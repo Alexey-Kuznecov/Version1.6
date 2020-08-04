@@ -13,11 +13,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             FileList = new ObservableCollection<FileModel>();
 
-            DirectoryInfo directoryInfo = new DirectoryInfo("E:\\");
+            DirectoryInfo directoryInfo = new DirectoryInfo("g:\\Program Files\\Total Commander 8.52a\\Doc\\");
 
             foreach (var item in directoryInfo.GetDirectories())
             {
-                FileList.Add(new FileModel { FileName = item.Name });
+                FileList.Add(new FileModel 
+                { 
+                    FileName = item.Name, 
+                    FullName = item.FullName 
+                });
             }
         }
 

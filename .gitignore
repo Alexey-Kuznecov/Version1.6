@@ -1,5 +1,6 @@
 ﻿/.vs/UnityCommander
-/Source
+/source
+/output
 /UnityCommander/.vs/UnityCommander
 /UnityCommander/Business/UnityCommander.Business/bin/Debug/netcoreapp3.1
 /UnityCommander/Business/UnityCommander.Business/obj

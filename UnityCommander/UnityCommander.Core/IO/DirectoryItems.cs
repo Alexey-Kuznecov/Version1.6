@@ -1,25 +1,27 @@
-﻿using System;
+﻿using Prism.Commands;
+using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityCommander.Business;
 
 namespace UnityCommander.Core.IO
 {
     public delegate bool SetCommand(FileInfo sourceFile);
 
-    class DirectoryItems
+    public class DirectoryItems
     {
-        public string Target { get; }
-        public string Source { get; }
-        public bool MD5Enable { get; set; }
-        public bool Exists { get; set; }
-        public List<string> IncludeExtension { get; set; }
-        public List<string> ExcludeExtension { get; set; }
+        IEventAggregator _ea;
+        public DelegateCommand SendCopyInfoCommand { get; private set; }
 
-        public DirectoryItems(string source, string target)
+        public DirectoryItems(IEventAggregator ea)
         {
-            Target = target;
-            Source = source;
-
+            this._ea = ea;
+            //this.SendCopyInfoCommand = new DelegateCommand(SendCopyInfo);
+        }
+        public DirectoryItems()
+            : this(null)
+        {
             FileFilter fileFilter = new FileFilter();
             SetCommand setCommand = new SetCommand(fileFilter.Md5Check);
         }
@@ -29,7 +31,7 @@ namespace UnityCommander.Core.IO
         /// </summary>
         /// <param name="source"> The source. </param>
         /// <param name="target"> The target. </param>
-        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+        public void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
         {
             foreach (DirectoryInfo dir in source.GetDirectories())
             {
@@ -43,10 +45,21 @@ namespace UnityCommander.Core.IO
                 if (!File.Exists(path))
                 {
                     file.CopyTo(path);
+                    FileCopyInfoModel copyInfo = new FileCopyInfoModel
+                    {
+                        SourceFile = file.FullName,
+                        TargetFile = target.FullName
+                    };
+
+                    SendCopyInfo(copyInfo);
                 }
             }
         }
 
+        private void SendCopyInfo(FileCopyInfoModel info)
+        {
+            _ea.GetEvent<CopyFilesEvent>().Publish(info);
+        }
         public void Remove() { }
         public void Move() { }
 
