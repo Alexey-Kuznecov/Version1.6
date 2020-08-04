@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="UnityCommander.Modules.FilePanel.Views.ViewA"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:UnityCommander.Modules.FilePanel.Views"       
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"> 
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ContentControl>
+            <ContentControl.Content>
+                <local:LeftPanel></local:LeftPanel>
+            </ContentControl.Content>
+        </ContentControl>
+        <ContentControl Grid.Column="1">
+            <ContentControl.Content>
+                <local:RightPanel></local:RightPanel>
+            </ContentControl.Content>
+        </ContentControl>
+    </Grid>
+</UserControl>

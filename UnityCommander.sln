@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0C605079-A48D-4E64-919A-E796221AB09E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Modules.ModuleName.Tests", "UnityCommander\Tests\UnityCommander.Modules.ModuleName.Tests\UnityCommander.Modules.ModuleName.Tests.csproj", "{9D35A24F-EC63-4748-8C36-81E0B7731CE2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{5FD899C8-D9FE-4084-9E2B-5B555C3532C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{A2053B60-B6BB-4D66-B49D-ACA7938878FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander", "UnityCommander\UnityCommander\UnityCommander.csproj", "{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Core", "UnityCommander\UnityCommander.Core\UnityCommander.Core.csproj", "{5F38C3A3-3D0B-4D75-B8A5-45A19E9F8B3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Modules.FilePanel", "UnityCommander\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj", "{25EF82CF-DCA5-452C-983B-34830097D77A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{87368608-CCD0-468D-87FD-FD427A98848A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Business", "UnityCommander\Business\UnityCommander.Business\UnityCommander.Business.csproj", "{3A5A42CD-E8DC-4E94-972E-59E100E5903A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Services", "UnityCommander\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj", "{479ED3A8-0141-420B-861E-EC89F5185927}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Services.Interfaces", "UnityCommander\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj", "{D4B517D9-0A06-489D-A764-16B720A809C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F38C3A3-3D0B-4D75-B8A5-45A19E9F8B3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F38C3A3-3D0B-4D75-B8A5-45A19E9F8B3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F38C3A3-3D0B-4D75-B8A5-45A19E9F8B3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F38C3A3-3D0B-4D75-B8A5-45A19E9F8B3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25EF82CF-DCA5-452C-983B-34830097D77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25EF82CF-DCA5-452C-983B-34830097D77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25EF82CF-DCA5-452C-983B-34830097D77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25EF82CF-DCA5-452C-983B-34830097D77A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A5A42CD-E8DC-4E94-972E-59E100E5903A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A5A42CD-E8DC-4E94-972E-59E100E5903A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A5A42CD-E8DC-4E94-972E-59E100E5903A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A5A42CD-E8DC-4E94-972E-59E100E5903A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{479ED3A8-0141-420B-861E-EC89F5185927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{479ED3A8-0141-420B-861E-EC89F5185927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{479ED3A8-0141-420B-861E-EC89F5185927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{479ED3A8-0141-420B-861E-EC89F5185927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4B517D9-0A06-489D-A764-16B720A809C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4B517D9-0A06-489D-A764-16B720A809C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4B517D9-0A06-489D-A764-16B720A809C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4B517D9-0A06-489D-A764-16B720A809C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9D35A24F-EC63-4748-8C36-81E0B7731CE2} = {0C605079-A48D-4E64-919A-E796221AB09E}
+		{25EF82CF-DCA5-452C-983B-34830097D77A} = {5FD899C8-D9FE-4084-9E2B-5B555C3532C6}
+		{3A5A42CD-E8DC-4E94-972E-59E100E5903A} = {87368608-CCD0-468D-87FD-FD427A98848A}
+		{479ED3A8-0141-420B-861E-EC89F5185927} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}
+		{D4B517D9-0A06-489D-A764-16B720A809C0} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}
+	EndGlobalSection
+EndGlobal

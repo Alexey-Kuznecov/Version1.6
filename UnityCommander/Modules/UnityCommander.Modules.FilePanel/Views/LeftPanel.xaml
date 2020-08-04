@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="UnityCommander.Modules.FilePanel.Views.LeftPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:view="clr-namespace:UnityCommander.Modules.FilePanel.Views"
+             xmlns:vm="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels" xmlns:dd="urn:gong-wpf-dragdrop">
+    <UserControl.DataContext>
+        <vm:LeftPanelViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <ListBox  dd:DragDrop.DropHandler="{Binding}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" ItemsSource="{Binding FileList, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding FileName}"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

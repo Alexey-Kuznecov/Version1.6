@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Business\UnityCommander.Business\UnityCommander.Business.csproj" />
+    <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="GongSolutions.WPF.DragDrop">
+      <HintPath>..\..\..\Source\GongSolutions.WPF.DragDrop\bin\Debug\netcoreapp3.1\GongSolutions.WPF.DragDrop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

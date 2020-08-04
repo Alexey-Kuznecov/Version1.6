@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>UnityCommander</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Prism.DryIoc" Version="7.2.0.1422" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
+    <ProjectReference Include="..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
+    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
+  </ItemGroup>
+</Project>
