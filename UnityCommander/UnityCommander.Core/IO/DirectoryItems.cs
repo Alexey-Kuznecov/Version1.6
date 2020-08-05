@@ -11,16 +11,7 @@ namespace UnityCommander.Core.IO
 
     public class DirectoryItems
     {
-        IEventAggregator _ea;
-        public DelegateCommand SendCopyInfoCommand { get; private set; }
-
-        public DirectoryItems(IEventAggregator ea)
-        {
-            this._ea = ea;
-            //this.SendCopyInfoCommand = new DelegateCommand(SendCopyInfo);
-        }
         public DirectoryItems()
-            : this(null)
         {
             FileFilter fileFilter = new FileFilter();
             SetCommand setCommand = new SetCommand(fileFilter.Md5Check);
@@ -50,16 +41,10 @@ namespace UnityCommander.Core.IO
                         SourceFile = file.FullName,
                         TargetFile = target.FullName
                     };
-
-                    SendCopyInfo(copyInfo);
                 }
             }
         }
 
-        private void SendCopyInfo(FileCopyInfoModel info)
-        {
-            _ea.GetEvent<CopyFilesEvent>().Publish(info);
-        }
         public void Remove() { }
         public void Move() { }
 

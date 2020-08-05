@@ -10,6 +10,11 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     WindowStartupLocation="CenterScreen">
     <Grid>
-        <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
+        <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
     </Grid>
 </Window>

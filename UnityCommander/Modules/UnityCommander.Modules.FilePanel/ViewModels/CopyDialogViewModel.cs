@@ -8,6 +8,7 @@ using Prism.Mvvm;
 using UnityCommander.Core.IO;
 using UnityCommander.Core;
 using UnityCommander.Business;
+using System.Windows;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -31,12 +32,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public CopyDialogViewModel(IEventAggregator ea)
         {
             CopyCommand = new DelegateCommand(CopyExecute);
-            ea.GetEvent<CopyFilesEvent>().Subscribe(MessageReceived);
+            ea.GetEvent<MessageSendEvent>().Subscribe(MessageReceived);
         }
 
-        private void MessageReceived(FileCopyInfoModel obj)
+        private void MessageReceived(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message);
         }
 
         /// <summary>

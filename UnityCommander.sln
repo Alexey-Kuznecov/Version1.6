@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Services", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Services.Interfaces", "UnityCommander\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj", "{D4B517D9-0A06-489D-A764-16B720A809C0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Modules.LeftSideBars", "UnityCommander\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj", "{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{D4B517D9-0A06-489D-A764-16B720A809C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4B517D9-0A06-489D-A764-16B720A809C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4B517D9-0A06-489D-A764-16B720A809C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{3A5A42CD-E8DC-4E94-972E-59E100E5903A} = {87368608-CCD0-468D-87FD-FD427A98848A}
 		{479ED3A8-0141-420B-861E-EC89F5185927} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}
 		{D4B517D9-0A06-489D-A764-16B720A809C0} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}
+		{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5} = {5FD899C8-D9FE-4084-9E2B-5B555C3532C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}

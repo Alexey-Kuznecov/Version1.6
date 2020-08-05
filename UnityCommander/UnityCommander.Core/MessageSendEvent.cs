@@ -5,7 +5,7 @@ using Prism.Events;
 
 namespace UnityCommander.Core
 {
-    class MessageSendEvent : PubSubEvent<string>
+    public class MessageSendEvent : PubSubEvent<string>
     {
     }
 }
