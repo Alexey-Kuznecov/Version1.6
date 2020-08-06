@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace UnityCommander.Business
+namespace UnityCommander.Core
 {
-    public class FileCopyInfoModel
+    public class CopyInfoModel
     {
         public string TargetFile { get; set; }
         public string SourceFile { get; set; }

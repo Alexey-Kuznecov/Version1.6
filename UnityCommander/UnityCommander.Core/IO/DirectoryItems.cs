@@ -1,9 +1,6 @@
-﻿using Prism.Commands;
-using Prism.Events;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using UnityCommander.Business;
+using System.Windows;
 
 namespace UnityCommander.Core.IO
 {
@@ -11,10 +8,61 @@ namespace UnityCommander.Core.IO
 
     public class DirectoryItems
     {
-        public DirectoryItems()
+        private DirectoryInfo _source;
+        private DirectoryInfo _target;
+        private bool _askFileReplace;
+        private DirectoryInfo _currentCopy;
+
+        /// <summary>
+        /// The event occurs while copying one of the file. 
+        /// </summary>
+        public static event EventHandler<CopyInfoEventArgs> CopyingEvent;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DirectoryItems"/> class.
+        /// </summary>
+        public DirectoryItems(DirectoryInfo source, DirectoryInfo target)
         {
-            FileFilter fileFilter = new FileFilter();
-            SetCommand setCommand = new SetCommand(fileFilter.Md5Check);
+            this._source = source;
+            this._target = target;
+            //FileFilter fileFilter = new FileFilter();
+            //SetCommand setCommand = new SetCommand(fileFilter.Md5Check);
+        }
+       
+        public void Copy()
+        {
+            this.CopyFilesRecursively(this._source, this._target);
+            //this.CopyFiles();         
+        }
+
+        public void CopyFiles()
+        {
+            foreach (string dirPath in Directory.GetDirectories(this._source.FullName, "*",
+               SearchOption.AllDirectories))
+            {
+                try
+                {
+                    Directory.CreateDirectory(dirPath.Replace(this._source.FullName, this._target.FullName));
+                }
+                catch (Exception e)
+                {
+                    //здесь обрабатывай ошибки
+                }
+            }
+
+            foreach (var file in Directory.GetFiles(this._source.FullName, "*.*",
+               SearchOption.AllDirectories))
+            {
+                try
+                {
+                    // string path = Path.Combine(this._target.FullName, file.);
+                    File.Copy(file, file.Replace(this._source.FullName, this._target.FullName), true);
+
+                }
+                catch (Exception e)
+                {
+                    //здесь обрабатывай ошибки
+                }
+            }
         }
 
         /// <summary>
@@ -36,21 +84,20 @@ namespace UnityCommander.Core.IO
                 if (!File.Exists(path))
                 {
                     file.CopyTo(path);
-                    FileCopyInfoModel copyInfo = new FileCopyInfoModel
+
+                    if (CopyingEvent != null)
                     {
-                        SourceFile = file.FullName,
-                        TargetFile = target.FullName
-                    };
+                        // Generates a report on the copied file. 
+                        CopyInfoModel copyInfo = new CopyInfoModel
+                        {
+                            SourceFile = file.FullName,
+                            TargetFile = _target.FullName
+                        };
+                        // Raise event for a notify subscribers.
+                        CopyingEvent(this, new CopyInfoEventArgs(copyInfo));
+                    }
                 }
             }
-        }
-
-        public void Remove() { }
-        public void Move() { }
-
-        private bool Compare()
-        {
-            return false;
         }
     }
 

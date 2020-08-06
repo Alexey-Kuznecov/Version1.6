@@ -7,8 +7,9 @@ using Prism.Events;
 using Prism.Mvvm;
 using UnityCommander.Core.IO;
 using UnityCommander.Core;
-using UnityCommander.Business;
 using System.Windows;
+using UnityCommander.Modules.FilePanel.Views;
+using System.Threading;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -31,15 +32,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public CopyDialogViewModel(IEventAggregator ea)
         {
-            CopyCommand = new DelegateCommand(CopyExecute);
+            this.CopyCommand = new DelegateCommand(CopyExecute);
             ea.GetEvent<MessageSendEvent>().Subscribe(MessageReceived);
         }
-
+        /// <summary>
+        /// Gets a message from the sidebar region.
+        /// </summary>
+        /// <param name="message"> Message of the sidebar. </param>
         private void MessageReceived(string message)
         {
             MessageBox.Show(message);
         }
-
         /// <summary>
         /// Gets or sets the source panel.
         /// </summary>
@@ -75,9 +78,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyExecute()
         {
-            DirectoryItems directoryItems = new DirectoryItems();
-            directoryItems.CopyFilesRecursively(
-                new DirectoryInfo(Source), new DirectoryInfo(Target));
+            DirectoryItems directoryItems = new DirectoryItems(new DirectoryInfo(Source), new DirectoryInfo(Target));
+            Thread thread = new Thread(directoryItems.Copy);
+            thread.Start();
         }
     }
 }

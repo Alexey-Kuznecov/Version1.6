@@ -1,5 +1,4 @@
 ﻿using Prism.Regions;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityCommander.Business;
 using UnityCommander.Core.Mvvm;

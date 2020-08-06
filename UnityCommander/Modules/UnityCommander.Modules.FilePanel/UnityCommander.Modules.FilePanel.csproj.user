@@ -5,9 +5,15 @@
     <Compile Update="Views\CopyDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\CopyReportView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\CopyDialogView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CopyReportView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\LeftPanel.xaml">

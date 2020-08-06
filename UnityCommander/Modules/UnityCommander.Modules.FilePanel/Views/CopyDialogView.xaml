@@ -17,6 +17,7 @@
             <RowDefinition Height="80" />
             <RowDefinition Height="80" />
             <RowDefinition Height="50" />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid>
             <Grid.RowDefinitions>
@@ -70,5 +71,8 @@
                 Content="Продвинутый"
                 ToolTip="Комплексоное копирование файлов." />
         </WrapPanel>
+        <ContentControl Height="300" Grid.Row="3">
+            <local:CopyReportView/>
+        </ContentControl>
     </Grid>
 </Window>
