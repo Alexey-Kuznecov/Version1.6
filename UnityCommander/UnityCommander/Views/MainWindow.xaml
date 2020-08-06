@@ -8,11 +8,13 @@
     Width="525"
     Height="350"
     prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
     WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
         <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
