@@ -5,6 +5,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.IO;
 using System.ComponentModel;
 using System.Windows.Threading;
+using System.Windows;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -32,11 +33,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="e"> The report data. </param>
         private void DirectoryItems_CopyingEvent(object sender, CopyInfoEventArgs e)
         {
-            Action action = () =>
+            Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 this.CopyReport.Add(e.CopyInfo);
-            };
-            Dispatcher.CurrentDispatcher.Invoke(action);
+            });
         }
     }
 }
