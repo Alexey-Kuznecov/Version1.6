@@ -2,6 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="Views\CopyDialogControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\CopyDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -10,6 +13,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Views\CopyDialogControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\CopyDialogView.xaml">
       <SubType>Designer</SubType>
     </Page>

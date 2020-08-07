@@ -9,7 +9,8 @@ using UnityCommander.Core.IO;
 using UnityCommander.Core;
 using System.Windows;
 using UnityCommander.Modules.FilePanel.Views;
-using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -23,15 +24,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The path to the target panel.
         /// </summary>
         private string _target;
+        private UserControl _controlView;
+
         /// <summary>
         /// Gets or sets whether to ignore folders when copying.
         /// </summary>
         public bool FolderIgnore { get; set; }
         /// <summary>
+        /// 
+        /// </summary>
+        public UserControl ControlView
+        {
+            get => this._controlView;
+            set => SetProperty(ref this._controlView, value);
+        }
+        /// <summary>
         /// Initializes a new instance of the <see cref="CopyDialogViewModel"/> class.
         /// </summary>
         public CopyDialogViewModel(IEventAggregator ea)
         {
+            this.ControlView = new CopyDialogControl();
             this.CopyCommand = new DelegateCommand(CopyExecute);
             ea.GetEvent<MessageSendEvent>().Subscribe(MessageReceived);
         }
@@ -78,9 +90,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyExecute()
         {
+            this.ControlView = new CopyReportView();
             DirectoryItems directoryItems = new DirectoryItems(new DirectoryInfo(Source), new DirectoryInfo(Target));
-            Thread thread = new Thread(directoryItems.Copy);
-            thread.Start();
+            Task thread = Task.Factory.StartNew(directoryItems.Copy);
         }
     }
 }

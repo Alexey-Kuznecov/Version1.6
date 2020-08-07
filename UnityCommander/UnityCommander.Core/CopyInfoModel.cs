@@ -8,5 +8,7 @@ namespace UnityCommander.Core
         public string SourceFile { get; set; }
         public int TotalLeft { get; set; }
         public DateTime AmazingTime { get; set; }
+        public long FileLength { get; set; }
+        public int CopyStatus { get; set; }
     }
 }

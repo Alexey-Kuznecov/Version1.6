@@ -28,3 +28,7 @@
 /UnityCommander/UnityCommander/obj
 /UnityCommander/UnityCommander.Core/bin/Debug/netcoreapp3.1
 /UnityCommander/UnityCommander.Core/obj
+/UnityCommander/Tests/UnityCommander.Core.Tests/bin/Debug/netcoreapp3.1
+/UnityCommander/Tests/UnityCommander.Core.Tests/obj
+/UnityCommander/Tests/UnityCommander.Modules.ModuleName.Tests/bin/Debug/netcoreapp3.1
+/UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/obj
