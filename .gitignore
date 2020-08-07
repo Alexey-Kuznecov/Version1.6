@@ -32,3 +32,5 @@
 /UnityCommander/Tests/UnityCommander.Core.Tests/obj
 /UnityCommander/Tests/UnityCommander.Modules.ModuleName.Tests/bin/Debug/netcoreapp3.1
 /UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/obj
+/UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/bin/Debug/netcoreapp3.1
+/TestResults/3b56d826-7e49-43f6-b419-c738210ba044

@@ -11,12 +11,12 @@
         </Grid.ColumnDefinitions>
         <ContentControl>
             <ContentControl.Content>
-                <local:LeftPanel></local:LeftPanel>
+                <local:LeftPanelControl></local:LeftPanelControl>
             </ContentControl.Content>
         </ContentControl>
         <ContentControl Grid.Column="1">
             <ContentControl.Content>
-                <local:RightPanel></local:RightPanel>
+                <local:RightPanelControl></local:RightPanelControl>
             </ContentControl.Content>
         </ContentControl>
     </Grid>

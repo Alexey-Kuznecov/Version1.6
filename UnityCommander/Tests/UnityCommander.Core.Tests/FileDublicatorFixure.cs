@@ -3,7 +3,7 @@ using Xunit;
 
 namespace UnityCommander.Core.Tests
 {
-    public class DirectoryItemsFixure
+    public class FileDublicatorFixure
     {
         [Fact]
         public void Test1()

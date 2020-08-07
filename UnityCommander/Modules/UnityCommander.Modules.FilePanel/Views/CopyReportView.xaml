@@ -13,6 +13,7 @@
             Grid.Row="1"
             Width="100"
             Height="42"
+            Margin="10"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding StartCommand}"
@@ -24,7 +25,7 @@
             </Grid.ColumnDefinitions>
             <ProgressBar
                 Grid.Column="0"
-                Width="180"
+                Width="450"
                 Height="20"
                 Margin="10,55,0,50"
                 Maximum="100"
@@ -33,7 +34,7 @@
             <TextBlock
                 Grid.Column="1"
                 Margin="10,55,0,50"
-                Text="{Binding CurrentPerc, StringFormat={}{0}%}" />
+                Text="{Binding CurrentPercent, StringFormat={}{0}%}" />
         </Grid>
 
         <!--<ListView Grid.Row="1" ItemsSource="{Binding CopyReport}">

@@ -22,10 +22,10 @@
     <Page Update="Views\CopyReportView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\LeftPanel.xaml">
+    <Page Update="Views\LeftPanelControl.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\RightPanel.xaml">
+    <Page Update="Views\RightPanelControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ViewA.xaml">

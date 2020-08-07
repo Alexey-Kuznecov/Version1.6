@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="UnityCommander.Modules.FilePanel.Views.RightPanel"
+    x:Class="UnityCommander.Modules.FilePanel.Views.RightPanelControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dd="urn:gong-wpf-dragdrop"

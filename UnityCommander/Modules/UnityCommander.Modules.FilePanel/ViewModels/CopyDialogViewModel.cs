@@ -17,21 +17,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class CopyDialogViewModel : BindableBase
     {
         /// <summary>
-        /// The path to the source panel.
+        /// Contains the path to the source panel.
         /// </summary>
         private string _source;
         /// <summary>
-        /// The path to the target panel.
+        /// Contains the path to the target panel.
         /// </summary>
         private string _target;
+        /// <summary>
+        /// Contains a view of the copy dialog box.
+        /// </summary>
         private UserControl _controlView;
-
         /// <summary>
         /// Gets or sets whether to ignore folders when copying.
         /// </summary>
         public bool FolderIgnore { get; set; }
         /// <summary>
-        /// 
+        /// Gets or sets the appearance of the copy dialog box.
         /// </summary>
         public UserControl ControlView
         {
@@ -91,7 +93,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void CopyExecute()
         {
             this.ControlView = new CopyReportView();
-            DirectoryItems directoryItems = new DirectoryItems(new DirectoryInfo(Source), new DirectoryInfo(Target));
+            FileDublicator directoryItems = new FileDublicator(new DirectoryInfo(Source), new DirectoryInfo(Target));
             Task thread = Task.Factory.StartNew(directoryItems.Copy);
         }
     }
