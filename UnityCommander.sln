@@ -27,9 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Services.Int
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Modules.LeftSideBars", "UnityCommander\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj", "{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Core.Tests", "UnityCommander\Tests\UnityCommander.Core.Tests\UnityCommander.Core.Tests.csproj", "{C49000D0-3E16-4F42-8D67-5BF650E3E6B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Core.Tests", "UnityCommander\Tests\UnityCommander.Core.Tests\UnityCommander.Core.Tests.csproj", "{C49000D0-3E16-4F42-8D67-5BF650E3E6B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Core.NUnit.Tests", "UnityCommander\Tests\UnityCommander.Core.NUnit.Tests\UnityCommander.Core.NUnit.Tests.csproj", "{E19F99FE-3185-4302-96A8-D08CCA584984}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Core.NUnit.Tests", "UnityCommander\Tests\UnityCommander.Core.NUnit.Tests\UnityCommander.Core.NUnit.Tests.csproj", "{E19F99FE-3185-4302-96A8-D08CCA584984}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Test", "UnityCommander.Test\UnityCommander.Test.csproj", "{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{E19F99FE-3185-4302-96A8-D08CCA584984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E19F99FE-3185-4302-96A8-D08CCA584984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E19F99FE-3185-4302-96A8-D08CCA584984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

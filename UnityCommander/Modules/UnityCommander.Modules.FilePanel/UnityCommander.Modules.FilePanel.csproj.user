@@ -11,6 +11,9 @@
     <Compile Update="Views\CopyReportView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\NTFSSecurityView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\CopyDialogControl.xaml">
@@ -23,6 +26,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\LeftPanelControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\NTFSSecurityView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\RightPanelControl.xaml">
