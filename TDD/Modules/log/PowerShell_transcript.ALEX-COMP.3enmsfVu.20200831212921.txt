@@ -1,0 +1,92 @@
+﻿**********************
+Начало записи сценария Windows PowerShell
+Время начала: 20200831212921
+Имя пользователя: ALEX-COMP\Alexey
+Запуск от имени пользователя: ALEX-COMP\Alexey
+Имя конфигурации: 
+Компьютер: ALEX-COMP (Microsoft Windows NT 10.0.18363.0)
+Ведущее приложение: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+ИД процесса: 16204
+PSVersion: 5.1.18362.752
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.18362.752
+BuildVersion: 10.0.18362.752
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Транскрибирование запущено, выходной файл C:\Users\Alexey\Desktop\TDD\Modules\Log\PowerShell_transcript.ALEX-COMP.3enmsfVu.20200831212921.txt
+PS C:\Users\Alexey\Desktop\TDD> $mPerm | Get-Member
+
+
+   TypeName: System.Management.Automation.PSModuleInfo
+
+Name                         MemberType Definition
+----                         ---------- ----------
+AsCustomObject               Method     psobject AsCustomObject()
+Clone                        Method     psmoduleinfo Clone()
+Equals                       Method     bool Equals(System.Object obj)
+GetExportedTypeDefinitions   Method     System.Collections.ObjectModel.ReadOnlyDictionary[string,System.Management.Automation.Language.TypeDefini...
+GetHashCode                  Method     int GetHashCode()
+GetType                      Method     type GetType()
+GetVariableFromCallersModule Method     psvariable GetVariableFromCallersModule(string variableName)
+Invoke                       Method     System.Object Invoke(scriptblock sb, Params System.Object[] args)
+NewBoundScriptBlock          Method     scriptblock NewBoundScriptBlock(scriptblock scriptBlockToBind)
+ToString                     Method     string ToString()
+AccessMode                   Property   System.Management.Automation.ModuleAccessMode AccessMode {get;set;}
+Author                       Property   string Author {get;}
+ClrVersion                   Property   version ClrVersion {get;}
+CompanyName                  Property   string CompanyName {get;}
+CompatiblePSEditions         Property   System.Collections.Generic.IEnumerable[string] CompatiblePSEditions {get;}
+Copyright                    Property   string Copyright {get;}
+Definition                   Property   string Definition {get;}
+Description                  Property   string Description {get;set;}
+DotNetFrameworkVersion       Property   version DotNetFrameworkVersion {get;}
+ExportedAliases              Property   System.Collections.Generic.Dictionary[string,System.Management.Automation.AliasInfo] ExportedAliases {get;}
+ExportedCmdlets              Property   System.Collections.Generic.Dictionary[string,System.Management.Automation.CmdletInfo] ExportedCmdlets {get;}
+ExportedCommands             Property   System.Collections.Generic.Dictionary[string,System.Management.Automation.CommandInfo] ExportedCommands {...
+ExportedDscResources         Property   System.Collections.ObjectModel.ReadOnlyCollection[string] ExportedDscResources {get;}
+ExportedFormatFiles          Property   System.Collections.ObjectModel.ReadOnlyCollection[string] ExportedFormatFiles {get;}
+ExportedFunctions            Property   System.Collections.Generic.Dictionary[string,System.Management.Automation.FunctionInfo] ExportedFunctions...
+ExportedTypeFiles            Property   System.Collections.ObjectModel.ReadOnlyCollection[string] ExportedTypeFiles {get;}
+ExportedVariables            Property   System.Collections.Generic.Dictionary[string,psvariable] ExportedVariables {get;}
+ExportedWorkflows            Property   System.Collections.Generic.Dictionary[string,System.Management.Automation.FunctionInfo] ExportedWorkflows...
+FileList                     Property   System.Collections.Generic.IEnumerable[string] FileList {get;}
+Guid                         Property   guid Guid {get;}
+HelpInfoUri                  Property   string HelpInfoUri {get;}
+IconUri                      Property   uri IconUri {get;}
+ImplementingAssembly         Property   System.Reflection.Assembly ImplementingAssembly {get;}
+LicenseUri                   Property   uri LicenseUri {get;}
+LogPipelineExecutionDetails  Property   bool LogPipelineExecutionDetails {get;set;}
+ModuleBase                   Property   string ModuleBase {get;}
+ModuleList                   Property   System.Collections.Generic.IEnumerable[System.Object] ModuleList {get;}
+ModuleType                   Property   System.Management.Automation.ModuleType ModuleType {get;}
+Name                         Property   string Name {get;}
+NestedModules                Property   System.Collections.ObjectModel.ReadOnlyCollection[psmoduleinfo] NestedModules {get;}
+OnRemove                     Property   scriptblock OnRemove {get;set;}
+Path                         Property   string Path {get;}
+PowerShellHostName           Property   string PowerShellHostName {get;}
+PowerShellHostVersion        Property   version PowerShellHostVersion {get;}
+PowerShellVersion            Property   version PowerShellVersion {get;}
+Prefix                       Property   string Prefix {get;}
+PrivateData                  Property   System.Object PrivateData {get;set;}
+ProcessorArchitecture        Property   System.Reflection.ProcessorArchitecture ProcessorArchitecture {get;}
+ProjectUri                   Property   uri ProjectUri {get;}
+ReleaseNotes                 Property   string ReleaseNotes {get;}
+RepositorySourceLocation     Property   uri RepositorySourceLocation {get;}
+RequiredAssemblies           Property   System.Collections.Generic.IEnumerable[string] RequiredAssemblies {get;}
+RequiredModules              Property   System.Collections.ObjectModel.ReadOnlyCollection[psmoduleinfo] RequiredModules {get;}
+RootModule                   Property   string RootModule {get;}
+Scripts                      Property   System.Collections.Generic.IEnumerable[string] Scripts {get;}
+SessionState                 Property   System.Management.Automation.SessionState SessionState {get;set;}
+Tags                         Property   System.Collections.Generic.IEnumerable[string] Tags {get;}
+Version                      Property   version Version {get;}
+
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable -Name "mPerm"
+
+Name                           Value
+----                           -----
+mPerm                          TDD_Set_Random_Permissions
+
+

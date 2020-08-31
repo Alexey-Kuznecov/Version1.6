@@ -1,0 +1,143 @@
+**********************
+PowerShell transcript start
+Start time: 20200831221949
+Username: ALEX-COMP\Alexey
+RunAs User: ALEX-COMP\Alexey
+Configuration Name: 
+Machine: ALEX-COMP (Microsoft Windows NT 10.0.18363.0)
+Host Application: H:\Porgram Files\Tools\powershell7\pwsh.dll
+Process ID: 18900
+PSVersion: 7.0.3
+PSEdition: Core
+GitCommitId: 7.0.3
+OS: Microsoft Windows 10.0.18363
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.10032.0, 6.0.0, 6.1.0, 6.2.0, 7.0.3
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\Alexey\Desktop\TDD\Modules\log\session1.log
+PS C:\Users\Alexey\Desktop\TDD> Set-AuthenticodeSignature .\Modules\TDD_Set_Random_Permissions.psm1 -Certificate (Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert)
+
+
+    Directory: C:\Users\Alexey\Desktop\TDD\Modules
+
+SignerCertificate                         Status                              StatusMessage                       Path
+-----------------                         ------                              -------------                       ----
+988D4CEC2E499333856AE755BF635661917E9983  Valid                               Signature verified.                 TDD_Set_Random_Permissions.psm1
+
+PS C:\Users\Alexey\Desktop\TDD> Get-Child -Path E:\Temp\Pictures\ -File -Recurse | Remove-NTFSAcess -Account "Все" -AccessRights "FullControl"
+
+Get-Child: The term 'Get-Child' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mGet-Child: [91mThe term 'Get-Child' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Remove-NTFSAcess -Account "Все" -AccessRights "FullControl"
+
+Remove-NTFSAcess: The term 'Remove-NTFSAcess' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mRemove-NTFSAcess: [91mThe term 'Remove-NTFSAcess' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> Import-Module NTFSSecurity
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Remove-NTFSAcess -Account "Все" -AccessRights "FullControl"
+
+Remove-NTFSAcess: The term 'Remove-NTFSAcess' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mRemove-NTFSAcess: [91mThe term 'Remove-NTFSAcess' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Remove-NTFSAccess -Account "Все" -AccessRights "FullControl"
+PS C:\Users\Alexey\Desktop\TDD> cls
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Add-NTFSAccess -Account "Все" -AccessRights "FullControl"
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Add-NTFSAccess -Account "Все" -AccessRights "FullControl" -InheritanceFlags $True
+>> TerminatingError(Add-NTFSAccess): "Cannot bind parameter 'InheritanceFlags'. Cannot convert value "True" to type "System.Security.AccessControl.InheritanceFlags". Error: "Invalid cast from 'System.Boolean' to 'System.Security.AccessControl.InheritanceFlags'.""
+
+Add-NTFSAccess: Cannot bind parameter 'InheritanceFlags'. Cannot convert value "True" to type "System.Security.AccessControl.InheritanceFlags". Error: "Invalid cast from 'System.Boolean' to 'System.Security.AccessControl.InheritanceFlags'."
+
+[91mAdd-NTFSAccess: [91mCannot bind parameter 'InheritanceFlags'. Cannot convert value "True" to type "System.Security.AccessControl.InheritanceFlags". Error: "Invalid cast from 'System.Boolean' to 'System.Security.AccessControl.InheritanceFlags'."[0m
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Add-NTFSAccess -Account "Все" -AccessRights "FullControl" -InheritanceFlags
+>> TerminatingError(Add-NTFSAccess): "Missing an argument for parameter 'InheritanceFlags'. Specify a parameter of type 'System.Security.AccessControl.InheritanceFlags' and try again."
+
+Add-NTFSAccess: Missing an argument for parameter 'InheritanceFlags'. Specify a parameter of type 'System.Security.AccessControl.InheritanceFlags' and try again.
+
+[91mAdd-NTFSAccess: [91mMissing an argument for parameter 'InheritanceFlags'. Specify a parameter of type 'System.Security.AccessControl.InheritanceFlags' and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> $acl = Get-ACL -Path $item.FullName
+>> TerminatingError(Get-Acl): "Cannot validate argument on parameter 'Path'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again."
+
+Get-Acl: Cannot validate argument on parameter 'Path'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.
+
+[91mGet-Acl: [91mCannot validate argument on parameter 'Path'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.[0m
+PS C:\Users\Alexey\Desktop\TDD> $acl = Get-ACL -Path E:\Temp\Pictures\
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable -Name acl
+
+Name                           Value
+----                           -----
+acl                            System.Security.AccessControl.DirectorySecurity
+
+PS C:\Users\Alexey\Desktop\TDD> $acl = Get-ACL -Path E:\Temp\Pictures\img0.psd
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable -Name acl
+
+Name                           Value
+----                           -----
+acl                            System.Security.AccessControl.FileSecurity
+
+PS C:\Users\Alexey\Desktop\TDD> $acl = Get-ACL -Path E:\Temp\Pictures\
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Add-NTFSAccess -Account "Все" -AccessRights "FullControl" -InheritanceFlags $cal
+>> TerminatingError(Add-NTFSAccess): "Cannot bind parameter 'InheritanceFlags' to the target. Exception setting "InheritanceFlags": "Cannot convert null to type "System.Security.AccessControl.InheritanceFlags" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "None;ContainerInherit;ObjectInherit".""
+
+Add-NTFSAccess: Cannot bind parameter 'InheritanceFlags' to the target. Exception setting "InheritanceFlags": "Cannot convert null to type "System.Security.AccessControl.InheritanceFlags" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "None;ContainerInherit;ObjectInherit"."
+
+[91mAdd-NTFSAccess: [91mCannot bind parameter 'InheritanceFlags' to the target. Exception setting "InheritanceFlags": "Cannot convert null to type "System.Security.AccessControl.InheritanceFlags" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "None;ContainerInherit;ObjectInherit"."[0m
+PS C:\Users\Alexey\Desktop\TDD> Get-ChildItem -Path E:\Temp\Pictures\ -File -Recurse | Add-NTFSAccess -Account "Все" -AccessRights "FullControl" -InheritanceFlags $acl
+>> TerminatingError(Add-NTFSAccess): "Cannot bind parameter 'InheritanceFlags'. Cannot convert the "System.Security.AccessControl.DirectorySecurity" value of type "System.Security.AccessControl.DirectorySecurity" to type "System.Security.AccessControl.InheritanceFlags"."
+
+Add-NTFSAccess: Cannot bind parameter 'InheritanceFlags'. Cannot convert the "System.Security.AccessControl.DirectorySecurity" value of type "System.Security.AccessControl.DirectorySecurity" to type "System.Security.AccessControl.InheritanceFlags".
+
+[91mAdd-NTFSAccess: [91mCannot bind parameter 'InheritanceFlags'. Cannot convert the "System.Security.AccessControl.DirectorySecurity" value of type "System.Security.AccessControl.DirectorySecurity" to type "System.Security.AccessControl.InheritanceFlags".[0m
+PS C:\Users\Alexey\Desktop\TDD> Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+PS C:\Users\Alexey\Desktop\TDD> E:\Temp\Pictures | RemoveInheritance
+
+E:\Temp\Pictures: The term 'E:\Temp\Pictures' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mE:\Temp\Pictures: [91mThe term 'E:\Temp\Pictures' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> "E:\Temp\Pictures" | RemoveInheritance
+PS C:\Users\Alexey\Desktop\TDD> Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+PS C:\Users\Alexey\Desktop\TDD> "E:\Temp\Pictures" | RemoveInheritance
+PS C:\Users\Alexey\Desktop\TDD> RemoveAll -Path E:\Temp\Pictures -User "Все" -Perm "Full"
+
+RemoveAll: The term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mRemoveAll: [91mThe term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+PS C:\Users\Alexey\Desktop\TDD> RemoveAll -Path E:\Temp\Pictures -User "Все" -Perm "Full"
+
+RemoveAll: The term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mRemoveAll: [91mThe term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+PS C:\Users\Alexey\Desktop\TDD> RemoveAll -Path E:\Temp\Pictures -User "Все" -Perm "Full"
+
+RemoveAll: The term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mRemoveAll: [91mThe term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+PS C:\Users\Alexey\Desktop\TDD> RemoveAll -Path E:\Temp\Pictures -User "Все" -Perm "Full"
+
+RemoveAll: The term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+[91mRemoveAll: [91mThe term 'RemoveAll' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+PS C:\Users\Alexey\Desktop\TDD> $global:?
+False

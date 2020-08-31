@@ -1,0 +1,164 @@
+﻿**********************
+Начало записи сценария Windows PowerShell
+Время начала: 20200831211109
+Имя пользователя: ALEX-COMP\Alexey
+Запуск от имени пользователя: ALEX-COMP\Alexey
+Имя конфигурации: 
+Компьютер: ALEX-COMP (Microsoft Windows NT 10.0.18363.0)
+Ведущее приложение: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+ИД процесса: 16204
+PSVersion: 5.1.18362.752
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.18362.752
+BuildVersion: 10.0.18362.752
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Транскрибирование запущено, выходной файл C:\Users\Alexey\Desktop\TDD\Modules\session1.log
+PS C:\Users\Alexey\Desktop\TDD> Get-Veriable
+Get-Veriable : Имя "Get-Veriable" не распознано как имя командлета, функции, файла сценария или выполняемой программы. П
+роверьте правильность написания имени, а также наличие и правильность пути, после чего повторите попытку.
+строка:1 знак:1
++ Get-Veriable
++ ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Get-Veriable:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+Get-Veriable : Имя "Get-Veriable" не распознано как имя командлета, функции, файла сценария или выполняемой программы. Проверьте правильность написа
+ния имени, а также наличие и правильность пути, после чего повторите попытку.
+строка:1 знак:1
++ Get-Veriable
++ ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Get-Veriable:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable
+
+Name                           Value
+----                           -----
+$                              Get-Veriable
+?                              False
+^                              Get-Veriable
+args                           {}
+ConfirmPreference              High
+ConsoleFileName
+DebugPreference                SilentlyContinue
+Error                          {Имя "Get-Veriable" не распознано как имя командлета, функции, файла сценария или выполняемой программы. Проверьте...
+ErrorActionPreference          Continue
+ErrorView                      NormalView
+ExecutionContext               System.Management.Automation.EngineIntrinsics
+false                          False
+FormatEnumerationLimit         4
+FullName                       E:\Temp\Pictures\With Meaning\Macro\img2.png
+HOME                           C:\Users\Alexey
+Host                           System.Management.Automation.Internal.Host.InternalHost
+InformationPreference          SilentlyContinue
+input                          System.Collections.ArrayList+ArrayListEnumeratorSimple
+MaximumAliasCount              4096
+MaximumDriveCount              4096
+MaximumErrorCount              256
+MaximumFunctionCount           4096
+MaximumHistoryCount            4096
+MaximumVariableCount           4096
+mPerm
+MyInvocation                   System.Management.Automation.InvocationInfo
+NestedPromptLevel              0
+null
+OutputEncoding                 System.Text.ASCIIEncoding
+PID                            16204
+PROFILE                        C:\Users\Alexey\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+ProgressPreference             Continue
+PSBoundParameters              {}
+PSCommandPath
+PSCulture                      ru-RU
+PSDefaultParameterValues       {}
+PSEdition                      Desktop
+PSEmailServer
+PSHOME                         C:\Windows\System32\WindowsPowerShell\v1.0
+PSScriptRoot
+PSSessionApplicationName       wsman
+PSSessionConfigurationName     http://schemas.microsoft.com/powershell/Microsoft.PowerShell
+PSSessionOption                System.Management.Automation.Remoting.PSSessionOption
+PSUICulture                    ru-RU
+PSVersionTable                 {PSVersion, PSEdition, PSCompatibleVersions, BuildVersion...}
+PWD                            C:\Users\Alexey\Desktop\TDD
+ShellId                        Microsoft.PowerShell
+StackTrace                        в System.Management.Automation.CommandDiscovery.LookupCommandInfo(String commandName, CommandTypes commandTypes...
+true                           True
+type_NTFS1                     	using System;...
+VerbosePreference              SilentlyContinue
+WarningPreference              Continue
+WhatIfPreference               False
+
+
+PS C:\Users\Alexey\Desktop\TDD> $mPerm | Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+>> CommandInvocation(Out-Null): "Out-Null"
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable -Name "mPerm"
+
+Name                           Value
+----                           -----
+mPerm
+
+
+PS C:\Users\Alexey\Desktop\TDD> $mPerm = Import-Module .\Modules\TDD_Set_Random_Permissions.psm1
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable -Name "mPerm"
+
+Name                           Value
+----                           -----
+mPerm
+
+
+PS C:\Users\Alexey\Desktop\TDD> $mPerm = Get-Module .\Modules\TDD_Set_Random_Permissions.psm1
+>> TerminatingError(Get-Module): "Выполнение командлета Get-Module без параметра ListAvailable не поддерживается для имен модулей, которые включают путь. В параметре имени есть этот элемент ".\Modules\TDD_Set_Random_Permissions.psm1", который соответствует пути. Обновите параметр имени, чтобы в нем не было элементов пути, и попробуйте еще раз."
+Get-Module : Выполнение командлета Get-Module без параметра ListAvailable не поддерживается для имен модулей, которые вк
+лючают путь. В параметре имени есть этот элемент ".\Modules\TDD_Set_Random_Permissions.psm1", который соответствует пути
+. Обновите параметр имени, чтобы в нем не было элементов пути, и попробуйте еще раз.
+строка:1 знак:10
++ $mPerm = Get-Module .\Modules\TDD_Set_Random_Permissions.psm1
++          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (.\Modules\TDD_S...ermissions.psm1:String) [Get-Module], ArgumentExceptio
+n
+    + FullyQualifiedErrorId : ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames,Microsoft.PowerShell.Commands.
+GetModuleCommand
+Get-Module : Выполнение командлета Get-Module без параметра ListAvailable не поддерживается для имен модулей, которые включают путь. В параметре име
+ни есть этот элемент ".\Modules\TDD_Set_Random_Permissions.psm1", который соответствует пути. Обновите параметр имени, чтобы в нем не было элементов
+ пути, и попробуйте еще раз.
+строка:1 знак:10
++ $mPerm = Get-Module .\Modules\TDD_Set_Random_Permissions.psm1
++          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (.\Modules\TDD_S...ermissions.psm1:String) [Get-Module], ArgumentException
+    + FullyQualifiedErrorId : ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames,Microsoft.PowerShell.Commands.GetModuleCommand
+
+PS C:\Users\Alexey\Desktop\TDD> $mPerm = Get-Module TDD_Set_Random_Permissions
+PS C:\Users\Alexey\Desktop\TDD> Get-Variable -Name "mPerm"
+
+Name                           Value
+----                           -----
+mPerm                          TDD_Set_Random_Permissions
+
+
+PS C:\Users\Alexey\Desktop\TDD> $mPerm | Get-Member -MemberType Method
+
+
+   TypeName: System.Management.Automation.PSModuleInfo
+
+Name                         MemberType Definition
+----                         ---------- ----------
+AsCustomObject               Method     psobject AsCustomObject()
+Clone                        Method     psmoduleinfo Clone()
+Equals                       Method     bool Equals(System.Object obj)
+GetExportedTypeDefinitions   Method     System.Collections.ObjectModel.ReadOnlyDictionary[string,System.Management.Automation.Language.TypeDefini...
+GetHashCode                  Method     int GetHashCode()
+GetType                      Method     type GetType()
+GetVariableFromCallersModule Method     psvariable GetVariableFromCallersModule(string variableName)
+Invoke                       Method     System.Object Invoke(scriptblock sb, Params System.Object[] args)
+NewBoundScriptBlock          Method     scriptblock NewBoundScriptBlock(scriptblock scriptBlockToBind)
+ToString                     Method     string ToString()
+
+
+PS C:\Users\Alexey\Desktop\TDD> stop-transcript
+**********************
+Конец записи протокола Windows PowerShell
+Время окончания: 20200831212805
+**********************

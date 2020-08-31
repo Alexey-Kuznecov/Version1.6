@@ -1,0 +1,52 @@
+﻿Import-Module NTFSSecurity
+function DataFaker {
+    param (
+        [string]$Path
+      )
+
+    $files = Get-ChildItem -Path $Path -File -Recurse;
+
+    foreach ($item in $files)
+    {
+        Remove-NTFSAccess -Path $item.FullName -Account 'Все' -AccessRights 'FullControl';
+    }
+}
+
+function InitDataFake {
+    param (
+        [string]$sd
+    )
+}
+
+# SIG # Begin signature block
+# MIIFkQYJKoZIhvcNAQcCoIIFgjCCBX4CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUqU+1lMHLrtTH57D8zcspStyA
+# lymgggMqMIIDJjCCAg6gAwIBAgIQXI2Y/4WK6KlBlFsjmPpZszANBgkqhkiG9w0B
+# AQsFADAcMRowGAYDVQQDDBFsZXhhMXRoQGdtYWlsLmNvbTAeFw0yMDA4MjUwODE1
+# MzhaFw0yMTA4MjUwODM1MzhaMBwxGjAYBgNVBAMMEWxleGExdGhAZ21haWwuY29t
+# MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAudlTYCSLWSHR/tUtF7el
+# n8O7UyS4+tIYXGNXra/uzYB6k3mgiV91Sl/ukE9iOU6/qVpj2leyjGkygNH5wWa1
+# OuY/4HTfkTKt+tWr+vl+ZMViIMfM1TdYHNAgeU4fvPrMukOG8TEUAVt6fRTn8Lx2
+# 9SzpUgP3ttInfASqJVJexZMicKBBxCnbqdenYVqkgXspUM0+qUJDgq9i5EPDJDCh
+# zZj1+IJRlLeqmWkk5Obddj/FfYsJIAhPLl+wUbQ5BoDmDUlI9jvUfX2urbuJ+uzn
+# NrtdqeuW8B0t+6s9eFslGtZTbbxO/+bdwDOMvVZnS3vIwZbf/LJvw1PNXmS7ZxRB
+# dQIDAQABo2QwYjAOBgNVHQ8BAf8EBAMCB4AwEwYDVR0lBAwwCgYIKwYBBQUHAwMw
+# HAYDVR0RBBUwE4IRbGV4YTF0aEBnbWFpbC5jb20wHQYDVR0OBBYEFIKYlgcGRtlb
+# NohSqiwQan0A6J3mMA0GCSqGSIb3DQEBCwUAA4IBAQCki89phTOt/NGdqQDXqBOv
+# ieK6Pvwtb1WlaZ2pldh740UQKIAaXsrGR4FMyWBGuuy8vUv6zQGgWsMkXglYz1W1
+# qBgAAm6usuRi7TnBpLq87g291moM4USNyZBwxq3TP1tZTpN3CtGTSzL1Oj6vSm7W
+# 24FrqiUbMcojnrIjbjen+V21s4U95czpL6HCWIpRcM2otW8J9nYD1B7xFcb82Meq
+# uefdXBMSedSa399mj71YeP2hLVolgDzzK/0qW4V1ZvIWy5SAa4yN/Nv0m6+86a+d
+# laOaPWeLfs6GjBn0hm7ip8ppS4o6wYi1Bq/2tLfhQi2dytsk3MJw8QiskEwZ6uF8
+# MYIB0TCCAc0CAQEwMDAcMRowGAYDVQQDDBFsZXhhMXRoQGdtYWlsLmNvbQIQXI2Y
+# /4WK6KlBlFsjmPpZszAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEKMAigAoAA
+# oQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4w
+# DAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUO07pddCHI5jnBsMV8wXYae+B
+# ScswDQYJKoZIhvcNAQEBBQAEggEAB5JIO54cqWMv5sgdrnSm1acNbpDBlzjzEy7W
+# XfK/oSQHQTjMuSABgFgE7d/24syC4qr3HLwsY6AfXgyLiua5ZGCQyv75PMgx4c97
+# hKpce4IP7jjiwSMIRaVLlUmjHC5Rm6XrUrh1XLS/R2XlsTbj16IKX++TunpFVRqu
+# ByO8cJcKpICluSHeK9m4KGPVmzDhbXvgy4hL+I/kYhbY/mNHJvhsFbZfXWX2YKdE
+# CXPn1aVtjsnrqttPjIGQLizcBQR/QFnDzCjlsbFmPbl4PpknrnPBRqymlbiEMVOx
+# It633gl9XZSYl/WlGttJo+NWFtmc8NmO9HbN7V+JUhBWIgMBTg==
+# SIG # End signature block
