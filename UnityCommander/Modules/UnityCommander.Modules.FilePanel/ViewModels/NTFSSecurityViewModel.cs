@@ -14,7 +14,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             FileInfo info = new FileInfo("");
             FileSecurity accessControl = info.GetAccessControl(AccessControlSections.All);
-            var s = accessControl.GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
+            var s = accessControl.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
             //accessControl.RemoveAccessRule(
             //    new FileSystemAccessRule(
             //        Environment.UserName.ToString(),
