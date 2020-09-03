@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UnityCommander.Core.IO
 {
@@ -28,5 +29,9 @@ namespace UnityCommander.Core.IO
         /// Gets or sets the method called to cancel the copy operation.
         /// </summary>
         public Action CancelationFlag { get; set; }
+        /// <summary>
+        /// Gets or sets the files copy error report.
+        /// </summary>
+        public string ErrorMessage { get; set; }
     }
 }

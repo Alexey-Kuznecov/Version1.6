@@ -3,6 +3,7 @@ using System.IO;
 using Prism.Mvvm;
 using System.Security.AccessControl;
 using System.Collections.ObjectModel;
+using UnityCommander.Core.IO;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -10,22 +11,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     {
         private ObservableCollection<string> _account;
 
-        public NTFSSecurityViewModel()
+        public NTFSSecurityViewModel(string path)
         {
             FileInfo info = new FileInfo("");
-            FileSecurity accessControl = info.GetAccessControl(AccessControlSections.All);
-            var s = accessControl.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
-            //accessControl.RemoveAccessRule(
-            //    new FileSystemAccessRule(
-            //        Environment.UserName.ToString(),
-            //        FileSystemRights.FullControl,
-            //        AccessControlType.Deny));
+            NTFSSecurity security = new NTFSSecurity(path);
+            var ntfsAccounts = NTFSSecurity.GetNTAccounts(path);
+
+            foreach (var account in ntfsAccounts)
+            {
+                NTAccount.Add(account.IdentityReference.Value.Split('\\',1).ToString());
+            }
         }
 
-        public ObservableCollection<string> Account 
+        public ObservableCollection<string> NTAccount 
         { 
             get => this._account;
             set => SetProperty(ref this._account, value);
-         }
+        }
     }
 }

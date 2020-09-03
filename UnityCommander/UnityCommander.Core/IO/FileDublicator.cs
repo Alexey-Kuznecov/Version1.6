@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.AccessControl;
 
 namespace UnityCommander.Core.IO
 {
@@ -24,6 +25,10 @@ namespace UnityCommander.Core.IO
         /// which determines the progress bar step.
         /// </summary>
         private int _fileCopyIndicator = 0;
+        /// <summary>
+        /// Gets or sets value to copy whether file/folder ntfs rights.
+        /// </summary>
+        public static bool IncludeNTFSRights { get; set; }
         /// <summary>
         /// The event occurs while copying one of the file. 
         /// </summary>
@@ -84,32 +89,76 @@ namespace UnityCommander.Core.IO
         {
             int count = 0, b = 0;
             this._fileCopyIndicator = 0;
-
-            using (var inFileStream = new FileStream(source, FileMode.Open))
-            using (var outFileStream = new FileStream(destination, FileMode.Create))
+            try
             {
-                this._fileSizeByte = inFileStream.Length;
-                // Gets a percentage of the file size and subtracts another 100. 
-                // This is how I fixed a boolean error that affects the progress bar result.
-                // Before the fix, the progress bar worked at 99%.
-                var byteInPercent = this._fileSizeByte / 100 - 10;
-                while ((b = inFileStream.ReadByte()) >= 0)
+                using (var inFileStream = new FileStream(source, FileMode.Open))
+                using (var outFileStream = new FileStream(destination, FileMode.Create))
                 {
-                    outFileStream.WriteByte((byte)b);
-                    count++;
-                    // This part of the code serves to fix the moment at 
-                    // which you can see the progress of copying the file.
-                    if (count > byteInPercent)
+                    this._fileSizeByte = inFileStream.Length;
+                    // Gets a percentage of the file size and subtracts another 100. 
+                    // This is how I fixed a boolean error that affects the progress bar result.
+                    // Before the fix, the progress bar worked at 99%.
+                    var byteInPercent = this._fileSizeByte / 100 - 10;
+                    while ((b = inFileStream.ReadByte()) >= 0)
                     {
-                        count = 0;
-                        // Sending useful information to each subscribers.
-                        // For example, report on the copying file.
-                        if (CopyingEvent != null)
+                        outFileStream.WriteByte((byte)b);
+                        count++;
+                        // This part of the code serves to fix the moment at 
+                        // which you can see the progress of copying the file.
+                        if (count > byteInPercent)
                         {
-                            this.ExportProgressBarReport(source, destination);
-                        } 
+                            count = 0;
+                            // Sending useful information to each subscribers.
+                            // For example, report on the copying file.
+                            if (CopyingEvent != null)
+                            {
+                                this.ExportProgressBarReport(source, destination);
+                            }
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                if (TryRestoreAccessFile(source))
+                {
+                    CopyFileByte(source, destination);
+                }
+                else
+                {
+                    this.ExportProgressBarReport(source, destination, ex.Message);
+                }
+            }
+        }
+        /// <summary>
+        /// Restores access to file/folder.
+        /// </summary>
+        /// <param name="path"> The path to file/folder. </param>
+        public static bool TryRestoreAccessFile(string path)
+        {
+            var ntAccount = NTFSSecurity.GetNTAccounts(path);
+            try
+            {
+                foreach (var item in ntAccount)
+                {
+                    if (IncludeNTFSRights)
+                    {
+                        NTFSSecurity.ChangeAccessRight(path, item.IdentityReference.Value,
+                                                                    FileSystemRights.FullControl,
+                                                                    AccessControlType.Allow);
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+                    
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return false;
             }
         }
         /// <summary>
@@ -117,13 +166,16 @@ namespace UnityCommander.Core.IO
         /// </summary>
         /// <param name="source"> The source of the file. </param>
         /// <param name="destination"> The destination of the file. </param>
-        private void ExportProgressBarReport(string source, string destination)
+        private void ExportProgressBarReport(string source, string destination, string error = null)
         {
             // Generates a report on the copied file. 
             CopyInfoModel copyInfo = new CopyInfoModel
             {
+                Source = source,
+                Destination = destination,
                 FileLength = this._fileSizeByte,
                 ProgressBar = ++this._fileCopyIndicator,
+                ErrorMessage = error
             };
             // Raise event for a notify subscribers.
             CopyingEvent(this, new CopyInfoEventArgs(copyInfo));
