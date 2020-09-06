@@ -20,7 +20,7 @@ namespace UnityCommander.Core.IO
         /// <summary>
         /// Gets or sets owner for current object.
         /// </summary>
-        public string Owner 
+        public static string Owner 
         {
             get 
             { 
@@ -73,6 +73,9 @@ namespace UnityCommander.Core.IO
             directorySecurity.SetOwner(identifier);
             directory.SetAccessControl(directorySecurity);
         }
+
+        #region Methods to manage file permissions. 
+
         /// <summary>
         /// Changes the permissions for an existing ntfs account.
         /// May need administrator rights for perform this operation.
@@ -159,6 +162,11 @@ namespace UnityCommander.Core.IO
             fileSecurity.RemoveAccessRule(new FileSystemAccessRule(identifier, rights, controlType));
             info.SetAccessControl(fileSecurity);
         }
+
+        #endregion
+
+        #region Helper methods
+
         /// <summary>
         /// Convert username to SID string.
         /// </summary>
@@ -200,5 +208,7 @@ namespace UnityCommander.Core.IO
                 Console.WriteLine(ex.Message);
             }
         }
+        
+        #endregion
     }
 }

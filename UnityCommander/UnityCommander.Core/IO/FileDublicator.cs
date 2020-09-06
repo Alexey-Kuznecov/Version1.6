@@ -19,6 +19,10 @@ namespace UnityCommander.Core.IO
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 #endif
         /// <summary>
+        /// Contains the file permissions and the file owner.
+        /// </summary>
+        static NTFSAccountModel _accountModel;
+        /// <summary>
         /// Contains information about a source directory. 
         /// </summary>
         private DirectoryInfo _source;
@@ -63,16 +67,25 @@ namespace UnityCommander.Core.IO
             this._source = source;
             this._destination = destination;
         }
-
-        static NTFSAccountModel _accountModel;
-
+        /// <summary>
+        /// Restores a file permissions and a file owner.
+        /// </summary>
+        /// <param name="sender"> Initiator class. </param>
+        /// <param name="e"> Expected name of the ntfs account. </param>
         private void RestoreNTFSRights_CopyCompleteEvent(object sender, object e)
         {
             if (IncludeNTFSRights)
             {
                 NTFSSecurity.AddAccessRuleList((string)e, _accountModel.Accounts);
+                NTFSSecurity.TakeOwnership(_accountModel.Owner.Value);
             }
         }
+        /// <summary>
+        /// Makes a deep copy of the file's permissions 
+        /// and writes it to the _accountModel field.
+        /// </summary>
+        /// <param name="sender"> Initiator class. </param>
+        /// <param name="e"> Expected name of the ntfs account. </param>
         private void BackupNTFSRights_CopyStartEvent(object sender, object e)
         {
             if (IncludeNTFSRights)
@@ -115,9 +128,9 @@ namespace UnityCommander.Core.IO
 
                 if (!File.Exists(path))
                 {
-                    //CopyStartEvent(this, file.FullName);
+                    CopyStartEvent(this, file.FullName);
                     this.CopyFileByte(file.FullName, path);
-                    //CopyCompleteEvent(this, path);
+                    CopyCompleteEvent(this, path);
                 }
             }
         }
@@ -139,7 +152,7 @@ namespace UnityCommander.Core.IO
                     // Gets a percentage of the file size and subtracts another 100. 
                     // This is how I fixed a boolean error that affects the progress bar result.
                     // Before the fix, the progress bar worked at 99%.
-                    var byteInPercent = this._fileSizeByte / 100;
+                    var byteInPercent = this._fileSizeByte / 101;
                     while ((b = inFileStream.ReadByte()) >= 0)
                     {
                         outFileStream.WriteByte((byte)b);
@@ -167,7 +180,7 @@ namespace UnityCommander.Core.IO
                 }
                 else
                 {
-                    //this.ExportProgressBarReport(source, destination, ex.Message);
+                    this.ExportProgressBarReport(source, destination, ex.Message);
                     Logger.Error(ex.Message);
                 }
             }
@@ -181,7 +194,7 @@ namespace UnityCommander.Core.IO
             try
             {
                 NTFSSecurity.AddNTAccount(path, "Все",
-                        FileSystemRights.Read,
+                        FileSystemRights.FullControl,
                         AccessControlType.Allow);
                 return true;
             }

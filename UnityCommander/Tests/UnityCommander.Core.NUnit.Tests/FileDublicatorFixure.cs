@@ -24,7 +24,7 @@ namespace UnityCommander.Core.NUnit.Tests
         [SetUp]
         public void Setup()
         {
-            this._source = new DirectoryInfo("h:\\Books");
+            this._source = new DirectoryInfo("h:\\Works\\UnitTests\\Source\\Music");
             this._target = new DirectoryInfo("h:\\Works\\UnitTests\\Target");
             this._dublicator = new FileDublicator();
             FileDublicator.CopyingEvent += FileDublicator_CopyingEvent;
@@ -132,8 +132,7 @@ namespace UnityCommander.Core.NUnit.Tests
             DirectoryInfo info = new DirectoryInfo(path);
             foreach (var item in Directory.GetFiles(info.FullName, "*", SearchOption.AllDirectories))
             {
-                if (!item.Contains("desktop.ini"))
-                    count++;
+                count++;
             }
             Logger.Info("Total files: {0}", count);
             return count;
@@ -148,9 +147,6 @@ namespace UnityCommander.Core.NUnit.Tests
             DirectoryInfo info = new DirectoryInfo(this._source.FullName);
             foreach (var soureFile in Directory.GetFiles(info.FullName, "*", SearchOption.AllDirectories))
             {
-                if (soureFile.Contains("desktop.ini"))
-                    continue;
-
                 string destFile = soureFile.Replace(this._source.FullName, this._target.FullName);           
                 // To check if file exist in the destination 
                 if (File.Exists(destFile))
