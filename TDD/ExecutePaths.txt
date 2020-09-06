@@ -68,6 +68,7 @@ h:\AppPortable\ProgFiles\Images&Graphic\PicPick\picpick.exe
 h:\AppPortable\ProgFiles\Images&Graphic\PixBuilder\PixBuilder.exe
 h:\AppPortable\ProgFiles\Internet\Downloader\Dmaster\dmaster.exe
 h:\AppPortable\ProgFiles\Internet\Downloader\uTorrentPortable\uTorrentPortable.exe
+h:\AppPortable\ProgFiles\Internet\Downloader\UmmyVideoDownloader\UmmyVideoDownloaderPort.exe
 h:\AppPortable\ProgFiles\Internet\MainManager\ThunderbirdPortable\ThunderbirdPortable.exe
 h:\AppPortable\ProgFiles\Internet\TransferFiles\FileZillaPortable\FileZillaPortable.exe
 h:\AppPortable\ProgFiles\Internet\TransferFiles\WinSCP\WinSCP.exe

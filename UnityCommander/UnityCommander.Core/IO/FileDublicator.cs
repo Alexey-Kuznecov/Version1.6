@@ -115,9 +115,9 @@ namespace UnityCommander.Core.IO
 
                 if (!File.Exists(path))
                 {
-                    CopyStartEvent(this, file.FullName);
+                    //CopyStartEvent(this, file.FullName);
                     this.CopyFileByte(file.FullName, path);
-                    CopyCompleteEvent(this, path);
+                    //CopyCompleteEvent(this, path);
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace UnityCommander.Core.IO
                     // Gets a percentage of the file size and subtracts another 100. 
                     // This is how I fixed a boolean error that affects the progress bar result.
                     // Before the fix, the progress bar worked at 99%.
-                    var byteInPercent = this._fileSizeByte / 100 - 10;
+                    var byteInPercent = this._fileSizeByte / 100;
                     while ((b = inFileStream.ReadByte()) >= 0)
                     {
                         outFileStream.WriteByte((byte)b);

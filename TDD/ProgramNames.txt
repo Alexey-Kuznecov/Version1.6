@@ -68,6 +68,7 @@ PicpickPortable.exe
 PixBuilderPortable.exe
 DmasterPortable.exe
 UTorrentPortable.exe
+UmmyVideoDownloaderPortable.exe
 ThunderbirdPortable.exe
 FileZillaPortable.exe
 WinSCPPortable.exe
