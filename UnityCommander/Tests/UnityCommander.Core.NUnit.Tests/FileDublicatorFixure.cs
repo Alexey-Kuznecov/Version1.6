@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
 using UnityCommander.Core.IO;
+using NLog;
 
 namespace UnityCommander.Core.NUnit.Tests
 {
@@ -10,6 +11,10 @@ namespace UnityCommander.Core.NUnit.Tests
         private int _currentStep;
         private string _source;
         private string _target;
+         /// <summary>
+        /// The Logger.
+        /// </summary>
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         [SetUp]
         public void Setup()
@@ -32,7 +37,6 @@ namespace UnityCommander.Core.NUnit.Tests
                 }
             }
         }
-
         /// <summary>
         /// Send a report on the correct step of copying the file.
         /// </summary>
@@ -47,8 +51,12 @@ namespace UnityCommander.Core.NUnit.Tests
 
         private void FileDublicator_CopyingEvent(object sender, CopyInfoEventArgs e)
         {
-            Trace.WriteLine(e.ProgressBarInfo.ErrorMessage);
             this._currentStep = e.ProgressBarInfo.ProgressBar;
+
+            if (!string.IsNullOrEmpty(e.ProgressBarInfo.ErrorMessage))
+            {
+                Logger.Error(e.ProgressBarInfo.ErrorMessage);
+            }
         }
     }
 }

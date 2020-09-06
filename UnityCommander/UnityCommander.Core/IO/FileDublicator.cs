@@ -1,6 +1,9 @@
-﻿using System;
+﻿#define NLog
+
+using System;
 using System.IO;
 using System.Security.AccessControl;
+using NLog;
 
 namespace UnityCommander.Core.IO
 {
@@ -8,6 +11,13 @@ namespace UnityCommander.Core.IO
 
     public class FileDublicator
     {
+
+#if (NLog)
+        /// <summary>
+        /// The Logger.
+        /// </summary>
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+#endif
         /// <summary>
         /// Contains information about a source directory. 
         /// </summary>
@@ -25,7 +35,6 @@ namespace UnityCommander.Core.IO
         /// which determines the progress bar step.
         /// </summary>
         private int _fileCopyIndicator = 0;
-        private DirectoryInfo _currentFile;
         /// <summary>
         /// Gets or sets value to copy whether file/folder ntfs rights.
         /// </summary>
@@ -158,7 +167,8 @@ namespace UnityCommander.Core.IO
                 }
                 else
                 {
-                    this.ExportProgressBarReport(source, destination, ex.Message);
+                    //this.ExportProgressBarReport(source, destination, ex.Message);
+                    Logger.Error(ex.Message);
                 }
             }
         }
