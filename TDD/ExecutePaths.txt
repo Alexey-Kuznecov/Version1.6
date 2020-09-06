@@ -1,0 +1,186 @@
+h:\AppPortable\ProgFiles\Antivirus\HitmanPro3.8.0\HitmanProX32.exe
+h:\AppPortable\ProgFiles\Antivirus\HitmanPro3.8.0\HitmanProX64.exe
+h:\AppPortable\ProgFiles\Boosters\memreduct\32\memreduct.exe
+h:\AppPortable\ProgFiles\Boosters\memreduct\64\memreduct.exe
+h:\AppPortable\ProgFiles\Comporess\Files\7-Zip\7zFM.exe
+h:\AppPortable\ProgFiles\Comporess\Images\Caesium1.7.0\Caesium.exe
+h:\AppPortable\ProgFiles\Comporess\Files\CompactGUI\CompactGUI.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZip.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZipImgConvert.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZipImgViewer.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZipLoader.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZipMd5.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZipRename.exe
+h:\AppPortable\ProgFiles\Comporess\Files\HaoZip2.6.1\HaoZipReplace.exe
+h:\AppPortable\ProgFiles\Comporess\Files\PowerArchiver18\PACLOUD.EXE
+h:\AppPortable\ProgFiles\Comporess\Files\PowerArchiver18\powerarc.exe
+h:\AppPortable\ProgFiles\Comporess\Files\PowerArchiver18\PAES.EXE
+h:\AppPortable\ProgFiles\Comporess\Files\WinRAR\WinRAR.exe
+h:\AppPortable\ProgFiles\Converters\AnyVideoConverterUltimateP\AVCUltimatePortable.exe
+h:\AppPortable\ProgFiles\Converters\HandBrake64Portable\HandBrake64Portable.exe
+h:\AppPortable\ProgFiles\Customizers\Dism++\Dism++x64.exe
+h:\AppPortable\ProgFiles\Customizers\Dism++\Dism++x86.exe
+h:\AppPortable\ProgFiles\Customizers\EcMenu1.6\EcMenu.exe
+h:\AppPortable\ProgFiles\Customizers\EcMenu1.6\EcMenu_x64.exe
+h:\AppPortable\Developer\CodeEditor\BracketsPortable\BracketsPortable.exe
+h:\AppPortable\Developer\CodeEditor\Notepad++\notepad++.exe
+h:\AppPortable\Developer\CodeEditor\Sublime text 2\sublime_text.exe
+h:\AppPortable\Developer\CodeEditor\SublimeText3Portable\subl.exe
+h:\AppPortable\Developer\CodeEditor\SublimeText3Portable\sublime_text.exe
+h:\AppPortable\Developer\CodeEditor\SynWrite\SynWrite.exe
+h:\AppPortable\Developer\Database\SQLiteDatabaseBrowserPortable\SQLiteDatabaseBrowserPortable.exe
+h:\AppPortable\Developer\LangEditor\RegexBuddy4\RegexBuddy4.exe
+h:\AppPortable\Developer\Tools\LocalServer\OSPanel\Open Server x86.exe
+h:\AppPortable\Developer\Tools\LocalServer\OSPanel\Open Server x64.exe
+h:\AppPortable\Developer\Tools\LocalServer\webserver\denwer\Run.exe
+h:\AppPortable\Developer\Tools\LocalServer\webserver\denwer\Stop.exe
+h:\AppPortable\Developer\Security\Kitty\kitty.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Aida64 Extreme\aida64.exe
+h:\AppPortable\ProgFiles\DeviceInfo\CPU-Z1.59_Ru\CPU-Z 1.59.exe
+h:\AppPortable\ProgFiles\DeviceInfo\CPU-Z1.83_En\cpuz_x32.exe
+h:\AppPortable\ProgFiles\DeviceInfo\CPU-Z1.83_En\cpuz_x64.exe
+h:\AppPortable\ProgFiles\DeviceInfo\CrystallDiskInfo\DiskInfo.exe
+h:\AppPortable\ProgFiles\DeviceInfo\CrystallDiskInfo\DiskInfoX64.exe
+h:\AppPortable\ProgFiles\DeviceInfo\GPU-ZPortable\GPU-ZPortable.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Hard Drive Inspector\HDInspector.exe
+h:\AppPortable\ProgFiles\DeviceInfo\PeStudio\pestudio.exe
+h:\AppPortable\ProgFiles\DeviceInfo\produkey\ProduKey.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Moo0SystemMonitor1.82Portable\SystemMonitor.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Moo0SystemMonitor1.82Portable\SystemMonitor64.exe
+h:\AppPortable\ProgFiles\DeviceInfo\WinaeroWEITool1.0\WEI.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Files\ExeInfoPE\exeinfope.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Files\TridNet\TrIDNet.exe
+h:\AppPortable\ProgFiles\DeviceInfo\Files\Wiztree portable\WizTree64.exe
+h:\AppPortable\ProgFiles\Extentions\DefSound\DefSound.exe
+h:\AppPortable\ProgFiles\Extentions\Deskpins\DeskPins.exe
+h:\AppPortable\ProgFiles\Extentions\TrayStatus\TrayStatus.exe
+h:\AppPortable\ProgFiles\Extentions\UniversalPauseButton\UniversalPauseButton.exe
+h:\AppPortable\ProgFiles\Images&Graphic\AdobeIllustratorCC\Illustratоr.exe
+h:\AppPortable\ProgFiles\Images&Graphic\AdobeLightRoom\LightroomPortable.exe
+h:\AppPortable\ProgFiles\Images&Graphic\AdobePhotoshopCC\Photoshop CC.exe
+h:\AppPortable\ProgFiles\Images&Graphic\digiKamPortable32\digiKamPortable.exe
+h:\AppPortable\ProgFiles\Images&Graphic\digiKamPortable64\digiKamPortable.exe
+h:\AppPortable\ProgFiles\Images&Graphic\Google Picasa\Picasa3.exe
+h:\AppPortable\ProgFiles\Images&Graphic\Google Picasa\PicasaPhotoViewer.exe
+h:\AppPortable\ProgFiles\Images&Graphic\PaintToolSAI\sai.exe
+h:\AppPortable\ProgFiles\Images&Graphic\Photo Mechanic5.0.18040Portable\Photo Mechanic.exe
+h:\AppPortable\ProgFiles\Images&Graphic\PicPick\picpick.exe
+h:\AppPortable\ProgFiles\Images&Graphic\PixBuilder\PixBuilder.exe
+h:\AppPortable\ProgFiles\Internet\Downloader\Dmaster\dmaster.exe
+h:\AppPortable\ProgFiles\Internet\Downloader\uTorrentPortable\uTorrentPortable.exe
+h:\AppPortable\ProgFiles\Internet\MainManager\ThunderbirdPortable\ThunderbirdPortable.exe
+h:\AppPortable\ProgFiles\Internet\TransferFiles\FileZillaPortable\FileZillaPortable.exe
+h:\AppPortable\ProgFiles\Internet\TransferFiles\WinSCP\WinSCP.exe
+h:\AppPortable\ProgFiles\Internet\ManageRemote\TeamViewer\TeamViewer.exe
+h:\AppPortable\ProgFiles\Internet\WebBowsers\FirefoxPortable\FirefoxPortable.exe
+h:\AppPortable\ProgFiles\Internet\WebBowsers\GoogleChromePortable\GoogleChromePortable.exe
+h:\AppPortable\ProgFiles\Internet\WebBowsers\GoogleChromePortable64\GoogleChromePortable.exe
+h:\AppPortable\ProgFiles\Internet\WebBowsers\K-Meleo76ProRC\k-meleon.exe
+h:\AppPortable\ProgFiles\Internet\WebBowsers\MaxthonPortable\Bin\Maxthon.exe
+h:\AppPortable\ProgFiles\Internet\WebBowsers\OperaPortable\OperaPortable.exe
+h:\AppPortable\ProgFiles\MultibootFlash\AIO_Boot_Extractor\AIO_Boot_Extractor.exe
+h:\AppPortable\ProgFiles\Office\SoftMakerOffice2016\PlanMaker.exe
+h:\AppPortable\ProgFiles\Office\SoftMakerOffice2016\TextMaker.exe
+h:\AppPortable\ProgFiles\Organizers\Essentialpim Free\EssentialPIM.exe
+h:\AppPortable\ProgFiles\Organizers\LazyCure3.7\LazyCure.exe
+h:\AppPortable\ProgFiles\Organizers\LeaderTask\LeaderTask.exe
+h:\AppPortable\ProgFiles\Organizers\TaskCoachPortable\TaskCoachPortable.exe
+h:\AppPortable\ProgFiles\Players\Music\AIMP Portable\AIMP.exe
+h:\AppPortable\ProgFiles\Players\Video\CherryPlayer2.5.1\CherryPlayer\CherryPlayer.exe
+h:\AppPortable\ProgFiles\Players\Video\MediaPlayerClassicHomeCinema1.8.6\MPC-HC\mpc-hc64.exe
+h:\AppPortable\ProgFiles\Players\Video\MPV\mpv.exe
+h:\AppPortable\ProgFiles\ServicesHDD\AuslogicsDiskDefrag\DiskDefrag.exe
+h:\AppPortable\ProgFiles\ServicesHDD\Defraggler\Defraggler.exe
+h:\AppPortable\ProgFiles\ServicesHDD\Handy Recovery\HandyRecovery.exe
+h:\AppPortable\ProgFiles\ServicesHDD\MiniToolPartitionWizar ProfessionalEdition7.1\PartitionWizard.exe
+h:\AppPortable\ProgFiles\ServicesHDD\PowerDataRecovery\PowerDataRecovery.exe
+h:\AppPortable\ProgFiles\ServicesHDD\RecoverMyFilesv4\RecoverMyFiles.exe
+h:\AppPortable\ProgFiles\ServicesHDD\Recuva\Recuva.exe
+h:\AppPortable\ProgFiles\ServicesHDD\rstudio\RStudio32.exe
+h:\AppPortable\ProgFiles\ServicesHDD\UFS Explorer\ufsexplorer_sr4.exe
+h:\AppPortable\ProgFiles\ServicesHDD\Victoria4.47\vcr447.exe
+h:\AppPortable\ProgFiles\ServicesHDD\ZAR\zar.exe
+h:\AppPortable\ProgFiles\ServicesPC\CCleaner\CCleaner.exe
+h:\AppPortable\ProgFiles\ServicesPC\CCleaner\CCleaner64.exe
+h:\AppPortable\ProgFiles\ServicesPC\Reg Organizer\RegOrganizerPortable.exe
+h:\AppPortable\ProgFiles\ServicesPC\WinToolsUltimate\wintoolsnet.exe
+h:\AppPortable\ProgFiles\Translators\ABBYY Lingvo x6\LingvoPortable.exe
+h:\AppPortable\ProgFiles\Translators\ABBYY Lingvo x6\App\Lingvo\Tutor.exe
+h:\AppPortable\ProgFiles\Translators\QTranslate\QTranslate.exe
+h:\AppPortable\ProgFiles\Utilities\AnalogWin\RapidEEx64\rapidee.exe
+h:\AppPortable\ProgFiles\Utilities\AnalogWin\MyEventViewer\MyEventViewer.exe
+h:\AppPortable\ProgFiles\Utilities\AnalogWin\Peazip\peazip.exe
+h:\AppPortable\ProgFiles\Utilities\AnalogWin\RegPool\RegCoolX64\RegCool.exe
+h:\AppPortable\ProgFiles\Utilities\AnalogWin\SystemExplorer\SystemExplorer.exe
+h:\AppPortable\ProgFiles\Utilities\Backup\CobianBackup\cobian-backup.exe
+h:\AppPortable\ProgFiles\Utilities\Backup\DoubleDriver\dd.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\AudioCD.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\BurnAware.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\BurnImage.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\CopyDisc.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\CopyImage.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\DataDisc.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\DataRecovery.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\DiscInfo.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\DVDVideo.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\EraseDisc.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\MakeISO.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\MP3Disc.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\BurnAwareProfessional\MultiBurn.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\ImageBurner\AudioBurner.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\ImageBurner\Commander.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\ImageBurner\DataBurner.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\ImageBurner\ImageBurner.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\PowerISO\PowerISO.exe
+h:\AppPortable\ProgFiles\Utilities\BurnDisk\UltraISO\UltraISO.exe
+h:\AppPortable\ProgFiles\Utilities\Clipboard\clipdiary\clipdiary-portable.exe
+h:\AppPortable\ProgFiles\Utilities\Colors\ColorMania\ColorManiaPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Files\AKSTextReplacer\TextReplacerPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Files\AttributeManager\attrman.exe
+h:\AppPortable\ProgFiles\Utilities\Files\AuslogicsFileRecovery\DiskWiper.exe
+h:\AppPortable\ProgFiles\Utilities\Files\Everything\Everything.exe
+h:\AppPortable\ProgFiles\Utilities\Files\FFTools\FFTools.exe
+h:\AppPortable\ProgFiles\Utilities\Files\AuslogicsFileRecovery\FileRecovery.exe
+h:\AppPortable\ProgFiles\Utilities\Files\AuslogicsFileRecovery\FileShredder.exe
+h:\AppPortable\ProgFiles\Utilities\Files\HugeFileGenerator\Huge File Generator.exe
+h:\AppPortable\ProgFiles\Utilities\Files\AKSTextReplacer\App\textreplacer.exe
+h:\AppPortable\ProgFiles\Utilities\Files\WinMergePortable\WinMergePortable.exe
+h:\AppPortable\ProgFiles\Utilities\Games\WitcherScriptMerger\WitcherScriptMerger.exe
+h:\AppPortable\ProgFiles\Utilities\Games\The Witcher 3 String Editor.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\ElcomSoft\AdvancedArchivePasswordRecovery\archpr.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\Processhacker-2.39-bin\x86\ProcessHacker.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\Processhacker-2.39-bin\x64\ProcessHacker.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\ProcessMonitorPortable\ProcessMonitorPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\Procmon_v3.33_RUS\Procmon.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\Procmon_v3.33_RUS\Procmon64.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\X64dbg\release\x64\x64dbg.exe
+h:\AppPortable\ProgFiles\Utilities\Hack\X64dbg\release\x32\x32dbg.exe
+h:\AppPortable\ProgFiles\Utilities\Icons\IcoFXPortable\IcoFXPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Icons\IcoGrabber\IcoGrabber.exe
+h:\AppPortable\ProgFiles\Utilities\Icons\Icons8\Icons8.exe
+h:\AppPortable\ProgFiles\Utilities\Icons\IconsExtractPortable\IconsExtractPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Icons\iConvertIcons\iConvertIconsPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Network\AutoNet\penetwork.exe
+h:\AppPortable\ProgFiles\Utilities\Network\GlassWirePortable\GlassWirePortable.exe
+h:\AppPortable\ProgFiles\Utilities\Network\WinMTRPortable\WinMTRPortable.exe
+h:\AppPortable\ProgFiles\Utilities\Network\WirelessNetView\WirelessNetView.exe
+h:\AppPortable\ProgFiles\Utilities\Notepad\AkelPad\AkelPad.exe
+h:\AppPortable\ProgFiles\Utilities\Notepad\CintaNotes\CintaNotes.exe
+h:\AppPortable\ProgFiles\Utilities\Notepad\FlashNotePortable4.8\Flashnote-portable.exe
+h:\AppPortable\ProgFiles\Utilities\Notepad\KeyNoteNF\keynote.exe
+h:\AppPortable\ProgFiles\Utilities\Navigation\Laitis\Laitis.exevvg
+h:\AppPortable\ProgFiles\Utilities\Password\SafeInCloud\SafeInCloud.exe
+h:\AppPortable\ProgFiles\Utilities\PowerManagement\Program Power Management\PowerOff63_RUS.exe
+h:\AppPortable\ProgFiles\Utilities\ScreenCast\FastStone Capture\FSCapture.exe
+h:\AppPortable\ProgFiles\Utilities\ScreenCast\ShareX\ShareX.exe
+h:\AppPortable\ProgFiles\Utilities\Transcoders\AltSwitchER\SwitchER.exe
+h:\AppPortable\ProgFiles\Utilities\Transcoders\AltSwitchER\SwitchER64.exe
+h:\AppPortable\ProgFiles\Utilities\Transcoders\Punto Switcher\punto.exe
+h:\AppPortable\ProgFiles\Utilities\Transcoders\Translit\translit.exe
+h:\AppPortable\ProgFiles\Utilities\Transcoders\TypePilot\TypePlt.exe
+h:\AppPortable\ProgFiles\Utilities\Tutor\ZealPotable\zeal.exe
+h:\AppPortable\ProgFiles\Utilities\Viewers\FastStoneImageViewer4.5\FSViewer.exe
+h:\AppPortable\ProgFiles\Utilities\Viewers\FoxitReader\Foxit Reader.exe
+h:\AppPortable\ProgFiles\Utilities\Viewers\IrfanView4.32\i_view32.exe
+h:\AppPortable\ProgFiles\Utilities\Viewers\STDU Viewer\STDUViewerApp.exe
+h:\AppPortable\ProgFiles\Utilities\Viewers\XnView\xnview.exe

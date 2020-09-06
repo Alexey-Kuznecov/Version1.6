@@ -24,8 +24,10 @@ namespace UnityCommander.Core.IO
         {
             get 
             { 
-               var identy = GetOwner();
-               return identy.Value;
+                DirectoryInfo directory = new DirectoryInfo(_path);
+                DirectorySecurity directorySecurity = directory.GetAccessControl();
+                var identy = directorySecurity.GetOwner(typeof(NTAccount));
+                return identy.Value;
             }
             set
             {
@@ -50,10 +52,11 @@ namespace UnityCommander.Core.IO
         /// <summary>
         /// Gets the ntfs account of the current object owner.
         /// </summary>
+        /// <param name="path"> The path to file/folder. </param>
         /// <returns> The reference to manage the ntfs account. </returns> 
-        public static IdentityReference GetOwner()
+        public static IdentityReference GetOwner(string path)
         {
-            DirectoryInfo directory = new DirectoryInfo(_path);
+            DirectoryInfo directory = new DirectoryInfo(path);
             DirectorySecurity directorySecurity = directory.GetAccessControl();
             return directorySecurity.GetOwner(typeof(NTAccount));
         }
@@ -110,12 +113,34 @@ namespace UnityCommander.Core.IO
         /// <param name="account"> NTFS Acoount name. For example "Users". </param>
         /// <param name="rights"> Access right set that be have ntfs account. </param>
         /// <param name="controlType"> Deny or allow access to a protected object. </param>
-        public void AddNTAccount(string account, FileSystemRights rights, AccessControlType controlType)
+        public static void AddNTAccount(string path, string account, FileSystemRights rights, AccessControlType controlType)
         {
             SecurityIdentifier identifier = ConvertStringToSID(account);
-            FileInfo info = new FileInfo(_path);
+            FileInfo info = new FileInfo(path);
             FileSecurity fileSecurity = info.GetAccessControl();        
             fileSecurity.AddAccessRule(new FileSystemAccessRule(identifier, rights, controlType));
+            info.SetAccessControl(fileSecurity);
+        }
+        /// <summary>
+        /// Flush and add new access right to file.
+        /// </summary>
+        /// <param name="path"> The path to file/folder. </param>
+        /// <param name="accessRules"> Users access rights list to file. </param>
+        public static void AddAccessRuleList(string path, List<FileSystemAccessRule> accessRules)
+        {
+            // Get file info
+            FileInfo info = new FileInfo(path);
+            // Get security access
+            FileSecurity fileSecurity = info.GetAccessControl();
+            //remove any inherited access
+            fileSecurity.SetAccessRuleProtection(true, false);
+
+            // Add current user with full control.
+            foreach (var rule in accessRules)
+            {
+                fileSecurity.AddAccessRule(rule);
+            }
+            // Flush security access.
             info.SetAccessControl(fileSecurity);
         }
         /// <summary>

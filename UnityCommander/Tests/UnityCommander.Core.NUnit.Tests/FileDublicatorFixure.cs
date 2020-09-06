@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Diagnostics;
 using System.IO;
 using UnityCommander.Core.IO;
 
@@ -13,7 +14,7 @@ namespace UnityCommander.Core.NUnit.Tests
         [SetUp]
         public void Setup()
         {
-            DirectoryInfo src = new DirectoryInfo("h:\\Works\\UnitTests\\Source");
+            DirectoryInfo src = new DirectoryInfo("h:\\Books");
             DirectoryInfo dest = new DirectoryInfo("h:\\Works\\UnitTests\\Target");
 
             foreach (string dirPath in Directory.GetDirectories(src.FullName, "*",
@@ -46,6 +47,7 @@ namespace UnityCommander.Core.NUnit.Tests
 
         private void FileDublicator_CopyingEvent(object sender, CopyInfoEventArgs e)
         {
+            Trace.WriteLine(e.ProgressBarInfo.ErrorMessage);
             this._currentStep = e.ProgressBarInfo.ProgressBar;
         }
     }

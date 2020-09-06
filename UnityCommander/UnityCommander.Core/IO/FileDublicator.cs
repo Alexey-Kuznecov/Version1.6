@@ -25,14 +25,23 @@ namespace UnityCommander.Core.IO
         /// which determines the progress bar step.
         /// </summary>
         private int _fileCopyIndicator = 0;
+        private DirectoryInfo _currentFile;
         /// <summary>
         /// Gets or sets value to copy whether file/folder ntfs rights.
         /// </summary>
-        public static bool IncludeNTFSRights { get; set; }
+        public static bool IncludeNTFSRights { get; set; } = true;
         /// <summary>
         /// The event occurs while copying one of the file. 
         /// </summary>
         public static event EventHandler<CopyInfoEventArgs> CopyingEvent;
+        /// <summary>
+        /// The event occurs when copy start. 
+        /// </summary>
+        public static event EventHandler<object> CopyStartEvent;
+        /// <summary>
+        /// The event occurs when copy completed. 
+        /// </summary>
+        public static event EventHandler<object> CopyCompleteEvent;
         /// <summary>
         /// Initializes a new instance of the <see cref="FileDublicator"/> class.
         /// </summary>
@@ -40,8 +49,29 @@ namespace UnityCommander.Core.IO
         /// <param name="destination"> The destination of the files. </param>
         public FileDublicator(DirectoryInfo source, DirectoryInfo destination)
         {
+            CopyStartEvent += BackupNTFSRights_CopyStartEvent;
+            CopyCompleteEvent += RestoreNTFSRights_CopyCompleteEvent;
             this._source = source;
             this._destination = destination;
+        }
+
+        static NTFSAccountModel _accountModel;
+
+        private void RestoreNTFSRights_CopyCompleteEvent(object sender, object e)
+        {
+            if (IncludeNTFSRights)
+            {
+                NTFSSecurity.AddAccessRuleList((string)e, _accountModel.Accounts);
+            }
+        }
+        private void BackupNTFSRights_CopyStartEvent(object sender, object e)
+        {
+            if (IncludeNTFSRights)
+            {
+                _accountModel = new NTFSAccountModel();
+                _accountModel.Accounts = NTFSSecurity.GetNTAccounts((string)e);
+                _accountModel.Owner = NTFSSecurity.GetOwner((string)e);
+            }
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="FileDublicator"/> class.
@@ -54,7 +84,7 @@ namespace UnityCommander.Core.IO
         /// </summary>
         public void Copy()
         {
-            this.CreateDirectoryStructure(this._source, this._destination);        
+            this.CreateDirectoryStructure(this._source, this._destination);
         }
         /// <summary>
         /// Recursively navigates over directories. Creates a directory structure at the destination 
@@ -76,7 +106,9 @@ namespace UnityCommander.Core.IO
 
                 if (!File.Exists(path))
                 {
+                    CopyStartEvent(this, file.FullName);
                     this.CopyFileByte(file.FullName, path);
+                    CopyCompleteEvent(this, path);
                 }
             }
         }
@@ -131,33 +163,20 @@ namespace UnityCommander.Core.IO
             }
         }
         /// <summary>
-        /// Restores access to file/folder.
+        /// Restores access to file/folder if this is posible.
         /// </summary>
         /// <param name="path"> The path to file/folder. </param>
         public static bool TryRestoreAccessFile(string path)
         {
-            var ntAccount = NTFSSecurity.GetNTAccounts(path);
             try
             {
-                foreach (var item in ntAccount)
-                {
-                    if (IncludeNTFSRights)
-                    {
-                        NTFSSecurity.ChangeAccessRight(path, item.IdentityReference.Value,
-                                                                    FileSystemRights.FullControl,
-                                                                    AccessControlType.Allow);
-                    }
-                    else
-                    {
-                        
-                    }
-                }
-                    
+                NTFSSecurity.AddNTAccount(path, "Все",
+                        FileSystemRights.Read,
+                        AccessControlType.Allow);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var message = ex.Message;
                 return false;
             }
         }
