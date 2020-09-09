@@ -1,16 +1,28 @@
-﻿using System;
-using System.IO;
-using Prism.Mvvm;
-using System.Security.AccessControl;
-using System.Collections.ObjectModel;
-using UnityCommander.Core.IO;
-
+﻿
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Security.AccessControl;
+
+    using Prism.Mvvm;
+    using UnityCommander.Core.IO;
+
+    /// <summary>
+    /// The ntfs security view model.
+    /// </summary>
     public class NTFSSecurityViewModel : BindableBase
     {
-        private ObservableCollection<string> _account;
+        /// <summary>
+        /// The account.
+        /// </summary>
+        private ObservableCollection<string> account;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NTFSSecurityViewModel"/> class.
+        /// </summary>
+        /// <param name="path"> The path. </param>
         public NTFSSecurityViewModel(string path)
         {
             FileInfo info = new FileInfo("");
@@ -19,14 +31,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var account in ntfsAccounts)
             {
-                NTAccount.Add(account.IdentityReference.Value.Split('\\',1).ToString());
+                this.NTAccount.Add(account.IdentityReference.Value.Split('\\', 1).ToString());
             }
         }
 
+        /// <summary>
+        /// Gets or sets the nt account.
+        /// </summary>
         public ObservableCollection<string> NTAccount 
         { 
-            get => this._account;
-            set => SetProperty(ref this._account, value);
+            get => this.account;
+            set => this.SetProperty(ref this.account, value);
         }
     }
 }

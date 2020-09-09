@@ -5,6 +5,9 @@
     <AssemblyName>UnityCommander.Modules.LeftSideBars</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="ViewModels\ViewAViewModel.cs~RF220cb962.TMP" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
   </ItemGroup>
   <ItemGroup>

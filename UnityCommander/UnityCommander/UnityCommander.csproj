@@ -6,6 +6,7 @@
     <AssemblyName>UnityCommander</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="ViewModels\MainWindowViewModel.cs~RF22052bda.TMP" />
     <None Remove="Views\MainWindow.xaml~RF12940cd.TMP" />
   </ItemGroup>
   <ItemGroup>

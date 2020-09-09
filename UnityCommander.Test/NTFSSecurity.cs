@@ -1,24 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Security.AccessControl;
-using System.Security.Permissions;
-using System.Security.Principal;
-
+﻿
 namespace UnityCommander.Test
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Security.AccessControl;
+    using System.Security.Permissions;
+    using System.Security.Principal;
+
+    /// <summary>
+    /// The ntfs security.
+    /// </summary>
     [PrincipalPermission(SecurityAction.Demand, Authenticated = true)]
-    class NTFSSecurity
+    public class NTFSSecurity
     {
         /// <summary>
         /// Contains path to file/folder.
         /// </summary>
-        private static string _path;
+        private static string path;
+        
         /// <summary>
         /// Contains reference for manage process.
         /// </summary>
-        private static Process _processRef;
+        private static Process processRef;
+        
         /// <summary>
         /// Gets or sets owner for current object.
         /// </summary>
@@ -26,13 +32,15 @@ namespace UnityCommander.Test
         {
             get 
             { 
-               var identy = GetOwner();
-               return identy.Value;
+               var identity = GetOwner();
+               return identity.Value;
             }
+
             set
             {
-                if (_processRef != null)
-                    _processRef.Kill();
+                if (processRef != null)
+                    processRef.Kill();
+                
                 // If the program already has elevated rights
                 // there is no need to start a new process. 
                 if (IsAdministrator())
@@ -47,7 +55,7 @@ namespace UnityCommander.Test
         /// <param name="path"></param>
         public NTFSSecurity(string path)
         {
-            _path = path;
+            NTFSSecurity.path = path;
         }
         /// <summary>
         /// Gets the ntfs account of the current object owner.
@@ -55,7 +63,7 @@ namespace UnityCommander.Test
         /// <returns> The reference to manage the ntfs account. </returns> 
         public static IdentityReference GetOwner()
         {
-            DirectoryInfo directory = new DirectoryInfo(_path);
+            DirectoryInfo directory = new DirectoryInfo(path);
             DirectorySecurity directorySecurity = directory.GetAccessControl();
             return directorySecurity.GetOwner(typeof(NTAccount));
         }
@@ -67,7 +75,7 @@ namespace UnityCommander.Test
         public static void TakeOwnership(string ntfsAccountName)
         {
             SecurityIdentifier identifier = ConvertStringToSID(ntfsAccountName);
-            DirectoryInfo directory = new DirectoryInfo(_path);
+            DirectoryInfo directory = new DirectoryInfo(path);
             DirectorySecurity directorySecurity = directory.GetAccessControl();              
             directorySecurity.SetOwner(identifier);
             directory.SetAccessControl(directorySecurity);
@@ -83,7 +91,7 @@ namespace UnityCommander.Test
         public void ChangeAccessRight(string account, FileSystemRights rights, AccessControlType controlType)
         {
             SecurityIdentifier identifier = ConvertStringToSID(account);
-            FileInfo info = new FileInfo(_path);
+            FileInfo info = new FileInfo(path);
             FileSecurity fileSecurity = info.GetAccessControl();
             fileSecurity.SetAccessRule(new FileSystemAccessRule(identifier, rights, controlType));
             info.SetAccessControl(fileSecurity);
@@ -96,7 +104,7 @@ namespace UnityCommander.Test
         public List<FileSystemAccessRule> GetNTAccount()
         {
             List<FileSystemAccessRule> accountCal = new List<FileSystemAccessRule>();
-            FileInfo info = new FileInfo(_path);
+            FileInfo info = new FileInfo(path);
             FileSecurity accessControl = info.GetAccessControl();
             var ruleCollection = accessControl.GetAccessRules(true, true, typeof(NTAccount));
             // Adding all ntfs accounts of the file or folder.
@@ -115,7 +123,7 @@ namespace UnityCommander.Test
         public void AddNTAccount(string account, FileSystemRights rights, AccessControlType controlType)
         {
             SecurityIdentifier identifier = ConvertStringToSID(account);
-            FileInfo info = new FileInfo(_path);
+            FileInfo info = new FileInfo(path);
             FileSecurity fileSecurity = info.GetAccessControl();        
             fileSecurity.AddAccessRule(new FileSystemAccessRule(identifier, rights, controlType));
             info.SetAccessControl(fileSecurity);
@@ -131,7 +139,7 @@ namespace UnityCommander.Test
         public void RemoveNTAccount(string account, FileSystemRights rights, AccessControlType controlType)
         {
             SecurityIdentifier identifier = ConvertStringToSID(account);
-            FileInfo info = new FileInfo(_path);
+            FileInfo info = new FileInfo(path);
             FileSecurity fileSecurity = info.GetAccessControl();
             fileSecurity.RemoveAccessRule(new FileSystemAccessRule(identifier, rights, controlType));
             info.SetAccessControl(fileSecurity);
@@ -170,7 +178,7 @@ namespace UnityCommander.Test
                 psi.Arguments = arguments;
                 psi.UseShellExecute = true;
                 psi.Verb = "runas";
-                _processRef = Process.Start(psi);
+                processRef = Process.Start(psi);
             }
             catch (Exception ex)
             {

@@ -1,16 +1,22 @@
-﻿using System;
+﻿
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CopyInfoEventArgs.cs" company="T">
+// Copyright (p) Alexey Kuznecov. All right reserved.
+// </copyright>
+// <summary>
+//  The class is a data wrapper for the file copy event.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace UnityCommander.Core.IO
 {
+    using System;
+
     /// <summary>
-    /// Class is an event representative <see cref="FileDublicator.CopyingEvent"/>.
+    /// The class is a data wrapper for the file copy event. <see cref="FileDublicator.CopyingEvent"/>.
     /// </summary>
     public class CopyInfoEventArgs : EventArgs
     {
-        /// <summary>
-        /// Gets or set the data on the copying file.
-        /// </summary>
-        public CopyInfoModel ProgressBarInfo { get; private set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="CopyInfoEventArgs"/> class.
         /// </summary>
@@ -19,5 +25,10 @@ namespace UnityCommander.Core.IO
         {
             this.ProgressBarInfo = copyInfo;
         }
+
+        /// <summary>
+        /// Gets the data on the copying file.
+        /// </summary>
+        public CopyInfoModel ProgressBarInfo { get; }
     }
 }

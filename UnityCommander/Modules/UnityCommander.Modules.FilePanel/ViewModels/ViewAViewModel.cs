@@ -1,28 +1,56 @@
-﻿using Prism.Regions;
-using System.Collections.ObjectModel;
-using UnityCommander.Business;
-using UnityCommander.Core.Mvvm;
-using UnityCommander.Services.Interfaces;
-
+﻿
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System.Collections.ObjectModel;
+
+    using Prism.Regions;
+
+    using UnityCommander.Business;
+    using UnityCommander.Core.Mvvm;
+    using UnityCommander.Services.Interfaces;
+
+    /// <summary>
+    /// The view a view model.
+    /// </summary>
     public class ViewAViewModel : RegionViewModelBase
     {
-        private ObservableCollection<FileModel> _fileList;
+        /// <summary>
+        /// The _file list.
+        /// </summary>
+        private ObservableCollection<FileModel> fileList;
 
-        public ObservableCollection<FileModel> FileList
-        {
-            get { return _fileList; }
-            set { SetProperty(ref _fileList, value); }
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ViewAViewModel"/> class.
+        /// </summary>
+        /// <param name="regionManager">
+        /// The region manager.
+        /// </param>
+        /// <param name="fileProvider">
+        /// The file provider.
+        /// </param>
         public ViewAViewModel(IRegionManager regionManager, IFilesProvider fileProvider)
             : base(regionManager)
         {
         }
+
+        /// <summary>
+        /// Gets or sets the file list.
+        /// </summary>
+        public ObservableCollection<FileModel> FileList
+        {
+            get => this.fileList;
+            set => this.SetProperty(ref this.fileList, value);
+        }
+
+        /// <summary>
+        /// The on navigated to.
+        /// </summary>
+        /// <param name="navigationContext">
+        /// The navigation context.
+        /// </param>
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
-            //do something
+            // do something
         }
     }
 }

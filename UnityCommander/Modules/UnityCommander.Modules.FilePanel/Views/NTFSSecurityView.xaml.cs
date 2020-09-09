@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
+﻿
 namespace UnityCommander.Modules.FilePanel.Views
 {
+    using System.Windows;
+
     /// <summary>
-    /// Логика взаимодействия для NTFSSecurityView.xaml
+    /// Interaction logic for NTFSSecurityView.xaml
     /// </summary>
     public partial class NTFSSecurityView : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NTFSSecurityView"/> class.
+        /// </summary>
         public NTFSSecurityView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

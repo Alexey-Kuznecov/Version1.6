@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="IO\NTFSAccountModel.cs~RF1249184a.TMP" />
+    <None Remove="RegionNames.cs~RF22523a1b.TMP" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />

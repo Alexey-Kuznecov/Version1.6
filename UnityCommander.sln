@@ -31,7 +31,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Core.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Core.NUnit.Tests", "UnityCommander\Tests\UnityCommander.Core.NUnit.Tests\UnityCommander.Core.NUnit.Tests.csproj", "{E19F99FE-3185-4302-96A8-D08CCA584984}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Test", "UnityCommander.Test\UnityCommander.Test.csproj", "{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Test", "UnityCommander.Test\UnityCommander.Test.csproj", "{15A305E1-7578-4BFD-8DA2-E0B42529DEDA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F1A5BCCC-6EEA-4BC9-977A-A733235F86D0}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

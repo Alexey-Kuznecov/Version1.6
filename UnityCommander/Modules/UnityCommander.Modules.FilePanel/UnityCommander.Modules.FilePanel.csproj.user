@@ -8,7 +8,7 @@
     <Compile Update="Views\CopyDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\CopyReportView.xaml.cs">
+    <Compile Update="Views\CopyProcessView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\NTFSSecurityView.xaml.cs">
@@ -22,7 +22,7 @@
     <Page Update="Views\CopyDialogView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\CopyReportView.xaml">
+    <Page Update="Views\CopyProcessView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\LeftPanelControl.xaml">

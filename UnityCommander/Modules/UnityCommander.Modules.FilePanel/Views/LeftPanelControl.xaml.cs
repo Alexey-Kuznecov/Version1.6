@@ -1,15 +1,19 @@
-﻿using System.Windows.Controls;
-
+﻿
 namespace UnityCommander.Modules.FilePanel.Views
 {
+    using System.Windows.Controls;
+
     /// <summary>
-    /// Логика взаимодействия для LeftPanel.xaml
+    /// Interaction logic for LeftPanel.xaml
     /// </summary>
     public partial class LeftPanelControl : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LeftPanelControl"/> class.
+        /// </summary>
         public LeftPanelControl()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }
