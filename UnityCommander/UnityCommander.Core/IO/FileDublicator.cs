@@ -36,6 +36,8 @@ namespace UnityCommander.Core.IO
     /// </summary>
     public class FileDublicator
     {
+        #region Declaration Field
+
 #if (NLog)
         /// <summary>
         /// The Logger.
@@ -56,12 +58,12 @@ namespace UnityCommander.Core.IO
         /// Contains the file permissions and the file owner.
         /// </summary>
         private static NTFSAccountModel accountModel;
-        
+
         /// <summary>
         /// Contains information about a source directory. 
         /// </summary>
         private readonly DirectoryInfo sourceInfo;
-        
+
         /// <summary>
         /// Contains information about a target directory.
         /// </summary>
@@ -71,12 +73,16 @@ namespace UnityCommander.Core.IO
         /// Contains the size of the file in bytes.  
         /// </summary>
         private long fileSizeByte;
-        
+
         /// <summary>
         /// Contains the file copy completion percentage,
         /// which determines the progress bar step.
         /// </summary>
         private int fileCopyIndicator;
+
+        #endregion
+
+        #region Contructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileDublicator"/> class.
@@ -97,6 +103,8 @@ namespace UnityCommander.Core.IO
         public FileDublicator()
         {
         }
+
+        #endregion
 
         #region Declaration Events
 
@@ -187,6 +195,25 @@ namespace UnityCommander.Core.IO
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// The calc total size file.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public long CalcTotalSizeFile(string path)
+        {
+            foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+            {
+                var fileInfo = new FileInfo(path);
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// This method can stop, resume, or cancel the copy altogether.

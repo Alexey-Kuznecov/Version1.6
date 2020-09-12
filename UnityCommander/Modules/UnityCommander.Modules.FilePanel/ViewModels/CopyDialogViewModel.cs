@@ -130,10 +130,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets a message from the sidebar region.
         /// </summary>
-        /// <param name="message"> Message of the sidebar. </param>
-        private void MessageReceived(object message)
+        /// <param name="obj"> Message of the sidebar. </param>
+        private void MessageReceived(object obj)
         {
-            MessageBox.Show((string)message);
+            if (obj is string message)
+            {
+                MessageBox.Show(message);
+            }
         }
 
         #endregion

@@ -62,40 +62,6 @@ namespace UnityCommander.Core
             DIRECT_IMPERSONATION = (0x0200)
         }
 
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
-        [DllImport("kernel32.dll")]
-        static extern uint SuspendThread(IntPtr hThread);
-        [DllImport("kernel32.dll")]
-        static extern int ResumeThread(IntPtr hThread);
-        [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool CloseHandle(IntPtr handle);
-
-        /// <summary>
-        /// The suspend process.
-        /// </summary>
-        /// <param name="pid">
-        /// The pid.
-        /// </param>
-        public static void SuspendProcess(int pid)
-        {
-            var process = Process.GetProcessById(pid); // throws exception if process does not exist
-
-            foreach (ProcessThread pT in process.Threads)
-            {
-                var pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
-
-                if (pOpenThread == IntPtr.Zero)
-                {
-                    continue;
-                }
-
-                SuspendThread(pOpenThread);
-
-                CloseHandle(pOpenThread);
-            }
-        }
-
         /// <summary>
         /// The resume process.
         /// </summary>
@@ -111,9 +77,9 @@ namespace UnityCommander.Core
 
             foreach (ProcessThread pT in process.Threads)
             {
-                IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
+                IntPtr openThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
 
-                if (pOpenThread == IntPtr.Zero)
+                if (openThread == IntPtr.Zero)
                 {
                     continue;
                 }
@@ -121,11 +87,45 @@ namespace UnityCommander.Core
                 var suspendCount = 0;
                 do
                 {
-                    suspendCount = ResumeThread(pOpenThread);
+                    suspendCount = ResumeThread(openThread);
                 } while (suspendCount > 0);
 
-                CloseHandle(pOpenThread);
+                CloseHandle(openThread);
             }
         }
+
+        /// <summary>
+        /// The suspend process.
+        /// </summary>
+        /// <param name="pid">
+        /// The pid.
+        /// </param>
+        public static void SuspendProcess(int pid)
+        {
+            var process = Process.GetProcessById(pid); // throws exception if process does not exist
+
+            foreach (ProcessThread pT in process.Threads)
+            {
+                var openThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
+
+                if (openThread == IntPtr.Zero)
+                {
+                    continue;
+                }
+
+                SuspendThread(openThread);
+
+                CloseHandle(openThread);
+            }
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr OpenThread(ThreadAccess desiredAccess, bool inheritHandle, uint threadId);
+        [DllImport("kernel32.dll")]
+        private static extern uint SuspendThread(IntPtr handle);
+        [DllImport("kernel32.dll")]
+        private static extern int ResumeThread(IntPtr handle);
+        [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr handle);
     }
 }
