@@ -34,15 +34,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the file list.
-        /// </summary>
-        public ObservableCollection<FileModel> FileList
-        {
-            get => this.fileList;
-            set => this.SetProperty(ref this.fileList, value);
-        }
-
-        /// <summary>
         /// The on navigated to.
         /// </summary>
         /// <param name="navigationContext">

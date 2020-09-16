@@ -34,7 +34,6 @@
 /UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/obj
 /UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/bin/Debug/netcoreapp3.1
 /TestResults/3b56d826-7e49-43f6-b419-c738210ba044
-/PowerRunner
 /PSRunner
 /UnityCommander.Test/bin/Debug/netcoreapp3.1
 /UnityCommander.Test/obj
@@ -49,7 +48,6 @@
 /packages/NLog.Schema.4.7.4
 /Labaratory.Works/bin/Debug
 /Labaratory.Works/obj/Debug
-/Labaratory.Works/Properties
 /ClassLibrary2/obj
 /ClassLibrary1
 /ClassLibrary2
@@ -58,3 +56,14 @@
 /Archives/TDD/.vscode
 /Archives/TDD/Modules/log
 /Archives/TDD
+/Lab/UnityCommander.WinDepends/bin/Debug
+/Lab/UnityCommander.WinDepends/obj/Debug
+/Lab/UnityCommander.Tests/obj/Debug
+/Lab/UnityCommander.Tests/Properties
+/Lab/UnityCommander.Test/bin/Debug/netcoreapp3.1
+/Lab/UnityCommander.Test/obj
+/Lab/Laboratory.Works/bin/Debug
+/Lab/Laboratory.Works/obj/Debug
+/Lab/Laboratory.Works/Properties
+/Lab/UnityCommander.WinDepends/Properties
+/packages

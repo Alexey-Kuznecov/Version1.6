@@ -14,35 +14,28 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows;
     using GongSolutions.Wpf.DragDrop;
     using Prism.Mvvm;
+    using Prism.Regions;
     using UnityCommander.Business;
+    using UnityCommander.Core.Mvvm;
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The right panel view model.
     /// </summary>
-    public class RightPanelViewModel : BindableBase, IDropTarget
+    public class RightPanelViewModel : RegionViewModelBase, IDropTarget
     {
         /// <summary>
         /// The _file list.
         /// </summary>
         private ObservableCollection<FileModel> fileList;
-        
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="RightPanelViewModel"/> class.
+        /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
         /// </summary>
-        public RightPanelViewModel()
+        public RightPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
+            base(regionManager)
         {
-            this.FileList = new ObservableCollection<FileModel>();
-
-            DirectoryInfo directoryInfo = new DirectoryInfo("h:\\");
-
-            foreach (var item in directoryInfo.GetDirectories())
-            {
-                this.FileList.Add(new FileModel 
-                { 
-                    FileName = item.Name, 
-                    FullName = item.FullName 
-                });
-            }
+            FileList = filesProvider.GetFiles("e:\\");
         }
 
         /// <summary>

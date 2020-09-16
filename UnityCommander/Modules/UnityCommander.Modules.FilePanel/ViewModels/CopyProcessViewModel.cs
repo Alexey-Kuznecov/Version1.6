@@ -182,6 +182,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
                 catch (OperationCanceledException)
                 {
+                    throw;
                 }
             }
         }

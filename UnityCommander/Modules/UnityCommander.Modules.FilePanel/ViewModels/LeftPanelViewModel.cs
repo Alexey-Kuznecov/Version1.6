@@ -12,18 +12,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
-
+    using System.Collections.Generic;
     using GongSolutions.Wpf.DragDrop;
 
     using Prism.Mvvm;
-
+   
     using UnityCommander.Business;
     using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services;
+    using Prism.Regions;
+    using UnityCommander.Core.Mvvm;
 
     /// <summary>
     /// The left panel view model.
     /// </summary>
-    public class LeftPanelViewModel : BindableBase, IDropTarget
+    public class LeftPanelViewModel : RegionViewModelBase, IDropTarget
     {
         /// <summary>
         /// The copy dialog.
@@ -38,20 +42,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
         /// </summary>
-        public LeftPanelViewModel()
+        public LeftPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
+            base(regionManager)
         {
-            this.copyDialog = new CopyDialogView();
-            this.FileList = new ObservableCollection<FileModel>();
-            DirectoryInfo directoryInfo = new DirectoryInfo("h:\\Works\\UnitTests");
-
-            foreach (var item in directoryInfo.GetDirectories())
-            {
-                this.FileList.Add(new FileModel
-                {
-                    FileName = item.Name,
-                    FullName = item.FullName
-                });
-            }
+            copyDialog = new CopyDialogView();
+            FileList = filesProvider.GetFiles("f:\\");
         }
 
         /// <summary>
@@ -88,7 +83,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             FileModel sourceItem = dropInfo.Data as FileModel;
             FileModel targetItem = dropInfo.TargetItem as FileModel;
-            
             // targetItem.Add(sourceItem);
             if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
             {

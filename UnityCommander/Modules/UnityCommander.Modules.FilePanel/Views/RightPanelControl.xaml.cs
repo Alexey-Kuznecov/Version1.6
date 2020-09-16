@@ -6,12 +6,12 @@ namespace UnityCommander.Modules.FilePanel.Views
     /// <summary>
     /// Interaction logic for RightPanel.xaml
     /// </summary>
-    public partial class RightPanelControl : UserControl
+    public partial class RightPanelView : UserControl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RightPanelControl"/> class.
         /// </summary>
-        public RightPanelControl()
+        public RightPanelView()
         {
             this.InitializeComponent();
         }

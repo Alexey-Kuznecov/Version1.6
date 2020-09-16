@@ -14,11 +14,11 @@
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="GongSolutions.WPF.DragDrop">
-      <HintPath>..\..\..\src\Gong-Wpf-DragAnDrop\netcoreapp3.1\GongSolutions.WPF.DragDrop.dll</HintPath>
-    </Reference>
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
+    <Reference Include="GongSolutions.WPF.DragDrop">
+      <HintPath>..\..\..\Source\Gong-Wpf-DragAnDrop\netcoreapp3.1\GongSolutions.WPF.DragDrop.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -12,12 +12,12 @@
         </Grid.ColumnDefinitions>
         <ContentControl>
             <ContentControl.Content>
-                <local:LeftPanelControl />
+                <local:LeftPanelView />
             </ContentControl.Content>
         </ContentControl>
         <ContentControl Grid.Column="1">
             <ContentControl.Content>
-                <local:RightPanelControl />
+                <local:RightPanelView />
             </ContentControl.Content>
         </ContentControl>
     </Grid>

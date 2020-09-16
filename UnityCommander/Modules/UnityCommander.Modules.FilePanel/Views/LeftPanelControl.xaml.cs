@@ -6,12 +6,12 @@ namespace UnityCommander.Modules.FilePanel.Views
     /// <summary>
     /// Interaction logic for LeftPanel.xaml
     /// </summary>
-    public partial class LeftPanelControl : UserControl
+    public partial class LeftPanelView : UserControl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelControl"/> class.
         /// </summary>
-        public LeftPanelControl()
+        public LeftPanelView()
         {
             this.InitializeComponent();
         }

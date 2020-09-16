@@ -1,12 +1,10 @@
 ﻿<UserControl
-    x:Class="UnityCommander.Modules.FilePanel.Views.LeftPanelControl"
+    x:Class="UnityCommander.Modules.FilePanel.Views.LeftPanelView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dd="urn:gong-wpf-dragdrop"
-    xmlns:vm="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels">
-    <UserControl.DataContext>
-        <vm:LeftPanelViewModel />
-    </UserControl.DataContext>
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <ListBox
             dd:DragDrop.DropHandler="{Binding}"
