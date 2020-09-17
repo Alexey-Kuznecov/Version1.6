@@ -10,12 +10,6 @@
     <Page Update="Views\CopyDialogView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\LeftPanel.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\RightPanel.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\ViewA.xaml">
       <SubType>Designer</SubType>
     </Page>

@@ -25,3 +25,16 @@
 /UnityCommander/UnityCommander/obj
 /UnityCommander/UnityCommander.Core/bin/Debug/netcoreapp3.1
 /UnityCommander/UnityCommander.Core/obj
+/packages/MSTest.TestAdapter.2.1.1
+/packages/MSTest.TestFramework.2.1.1
+/packages/NLog.4.7.4
+/packages/NLog.Config.4.7.4
+/packages/NLog.Schema.4.7.4
+/UnityCommander/Modules/UnityCommander.Modules.LeftSideBars/obj/Debug/netcoreapp3.1
+/UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/obj/Debug/netcoreapp3.1
+/UnityCommander/Tests/UnityCommander.Core.NUnit.Tests/obj
+/UnityCommander/Tests/UnityCommander.Core.Tests/obj/Debug/netcoreapp3.1
+/UnityCommander/Tests/UnityCommander.Core.Tests/obj
+/UnityCommander/Modules/UnityCommander.Modules.LeftSideBars/obj
+/Lab/UnityCommander.Test/obj
+/Lab
