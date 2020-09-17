@@ -1,5 +1,6 @@
 ﻿
 #define Nlog
+#undef Nlog
 
 namespace UnityCommander.WinDepends
 {
@@ -37,7 +38,7 @@ namespace UnityCommander.WinDepends
         STATUS_BUFFER_OVERFLOW = unchecked((int)0x80000005L),
 
         /// <summary>
-        /// The status info length mismatch.
+        /// The info length is not sufficient to hold the data.
         /// </summary>
         STATUS_INFO_LENGTH_MISMATCH = unchecked((int)0xC0000004L)
     }
@@ -475,6 +476,9 @@ namespace UnityCommander.WinDepends
         /// <returns> The <see cref="IEnumerator"/> </returns>
         public static IEnumerator<FileSystemInfo> GetOpenFilesEnumerator(int processId)
         {
+#if (Nlog)
+            Logger.Info("\n" + LogFormatter.DrawInfoHeader() + "\n");
+#endif
             return new OpenFiles(processId).GetEnumerator();
         }
 
@@ -623,7 +627,6 @@ namespace UnityCommander.WinDepends
                         // CER guarantees that the previous allocation is freed,
                         // and that the newly allocated memory address is 
                         // assigned to ptr if an asynchronous exception occurs.
-
                         Logger.Info("Memory allocation: {0} => {1} ", length, ptr.ToString());
                         Marshal.FreeHGlobal(ptr);
                         ptr = Marshal.AllocHGlobal(length);
@@ -661,7 +664,6 @@ namespace UnityCommander.WinDepends
         /// <returns> The <see cref="bool"/>. </returns>
         private static bool GetHandleType(IntPtr handle, int processId, out SystemHandleType handleType)
         {
-            //Logger.Info("\n" + LogFormater.DrawInfo() + "\n");
             string token = GetHandleTypeToken(handle, processId);
             return GetHandleTypeFromToken(token, out handleType);
         }
@@ -790,6 +792,7 @@ namespace UnityCommander.WinDepends
                     return dosPath.Length != 0;
                 }
             }
+
             dosPath = string.Empty;
             return false;
         }
@@ -1029,7 +1032,7 @@ namespace UnityCommander.WinDepends
             /// <param name="processId"> The process id. </param>
             internal OpenFiles(int processId)
             {
-                LogManager.Configuration = new XmlLoggingConfiguration(@"C:\Users\Misha\Desktop\Version1.8\Lab\UnityCommander.WinDepends\NLog.config");
+                LogManager.Configuration = new XmlLoggingConfiguration(@"C:\Users\Alexey\Desktop\Version1.8\Lab\UnityCommander.WinDepends\NLog.config");
                 this.processId = processId;
             }
 
@@ -1085,6 +1088,10 @@ namespace UnityCommander.WinDepends
                             for (int i = 0; i < handleCount; i++)
                             {
                                 SYSTEM_HANDLE_ENTRY handleEntry = (SYSTEM_HANDLE_ENTRY)Marshal.PtrToStructure(IntPtrAdd(ptr, offset), typeof(SYSTEM_HANDLE_ENTRY));
+
+                                string hex = Marshal.PtrToStringAuto(handleEntry.ObjectPointer);
+                                Logger.Info(hex);
+
                                 int ownerProcessId = GetProcessId(handleEntry.OwnerPid);
                                 if (ownerProcessId == this.processId)
                                 {
@@ -1098,15 +1105,8 @@ namespace UnityCommander.WinDepends
                                             if (ConvertDevicePathToDosPath(devicePath, out var dosPath))
                                             {
 #if (Nlog)
-                                                Logger.Info("\n" + LogFormater.DrawInfoHeader() + "\n");
-                                                Logger.Info("\n" + LogFormater.DrawObject(handleEntry) + "\n");
-                                                Logger.Info("SYSTEM_HANDLE_ENTRY: \n> ObjectPointer: {0} \n> HandleFlags: {1} \n> HandleValue: {2} \n> ObjectType: {3} \n> OwnerPid {4}",
-                                                    handleEntry.ObjectPointer,
-                                                    handleEntry.HandleFlags,
-                                                    handleEntry.HandleValue,
-                                                    handleEntry.ObjectType,
-                                                    handleEntry.OwnerPid);
-
+                                                Logger.Info("\n" + LogFormatter.DrawInfoHeader() + "\n");
+                                                Logger.Info("\n" + LogFormatter.DrawObject(handleEntry) + "\n");
                                                 Logger.Info("LOCAL VAR: \n> OwnerProcessId ({0}) \n> Handle ({1}) \n> HandleType [{2}] \n> DevicePath '{3}' \n> DosPath '{4}'  \n> Offset ({5}) \n> Size ({6})\n",
                                                     ownerProcessId,
                                                     handle, handleType,
@@ -1115,6 +1115,7 @@ namespace UnityCommander.WinDepends
                                                     offset,
                                                     size);
 #endif
+
                                                 if (File.Exists(dosPath))
                                                 {
                                                     yield return new FileInfo(dosPath);
@@ -1143,7 +1144,7 @@ namespace UnityCommander.WinDepends
                 while (ret == NT_STATUS.STATUS_INFO_LENGTH_MISMATCH);
             }
 
-#endregion
+            #endregion
 
             #region IEnumerable Members
 
@@ -1153,6 +1154,9 @@ namespace UnityCommander.WinDepends
             /// <returns> The <see cref="IEnumerator"/>. </returns>
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
             {
+#if (Nlog)
+                Logger.Info("\n" + LogFormatter.DrawInfoHeader() + "\n");
+#endif
                 return this.GetEnumerator();
             }
 

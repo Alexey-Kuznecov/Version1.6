@@ -11,15 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <COMReference Include="{4fb2d46f-efc8-4643-bcd0-6e5bfa6a174c}">
-      <Guid>4fb2d46f-efc8-4643-bcd0-6e5bfa6a174c</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>4</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.4" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />

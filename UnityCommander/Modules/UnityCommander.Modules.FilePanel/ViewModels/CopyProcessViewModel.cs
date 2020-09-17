@@ -42,12 +42,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The token source.
         /// </summary>
-        private CancellationTokenSource tokenSource;
+        private static CancellationTokenSource tokenSource;
 
         /// <summary>
         /// The token.
         /// </summary>
-        private CancellationToken token;
+        private static CancellationToken token;
 
         /// <summary>
         /// The report data about copying files.
@@ -133,7 +133,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyCancel()
         {
-            FileDublicator.ChangeCopyStatus(Status.Cancel);
+            tokenSource.Cancel();
         }
 
         /// <summary>
@@ -165,8 +165,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             if (obj is string[] address)
             {
                 // Create the token to cancel the copy operation.
-                this.tokenSource = new CancellationTokenSource();
-                this.token = this.tokenSource.Token;
+                tokenSource = new CancellationTokenSource();
+                token = tokenSource.Token;
 
                 // Initial data
                 var source = new DirectoryInfo(address[0]);
@@ -176,13 +176,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 try
                 {
                     // Create a task to copying
-                    var task = Task<bool>.Factory.StartNew(() => duplicator.CreateDirectoryStructure(this.token), this.token);
+                    var task = Task<bool>.Factory.StartNew(() => duplicator.CreateDirectoryStructure(token), token);
                     this.taskStatus = task.Status;
                     bool cancelled = await task.ConfigureAwait(true);
                 }
-                catch (OperationCanceledException)
+                catch (OperationCanceledException ex)
                 {
-                    throw;
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

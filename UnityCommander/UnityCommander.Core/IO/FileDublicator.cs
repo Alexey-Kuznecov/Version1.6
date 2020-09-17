@@ -279,11 +279,10 @@ namespace UnityCommander.Core.IO
 
                     // Looping simulates pausing the copy process.
                     if (status == Status.Pause)
-                        while (status != Status.Resume)
+                        while (status != Status.Resume);
 
                     // Throw exception for cancel the copy process
-                    if (status == Status.Cancel)
-                        cancellationToken.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     // This part of the code serves to fix the moment at 
                     // which you can see the progress of copying the file.
