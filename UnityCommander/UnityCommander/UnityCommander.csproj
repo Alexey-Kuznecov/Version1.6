@@ -6,10 +6,15 @@
     <AssemblyName>UnityCommander</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="ViewModels\MainWindowViewModel.cs~RF22052bda.TMP" />
+    <None Remove="Views\MainWindow.xaml~RF12940cd.TMP" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Prism.DryIoc" Version="7.2.0.1422" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
     <ProjectReference Include="..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>

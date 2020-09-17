@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Prism.Events;
-
+﻿
 namespace UnityCommander.Core
 {
-    class MessageSendEvent : PubSubEvent<string>
+    using Prism.Events;
+
+    /// <summary>
+    /// The message send event.
+    /// </summary>
+    public class MessageSendEvent : PubSubEvent<object>
     {
     }
 }

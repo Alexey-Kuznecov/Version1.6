@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>UnityCommander.Modules.LeftSideBars</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="ViewModels\ViewAViewModel.cs~RF220cb962.TMP" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+  </ItemGroup>
+</Project>
