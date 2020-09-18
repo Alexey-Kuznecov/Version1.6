@@ -1,85 +1,144 @@
-﻿using NLog;
-using NLog.Config;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
+﻿
+#define Nlog
 
 namespace UnityCommander.Test
 {
+    using System;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+
+    using NLog;
+    using NLog.Config;
+
+    /// <summary>
+    /// The copy watch.
+    /// </summary>
     public class CopyWatch
     {
-         /// <summary>
-         /// The Logger.
-         /// </summary>
+#if (Nlog)
+        /// <summary>
+        /// The Logger.
+        /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private 
-        public ProcessCounter Counter { get; }
-        public static long TotalBytes { get; set; } = 3160233984; // 2,94 gb
-        public double BytesCounter { get; set; }
-        public static long Speed { get; set; }
-        public static decimal RemainTime { get; set; }
+#endif
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CopyWatch"/> class.
+        /// </summary>
+        /// <param name="process">
+        /// The process.
+        /// </param>
         public CopyWatch(Process process)
         {
-            LogManager.Configuration = new XmlLoggingConfiguration(@"C:\Users\Misha\Desktop\Version1.8\Lab\UnityCommander.WinDepends\NLog.config");
-            Counter = new ProcessCounter(process);
+             LogManager.Configuration = new XmlLoggingConfiguration(@"C:\Users\Alexey\Desktop\Version1.9\NLog.config");
+             this.Counter = new ProcessCounter(process);
         }
 
-        public void WatchProcess()
-        {
-            
-            Task task = Task.Factory.StartNew(CalcBytesInterval);
-            Task task2 = Task.Factory.StartNew(CalcTime);
-            Speed = (long)Counter.IOReadBytes.NextValue();
+         /// <summary>
+         /// Gets or sets the total bytes.
+         /// </summary>
+         public static long TotalBytes { get; set; } = 484261288; // 2,94 gb
 
+         /// <summary>
+         /// Gets or sets the speed.
+         /// </summary>
+         public static long Speed { get; set; }
+
+         /// <summary>
+         /// Gets or sets the remain time.
+         /// </summary>
+         public static TimeSpan RemainTime { get; set; }
+
+         /// <summary>
+         /// Gets the counter.
+         /// </summary>
+         public ProcessCounter Counter { get; }
+
+         /// <summary>
+         /// Gets or sets the bytes counter.
+         /// </summary>
+         public double BytesCounter { get; set; }
+
+         /// <summary>
+         /// The watch process.
+         /// </summary>
+         public async void WatchProcess()
+         {
+             bool taskCalcBytes = await Task<bool>.Factory.StartNew(this.CalcBytesInterval).ConfigureAwait(true);
+             bool taskCalcTime = await Task<bool>.Factory.StartNew(this.CalcTime).ConfigureAwait(true);
+
+             if (!taskCalcBytes && !taskCalcTime) return;
+#if (Nlog)
+             if (Speed != 0)
+             {
+                 Logger.Info("\nTotalBytes: {0}\nSpeed {1}", TotalBytes, Speed);
+                 Logger.Info("BytesCounter: {0}", this.BytesCounter);
+                 Logger.Info("RemainTime: {0}", RemainTime);
+                 Logger.Info(new string('-', 30));
+             }
+#endif
+             this.Show();
+         }
+
+         /// <summary>
+         /// The show.
+         /// </summary>
+         public void Show()
+         {
+             if (Speed != 0)
+             {
+                 Console.WriteLine("Received Auto: {0}", ConverterBytes.AutoConvertFormatBytes((decimal)this.BytesCounter));
+                 Console.WriteLine("Speed: {0}/s", ConverterBytes.AutoConvertFormatBytes(Speed));
+                 Console.WriteLine("Remain Time: {0} second", RemainTime.Seconds);
+                 Console.WriteLine(new string('-', 20));
+             }
+         }
+
+         /// <summary>
+         /// The calc bytes interval.
+         /// </summary>
+         /// <returns>
+         /// The <see cref="bool"/>.
+         /// </returns>
+         public bool CalcBytesInterval()
+         {
+             int seconds = 16;
+             int counter = 0;
+         
+             while (counter++ <= seconds)
+             {
+                 this.BytesCounter += this.Counter.IOWriteBytes.NextValue() / 4;
+             }
+
+#if (Nlog2)
             if (Speed != 0)
             {
-                RemainTime = Math.Truncate((decimal)((TotalBytes - (long)BytesCounter) / Speed));
-
-                Logger.Info("\nTotalBytes: {0}\nBytesCounter {1}\nSpeed {2}\n RemainTime {3}", TotalBytes, BytesCounter, Speed, RemainTime);
+                Logger.Info("BytesCounter: {0}", this.BytesCounter);
             }
-
-            Show();
-
-            task.Wait();
+#endif
+             return true;
         }
 
-        public void Show()
-        {
+         /// <summary>
+         /// The calc time.
+         /// </summary>
+         /// <returns>
+         /// The <see cref="bool"/>.
+         /// </returns>
+         public bool CalcTime()
+         {
             if (Speed != 0)
             {
-                Console.WriteLine("Received Auto: {0}", ConverterBytes.AutoConvertFormatBytes((decimal)BytesCounter));
-                Console.WriteLine("Speed: {0}/s", ConverterBytes.AutoConvertFormatBytes(Speed));
-                Console.WriteLine("Remain Time: {0} second", RemainTime);
-                Console.WriteLine(new string('-', 20));
+                // Thread.Sleep(200);
+                Speed = (long)this.Counter.IOReadBytes.NextValue();
+                RemainTime = TimeSpan.FromMilliseconds((TotalBytes - this.BytesCounter) / Speed);
+#if (Nlog2)
+                Logger.Info("RemainTime: {0}", RemainTime);
+#endif
             }
-        }
 
-        public void CalcBytesInterval()
-        {
-            int seconds = 16;
-            int counter = 0;
-
-            while (counter++ <= seconds)
-            {
-                BytesCounter += (double)Counter.IOWriteBytes.NextValue() / 29.5;
-            }
-        }
-
-        public void CalcTime()
-        {
-            int seconds = 16;
-            int counter = 0;
-
-            while (counter++ <= seconds)
-            {
-                BytesCounter += (double)Counter.IOWriteBytes.NextValue() / 29.5;
-            }
-        }
+            return true;
+         }
     }
 }

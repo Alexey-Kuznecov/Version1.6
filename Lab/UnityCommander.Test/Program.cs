@@ -2,24 +2,23 @@
 namespace UnityCommander.Test
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Threading;
-    using Microsoft.Win32.SafeHandles;
+    using System.Linq;
 
-    using UnityCommander.WinDepends;
+    using UnityCommander.Test.WinApi;
 
     /// <summary>
     /// The program.
     /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The progress.
+        /// </summary>
+        private static ProgressBar progress;
+
         /// <summary>
         /// The main.
         /// </summary>
@@ -28,190 +27,142 @@ namespace UnityCommander.Test
         /// </param>
         public static void Main(string[] args)
         {
-            string processName = "explorer";
+            List<Process> processes = Process.GetProcesses().ToList();
 
-            // foreach (var filePath in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
-            // {
-            //     FileInfo info = new FileInfo(filePath);
-            //     total += info.Length;
-            // }
-            // total = ConverterBytes.AutoConvertBytes(total);
-            Process[] processes = Process.GetProcessesByName(processName);
-            CopyWatch watch = new CopyWatch(processes[0]);
-
-            while (true)
-            {
-                watch.WatchProcess();
-            }
-
-            // HardDrivePerf hardDrive = new HardDrivePerf();
-            //long iODataOperation = 0;
-            //long IODataBytes = 0;
-            //long iOReadOperation = 0;
-            //long iOReadBytes = 0;
-            //long iOWriteOperation = 0;
-            //long iOWriteBytes = 0;
-
-                //iODataBytes += (long)counter.IODataBytes.NextValue();
-
-                //iOReadOperation += (long)counter.IODataBytes.NextValue();
-                //iOReadBytes += (long)counter.IOReadOperation.NextValue();
-
-                //iOWriteOperation += (long)counter.IOWriteOperation.NextValue();
-                //iOWriteBytes += (long)counter.IOWriteBytes.NextValue();
-
-                //Console.Write(
-                //    "IODataBytes: {0}\n IODataOperation: {1}\n  IOWriteBytes: {2}\n  IOWriteOperation: {3}\n IOReadBytes: {4}\n IOReadOperation: {0}\n",
-                //    ConverterBytes.AutoConvertFormatBytes(iODataBytes),
-                //    ConverterBytes.AutoConvertFormatBytes(iODataOperation),
-                //    ConverterBytes.AutoConvertFormatBytes(iOWriteBytes),
-                //    ConverterBytes.AutoConvertFormatBytes(iOWriteOperation),
-                //    ConverterBytes.AutoConvertFormatBytes(iOReadBytes),
-                //    ConverterBytes.AutoConvertFormatBytes(iOReadOperation));
-            //Console.WriteLine();
-            //Console.WriteLine(new string('–', 50));
-            //hardDrive.PrintPerformanceData();
-
-            Console.WriteLine();
+            VmcControllerTest();
             Console.ReadKey();
         }
 
-        static public class FileUtil
+        /// <summary>
+        /// Copies the file by byte using stream of the files.
+        /// </summary>
+        /// <param name="source"> The source of the files. </param>
+        /// <param name="destination"> The destination of the files. </param>
+        public static void CopyFileByte(string source, string destination)
         {
-            [StructLayout(LayoutKind.Sequential)]
-            struct RM_UNIQUE_PROCESS
+            int count = 0, b = 0;
+            int fileCopyIndicator = 0;
+
+            using (var inFileStream = new FileStream(source, FileMode.Open))
+            using (var outFileStream = new FileStream(destination, FileMode.Create))
             {
-                public int dwProcessId;
-                public System.Runtime.InteropServices.ComTypes.FILETIME ProcessStartTime;
-            }
+                long fileSizeByte = inFileStream.Length;
 
-            const int RmRebootReasonNone = 0;
-            const int CCH_RM_MAX_APP_NAME = 255;
-            const int CCH_RM_MAX_SVC_NAME = 63;
+                // Gets a percentage of the file size and subtracts another 100. 
+                // This is how I fixed a boolean error that affects the progress bar result.
+                // Before the fix, the progress bar worked at 99%.
+                var byteInPercent = fileSizeByte / 100;
 
-            enum RM_APP_TYPE
-            {
-                RmUnknownApp = 0,
-                RmMainWindow = 1,
-                RmOtherWindow = 2,
-                RmService = 3,
-                RmExplorer = 4,
-                RmConsole = 5,
-                RmCritical = 1000
-            }
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            struct RM_PROCESS_INFO
-            {
-                public RM_UNIQUE_PROCESS Process;
-
-                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCH_RM_MAX_APP_NAME + 1)]
-                public string strAppName;
-
-                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCH_RM_MAX_SVC_NAME + 1)]
-                public string strServiceShortName;
-
-                public RM_APP_TYPE ApplicationType;
-                public uint AppStatus;
-                public uint TSSessionId;
-                [MarshalAs(UnmanagedType.Bool)]
-                public bool bRestartable;
-            }
-
-            [DllImport("rstrtmgr.dll", CharSet = CharSet.Unicode)]
-            static extern int RmRegisterResources(uint pSessionHandle,
-                                                  UInt32 nFiles,
-                                                  string[] rgsFilenames,
-                                                  UInt32 nApplications,
-                                                  [In] RM_UNIQUE_PROCESS[] rgApplications,
-                                                  UInt32 nServices,
-                                                  string[] rgsServiceNames);
-
-            [DllImport("rstrtmgr.dll", CharSet = CharSet.Auto)]
-            static extern int RmStartSession(out uint pSessionHandle, int dwSessionFlags, string strSessionKey);
-
-            [DllImport("rstrtmgr.dll")]
-            static extern int RmEndSession(uint pSessionHandle);
-
-            [DllImport("rstrtmgr.dll")]
-            static extern int RmGetList(uint dwSessionHandle,
-                                        out uint pnProcInfoNeeded,
-                                        ref uint pnProcInfo,
-                                        [In, Out] RM_PROCESS_INFO[] rgAffectedApps,
-                                        ref uint lpdwRebootReasons);
-
-            /// <summary>
-            /// Find out what process(es) have a lock on the specified file.
-            /// </summary>
-            /// <param name="path">Path of the file.</param>
-            /// <returns>Processes locking the file</returns>
-            /// <remarks>See also:
-            /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
-            /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
-            /// 
-            /// </remarks>
-            static public List<Process> WhoIsLocking(string path)
-            {
-                uint handle;
-                string key = Guid.NewGuid().ToString();
-                List<Process> processes = new List<Process>();
-
-                int res = RmStartSession(out handle, 0, key);
-                if (res != 0) throw new Exception("Could not begin restart session.  Unable to determine file locker.");
-
-                try
+                while ((b = inFileStream.ReadByte()) >= 0)
                 {
-                    const int ERROR_MORE_DATA = 234;
-                    uint pnProcInfoNeeded = 0,
-                         pnProcInfo = 0,
-                         lpdwRebootReasons = RmRebootReasonNone;
+                    outFileStream.WriteByte((byte)b);
+                    count++;
 
-                    string[] resources = new string[] { path }; // Just checking on one resource.
-
-                    res = RmRegisterResources(handle, (uint)resources.Length, resources, 0, null, 0, null);
-
-                    if (res != 0) throw new Exception("Could not register resource.");
-
-                    //Note: there's a race condition here -- the first call to RmGetList() returns
-                    //      the total number of process. However, when we call RmGetList() again to get
-                    //      the actual processes this number may have increased.
-                    res = RmGetList(handle, out pnProcInfoNeeded, ref pnProcInfo, null, ref lpdwRebootReasons);
-
-                    if (res == ERROR_MORE_DATA)
+                    // This part of the code serves to fix the moment at 
+                    // which you can see the progress of copying the file.
+                    if (count > byteInPercent)
                     {
-                        // Create an array to store the process results
-                        RM_PROCESS_INFO[] processInfo = new RM_PROCESS_INFO[pnProcInfoNeeded];
-                        pnProcInfo = pnProcInfoNeeded;
-
-                        // Get the list
-                        res = RmGetList(handle, out pnProcInfoNeeded, ref pnProcInfo, processInfo, ref lpdwRebootReasons);
-                        if (res == 0)
-                        {
-                            processes = new List<Process>((int)pnProcInfo);
-
-                            // Enumerate all of the results and add them to the 
-                            // list to be returned
-                            for (int i = 0; i < pnProcInfo; i++)
-                            {
-                                try
-                                {
-                                    processes.Add(Process.GetProcessById(processInfo[i].Process.dwProcessId));
-                                }
-                                // catch the error -- in case the process is no longer running
-                                catch (ArgumentException) { }
-                            }
-                        }
-                        else throw new Exception("Could not list processes locking resource.");
+                        progress.Report((double)fileCopyIndicator++ / 98);
+                        count = 0;
                     }
-                    else if (res != 0) throw new Exception("Could not list processes locking resource. Failed to get size of result.");
                 }
-                finally
+            }
+        }
+
+        /// <summary>
+        /// The automation copy.
+        /// </summary>
+        private static void AutomationCopy()
+        {
+            string path = "E:\\Temp\\JetBrains.Rider-2019.2.2.exe";
+
+            Console.WriteLine("To start press Y: ");
+            Console.WriteLine("To exit press Q: ");
+            string flag = Console.ReadLine();
+
+            do
+            {
+                if (File.Exists(path))
                 {
-                    RmEndSession(handle);
+                    Console.WriteLine("File already exist, to delete? ");
+
+                    if (Console.ReadLine() == "y")
+                    {
+                        File.Delete(path);
+                        Console.Clear();
+                    }
+                    else
+                    {
+                        flag = "q";
+                    }
+                }
+                
+                if (flag == "y")
+                {
+                    Console.Clear();
+                    Console.Write("Copying files... ");
+                    using (progress = new ProgressBar())
+                    {
+                        CopyFileByte(
+                            "H:\\Works\\UnitTests\\Source\\JetBrains.Rider-2019.2.2.exe",
+                            path);
+                    }
+
+                    Console.WriteLine("Done.");
                 }
 
-                return processes;
+                Console.Clear();
+                Console.WriteLine("To start press Y");
+                Console.WriteLine("To exit press Q");
+                flag = Console.ReadLine() == "q" ? "q" : "y";
             }
+            while (flag == "q");
+        }
+
+
+        /// <summary>
+        /// The vmc controller test.
+        /// </summary>
+        private static void VmcControllerTest()
+        {
+            List<FileSystemInfo> infos = new List<FileSystemInfo>();
+            var process = Process.GetProcessesByName("TOTALCMD64").Select(p => p.Id).ToList();
+            infos = new List<FileSystemInfo>();
+
+            using (var openFiles = ProcessUtility.GetOpenFilesEnumerator(process[0]))
+            {
+                while (openFiles.MoveNext())
+                {
+                    infos.Add(openFiles.Current);
+                }
+            }
+
+            infos.Sort(SortPaths);
+
+            foreach (var fileSystem in infos)
+            {
+                Console.WriteLine(fileSystem.FullName);
+            }
+        }
+
+        /// <summary>
+        /// The sort paths.
+        /// </summary>
+        /// <param name="x"> The x. </param>
+        /// <param name="y"> The y. </param>
+        /// <returns> The <see cref="int"/>. </returns>
+        private static int SortPaths(FileSystemInfo x, FileSystemInfo y)
+        {
+            string strX = x.FullName;
+            string strY = y.FullName;
+            int min = Math.Min(strX.Length, strY.Length);
+
+            if (min > 5)
+            {
+                return string.Compare(strX.Substring(0, 5), strY.Substring(0, 5), StringComparison.Ordinal);
+            }
+            
+            return string.Compare(strX.Substring(0, 5), strY.Substring(0, 5), StringComparison.Ordinal);
         }
     }
 }

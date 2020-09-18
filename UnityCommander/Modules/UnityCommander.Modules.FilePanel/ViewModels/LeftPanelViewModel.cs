@@ -10,19 +10,16 @@
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System.Collections.ObjectModel;
-    using System.IO;
     using System.Windows;
-    using System.Collections.Generic;
+
     using GongSolutions.Wpf.DragDrop;
 
-    using Prism.Mvvm;
-   
+    using Prism.Regions;
+
     using UnityCommander.Business;
+    using UnityCommander.Core.Mvvm;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services;
-    using Prism.Regions;
-    using UnityCommander.Core.Mvvm;
 
     /// <summary>
     /// The left panel view model.
@@ -42,11 +39,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
         /// </summary>
+        /// <param name="regionManager">
+        /// The region Manager.
+        /// </param>
+        /// <param name="filesProvider">
+        /// The files Provider.
+        /// </param>
         public LeftPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
             base(regionManager)
         {
-            copyDialog = new CopyDialogView();
-            FileList = filesProvider.GetFiles("f:\\");
+            this.copyDialog = new CopyDialogView();
+            this.FileList = filesProvider.GetFiles("H:\\Works\\UnitTests");
         }
 
         /// <summary>
@@ -83,6 +86,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             FileModel sourceItem = dropInfo.Data as FileModel;
             FileModel targetItem = dropInfo.TargetItem as FileModel;
+            
             // targetItem.Add(sourceItem);
             if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
             {

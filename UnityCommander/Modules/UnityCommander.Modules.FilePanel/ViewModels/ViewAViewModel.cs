@@ -15,11 +15,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class ViewAViewModel : RegionViewModelBase
     {
         /// <summary>
-        /// The _file list.
-        /// </summary>
-        private ObservableCollection<FileModel> fileList;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ViewAViewModel"/> class.
         /// </summary>
         /// <param name="regionManager">

@@ -30,7 +30,7 @@ namespace UnityCommander.Core.IO
         /// </summary>
         Cancel = 2
     }
-
+    
     /// <summary>
     /// The file duplicator.
     /// </summary>
@@ -260,7 +260,6 @@ namespace UnityCommander.Core.IO
         /// </summary>
         /// <param name="source"> The source of the files. </param>
         /// <param name="destination"> The destination of the files. </param>
-        [SuppressMessage("ReSharper", "StyleCop.SA1503")]
         public void CopyFileByte(string source, string destination)
         {
             FileStream inFileStream = this.SafetyOpenFile(source, destination);

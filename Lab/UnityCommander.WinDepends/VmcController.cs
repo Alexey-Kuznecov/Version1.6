@@ -116,184 +116,12 @@ namespace UnityCommander.WinDepends
 
     #endregion
 
-    #region Native Methods
-    /// <summary>
-    /// The native methods.
-    /// </summary>
-    internal static class NativeMethods
-    {
-        /// <summary>
-        /// Retrieves the specified system information.
-        /// </summary>
-        /// <param name="SystemInformationClass">
-        /// One of the values enumerated in SYSTEM_INFORMATION_CLASS, which indicate the kind of system information
-        /// to be retrieved. These include the following values.
-        /// </param>
-        /// <param name="SystemInformation"></param>
-        /// <param name="SystemInformationLength"></param>
-        /// <param name="ReturnLength"></param>
-        /// <returns></returns>
-        [DllImport("ntdll.dll")]
-        internal static extern NT_STATUS NtQuerySystemInformation(
-            [In] SYSTEM_INFORMATION_CLASS SystemInformationClass,
-            [In] IntPtr SystemInformation,
-            [In] int SystemInformationLength,
-            [Out] out int ReturnLength);
-
-        /// <summary>
-        /// Retrieves various kinds of object information.
-        /// </summary>
-        /// <param name="Handle"> The handle of the object for which information is being queried. </param>
-        /// <param name="ObjectInformationClass">
-        /// One of the following values, as enumerated in OBJECT_INFORMATION_CLASS,
-        /// indicating the kind of object information to be retrieved.
-        /// </param>
-        /// <param name="ObjectInformation">
-        /// An optional pointer to a buffer where the requested information is to be returned.
-        /// The size and structure of this information varies depending on the value of the ObjectInformationClass parameter.
-        /// </param>
-        /// <param name="ObjectInformationLength">
-        /// The size of the buffer pointed to by the ObjectInformation parameter, in bytes.
-        /// </param>
-        /// <param name="ReturnLength">
-        /// An optional pointer to a location where the function writes the actual size of the information requested.
-        /// If that size is less than or equal to the ObjectInformationLength parameter,
-        /// the function copies the information into the ObjectInformation buffer; otherwise,
-        /// it returns an NTSTATUS error code and returns in ReturnLength the size of the buffer
-        /// required to receive the requested information.
-        /// </param>
-        /// <returns>
-        /// Returns an NTSTATUS or error code.  The forms and significance of NTSTATUS error codes are listed in the Ntstatus.h
-        /// header file available in the WDK, and are described in the WDK documentation.
-        /// </returns>
-        [DllImport("ntdll.dll")]
-        internal static extern NT_STATUS NtQueryObject(
-            [In] IntPtr Handle,
-            [In] OBJECT_INFORMATION_CLASS ObjectInformationClass,
-            [In] IntPtr ObjectInformation,
-            [In] int ObjectInformationLength,
-            [Out] out int ReturnLength);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern SafeProcessHandle OpenProcess(
-            [In] ProcessAccessRights dwDesiredAccess,
-            [In, MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
-            [In] int dwProcessId);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool DuplicateHandle(
-            [In] IntPtr hSourceProcessHandle,
-            [In] IntPtr hSourceHandle,
-            [In] IntPtr hTargetProcessHandle,
-            [Out] out SafeObjectHandle lpTargetHandle,
-            [In] int dwDesiredAccess,
-            [In, MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
-            [In] DuplicateHandleOptions dwOptions);
-
-        [DllImport("kernel32.dll")]
-        internal static extern IntPtr GetCurrentProcess();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern int GetProcessId([In] IntPtr Process);
-
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-
-        internal static extern bool CloseHandle([In] IntPtr hObject);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern int QueryDosDevice(
-            [In] string lpDeviceName,
-            [Out] StringBuilder lpTargetPath,
-            [In] int ucchMax);
-    }
-
-    #endregion
-
-    /// <summary>
-    /// The safe object handle.
-    /// </summary>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    internal sealed class SafeObjectHandle : SafeHandleZeroOrMinusOneIsInvalid
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SafeObjectHandle"/> class.
-        /// </summary>
-        /// <param name="preexistingHandle"> The preexisting handle. </param>
-        /// <param name="ownsHandle"> The owns handle. </param>
-        internal SafeObjectHandle(IntPtr preexistingHandle, bool ownsHandle)
-            : base(ownsHandle)
-        {
-            this.SetHandle(preexistingHandle);
-        }
-
-        /// <summary>
-        /// Prevents a default instance of the <see cref="SafeObjectHandle"/> class from being created.
-        /// </summary>
-        private SafeObjectHandle()
-            : base(true)
-        {
-        }
-
-        /// <summary>
-        /// The release handle.
-        /// </summary>
-        /// <returns> The <see cref="bool"/>.</returns>
-        protected override bool ReleaseHandle()
-        {
-            return NativeMethods.CloseHandle(this.handle);
-        }
-    }
-
-    /// <summary>
-    /// The safe process handle.
-    /// </summary>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    internal sealed class SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SafeProcessHandle"/> class.
-        /// </summary>
-        /// <param name="preexistingHandle"> The preexisting handle. </param>
-        /// <param name="ownsHandle"> The owns handle. </param>
-        internal SafeProcessHandle(IntPtr preexistingHandle, bool ownsHandle)
-            : base(ownsHandle)
-        {
-            this.SetHandle(preexistingHandle);
-        }
-
-        /// <summary>
-        /// Prevents a default instance of the <see cref="SafeProcessHandle"/> class from being created.
-        /// </summary>
-        private SafeProcessHandle()
-            : base(true)
-        {
-        }
-
-        /// <summary>
-        /// The release handle.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="bool"/>. </returns>
-        protected override bool ReleaseHandle()
-        {
-            return NativeMethods.CloseHandle(this.handle);
-        }
-    }
-
     /// <summary>
     /// The detect open files.
     /// </summary>
     [ComVisible(true), EventTrackingEnabled(true)]
     public class DetectOpenFiles : ServicedComponent
     {
-        /// <summary>
-        /// The Logger.
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         /// The max path.
         /// </summary>
@@ -308,6 +136,11 @@ namespace UnityCommander.WinDepends
         /// The network device prefix.
         /// </summary>
         private const string NetworkDevicePrefix = "\\Device\\LanmanRedirector\\";
+
+        /// <summary>
+        /// The Logger.
+        /// </summary>
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The handle type tokens.
@@ -667,18 +500,6 @@ namespace UnityCommander.WinDepends
             string token = GetHandleTypeToken(handle, processId);
             return GetHandleTypeFromToken(token, out handleType);
         }
-
-        ///// <summary>
-        ///// The get handle type.
-        ///// </summary>
-        ///// <param name="handle"> The handle. </param>
-        ///// <param name="handleType"> The handle type. </param>
-        ///// <returns> The <see cref="bool"/>. </returns>
-        //private static bool GetHandleType(IntPtr handle, out SystemHandleType handleType)
-        //{
-        //    string token = GetHandleTypeToken(handle);
-        //    return GetHandleTypeFromToken(token, out handleType);
-        //}
 
         /// <summary>
         /// The get handle type from token.
@@ -1161,6 +982,185 @@ namespace UnityCommander.WinDepends
             }
 
             #endregion
+        }
+    }
+
+    #region Native Methods
+    /// <summary>
+    /// The native methods.
+    /// </summary>
+    internal static class NativeMethods
+    {
+        /// <summary>
+        /// Retrieves the specified system information.
+        /// See <see cref="https://docs.microsoft.com/en-us/windows/win32/api/winternl/nf-winternl-ntquerysysteminformation"/>
+        /// </summary>
+        /// <param name="SystemInformationClass">
+        /// One of the values enumerated in SYSTEM_INFORMATION_CLASS, which indicate the kind of system information
+        /// to be retrieved. These include the following values.
+        /// </param>
+        /// <param name="SystemInformation">
+        /// A pointer to a buffer that receives the requested information.
+        /// The size and structure of this information varies depending on the value of the SystemInformationClass parameter:
+        /// </param>
+        /// <param name="SystemInformationLength">
+        /// The size of the buffer pointed to by the System Information Parameter, in bytes.
+        /// </param>
+        /// <param name="ReturnLength">
+        /// An optional pointer to a location where the function writes the actual size of the information requested. If that size is less than or equal to the
+        /// SystemInformationLength parameter, the function copies the information into the SystemInformation buffer; otherwise, it returns an NTSTATUS error code and returns in ReturnLength the size of buffer required to receive the requested information.
+        /// </param>
+        /// <returns>
+        /// Returns an NTSTATUS success or error code. The forms and significance of NTSTATUS error codes are listed in the Ntstatus.h
+        /// header file available in the DDK, and are described in the DDK documentation.
+        /// </returns>
+        [DllImport("ntdll.dll")]
+        internal static extern NT_STATUS NtQuerySystemInformation(
+            [In] SYSTEM_INFORMATION_CLASS SystemInformationClass,
+            [In] IntPtr SystemInformation,
+            [In] int SystemInformationLength,
+            [Out] out int ReturnLength);
+
+        /// <summary>
+        /// Retrieves various kinds of object information.
+        /// </summary>
+        /// <param name="Handle"> The handle of the object for which information is being queried. </param>
+        /// <param name="ObjectInformationClass">
+        /// One of the following values, as enumerated in OBJECT_INFORMATION_CLASS,
+        /// indicating the kind of object information to be retrieved.
+        /// </param>
+        /// <param name="ObjectInformation">
+        /// An optional pointer to a buffer where the requested information is to be returned.
+        /// The size and structure of this information varies depending on the value of the ObjectInformationClass parameter.
+        /// </param>
+        /// <param name="ObjectInformationLength">
+        /// The size of the buffer pointed to by the ObjectInformation parameter, in bytes.
+        /// </param>
+        /// <param name="ReturnLength">
+        /// An optional pointer to a location where the function writes the actual size of the information requested.
+        /// If that size is less than or equal to the ObjectInformationLength parameter,
+        /// the function copies the information into the ObjectInformation buffer; otherwise,
+        /// it returns an NTSTATUS error code and returns in ReturnLength the size of the buffer
+        /// required to receive the requested information.
+        /// </param>
+        /// <returns>
+        /// Returns an NTSTATUS or error code.  The forms and significance of NTSTATUS error codes are listed in the Ntstatus.h
+        /// header file available in the WDK, and are described in the WDK documentation.
+        /// </returns>
+        [DllImport("ntdll.dll")]
+        internal static extern NT_STATUS NtQueryObject(
+            [In] IntPtr Handle,
+            [In] OBJECT_INFORMATION_CLASS ObjectInformationClass,
+            [In] IntPtr ObjectInformation,
+            [In] int ObjectInformationLength,
+            [Out] out int ReturnLength);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern SafeProcessHandle OpenProcess(
+            [In] ProcessAccessRights dwDesiredAccess,
+            [In, MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
+            [In] int dwProcessId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool DuplicateHandle(
+            [In] IntPtr hSourceProcessHandle,
+            [In] IntPtr hSourceHandle,
+            [In] IntPtr hTargetProcessHandle,
+            [Out] out SafeObjectHandle lpTargetHandle,
+            [In] int dwDesiredAccess,
+            [In, MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
+            [In] DuplicateHandleOptions dwOptions);
+
+        [DllImport("kernel32.dll")]
+        internal static extern IntPtr GetCurrentProcess();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern int GetProcessId([In] IntPtr Process);
+
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+
+        internal static extern bool CloseHandle([In] IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern int QueryDosDevice(
+            [In] string lpDeviceName,
+            [Out] StringBuilder lpTargetPath,
+            [In] int ucchMax);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// The safe object handle.
+    /// </summary>
+    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    internal sealed class SafeObjectHandle : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SafeObjectHandle"/> class.
+        /// </summary>
+        /// <param name="preexistingHandle"> The preexisting handle. </param>
+        /// <param name="ownsHandle"> The owns handle. </param>
+        internal SafeObjectHandle(IntPtr preexistingHandle, bool ownsHandle)
+            : base(ownsHandle)
+        {
+            this.SetHandle(preexistingHandle);
+        }
+
+        /// <summary>
+        /// Prevents a default instance of the <see cref="SafeObjectHandle"/> class from being created.
+        /// </summary>
+        private SafeObjectHandle()
+            : base(true)
+        {
+        }
+
+        /// <summary>
+        /// The release handle.
+        /// </summary>
+        /// <returns> The <see cref="bool"/>.</returns>
+        protected override bool ReleaseHandle()
+        {
+            return NativeMethods.CloseHandle(this.handle);
+        }
+    }
+
+    /// <summary>
+    /// The safe process handle.
+    /// </summary>
+    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    internal sealed class SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SafeProcessHandle"/> class.
+        /// </summary>
+        /// <param name="preexistingHandle"> The preexisting handle. </param>
+        /// <param name="ownsHandle"> The owns handle. </param>
+        internal SafeProcessHandle(IntPtr preexistingHandle, bool ownsHandle)
+            : base(ownsHandle)
+        {
+            this.SetHandle(preexistingHandle);
+        }
+
+        /// <summary>
+        /// Prevents a default instance of the <see cref="SafeProcessHandle"/> class from being created.
+        /// </summary>
+        private SafeProcessHandle()
+            : base(true)
+        {
+        }
+
+        /// <summary>
+        /// The release handle.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>. </returns>
+        protected override bool ReleaseHandle()
+        {
+            return NativeMethods.CloseHandle(this.handle);
         }
     }
 }

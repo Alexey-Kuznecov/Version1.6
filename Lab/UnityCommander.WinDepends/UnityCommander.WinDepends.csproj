@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.4\lib\net45\NLog.dll</HintPath>
+    <Reference Include="NLog">
+      <HintPath>..\..\..\Version1.8\packages\NLog.4.7.4\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -43,6 +43,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,9 +52,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LogFormater.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="VmcController.cs" />
+    <Compile Include="WinApi\ProcessUtility.cs" />
+    <Compile Include="WinApi\MethodHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WinApi\NativeEnums.cs" />
+    <Compile Include="WinApi\NativeMethods.cs" />
+    <Compile Include="WinApi\NativeStructs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">
@@ -64,5 +70,6 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

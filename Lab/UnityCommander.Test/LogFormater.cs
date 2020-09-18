@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.WinDepends
+namespace UnityCommander.Test
 {
     using System;
     using System.Collections.Generic;
