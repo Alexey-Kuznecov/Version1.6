@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Test.WinApi
+namespace UnityCommander.Native
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace UnityCommander.Test.WinApi
 
     using Microsoft.Win32.SafeHandles;
 
-    using NLog;
+    using UnityCommander.Native.Api;
 
     /// <summary>
     /// The process utility.
@@ -37,11 +37,11 @@ namespace UnityCommander.Test.WinApi
         /// The handle type tokens.
         /// </summary>
         private static readonly string[] HandleTypeTokens =
-            {
-                string.Empty, string.Empty, "Directory", "SymbolicLink", "Token", "Process", "Thread", "Unknown7", "Event", "EventPair",
-                "Mutant", "Unknown11", "Semaphore", "Timer", "Profile", "WindowStation", "Desktop", "Section", "Key",
-                "Port", "WaitablePort", "Unknown21", "Unknown22", "Unknown23", "Unknown24", "IoCompletion", "File"
-            };
+        {
+            string.Empty, string.Empty, "Directory", "SymbolicLink", "Token", "Process", "Thread", "Unknown7", "Event", "EventPair",
+            "Mutant", "Unknown11", "Semaphore", "Timer", "Profile", "WindowStation", "Desktop", "Section", "Key",
+            "Port", "WaitablePort", "Unknown21", "Unknown22", "Unknown23", "Unknown24", "IoCompletion", "File"
+        };
 
         /// <summary>
         /// The device map.
@@ -91,16 +91,16 @@ namespace UnityCommander.Test.WinApi
         /// <returns> The <see cref="bool"/>. </returns>
         public static bool GetFileNameFromHandle(IntPtr handle, int processId, out string fileName)
         {
-            IntPtr currentProcess = NativeMethods.GetCurrentProcess();
-            bool remote = processId != NativeMethods.GetProcessId(currentProcess);
+            IntPtr currentProcess = NativeFunctions.GetCurrentProcess();
+            bool remote = processId != NativeFunctions.GetProcessId(currentProcess);
             SafeProcessHandle processHandle = null;
             SafeObjectHandle objectHandle = null;
             try
             {
                 if (remote)
                 {
-                    processHandle = NativeMethods.OpenProcess(ProcessAccessRights.PROCESS_DUP_HANDLE, true, processId);
-                    if (NativeMethods.DuplicateHandle(processHandle.DangerousGetHandle(), handle, currentProcess, out objectHandle, 0, false, DuplicateHandleOptions.DUPLICATE_SAME_ACCESS))
+                    processHandle = NativeFunctions.OpenProcess(ProcessAccessRights.PROCESS_DUP_HANDLE, true, processId);
+                    if (NativeFunctions.DuplicateHandle(processHandle.DangerousGetHandle(), handle, currentProcess, out objectHandle, 0, false, DuplicateHandleOptions.DUPLICATE_SAME_ACCESS))
                     {
                         handle = objectHandle.DangerousGetHandle();
                     }
@@ -216,7 +216,7 @@ namespace UnityCommander.Test.WinApi
                     ptr = Marshal.AllocHGlobal(length);
                 }
 
-                NT_STATUS ret = NativeMethods.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectNameInformation, ptr, length, out length);
+                NT_STATUS ret = NativeFunctions.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectNameInformation, ptr, length, out length);
                 if (ret == NT_STATUS.STATUS_BUFFER_OVERFLOW)
                 {
                     RuntimeHelpers.PrepareConstrainedRegions();
@@ -232,7 +232,7 @@ namespace UnityCommander.Test.WinApi
                         ptr = Marshal.AllocHGlobal(length);
                     }
 
-                    ret = NativeMethods.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectNameInformation, ptr, length, out length);
+                    ret = NativeFunctions.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectNameInformation, ptr, length, out length);
                 }
 
                 if (ret == NT_STATUS.STATUS_SUCCESS)
@@ -282,16 +282,16 @@ namespace UnityCommander.Test.WinApi
         /// <returns> The <see cref="string"/>. </returns>
         private static string GetHandleTypeToken(IntPtr handle, int processId)
         {
-            IntPtr currentProcess = NativeMethods.GetCurrentProcess();
-            bool remote = processId != NativeMethods.GetProcessId(currentProcess);
+            IntPtr currentProcess = NativeFunctions.GetCurrentProcess();
+            bool remote = processId != NativeFunctions.GetProcessId(currentProcess);
             SafeProcessHandle processHandle = null;
             SafeObjectHandle objectHandle = null;
             try
             {
                 if (remote)
                 {
-                    processHandle = NativeMethods.OpenProcess(ProcessAccessRights.PROCESS_DUP_HANDLE, true, processId);
-                    if (NativeMethods.DuplicateHandle(processHandle.DangerousGetHandle(), handle, currentProcess, out objectHandle, 0, false, DuplicateHandleOptions.DUPLICATE_SAME_ACCESS))
+                    processHandle = NativeFunctions.OpenProcess(ProcessAccessRights.PROCESS_DUP_HANDLE, true, processId);
+                    if (NativeFunctions.DuplicateHandle(processHandle.DangerousGetHandle(), handle, currentProcess, out objectHandle, 0, false, DuplicateHandleOptions.DUPLICATE_SAME_ACCESS))
                     {
                         handle = objectHandle.DangerousGetHandle();
                     }
@@ -316,7 +316,7 @@ namespace UnityCommander.Test.WinApi
         /// <returns> The <see cref="string"/>. </returns>
         private static string GetHandleTypeToken(IntPtr handle)
         {
-            NativeMethods.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectTypeInformation, IntPtr.Zero, 0, out var length);
+            NativeFunctions.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectTypeInformation, IntPtr.Zero, 0, out var length);
             IntPtr ptr = IntPtr.Zero;
             RuntimeHelpers.PrepareConstrainedRegions();
             try
@@ -333,7 +333,7 @@ namespace UnityCommander.Test.WinApi
                     }
                 }
 
-                if (NativeMethods.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectTypeInformation, ptr, length, out length) == NT_STATUS.STATUS_SUCCESS)
+                if (NativeFunctions.NtQueryObject(handle, OBJECT_INFORMATION_CLASS.ObjectTypeInformation, ptr, length, out length) == NT_STATUS.STATUS_SUCCESS)
                 {
                     OBJECT_TYPE_INFORMATION objTypeInfo = (OBJECT_TYPE_INFORMATION)Marshal.PtrToStructure(ptr, typeof(OBJECT_TYPE_INFORMATION));
                     return objTypeInfo.TypeName.Buffer;
@@ -369,7 +369,7 @@ namespace UnityCommander.Test.WinApi
             foreach (string drive in logicalDrives)
             {
                 string deviceName = drive.Substring(0, 2);
-                NativeMethods.QueryDosDevice(deviceName, targetPath, MaxPath);
+                NativeFunctions.QueryDosDevice(deviceName, targetPath, MaxPath);
                 localDeviceMap.Add(NormalizeDeviceName(targetPath.ToString()), deviceName);
             }
 
@@ -424,7 +424,7 @@ namespace UnityCommander.Test.WinApi
             /// <returns> The <see cref="bool"/>.</returns>
             protected override bool ReleaseHandle()
             {
-                return NativeMethods.CloseHandle(this.handle);
+                return NativeFunctions.CloseHandle(this.handle);
             }
         }
 
@@ -460,7 +460,7 @@ namespace UnityCommander.Test.WinApi
             /// The <see cref="bool"/>. </returns>
             protected override bool ReleaseHandle()
             {
-                return NativeMethods.CloseHandle(this.handle);
+                return NativeFunctions.CloseHandle(this.handle);
             }
         }
 
@@ -469,11 +469,6 @@ namespace UnityCommander.Test.WinApi
         /// </summary>
         private class FileNameFromHandleState : IDisposable
         {
-            /// <summary>
-            /// The Logger.
-            /// </summary>
-            private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
             /// <summary>
             /// The mr.
             /// </summary>

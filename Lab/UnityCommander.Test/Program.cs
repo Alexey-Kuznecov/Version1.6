@@ -6,8 +6,8 @@ namespace UnityCommander.Test
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-
-    using UnityCommander.Test.WinApi;
+    using UnityCommander.Native;
+    using UnityCommander.Native.Api;
 
     /// <summary>
     /// The program.
@@ -20,6 +20,23 @@ namespace UnityCommander.Test
         private static ProgressBar progress;
 
         /// <summary>
+        /// The progress percentage.
+        /// </summary>
+        private static byte progressPerc;
+
+
+        private static double percent = 100;
+
+        private static double mg = 0;
+
+        private static double derive = 0;
+
+        private static long pos = 0;
+
+        private static int counter = 0;
+        private static ProgressBar progressBar;
+
+        /// <summary>
         /// The main.
         /// </summary>
         /// <param name="args">
@@ -27,10 +44,59 @@ namespace UnityCommander.Test
         /// </param>
         public static void Main(string[] args)
         {
-            List<Process> processes = Process.GetProcesses().ToList();
+            FileOperations operations = new FileOperations();
 
-            VmcControllerTest();
+            foreach (var item in Directory.GetFiles("E:\\temp\\", "*", SearchOption.TopDirectoryOnly))
+            {
+                counter = 0;
+                derive = 0;
+                pos = 0;
+                FileInfo info = new FileInfo(item);
+                Console.WriteLine("Copy File: {0} Size: {1}", info.Name, ConverterBytes.AutoConvertFormatBytes(info.Length));
+                operations.XCopy(info.FullName, @"F:\target\\" + info.Name, CopyProgressHandle);
+                //using (progressBar = new ProgressBar())
+                //{
+                //    operations.XCopy(info.FullName, @"F:\target\\" + info.Name, CopyProgressHandle);
+                //}
+
+                Console.WriteLine("File ready..");
+                Console.WriteLine(new string('-', 50));
+            }
+
+            // CopyFileByte(@"H:\Works\UnitTests\Source\JetBrains.Rider-2019.2.2.exe", @"E:\Temp\2\JetBrains.Rider-2019.2.2.exe");
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// The copy progress handler.
+        /// </summary>
+        /// <param name="total"> The total. </param>
+        /// <param name="transferred"> The transferred. </param>
+        /// <param name="streamSize"> The stream size. </param>
+        /// <param name="streamByteTrans"> The stream byte trans. </param>
+        /// <param name="dwStreamNumber"> The dw stream number. </param>
+        /// <param name="reason"> The reason. </param>
+        /// <param name="hSourceFile"> The h source file. </param>
+        /// <param name="hDestinationFile"> The h destination file. </param>
+        /// <param name="lpData"> The lp data. </param>
+        /// <returns> The <see cref="CopyProgressResult"/>. </returns>
+        public static CopyProgressResult CopyProgressHandle(long total, long transferred, long streamSize, long streamByteTrans, uint dwStreamNumber, CopyProgressCallbackReason reason, IntPtr hSourceFile, IntPtr hDestinationFile, IntPtr lpData)
+        {
+            if (reason == CopyProgressCallbackReason.CALLBACK_STREAM_SWITCH)
+            {
+                // int d = (int)(total % 100);
+                mg = ((double)total / 1024 / 1024);
+                percent = mg / 100;
+            }
+
+            if (++pos >= derive)
+            {
+                Console.Write(counter++ + " / ");
+                //progressBar.Report((double)counter++ / 100);
+                derive += percent;
+            }
+
+            return CopyProgressResult.PROGRESS_CONTINUE;
         }
 
         /// <summary>
@@ -62,7 +128,7 @@ namespace UnityCommander.Test
                     // which you can see the progress of copying the file.
                     if (count > byteInPercent)
                     {
-                        progress.Report((double)fileCopyIndicator++ / 98);
+                        //progress.Report((double)fileCopyIndicator++ / 98);
                         count = 0;
                     }
                 }
@@ -96,7 +162,7 @@ namespace UnityCommander.Test
                         flag = "q";
                     }
                 }
-                
+
                 if (flag == "y")
                 {
                     Console.Clear();
@@ -161,8 +227,8 @@ namespace UnityCommander.Test
             {
                 return string.Compare(strX.Substring(0, 5), strY.Substring(0, 5), StringComparison.Ordinal);
             }
-            
-            return string.Compare(strX.Substring(0, 5), strY.Substring(0, 5), StringComparison.Ordinal);
+
+            return string.Compare(strX.Substring(0, 2), strY.Substring(0, 2), StringComparison.Ordinal);
         }
     }
 }

@@ -39,8 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lab", "Lab", "{30D7551D-E97
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laboratory.Works", "Lab\Laboratory.Works\Laboratory.Works.csproj", "{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Test", "Lab\UnityCommander.Test\UnityCommander.Test.csproj", "{5124810B-4629-46C4-A69C-9FAAF0E64858}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Snippets", "Snippets", "{99A4CCD5-E19A-412C-AE5C-4B1248DBF6CA}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\Logger.snippet = ..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\Logger.snippet
@@ -52,6 +50,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nlog", "Nlog", "{7440573D-A
 		NLog.config = NLog.config
 		NLog.xsd = NLog.xsd
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Test", "Lab\UnityCommander.Test\UnityCommander.Test.csproj", "{6BEB4DFB-6B12-4619-BADD-508D30B82314}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Native", "UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj", "{59480595-09DB-40DE-BC77-2F2D2194EEC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,10 +101,14 @@ Global
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,9 +122,10 @@ Global
 		{C49000D0-3E16-4F42-8D67-5BF650E3E6B9} = {0C605079-A48D-4E64-919A-E796221AB09E}
 		{E19F99FE-3185-4302-96A8-D08CCA584984} = {0C605079-A48D-4E64-919A-E796221AB09E}
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
-		{5124810B-4629-46C4-A69C-9FAAF0E64858} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
 		{99A4CCD5-E19A-412C-AE5C-4B1248DBF6CA} = {F1A5BCCC-6EEA-4BC9-977A-A733235F86D0}
 		{7440573D-A989-4FB3-9B14-2D1A81D02E86} = {F1A5BCCC-6EEA-4BC9-977A-A733235F86D0}
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}

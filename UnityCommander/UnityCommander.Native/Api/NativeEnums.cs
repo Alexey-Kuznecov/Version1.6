@@ -1,7 +1,99 @@
 ﻿
-namespace UnityCommander.Test.WinApi
+namespace UnityCommander.Native.Api
 {
     using System;
+
+    #region Files Operation
+
+    /// <summary>
+    /// The copy progress result.
+    /// </summary>
+    public enum CopyProgressResult : uint
+    {
+        /// <summary>
+        /// Continue the copy operation.
+        /// </summary>
+        PROGRESS_CONTINUE = 0,
+
+        /// <summary>
+        /// Cancel the copy operation and delete the destination file.
+        /// </summary>
+        PROGRESS_CANCEL = 1,
+
+        /// <summary>
+        /// Stop the copy operation. It can be restarted at a later time.
+        /// </summary>
+        PROGRESS_STOP = 2,
+
+        /// <summary>
+        /// Continue the copy operation, but stop invoking CopyProgressRoutine to report progress.
+        /// </summary>
+        PROGRESS_QUIET = 3
+    }
+
+    /// <summary>
+    /// The reason that CopyProgressRoutine was called. This parameter can be one of the following values.
+    /// </summary>
+    public enum CopyProgressCallbackReason : uint
+    {
+        /// <summary>
+        /// Another part of the data file was copied.
+        /// </summary>
+        CALLBACK_CHUNK_FINISHED = 0x00000000,
+
+        /// <summary>
+        /// Another stream was created and is about to be copied.
+        /// This is the callback reason given when the callback routine is first invoked.
+        /// </summary>
+        CALLBACK_STREAM_SWITCH = 0x00000001
+    }
+
+    /// <summary>
+    /// The copy file flags.
+    /// </summary>
+    [Flags]
+    public enum CopyFileFlags : uint
+    {
+        /// <summary>
+        /// The copy operation fails immediately if the target file already exists.
+        /// </summary>
+        COPY_FILE_FAIL_IF_EXISTS = 0x00000001,
+
+        /// <summary>
+        /// The file is copied and the original file is opened for write access.
+        /// </summary>
+        COPY_FILE_OPEN_SOURCE_FOR_WRITE = 0x00000004,
+
+        /// <summary>
+        /// An attempt to copy an encrypted file will succeed even
+        /// if the destination copy cannot be encrypted.
+        /// </summary>
+        COPY_FILE_ALLOW_DECRYPTED_DESTINATION = 0x00000008,
+
+        /// <summary>
+        /// The copy operation is performed using unbuffered I/O, bypassing system I/O cache resources.
+        /// Recommended for very large file transfers.
+        /// </summary>
+        COPY_FILE_NO_BUFFERING = 0x00001000,
+
+        /// <summary>
+        /// If the source file is a symbolic link, the destination file is also
+        /// a symbolic link pointing to the same file that the source symbolic
+        /// link is pointing to.
+        /// </summary>
+        COPY_FILE_COPY_SYMLINK = 0x00000800,
+
+        /// <summary>
+        /// Progress of the copy is tracked in the target file in case the copy fails.
+        /// The failed copy can be restarted at a later time by specifying the same values
+        /// for lpExistingFileName and lpNewFileName as those used in the call that failed.
+        /// This can significantly slow down the copy operation as the new file may be flushed
+        /// multiple times during the copy operation.
+        /// </summary>
+        COPY_FILE_RESTARTABLE = 0x00000002
+    }
+
+    #endregion
 
     /// <summary>
     /// The system information class.
@@ -15,28 +107,33 @@ namespace UnityCommander.Test.WinApi
     }
 
     /// <summary>
-    /// The nt status.
+    /// By combining the NTSTATUS into a single 32-bit numbering space,
+    /// the following NTSTATUS values are defined. Most values also have a defined default message
+    /// that can be used to map the value to a human-readable text message.
+    /// When this is done, the NTSTATUS value is also known as a message identifier.
     /// </summary>
+    /// <remarks> Reference: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55 </remarks> 
     internal enum NT_STATUS
     {
         /// <summary>
-        /// The status success.
+        /// The operation completed successfully.
         /// </summary>
         STATUS_SUCCESS = 0x00000000,
 
         /// <summary>
-        /// The status buffer overflow.
+        /// The data was too large to fit into the specified buffer.
         /// </summary>
         STATUS_BUFFER_OVERFLOW = unchecked((int)0x80000005L),
 
         /// <summary>
-        /// The info length is not sufficient to hold the data.
+        /// The specified information record length does not match the length that is required for the specified information class.
         /// </summary>
         STATUS_INFO_LENGTH_MISMATCH = unchecked((int)0xC0000004L)
     }
 
     /// <summary>
-    /// The object information class.
+    /// One of the following values, as enumerated in OBJECT_INFORMATION_CLASS,
+    /// indicating the kind of object information to be retrieved.
     /// </summary>
     internal enum OBJECT_INFORMATION_CLASS
     {
@@ -46,12 +143,12 @@ namespace UnityCommander.Test.WinApi
         ObjectBasicInformation = 0,
 
         /// <summary>
-        /// The object name information.
+        /// Returns a <see cref="OBJECT_NAME_INFORMATION"/> structure.
         /// </summary>
         ObjectNameInformation = 1,
 
         /// <summary>
-        /// The object type information.
+        /// Returns a <see cref="OBJECT_TYPE_INFORMATION"/> structure.
         /// </summary>
         ObjectTypeInformation = 2,
 

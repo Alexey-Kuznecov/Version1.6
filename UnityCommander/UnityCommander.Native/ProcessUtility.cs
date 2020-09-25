@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Test.WinApi
+namespace UnityCommander.Native
 {
     using System;
     using System.Collections.Generic;
@@ -7,18 +7,13 @@ namespace UnityCommander.Test.WinApi
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
-    using NLog;
+    using UnityCommander.Native.Api;
 
     /// <summary>
     /// The open files.
     /// </summary>
     public sealed class ProcessUtility : IEnumerable<FileSystemInfo>
     {
-        /// <summary>
-        /// The Logger.
-        /// </summary>
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         /// <summary>
         /// The process id.
         /// </summary>
@@ -71,7 +66,7 @@ namespace UnityCommander.Test.WinApi
                         ptr = Marshal.AllocHGlobal(length);
                     }
 
-                    ret = NativeMethods.NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS.SystemHandleInformation, ptr, length, out var returnLength);
+                    ret = NativeFunctions.NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS.SystemHandleInformation, ptr, length, out var returnLength);
 
                     if (ret == NT_STATUS.STATUS_INFO_LENGTH_MISMATCH)
                     {

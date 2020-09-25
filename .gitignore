@@ -50,3 +50,5 @@
 /UnityCommander/.vs/UnityCommander
 /Lab/UnityCommander.WinDepends/bin/Release
 /Lab/UnityCommander.WinDepends/obj/Release
+/UnityCommander/UnityCommander.Native/obj
+/UnityCommander/UnityCommander.Native/bin/Debug

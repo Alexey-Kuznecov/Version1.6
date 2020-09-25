@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Test.WinApi
+namespace UnityCommander.Native.Api
 {
     using System;
     using System.Runtime.InteropServices;
@@ -97,5 +97,18 @@ namespace UnityCommander.Test.WinApi
         /// The name buffer.
         /// </summary>
         private readonly IntPtr nameBuffer;
+    }
+
+    /// <summary>
+    /// The i o_ counters.
+    /// </summary>
+    public struct IO_COUNTERS
+    {
+        ulong ReadOperationCount;
+        ulong WriteOperationCount;
+        ulong OtherOperationCount;
+        ulong ReadTransferCount;
+        ulong WriteTransferCount;
+        ulong OtherTransferCount;
     }
 }
