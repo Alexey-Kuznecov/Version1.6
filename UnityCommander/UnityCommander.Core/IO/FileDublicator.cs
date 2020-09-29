@@ -143,7 +143,7 @@ namespace UnityCommander.Core.IO
         /// <summary>
         /// Gets or sets a value indicating whether to copy whether file/folder ntfs rights.
         /// </summary>
-        public static bool IncludeNTFSRights { get; set; }
+        public static bool IncludeNtfsRights { get; set; }
 
         #region Event Invocators
 
@@ -195,25 +195,6 @@ namespace UnityCommander.Core.IO
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// The calc total size file.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <returns>
-        /// The <see cref="long"/>.
-        /// </returns>
-        public long CalcTotalSizeFile(string path)
-        {
-            foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
-            {
-                var fileInfo = new FileInfo(path);
-            }
-
-            return 0;
-        }
 
         /// <summary>
         /// This method can stop, resume, or cancel the copy altogether.
@@ -312,7 +293,7 @@ namespace UnityCommander.Core.IO
         /// <param name="path"> Expected the path to the file. </param>
         private static void RestoreNtfsRightsCopyStopEvent(object sender, object path)
         {
-            if (IncludeNTFSRights)
+            if (IncludeNtfsRights)
             {
                 NTFSSecurity.AddAccessRuleList((string)path, accountModel.Accounts);
             }
@@ -326,7 +307,7 @@ namespace UnityCommander.Core.IO
         /// <param name="e"> Expected the path to the file. </param>
         private static void BackupNtfsRightsCopyStartEvent(object sender, object e)
         {
-            if (IncludeNTFSRights)
+            if (IncludeNtfsRights)
             {
                 string path = (string)e;
                 accountModel = new NTFSAccountModel

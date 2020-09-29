@@ -9,7 +9,9 @@
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Windows;
 
     using GongSolutions.Wpf.DragDrop;
@@ -49,7 +51,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             base(regionManager)
         {
             this.copyDialog = new CopyDialogView();
-            this.FileList = filesProvider.GetFiles("H:\\Works\\UnitTests");
+            string rightPanelPath = @"Works\UnitTests\";
+
+            string[] drives = Environment.GetLogicalDrives();
+            foreach (string drive in drives)
+            {
+                string path = drive + rightPanelPath;
+
+                if (Directory.Exists(path))
+                {
+                    this.FileList = filesProvider.GetFiles(path);
+                }
+            }
         }
 
         /// <summary>

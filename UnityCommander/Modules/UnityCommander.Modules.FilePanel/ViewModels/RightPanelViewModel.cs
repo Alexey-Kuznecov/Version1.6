@@ -9,7 +9,9 @@
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Windows;
     using GongSolutions.Wpf.DragDrop;
 
@@ -40,7 +42,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public RightPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
             base(regionManager)
         {
-            this.FileList = filesProvider.GetFiles("H:\\Works\\UnitTests\\Source");
+            var rightPanelPath = @"\Works\UnitTests\Source";
+
+            string[] Drives = Environment.GetLogicalDrives();
+            foreach (string drive in Drives)
+            {
+                var path = drive + rightPanelPath;
+
+                if (Directory.Exists(path))
+                {
+                    this.FileList = filesProvider.GetFiles(path);
+                }
+            }
         }
 
         /// <summary>

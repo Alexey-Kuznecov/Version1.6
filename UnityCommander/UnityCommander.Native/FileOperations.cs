@@ -20,10 +20,10 @@ namespace UnityCommander.Native
         /// <summary>
         /// The copy progress routine.
         /// </summary>
-        /// <param name="TotalFileSize"> The total size of the file, in bytes. </param>
-        /// <param name="TotalBytesTransferred"> The total number of bytes transferred from the source file to the destination file since the copy operation began. </param>
-        /// <param name="StreamSize"> The total size of the current file stream, in bytes. </param>
-        /// <param name="StreamBytesTransferred"> The total number of bytes in the current stream that have been transferred from the source file to the destination file since the copy operation began. </param>
+        /// <param name="totalFileSize"> The total size of the file, in bytes. </param>
+        /// <param name="totalBytesTransferred"> The total number of bytes transferred from the source file to the destination file since the copy operation began. </param>
+        /// <param name="streamSize"> The total size of the current file stream, in bytes. </param>
+        /// <param name="streamBytesTransferred"> The total number of bytes in the current stream that have been transferred from the source file to the destination file since the copy operation began. </param>
         /// <param name="dwStreamNumber"> A handle to the current stream. The first time CopyProgressRoutine is called, the stream number is 1. </param>
         /// <param name="dwCallbackReason"> The reason that CopyProgressRoutine was called. This parameter can be one of the following values. <see cref="CopyProgressCallbackReason"/> </param>
         /// <param name="hSourceFile"> A handle to the source file. </param>
@@ -32,10 +32,10 @@ namespace UnityCommander.Native
         /// <returns> The CopyProgressRoutine function should return one of the following values. <see cref="CopyProgressResult"/> </returns>
         /// <remarks> Reference: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nc-winbase-lpprogress_routine </remarks>
         public delegate CopyProgressResult CopyProgressRoutine(
-            long TotalFileSize,
-            long TotalBytesTransferred,
-            long StreamSize,
-            long StreamBytesTransferred,
+            long totalFileSize,
+            long totalBytesTransferred,
+            long streamSize,
+            long streamBytesTransferred,
             uint dwStreamNumber,
             CopyProgressCallbackReason dwCallbackReason,
             IntPtr hSourceFile,

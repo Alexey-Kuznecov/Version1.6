@@ -12,6 +12,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Mvvm;
     using UnityCommander.Core;
     using UnityCommander.Core.IO;
+    using UnityCommander.Test;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
@@ -40,24 +42,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private int startBar;
 
         /// <summary>
-        /// The token source.
-        /// </summary>
-        private static CancellationTokenSource tokenSource;
-
-        /// <summary>
-        /// The token.
-        /// </summary>
-        private static CancellationToken token;
-
-        /// <summary>
         /// The report data about copying files.
         /// </summary>
         private ObservableCollection<CopyInfoModel> copyReport;
 
         /// <summary>
-        /// The task status.
+        /// The list copy errors.
         /// </summary>
-        private TaskStatus taskStatus;
+        private ObservableCollection<CopyInfoModel> skippedFile;
+
+        /// <summary>
+        /// The time left.
+        /// </summary>
+        private string timeLeft;
+
+        /// <summary>
+        /// The average speed.
+        /// </summary>
+        private string averageSpeed;
+
+        /// <summary>
+        /// The remainder.
+        /// </summary>
+        private string remainder;
 
         #endregion
 
@@ -70,9 +77,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyProcessViewModel(IEventAggregator viewModelMessage)
         {
-            viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupFilesThread);
-            FileDublicator.CopyingEvent += this.DirectoryItemsCopyingEvent;
-            this.CopyReport = new ObservableCollection<CopyInfoModel>();
+            viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupCopyFiles);
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
             this.ResumeCommand = new DelegateCommand(this.CopyResume);
@@ -89,6 +94,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.copyReport;
             set => this.SetProperty(ref this.copyReport, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the report data for copied files.
+        /// </summary>
+        public ObservableCollection<CopyInfoModel> SkippedFile
+        {
+            get => this.skippedFile;
+            set => this.SetProperty(ref this.skippedFile, value);
         }
 
         /// <summary>
@@ -124,6 +138,33 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             set => this.SetProperty(ref this.currentPercent, value);
         }
 
+        /// <summary>
+        /// Gets or sets the time left.
+        /// </summary>
+        public string TimeLeft
+        {
+            get => this.timeLeft;
+            set => this.SetProperty(ref this.timeLeft, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the remainder.
+        /// </summary>
+        public string Remainder
+        {
+            get => this.remainder;
+            set => this.SetProperty(ref this.remainder, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the average speed.
+        /// </summary>
+        public string AverageSpeed
+        {
+            get => this.averageSpeed;
+            set => this.SetProperty(ref this.averageSpeed, value);
+        }
+
         #endregion
 
         #region File Copy Controls
@@ -133,7 +174,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyCancel()
         {
-            tokenSource.Cancel();
+            FileCopier.ChangeCopyStatus(FileCopier.CopyControl.Cancel);
         }
 
         /// <summary>
@@ -141,7 +182,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyResume()
         {
-            FileDublicator.ChangeCopyStatus(Status.Resume);
+            FileCopier.ChangeCopyStatus(FileCopier.CopyControl.Resume);
         }
 
         /// <summary>
@@ -149,7 +190,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopySuspend()
         {
-            FileDublicator.ChangeCopyStatus(Status.Pause);
+            FileCopier.ChangeCopyStatus(FileCopier.CopyControl.Pause);
         }
 
         #endregion
@@ -160,57 +201,85 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets control on the copy thread.
         /// </summary>
         /// <param name="obj"> Expected two strings the source path and destination path. </param>
-        private async void SetupFilesThread(object obj)
+        private void SetupCopyFiles(object obj)
         {
+            this.SkippedFile = new ObservableCollection<CopyInfoModel>();
+            this.CopyReport = new ObservableCollection<CopyInfoModel>();
+
             if (obj is string[] address)
             {
-                // Create the token to cancel the copy operation.
-                tokenSource = new CancellationTokenSource();
-                token = tokenSource.Token;
-
-                // Initial data
                 var source = new DirectoryInfo(address[0]);
                 var destination = new DirectoryInfo(address[1]);
-                var duplicator = new FileDublicator(source, destination);
-
-                try
-                {
-                    // Create a task to copying
-                    var task = Task<bool>.Factory.StartNew(() => duplicator.CreateDirectoryStructure(token), token);
-                    this.taskStatus = task.Status;
-                    bool cancelled = await task.ConfigureAwait(true);
-                }
-                catch (OperationCanceledException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                FileCopier.StartCopyDeep(source.FullName, destination.FullName);
+                FileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
+                FileCopier.CopyFileResault += FileCopier_CopyFileResault;
             }
         }
 
         /// <summary>
-        /// The event handles report data on the copied file.
+        /// The event handle for initailization report a copy progress.
         /// </summary>
-        /// <param name="sender"> Class <see cref="FileDublicator"/> is event initiator. </param>
-        /// <param name="e"> Receives report data on the copied file. </param>
-        private void DirectoryItemsCopyingEvent(object sender, CopyInfoEventArgs e)
+        /// <param name="sender"> The sender is <see cref="FileCopier"/> object. </param>
+        /// <param name="progressInfo"> The copy progress information. </param>
+        private void FileCopier_CopyFileResault(object sender, FileCopier.CopyInfo e)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                this.StartBar = 0;
-                this.DisplayReport(e);
+                if (e.Skipped)
+                {
+                    this.CopyReport.Add(new CopyInfoModel
+                    {
+                        Name = e.Name,
+                        Source = e.Source,
+                        Destination = e.Destination
+                    });
+                }
+                else
+                {
+                    this.SkippedFile.Add(new CopyInfoModel
+                    {
+                        Name = e.Name,
+                        Source = e.Source
+                    });
+                }
             });
         }
 
         /// <summary>
-        /// Initials properties of the ProgressBar control 
-        /// to display information on the copying file. 
+        /// The event handle for initailization report a copy progress.
         /// </summary>
-        /// <param name="e"> Receives report data on the copied file. </param>
-        private void DisplayReport(CopyInfoEventArgs e)
+        /// <param name="sender"> The sender is <see cref="FileCopier"/> object. </param>
+        /// <param name="progressInfo"> The copy progress information. </param>
+        private void FileCopier_CopyProgressReport(object sender, FileCopier.CopyInfo progressInfo)
         {
-            this.CopyReport.Add(e.ProgressBarInfo);
-            this.StartBar = e.ProgressBarInfo.ProgressBar;
-            this.CurrentPercent = e.ProgressBarInfo.ProgressBar;
+            this.CurrentPercent = (int)progressInfo.Percentage;
+            this.AverageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)progressInfo.AverageSpeed), 2) + " Mb/s";
+            this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.ByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalByte)}";
+            this.TimeLeft = ConvertTimeElapsed(progressInfo.TimeLeftRounded, "ru-RU");
+        }
+
+        public static string ConvertTimeElapsed(TimeSpan time, string culture)
+        {
+            string format = "Time left: ";
+            int milliseconds = time.Milliseconds;
+            int seconds = time.Seconds;
+            int minutes = time.Minutes;
+            int hours = time.Hours;
+
+            if (hours != 0)
+            {
+                format += hours + " h.";
+            }
+            if (minutes != 0)
+            {
+                format += hours != 0 ? ", " + minutes + " min." : minutes + " min.";
+            }
+            if (seconds != 0)
+            {
+                format += minutes != 0 ? ", " + seconds + " sec." : seconds + " sec.";
+            }
+
+            return format.Length > 10 ? format : "Calculating..";
         }
 
         #endregion
