@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
@@ -19,6 +19,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.WinDepends\UnityCommander.WinDepends.csproj" />
+    <ProjectReference Include="..\..\UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
+
+<Choose>
+  <When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <ItemGroup>
+      <PackageReference Include="System.Management.Automation">
+        <Version>7.0.3</Version>
+      </PackageReference>
+    </ItemGroup>
+  </When>
+  <When Condition="'$(TargetFramework)' == 'net472'">
+    <ItemGroup>
+      <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
+    </ItemGroup>
+  </When>
+</Choose>
+ 
 </Project>

@@ -7,7 +7,7 @@ namespace UnityCommander.Test
     /// <summary>
     /// The hard drive perf.
     /// </summary>
-    public class HardDrivePerf
+    public class HardDrivePerformance
     {
         #region Common hard drive performance counter.
 
@@ -39,9 +39,9 @@ namespace UnityCommander.Test
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HardDrivePerf"/> class. 
+        /// Initializes a new instance of the <see cref="HardDrivePerformance"/> class. 
         /// </summary>
-        public HardDrivePerf() => this.InitPerformanceCounters();
+        public HardDrivePerformance() => this.InitPerformanceCounters();
 
         /// <summary>
         /// Gets or sets the drive letter.

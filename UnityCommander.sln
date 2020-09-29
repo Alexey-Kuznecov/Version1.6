@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0C605079-A48D-4E64-919A-E796221AB09E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Modules.ModuleName.Tests", "UnityCommander\Tests\UnityCommander.Modules.ModuleName.Tests\UnityCommander.Modules.ModuleName.Tests.csproj", "{9D35A24F-EC63-4748-8C36-81E0B7731CE2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{5FD899C8-D9FE-4084-9E2B-5B555C3532C6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{A2053B60-B6BB-4D66-B49D-ACA7938878FC}"
@@ -34,19 +32,28 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F1A5BCCC-6EEA-4BC9-977A-A733235F86D0}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lab", "Lab", "{30D7551D-E97F-47C2-8E01-2A04C3B5AF63}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{59AC17CB-9A6A-48F1-B1DB-F18561E0079D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Tests", "Lab\UnityCommander.Tests\UnityCommander.Tests.csproj", "{0DF3FD68-D7BB-4F13-BE9E-BB2D37C38810}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laboratory.Works", "Lab\Laboratory.Works\Laboratory.Works.csproj", "{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Test", "Lab\UnityCommander.Test\UnityCommander.Test.csproj", "{5124810B-4629-46C4-A69C-9FAAF0E64858}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Snippets", "Snippets", "{99A4CCD5-E19A-412C-AE5C-4B1248DBF6CA}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\Logger.snippet = ..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\Logger.snippet
+		..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\methods.snippet = ..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\methods.snippet
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.WinDepends", "Lab\UnityCommander.WinDepends\UnityCommander.WinDepends.csproj", "{32232EBA-BA91-45EB-A8EA-26548E1B9999}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nlog", "Nlog", "{7440573D-A989-4FB3-9B14-2D1A81D02E86}"
+	ProjectSection(SolutionItems) = preProject
+		NLog.config = NLog.config
+		NLog.xsd = NLog.xsd
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Test", "Lab\UnityCommander.Test\UnityCommander.Test.csproj", "{6BEB4DFB-6B12-4619-BADD-508D30B82314}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Native", "UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj", "{59480595-09DB-40DE-BC77-2F2D2194EEC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,10 +61,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D35A24F-EC63-4748-8C36-81E0B7731CE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8AACFE0-0A49-4CA2-8558-1FD1A17B0E17}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -94,28 +97,23 @@ Global
 		{E19F99FE-3185-4302-96A8-D08CCA584984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E19F99FE-3185-4302-96A8-D08CCA584984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E19F99FE-3185-4302-96A8-D08CCA584984}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0DF3FD68-D7BB-4F13-BE9E-BB2D37C38810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0DF3FD68-D7BB-4F13-BE9E-BB2D37C38810}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DF3FD68-D7BB-4F13-BE9E-BB2D37C38810}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0DF3FD68-D7BB-4F13-BE9E-BB2D37C38810}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5124810B-4629-46C4-A69C-9FAAF0E64858}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32232EBA-BA91-45EB-A8EA-26548E1B9999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32232EBA-BA91-45EB-A8EA-26548E1B9999}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32232EBA-BA91-45EB-A8EA-26548E1B9999}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32232EBA-BA91-45EB-A8EA-26548E1B9999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{9D35A24F-EC63-4748-8C36-81E0B7731CE2} = {0C605079-A48D-4E64-919A-E796221AB09E}
 		{25EF82CF-DCA5-452C-983B-34830097D77A} = {5FD899C8-D9FE-4084-9E2B-5B555C3532C6}
 		{3A5A42CD-E8DC-4E94-972E-59E100E5903A} = {87368608-CCD0-468D-87FD-FD427A98848A}
 		{479ED3A8-0141-420B-861E-EC89F5185927} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}
@@ -123,11 +121,11 @@ Global
 		{FDC8F3D0-1ABA-4165-AAE2-FD0AFBB195C5} = {5FD899C8-D9FE-4084-9E2B-5B555C3532C6}
 		{C49000D0-3E16-4F42-8D67-5BF650E3E6B9} = {0C605079-A48D-4E64-919A-E796221AB09E}
 		{E19F99FE-3185-4302-96A8-D08CCA584984} = {0C605079-A48D-4E64-919A-E796221AB09E}
-		{59AC17CB-9A6A-48F1-B1DB-F18561E0079D} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
-		{0DF3FD68-D7BB-4F13-BE9E-BB2D37C38810} = {59AC17CB-9A6A-48F1-B1DB-F18561E0079D}
 		{A3B1856B-DE11-47F3-AF59-EEEAD4C36FE8} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
-		{5124810B-4629-46C4-A69C-9FAAF0E64858} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
-		{32232EBA-BA91-45EB-A8EA-26548E1B9999} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
+		{99A4CCD5-E19A-412C-AE5C-4B1248DBF6CA} = {F1A5BCCC-6EEA-4BC9-977A-A733235F86D0}
+		{7440573D-A989-4FB3-9B14-2D1A81D02E86} = {F1A5BCCC-6EEA-4BC9-977A-A733235F86D0}
+		{6BEB4DFB-6B12-4619-BADD-508D30B82314} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
+		{59480595-09DB-40DE-BC77-2F2D2194EEC6} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}

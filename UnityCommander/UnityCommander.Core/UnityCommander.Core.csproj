@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Business\UnityCommander.Business\UnityCommander.Business.csproj" />
+    <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">

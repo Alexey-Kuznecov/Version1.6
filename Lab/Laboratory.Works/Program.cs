@@ -2,13 +2,9 @@
 namespace Laboratory.Works
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
+    using System.Runtime.InteropServices;
 
-    using UnityCommander.WinDepends;
 
     /// <summary>
     /// The program.
@@ -21,44 +17,38 @@ namespace Laboratory.Works
         /// <param name="args"> The args. </param>
         public static void Main(string[] args)
         {
-            List<FileSystemInfo> infos = new List<FileSystemInfo>();
-
-            var process = Process.GetProcessesByName("opera").Select(p => p.Id).ToList();
-
-            // Thread.Sleep(500);
-            infos = new List<FileSystemInfo>();
-
-            using (var openFiles = DetectOpenFiles.GetOpenFilesEnumerator(process[0]))
-            {
-                while (openFiles.MoveNext())
-                {
-                    infos.Add(openFiles.Current);
-                }
-            } // Process.GetCurrentProcess().Id))
-
-            infos.Sort(delegate (FileSystemInfo x, FileSystemInfo y)
-            {
-                string strX = x.FullName.Substring(0, 5);
-                string strY = y.FullName.Substring(0, 5);
-                return string.Compare(strX, strY, StringComparison.Ordinal);
-            });
-
-            foreach (var fileSystem in infos)
-            {
-                Console.WriteLine(fileSystem.FullName);
-            }
-
-            Console.WriteLine();
             Console.ReadKey();
         }
 
-        public static void CalledMethod()
-        {
-            var frame = new StackFrame(1);
+        /// <summary>
+        /// The get foreground window.
+        /// </summary>
+        /// <returns> The <see cref="IntPtr"/>. </returns>
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
 
-            Console.WriteLine("Called by method '{0}' of class '{1}'",
-                frame.GetMethod(),
-                frame.GetMethod().DeclaringType.Name);
+        /// <summary>
+        /// The get window thread process id.
+        /// </summary>
+        /// <param name="hwnd"> The hwnd. </param>
+        /// <param name="pid"> The pid. </param>
+        /// <returns> The <see cref="uint"/>. </returns>
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hwnd, ref int pid);
+
+        /// <summary>
+        /// The method.
+        /// </summary>
+        public static void Method()
+        {
+            int pid = 1464;
+
+            GetWindowThreadProcessId(GetForegroundWindow(), ref pid);
+            Process process = Process.GetProcessById(pid);
+
+            var desc = process.MainModule?.FileVersionInfo.FileDescription;
+            var title = process.MainWindowTitle;
+            var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.MainModule.FileName);
         }
     }
 }

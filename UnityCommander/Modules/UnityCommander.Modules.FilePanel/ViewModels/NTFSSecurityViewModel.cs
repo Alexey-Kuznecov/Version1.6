@@ -1,10 +1,8 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.IO;
-    using System.Security.AccessControl;
 
     using Prism.Mvvm;
     using UnityCommander.Core.IO;

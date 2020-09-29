@@ -9,11 +9,12 @@
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
     using GongSolutions.Wpf.DragDrop;
-    using Prism.Mvvm;
+
     using Prism.Regions;
     using UnityCommander.Business;
     using UnityCommander.Core.Mvvm;
@@ -30,12 +31,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<FileModel> fileList;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
+        /// Initializes a new instance of the <see cref="RightPanelViewModel"/> class.
         /// </summary>
+        /// <param name="regionManager">
+        /// The region Manager.
+        /// </param>
+        /// <param name="filesProvider">
+        /// The files Provider.
+        /// </param>
         public RightPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
             base(regionManager)
         {
-            FileList = filesProvider.GetFiles("e:\\");
+            var rightPanelPath = @"\Works\UnitTests\Source";
+
+            string[] Drives = Environment.GetLogicalDrives();
+            foreach (string drive in Drives)
+            {
+                var path = drive + rightPanelPath;
+
+                if (Directory.Exists(path))
+                {
+                    this.FileList = filesProvider.GetFiles(path);
+                }
+            }
         }
 
         /// <summary>

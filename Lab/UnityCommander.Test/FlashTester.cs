@@ -47,7 +47,7 @@ namespace UnityCommander.Test
             {
                 int appendIterations = this.testFileSize / 100000;
                 
-                string runText = "Running a " + this.testFileSize/1000000 + "MB file write on drive "
+                string runText = "Running a " + this.testFileSize / 1000000 + "MB file write on drive "
                     + this.testDriveLetter + " " + this.testIterations + " times...";
                 Console.WriteLine(runText);
                 

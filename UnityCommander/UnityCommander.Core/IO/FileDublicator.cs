@@ -30,7 +30,7 @@ namespace UnityCommander.Core.IO
         /// </summary>
         Cancel = 2
     }
-
+    
     /// <summary>
     /// The file duplicator.
     /// </summary>
@@ -143,7 +143,7 @@ namespace UnityCommander.Core.IO
         /// <summary>
         /// Gets or sets a value indicating whether to copy whether file/folder ntfs rights.
         /// </summary>
-        public static bool IncludeNTFSRights { get; set; }
+        public static bool IncludeNtfsRights { get; set; }
 
         #region Event Invocators
 
@@ -197,25 +197,6 @@ namespace UnityCommander.Core.IO
         #region Public Methods
 
         /// <summary>
-        /// The calc total size file.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <returns>
-        /// The <see cref="long"/>.
-        /// </returns>
-        public long CalcTotalSizeFile(string path)
-        {
-            foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
-            {
-                var fileInfo = new FileInfo(path);
-            }
-
-            return 0;
-        }
-
-        /// <summary>
         /// This method can stop, resume, or cancel the copy altogether.
         /// </summary>
         /// <param name="changeOn"> Select status to change copy behavior. </param>
@@ -260,7 +241,6 @@ namespace UnityCommander.Core.IO
         /// </summary>
         /// <param name="source"> The source of the files. </param>
         /// <param name="destination"> The destination of the files. </param>
-        [SuppressMessage("ReSharper", "StyleCop.SA1503")]
         public void CopyFileByte(string source, string destination)
         {
             FileStream inFileStream = this.SafetyOpenFile(source, destination);
@@ -313,7 +293,7 @@ namespace UnityCommander.Core.IO
         /// <param name="path"> Expected the path to the file. </param>
         private static void RestoreNtfsRightsCopyStopEvent(object sender, object path)
         {
-            if (IncludeNTFSRights)
+            if (IncludeNtfsRights)
             {
                 NTFSSecurity.AddAccessRuleList((string)path, accountModel.Accounts);
             }
@@ -327,7 +307,7 @@ namespace UnityCommander.Core.IO
         /// <param name="e"> Expected the path to the file. </param>
         private static void BackupNtfsRightsCopyStartEvent(object sender, object e)
         {
-            if (IncludeNTFSRights)
+            if (IncludeNtfsRights)
             {
                 string path = (string)e;
                 accountModel = new NTFSAccountModel
