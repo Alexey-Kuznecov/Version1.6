@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Models\IconModel.cs~RF55d2a94.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logger\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\lexa1\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config" Link="Logger\NLog.config">
+      <Private>True</Private>
+      <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <NuGetItemType>None</NuGetItemType>
+      <TargetPath>NLog.config</TargetPath>
+      <NuGetPackageId>NLog.Config</NuGetPackageId>
+    </None>
+    <None Include="C:\Users\lexa1\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd" Link="Logger\NLog.xsd">
+      <Private>False</Private>
+      <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
+      <NuGetItemType>None</NuGetItemType>
+      <NuGetPackageId>NLog.Schema</NuGetPackageId>
+    </None>
+  </ItemGroup>
+
+</Project>

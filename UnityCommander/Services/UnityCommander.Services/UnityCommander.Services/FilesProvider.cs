@@ -3,8 +3,7 @@ namespace UnityCommander.Services
 {
     using System.Collections.ObjectModel;
     using System.IO;
-
-    using UnityCommander.Business;
+    using UnityCommander.Common.Models;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>

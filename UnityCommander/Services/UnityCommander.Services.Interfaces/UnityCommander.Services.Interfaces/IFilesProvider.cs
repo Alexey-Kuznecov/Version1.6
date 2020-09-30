@@ -2,7 +2,7 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.ObjectModel;
-    using UnityCommander.Business;
+    using UnityCommander.Common.Models;
 
     /// <summary>
     /// The FilesProvider interface.

@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Test
+namespace UnityCommander.Core.Helper
 {
     using System;
 

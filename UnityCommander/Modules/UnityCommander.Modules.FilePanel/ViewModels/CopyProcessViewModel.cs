@@ -12,17 +12,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.Globalization;
     using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
     using System.Windows;
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
     using UnityCommander.Core;
+    using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
-    using UnityCommander.Test;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.

@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Business
+namespace UnityCommander.Api.Models
 {
     /// <summary>
     /// The file model.

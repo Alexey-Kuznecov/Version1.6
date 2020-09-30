@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Core
+namespace UnityCommander.Test
 {
     using System;
     using System.Diagnostics;

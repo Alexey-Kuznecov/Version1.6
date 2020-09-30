@@ -17,9 +17,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using GongSolutions.Wpf.DragDrop;
 
     using Prism.Regions;
-
-    using UnityCommander.Business;
+    using UnityCommander.Common.Models;
     using UnityCommander.Core.Mvvm;
+    using UnityCommander.Integration.Contracts;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
 
@@ -39,13 +39,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<FileModel> fileList;
 
         /// <summary>
+        /// The icons.
+        /// </summary>
+        private ObservableCollection<IconModel> icons;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
         /// </summary>
         /// <param name="regionManager">
-        /// The region Manager.
+        /// The region manager.
         /// </param>
         /// <param name="filesProvider">
-        /// The files Provider.
+        /// The files provider.
         /// </param>
         public LeftPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
             base(regionManager)
@@ -63,6 +68,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.FileList = filesProvider.GetFiles(path);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the icons.
+        /// </summary>
+        public ObservableCollection<IconModel> Icons
+        {
+            get => this.icons;
+            set => this.SetProperty(ref this.icons, value);
         }
 
         /// <summary>

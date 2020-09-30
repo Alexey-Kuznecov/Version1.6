@@ -16,7 +16,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using GongSolutions.Wpf.DragDrop;
 
     using Prism.Regions;
-    using UnityCommander.Business;
+
+    using UnityCommander.Common.Models;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Services.Interfaces;
 
