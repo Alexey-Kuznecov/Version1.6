@@ -19,7 +19,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Regions;
     using UnityCommander.Common.Models;
     using UnityCommander.Core.Mvvm;
-    using UnityCommander.Integration.Contracts;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
 
@@ -39,9 +38,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<FileModel> fileList;
 
         /// <summary>
-        /// The icons.
+        /// The directoryList.
         /// </summary>
-        private ObservableCollection<IconModel> icons;
+        private ObservableCollection<DirectoryModel> directoryList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
@@ -49,11 +48,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="regionManager">
         /// The region manager.
         /// </param>
-        /// <param name="filesProvider">
+        /// <param name="directoryProvider">
         /// The files provider.
         /// </param>
-        public LeftPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
-            base(regionManager)
+        public LeftPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
+            : base(regionManager)
         {
             this.copyDialog = new CopyDialogView();
             string rightPanelPath = @"Works\UnitTests\";
@@ -65,18 +64,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                 if (Directory.Exists(path))
                 {
-                    this.FileList = filesProvider.GetFiles(path);
+                    this.FileList = directoryProvider.GetFiles(path);
+                    this.DirectoryList = directoryProvider.GetDirectories(path);
                 }
             }
         }
 
         /// <summary>
-        /// Gets or sets the icons.
+        /// Gets or sets the directory list.
         /// </summary>
-        public ObservableCollection<IconModel> Icons
+        public ObservableCollection<DirectoryModel> DirectoryList
         {
-            get => this.icons;
-            set => this.SetProperty(ref this.icons, value);
+            get => this.directoryList;
+            set => this.SetProperty(ref this.directoryList, value);
         }
 
         /// <summary>
@@ -117,8 +117,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             // targetItem.Add(sourceItem);
             if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
             {
-                dialogViewModel.Source = (dropInfo.Data as FileModel)?.FullName;
-                dialogViewModel.Target = (dropInfo.TargetItem as FileModel)?.FullName;
+                dialogViewModel.Source = (dropInfo.Data as DirectoryBase)?.Name;
+                dialogViewModel.Target = (dropInfo.TargetItem as DirectoryBase)?.Name;
             }
 
             this.copyDialog.ShowDialog();

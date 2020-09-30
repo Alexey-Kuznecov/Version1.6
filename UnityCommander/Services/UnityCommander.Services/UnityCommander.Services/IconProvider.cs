@@ -2,7 +2,8 @@
 namespace UnityCommander.Services
 {
     using System.Collections.ObjectModel;
-    using UnityCommander.Integration.Contracts;
+
+    using UnityCommander.Common.Models;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
@@ -16,7 +17,7 @@ namespace UnityCommander.Services
         /// <returns>
         /// Icons collection.
         /// </returns>
-        public ObservableCollection<IIcon> GetIcons()
+        public ObservableCollection<IconModel> GetIcons()
         {
             return null;
         }

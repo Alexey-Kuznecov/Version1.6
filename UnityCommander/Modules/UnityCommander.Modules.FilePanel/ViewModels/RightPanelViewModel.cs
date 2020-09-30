@@ -37,10 +37,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="regionManager">
         /// The region Manager.
         /// </param>
-        /// <param name="filesProvider">
+        /// <param name="directoryProvider">
         /// The files Provider.
         /// </param>
-        public RightPanelViewModel(IRegionManager regionManager, IFilesProvider filesProvider) :
+        public RightPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) :
             base(regionManager)
         {
             var rightPanelPath = @"\Works\UnitTests\Source";
@@ -52,7 +52,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                 if (Directory.Exists(path))
                 {
-                    this.FileList = filesProvider.GetFiles(path);
+                    this.FileList = directoryProvider.GetFiles(path);
                 }
             }
         }

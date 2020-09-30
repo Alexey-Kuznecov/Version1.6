@@ -10,10 +10,10 @@
             dd:DragDrop.DropHandler="{Binding}"
             dd:DragDrop.IsDragSource="True"
             dd:DragDrop.IsDropTarget="True"
-            ItemsSource="{Binding FileList, Mode=TwoWay}">
+            ItemsSource="{Binding DirectoryList, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding FileName}" />
+                    <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

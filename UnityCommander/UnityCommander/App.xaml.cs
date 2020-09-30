@@ -36,7 +36,7 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IFilesProvider, FilesProvider>();
+            containerRegistry.Register<IDirectoryProvider, DirectoryProvider>(); 
         }
 
         /// <summary>

@@ -3,7 +3,7 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.ObjectModel;
-    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Common.Models;
 
     /// <summary>
     /// The i icon provider.
@@ -16,6 +16,6 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// The <see cref="ObservableCollection"/>.
         /// </returns>
-        ObservableCollection<IIcon> GetIcons();
+        ObservableCollection<IconModel> GetIcons();
     }
 }
