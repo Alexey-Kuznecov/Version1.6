@@ -59,11 +59,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconMaker", "Other\IconMake
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AkuzLib", "Other\AkuzLib\AkuzLib\AkuzLib.csproj", "{481B0A93-2F9E-4247-9263-0FFF0F374B8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Integration", "UnityCommander\Business\UnityCommander.Integration\UnityCommander.Integration.csproj", "{5F73C07C-F992-40EF-BED3-10BD105CE96E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Integration", "UnityCommander\Business\UnityCommander.Integration\UnityCommander.Integration.csproj", "{5F73C07C-F992-40EF-BED3-10BD105CE96E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlkuzLib", "UnityCommander\Business\AlkuzLib\AlkuzLib.csproj", "{FEAC4DE4-DCCB-43E4-9727-DB40839A154C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlkuzLib", "UnityCommander\Business\AlkuzLib\AlkuzLib.csproj", "{FEAC4DE4-DCCB-43E4-9727-DB40839A154C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Common", "UnityCommander\Business\UnityCommander.Common\UnityCommander.Common.csproj", "{E149669B-498A-427F-AC07-2436DD5F130A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Common", "UnityCommander\Business\UnityCommander.Common\UnityCommander.Common.csproj", "{E149669B-498A-427F-AC07-2436DD5F130A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander", "..\Version1.3\UnityCommander\UnityCommander\UnityCommander.csproj", "{181AB0AE-76E0-4DA4-8E39-7A443578F31F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{CAE06C48-FB47-4EEC-96AC-9B4D401335FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImagesColumns", "UnityCommander\Plugins\ImagesColumns\ImagesColumns.csproj", "{9218621A-CA8F-4FB2-81DD-111354CAA4FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingItemResize", "..\..\Examples\DragCanvasResize\SettingItemResize.csproj", "{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -168,6 +176,24 @@ Global
 		{E149669B-498A-427F-AC07-2436DD5F130A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E149669B-498A-427F-AC07-2436DD5F130A}.soft|Any CPU.ActiveCfg = Release|Any CPU
 		{E149669B-498A-427F-AC07-2436DD5F130A}.soft|Any CPU.Build.0 = Release|Any CPU
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.soft|Any CPU.ActiveCfg = Debug|Any CPU
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.soft|Any CPU.Build.0 = Debug|Any CPU
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.soft|Any CPU.ActiveCfg = Release|Any CPU
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.soft|Any CPU.Build.0 = Release|Any CPU
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}.soft|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B}.soft|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -189,6 +215,9 @@ Global
 		{5F73C07C-F992-40EF-BED3-10BD105CE96E} = {87368608-CCD0-468D-87FD-FD427A98848A}
 		{FEAC4DE4-DCCB-43E4-9727-DB40839A154C} = {87368608-CCD0-468D-87FD-FD427A98848A}
 		{E149669B-498A-427F-AC07-2436DD5F130A} = {87368608-CCD0-468D-87FD-FD427A98848A}
+		{181AB0AE-76E0-4DA4-8E39-7A443578F31F} = {78EA39F3-66A7-402B-8A94-EA8675434233}
+		{9218621A-CA8F-4FB2-81DD-111354CAA4FB} = {CAE06C48-FB47-4EEC-96AC-9B4D401335FC}
+		{DBD04C84-61AA-4BFF-B3C3-C7E4704B561B} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}

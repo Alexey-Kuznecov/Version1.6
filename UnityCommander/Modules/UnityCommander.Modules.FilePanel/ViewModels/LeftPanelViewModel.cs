@@ -13,9 +13,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
-
     using GongSolutions.Wpf.DragDrop;
-
     using Prism.Regions;
     using UnityCommander.Common.Models;
     using UnityCommander.Core.Mvvm;
@@ -96,7 +94,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
-            if (dropInfo.Data is FileModel && dropInfo.TargetItem is FileModel)
+            var source = dropInfo.Data as DirectoryBase;
+
+            if (source != null && dropInfo.TargetItem is DirectoryBase target)
             {
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
                 dropInfo.Effects = DragDropEffects.Copy;
@@ -111,14 +111,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         void IDropTarget.Drop(IDropInfo dropInfo)
         {
-            FileModel sourceItem = dropInfo.Data as FileModel;
-            FileModel targetItem = dropInfo.TargetItem as FileModel;
+            DirectoryBase sourceItem = dropInfo.Data as DirectoryBase;
+            DirectoryBase targetItem = dropInfo.TargetItem as DirectoryBase;
             
             // targetItem.Add(sourceItem);
             if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
             {
-                dialogViewModel.Source = (dropInfo.Data as DirectoryBase)?.Name;
-                dialogViewModel.Target = (dropInfo.TargetItem as DirectoryBase)?.Name;
+                dialogViewModel.Source = (dropInfo.Data as DirectoryBase)?.Path;
+                dialogViewModel.Target = (dropInfo.TargetItem as DirectoryBase)?.Path;
             }
 
             this.copyDialog.ShowDialog();
