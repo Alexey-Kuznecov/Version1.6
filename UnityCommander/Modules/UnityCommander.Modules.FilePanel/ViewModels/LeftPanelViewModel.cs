@@ -11,24 +11,44 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+
     using GongSolutions.Wpf.DragDrop;
+
+    using Prism.Commands;
     using Prism.Regions;
     using UnityCommander.Common.Models;
+    using UnityCommander.Core.IO;
     using UnityCommander.Core.Mvvm;
+    using UnityCommander.Integration.Contracts;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The left panel view model.
     /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class LeftPanelViewModel : RegionViewModelBase, IDropTarget
     {
+        /// <summary>
+        /// The directory provider.
+        /// </summary>
+        private static IDirectoryProvider directoryProviderManager;
+
         /// <summary>
         /// The copy dialog.
         /// </summary>
         private readonly CopyDialogView copyDialog;
+
+        /// <summary>
+        /// The invoker.
+        /// </summary>
+        private readonly NavigationInvoker invoker;
 
         /// <summary>
         /// The file list.
@@ -44,14 +64,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
         /// </summary>
         /// <param name="regionManager">
-        /// The region manager.
+        /// The region manager is Prism implementation.
         /// </param>
         /// <param name="directoryProvider">
-        /// The files provider.
+        /// The service that provides the files system items.
         /// </param>
         public LeftPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
             : base(regionManager)
         {
+            directoryProviderManager = directoryProvider;
+
             this.copyDialog = new CopyDialogView();
             string rightPanelPath = @"Works\UnitTests\";
 
@@ -62,11 +84,25 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                 if (Directory.Exists(path))
                 {
-                    this.FileList = directoryProvider.GetFiles(path);
-                    this.DirectoryList = directoryProvider.GetDirectories(path);
+                    this.FileList = directoryProviderManager.GetFiles(path);
+                    this.DirectoryList = directoryProviderManager.GetDirectories(path);
                 }
             }
+
+            this.invoker = new NavigationInvoker();
         }
+
+        /// <summary>
+        /// The go to directory.
+        /// </summary>
+        public DelegateCommand<DirectoryModel> GotoDirectory => new DelegateCommand<DirectoryModel>(dir =>
+        {
+            if (dir == null) return;
+            this.DirectoryList = directoryProviderManager.GetDirectories(dir.Path);
+            this.FileList = directoryProviderManager.GetFiles(dir.Path);
+            
+            invoker.Display(dir.Path);
+        });
 
         /// <summary>
         /// Gets or sets the directory list.
@@ -94,9 +130,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
-            var source = dropInfo.Data as DirectoryBase;
-
-            if (source != null && dropInfo.TargetItem is DirectoryBase target)
+            if (dropInfo.Data is DirectoryBase source && dropInfo.TargetItem is DirectoryBase target)
             {
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
                 dropInfo.Effects = DragDropEffects.Copy;

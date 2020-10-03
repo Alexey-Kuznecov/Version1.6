@@ -78,6 +78,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
             this.ResumeCommand = new DelegateCommand(this.CopyResume);
+
         }
 
         #endregion

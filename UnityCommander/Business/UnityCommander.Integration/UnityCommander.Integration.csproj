@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Contracts\INavigator.cs~RF2ba06c3.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AlkuzLib\AlkuzLib.csproj" />
   </ItemGroup>
 </Project>

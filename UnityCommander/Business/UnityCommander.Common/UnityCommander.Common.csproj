@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Models\DirectoryPathModel.cs~RF86a07a.TMP" />
     <None Remove="Models\IconModel.cs~RF55d2a94.TMP" />
   </ItemGroup>
 
