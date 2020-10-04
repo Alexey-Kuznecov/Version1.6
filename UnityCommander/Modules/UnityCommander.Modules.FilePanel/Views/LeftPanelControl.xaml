@@ -17,35 +17,59 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        <Canvas Grid.Row="3">
-            <p:Navigator Width="350" Height="30" />
-        </Canvas>
+        <ContentControl Grid.Row="3" Content="{Binding Navigator, Mode=TwoWay}" />
         <GridSplitter
             Grid.Row="1"
-            Grid.ColumnSpan="3"
             Height="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center" />
-        <ListBox
-            Grid.Row="0"
-            Margin="10"
-            dd:DragDrop.DropHandler="{Binding Mode=Default}"
-            dd:DragDrop.IsDragSource="True"
-            dd:DragDrop.IsDropTarget="True"
-            ItemsSource="{Binding DirectoryList, Mode=OneWay}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding GotoDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <WrapPanel>
-                        <TextBlock Text="{Binding Name, Mode=OneWay}" />
-                    </WrapPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Border
+                Grid.Row="0"
+                Background="#5D6B99">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Grid.Column="0"
+                        Width="100"
+                        Margin="0"
+                        Background="{x:Null}"
+                        BorderBrush="{x:Null}"
+                        Content="Back"
+                        Foreground="#E8E8EC" />
+                </Grid>
+            </Border>
+            <ListBox
+                Grid.Row="1"
+                Margin="10"
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
+                dd:DragDrop.IsDropTarget="True"
+                ItemsSource="{Binding DirectoryList, Mode=OneWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding GotoDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <TextBlock Text="{Binding Name, Mode=OneWay}" />
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
         <ListBox
             Grid.Row="2"
             Margin="10"

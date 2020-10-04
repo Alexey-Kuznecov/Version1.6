@@ -36,19 +36,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class LeftPanelViewModel : RegionViewModelBase, IDropTarget
     {
         /// <summary>
-        /// The directory provider.
-        /// </summary>
-        private static IDirectoryProvider directoryProviderManager;
-
-        /// <summary>
         /// The copy dialog.
         /// </summary>
         private readonly CopyDialogView copyDialog;
 
         /// <summary>
-        /// The invoker.
+        /// Previous a directory path.
         /// </summary>
-        private readonly NavigationInvoker invoker;
+        private string previousDirectory;
+
+        /// <summary>
+        /// The directory provider.
+        /// </summary>
+        private IDirectoryProvider directoryProviderManager;
+
+        /// <summary>
+        /// The invoker class instance.
+        /// </summary>
+        public NavigationInvoker invoker;
 
         /// <summary>
         /// The file list.
@@ -59,6 +64,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The directoryList.
         /// </summary>
         private ObservableCollection<DirectoryModel> directoryList;
+
+        /// <summary>
+        /// The navigator.
+        /// </summary>
+        private INavigator navigator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
@@ -72,7 +82,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public LeftPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
             : base(regionManager)
         {
-            directoryProviderManager = directoryProvider;
+            this.invoker = new NavigationInvoker();
+            this.directoryProviderManager = directoryProvider;
 
             this.copyDialog = new CopyDialogView();
             string rightPanelPath = @"Works\UnitTests\";
@@ -88,9 +99,30 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.DirectoryList = directoryProviderManager.GetDirectories(path);
                 }
             }
-
-            this.invoker = new NavigationInvoker();
         }
+
+        /// <summary>
+        /// Gets or sets the UI collection.
+        /// </summary>
+        public INavigator Navigator
+        {
+            get => this.navigator;
+            set 
+            {
+                previousDirectory = value.PreviousDirectory;
+                this.SetProperty(ref this.navigator, value); 
+            }
+        }
+
+        /// <summary>
+        /// Previous a directory path.
+        /// </summary>
+        public string PrevDir { get; }
+
+        /// <summary>
+        /// Next a directory path.
+        /// </summary>
+        public string NextDir { get; }
 
         /// <summary>
         /// The go to directory.
@@ -100,8 +132,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             if (dir == null) return;
             this.DirectoryList = directoryProviderManager.GetDirectories(dir.Path);
             this.FileList = directoryProviderManager.GetFiles(dir.Path);
-            
-            invoker.Display(dir.Path);
+            Navigator = invoker.Add(dir.Path);
+        });
+
+        /// <summary>
+        /// The go to directory.
+        /// </summary>
+        public DelegateCommand PreviousDirectory => new DelegateCommand(() =>
+        {
+            invoker.Previous();
         });
 
         /// <summary>

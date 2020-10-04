@@ -17,7 +17,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"
             ShowsPreview="False" />
-        <ContentControl>
+        <ContentControl Grid.Column="0">
             <ContentControl.Content>
                 <local:LeftPanelView />
             </ContentControl.Content>

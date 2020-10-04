@@ -1,11 +1,12 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel
 {
+    using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Data;
 
     using UnityCommander.Integration.Contracts;
 
@@ -47,7 +48,7 @@ namespace UnityCommander.Modules.FilePanel
         /// </summary>
         /// <param name="receiver"> The receiver. </param>
         /// <param name="path"> The path. </param>
-        public NavigationCommand(INavigator receiver, string path)
+        public NavigationCommand(ref INavigator receiver, string path)
         {
             this.navigator = receiver;
             this.path = path;
@@ -73,13 +74,17 @@ namespace UnityCommander.Modules.FilePanel
     /// <summary>
     /// Knows how to perform the operations associated with carrying out the request.
     /// </summary>
-    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class Navigator : Panel, INavigator
     {
         /// <summary>
-        /// The singleton.
+        /// The bonded property.
         /// </summary>
-        private static byte singleton;
+        public static readonly DependencyProperty BondedProperty;
+
+        /// <summary>
+        /// The back path property.
+        /// </summary>
+        public static readonly DependencyProperty PreviousDirectoryProperty;
 
         /// <summary>
         /// The margin.
@@ -87,25 +92,41 @@ namespace UnityCommander.Modules.FilePanel
         private static double margin;
 
         /// <summary>
-        /// The bind.
+        /// Initializes static members of the <see cref="Navigator"/> class.
         /// </summary>
-        private static Binding bind;
-
-        /// <summary>
-        /// The removed.
-        /// </summary>
-        private readonly List<UIElement> removed;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Navigator"/> class.
-        /// </summary>
-        public Navigator()
-            : base()
+        static Navigator()
         {
-            bind = new Binding("InternalChildren") { Source = this };
-            singleton++;
+            BondedProperty = DependencyProperty.Register(
+                "Bonded",
+                typeof(ObservableCollection<UIElement>),
+                typeof(Navigator),
+                new FrameworkPropertyMetadata(
+                    new ObservableCollection<UIElement>(),
+                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange,
+                    new PropertyChangedCallback(OnBondedChanged),
+                    new CoerceValueCallback(CoerceBonded)));
 
-            this.removed = new List<UIElement>();
+            PreviousDirectoryProperty = DependencyProperty.Register(
+                "PreviousDirectory",
+                typeof(string),
+                typeof(Navigator),
+                new FrameworkPropertyMetadata(null,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange));
+        }
+
+        public string PreviousDirectory
+        {
+            get => (string)GetValue(PreviousDirectoryProperty);
+            set => this.SetValue(PreviousDirectoryProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the bonded.
+        /// </summary>
+        public ObservableCollection<UIElement> Bonded
+        {
+            get => (ObservableCollection<UIElement>)GetValue(BondedProperty);
+            set => this.SetValue(BondedProperty, value);
         }
 
         /// <summary>
@@ -116,9 +137,7 @@ namespace UnityCommander.Modules.FilePanel
         /// </param>
         public void Back(string path)
         {
-            if (bind.Source is Navigator navigator)
-            {
-            }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -127,20 +146,18 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="path"> The <c>path</c>. </param>
         public void Next(string path)
         {
-            if (bind.Source is Navigator navigator)
-            {
-                navigator.InternalChildren.Clear();
-                margin = 0;
+            InternalChildren.Clear();
+            margin = 0;
+            string[] slp = path.Split('\\');
 
-                string[] slp = path.Split('\\');
-                foreach (var item in slp)
+            foreach (var item in slp)
+            {
+                Button button = new Button
                 {
-                    Button button = new Button
-                    {
-                        Height = 25, Content = item
-                    };
-                    navigator.InternalChildren.Add(button);
-                }
+                    Height = 25, Content = item
+                };
+
+                InternalChildren.Add(button);
             }
         }
 
@@ -159,7 +176,7 @@ namespace UnityCommander.Modules.FilePanel
         protected override Size MeasureOverride(Size availableSize)
         {
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
-
+          
             // In our example, we just have one child. 
             // Report that our panel requires just the size of its only child.
             foreach (UIElement child in this.InternalChildren)
@@ -185,7 +202,7 @@ namespace UnityCommander.Modules.FilePanel
         {
             margin = 0;
 
-            for (var index = 0; index < this.InternalChildren.Count; index++)
+            for (var index = 0; index < InternalChildren.Count; index++)
             {
                 UIElement child = this.InternalChildren[index];
                 child.Arrange(new Rect(new Point(margin, 10), child.DesiredSize));
@@ -193,13 +210,32 @@ namespace UnityCommander.Modules.FilePanel
 
                 if (margin - 10 > finalSize.Width)
                 {
-                    this.removed.Add(child);
-                    this.InternalChildren.RemoveAt(0);
+                    this.InternalChildren.RemoveAt(1);
                 }
             }
 
             // Returns the final Arranged size
             return finalSize;
+        }
+
+        /// <summary>
+        /// The coerce bonded.
+        /// </summary>
+        /// <param name="d"> The d. </param>
+        /// <param name="basevalue"> The <c>base</c> value. </param>
+        /// <returns> The <see cref="object"/>. </returns>
+        private static object CoerceBonded(DependencyObject d, object basevalue)
+        {
+            return basevalue;
+        }
+
+        /// <summary>
+        /// The on bonded changed.
+        /// </summary>
+        /// <param name="d"> The d. </param>
+        /// <param name="e"> The e. </param>
+        private static void OnBondedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
         }
     }
 
@@ -209,14 +245,14 @@ namespace UnityCommander.Modules.FilePanel
     public class NavigationInvoker
     {
         /// <summary>
-        /// The navigator.
-        /// </summary>
-        private readonly INavigator navigator = new Navigator();
-        
-        /// <summary>
         /// The directory traversal history.
         /// </summary>
         private readonly List<Command> history = new List<Command>();
+
+        /// <summary>
+        /// The navigator.
+        /// </summary>
+        private INavigator navigator = new Navigator();
 
         /// <summary>
         /// The current index or path.
@@ -236,7 +272,7 @@ namespace UnityCommander.Modules.FilePanel
         /// <summary>
         /// Redo the command if possible.
         /// </summary>
-        public void Redo()
+        public void Next()
         {
             if (!this.CanRedo)
             {
@@ -249,40 +285,36 @@ namespace UnityCommander.Modules.FilePanel
         /// <summary>
         /// Undo the command if possible.
         /// </summary>
-        public void Undo()
+        public void Previous()
         {
-            if (!this.CanUndo || --this.currentIndex < 0)
+            if (this.CanUndo || --this.currentIndex > 0)
             {
-                return;
+                this.history[this.currentIndex]?.UnExecute();
             }
-
-            this.history[this.currentIndex]?.UnExecute();
         }
 
         /// <summary>
         /// Add the command if possible.
         /// </summary>
-        /// <param name="dirPath"> The directory path. </param>
-        public void Add(string dirPath)
+        /// <param name="dirPath">
+        /// The directory path. 
+        /// </param>
+        /// <returns>
+        /// The <see cref="INavigator"/>.
+        /// </returns>
+        public INavigator Add(string dirPath)
         {
-            Command command = new NavigationCommand(this.navigator, dirPath);
+            Command command = new NavigationCommand(ref this.navigator, dirPath);
             this.currentIndex++;
             this.history.Add(command);
+            this.history[this.currentIndex]?.Execute();
             if (this.currentIndex > 10)
             {
                 this.currentIndex = 11;
                 this.history.RemoveAt(0);
             }
-        }
 
-        /// <summary>
-        /// The display path in the UI.
-        /// </summary>
-        /// <param name="dirPath"> The directory path. </param>
-        public void Display(string dirPath)
-        {
-            this.Add(dirPath);
-            this.history[this.currentIndex]?.Execute();
+            return this.navigator;
         }
     }
 }

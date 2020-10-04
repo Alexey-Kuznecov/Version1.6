@@ -6,6 +6,11 @@ namespace UnityCommander.Integration.Contracts
     /// </summary>
     public interface INavigator
     {
+        /// <summary> 
+        /// The pack path.  
+        /// </summary>
+        string PreviousDirectory { get; }
+
         /// <summary>
         /// The back.
         /// </summary>

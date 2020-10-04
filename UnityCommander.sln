@@ -39,8 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laboratory.Works", "Lab\Lab
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Snippets", "Snippets", "{99A4CCD5-E19A-412C-AE5C-4B1248DBF6CA}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\Logger.snippet = ..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\Logger.snippet
-		..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\methods.snippet = ..\..\Documents\Visual Studio 2019\Code Snippets\Visual C#\My Code Snippets\methods.snippet
+		Property.snippet = Property.snippet
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nlog", "Nlog", "{7440573D-A989-4FB3-9B14-2D1A81D02E86}"
