@@ -9,7 +9,7 @@ namespace UnityCommander.Integration.Contracts
         /// <summary> 
         /// The pack path.  
         /// </summary>
-        string PreviousDirectory { get; }
+        string PreviousDirectory { get; set; }
 
         /// <summary>
         /// The back.

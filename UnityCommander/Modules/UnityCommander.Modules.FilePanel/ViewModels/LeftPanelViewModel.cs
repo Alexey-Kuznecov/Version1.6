@@ -11,28 +11,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
 
     using GongSolutions.Wpf.DragDrop;
 
     using Prism.Commands;
     using Prism.Regions;
     using UnityCommander.Common.Models;
-    using UnityCommander.Core.IO;
+    using UnityCommander.Core.Commands;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Modules.FilePanel.Commands;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The left panel view model.
     /// </summary>
-    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class LeftPanelViewModel : RegionViewModelBase, IDropTarget
     {
         /// <summary>
@@ -40,20 +36,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private readonly CopyDialogView copyDialog;
 
-        /// <summary>
-        /// Previous a directory path.
-        /// </summary>
-        private string previousDirectory;
-
-        /// <summary>
-        /// The directory provider.
-        /// </summary>
-        private IDirectoryProvider directoryProviderManager;
 
         /// <summary>
         /// The invoker class instance.
         /// </summary>
-        public NavigationInvoker invoker;
+        private readonly NavigationInvoker invoker;
+
+        /// <summary>
+        /// The directory provider.
+        /// </summary>
+        private readonly IDirectoryProvider directoryProviderManager;
+
+        /// <summary>
+        /// Previous a directory path.
+        /// </summary>
+        private string previousDirectory;
 
         /// <summary>
         /// The file list.
@@ -95,8 +92,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                 if (Directory.Exists(path))
                 {
-                    this.FileList = directoryProviderManager.GetFiles(path);
-                    this.DirectoryList = directoryProviderManager.GetDirectories(path);
+                    this.FileList = this.directoryProviderManager.GetFiles(path);
+                    this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
                 }
             }
         }
@@ -109,38 +106,41 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             get => this.navigator;
             set 
             {
-                previousDirectory = value.PreviousDirectory;
+                this.previousDirectory = value.PreviousDirectory;
                 this.SetProperty(ref this.navigator, value); 
             }
         }
-
-        /// <summary>
-        /// Previous a directory path.
-        /// </summary>
-        public string PrevDir { get; }
-
-        /// <summary>
-        /// Next a directory path.
-        /// </summary>
-        public string NextDir { get; }
 
         /// <summary>
         /// The go to directory.
         /// </summary>
         public DelegateCommand<DirectoryModel> GotoDirectory => new DelegateCommand<DirectoryModel>(dir =>
         {
-            if (dir == null) return;
-            this.DirectoryList = directoryProviderManager.GetDirectories(dir.Path);
-            this.FileList = directoryProviderManager.GetFiles(dir.Path);
-            Navigator = invoker.Add(dir.Path);
+            if (dir != null)
+            {
+                this.invoker.Execute(
+                path =>
+                    {
+                        this.DirectoryList = this.directoryProviderManager.GetDirectories((string)path);
+                        this.FileList = this.directoryProviderManager.GetFiles((string)path);
+                    },
+                dir.Path);
+            }
         });
 
         /// <summary>
         /// The go to directory.
         /// </summary>
-        public DelegateCommand PreviousDirectory => new DelegateCommand(() =>
+        public DelegateCommand<DirectoryModel> PrevDirectory => new DelegateCommand<DirectoryModel>(dir =>
         {
-            invoker.Previous();
+            this.invoker.UnExecute(
+                path =>
+                    {
+                        var test = (Command)path;
+                        // this.DirectoryList = this.directoryProviderManager.GetDirectories((string)path);
+                        // this.FileList = this.directoryProviderManager.GetFiles((string)path);
+                    },
+                null);
         });
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">
         /// The drop event handler.
         /// </param>
-        void IDropTarget.Drop(IDropInfo dropInfo)
+         void IDropTarget.Drop(IDropInfo dropInfo)
         {
             DirectoryBase sourceItem = dropInfo.Data as DirectoryBase;
             DirectoryBase targetItem = dropInfo.TargetItem as DirectoryBase;
@@ -195,6 +195,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
 
             this.copyDialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// The navigate directory.
+        /// </summary>
+        /// <param name="path"> Expected the path to the directory. </param>
+        private void NavigateDirectory(string path)
+        {
+            this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
+            this.FileList = this.directoryProviderManager.GetFiles(path);
         }
     }
 }

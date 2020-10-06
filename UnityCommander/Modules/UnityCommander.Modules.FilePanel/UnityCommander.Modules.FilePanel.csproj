@@ -11,6 +11,10 @@
     <Page Remove="Models\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Commands\Navigator.cs~RF1037a70f.TMP" />
+    <None Remove="Commands\Navigator.cs~RF4269424.TMP" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
   </ItemGroup>

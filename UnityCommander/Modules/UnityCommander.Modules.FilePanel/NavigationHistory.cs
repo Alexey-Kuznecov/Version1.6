@@ -79,55 +79,59 @@ namespace UnityCommander.Modules.FilePanel
         /// <summary>
         /// The bonded property.
         /// </summary>
-        public static readonly DependencyProperty BondedProperty;
+        private static readonly DependencyProperty BondedProperty;
 
         /// <summary>
         /// The back path property.
         /// </summary>
-        public static readonly DependencyProperty PreviousDirectoryProperty;
+        private static readonly DependencyProperty PreviousDirectoryProperty;
 
         /// <summary>
         /// The margin.
         /// </summary>
         private static double margin;
 
+        #region Declaration constuctors
+
         /// <summary>
         /// Initializes static members of the <see cref="Navigator"/> class.
         /// </summary>
         static Navigator()
         {
-            BondedProperty = DependencyProperty.Register(
-                "Bonded",
-                typeof(ObservableCollection<UIElement>),
-                typeof(Navigator),
-                new FrameworkPropertyMetadata(
-                    new ObservableCollection<UIElement>(),
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange,
-                    new PropertyChangedCallback(OnBondedChanged),
-                    new CoerceValueCallback(CoerceBonded)));
-
             PreviousDirectoryProperty = DependencyProperty.Register(
                 "PreviousDirectory",
                 typeof(string),
                 typeof(Navigator),
-                new FrameworkPropertyMetadata(null,
-                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange));
+                new FrameworkPropertyMetadata("path",
+                    FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange,
+                    new PropertyChangedCallback(OnPreviousDirectoryChanged),
+                    new CoerceValueCallback(CoercePreviousDirectory)));
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Navigator"/> class.
+        /// </summary>
+        public Navigator()
+            : base()
+        {
+        }
+
+        #endregion
+
+        #region Public properties
+
+        /// <summary>
+        /// Previous a directory path.
+        /// </summary>
         public string PreviousDirectory
         {
             get => (string)GetValue(PreviousDirectoryProperty);
             set => this.SetValue(PreviousDirectoryProperty, value);
         }
 
-        /// <summary>
-        /// Gets or sets the bonded.
-        /// </summary>
-        public ObservableCollection<UIElement> Bonded
-        {
-            get => (ObservableCollection<UIElement>)GetValue(BondedProperty);
-            set => this.SetValue(BondedProperty, value);
-        }
+        #endregion
+
+        #region Public methods
 
         /// <summary>
         /// The back.
@@ -137,7 +141,7 @@ namespace UnityCommander.Modules.FilePanel
         /// </param>
         public void Back(string path)
         {
-            throw new NotImplementedException();
+            this.PreviousDirectory = path;
         }
 
         /// <summary>
@@ -160,6 +164,10 @@ namespace UnityCommander.Modules.FilePanel
                 InternalChildren.Add(button);
             }
         }
+
+        #endregion
+
+        #region Override methods
 
         /// <summary>
         /// When overridden in a derived class, measures the size in layout required
@@ -218,13 +226,17 @@ namespace UnityCommander.Modules.FilePanel
             return finalSize;
         }
 
+        #endregion
+
+        #region Declaration callback functions
+
         /// <summary>
         /// The coerce bonded.
         /// </summary>
         /// <param name="d"> The d. </param>
         /// <param name="basevalue"> The <c>base</c> value. </param>
         /// <returns> The <see cref="object"/>. </returns>
-        private static object CoerceBonded(DependencyObject d, object basevalue)
+        private static object CoercePreviousDirectory(DependencyObject d, object basevalue)
         {
             return basevalue;
         }
@@ -234,9 +246,11 @@ namespace UnityCommander.Modules.FilePanel
         /// </summary>
         /// <param name="d"> The d. </param>
         /// <param name="e"> The e. </param>
-        private static void OnBondedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnPreviousDirectoryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
         }
+
+        #endregion
     }
 
     /// <summary>

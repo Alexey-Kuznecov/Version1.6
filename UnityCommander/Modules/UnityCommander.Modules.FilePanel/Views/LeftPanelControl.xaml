@@ -17,7 +17,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        <ContentControl Grid.Row="3" Content="{Binding Navigator, Mode=TwoWay}" />
+        <!--<ContentControl Grid.Row="3">
+            <p:Navigator PreviousDirectory="{Binding PreviousDirectory, Mode=TwoWay}" />
+        </ContentControl>-->
         <GridSplitter
             Grid.Row="1"
             Height="5"
@@ -28,22 +30,21 @@
                 <RowDefinition Height="25" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Border
-                Grid.Row="0"
-                Background="#5D6B99">
+            <Border Grid.Row="0" Background="#5D6B99">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Button
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
                         Grid.Column="0"
                         Width="100"
                         Margin="0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
+                        Command="{Binding PrevDirectory, Mode=Default}"
                         Content="Back"
                         Foreground="#E8E8EC" />
                 </Grid>
