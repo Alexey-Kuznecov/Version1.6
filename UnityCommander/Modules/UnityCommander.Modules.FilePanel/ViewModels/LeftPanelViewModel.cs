@@ -11,8 +11,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Windows;
+    using System.Windows.Input;
 
     using GongSolutions.Wpf.DragDrop;
 
@@ -119,22 +121,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (dir != null)
             {
-                this.invoker.Execute(
-                path =>
-                    {
-                        this.DirectoryList = this.directoryProviderManager.GetDirectories((string)path);
-                        this.FileList = this.directoryProviderManager.GetFiles((string)path);
-                    },
-                dir.Path);
+                this.invoker.Execute(NavigateCommand, dir.Path);
             }
         });
 
         /// <summary>
         /// The go to directory.
         /// </summary>
-        public DelegateCommand<DirectoryModel> PrevDirectory => new DelegateCommand<DirectoryModel>(dir =>
+        public ICommand PrevDirectory => new DelegateCommand<DirectoryModel>(dir =>
         {
-            this.invoker.Previous();
+            if (this.invoker.CanUndo)
+            {
+                this.invoker.Previous();
+            }
         });
 
         #endregion Commands End
@@ -180,6 +179,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">
         /// The drop-over event handler.
         /// </param>
+        [DebuggerStepThrough]
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
             if (dropInfo.Data is DirectoryBase source && dropInfo.TargetItem is DirectoryBase target)
@@ -195,7 +195,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">
         /// The drop event handler.
         /// </param>
-         void IDropTarget.Drop(IDropInfo dropInfo)
+        [DebuggerStepThrough]
+        void IDropTarget.Drop(IDropInfo dropInfo)
         {
             DirectoryBase sourceItem = dropInfo.Data as DirectoryBase;
             DirectoryBase targetItem = dropInfo.TargetItem as DirectoryBase;

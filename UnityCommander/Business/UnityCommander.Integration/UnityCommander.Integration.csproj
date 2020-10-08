@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Contracts\INavigator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Contracts\INavigator.cs~RF2ba06c3.TMP" />
   </ItemGroup>
 

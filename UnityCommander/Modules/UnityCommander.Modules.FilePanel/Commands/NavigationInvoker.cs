@@ -18,11 +18,6 @@ namespace UnityCommander.Modules.FilePanel.Commands
         private readonly List<Command> commands;
 
         /// <summary>
-        /// The current index or path.
-        /// </summary>
-        private int currentIndex;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NavigationInvoker"/> class.
         /// </summary>
         public NavigationInvoker()
@@ -33,17 +28,12 @@ namespace UnityCommander.Modules.FilePanel.Commands
         /// <summary>
         /// Gets a value indicating whether the command can be canceled.
         /// </summary>
-        public bool CanUndo => this.commands.Count > 0 && this.currentIndex > -1;
+        public bool CanUndo => this.commands.Count - 1 != 1;
 
         /// <summary>
         /// Gets a value indicating whether the command can be repeated.
         /// </summary>
-        public bool CanRedo => this.commands.Count > 0 && this.currentIndex < this.commands.Count - 1;
-
-        /// <summary>
-        /// The index.
-        /// </summary>
-        public int Index => this.currentIndex == 0 ? 0 : this.currentIndex - 1;
+        public bool CanRedo => this.CurrentIndex > 0 && this.CurrentIndex < this.CurrentIndex - 1;
 
         /// <summary>
         /// The current index.
@@ -59,7 +49,6 @@ namespace UnityCommander.Modules.FilePanel.Commands
         {
             NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator(action, path));
             this.commands.Add(NavigationInvoker.currentCommand);
-            this.currentIndex++;
         }
 
         /// <summary>
@@ -72,7 +61,7 @@ namespace UnityCommander.Modules.FilePanel.Commands
         {
             NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator());            
             this.commands.Add(NavigationInvoker.currentCommand);
-            this.commands[this.currentIndex++]?.Execute(action, path);
+            this.commands[this.CurrentIndex]?.Execute(action, path);
         }
 
         /// <summary>
@@ -82,7 +71,7 @@ namespace UnityCommander.Modules.FilePanel.Commands
         {
             if (this.CanRedo)
             {
-                var command = this.commands[this.currentIndex];
+                var command = this.commands[this.CurrentIndex];
                 var receiver = (Navigator)((ConcreteCommand)command)?.Receiver;
                 command?.Execute(receiver.Action, receiver.Path);
             }
@@ -95,11 +84,8 @@ namespace UnityCommander.Modules.FilePanel.Commands
         {
             if (this.CanUndo)
             {
-                this.currentIndex = this.commands.Count - 1;
-
-                if (this.commands.Count == 1) return;
-                this.commands.RemoveAt(this.currentIndex);
-                NavigationInvoker.currentCommand = this.commands[this.Index];
+                this.commands.RemoveAt(this.CurrentIndex);
+                NavigationInvoker.currentCommand = this.commands[this.CurrentIndex - 1];
                 var receiver = (Navigator)((ConcreteCommand)NavigationInvoker.currentCommand)?.Receiver;
                 
                 if (receiver != null)

@@ -5,10 +5,17 @@
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Controls\**" />
     <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Controls\**" />
     <EmbeddedResource Remove="Models\**" />
+    <None Remove="Controls\**" />
     <None Remove="Models\**" />
+    <Page Remove="Controls\**" />
     <Page Remove="Models\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="NavigationHistory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Commands\Navigator.cs~RF1037a70f.TMP" />
