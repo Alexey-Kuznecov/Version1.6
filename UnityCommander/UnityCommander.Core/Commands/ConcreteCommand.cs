@@ -23,7 +23,7 @@ namespace UnityCommander.Core.Commands
         /// </param>
         public ConcreteCommand(ReceiverBase receiver)
         {
-            idCommand = idCommand++;
+            idCommand = idCommand + 1;
             this.Id = idCommand;
             this.Receiver = receiver;
         }

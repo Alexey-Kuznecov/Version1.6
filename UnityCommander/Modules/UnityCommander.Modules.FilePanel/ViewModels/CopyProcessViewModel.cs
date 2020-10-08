@@ -20,6 +20,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Core;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
+    using UnityCommander.Modules.FilePanel.Commands;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
@@ -27,6 +28,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class CopyProcessViewModel : BindableBase
     {
         #region Declaration Fields
+
+        /// <summary>
+        /// The invoker class instance.
+        /// </summary>
+        private readonly CopyFileInvoker invoker;
 
         /// <summary>
         /// Contains the current progress bar for copying a file.
@@ -74,6 +80,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyProcessViewModel(IEventAggregator viewModelMessage)
         {
+            this.invoker = new CopyFileInvoker(this.invoker);
             viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupCopyFiles);
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
@@ -201,17 +208,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="obj"> Expected two strings the source path and destination path. </param>
         private void SetupCopyFiles(object obj)
         {
-            this.SkippedFile = new ObservableCollection<CopyInfoModel>();
-            this.CopyReport = new ObservableCollection<CopyInfoModel>();
+            this.invoker.Execute(
+        path =>
+                {
+                    this.SkippedFile = new ObservableCollection<CopyInfoModel>();
+                    this.CopyReport = new ObservableCollection<CopyInfoModel>();
 
-            if (obj is string[] address)
-            {
-                var source = new DirectoryInfo(address[0]);
-                var destination = new DirectoryInfo(address[1]);
-                FileCopier.StartCopyDeep(source.FullName, destination.FullName);
-                FileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
-                FileCopier.CopyFileResult += this.FileCopier_CopyFileResult;
-            }
+                    if (path is string[] address)
+                    {
+                        var source = new DirectoryInfo(address[0]);
+                        var destination = new DirectoryInfo(address[1]);
+                        FileCopier.StartCopyDeep(source.FullName, destination.FullName);
+                        FileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
+                        FileCopier.CopyFileResult += this.FileCopier_CopyFileResult;
+                    }
+                },
+            obj);
         }
 
         /// <summary>

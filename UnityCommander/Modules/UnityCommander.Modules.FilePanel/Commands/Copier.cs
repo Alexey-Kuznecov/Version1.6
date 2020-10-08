@@ -2,41 +2,18 @@
 namespace UnityCommander.Modules.FilePanel.Commands
 {
     using System;
+
     using UnityCommander.Core.Commands;
 
     /// <summary>
-    /// The navigator.
+    /// The copier.
     /// </summary>
-    public class Navigator : ReceiverBase
+    public class Copier : ReceiverBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Navigator"/> class.
-        /// </summary>
-        public Navigator()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Navigator"/> class.
-        /// This constructor allows pre-registering the command.
-        /// </summary>
-        /// <param name="action"> Allows determined the method to get . </param>
-        /// <param name="path"> Allows determined the path to directory. </param>
-        public Navigator(Action<object> action, object path)
-        {
-            this.Path = path as string;
-            this.Action = action;
-        }
-
         /// <summary>
         /// Gets the path.
         /// </summary>
         public string Path { get; private set; }
-
-        /// <summary>
-        /// Gets the action.
-        /// </summary>
-        public Action<object> Action { get; private set; }
 
         /// <summary>
         /// Determines can whether the command be executed.
@@ -75,7 +52,6 @@ namespace UnityCommander.Modules.FilePanel.Commands
         public override void Execute(Action<object> action, object path)
         {
             this.Path = path as string;
-            this.Action = action;
             action(path);
         }
 

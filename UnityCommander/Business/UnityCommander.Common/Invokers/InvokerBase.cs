@@ -8,34 +8,54 @@ namespace UnityCommander.Common.Invokers
     using UnityCommander.Core.Commands;
 
     /// <summary>
+    /// The procedures.
+    /// </summary>
+    public enum Scopes
+    {
+        /// <summary>
+        /// The Macros.
+        /// </summary>
+        Macros,
+
+        /// <summary>
+        /// The module.
+        /// </summary>
+        Module,
+
+        /// <summary>
+        /// The all.
+        /// </summary>
+        All
+    }
+
+    /// <summary>
     /// This class is part of the implementation of the Command design pattern.
     /// Asks the command to carry out the request.
     /// </summary>
-    public class InvokerBase
+    public abstract class InvokerBase
     {
         /// <summary>
         /// The macros commands.
         /// </summary>
-        protected static readonly List<Command> MacrosCommands = new List<Command>();
+        protected static readonly List<Command> ModuleCommands = new List<Command>();
 
         /// <summary>
-        /// The index.
+        /// The current command.
+        /// </summary>
+        protected static Command currentCommand;
+
+        /// <summary>
+        /// The current command.
         /// </summary>
         private static int index;
-        
-        /// <summary>
-        /// The module commands.
-        /// </summary>
-        private readonly List<Command> moduleCommands = new List<Command>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InvokerBase"/> class.
+        /// Gets or sets the index.
         /// </summary>
-        /// <param name="command"> The <see cref="Command"/> class. </param>
-        public InvokerBase(Command command)
-        {
-            this.moduleCommands.Add(command);
-            MacrosCommands.Add(command);
+        private static int Index 
+        {   
+            get => index;
+            set => index = value < 0 ? 0 : value;
         }
 
         /// <summary>
@@ -43,19 +63,7 @@ namespace UnityCommander.Common.Invokers
         /// </summary>
         public void Execute()
         {
-            foreach (var cmd in this.moduleCommands)
-            {
-                if (!cmd.CanExecute()) continue;
-                cmd.Execute();
-            }
-        }
-
-        /// <summary>
-        /// Executes the commands all modules in turn.
-        /// </summary>
-        public void ExecuteAll()
-        {
-            foreach (var cmd in MacrosCommands)
+            foreach (var cmd in ModuleCommands)
             {
                 if (!cmd.CanExecute()) continue;
                 cmd.Execute();
@@ -71,7 +79,7 @@ namespace UnityCommander.Common.Invokers
         /// </returns>
         public IEnumerable<Command> GetAllCommands()
         {
-            return MacrosCommands;
+            return ModuleCommands;
         }
 
         /// <summary>
@@ -83,7 +91,7 @@ namespace UnityCommander.Common.Invokers
         /// </returns>
         public IEnumerable<Command> GetCommands()
         {
-            return this.moduleCommands;
+            return ModuleCommands;
         }
 
         /// <summary>
@@ -92,12 +100,14 @@ namespace UnityCommander.Common.Invokers
         /// </summary>
         /// <param name="action"> The method to be called. </param>
         /// <param name="arg"> The string argument to be passed. </param>
-        public void Execute(Action<object> action, object arg)
+        public virtual void Execute(Action<object> action, object arg)
         {
-            foreach (var cmd in this.moduleCommands.Where(cmd => cmd.CanExecute()))
+            foreach (var cmd in ModuleCommands.Where(cmd => cmd.CanExecute()))
             {
                 cmd.Execute(action, arg);
             }
+
+            Index++;
         }
 
         /// <summary>
@@ -108,13 +118,23 @@ namespace UnityCommander.Common.Invokers
         /// <param name="arg"> Determines the argument of the invoker. </param>
         public virtual void UnExecute(Action<object> action, object arg)
         {
-            if (this.moduleCommands.Count > 0)
+            if (ModuleCommands.Count > 0)
             {
-                foreach (var cmd in this.moduleCommands)
-                {
-                    cmd.UnExecute(action, this.moduleCommands[cmd.Id]);
-                }
+                ModuleCommands[index].UnExecute(action, ModuleCommands[index]);
             }
+
+            Index--;
+        }
+
+        /// <summary>
+        /// Adding a command to record macros.
+        /// </summary>
+        /// <param name="newCommand">
+        /// The new command.
+        /// </param>
+        protected void AddMacros(ConcreteCommand newCommand)
+        {
+            ModuleCommands.Add(newCommand);
         }
     }
 }

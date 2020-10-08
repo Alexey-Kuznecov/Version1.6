@@ -18,8 +18,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Prism.Commands;
     using Prism.Regions;
+
+    using UnityCommander.Common;
     using UnityCommander.Common.Models;
-    using UnityCommander.Core.Commands;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Modules.FilePanel.Commands;
@@ -31,11 +32,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// </summary>
     public class LeftPanelViewModel : RegionViewModelBase, IDropTarget
     {
+        #region Declaration fields
+
         /// <summary>
         /// The copy dialog.
         /// </summary>
         private readonly CopyDialogView copyDialog;
-
 
         /// <summary>
         /// The invoker class instance.
@@ -48,7 +50,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDirectoryProvider directoryProviderManager;
 
         /// <summary>
-        /// Previous a directory path.
+        /// Previous a directory dirPath.
         /// </summary>
         private string previousDirectory;
 
@@ -67,6 +69,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private INavigator navigator;
 
+        #endregion
+
+        #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
         /// </summary>
@@ -79,16 +85,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public LeftPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
             : base(regionManager)
         {
+            string rightPanelPath = @"Works\UnitTests\";
+
             this.invoker = new NavigationInvoker();
+            string path = string.Empty;
+            
             this.directoryProviderManager = directoryProvider;
 
             this.copyDialog = new CopyDialogView();
-            string rightPanelPath = @"Works\UnitTests\";
-
             string[] drives = Environment.GetLogicalDrives();
             foreach (string drive in drives)
             {
-                string path = drive + rightPanelPath;
+                path = drive + rightPanelPath;
 
                 if (Directory.Exists(path))
                 {
@@ -96,20 +104,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
                 }
             }
+
+            this.SetCommands(path);
         }
 
-        /// <summary>
-        /// Gets or sets the UI collection.
-        /// </summary>
-        public INavigator Navigator
-        {
-            get => this.navigator;
-            set 
-            {
-                this.previousDirectory = value.PreviousDirectory;
-                this.SetProperty(ref this.navigator, value); 
-            }
-        }
+        #endregion
+
+        #region Commands
 
         /// <summary>
         /// The go to directory.
@@ -133,15 +134,25 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public DelegateCommand<DirectoryModel> PrevDirectory => new DelegateCommand<DirectoryModel>(dir =>
         {
-            this.invoker.UnExecute(
-                path =>
-                    {
-                        var test = (Command)path;
-                        // this.DirectoryList = this.directoryProviderManager.GetDirectories((string)path);
-                        // this.FileList = this.directoryProviderManager.GetFiles((string)path);
-                    },
-                null);
+            this.invoker.Previous();
         });
+
+        #endregion Commands End
+
+        #region Delaration properties
+
+        /// <summary>
+        /// Gets or sets the UI collection.
+        /// </summary>
+        public INavigator Navigator
+        {
+            get => this.navigator;
+            set
+            {
+                this.previousDirectory = value.PreviousDirectory;
+                this.SetProperty(ref this.navigator, value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the directory list.
@@ -160,6 +171,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             get => this.fileList;
             set => this.SetProperty(ref this.fileList, value);
         }
+
+        #endregion
 
         /// <summary>
         /// The drag over.
@@ -200,11 +213,25 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The navigate directory.
         /// </summary>
-        /// <param name="path"> Expected the path to the directory. </param>
-        private void NavigateDirectory(string path)
+        /// <param name="dirPath"> Expected the path to the directory. </param>
+        private void NavigateCommand(object dirPath)
         {
-            this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
-            this.FileList = this.directoryProviderManager.GetFiles(path);
+            this.DirectoryList = this.directoryProviderManager.GetDirectories((string)dirPath);
+            this.FileList = this.directoryProviderManager.GetFiles((string)dirPath);
+        }
+
+        /// <summary>
+        /// Pre-registers commands to the command execution history.
+        /// </summary>
+        /// <param name="dirPath"> Expected the path to the directory. </param>
+        private void SetCommands(string dirPath)
+        {
+            string[] paths = HelperMethods.ParsePath(dirPath);
+
+            foreach (var item in paths)
+            {
+                this.invoker.AddCommand(this.NavigateCommand, item);
+            }
         }
     }
 }

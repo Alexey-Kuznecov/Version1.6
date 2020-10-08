@@ -20,6 +20,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Mvvm;
 
     using UnityCommander.Core;
+    using UnityCommander.Modules.FilePanel.Commands;
     using UnityCommander.Modules.FilePanel.Views;
 
     /// <summary>
