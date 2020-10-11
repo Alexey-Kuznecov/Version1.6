@@ -14,7 +14,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Diagnostics;
     using System.IO;
     using System.Windows;
-    using System.Windows.Input;
+    using System.Windows.Controls;
 
     using GongSolutions.Wpf.DragDrop;
 
@@ -24,7 +24,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Common;
     using UnityCommander.Common.Models;
     using UnityCommander.Core.Mvvm;
-    using UnityCommander.Integration.Contracts;
     using UnityCommander.Modules.FilePanel.Commands;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
@@ -52,11 +51,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDirectoryProvider directoryProviderManager;
 
         /// <summary>
-        /// Previous a directory dirPath.
-        /// </summary>
-        private string previousDirectory;
-
-        /// <summary>
         /// The file list.
         /// </summary>
         private ObservableCollection<FileModel> fileList;
@@ -67,9 +61,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<DirectoryModel> directoryList;
 
         /// <summary>
-        /// The navigator.
+        /// Indicates the current directory.
         /// </summary>
-        private INavigator navigator;
+        private string currentDirectory;
 
         #endregion
 
@@ -108,6 +102,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
 
             this.SetCommands(path);
+            this.CurrentDirectory = path;
         }
 
         #endregion
@@ -115,20 +110,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Commands
 
         /// <summary>
-        /// The go to directory.
+        /// Goes to the selected directory.
         /// </summary>
-        public DelegateCommand<DirectoryModel> GotoDirectory => new DelegateCommand<DirectoryModel>(dir =>
+        public DelegateCommand<DirectoryModel> GoToDirectory => new DelegateCommand<DirectoryModel>(
+            dir =>
         {
             if (dir != null)
             {
-                this.invoker.Execute(NavigateCommand, dir.Path);
+                this.invoker.Execute(this.UpdateFilePanel, dir.Path);
             }
         });
 
         /// <summary>
-        /// The go to directory.
+        ///  Goes back to the previous directory.
         /// </summary>
-        public ICommand PrevDirectory => new DelegateCommand<DirectoryModel>(dir =>
+        public DelegateCommand GoBackDirectory => new DelegateCommand(() =>
         {
             if (this.invoker.CanUndo)
             {
@@ -136,21 +132,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         });
 
-        #endregion Commands End
+        /// <summary>
+        /// Gets or sets a navigate command.
+        /// </summary>
+        public DelegateCommand<object> UpdateCommand => new DelegateCommand<object>(
+        dir =>
+        {
+            if (dir != null)
+            {
+                this.invoker.Execute(this.UpdateFilePanel, dir);
+            }
+        });
+
+        #endregion
 
         #region Delaration properties
 
         /// <summary>
-        /// Gets or sets the UI collection.
+        /// Gets or sets the current directory.
         /// </summary>
-        public INavigator Navigator
+        public string CurrentDirectory
         {
-            get => this.navigator;
-            set
-            {
-                this.previousDirectory = value.PreviousDirectory;
-                this.SetProperty(ref this.navigator, value);
-            }
+            get => this.currentDirectory;
+            set => this.SetProperty(ref this.currentDirectory, value);
         }
 
         /// <summary>
@@ -215,10 +219,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The navigate directory.
         /// </summary>
         /// <param name="dirPath"> Expected the path to the directory. </param>
-        private void NavigateCommand(object dirPath)
+        private void UpdateFilePanel(object dirPath)
         {
-            this.DirectoryList = this.directoryProviderManager.GetDirectories((string)dirPath);
-            this.FileList = this.directoryProviderManager.GetFiles((string)dirPath);
+            string path = (string)dirPath;
+            this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
+            this.FileList = this.directoryProviderManager.GetFiles(path);
+            this.CurrentDirectory = path;
         }
 
         /// <summary>
@@ -231,7 +237,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var item in paths)
             {
-                this.invoker.AddCommand(this.NavigateCommand, item);
+                this.invoker.AddCommand(this.UpdateFilePanel, item);
             }
         }
     }

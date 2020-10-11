@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace UnityCommander.Modules.ModuleName.Views
+namespace UnityCommander.Modules.FilePanel.Controls
 {
     /// <summary>
-    /// Interaction logic for ViewA.xaml
+    /// Логика взаимодействия для NavigationPopup.xaml
     /// </summary>
-    public partial class ViewA : UserControl
+    public partial class NavigationPopup : UserControl
     {
-        public ViewA()
+        public NavigationPopup()
         {
             InitializeComponent();
         }

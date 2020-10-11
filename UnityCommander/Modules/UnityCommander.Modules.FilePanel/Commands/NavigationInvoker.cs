@@ -28,7 +28,7 @@ namespace UnityCommander.Modules.FilePanel.Commands
         /// <summary>
         /// Gets a value indicating whether the command can be canceled.
         /// </summary>
-        public bool CanUndo => this.commands.Count - 1 != 1;
+        public bool CanUndo => this.commands.Count != 1;
 
         /// <summary>
         /// Gets a value indicating whether the command can be repeated.
@@ -85,7 +85,7 @@ namespace UnityCommander.Modules.FilePanel.Commands
             if (this.CanUndo)
             {
                 this.commands.RemoveAt(this.CurrentIndex);
-                NavigationInvoker.currentCommand = this.commands[this.CurrentIndex - 1];
+                NavigationInvoker.currentCommand = this.commands[this.CurrentIndex];
                 var receiver = (Navigator)((ConcreteCommand)NavigationInvoker.currentCommand)?.Receiver;
                 
                 if (receiver != null)

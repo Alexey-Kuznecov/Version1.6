@@ -5,13 +5,9 @@
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Controls\**" />
     <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Controls\**" />
     <EmbeddedResource Remove="Models\**" />
-    <None Remove="Controls\**" />
     <None Remove="Models\**" />
-    <Page Remove="Controls\**" />
     <Page Remove="Models\**" />
   </ItemGroup>
   <ItemGroup>
@@ -20,6 +16,8 @@
   <ItemGroup>
     <None Remove="Commands\Navigator.cs~RF1037a70f.TMP" />
     <None Remove="Commands\Navigator.cs~RF4269424.TMP" />
+    <None Remove="Controls\NavigationPopup.xaml~RF26e2a75b.TMP" />
+    <None Remove="Views\LeftPanelControl.xaml.cs~RF26bc59a1.TMP" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
@@ -27,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
