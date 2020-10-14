@@ -3,9 +3,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:UnityCommander.Modules.FilePanel">
 
+    <Grid x:Key="PopupButton">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Button
+            Grid.Column="0"
+            Height="25"
+            MinWidth="30"
+            Style="{DynamicResource NavigationStyle}" />
+        <Button
+            Grid.Column="1"
+            Width="30"
+            Height="25"
+            Content="+"
+            Style="{DynamicResource NavigationPopupStyle}" />
+    </Grid>
     <Style x:Key="NavigationStyle" TargetType="{x:Type Button}">
-        <Setter Property="Height" Value="25" />
-        <Setter Property="MinWidth" Value="30" />
         <Setter Property="Background" Value="#D0D1F0" />
         <Setter Property="Foreground" Value="#373737" />
         <Setter Property="FontSize" Value="12" />
@@ -15,10 +30,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border
-                        Padding="5,0"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="3,0,0,3">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="3,0,0,3">
                         <!--<Border.Effect>
                             <DropShadowEffect BlurRadius="2" ShadowDepth="0" />
                         </Border.Effect>-->
@@ -45,8 +57,6 @@
         </Setter>
     </Style>
     <Style x:Key="NavigationPopupStyle" TargetType="{x:Type Button}">
-        <Setter Property="Width" Value="30" />
-        <Setter Property="Height" Value="25" />
         <Setter Property="Background" Value="#D0D1F0" />
         <Setter Property="Foreground" Value="#373737" />
         <Setter Property="FontSize" Value="15" />
@@ -58,20 +68,21 @@
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" CornerRadius="0,3,3,0">
                         <Grid>
-                            <Path
+                            <!--<Path
                                 x:Name="PathIcon"
-                                Width="8"
-                                Height="12"
-                                HorizontalAlignment="Center"
+                                Width="15"
+                                Height="25"
+                                Margin="17,0,0,0"
+                                HorizontalAlignment="Left"
                                 Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
                                 Fill="#4C87B3"
-                                Stretch="Fill" />
+                                Stretch="Fill" />-->
                             <Line
+                                Name="line4"
                                 Width="2"
-                                Height="20"
-                                Margin="0,0,28,0"
+                                Margin="40,0,0,0"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
+                                VerticalAlignment="Top"
                                 Opacity="0.5"
                                 Stroke="Black"
                                 Y1="0"
