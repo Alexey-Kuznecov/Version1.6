@@ -52,3 +52,14 @@
 /Lab/UnityCommander.WinDepends/obj/Release
 /UnityCommander/UnityCommander.Native/obj
 /UnityCommander/UnityCommander.Native/bin/Debug
+/Other
+/UnityCommander/Business/AlkuzLib/bin/Debug
+/UnityCommander/Business/AlkuzLib/obj
+/UnityCommander/Business/UnityCommander.Common/bin/Debug/netcoreapp3.1
+/UnityCommander/Business/UnityCommander.Common/obj
+/UnityCommander/Business/UnityCommander.Integration/bin/Debug
+/UnityCommander/Business/UnityCommander.Integration/obj
+/UnityCommander/Plugins/ImagesColumns/bin/Debug/netcoreapp3.1
+/UnityCommander/Plugins/ImagesColumns/obj/Debug/netcoreapp3.1
+/UnityCommander/Plugins/ImagesColumns/obj
+/Lab/UnityCommander.Test/UndoRedo
