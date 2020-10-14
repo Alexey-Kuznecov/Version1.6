@@ -27,15 +27,11 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
-                            <TextBlock Text="{Binding Path, Mode=TwoWay}" />
+                            <TextBlock Text="{Binding SelectedPath, Mode=TwoWay}" />
                         </WrapPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Border>
-        <Button
-            Grid.Row="0"
-            Command="{Binding TestCommand, Mode=OneWay}"
-            Content="+" />
     </Grid>
 </UserControl>
