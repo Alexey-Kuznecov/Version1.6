@@ -1,0 +1,116 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:UnityCommander.Modules.FilePanel">
+
+    <Grid x:Key="PopupButton">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Button
+            Grid.Column="0"
+            Height="25"
+            MinWidth="30"
+            Style="{DynamicResource NavigationStyle}" />
+        <Button
+            Grid.Column="1"
+            Width="30"
+            Height="25"
+            Content="+"
+            Style="{DynamicResource NavigationPopupStyle}" />
+    </Grid>
+    <Style x:Key="NavigationStyle" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="#D0D1F0" />
+        <Setter Property="Foreground" Value="#373737" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="3,0,0,3">
+                        <!--<Border.Effect>
+                            <DropShadowEffect BlurRadius="2" ShadowDepth="0" />
+                        </Border.Effect>-->
+                        <Grid>
+                            <ContentPresenter
+                                x:Name="MyContentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#DCDDFC" />
+                            <Setter Property="Foreground" Value="#373737" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#C6C7DC" />
+                            <Setter Property="Foreground" Value="#373737" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="NavigationPopupStyle" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="#D0D1F0" />
+        <Setter Property="Foreground" Value="#373737" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="0,3,3,0">
+                        <Grid>
+                            <!--<Path
+                                x:Name="PathIcon"
+                                Width="15"
+                                Height="25"
+                                Margin="17,0,0,0"
+                                HorizontalAlignment="Left"
+                                Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
+                                Fill="#4C87B3"
+                                Stretch="Fill" />-->
+                            <Line
+                                Name="line4"
+                                Width="2"
+                                Margin="40,0,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Opacity="0.5"
+                                Stroke="Black"
+                                Y1="0"
+                                Y2="640" />
+                            <ContentPresenter
+                                x:Name="MyContentPresenter"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#DCDDFC" />
+                            <Setter Property="Foreground" Value="#373737" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#C6C7DC" />
+                            <Setter Property="Foreground" Value="#373737" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#DCDDFC" />
+                            <Setter Property="Foreground" Value="#C6C7DC" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

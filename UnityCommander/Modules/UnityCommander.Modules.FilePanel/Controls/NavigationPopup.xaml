@@ -12,10 +12,17 @@
         <local:NavigationPopupModel />
     </UserControl.DataContext>-->
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <Border
+            Grid.Row="1"
             Width="400"
             Height="250"
-            Background="LightSeaGreen">
+            Background="#F1F2FF"
+            BorderBrush="#A7A8B5"
+            BorderThickness="2">
             <ListBox ItemsSource="{Binding DirectoryList, Mode=TwoWay}" SelectedItem="{Binding SelectItem}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -26,5 +33,9 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Border>
+        <Button
+            Grid.Row="0"
+            Command="{Binding TestCommand, Mode=OneWay}"
+            Content="+" />
     </Grid>
 </UserControl>

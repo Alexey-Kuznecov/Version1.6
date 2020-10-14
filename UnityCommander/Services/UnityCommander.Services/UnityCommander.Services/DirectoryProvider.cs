@@ -23,11 +23,14 @@ namespace UnityCommander.Services
 
             foreach (var item in dir.GetFiles())
             {
-                models.Add(new FileModel 
+                if ((item.Attributes & FileAttributes.Hidden) == 0)
                 {
-                    Name = item.Name,
-                    Path = item.FullName,
-                });
+                    models.Add(new FileModel
+                    {
+                        Name = item.Name,
+                        Path = item.FullName,
+                    });
+                }
             }
 
             return models;
@@ -45,11 +48,14 @@ namespace UnityCommander.Services
 
             foreach (var item in dir.GetDirectories())
             {
-                models.Add(new DirectoryModel
+                if ((item.Attributes & FileAttributes.Hidden) == 0)
                 {
-                    Name = item.Name,
-                    Path = item.FullName,
-                });
+                    models.Add(new DirectoryModel
+                    {
+                        Name = item.Name,
+                        Path = item.FullName,
+                    });
+                }
             }
 
             return models;

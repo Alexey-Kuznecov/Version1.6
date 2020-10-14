@@ -1,27 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
+﻿
 namespace UnityCommander.Modules.FilePanel.Controls
 {
+    using System.Windows.Controls;
+
     /// <summary>
-    /// Логика взаимодействия для NavigationPopup.xaml
+    /// The navigation popup.
     /// </summary>
     public partial class NavigationPopup : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NavigationPopup"/> class.
+        /// </summary>
         public NavigationPopup()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

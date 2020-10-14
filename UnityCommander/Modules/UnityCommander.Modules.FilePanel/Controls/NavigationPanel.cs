@@ -1,12 +1,15 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Controls
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
+    using System.Windows.Data;
     using System.Windows.Input;
 
     using Prism.Commands;
@@ -29,6 +32,16 @@ namespace UnityCommander.Modules.FilePanel.Controls
         /// in the navigation bar.
         /// </summary>
         private static readonly DependencyProperty NavigateCommandProperty;
+
+        /// <summary>
+        /// The pop-up model class instance.
+        /// </summary>
+        private static PopupViewModel popupViewModel;
+
+        /// <summary>
+        /// The pop-up model class instance.
+        /// </summary>
+        private static NavigationPopup popupControl;
 
         /// <summary>
         /// The space between navigation controls.
@@ -69,6 +82,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
         public NavigationPanel()
             : base()
         {
+            this.SizeChanged += this.NavigationPanel_SizeChanged;
         }
 
         #endregion
@@ -93,6 +107,8 @@ namespace UnityCommander.Modules.FilePanel.Controls
             get => (ICommand)GetValue(NavigateCommandProperty);
             set => this.SetValue(NavigateCommandProperty, value);
         }
+        
+        public List<FrameworkElement> VisualElementList { get; private set; }
 
         #endregion
 
@@ -143,7 +159,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             {
                 UIElement child = this.InternalChildren[index];
                 child.Arrange(new Rect(new Point(margin, 10), child.DesiredSize));
-                margin += child.DesiredSize.Width + 2;
+                margin += child.DesiredSize.Width + 5;
 
                 if (margin - 10 > finalSize.Width)
                 {
@@ -170,9 +186,9 @@ namespace UnityCommander.Modules.FilePanel.Controls
             var panel = (NavigationPanel)d;
             var command = (DelegateCommand<object>)e.NewValue;
 
-            foreach (var gridChild in panel.InternalChildren)
+            foreach (var borderChild in panel.InternalChildren)
             {
-                var grid = (Grid)gridChild;
+                var grid = (Grid)borderChild;
                 var popButton = (Button)grid.Children[1];
 
                 ((Button)grid.Children[0]).Command = command;
@@ -205,10 +221,17 @@ namespace UnityCommander.Modules.FilePanel.Controls
         /// <param name="e"> Event data that is issued by any event that tracks changes to the effective value of this property. </param>
         private static void OnDirectoryPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var panel = (NavigationPanel)d;
-            var cmdCounter = 0;
+            int cmdCounter = 0;
+            NavigationPanel panel = (NavigationPanel)d;
+
+            /*
+             * Parse the path into directory names to display the contents of the buttons
+             * in the navigation panel and create parameters by expanding the path to the full
+             * paths of subdirectories.
+             */
             string[] slp = panel.DirectoryPath.Split('\\');
             string[] cmd = HelperMethods.ParsePath(panel.DirectoryPath);
+          
             panel.InternalChildren.Clear();
 
             foreach (string item in slp)
@@ -216,29 +239,28 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 if (item == string.Empty) break;
 
                 PopupParameters parameter = new PopupParameters();
-                var navigationPopup = new Button
+                Grid grid = SetGridFromXaml();
+                if (grid != null)
                 {
-                    Margin = new Thickness(2),
-                    Height = 25,
-                    Width = 30,
-                    Content = "+",
-                    Command = new DelegateCommand<PopupParameters>(CreatePopupNavigation)
-                };
-                var navigation = new Button
-                {
-                    Height = 25,
-                    Content = item,
-                    Command = panel.NavigateCommand,
-                    CommandParameter = cmd[cmdCounter]
-                };
+                    var navButton = (Button)grid.Children[0];
+                    var popButton = (Button)grid.Children[1];
 
-                var grid = CreateGridNavigationItem(navigation, navigationPopup);
-                parameter.Element = grid;
-                parameter.Command = panel.NavigateCommand;
-                parameter.Path = cmd[cmdCounter];
-                navigationPopup.CommandParameter = parameter;
-                panel.InternalChildren.Add(grid);
-                cmdCounter++;
+                    popButton.Height = 25;
+                    popButton.Width = 30;
+                    popButton.Command = new DelegateCommand<PopupParameters>(SetPopupNavigation);
+
+                    navButton.Content = item;
+                    navButton.Command = panel.NavigateCommand;
+                    navButton.CommandParameter = cmd[cmdCounter];
+
+                    parameter.GridElement = grid;
+                    parameter.PopButton = popButton;
+                    parameter.Command = panel.NavigateCommand;
+                    parameter.Path = cmd[cmdCounter];
+                    popButton.CommandParameter = parameter;
+                    panel.InternalChildren.Add(grid);
+                    cmdCounter++;
+                }
             }
         }
 
@@ -247,137 +269,199 @@ namespace UnityCommander.Modules.FilePanel.Controls
         #region Helper methods
 
         /// <summary>
+        /// Creates a grid of the navigation item.
+        /// </summary>
+        /// <returns> Returns the button wrapped in grid. </returns>
+        private static Grid SetGridFromXaml()
+        {
+            Grid grid = new Grid();
+
+            ResourceDictionary resourceDictionary = new ResourceDictionary
+            {
+                Source = new Uri(@"pack://application:,,,/UnityCommander.Modules.FilePanel;component/Resources/NavigationBarStyles.xaml")
+            };
+
+            foreach (DictionaryEntry entry in resourceDictionary)
+            {
+                if (entry.Key.ToString() == "PopupButton")
+                {
+                    grid = (Grid)entry.Value;
+                    return grid;
+                }
+            }
+
+            return grid;
+        }
+
+        /// <summary>
         /// Creates a pop-up navigation for each item in the navigation bar.
         /// </summary>
-        /// <param name="parameters"> The parameter for pop-up navigation. </param>
-        private static void CreatePopupNavigation(PopupParameters parameters)
+        /// <param name="parameters"> The parameters for pop-up navigation. </param>
+        private static void SetPopupNavigation(PopupParameters parameters)
         {
             // Popup content.
-            NavigationPopup content = new NavigationPopup();
-            PopupModel navigationPopup = new PopupModel(parameters.Path, parameters.Command);
-            content.DataContext = navigationPopup;
-
+            popupControl = new NavigationPopup();
+            popupViewModel = new PopupViewModel(parameters.Path, parameters.Command);
+            popupControl.DataContext = popupViewModel;
+            SetBindingPopButton(parameters);
+            
             // Popup creation.
             Popup popupBox = new Popup();
-            Point location = parameters.Element.PointToScreen(new Point(0, 0));
-            popupBox.Child = content;
+            Point location = parameters.GridElement.PointToScreen(new Point(0, 0));
+            popupBox.Child = popupControl;
             popupBox.IsOpen = true;
-            popupBox.PlacementRectangle = new Rect(location.X, location.Y, 0, 0);
+            popupBox.PlacementRectangle = new Rect(location.X, location.Y - 5, 0, 0);
             popupBox.Placement = PlacementMode.Top;
             popupBox.StaysOpen = false;
         }
 
         /// <summary>
-        /// Creates a grid of the navigation item.
+        /// Binds the enable property of the button to the view model property of the popup window.
         /// </summary>
-        /// <param name="navButton"> The navigation button. </param>
-        /// <param name="popButton"> The button pop-up invoker. </param>
-        /// <returns>
-        /// Returns the button wrapped in grid.
-        /// </returns>
-        private static Grid CreateGridNavigationItem(Button navButton, Button popButton)
+        /// <param name="parameters"> The parameters for pop-up navigation. </param>
+        private static void SetBindingPopButton(PopupParameters parameters)
         {
-            Grid grid = new Grid();
-            ColumnDefinition gridColumn = new ColumnDefinition();
-            ColumnDefinition gridColumn2 = new ColumnDefinition();
-            grid.ColumnDefinitions.Add(gridColumn);
-            grid.ColumnDefinitions.Add(gridColumn2);
-            Grid.SetColumn(navButton, 0);
-            Grid.SetColumn(popButton, 1);
-            grid.Children.Add(navButton);
-            grid.Children.Add(popButton);
-
-            return grid;
+            Button popBt = parameters.PopButton;
+            Binding bind = new Binding("PopButtonIsEnabled") { Mode = BindingMode.TwoWay, Source = popupViewModel };
+            BindingOperations.SetBinding(popBt, Button.IsEnabledProperty, bind);
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Serves to transferred parameters from the file panel to the pop-up navigation.
-    /// </summary>
-    [SuppressMessage(
-        "StyleCop.CSharp.MaintainabilityRules", 
-        "SA1402:FileMayOnlyContainASingleClass", 
-        Justification = "Reviewed. Suppression is OK here.")]
-    internal class PopupParameters
-    {
-        /// <summary>
-        /// Gets or sets the path.
-        /// </summary>
-        public string Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the element.
+        /// The navigation panel size changed.
         /// </summary>
-        public UIElement Element { get; set; }
-
-        /// <summary>
-        /// Gets or sets the command.
-        /// </summary>
-        public ICommand Command { get; set; }
-
-        /// <summary>
-        /// Gets or sets the command parameters.
-        /// </summary>
-        public string CommandParams { get; set; }
-    }
-
-    /// <summary>
-    /// Provides some data to the user control view.
-    /// </summary>
-    internal class PopupModel : BindableBase
-    {    
-        /// <summary>
-        /// The set command.
-        /// </summary>
-        private readonly ICommand setCommand;
-
-        /// <summary>
-        /// The directory list.
-        /// </summary>
-        private ObservableCollection<PopupParameters> directoryList;
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PopupModel"/> class.
-        /// </summary>
-        /// <param name="currentPath">
-        /// The current path.
-        /// </param>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        public PopupModel(string currentPath, ICommand command)
+        /// <param name="sender"> The sender. </param>
+        /// <param name="e"> The e. </param>
+        private void NavigationPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.DirectoryList = new ObservableCollection<PopupParameters>();
+            var panel = (NavigationPanel)sender;
+        }
 
-            if (!string.IsNullOrEmpty(currentPath))
+        /// <summary>
+        /// Serves to transferred parameters from the file panel to the pop-up navigation.
+        /// </summary>
+        internal class PopupParameters
+        {
+            /// <summary>
+            /// Gets or sets the path.
+            /// </summary>
+            public string Path { get; set; }
+
+            /// <summary>
+            /// Gets or sets the element.
+            /// </summary>
+            public Grid GridElement { get; set; }
+
+            /// <summary>
+            /// Gets or sets the pop button.
+            /// </summary>
+            public Button PopButton { get; set; }
+
+            /// <summary>
+            /// Gets or sets the command.
+            /// </summary>
+            public ICommand Command { get; set; }
+
+            /// <summary>
+            /// Gets or sets the command parameters.
+            /// </summary>
+            public string CommandParams { get; set; }
+
+            /// <summary>
+            /// Gets or sets the command parameters.
+            /// </summary>
+            public Binding Bound { get; set; }
+
+            /// <summary>
+            /// Gets or sets the command parameters.
+            /// </summary>
+            public Binding NavButton { get; set; }
+        }
+
+        /// <summary>
+        /// Provides some data to the user control view.
+        /// </summary>
+        internal class PopupViewModel : BindableBase
+        {
+            /// <summary>
+            /// The set command.
+            /// </summary>
+            private readonly ICommand setCommand;
+
+            /// <summary>
+            /// The set command.
+            /// </summary>
+            private bool popButtonIsEnabled;
+
+            /// <summary>
+            /// The directory list.
+            /// </summary>
+            private ObservableCollection<PopupParameters> directoryList;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PopupViewModel"/> class.
+            /// </summary>
+            /// <param name="currentPath">
+            /// The current path.
+            /// </param>
+            /// <param name="command">
+            /// The command.
+            /// </param>
+            public PopupViewModel(string currentPath, ICommand command)
             {
-                foreach (var item in Directory.GetDirectories(currentPath))
+                this.DirectoryList = new ObservableCollection<PopupParameters>();
+
+                if (!string.IsNullOrEmpty(currentPath))
                 {
-                    PopupParameters model = new PopupParameters { Path = item, CommandParams = item };
-                    this.DirectoryList.Add(model);
+                    DirectoryInfo dir = new DirectoryInfo(currentPath);
+
+                    foreach (var item in dir.GetDirectories())
+                    {
+                        if ((item.Attributes & FileAttributes.Hidden) == 0)
+                        {
+                            PopupParameters model = new PopupParameters { Path = item.FullName, CommandParams = item.FullName };
+                            this.DirectoryList.Add(model);
+                        }
+                    }
+                }
+
+                this.setCommand = command;
+            }
+
+            /// <summary>
+            /// Gets or sets a list of directory path.
+            /// </summary>
+            public ObservableCollection<PopupParameters> DirectoryList
+            {
+                get => this.directoryList;
+                set
+                {
+                    this.directoryList = value;
+                    this.SetProperty(ref this.directoryList, value);
                 }
             }
 
-            this.setCommand = command;
-        }
+            /// <summary>
+            /// Sets the select path.
+            /// </summary>
+            public PopupParameters SelectItem
+            {
+                set
+                {
+                    this.setCommand.Execute(value.Path);
+                    this.PopButtonIsEnabled = false;
+                }
+            }
 
-        /// <summary>
-        /// Gets or sets a list of directory path.
-        /// </summary>
-        public ObservableCollection<PopupParameters> DirectoryList
-        {
-            get => this.directoryList;
-            set => this.SetProperty(ref this.directoryList, value);
-        }
-
-        /// <summary>
-        /// Sets the select path.
-        /// </summary>
-        public PopupParameters SelectItem
-        {
-            set => this.setCommand.Execute(value.Path);
+            /// <summary>
+            /// Gets or sets a value indicating whether pop-up button is enabled.
+            /// </summary>
+            public bool PopButtonIsEnabled
+            {
+                get => this.popButtonIsEnabled;
+                set => this.SetProperty(ref this.popButtonIsEnabled, value);
+            }
         }
     }
 }

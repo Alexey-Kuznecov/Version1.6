@@ -17,6 +17,8 @@
     <None Remove="Commands\Navigator.cs~RF1037a70f.TMP" />
     <None Remove="Commands\Navigator.cs~RF4269424.TMP" />
     <None Remove="Controls\NavigationPopup.xaml~RF26e2a75b.TMP" />
+    <None Remove="Resources\MergedModuleResources.xaml~RF307a9909.TMP" />
+    <None Remove="Resources\NavigationBarStyles.xaml~RF3075562c.TMP" />
     <None Remove="Views\LeftPanelControl.xaml.cs~RF26bc59a1.TMP" />
   </ItemGroup>
   <ItemGroup>

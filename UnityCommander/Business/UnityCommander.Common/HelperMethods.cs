@@ -44,6 +44,24 @@ namespace UnityCommander.Common
         }
 
         /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <param name="obj"> The obj.</param>
+        /// <typeparam name="T"> </typeparam>
+        /// <returns> The <see cref="T"/>. </returns>
+        //public static T Clone<T>(T obj)
+        //{
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        //BinaryFormatter formatter = new BinaryFormatter();
+        //        //formatter.Serialize(ms, obj);
+        //        //ms.Seek(0, SeekOrigin.Begin);
+        //        //object o = formatter.Deserialize(ms);
+        //        //return (T)o ?? default(T);
+        //    }
+        //}
+
+        /// <summary>
         /// Deletes the <c>path</c> and file extensions, leaves only the name.
         /// </summary>
         /// <param name="path"> The <c>path</c> or file name. </param>

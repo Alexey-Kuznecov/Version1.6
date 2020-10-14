@@ -98,7 +98,6 @@ namespace UnityCommander.Core.Helper
             }
 
             return builder;
-
         }
     }
 }

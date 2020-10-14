@@ -98,6 +98,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     this.FileList = this.directoryProviderManager.GetFiles(path);
                     this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
+                    break;
                 }
             }
 
@@ -177,6 +178,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
+        #region Drag And Drop Handlers
+
         /// <summary>
         /// The drag over.
         /// </summary>
@@ -215,6 +218,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.copyDialog.ShowDialog();
         }
 
+        #endregion
+
+        #region Helper Methods
+
         /// <summary>
         /// The navigate directory.
         /// </summary>
@@ -240,5 +247,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 this.invoker.AddCommand(this.UpdateFilePanel, item);
             }
         }
+
+        #endregion
     }
 }
