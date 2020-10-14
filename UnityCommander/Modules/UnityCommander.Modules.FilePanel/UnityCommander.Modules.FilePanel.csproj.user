@@ -4,6 +4,9 @@
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Controls\NavigationPopup.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\CopyDialogControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -18,6 +21,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Controls\NavigationPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\MergedModuleResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\NavigationBarStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\CopyDialogControl.xaml">
       <SubType>Designer</SubType>
     </Page>

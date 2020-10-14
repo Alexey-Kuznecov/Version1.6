@@ -16,7 +16,7 @@
             <ColumnDefinition Width="100" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
+        <ContentControl Grid.Column="0" prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
         <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
     </Grid>
 </Window>

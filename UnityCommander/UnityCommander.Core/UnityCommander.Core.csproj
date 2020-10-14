@@ -1,10 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander.Core</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="C:\Users\lexa1\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config" />
+    <None Remove="C:\Users\lexa1\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd" />
+    <None Remove="Commands\ReceiverBase.cs~RF10164661.TMP" />
     <None Remove="IO\NTFSAccountModel.cs~RF1249184a.TMP" />
     <None Remove="RegionNames.cs~RF22523a1b.TMP" />
   </ItemGroup>
@@ -17,7 +20,7 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Business\UnityCommander.Business\UnityCommander.Business.csproj" />
+    <ProjectReference Include="..\Business\UnityCommander.Integration\UnityCommander.Integration.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
   <ItemGroup>

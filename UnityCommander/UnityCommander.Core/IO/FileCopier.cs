@@ -72,7 +72,7 @@ namespace UnityCommander.Core.IO
         /// <summary>
         /// The copy file resualt.
         /// </summary>
-        public static event EventHandler<CopyInfo> CopyFileResault;
+        public static event EventHandler<CopyInfo> CopyFileResult;
 
         #endregion
 
@@ -153,7 +153,7 @@ namespace UnityCommander.Core.IO
                     var newDir = oldDir.Replace(src, dest);
                     Directory.CreateDirectory(newDir);
                     CopyFiles(oldDir, newDir);
-                    CopyFileResault?.Invoke(null, copyInfoInstance);
+                    CopyFileResult?.Invoke(null, copyInfoInstance);
                 }
 
                 if (Directory.GetFiles(src).Length != 0)

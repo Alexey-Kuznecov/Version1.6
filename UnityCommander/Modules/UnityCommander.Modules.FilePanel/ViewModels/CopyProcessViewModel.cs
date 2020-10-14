@@ -12,17 +12,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
-    using System.Globalization;
     using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
     using System.Windows;
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
     using UnityCommander.Core;
+    using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
-    using UnityCommander.Test;
+    using UnityCommander.Modules.FilePanel.Commands;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
@@ -30,6 +28,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class CopyProcessViewModel : BindableBase
     {
         #region Declaration Fields
+
+        /// <summary>
+        /// The invoker class instance.
+        /// </summary>
+        private readonly CopyFileInvoker invoker;
 
         /// <summary>
         /// Contains the current progress bar for copying a file.
@@ -77,10 +80,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyProcessViewModel(IEventAggregator viewModelMessage)
         {
+            this.invoker = new CopyFileInvoker(this.invoker);
             viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupCopyFiles);
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
             this.ResumeCommand = new DelegateCommand(this.CopyResume);
+
         }
 
         #endregion
@@ -203,50 +208,55 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="obj"> Expected two strings the source path and destination path. </param>
         private void SetupCopyFiles(object obj)
         {
-            this.SkippedFile = new ObservableCollection<CopyInfoModel>();
-            this.CopyReport = new ObservableCollection<CopyInfoModel>();
+            this.invoker.Execute(
+        path =>
+                {
+                    this.SkippedFile = new ObservableCollection<CopyInfoModel>();
+                    this.CopyReport = new ObservableCollection<CopyInfoModel>();
 
-            if (obj is string[] address)
-            {
-                var source = new DirectoryInfo(address[0]);
-                var destination = new DirectoryInfo(address[1]);
-                FileCopier.StartCopyDeep(source.FullName, destination.FullName);
-                FileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
-                FileCopier.CopyFileResault += FileCopier_CopyFileResault;
-            }
+                    if (path is string[] address)
+                    {
+                        var source = new DirectoryInfo(address[0]);
+                        var destination = new DirectoryInfo(address[1]);
+                        FileCopier.StartCopyDeep(source.FullName, destination.FullName);
+                        FileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
+                        FileCopier.CopyFileResult += this.FileCopier_CopyFileResult;
+                    }
+                },
+            obj);
         }
 
         /// <summary>
-        /// The event handle for initailization report a copy progress.
+        /// The event handle for initialization report a copy progress.
         /// </summary>
         /// <param name="sender"> The sender is <see cref="FileCopier"/> object. </param>
         /// <param name="progressInfo"> The copy progress information. </param>
-        private void FileCopier_CopyFileResault(object sender, FileCopier.CopyInfo e)
+        private void FileCopier_CopyFileResult(object sender, FileCopier.CopyInfo progressInfo)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (e.Skipped)
+                if (progressInfo.Skipped)
                 {
                     this.CopyReport.Add(new CopyInfoModel
                     {
-                        Name = e.Name,
-                        Source = e.Source,
-                        Destination = e.Destination
+                        Name = progressInfo.Name,
+                        Source = progressInfo.Source,
+                        Destination = progressInfo.Destination
                     });
                 }
                 else
                 {
                     this.SkippedFile.Add(new CopyInfoModel
                     {
-                        Name = e.Name,
-                        Source = e.Source
+                        Name = progressInfo.Name,
+                        Source = progressInfo.Source
                     });
                 }
             });
         }
 
         /// <summary>
-        /// The event handle for initailization report a copy progress.
+        /// The event handle for initialization report a copy progress.
         /// </summary>
         /// <param name="sender"> The sender is <see cref="FileCopier"/> object. </param>
         /// <param name="progressInfo"> The copy progress information. </param>
@@ -255,10 +265,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.CurrentPercent = (int)progressInfo.Percentage;
             this.AverageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)progressInfo.AverageSpeed), 2) + " Mb/s";
             this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.ByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalByte)}";
-            this.TimeLeft = ConvertTimeElapsed(progressInfo.TimeLeftRounded, "ru-RU");
+            this.TimeLeft = this.ConvertTimeElapsed(progressInfo.TimeLeftRounded, "ru-RU");
         }
 
-        public static string ConvertTimeElapsed(TimeSpan time, string culture)
+        /// <summary>
+        /// The convert time elapsed.
+        /// </summary>
+        /// <param name="time"> The time. </param>
+        /// <param name="culture"> The culture. </param>
+        /// <returns> The <see cref="string"/>. </returns>
+        private string ConvertTimeElapsed(TimeSpan time, string culture)
         {
             string format = "Time left: ";
             int milliseconds = time.Milliseconds;
@@ -270,10 +286,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 format += hours + " h.";
             }
+
             if (minutes != 0)
             {
                 format += hours != 0 ? ", " + minutes + " min." : minutes + " min.";
             }
+
             if (seconds != 0)
             {
                 format += minutes != 0 ? ", " + seconds + " sec." : seconds + " sec.";

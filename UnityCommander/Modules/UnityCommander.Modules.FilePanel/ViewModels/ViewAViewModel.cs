@@ -1,11 +1,7 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System.Collections.ObjectModel;
-
     using Prism.Regions;
-
-    using UnityCommander.Business;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Services.Interfaces;
 
@@ -20,10 +16,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="regionManager">
         /// The region manager.
         /// </param>
-        /// <param name="fileProvider">
+        /// <param name="directoryProvider">
         /// The file provider.
         /// </param>
-        public ViewAViewModel(IRegionManager regionManager, IFilesProvider fileProvider)
+        public ViewAViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider)
             : base(regionManager)
         {
         }

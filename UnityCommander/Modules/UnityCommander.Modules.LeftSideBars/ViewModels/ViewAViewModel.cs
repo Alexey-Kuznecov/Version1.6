@@ -13,8 +13,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
-
-    using UnityCommander.Business;
     using UnityCommander.Core;
 
     /// <summary>
