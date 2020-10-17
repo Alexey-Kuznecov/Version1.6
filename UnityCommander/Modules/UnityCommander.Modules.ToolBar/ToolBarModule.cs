@@ -1,16 +1,17 @@
 ﻿
-namespace UnityCommander.Modules.LeftSideBars
+namespace UnityCommander.Modules.ToolBar
 {
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Regions;
+
     using UnityCommander.Core;
-    using UnityCommander.Modules.LeftSideBars.Views;
+    using UnityCommander.Modules.ToolBar.Views;
 
     /// <summary>
-    /// The left side bars module.
+    /// The tool bar module.
     /// </summary>
-    public class LeftSideBarsModule : IModule
+    public class ToolBarModule : IModule
     {
         /// <summary>
         /// The region manager.
@@ -18,10 +19,10 @@ namespace UnityCommander.Modules.LeftSideBars
         private readonly IRegionManager regionManager;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LeftSideBarsModule"/> class.
+        /// Initializes a new instance of the <see cref="ToolBarModule"/> class.
         /// </summary>
         /// <param name="regionManager"> The region manager. </param>
-        public LeftSideBarsModule(IRegionManager regionManager)
+        public ToolBarModule(IRegionManager regionManager)
         {
             this.regionManager = regionManager;
         }
@@ -32,7 +33,7 @@ namespace UnityCommander.Modules.LeftSideBars
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, "Sidebar");
+            this.regionManager.RequestNavigate(RegionNames.ToolBarRegion, "ViewA");
         }
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace UnityCommander.Modules.LeftSideBars
         /// <param name="containerRegistry"> The container registry. </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<Sidebar>();
+            containerRegistry.RegisterForNavigation<ViewA>();
         }
     }
 }

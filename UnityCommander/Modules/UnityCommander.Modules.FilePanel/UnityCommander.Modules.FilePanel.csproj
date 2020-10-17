@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\**" />
@@ -20,6 +22,7 @@
     <None Remove="Resources\MergedModuleResources.xaml~RF307a9909.TMP" />
     <None Remove="Resources\NavigationBarStyles.xaml~RF3075562c.TMP" />
     <None Remove="Views\LeftPanelControl.xaml.cs~RF26bc59a1.TMP" />
+    <None Remove="Views\SplitPanelControl.xaml.cs~RF441d883d.TMP" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />

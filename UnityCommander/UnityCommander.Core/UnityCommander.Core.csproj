@@ -4,6 +4,8 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander.Core</AssemblyName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="C:\Users\lexa1\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config" />
     <None Remove="C:\Users\lexa1\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd" />
@@ -12,7 +14,6 @@
     <None Remove="RegionNames.cs~RF22523a1b.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="3.1.3" />
     <PackageReference Include="NLog" Version="4.7.4" />
     <PackageReference Include="NLog.Config" Version="4.7.4" />
     <PackageReference Include="NLog.Schema" Version="4.7.4" />
@@ -20,7 +21,7 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Business\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
   <ItemGroup>

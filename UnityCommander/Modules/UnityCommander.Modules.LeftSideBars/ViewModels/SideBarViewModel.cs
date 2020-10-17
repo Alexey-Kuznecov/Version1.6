@@ -1,24 +1,28 @@
 ﻿
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ViewAViewModel.cs" company="T">
+// <copyright file="SidebarViewModel.cs" company="T">
 // Copyright (p) Alexey Kuznecov. All right reserved.
 // </copyright>
 // <summary>
-//   Defines the ViewAViewModel type.
+//   Defines the SidebarViewModel type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
+    using System.Windows.Controls;
+
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
+
     using UnityCommander.Core;
+    using UnityCommander.Modules.LeftSideBars.SidebarContent;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
-    public class ViewAViewModel : BindableBase
+    public class SidebarViewModel : BindableBase
     {        
         /// <summary>
         /// The view model message.
@@ -28,39 +32,28 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// <summary>
         /// The message.
         /// </summary>
-        private string message;
-
+        private ListViewItem selectItem;
+        
         /// <summary>
-        /// Initializes a new instance of the <see cref="ViewAViewModel"/> class.
+        /// Initializes a new instance of the <see cref="SidebarViewModel"/> class.
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
-        public ViewAViewModel(IEventAggregator viewModelMessage)
+        public SidebarViewModel(IEventAggregator viewModelMessage)
         {
             this.viewModelMessage = viewModelMessage;
-            this.SendCopyInfoCommand = new DelegateCommand(this.SendMessage);
         }
 
         /// <summary>
         /// Gets or sets the message.
         /// </summary>
-        public string Message
+        public ListViewItem SelectItem
         {
-            get => this.message;
-            set => this.SetProperty(ref this.message, value);
-        }
-
-        /// <summary>
-        /// Gets the send copy info command.
-        /// </summary>
-        public DelegateCommand SendCopyInfoCommand { get; }
-
-        /// <summary>
-        /// The send copy info.
-        /// </summary>
-        private void SendMessage()
-        {
-            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish("It is works!");
+            get => this.selectItem;
+            set
+            {
+                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new ColumnsOptionControl());
+            }
         }
     }
 }

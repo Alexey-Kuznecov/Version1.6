@@ -8,12 +8,13 @@ namespace UnityCommander
 
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.LeftSideBars;
+    using UnityCommander.Modules.ToolBar;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Views;
 
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// The application.
     /// </summary>
     public partial class App
     {
@@ -49,6 +50,7 @@ namespace UnityCommander
         {
             moduleCatalog.AddModule<FilePanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
+            moduleCatalog.AddModule<ToolBarModule>();
         }
     }
 }

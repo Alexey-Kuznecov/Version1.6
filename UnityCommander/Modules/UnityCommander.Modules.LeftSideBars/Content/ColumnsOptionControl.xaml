@@ -1,0 +1,29 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.LeftSideBars.SidebarContent.ColumnsOptionControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.SidebarContent"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid Background="#FFF3F2F2">
+        <ListView>
+            <ListViewItem>
+                <TextBlock FontSize="15" Text="Colums 1 Control" />
+            </ListViewItem>
+            <ListViewItem>
+                <TextBlock FontSize="15" Text="Colums 2 Control" />
+            </ListViewItem>
+            <ListViewItem>
+                <TextBlock FontSize="15" Text="Colums 3 Control" />
+            </ListViewItem>
+            <ListViewItem>
+                <TextBlock FontSize="15" Text="Colums 4 Control" />
+            </ListViewItem>
+            <ListViewItem>
+                <TextBlock FontSize="15" Text="Colums 5 Control" />
+            </ListViewItem>
+        </ListView>
+
+    </Grid>
+</UserControl>

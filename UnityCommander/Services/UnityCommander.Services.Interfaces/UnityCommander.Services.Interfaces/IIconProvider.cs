@@ -16,6 +16,6 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// The <see cref="ObservableCollection"/>.
         /// </returns>
-        ObservableCollection<IconModel> GetIcons();
+        //ObservableCollection<IconModel> GetIcons();
     }
 }

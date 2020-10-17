@@ -3,6 +3,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:UnityCommander.Modules.FilePanel">
 
+    <Style x:Key="NavigationGridPanel" TargetType="Grid">
+        <Setter Property="Margin" Value="5,0,0,0" />
+        <Setter Property="BitmapEffect">
+            <Setter.Value>
+                <DropShadowBitmapEffect
+                    Direction="0"
+                    Opacity="0.5"
+                    ShadowDepth="1"
+                    Softness="0.2"
+                    Color="Black" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="NavigationStyle" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="25" />
         <Setter Property="MinWidth" Value="30" />

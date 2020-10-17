@@ -1,8 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Converters\IconConverters.cs" />
+    <Compile Remove="ExtensionMethod.cs" />
+    <Compile Remove="HelperMethods.cs" />
+    <Compile Remove="Models\DirectoryPathModel.cs" />
+    <Compile Remove="Models\IconModel.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Models\DirectoryPathModel.cs~RF86a07a.TMP" />
@@ -10,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Converters\" />
     <Folder Include="Logger\" />
   </ItemGroup>
 
@@ -33,6 +44,11 @@
       <NuGetItemType>None</NuGetItemType>
       <NuGetPackageId>NLog.Schema</NuGetPackageId>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 
 </Project>

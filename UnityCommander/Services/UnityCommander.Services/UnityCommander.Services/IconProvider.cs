@@ -17,9 +17,9 @@ namespace UnityCommander.Services
         /// <returns>
         /// Icons collection.
         /// </returns>
-        public ObservableCollection<IconModel> GetIcons()
-        {
-            return null;
-        }
+        //public ObservableCollection<IconModel> GetIcons()
+        //{
+        //    return null;
+        //}
     }
 }

@@ -16,6 +16,7 @@
             <RowDefinition Height="25" />
             <RowDefinition />
         </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="{StaticResource WindowHeader}" />
         <Border
             Grid.Row="1"
             Width="400"

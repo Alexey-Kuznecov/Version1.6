@@ -14,15 +14,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Diagnostics;
     using System.IO;
     using System.Windows;
-    using System.Windows.Controls;
+    using System.Windows.Input;
 
     using GongSolutions.Wpf.DragDrop;
 
     using Prism.Commands;
     using Prism.Regions;
 
-    using UnityCommander.Common;
     using UnityCommander.Common.Models;
+    using UnityCommander.Core.Helper;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Modules.FilePanel.Commands;
     using UnityCommander.Modules.FilePanel.Views;
@@ -31,9 +31,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// <summary>
     /// The left panel view model.
     /// </summary>
-    public class LeftPanelViewModel : RegionViewModelBase, IDropTarget
+    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
     {
         #region Declaration fields
+
+        /// <summary>
+        /// The field serves to simulate double click.
+        /// </summary>
+        private static int doubleClick = 0;
 
         /// <summary>
         /// The copy dialog.
@@ -65,12 +70,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private string currentDirectory;
 
+        /// <summary>
+        /// The can go directory.
+        /// </summary>
+        private bool canGoDirectory = doubleClick == 1;
+
+        /// <summary>
+        /// The selected directory.
+        /// </summary>
+        private DirectoryModel selectedDirectory;
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LeftPanelViewModel"/> class.
+        /// Initializes a new instance of the <see cref="SplitPanelViewModel"/> class.
         /// </summary>
         /// <param name="regionManager">
         /// The region manager is Prism implementation.
@@ -78,7 +93,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="directoryProvider">
         /// The service that provides the files system items.
         /// </param>
-        public LeftPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
+        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
             : base(regionManager)
         {
             string rightPanelPath = @"Works\UnitTests\";
@@ -156,6 +171,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.currentDirectory;
             set => this.SetProperty(ref this.currentDirectory, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the selected directory.
+        /// </summary>
+        public DirectoryModel SelectedDirectory
+        {
+            get => this.selectedDirectory;
+            set
+            {
+                doubleClick = 0;
+                this.selectedDirectory = value;
+            }
         }
 
         /// <summary>
@@ -240,7 +268,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dirPath"> Expected the path to the directory. </param>
         private void SetCommands(string dirPath)
         {
-            string[] paths = HelperMethods.ParsePath(dirPath);
+            string[] paths = HelperFunctions.ParsePath(dirPath);
 
             foreach (var item in paths)
             {

@@ -2,12 +2,13 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <AssemblyName>UnityCommander.Modules.LeftSideBars</AssemblyName>
+    <AssemblyName>UnityCommander.Modules.ToolBar</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="ViewModels\SidebarViewModel.cs~RF220cb962.TMP" />
+    <None Remove="Views\ViewA.xaml~RF43b5d05c.TMP" />
+    <None Remove="Views\ViewA.xaml~RF43b94118.TMP" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />

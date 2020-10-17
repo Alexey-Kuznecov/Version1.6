@@ -4,11 +4,10 @@
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Contracts\INavigator.cs~RF2ba06c3.TMP" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+  </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AlkuzLib\AlkuzLib.csproj" />
+    <None Remove="Contracts\INavigator.cs~RF2ba06c3.TMP" />
   </ItemGroup>
 </Project>

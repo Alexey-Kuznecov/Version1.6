@@ -40,6 +40,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Snippets", "Snippets", "{99A4CCD5-E19A-412C-AE5C-4B1248DBF6CA}"
 	ProjectSection(SolutionItems) = preProject
 		Property.snippet = Property.snippet
+		propp.snippet = propp.snippet
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nlog", "Nlog", "{7440573D-A989-4FB3-9B14-2D1A81D02E86}"
@@ -67,6 +68,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{CAE06C48-FB47-4EEC-96AC-9B4D401335FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImagesColumns", "UnityCommander\Plugins\ImagesColumns\ImagesColumns.csproj", "{9218621A-CA8F-4FB2-81DD-111354CAA4FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Modules.ToolBar", "UnityCommander\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj", "{972903B9-3A52-4F95-8364-42A6975D5FC0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Common.Styling", "UnityCommander\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj", "{E56227A6-9723-4B4B-8E6C-3F889D78854F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander", "..\Version1.0\UnityCommander\UnityCommander\UnityCommander\UnityCommander.csproj", "{181AB0AE-76E0-4DA4-8E39-7A443578F31F}"
 EndProject
@@ -179,6 +184,18 @@ Global
 		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.soft|Any CPU.ActiveCfg = Release|Any CPU
 		{9218621A-CA8F-4FB2-81DD-111354CAA4FB}.soft|Any CPU.Build.0 = Release|Any CPU
+		{972903B9-3A52-4F95-8364-42A6975D5FC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{972903B9-3A52-4F95-8364-42A6975D5FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{972903B9-3A52-4F95-8364-42A6975D5FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{972903B9-3A52-4F95-8364-42A6975D5FC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{972903B9-3A52-4F95-8364-42A6975D5FC0}.soft|Any CPU.ActiveCfg = Release|Any CPU
+		{972903B9-3A52-4F95-8364-42A6975D5FC0}.soft|Any CPU.Build.0 = Release|Any CPU
+		{E56227A6-9723-4B4B-8E6C-3F889D78854F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E56227A6-9723-4B4B-8E6C-3F889D78854F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E56227A6-9723-4B4B-8E6C-3F889D78854F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E56227A6-9723-4B4B-8E6C-3F889D78854F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E56227A6-9723-4B4B-8E6C-3F889D78854F}.soft|Any CPU.ActiveCfg = Release|Any CPU
+		{E56227A6-9723-4B4B-8E6C-3F889D78854F}.soft|Any CPU.Build.0 = Release|Any CPU
 		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{181AB0AE-76E0-4DA4-8E39-7A443578F31F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -207,6 +224,7 @@ Global
 		{FEAC4DE4-DCCB-43E4-9727-DB40839A154C} = {87368608-CCD0-468D-87FD-FD427A98848A}
 		{E149669B-498A-427F-AC07-2436DD5F130A} = {87368608-CCD0-468D-87FD-FD427A98848A}
 		{9218621A-CA8F-4FB2-81DD-111354CAA4FB} = {CAE06C48-FB47-4EEC-96AC-9B4D401335FC}
+		{972903B9-3A52-4F95-8364-42A6975D5FC0} = {5FD899C8-D9FE-4084-9E2B-5B555C3532C6}
 		{181AB0AE-76E0-4DA4-8E39-7A443578F31F} = {78EA39F3-66A7-402B-8A94-EA8675434233}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

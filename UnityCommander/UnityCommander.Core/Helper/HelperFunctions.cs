@@ -18,6 +18,32 @@ namespace UnityCommander.Core.Helper
     public static class HelperFunctions
     {
         /// <summary>
+        /// Parses the path into nested paths that its make up.
+        /// </summary>
+        /// <param name="dirPath">  Expected the path to the directory. </param>
+        /// <returns> An array of nested paths that make up the path. </returns>
+        public static string[] ParsePath(string dirPath)
+        {
+            string[] splitPath = dirPath.Split('\\');
+            string[] paths = new string[!splitPath.Contains(string.Empty) ? splitPath.Length : splitPath.Length - 1];
+            string newPath = string.Empty;
+            int i = 0;
+
+            while (i < splitPath.Length)
+            {
+                if (splitPath[i] == string.Empty) break;
+
+                newPath = newPath.Equals(string.Empty)
+                              ? splitPath[i] + "\\"
+                              : newPath.Replace(paths[i - 1], newPath + splitPath[i] + "\\");
+
+                paths[i++] = newPath;
+            }
+
+            return paths;
+        }
+
+        /// <summary>
         /// Deletes the <c>path</c> and file extensions, leaves only the name.
         /// </summary>
         /// <param name="path"> The <c>path</c> or file name. </param>

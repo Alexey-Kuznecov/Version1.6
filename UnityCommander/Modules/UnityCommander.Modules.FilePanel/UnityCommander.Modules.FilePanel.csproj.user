@@ -39,13 +39,10 @@
     <Page Update="Views\CopyProcessView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\LeftPanelControl.xaml">
+    <Page Update="Views\SplitPanelControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\NTFSSecurityView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\RightPanelControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ViewA.xaml">

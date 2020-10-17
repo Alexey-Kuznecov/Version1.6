@@ -8,9 +8,12 @@ namespace UnityCommander.Modules.FilePanel.Controls
     using System.Windows.Controls.Primitives;
     using System.Windows.Data;
     using System.Windows.Input;
+    using System.Windows.Media;
+
     using Prism.Commands;
     using Prism.Mvvm;
     using UnityCommander.Common;
+    using UnityCommander.Core.Helper;
 
     /// <summary>
     /// The navigation panel.
@@ -117,14 +120,19 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
         #region Override methods
 
-        //protected override void OnRender(DrawingContext dc)
-        //{
-        //    SolidColorBrush mySolidColorBrush = new SolidColorBrush();
-        //    mySolidColorBrush.Color = Colors.LimeGreen;
-        //    Pen myPen = new Pen(Brushes.Blue, 10);
-        //    Rect myRect = new Rect(0, 0, 200, 50);
-        //    dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
-        //}
+        /// <summary>
+        /// The on render.
+        /// </summary>
+        /// <param name="dc">
+        /// The dc.
+        /// </param>
+        protected override void OnRender(DrawingContext dc)
+        {
+            // SolidColorBrush mySolidColorBrush = "#FFFFFF".StringFormatToSolidColor();
+            // Pen myPen = new Pen("#FFFFFF".StringFormatToSolidColor(), 1);
+            // Rect myRect = new Rect(0, 0, 500, 50);
+            // dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
+        }
 
         /// <summary>
         /// When overridden in a derived class, measures the size in layout required
@@ -171,11 +179,14 @@ namespace UnityCommander.Modules.FilePanel.Controls
             {
                 UIElement child = this.InternalChildren[index];
                 child.Arrange(new Rect(new Point(margin, 10), child.DesiredSize));
-                margin += child.DesiredSize.Width + 2;
+                margin += child.DesiredSize.Width;
 
                 if (margin - 10 > finalSize.Width)
                 {
-                    this.InternalChildren.RemoveAt(1);
+                    if (InternalChildren.Count != 1)
+                    {
+                        this.InternalChildren.RemoveAt(1);
+                    }
                 }
             }
 
@@ -224,7 +235,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             if (baseValue != null)
             {
                 panel.currentPath = (string)baseValue;
-                panel.parseParams = HelperMethods.ParsePath(panel.currentPath);
+                panel.parseParams = HelperFunctions.ParsePath(panel.currentPath);
                 panel.parsePath = panel.currentPath.Split('\\');
             }
 
@@ -319,6 +330,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             Grid.SetColumn(popButton, 1);
             grid.Children.Add(navButton);
             grid.Children.Add(popButton);
+            grid.Style = (Style)Application.Current.FindResource("NavigationGridPanel");
 
             return grid;
         }

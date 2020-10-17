@@ -4,19 +4,105 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
     xmlns:prism="http://prismlibrary.com/"
-    Title="{Binding Title}"
-    Width="850"
-    Height="500"
+    Title="{Binding Title, Mode=OneWay}"
+    Width="1350"
+    Height="800"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="MainMenuItem" TargetType="Menu" />
+        <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Height" Value="50" />
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="60" MinWidth="60" />
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="3*" MinWidth="800" />
         </Grid.ColumnDefinitions>
-        <ContentControl Grid.Column="0" prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
-        <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="80" />
+            <RowDefinition />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+
+        <Menu
+            Grid.Row="0"
+            Height="25"
+            IsMainMenu="True"
+            Style="{StaticResource MainMenuItem}">
+            <MenuItem
+                Width="100"
+                Height="25"
+                Background="#FF1368"
+                FontWeight="Bold"
+                Foreground="White"
+                Header="FILE">
+                <MenuItem Header="Open">
+                    <MenuItem Header="English" />
+                    <MenuItem Header="English1" />
+                </MenuItem>
+                <MenuItem Header="Close" />
+            </MenuItem>
+        </Menu>
+        <!--
+            Toolbar region.
+        -->
+        <ContentControl
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}" />
+        <!--
+            Grid splitter.
+        -->
+        <GridSplitter
+            Grid.Row="2"
+            Grid.Column="2"
+            Width="10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Stretch"
+            DragIncrement="10"
+            ShowsPreview="True" />
+        <!--
+            The content display region of ​​the left sidebar.
+        -->
+        <Border
+            Grid.Row="2"
+            Grid.Column="1"
+            Background="#FFF3F2F2">
+            <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
+        </Border>
+        <!--
+            Functional selection region on the left side panel.
+        -->
+        <ContentControl
+            Grid.Row="2"
+            Grid.Column="0"
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
+        <!--
+            File panel region.
+        -->
+        <ContentControl
+            Grid.Row="2"
+            Grid.Column="3"
+            MinWidth="200"
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
+        <!--
+            Context line region.
+        -->
+        <Grid
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Background="#F0F0F0" />
     </Grid>
 </Window>

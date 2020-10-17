@@ -7,24 +7,24 @@
     prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="300" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
         <GridSplitter
             Grid.Column="1"
             Width="5"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"
-            ShowsPreview="False" />
+            ShowsPreview="True" />
         <ContentControl Grid.Column="0">
             <ContentControl.Content>
-                <local:LeftPanelView />
+                <local:SplitPanelView />
             </ContentControl.Content>
         </ContentControl>
         <ContentControl Grid.Column="2">
             <ContentControl.Content>
-                <local:LeftPanelView />
+                <local:SplitPanelView />
             </ContentControl.Content>
         </ContentControl>
     </Grid>

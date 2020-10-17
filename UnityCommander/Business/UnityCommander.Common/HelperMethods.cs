@@ -8,6 +8,7 @@ namespace UnityCommander.Common
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -44,22 +45,22 @@ namespace UnityCommander.Common
         }
 
         /// <summary>
-        /// The clone.
+        /// Dublicates object to another.
         /// </summary>
         /// <param name="obj"> The obj.</param>
         /// <typeparam name="T"> </typeparam>
         /// <returns> The <see cref="T"/>. </returns>
-        //public static T Clone<T>(T obj)
-        //{
-        //    using (MemoryStream ms = new MemoryStream())
-        //    {
-        //        //BinaryFormatter formatter = new BinaryFormatter();
-        //        //formatter.Serialize(ms, obj);
-        //        //ms.Seek(0, SeekOrigin.Begin);
-        //        //object o = formatter.Deserialize(ms);
-        //        //return (T)o ?? default(T);
-        //    }
-        //}
+        public static T Clone<T>(T obj)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Seek(0, SeekOrigin.Begin);
+                object o = formatter.Deserialize(ms);
+                return (T)o;
+            }
+        }
 
         /// <summary>
         /// Deletes the <c>path</c> and file extensions, leaves only the name.

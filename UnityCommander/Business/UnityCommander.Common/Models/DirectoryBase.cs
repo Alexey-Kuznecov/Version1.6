@@ -19,6 +19,6 @@ namespace UnityCommander.Common.Models
         /// <summary>
         /// Gets or sets the icon.
         /// </summary>
-        public IconModel Icon { get; set; }
+        //public IconModel Icon { get; set; }
     }
 }

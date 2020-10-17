@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Colors\DefaultColors.xaml~RF45e465bc.TMP" />
+    <None Remove="Colors\DefaultColors.xaml~RF45ef6d19.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MaterialDesignTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\" />
+    <Folder Include="Icons\" />
+    <Folder Include="DataTemplates\" />
+    <Folder Include="Settings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+  </ItemGroup>
+
+</Project>
