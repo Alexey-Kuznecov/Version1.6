@@ -39,15 +39,13 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
+        /// <param name="viewModelMessage">
+        /// The view Model Message.
+        /// </param>
         public MainWindowViewModel(IEventAggregator viewModelMessage)
         {
             this.viewModelMessage = viewModelMessage;
             this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
-        }
-
-        private void SetSidebarViewModel(object obj)
-        {
-            this.SidebarContent = obj as UserControl;
         }
 
         /// <summary>
@@ -66,6 +64,15 @@ namespace UnityCommander.ViewModels
         {
             get => this.sidebarContent;
             set => this.SetProperty(ref this.sidebarContent, value);
+        }
+
+        /// <summary>
+        /// The set sidebar view model.
+        /// </summary>
+        /// <param name="obj"> The sidebar view. </param>
+        private void SetSidebarViewModel(object obj)
+        {
+            this.SidebarContent = obj as UserControl;
         }
     }
 }

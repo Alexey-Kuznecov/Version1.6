@@ -7,7 +7,7 @@
     <!--  Directory Panel Colors  -->
     <Color x:Key="DirectoryPanelBackgroundColor">#FFFFFF</Color>
     <Color x:Key="DirectoryPanelForegroundColor">Gray</Color>
-    <Color x:Key="DirectoryPanelBorderColor">#B6CAEB</Color>
+    <Color x:Key="DirectoryPanelBorderColor">#D8ECFF</Color>
     <Color x:Key="DirectoryItemBackgroundColor">#FFFFFF</Color>
     <Color x:Key="DirectoryItemForegroundColor">Gray</Color>
     <Color x:Key="DirectoryItemBorderColor">#B6CAEB</Color>

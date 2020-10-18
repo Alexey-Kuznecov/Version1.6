@@ -132,7 +132,7 @@ namespace UnityCommander.Common.Invokers
         /// <param name="newCommand">
         /// The new command.
         /// </param>
-        protected void AddMacros(ConcreteCommand newCommand)
+        protected void AddMacros(Command newCommand)
         {
             ModuleCommands.Add(newCommand);
         }

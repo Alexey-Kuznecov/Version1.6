@@ -12,11 +12,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Input;
 
     using GongSolutions.Wpf.DragDrop;
 
