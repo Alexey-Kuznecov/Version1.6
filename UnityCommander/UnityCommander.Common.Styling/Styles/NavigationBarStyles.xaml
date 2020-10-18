@@ -1,9 +1,28 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:UnityCommander.Modules.FilePanel">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style x:Key="NavigationGridPanel" TargetType="Grid">
+    <!--
+        POP-UP BOX STYLES
+    -->
+    <Style x:Key="NavigationPopupHeaderStyle" TargetType="{x:Type Grid}">
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource GeneralHeaderColor}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NavigationPopupContainerStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="#F1F2FF" />
+        <Setter Property="BorderBrush" Value="#A7A8B5" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Width" Value="400" />
+        <Setter Property="Height" Value="250" />
+    </Style>
+
+    <!--
+        NAVIGATION ITEM STYLES
+    -->
+    <Style x:Key="NavigationItemContainerStyle" TargetType="{x:Type Grid}">
         <Setter Property="Margin" Value="5,0,0,0" />
         <Setter Property="BitmapEffect">
             <Setter.Value>
@@ -17,7 +36,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NavigationStyle" TargetType="{x:Type Button}">
+    <Style x:Key="NavigationGotoButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="25" />
         <Setter Property="MinWidth" Value="30" />
         <Setter Property="Background" Value="#D0D1F0" />
@@ -58,7 +77,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="NavigationPopupStyle" TargetType="{x:Type Button}">
+
+    <Style x:Key="NavigationPopupButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="30" />
         <Setter Property="Height" Value="25" />
         <Setter Property="Background" Value="#D0D1F0" />

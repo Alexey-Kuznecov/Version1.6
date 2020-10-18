@@ -1,6 +1,77 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:UnityCommander.Common.Styling">
-    <SolidColorBrush x:Key="WindowHeader" Color="#306799" />
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  General Colors  -->
+    <Color x:Key="GeneralHeaderColor">#7C9BCC</Color>
+    <Color x:Key="GeneralContainerColor">#B6CAEB</Color>
+
+    <!--  Directory Panel Colors  -->
+    <Color x:Key="DirectoryPanelBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="DirectoryPanelForegroundColor">Gray</Color>
+    <Color x:Key="DirectoryPanelBorderColor">#B6CAEB</Color>
+    <Color x:Key="DirectoryItemBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="DirectoryItemForegroundColor">Gray</Color>
+    <Color x:Key="DirectoryItemBorderColor">#B6CAEB</Color>
+    <Color x:Key="DirectoryItemMouseOverColor">OldLace</Color>
+    <Color x:Key="DirectoryItemPressedColor">AliceBlue</Color>
+    <Color x:Key="DirectoryItemDisabledColor">#FF888888</Color>
+    <Color x:Key="DirectoryItemSelectedBackgroundColor">#E2F0E5</Color>
+    <Color x:Key="DirectoryItemSelectedUnfocusedColor">#FFE5C9</Color>
+
+    <!--  ListView Colors  -->
+    <Color x:Key="ListBoxMouseOverColor">Beige</Color>
+    <Color x:Key="ListBoxPressedColor">AliceBlue</Color>
+    <Color x:Key="ListBoxDisabledColor">#FF888888</Color>
+    <Color x:Key="ListBoxBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="ListBoxBorderColor">#E7E7E7</Color>
+    <Color x:Key="ListBoxSelectedBackgroundColor">#E2F0E5</Color>
+    <Color x:Key="ListBoxSelectedUnfocusedColor">#FFE5C9</Color>
+
+    <!--  GridView  -->
+    <Color x:Key="ColumnHeaderMouseOverColor">#D0FFD8</Color>
+    <Color x:Key="ColumnHeaderBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="ColumnHeaderBorderLightColor">#FFFFFF</Color>
+    <Color x:Key="ColumnHeaderBorderDarkColor">#E7E7E7</Color>
+    <Color x:Key="ColumnHeaderLightColor">#FFFFFF</Color>
+    <Color x:Key="ColumnHeaderMediumColor">#E7E7E7</Color>
+    <Color x:Key="ColumnHeaderGripperBorderLightColor">#E7E7E7</Color>
+    <Color x:Key="ColumnHeaderGripperBorderDarkColor">#D0FF00</Color>
+
+    <!--  Scrollbar Colors  -->
+    <Color x:Key="GlyphColor">#7A7A7A</Color>
+    <Brush x:Key="LineButtonColor">#FFFFFFFF</Brush>
+    <Brush x:Key="ScrollBarTrackColor">#F3F3F3</Brush>
+    <Color x:Key="ScrollbarPressedColor">AliceBlue</Color>
+    <Color x:Key="ScrollbarDisabledColor">#FF888888</Color>
+
+    <!--  Thumb Colors  -->
+    <Color x:Key="ThumbLightColor">#B6CAEB</Color>
+    <Color x:Key="ThumbMediumColor">#B6CAEB</Color>
+    <Color x:Key="ThumbBorderLightColor">#B6CAEB</Color>
+    <Color x:Key="ThumbBorderMediumColor">#B6CAEB</Color>
+
+    <!--  Common colors  -->
+    <Color x:Key="ControlMouseOverColor">#FFE5C9</Color>
+    <Color x:Key="ControlPressedColor">#FFCA28</Color>
+
+    <Color x:Key="PressedBorderLightColor">#FFE5C9</Color>
+    <Color x:Key="PressedBorderDarkColor">#FFCA28</Color>
+
+    <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
+    <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
+
+    <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
+    <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
+    <Color x:Key="DisabledForegroundColor">#FF888888</Color>
+
+    <Color x:Key="DefaultBorderBrushLightBrush">#FFE5C9</Color>
+    <Color x:Key="DefaultBorderBrushDarkColor">#FFCA28</Color>
+
+
+    <Color x:Key="BorderLightColor">#FFE5C9</Color>
+    <Color x:Key="BorderMediumColor">#FFD86E</Color>
+    <Color x:Key="BorderDarkColor">#FFCA28</Color>
+
+    <Color x:Key="ControlLightColor">#FFE5C9</Color>
+    <Color x:Key="ControlMediumColor">#FFD86E</Color>
+    <Color x:Key="ControlDarkColor">#FFCA28</Color>
 </ResourceDictionary>

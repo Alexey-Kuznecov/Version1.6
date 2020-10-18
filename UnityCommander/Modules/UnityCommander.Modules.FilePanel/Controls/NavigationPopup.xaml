@@ -8,27 +8,18 @@
     d:DesignHeight="400"
     d:DesignWidth="250"
     mc:Ignorable="d">
-    <!--<UserControl.DataContext>
-        <local:NavigationPopupModel />
-    </UserControl.DataContext>-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{StaticResource WindowHeader}" />
-        <Border
-            Grid.Row="1"
-            Width="400"
-            Height="250"
-            Background="#F1F2FF"
-            BorderBrush="#A7A8B5"
-            BorderThickness="2">
-            <ListBox ItemsSource="{Binding DirectoryList, Mode=TwoWay}" SelectedItem="{Binding SelectItem}">
+        <Grid Grid.Row="0" Style="{DynamicResource NavigationPopupHeaderStyle}" />
+        <Border Grid.Row="1" Style="{DynamicResource NavigationPopupContainerStyle}">
+            <ListBox ItemsSource="{Binding DirectoryList, Mode=OneWay}" SelectedItem="{Binding SelectItem, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="local:PopupViewModel">
                         <WrapPanel>
-                            <TextBlock Text="{Binding SelectedPath, Mode=TwoWay}" />
+                            <TextBlock Text="{Binding SelectedPath, Mode=OneWay}" />
                         </WrapPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

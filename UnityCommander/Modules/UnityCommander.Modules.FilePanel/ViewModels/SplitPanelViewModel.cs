@@ -10,10 +10,12 @@
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Input;
 
     using GongSolutions.Wpf.DragDrop;
@@ -34,11 +36,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
     {
         #region Declaration fields
-
-        /// <summary>
-        /// The field serves to simulate double click.
-        /// </summary>
-        private static int doubleClick = 0;
 
         /// <summary>
         /// The copy dialog.
@@ -69,16 +66,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Indicates the current directory.
         /// </summary>
         private string currentDirectory;
-
-        /// <summary>
-        /// The can go directory.
-        /// </summary>
-        private bool canGoDirectory = doubleClick == 1;
-
-        /// <summary>
-        /// The selected directory.
-        /// </summary>
-        private DirectoryModel selectedDirectory;
 
         #endregion
 
@@ -174,17 +161,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the selected directory.
+        /// Sets the selected directory.
         /// </summary>
-        public DirectoryModel SelectedDirectory
+        public DirectoryBase SelectedDirectory
         {
-            get => this.selectedDirectory;
             set
             {
-                doubleClick = 0;
-                this.selectedDirectory = value;
+                if (value == null) return;
+                this.SelectedDirectories.Add(value);
             }
         }
+
+        /// <summary>
+        /// Gets or sets the selected directory.
+        /// </summary>
+        public List<DirectoryBase> SelectedDirectories { get; set; } = new List<DirectoryBase>();
 
         /// <summary>
         /// Gets or sets the directory list.
@@ -214,10 +205,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">
         /// The drop-over event handler.
         /// </param>
-        [DebuggerStepThrough]
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
-            if (dropInfo.Data is DirectoryBase source && dropInfo.TargetItem is DirectoryBase target)
+            bool isMultiSelect = dropInfo.Data is List<object> 
+                           & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is DirectoryBase);
+            bool isSingleSelect = dropInfo.Data is DirectoryBase
+                            & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is DirectoryBase);
+
+
+            if (isMultiSelect || isSingleSelect) 
             {
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
                 dropInfo.Effects = DragDropEffects.Copy;
@@ -230,7 +226,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">
         /// The drop event handler.
         /// </param>
-        [DebuggerStepThrough]
+        /// [DebuggerStepThrough]
         void IDropTarget.Drop(IDropInfo dropInfo)
         {
             DirectoryBase sourceItem = dropInfo.Data as DirectoryBase;

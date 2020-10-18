@@ -7,9 +7,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Modules.FilePanel;component/Resources/MergedModuleResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Colors/DefaultColors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

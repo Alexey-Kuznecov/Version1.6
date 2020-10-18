@@ -50,10 +50,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         public ListViewItem SelectItem
         {
             get => this.selectItem;
-            set
-            {
-                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new ColumnsOptionControl());
-            }
+            set => this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new ColumnsOptionControl());
         }
     }
 }
