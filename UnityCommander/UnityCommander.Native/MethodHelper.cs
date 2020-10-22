@@ -14,7 +14,7 @@ namespace UnityCommander.Native
     using UnityCommander.Native.Api;
 
     /// <summary>
-    /// The process utility.
+    /// Class serves to search all files handle is opened of the selected process. 
     /// </summary>
     public class MethodHelper
     {
@@ -65,7 +65,6 @@ namespace UnityCommander.Native
                 return (IntPtr)((long)ptr + offset);
             }
         }
-
 
         /// <summary>
         /// The get process id.
@@ -237,7 +236,8 @@ namespace UnityCommander.Native
 
                 if (ret == NT_STATUS.STATUS_SUCCESS)
                 {
-                    OBJECT_NAME_INFORMATION objNameInfo = (OBJECT_NAME_INFORMATION)Marshal.PtrToStructure(ptr, typeof(OBJECT_NAME_INFORMATION));
+                    OBJECT_NAME_INFORMATION objNameInfo =
+                        (OBJECT_NAME_INFORMATION)Marshal.PtrToStructure(ptr, typeof(OBJECT_NAME_INFORMATION));
                     fileName = objNameInfo.Name.Buffer;
                     return fileName?.Length != 0;
                 }

@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Vmc\DetectOpenFiles.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ManagedWinapi" Version="0.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Vmc\" />
   </ItemGroup>
 
 </Project>

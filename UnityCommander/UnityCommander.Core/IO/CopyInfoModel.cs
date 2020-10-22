@@ -15,7 +15,6 @@ namespace UnityCommander.Core.IO
     /// <summary>
     /// The copy info model.
     /// </summary>
-    [Obsolete]
     public class CopyInfoModel
     {
         /// <summary>

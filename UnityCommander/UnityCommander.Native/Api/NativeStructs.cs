@@ -100,15 +100,38 @@ namespace UnityCommander.Native.Api
     }
 
     /// <summary>
-    /// The i o_ counters.
+    /// The input/output counters.
     /// </summary>
     public struct IO_COUNTERS
     {
-        ulong ReadOperationCount;
-        ulong WriteOperationCount;
-        ulong OtherOperationCount;
-        ulong ReadTransferCount;
-        ulong WriteTransferCount;
-        ulong OtherTransferCount;
+        /// <summary>
+        /// The read operation count.
+        /// </summary>
+        public ulong ReadOperationCount;
+
+        /// <summary>
+        /// The write operation count.
+        /// </summary>
+        public ulong WriteOperationCount;
+
+        /// <summary>
+        /// The other operation count.
+        /// </summary>
+        public ulong OtherOperationCount;
+
+        /// <summary>
+        /// The read transfer count.
+        /// </summary>
+        public ulong ReadTransferCount;
+
+        /// <summary>
+        /// The write transfer count.
+        /// </summary>
+        public ulong WriteTransferCount;
+
+        /// <summary>
+        /// The other transfer count.
+        /// </summary>
+        public ulong OtherTransferCount;
     }
 }

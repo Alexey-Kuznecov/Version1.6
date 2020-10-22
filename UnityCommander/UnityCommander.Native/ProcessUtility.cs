@@ -2,6 +2,7 @@
 namespace UnityCommander.Native
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.CompilerServices;
@@ -10,7 +11,7 @@ namespace UnityCommander.Native
     using UnityCommander.Native.Api;
 
     /// <summary>
-    /// The open files.
+    /// Class serves to search all files handle is opened of the selected process. 
     /// </summary>
     public sealed class ProcessUtility : IEnumerable<FileSystemInfo>
     {
@@ -126,7 +127,7 @@ namespace UnityCommander.Native
         /// The get enumerator.
         /// </summary>
         /// <returns> The <see cref="IEnumerator"/>. </returns>
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }

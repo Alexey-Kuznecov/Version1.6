@@ -1,4 +1,6 @@
 ﻿
+#define Nlog
+
 namespace UnityCommander.Core.IO
 {
     using System;
@@ -9,60 +11,105 @@ namespace UnityCommander.Core.IO
     using System.Threading.Tasks;
     using System.Timers;
 
+    using NLog;
+
     using UnityCommander.Native;
     using UnityCommander.Native.Api;
 
+    using Timer = System.Timers.Timer;
+
     /// <summary>
-    /// The file copier.
+    /// Provides copying files interface.
     /// </summary>
     public class FileCopier
     {
-        #region Declaration Fields
+        #region Fields
 
+#if (Nlog)
         /// <summary>
-        /// The Snapshots.
+        /// The reference the current log event manager.
+        /// </summary>
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+#endif
+        /// <summary>
+        /// Contains list of the most recently transferred bytes, maximum 30 snapshots.
+        /// Used to culculate the average copy file speed.
         /// </summary>
         private static readonly Queue<long> Snapshots = new Queue<long>(30);
 
         /// <summary>
-        /// The Timer.
+        /// Timer for measuring the average speed of copying a file per second.
         /// </summary>
-        private static readonly System.Timers.Timer Timer = new System.Timers.Timer(1000D);
+        private static readonly Timer SpeedTimer = new Timer(1000D);
 
         /// <summary>
-        /// The current bytes transferred.
+        /// Timer to measure the time remaining for copying files, 
+        /// also calculates the percentage of file copy progress
         /// </summary>
-        private static long currentBytesTransferred;
+        private static readonly Timer ElapsedTimer = new Timer(1000D);
 
         /// <summary>
-        /// The total bytes transferred.
+        /// The current status to copy files.
         /// </summary>
-        private static long totalBytesTransferred;
+        private static CopyBehaviors copyBehaviors;
 
         /// <summary>
-        /// The file size.
-        /// </summary>
-        private static long fileSize;
-
-        /// <summary>
-        /// The average speed.
-        /// </summary>
-        private static long remain;
-
-        /// <summary>
-        /// The copyControl.
-        /// </summary>
-        private static CopyControl copyControl;
-
-        /// <summary>
-        /// The operations.
+        /// A reference to the <see cref="FileOperations"/> class 
+        /// which is responsible for copying files.
         /// </summary>
         private static FileOperations operations;
 
         /// <summary>
-        /// The data model for storing information about the progress of file copying.
+        /// The data model for storing information about 
+        /// the progress of files copying.
         /// </summary>
         private static CopyInfo copyInfoInstance;
+
+        /// <summary>
+        /// The current number of bytes transferred.
+        /// </summary>
+        private static long currentBytesTransferred;
+
+        /// <summary>
+        /// The size of the file in bytes used to calculate the percentage 
+        /// and time remaining to the copy file.
+        /// </summary>
+        private static long fileSize;
+
+        /// <summary>
+        /// The bytes left to the copy file.
+        /// </summary>
+        private static long bytesLeft;
+
+        /// <summary>
+        /// Total files size used to calculate percentage and time left.
+        /// </summary>
+        private static long totalFileSize;
+
+        /// <summary>
+        /// The total number of bytes left to copy files.
+        /// </summary>
+        private static long totalBytesLeft;
+
+        /// <summary>
+        /// The last bytes that have been transferred in the <see cref="CopyProgressHandle"/> method.
+        /// </summary>
+        private static long lastBytes;
+
+        /// <summary>
+        /// The average speed of the copy files per second.
+        /// </summary>
+        private static double averageSpeed;
+
+        /// <summary>
+        /// The total number remaining time to copy files.
+        /// </summary>
+        private static TimeSpan totalTimeLeft;
+
+        /// <summary>
+        /// Used to measure the total number of bytes copied as a percentage..
+        /// </summary>
+        private static double percentCounter;
 
         /// <summary>
         /// The copy progress report.
@@ -70,16 +117,18 @@ namespace UnityCommander.Core.IO
         public static event EventHandler<CopyInfo> CopyProgressReport;
 
         /// <summary>
-        /// The copy file resualt.
+        /// The copy file result.
         /// </summary>
         public static event EventHandler<CopyInfo> CopyFileResult;
 
         #endregion
 
+        #region Enums
+
         /// <summary>
         /// The flags external control of the copy behavior.
         /// </summary>
-        public enum CopyControl : byte
+        public enum CopyBehaviors : byte
         {
             /// <summary>
             /// Copy is started.
@@ -97,57 +146,37 @@ namespace UnityCommander.Core.IO
             Cancel = 2
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
-        /// Indicates the status of copying.
+        /// Changes the copy status to stop, resume, or cancel the copy altogether.
         /// </summary>
-        public enum CopyStatus : byte
+        /// <param name="changeOn"> Select status to change the copying behavior. </param>
+        public static void ChangeCopyStatus(CopyBehaviors changeOn)
         {
-            /// <summary>
-            /// The finished.
-            /// </summary>
-            Finished = 0,
-
-            /// <summary>
-            /// The running.
-            /// </summary>
-            Running = 1,
-
-            /// <summary>
-            /// The cancelled.
-            /// </summary>
-            Cancelled = 2,
-
-            /// <summary>
-            /// The waiting.
-            /// </summary>
-            Waiting = 3,
+            copyBehaviors = changeOn;
         }
 
         /// <summary>
-        /// This method can stop, resume, or cancel the copy altogether.
+        /// Copies all files from source to destination.
         /// </summary>
-        /// <param name="changeOn"> Select copyControl to change copy behavior. </param>
-        public static void ChangeCopyStatus(CopyControl changeOn)
-        {
-            copyControl = changeOn;
-        }
-
-        /// <summary>
-        /// Copies a each file of the directory to new location.
-        /// </summary>
-        /// <param name="src">
-        /// The part to the source files.
-        /// </param>
-        /// <param name="dest">
-        /// The part to the new location.
-        /// </param>
+        /// <param name="src"> The part to source files. </param>
+        /// <param name="dest"> The part to destination. </param>
         public static void StartCopyDeep(string src, string dest)
         {
             Task.Factory.StartNew(() =>
             {
                 operations = new FileOperations();
-                Timer.Elapsed += Timer_Elapsed;
-                
+                copyInfoInstance = new CopyInfo();
+                SpeedTimer.Elapsed += SpeedTimerHandler;
+                ElapsedTimer.Elapsed += ElapseTimerHandler;
+                CalculateTotalFilesSize(src);
+
+                SpeedTimer.Start();
+                ElapsedTimer.Start();
+
                 foreach (var oldDir in Directory.GetDirectories(src, "*", SearchOption.AllDirectories))
                 {
                     var newDir = oldDir.Replace(src, dest);
@@ -156,10 +185,14 @@ namespace UnityCommander.Core.IO
                     CopyFileResult?.Invoke(null, copyInfoInstance);
                 }
 
+                // Also copy files in the root directory of the source.
                 if (Directory.GetFiles(src).Length != 0)
                 {
                     CopyFiles(src, dest);
                 }
+
+                SpeedTimer.Stop();
+                ElapsedTimer.Stop();
             });
         }
 
@@ -172,7 +205,7 @@ namespace UnityCommander.Core.IO
         /// <param name="newDir">
         /// The path to the new directory.
         /// </param>
-        private static void CopyFiles(string oldDir, string newDir)
+        public static void CopyFiles(string oldDir, string newDir)
         {
             foreach (var oldFile in Directory.GetFiles(oldDir))
             {
@@ -180,22 +213,41 @@ namespace UnityCommander.Core.IO
                 string newFile = Path.Combine(newDir, new DirectoryInfo(oldFile).Name);
 
                 fileSize = info.Length;
-                copyInfoInstance = new CopyInfo
-                {
-                    Name = info.Name,
-                    Length = info.Length,
-                    Source = info.FullName,
-                    Destination = newFile
-                };
+                copyInfoInstance.Name = info.Name;
+                copyInfoInstance.Length = info.Length;
+                copyInfoInstance.Source = info.FullName;
+                copyInfoInstance.Destination = newFile;
 
                 if (!File.Exists(newFile))
                 {
-                    Timer.Start();
                     copyInfoInstance.Skipped = operations.XCopy(oldFile, newFile, CopyProgressHandle);
-                    Timer.Stop();
                 }
             }
         }
+
+        /// <summary>
+        /// Calculates the total size of files on another thread.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        public static void CalculateTotalFilesSize(string source)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                totalFileSize = 0;
+
+                foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+                {
+                    FileInfo info = new FileInfo(path);
+                    totalFileSize = Interlocked.Add(ref totalFileSize, info.Length);
+                }
+            });
+        }
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// The copy progress handler.
@@ -211,9 +263,9 @@ namespace UnityCommander.Core.IO
         /// <param name="data"> The data. </param>
         /// <returns> The <see cref="CopyProgressResult"/>. </returns>
         private static CopyProgressResult CopyProgressHandle(
-            long total, 
+            long total,
             long transferred,
-            long streamSize, 
+            long streamSize,
             long streamByteTrans,
             uint streamNumber,
             CopyProgressCallbackReason reason,
@@ -221,87 +273,137 @@ namespace UnityCommander.Core.IO
             IntPtr destinationFile,
             IntPtr data)
         {
-            switch (reason) 
+            switch (reason)
             {
                 case CopyProgressCallbackReason.CALLBACK_CHUNK_FINISHED:
-                    switch (copyControl)
+                    switch (copyBehaviors)
                     {
-                        case CopyControl.Pause:
+                        case CopyBehaviors.Pause:
                             var timeout = TimeSpan.FromMinutes(10D);
                             var mre = new ManualResetEvent(false);
-                            while (copyControl != CopyControl.Resume)
+                            while (copyBehaviors != CopyBehaviors.Resume)
                             {
                                 mre.Set();
                                 mre.WaitOne(timeout);
                             }
 
                             return CopyProgressResult.PROGRESS_CONTINUE;
-                        case CopyControl.Cancel:
+                        case CopyBehaviors.Cancel:
                             return CopyProgressResult.PROGRESS_CANCEL;
                         default:
                             // Initial the CopyInfo object. 
                             copyInfoInstance.Percentage = (double)transferred / total * 100;
                             copyInfoInstance.ByteDone = transferred;
-                            copyInfoInstance.TotalByte = total;
+                            copyInfoInstance.FileSize = total;
 
-                            // Correcting the value for correct timer operation.
-                            var calibration = transferred - remain;
+                            // Calculating how many bytes been transferred on the previous iterap.
+                            var calibration = transferred - lastBytes;
 
-                            // Calculate the time left and the average speed.
-                            currentBytesTransferred = Interlocked.Add(ref currentBytesTransferred, calibration);
-                            totalBytesTransferred = Interlocked.Add(ref totalBytesTransferred, calibration);
+                            // Measurement of time and total time remaining to copy files.
+                            CalculateTimeLeft(calibration);
+                            Interlocked.Add(ref currentBytesTransferred, calibration);
 
-                            // Correcting the value for correct timer operation.
-                            remain = transferred;
+                            // Saving an intermediate calculation for the next iteration..
+                            lastBytes = transferred;
 
                             // Report current copy progress.
-                            Interlocked.Exchange<CopyInfo>(ref copyInfoInstance, copyInfoInstance);
+                            Interlocked.Exchange(ref copyInfoInstance, copyInfoInstance);
                             CopyProgressReport?.Invoke(null, copyInfoInstance);
 
                             return CopyProgressResult.PROGRESS_CONTINUE;
-                    }  
+                    }
 
-            default:
+                default:
                     currentBytesTransferred = Interlocked.Add(ref currentBytesTransferred, transferred);
                     return CopyProgressResult.PROGRESS_CONTINUE;
             }
         }
 
         /// <summary>
-        /// Calculates the time left and the average speed when occurring the <see cref="ElapsedEventHandler"/> event.
+        /// Calculates time remaining to copy files.  .
         /// </summary>
-        /// <param name="sender"> Expected the <see cref="System.Timers.Timer"/> object. </param>
-        /// <param name="e"> Provide data for the <see cref="System.Timers.Timer.Elapsed"/> </param> event.
-        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        /// <param name="byteTransferred">
+        /// Total bytes transferred.
+        /// </param>
+        private static void CalculateTimeLeft(long byteTransferred)
         {
-            // Remember only the last 30 Snapshots; discard older Snapshots
-            if (Snapshots.Count == 30)
+            var bps = (fileSize - lastBytes) / byteTransferred;
+            var timeLeft = TimeSpan.FromSeconds(bps);
+            copyInfoInstance.TimeLeft = TimeSpan.FromSeconds(Math.Round(timeLeft.TotalSeconds));
+
+            // Pass the transferred bytes to the elapsed timer.
+            if (byteTransferred > 0)
             {
-                Snapshots.Dequeue();
+                totalBytesLeft = Interlocked.Add(ref totalBytesLeft, byteTransferred);
+            }
+        }
+
+        #endregion
+
+        #region Timer Handlers
+
+        /// <summary>
+        /// Calculates the average speed when occurring the <see cref="ElapsedEventHandler"/> event.
+        /// </summary>
+        /// <param name="sender"> Expected the <see cref="Timer"/> object. </param>
+        /// <param name="e"> Provide data for the <see cref="Timer.Elapsed"/> </param> event.
+        private static void SpeedTimerHandler(object sender, ElapsedEventArgs e)
+        {
+            var bytesTransferred = Interlocked.Exchange(ref currentBytesTransferred, 0L);
+
+            if (fileSize < 10000000)
+            {
+                bytesTransferred = bytesTransferred << 2;
             }
 
-            Snapshots.Enqueue(Interlocked.Exchange(ref currentBytesTransferred, 0L));
-            var averageSpeed = Snapshots.Average();
-            var bytesLeft = fileSize - totalBytesTransferred;
-            copyInfoInstance.AverageSpeed = averageSpeed / (1024 * 1024);
-            if (averageSpeed > 0)
-            { 
-                var timeLeft = TimeSpan.FromSeconds(bytesLeft / averageSpeed);
-                copyInfoInstance.TimeLeftRounded = TimeSpan.FromSeconds(Math.Round(timeLeft.TotalSeconds));
-            }
-            else
+            if (bytesTransferred > 0)
             {
-                copyInfoInstance.TimeLeftRounded = TimeSpan.Zero;
+                if (Snapshots.Count == 30)
+                {
+                    Snapshots.Dequeue();
+                }
+
+                Snapshots.Enqueue(bytesTransferred);
+                Interlocked.Exchange(ref averageSpeed, Snapshots.Average());
+                copyInfoInstance.AverageSpeed = averageSpeed;
             }
         }
 
         /// <summary>
-        /// The copy info.
+        /// Calculates the average speed when occurring the <see cref="ElapsedEventHandler"/> event.
+        /// </summary>
+        /// <param name="sender"> The event source. </param>
+        /// <param name="e"> Expacted <see cref="ElapsedEventArgs"/> object, event data. </param>
+        private static void ElapseTimerHandler(object sender, ElapsedEventArgs e)
+        {
+            // Calculate the percentage completed to copy files.
+            if (totalBytesLeft > percentCounter)
+            {
+                percentCounter += totalFileSize / 100;
+                copyInfoInstance.TotalPercentage++;
+            }
+
+            // Calculates the time left completed to copy files.
+            if (averageSpeed > 0)
+            {
+                var bps = (totalFileSize - totalBytesLeft) / averageSpeed;
+                var timeLeft = TimeSpan.FromSeconds(bps);
+                totalTimeLeft = TimeSpan.FromSeconds(Math.Round(timeLeft.TotalSeconds));
+                copyInfoInstance.TotalTimeLeft = totalTimeLeft;
+            }
+        }
+
+        #endregion
+
+        #region Inner Class
+
+        /// <summary>
+        /// Provide details on copying files.
         /// </summary>
         public class CopyInfo
         {
             /// <summary>
-            /// Gets or sets the name.
+            /// Gets or sets the name file.
             /// </summary>
             public string Name { get; set; }
 
@@ -311,49 +413,61 @@ namespace UnityCommander.Core.IO
             public string Source { get; set; }
 
             /// <summary>
-            /// Gets or sets the destination directory.
+            /// Gets or sets the target directory.
             /// </summary>
             public string Destination { get; set; }
 
             /// <summary>
-            /// Gets or sets the length.
+            /// Gets or sets the file length in bytes.
             /// </summary>
             public long Length { get; set; }
 
             /// <summary>
-            /// Gets or sets the average speed.
+            /// Gets or sets the average file copy rate per second.
             /// </summary>
             public double AverageSpeed { get; set; }
 
             /// <summary>
-            /// Gets or sets the time left rounded.
+            /// Gets or sets a value indicating the time remaining for copying the file.
             /// </summary>
-            public TimeSpan TimeLeftRounded { get; set; }
+            public TimeSpan TimeLeft { get; set; }
 
             /// <summary>
-            /// Gets or sets the percentage.
+            /// Gets or sets the value indicating the time remaining for copying all files.
+            /// </summary>
+            public TimeSpan TotalTimeLeft { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating the percentage of file copy progress.
             /// </summary>
             public double Percentage { get; set; }
 
             /// <summary>
-            /// Gets or sets the byte done.
+            /// Gets or sets a value indicating the percentage of files copy progress.
+            /// </summary>
+            public double TotalPercentage { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating the copied bytes.
             /// </summary>
             public double ByteDone { get; set; }
 
             /// <summary>
-            /// Gets or sets the total byte.
+            /// Gets or sets the value indicating file size.
             /// </summary>
-            public double TotalByte { get; set; }
+            public double FileSize { get; set; }
+
+            /// <summary>
+            /// Gets or sets the value indicating total size of files.
+            /// </summary>
+            public double TotalFileSize { get; set; }
 
             /// <summary>
             /// Gets or sets a value indicating whether there are copy errors.
             /// </summary>
             public bool Skipped { get; set; }
-
-            /// <summary>
-            /// Gets value the copying state.
-            /// </summary>
-            public CopyStatus CopyStatusOption { get; private set; }
         }
+
+        #endregion
     }
 }

@@ -178,7 +178,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyCancel()
         {
-            FileCopier.ChangeCopyStatus(FileCopier.CopyControl.Cancel);
+            FileCopier.ChangeCopyStatus(FileCopier.CopyBehaviors.Cancel);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyResume()
         {
-            FileCopier.ChangeCopyStatus(FileCopier.CopyControl.Resume);
+            FileCopier.ChangeCopyStatus(FileCopier.CopyBehaviors.Resume);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopySuspend()
         {
-            FileCopier.ChangeCopyStatus(FileCopier.CopyControl.Pause);
+            FileCopier.ChangeCopyStatus(FileCopier.CopyBehaviors.Pause);
         }
 
         #endregion
@@ -208,7 +208,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void SetupCopyFiles(object obj)
         {
             this.invoker.Execute(
-        path =>
+                path =>
                 {
                     this.SkippedFile = new ObservableCollection<CopyInfoModel>();
                     this.CopyReport = new ObservableCollection<CopyInfoModel>();
@@ -263,8 +263,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             this.CurrentPercent = (int)progressInfo.Percentage;
             this.AverageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)progressInfo.AverageSpeed), 2) + " Mb/s";
-            this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.ByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalByte)}";
-            this.TimeLeft = this.ConvertTimeElapsed(progressInfo.TimeLeftRounded, "ru-RU");
+            this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.ByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.FileSize)}";
+            this.TimeLeft = progressInfo.TimeLeft.ToString(); //this.ConvertTimeElapsed(progressInfo.TimeLeft, "ru-RU");
         }
 
         /// <summary>

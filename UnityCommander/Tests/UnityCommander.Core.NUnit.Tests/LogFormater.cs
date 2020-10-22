@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Test
+namespace UnityCommander.Core.NUnit.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace UnityCommander.Test
     /// <summary>
     /// The log formatter.
     /// </summary>
-    public class LogFormatter : IFormatProvider
+    public class LogFormatter
     {
         /// <summary>
         /// The headers arr.
@@ -79,12 +79,8 @@ namespace UnityCommander.Test
         /// <summary>
         /// The draw header.
         /// </summary>
-        /// <param name="header">
-        /// The header.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        /// <param name="header"> The header. </param>
+        /// <returns> The <see cref="string"/>. </returns>
         public static string DrawHeader(string header)
         {
             byte count = 50;
@@ -104,62 +100,73 @@ namespace UnityCommander.Test
         public static string DrawInfoHeader()
         {
             var frame = new StackFrame(1);
-            string methodName = frame.GetMethod().Name;
-            string className = frame.GetMethod().DeclaringType?.FullName;
-            ParameterInfo[] parameters = frame.GetMethod().GetParameters();
-            string param = "";
+            string methodName = frame.GetMethod()?.Name;
+            string className = frame.GetMethod()?.DeclaringType?.FullName;
+            ParameterInfo[] parameters = frame.GetMethod()?.GetParameters();
+            var param = string.Empty;
 
-            if (parameters.Length == 0)
+            if (parameters != null && parameters.Length == 0)
             {
                 param = "<No parameters>";
             }
 
-            foreach (var item in parameters)
+            if (parameters != null)
             {
-                param += string.Format("{1} {0}, ", item.Name, item.ParameterType.Name);
+                foreach (var item in parameters)
+                {
+                    param += string.Format("{1} {0}, ", item.Name, item.ParameterType.Name);
+                }
+            }  
+               
+            if (className != null)
+            {
+                if (methodName != null)
+                {
+                    var max = Math.Max(Math.Max(param.Length, className.Length), methodName.Length) + 10;
+                    string str = "+" + new string('-', max) + "+";
+                    str += "\n| Class:  " + className + new string(' ', (max - className.Length) - 9) + "|\n";
+                    str += "| Method: " + methodName + new string(' ', (max - methodName.Length) - 9) + "|\n";
+                    str += "| Param:  " + param + new string(' ', (max - param.Length) - 9) + "|\n";
+                    str += "+" + new string('-', max) + "+";
+                    return str;
+                }
             }
 
-            int max = Math.Max(Math.Max(param.Length, className.Length), methodName.Length) + 10;
-            string str = "+" + new string('-', max) + "+";
-            str += "\n| Class:  " + className + new string(' ', (max - className.Length) - 9) + "|\n";
-            str += "| Method: " + methodName + new string(' ', (max - methodName.Length) - 9) + "|\n";
-            str += "| Param:  " + param + new string(' ', (max - param.Length) - 9) + "|\n";
-            str += "+" + new string('-', max) + "+";
-            return str;
+            return null;
         }
 
         /// <summary>
-        /// The draw local vars.
+        /// Draws local variables.
         /// </summary>
-        /// <param name="val">
-        /// The val.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        /// <param name="val"> The value. </param>
+        /// <returns> The <see cref="string"/>. </returns>
         public static string DrawLocalVars(object[] val)
         {
             HeaderNames = new[] { "Type", "Name", "Value" };
             table = new List<Dictionary<string, string>>();
             StackFrame stackFrame = new StackFrame(1);
             MethodBase methodBase = stackFrame.GetMethod();
-            var className = stackFrame.GetMethod().DeclaringType;
-            var variables = methodBase.GetMethodBody()?.LocalVariables;
-            var sdas = className.GetMethod("<GetEnumerator>d__3");
+            var className = stackFrame.GetMethod()?.DeclaringType;
+            
+            if (methodBase != null)
+            {
+                var variables = methodBase.GetMethodBody()?.LocalVariables;
+            }
+
+            if (className != null)
+            {
+                var sdas = className.GetMethod("<GetEnumerator>d__3");
+            }
 
             CreateHeader();
             return null;
         }
 
         /// <summary>
-        /// The draw object.
+        /// Draws an <c>object</c> in the form of a <c>table</c>. Only properties.
         /// </summary>
-        /// <param name="obj">
-        /// The obj.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        /// <param name="obj"> Any <c>object</c> that contains properties and fields. </param>
+        /// <returns> Returns a string as a <c>table</c>.. </returns>
         public static string DrawObject(object obj)
         {
             HeaderNames = new[] { "Member", "Access", "Type", "Name", "Value" };
@@ -185,7 +192,7 @@ namespace UnityCommander.Test
                         { "Access", filed.IsPublic ? "Public" : "Private" },
                         { "Type", filed.FieldType.ToString() },
                         { "Name", filed.Name },
-                        { "Value", filed.GetValue(obj).ToString() }
+                        { "Value", filed.GetValue(obj)?.ToString() }
                     };
                 table.Add(cell);
             }
@@ -199,7 +206,7 @@ namespace UnityCommander.Test
                         { "Access", propertyInfo.PropertyType.IsPublic ? "Public" : "Private" },
                         { "Type", propertyInfo.PropertyType.ToString() },
                         { "Name", propertyInfo.Name },
-                        { "Value", propertyInfo.GetValue(obj).ToString() },
+                        { "Value", propertyInfo.GetValue(obj)?.ToString() },
                         { "Member", "Property" }
                     };
                 table.Add(cell);
@@ -218,7 +225,7 @@ namespace UnityCommander.Test
         /// <summary>
         /// The create header.
         /// </summary>
-        public static void CreateHeader()
+        private static void CreateHeader()
         {
             headers = string.Empty;
             headerSeparator = string.Empty;
@@ -246,18 +253,18 @@ namespace UnityCommander.Test
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string MergeColumn()
+        private static string MergeColumn()
         {
             List<string> merge = new List<string>();
             string columns = string.Empty;
 
-            // Concat values into single line.
+            // Concatenate values into single line.
             for (int i = 0; i < table.Count; i++)
             {
                 merge.Add($"{memberColumn[i]} {modeColumn[i]} {typeColumn[i]} {nameColumn[i]} {valueColumn[i]} |\n");
             }
 
-            // Concat all lines into one.
+            // Concatenate all lines into one.
             foreach (var item in merge)
             {
                 columns += item;
@@ -274,13 +281,9 @@ namespace UnityCommander.Test
         /// <summary>
         /// The create column.
         /// </summary>
-        /// <param name="header">
-        /// The header.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        public static List<string> CreateColumn(string header)
+        /// <param name="header"> The header. </param>
+        /// <returns> The <see cref="List"/>. </returns>
+        private static List<string> CreateColumn(string header)
         {
             var rows = new List<string>();
             string longValue = string.Empty;
@@ -332,22 +335,6 @@ namespace UnityCommander.Test
             }
 
             return rows;
-        }
-
-        /// <summary>
-        /// The get format.
-        /// </summary>
-        /// <param name="formatType">
-        /// The format type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object?"/>.
-        /// </returns>
-        /// <exception cref="NotImplementedException">
-        /// </exception>
-        public object? GetFormat(Type? formatType)
-        {
-            throw new NotImplementedException();
         }
     }
 }

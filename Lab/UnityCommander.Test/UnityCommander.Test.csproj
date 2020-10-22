@@ -11,6 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Program.cs~RF5d4019b0.TMP" />
+    <None Remove="Program.cs~RF5da5fe39.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.4" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0" />

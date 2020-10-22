@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Method snippet</Title>
+      <Shortcut>mcr</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Language="csharp">
+        <![CDATA[ 
+            /// <summary>   
+            /// This method is created.
+            /// </summary>
+            public void $methodName$() 
+            {
+              $body$;
+            }
+            ]]>
+      </Code>
+      <Declarations>
+        <Literal>
+          <ID>retype</ID>
+          <ToolTip>Choose the type of return value.</ToolTip>
+          <Default>void</Default>
+        </Literal>
+        <Literal>
+          <ID>methodName</ID>
+          <ToolTip>Choose the method name.</ToolTip>
+          <Default>Method</Default>
+        </Literal>
+        <Literal>
+          <ID>argType</ID>
+          <ToolTip>Choose the return value.</ToolTip>
+          <Default>string</Default>
+        </Literal>
+        <Literal>
+          <ID>argName</ID>
+          <ToolTip>Choose the return value.</ToolTip>
+          <Default>argument</Default>
+        </Literal>
+        <Literal>
+          <ID>body</ID>
+          <ToolTip>Write your a code here.</ToolTip>
+          <Default>throw new NotImplementedException()</Default>
+        </Literal>
+      </Declarations>
+      <Imports>
+        <Import>
+          <Namespace>System</Namespace>
+        </Import>
+      </Imports>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

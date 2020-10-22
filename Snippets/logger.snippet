@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Init nlog.</Title>
+      <Description> Initializes logging in this class using nlog. </Description>
+        <Shortcut>lgi</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Kind="decl" Language="csharp">
+        <![CDATA[ 
+#if (Nlog)
+        /// <summary>
+        /// The log manager.
+        /// </summary>
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+#endif
+        ]]>
+      </Code>
+      <Imports>
+        <Import>
+          <Namespace>NLog</Namespace>
+        </Import>
+      </Imports>
+    </Snippet>
+  </CodeSnippet>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Init config.</Title>
+      <Description> Instantiate configuration file. </Description>
+      <Shortcut>lgc</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Kind="method" Language="csharp">
+        <![CDATA[
+#if (Nlog)
+            LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration($config$);
+            Logger.Info("$message$");
+#endif
+        ]]>
+      </Code>
+      <Declarations>
+        <Literal>
+          <ID>config</ID>
+          <ToolTip> Specify the path to configuration file. </ToolTip>
+          <Default>"../../../../../NLog.config"</Default>
+        </Literal>
+        <Literal>
+          <ID>message</ID>
+          <ToolTip> Write some information to the log.</ToolTip>
+          <Default>Some message</Default>
+        </Literal>
+      </Declarations>
+    </Snippet>
+  </CodeSnippet>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Create logger info.</Title>
+      <Description> Creates the method to log info. </Description>
+      <Shortcut>lif</Shortcut>
+    </Header>
+    <Snippet>
+      <Code Kind="method" Language="csharp">
+        <![CDATA[
+#if (Nlog)
+            Logger.Info("$message$");
+#endif
+        ]]>
+      </Code>
+      <Declarations>
+        <Literal>
+          <ID>config</ID>
+          <ToolTip> Specify the path to configuration file. </ToolTip>
+          <Default>"../../../../../NLog.config"</Default>
+        </Literal>
+        <Literal>
+          <ID>message</ID>
+          <ToolTip> Write some information to the log.</ToolTip>
+          <Default>Some message</Default>
+        </Literal>
+      </Declarations>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
