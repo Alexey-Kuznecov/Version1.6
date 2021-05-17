@@ -10,6 +10,7 @@
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Controls;
@@ -20,7 +21,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Mvvm;
 
     using UnityCommander.Core;
-    using UnityCommander.Modules.FilePanel.Commands;
     using UnityCommander.Modules.FilePanel.Views;
 
     /// <summary>
@@ -34,6 +34,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The view model message.
         /// </summary>
         private readonly IEventAggregator viewModelMessage;
+
+        /// <summary>
+        /// The close trigger.
+        /// </summary>
+        private bool closeTrigger;
 
         /// <summary>
         /// Contains the path to the source panel.
@@ -50,6 +55,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private UserControl controlView;
 
+        /// <summary>
+        /// The field name.
+        /// </summary>
+        private DelegateCommand fieldName;
+
         #endregion
 
         #region Constructors
@@ -65,11 +75,27 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.ControlView = new CopyDialogControl();
             this.CopyCommand = new DelegateCommand(this.CopyExecute);
             this.viewModelMessage = viewModelMessage;
+            
+            // just setting for example, close the window
+            this.CloseTrigger = true;
         }
 
         #endregion
 
         #region Declaration Properties
+
+        /// <summary>
+        /// Gets or sets a value indicating whether main window should be closed
+        /// </summary>
+        public bool CloseTrigger
+        {
+            get => this.closeTrigger;
+            set
+            {
+                this.closeTrigger = value;
+                this.SetProperty(ref this.closeTrigger, value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the appearance of the copy dialog box.
@@ -78,6 +104,30 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.controlView;
             set => this.SetProperty(ref this.controlView, value);
+        }
+
+        /// <summary>
+        /// The command name.
+        /// </summary>
+        public DelegateCommand CommandCloseWindow => new DelegateCommand(this.ExecuteCommandName, this.CanExecuteCommandName);
+
+        /// <summary>
+        /// The execute command name.
+        /// </summary>
+        private void ExecuteCommandName()
+        {
+            this.CloseTrigger = false;
+        }
+
+        /// <summary>
+        /// The can execute command name.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool CanExecuteCommandName()
+        {
+            return true;
         }
 
         /// <summary>

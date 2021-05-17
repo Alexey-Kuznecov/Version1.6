@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Converters\IconConverters.cs" />
     <Compile Remove="ExtensionMethod.cs" />
     <Compile Remove="HelperMethods.cs" />
     <Compile Remove="Models\DirectoryPathModel.cs" />
@@ -24,13 +23,12 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Converters\" />
+  <!--<ItemGroup>
     <Folder Include="Logger\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="C:\Users\lexa1\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config" Link="Logger\NLog.config">
+    <None Include="D:\Works\WPF Projects\UnityCommander\Version2.6\nlogconfig" Link="NLog.config">
       <Private>True</Private>
       <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -38,13 +36,13 @@
       <TargetPath>NLog.config</TargetPath>
       <NuGetPackageId>NLog.Config</NuGetPackageId>
     </None>
-    <None Include="C:\Users\lexa1\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd" Link="Logger\NLog.xsd">
+    <None Include="D:\Works\WPF Projects\UnityCommander\Version2.6\nlogconfig" Link="NLog.xsd">
       <Private>False</Private>
       <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
       <NuGetItemType>None</NuGetItemType>
       <NuGetPackageId>NLog.Schema</NuGetPackageId>
     </None>
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />

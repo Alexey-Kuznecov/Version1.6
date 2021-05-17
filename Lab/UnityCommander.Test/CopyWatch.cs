@@ -31,8 +31,8 @@ namespace UnityCommander.Test
         /// </param>
         public CopyWatch(Process process)
         {
-             LogManager.Configuration = new XmlLoggingConfiguration(@"C:\Users\Alexey\Desktop\Version1.9\NLog.config");
-             this.Counter = new ProcessCounter(process);
+            LogManager.Configuration = new XmlLoggingConfiguration("G:\\Works\\UnityCommander\\Version2.6\\NLog.config");
+            this.Counter = new ProcessCounter(process);
         }
 
          /// <summary>
@@ -65,6 +65,7 @@ namespace UnityCommander.Test
          /// </summary>
          public async void WatchProcess()
          {
+             // TODO: Task doesn't work when debugging something breaks.
              bool taskCalcBytes = await Task<bool>.Factory.StartNew(this.CalcBytesInterval).ConfigureAwait(true);
              bool taskCalcTime = await Task<bool>.Factory.StartNew(this.CalcTime).ConfigureAwait(true);
 
@@ -108,10 +109,11 @@ namespace UnityCommander.Test
          
              while (counter++ <= seconds)
              {
+                 // TODO: This expression will be works only without using the threads.
                  this.BytesCounter += this.Counter.IOWriteBytes.NextValue() / 4;
              }
 
-#if (Nlog2)
+#if (Nlog)
             if (Speed != 0)
             {
                 Logger.Info("BytesCounter: {0}", this.BytesCounter);
@@ -133,7 +135,7 @@ namespace UnityCommander.Test
                 // Thread.Sleep(200);
                 Speed = (long)this.Counter.IOReadBytes.NextValue();
                 RemainTime = TimeSpan.FromMilliseconds((TotalBytes - this.BytesCounter) / Speed);
-#if (Nlog2)
+#if (Nlog)
                 Logger.Info("RemainTime: {0}", RemainTime);
 #endif
             }

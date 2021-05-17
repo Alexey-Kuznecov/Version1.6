@@ -35,6 +35,7 @@ namespace UnityCommander.ViewModels
         /// The drag increment.
         /// </summary>
         private UserControl sidebarContent;
+        private int sidebarContentWidth;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -46,6 +47,12 @@ namespace UnityCommander.ViewModels
         {
             this.viewModelMessage = viewModelMessage;
             this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
+        }
+
+        public int SidebarContentWidth
+        {
+            get => this.sidebarContentWidth;
+            set => this.SetProperty(ref this.sidebarContentWidth, value);
         }
 
         /// <summary>
@@ -72,6 +79,7 @@ namespace UnityCommander.ViewModels
         /// <param name="obj"> The sidebar view. </param>
         private void SetSidebarViewModel(object obj)
         {
+            this.SidebarContentWidth = 250;
             this.SidebarContent = obj as UserControl;
         }
     }

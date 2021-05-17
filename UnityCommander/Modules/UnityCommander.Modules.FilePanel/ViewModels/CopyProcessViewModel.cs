@@ -20,7 +20,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Core;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
-    using UnityCommander.Modules.FilePanel.Commands;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
@@ -30,9 +29,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Declaration Fields
 
         /// <summary>
+        /// The manager.
+        /// </summary>
+        private static readonly FileCopierManager FileCopierCommand = (FileCopierManager)Commander<FileCopier>.GetManager();
+
+        /// <summary>
         /// The invoker class instance.
         /// </summary>
-        private readonly CopyFileInvoker invoker;
+        private readonly Commands.CopyFileInvoker invoker;
 
         /// <summary>
         /// Contains the current progress bar for copying a file.
@@ -80,7 +84,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyProcessViewModel(IEventAggregator viewModelMessage)
         {
-            this.invoker = new CopyFileInvoker(this.invoker);
+            this.invoker = new Commands.CopyFileInvoker(this.invoker);
             viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupCopyFiles);
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
@@ -178,7 +182,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyCancel()
         {
-            FileCopier.ChangeCopyStatus(FileCopier.CopyBehaviors.Cancel);
+            FileCopierCommand.Cancel();
         }
 
         /// <summary>
@@ -186,7 +190,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopyResume()
         {
-            FileCopier.ChangeCopyStatus(FileCopier.CopyBehaviors.Resume);
+            FileCopierCommand.Resume();
         }
 
         /// <summary>
@@ -194,7 +198,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public void CopySuspend()
         {
-            FileCopier.ChangeCopyStatus(FileCopier.CopyBehaviors.Pause);
+            FileCopierCommand.Pause();
         }
 
         #endregion
@@ -217,9 +221,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     {
                         var source = new DirectoryInfo(address[0]);
                         var destination = new DirectoryInfo(address[1]);
-                        FileCopier.StartCopyDeep(source.FullName, destination.FullName);
-                        FileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
-                        FileCopier.CopyFileResult += this.FileCopier_CopyFileResult;
+
+                        FileCopierCommand.Copy(source.FullName, destination.FullName);
+                        FileCopierCommand.CopyFileReport += this.CopyProgressReport;
+                        FileCopierCommand.CopyFileResult += this.CopyFileResult;
                     }
                 },
             obj);
@@ -227,10 +232,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         /// <summary>
         /// The event handle for initialization report a copy progress.
-        /// </summary>
-        /// <param name="sender"> The sender is <see cref="FileCopier"/> object. </param>
+        /// </summary>>
         /// <param name="progressInfo"> The copy progress information. </param>
-        private void FileCopier_CopyFileResult(object sender, FileCopier.CopyInfo progressInfo)
+        private void CopyFileResult(FileCopier.Parameters progressInfo)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -257,14 +261,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The event handle for initialization report a copy progress.
         /// </summary>
-        /// <param name="sender"> The sender is <see cref="FileCopier"/> object. </param>
         /// <param name="progressInfo"> The copy progress information. </param>
-        private void FileCopier_CopyProgressReport(object sender, FileCopier.CopyInfo progressInfo)
+        private void CopyProgressReport(FileCopier.Parameters progressInfo)
         {
             this.CurrentPercent = (int)progressInfo.Percentage;
             this.AverageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)progressInfo.AverageSpeed), 2) + " Mb/s";
             this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.ByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.FileSize)}";
-            this.TimeLeft = progressInfo.TimeLeft.ToString(); //this.ConvertTimeElapsed(progressInfo.TimeLeft, "ru-RU");
+            this.TimeLeft = this.ConvertTimeElapsed(progressInfo.TotalTimeLeft, "ru-RU");
         }
 
         /// <summary>

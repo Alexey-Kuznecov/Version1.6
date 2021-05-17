@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq" Version="4.14.7" />
     <PackageReference Include="NLog" Version="4.7.4" />
     <PackageReference Include="NLog.Config" Version="4.7.4" />
     <PackageReference Include="NLog.Schema" Version="4.7.4" />
@@ -22,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Lab\UnityCommander.Test\UnityCommander.Test.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 

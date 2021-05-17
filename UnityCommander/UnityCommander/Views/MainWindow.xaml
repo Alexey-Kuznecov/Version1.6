@@ -23,7 +23,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" MinWidth="60" />
-            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="3*" MinWidth="800" />
         </Grid.ColumnDefinitions>
@@ -76,6 +76,7 @@
             The content display region of ​​the left sidebar.
         -->
         <Border
+            Width="{Binding SidebarContentWidth}"
             Grid.Row="2"
             Grid.Column="1"
             Background="#FFF3F2F2">

@@ -24,6 +24,5 @@
                 <TextBlock FontSize="15" Text="Colums 5 Control" />
             </ListViewItem>
         </ListView>
-
     </Grid>
 </UserControl>

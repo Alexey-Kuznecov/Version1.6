@@ -1,13 +1,6 @@
 ﻿
 namespace UnityCommander.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using UnityCommander.Native;
     using UnityCommander.Test.TestStart;
 
     /// <summary>
@@ -23,7 +16,8 @@ namespace UnityCommander.Test
         /// </param>
         public static void Main(string[] args)
         {
-            FileCopierTest.Start();
+            CopyWatchTest.Start();
+
             // Gets open file handle used by process.
             // ProcessMonitorTest.Start();
         }

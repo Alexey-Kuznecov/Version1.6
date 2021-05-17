@@ -81,6 +81,22 @@ namespace UnityCommander.Native.Api
         internal static extern int GetProcessId(
             [In] IntPtr process);
 
+        /// <summary>
+        /// The get foreground window.
+        /// </summary>
+        /// <returns> The <see cref="IntPtr"/>. </returns>
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        /// <summary>
+        /// The get window thread process id.
+        /// </summary>
+        /// <param name="hwnd"> The hwnd. </param>
+        /// <param name="pid"> The pid. </param>
+        /// <returns> The <see cref="uint"/>. </returns>
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hwnd, ref int pid);
+
         #endregion
 
         #region System Services

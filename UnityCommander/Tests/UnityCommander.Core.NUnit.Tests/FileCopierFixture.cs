@@ -4,12 +4,17 @@
 namespace UnityCommander.Core.NUnit.Tests
 {
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+
     using global::NUnit.Framework;
+    using global::System.Collections.Generic;
+
     using NLog;
 
-    using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
 
     /// <summary>
@@ -21,6 +26,7 @@ namespace UnityCommander.Core.NUnit.Tests
         #region Declaration Fields
 
 #if (Nlog)
+
         /// <summary>
         /// The log manager.
         /// </summary>
@@ -28,9 +34,49 @@ namespace UnityCommander.Core.NUnit.Tests
 #endif
 
         /// <summary>
-        /// The current step.
+        /// The <c>io</c> read snapshot.
         /// </summary>
-        private double currentStep;
+        private static readonly List<double> IOReadSnapshot = new List<double>();
+
+        /// <summary>
+        /// The io read snapshot.
+        /// </summary>
+        private static readonly Queue<long> AvIOReadSnapshot = new Queue<long>(30);
+
+        /// <summary>
+        /// The snapshot.
+        /// </summary>
+        private static readonly List<double> Snapshot = new List<double>();
+
+        /// <summary>
+        /// The counter.
+        /// </summary>
+        private static readonly PerformanceCounter Counter = new PerformanceCounter("Process", "IO Read Bytes/sec", "testhost");
+
+        /// <summary>
+        /// The manager.
+        /// </summary>
+        private static readonly FileCopierManager CopyCommand = (FileCopierManager)Commander<FileCopier>.GetManager();
+
+        /// <summary>
+        /// The total performance bytes.
+        /// </summary>
+        private static long totalPerfBytes = 0;
+
+        /// <summary>
+        /// The total bytes.
+        /// </summary>
+        private static long totalBytes = 0;
+
+        /// <summary>
+        /// The parameters.
+        /// </summary>
+        private static FileCopier.Parameters parameters;
+
+        /// <summary>
+        /// The file copier.
+        /// </summary>
+        private FileCopier fileCopier;
 
         /// <summary>
         /// The source.
@@ -42,6 +88,10 @@ namespace UnityCommander.Core.NUnit.Tests
         /// </summary>
         private string target;
 
+        /// <summary>
+        /// The start performance test.
+        /// </summary>
+        private bool startPerfTest = true;
 
         #endregion
 
@@ -51,67 +101,113 @@ namespace UnityCommander.Core.NUnit.Tests
         [SetUp]
         public void Setup()
         {
-#if (Nlog)
-            LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration("../../../NLog.config");
-            Logger.Info("Starting Testing of the FileCopier class.");
-#endif
+            this.source = "G:\\Works\\UnitTests\\Source\\Big";
+            this.target = "G:\\Works\\UnitTests\\Target";
 
-            this.source = "e:\\Works\\UnitTests\\Source\\Big";
-            this.target = "e:\\Works\\UnitTests\\Target";
-            
-            FileCopier.CopyProgressReport += this.FileCopier_OnCopyProgressReport;
-            FileCopier.InitialDataTest();
+            this.MeasureSpeed();
         }
 
-        /// <summary>   
-        /// This method is created.
+        /// <summary>
+        /// Testing the result of the <see cref="FileCopier"/> class. Checks an average speed
+        /// of copying files per second it should equal the <c>true</c> speed.
         /// </summary>
         [Test]
-        public void FileCopier_ProgressPercentage_From0To100()
+        public void FileCopier_SpeedAdjustment_EqualTrueSpeed()
         {
-            FileCopier.MeasureTotalFilesSize(this.source);
-            FileCopier.GetTotalTimer.Start();
+            var count = 0;
 
-            foreach (var oldDir in Directory.GetDirectories(this.source, "*", SearchOption.AllDirectories))
+            foreach (var readByte in IOReadSnapshot)
             {
-                var newDir = oldDir.Replace(this.source, this.target);
-                Directory.CreateDirectory(newDir);
-                FileCopier.CopyFiles(oldDir, newDir);
-                this.CopyFileResult(FileCopier.CopyInfoInstance);
-                // Logger.Info(LogFormatter.DrawObject(FileCopier.CopyInfoInstance));
-            }
-
-            if (Directory.GetFiles(this.source).Length != 0)
-            {
-                FileCopier.CopyFiles(this.source, this.target);
-            }
-
-            FileCopier.GetTotalTimer.Start();
+                var compareTo = Snapshot[count].CompareTo(readByte);
+                count++;
+            }  
         }
 
         /// <summary>
-        /// The file copier_ on copy progress report.
+        /// The measure speed.
+        /// </summary>
+        public void MeasureSpeed()
+        {
+            Task.Factory.StartNew(
+                () =>
+            {
+                while (startPerfTest)
+                {
+                    var readBytes = Counter.NextValue();
+                    totalPerfBytes += (long)Math.Round(readBytes);
+                    if (AvIOReadSnapshot.Count > 30)
+                    {
+                        AvIOReadSnapshot.Dequeue();
+                    }
+
+                    AvIOReadSnapshot.Enqueue((long)readBytes);
+
+                    if (readBytes > 0)
+                    {
+                        var avarageSpeed = AvIOReadSnapshot.Average();
+                        IOReadSnapshot.Add(avarageSpeed);
+                    }
+                }
+            });
+        }
+
+        /// <summary>
+        /// Testing the result of the <see cref="FileCopier"/> class. Checks the progress of copying files.
+        /// The percentage must be greater or equal to 0 and less or equal to 100.
+        /// </summary>
+        [Test]
+        public void FileCopier_PercentAdjustment_EqualFrom0To100()
+        {
+            using (this.fileCopier = new FileCopier())
+            {
+                // Average
+                this.fileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
+                this.fileCopier.CalculateTotalFilesSize(this.source);
+                //this.fileCopier.GetSpeedTimer.Start();
+                this.fileCopier.GetElapsedTimer.Start();
+
+                // Act
+                foreach (var oldDir in Directory.GetDirectories(this.source, "*", SearchOption.AllDirectories))
+                {
+                    var newDir = oldDir.Replace(this.source, this.target);
+                    Directory.CreateDirectory(newDir);
+                    this.fileCopier.CopyFiles(oldDir, newDir);
+                }
+
+                // Also copy files in the root directory of the source.
+                if (Directory.GetFiles(this.source).Length != 0)
+                {
+                    this.fileCopier.CopyFiles(this.source, this.target);
+                }
+            }
+
+            // Assert
+            Directory.Delete(this.target, true);
+            this.startPerfTest = false;
+            //Assert.AreEqual(parameters.TotalTimeLeft, TimeSpan.Zero);
+            //Assert.That(parameters.TotalPercentage == 100);
+        }
+
+        /// <summary>
+        /// Testing the result of the <see cref="FileCopier"/> class. Checks how much time elapsed
+        /// after the files have finished copying to the destination. The time must be no more than 0.
+        /// </summary>
+        public void FileCopier_TimeLeftAdjustment_EqualTo0()
+        {
+            Assert.Equals(parameters.TotalTimeLeft, TimeSpan.Zero);
+        }
+        
+        /// <summary>
+        /// The copy command copy file report.
         /// </summary>
         /// <param name="sender"> The sender. </param>
-        /// <param name="e"> The e. </param>
-        private void FileCopier_OnCopyProgressReport(object sender, FileCopier.CopyInfo e)
+        /// <param name="e"> Expected report data about copy file. </param>
+        private void FileCopier_CopyProgressReport(object sender, FileCopier.Parameters e)
         {
-            decimal averageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)e.AverageSpeed), 1);
-            Logger.Info(LogFormatter.DrawHeader(e.Percentage.ToString(CultureInfo.InvariantCulture)));
-            Logger.Info(LogFormatter.DrawObject(e));
-            this.currentStep = e.Percentage;
-        }
-
-        /// <summary>
-        /// The file copier copy file result.
-        /// </summary>
-        /// <param name="e"> The e. </param>
-        private void CopyFileResult(FileCopier.CopyInfo e)
-        {
-            if (e.Percentage > 100)
-            {
-                throw new ArgumentException();
-            }
+            parameters = e;
+            totalBytes += (long)Math.Round(parameters.AverageSpeed);
+            Snapshot.Add(parameters.AverageSpeed);
+            Assert.That(parameters.TotalPercentage >= 0 && parameters.TotalPercentage <= 100);
         }
     }
 }
