@@ -50,6 +50,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The directory provider.
         /// </summary>
         private readonly IDirectoryProvider directoryProviderManager;
+        private GridView directoryPanelContainer;
 
         /// <summary>
         /// The file list.
@@ -66,6 +67,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private string currentDirectory;
 
+
+        private string path;
+
+
+        private static bool singleton;
         #endregion
 
         #region Constructors
@@ -87,24 +93,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.copyDialog = new CopyDialogView();
             this.invoker = new NavigationInvoker();
 
-            // Temporary code. 
-            string rightPanelPath = @"\";       
-            string path = string.Empty;       
-            this.directoryProviderManager = directoryProvider;
-            string[] drives = Environment.GetLogicalDrives();
-            foreach (string drive in drives)
+            if (!singleton)
             {
-                path = drive + rightPanelPath;
+                path = @"D:\PortableApps\Applnks\Application";
+                singleton = true;
+            }
+            else
+            {
+                path = @"C:\";
+            }
+            
+            this.directoryProviderManager = directoryProvider;
+            this.AddColumns();
 
-                if (Directory.Exists(path))
-                {
-                    this.FileList = this.directoryProviderManager.GetFiles(path);
-                    this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
-                    break;
-                }
+            if (Directory.Exists(path))
+            {
+                this.FileList = this.directoryProviderManager.GetFiles(path);
+                this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
             }
 
-            this.AddColumns();
+
             this.SetCommands(path);
             this.CurrentDirectory = path;
         }
@@ -164,7 +172,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the current
         /// </summary>
-        public GridView DirectoryPanelContainer { get; set; }
+        public GridView DirectoryPanelContainer
+        {
+            get => this.directoryPanelContainer;
+            set => this.SetProperty(ref this.directoryPanelContainer, value);
+        }
 
         /// <summary>
         /// Gets or sets the directory list.
@@ -200,6 +212,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets or sets the selected directory.
         /// </summary>
         public List<DirectoryBase> SelectedDirectories { get; set; } = new List<DirectoryBase>();
+        public ObservableCollection<IColumnService> ColumnsNative { get; private set; }
 
         #endregion
 
@@ -256,7 +269,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void AddColumns()
         {
             ColumnsDefault colsDefault = new ColumnsDefault();
-            ColumnsDate colsDate = new ColumnsDate();
 
             // Forced addition columns to the directory panel.
             colsDefault.GetColumn((items, error) =>

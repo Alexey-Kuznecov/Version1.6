@@ -305,7 +305,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 Point location = navItem.PointToScreen(new Point(0, 0));
                 popupBox.Child = popupControl;
                 popupBox.IsOpen = true;
-                popupBox.PlacementRectangle = new Rect(location.X, location.Y - 5, 0, 0);
+                popupBox.PlacementRectangle = new Rect(location.X + 440, location.Y - 5, 0, 0);
                 popupBox.Placement = PlacementMode.Top;
                 popupBox.StaysOpen = false;
             }

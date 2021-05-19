@@ -20,7 +20,7 @@
     <UserControl.Resources>
         <selectors:ColumnDataTamplateSelector x:Key="comlumsDataTemplateSelector" />
         <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="Padding" Value="8 10 0 10" />
+            <Setter Property="Padding" Value="8,10,0,10" />
         </Style>
     </UserControl.Resources>
 
@@ -119,6 +119,19 @@
             
             ItemContainerStyle="{StaticResource OverrideMaterialDesignGridViewItem}"
         -->
+
+        <!--<Grid Grid.Row="2">
+            <ListBox
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
+                ItemsSource="{Binding FileList, Mode=OneWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock d:DataContext="{d:DesignInstance}" Text="{Binding Name, Mode=Default}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>-->
         <Grid Grid.Row="2">
             <ListView
                 ItemsSource="{Binding FileList, Mode=OneWay}"
