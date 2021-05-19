@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.1;net472;net48</TargetFrameworks>
+	<UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
@@ -26,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander\Library\AkuzIcons\AkuzIcons.csproj" />
     <ProjectReference Include="..\..\UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
 

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Business\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+	<UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -11,7 +12,6 @@
     <Compile Remove="ExtensionMethod.cs" />
     <Compile Remove="HelperMethods.cs" />
     <Compile Remove="Models\DirectoryPathModel.cs" />
-    <Compile Remove="Models\IconModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,7 +45,8 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\Library\AkuzIcons\AkuzIcons.csproj" />
+    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 

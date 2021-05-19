@@ -4,7 +4,7 @@ namespace UnityCommander.Common.Models
     using System.Windows.Media;
     using System.Windows.Shapes;
 
-    using UnityCommander.Integration.Contracts;
+    using AkuzIcons;
 
     /// <summary>
     /// The icon model.

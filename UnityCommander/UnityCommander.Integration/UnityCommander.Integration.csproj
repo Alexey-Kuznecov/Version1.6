@@ -10,4 +10,8 @@
   <ItemGroup>
     <None Remove="Contracts\INavigator.cs~RF2ba06c3.TMP" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Library\AkuzIcons\AkuzIcons.csproj" />
+  </ItemGroup>
 </Project>

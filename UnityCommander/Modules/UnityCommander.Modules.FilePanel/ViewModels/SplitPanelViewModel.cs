@@ -24,6 +24,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Common.Models;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.Mvvm;
+    using UnityCommander.Integration.Contracts;
     using UnityCommander.Modules.FilePanel.Commands;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
@@ -81,14 +82,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
             : base(regionManager)
         {
-            string rightPanelPath = @"Works\UnitTests\";
-
-            this.invoker = new NavigationInvoker();
-            string path = string.Empty;
-            
-            this.directoryProviderManager = directoryProvider;
-
+            // Initialize properties.
+            this.DirectoryPanelContainer = new GridView();
             this.copyDialog = new CopyDialogView();
+            this.invoker = new NavigationInvoker();
+
+            // Temporary code. 
+            string rightPanelPath = @"\";       
+            string path = string.Empty;       
+            this.directoryProviderManager = directoryProvider;
             string[] drives = Environment.GetLogicalDrives();
             foreach (string drive in drives)
             {
@@ -102,6 +104,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
             }
 
+            this.AddColumns();
             this.SetCommands(path);
             this.CurrentDirectory = path;
         }
@@ -159,21 +162,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Sets the selected directory.
+        /// Gets or sets the current
         /// </summary>
-        public DirectoryBase SelectedDirectory
-        {
-            set
-            {
-                if (value == null) return;
-                this.SelectedDirectories.Add(value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the selected directory.
-        /// </summary>
-        public List<DirectoryBase> SelectedDirectories { get; set; } = new List<DirectoryBase>();
+        public GridView DirectoryPanelContainer { get; set; }
 
         /// <summary>
         /// Gets or sets the directory list.
@@ -192,6 +183,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             get => this.fileList;
             set => this.SetProperty(ref this.fileList, value);
         }
+
+        /// <summary>
+        /// Sets the selected directory.
+        /// </summary>
+        public DirectoryBase SelectedDirectory
+        {
+            set
+            {
+                if (value == null) return;
+                this.SelectedDirectories.Add(value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the selected directory.
+        /// </summary>
+        public List<DirectoryBase> SelectedDirectories { get; set; } = new List<DirectoryBase>();
 
         #endregion
 
@@ -243,6 +251,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #endregion
 
         #region Helper Methods
+
+
+        private void AddColumns()
+        {
+            ColumnsDefault colsDefault = new ColumnsDefault();
+            ColumnsDate colsDate = new ColumnsDate();
+
+            // Forced addition columns to the directory panel.
+            colsDefault.GetColumn((items, error) =>
+            {
+                foreach (var column in items)
+                {
+                    this.DirectoryPanelContainer.Columns.Add((GridViewColumn)column.ColumnTemplate);
+                }
+            });
+        }
 
         /// <summary>
         /// The navigate directory.

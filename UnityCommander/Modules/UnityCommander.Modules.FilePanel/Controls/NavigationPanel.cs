@@ -265,7 +265,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 };
                 var navButton = new Button
                 {
-                    Style = (Style)Application.Current.FindResource("NavigationGotoButtonStyle"),
+                    Style = (Style)Application.Current.FindResource("NavigationBackButtonStyle"),
                     Content = panel.parsePath[counter],
                     Command = panel.NavigateCommand,
                     CommandParameter = panel.parseParams[counter]
@@ -330,7 +330,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             Grid.SetColumn(popButton, 1);
             grid.Children.Add(navButton);
             grid.Children.Add(popButton);
-            grid.Style = (Style)Application.Current.FindResource("NavigationItemContainerStyle");
+            grid.Style = (Style)Application.Current.FindResource("NavigationButtonShadowStyle");
 
             return grid;
         }

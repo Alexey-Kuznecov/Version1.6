@@ -74,4 +74,5 @@
     <Color x:Key="ControlLightColor">#FFE5C9</Color>
     <Color x:Key="ControlMediumColor">#FFD86E</Color>
     <Color x:Key="ControlDarkColor">#FFCA28</Color>
+
 </ResourceDictionary>

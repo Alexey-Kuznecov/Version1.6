@@ -1,10 +1,12 @@
 ﻿
+using System.Windows.Controls;
+
 namespace UnityCommander.Common.Models
 {
     /// <summary>
     /// The directory base.
     /// </summary>
-    public class DirectoryBase
+    public class DirectoryBase : DirectoryTemplate
     {
         /// <summary>
         /// Gets or sets the name.
@@ -19,6 +21,6 @@ namespace UnityCommander.Common.Models
         /// <summary>
         /// Gets or sets the icon.
         /// </summary>
-        //public IconModel Icon { get; set; }
+        public IconModel Icon { get; set; }
     }
 }

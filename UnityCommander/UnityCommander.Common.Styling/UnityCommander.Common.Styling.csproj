@@ -20,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Converters\" />
-    <Folder Include="Icons\" />
-    <Folder Include="DataTemplates\" />
     <Folder Include="Settings\" />
   </ItemGroup>
 
@@ -31,6 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Icons\Icons.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Styles\DirectoryPanelStyles.xaml">
       <SubType>Designer</SubType>
     </Page>

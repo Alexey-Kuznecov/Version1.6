@@ -21,14 +21,15 @@ namespace UnityCommander.Services
             ObservableCollection<FileModel> models = new ObservableCollection<FileModel>();
             DirectoryInfo dir = new DirectoryInfo(path);
 
-            foreach (var item in dir.GetFiles())
+            foreach (var file in dir.GetFiles())
             {
-                if ((item.Attributes & FileAttributes.Hidden) == 0)
+                if ((file.Attributes & FileAttributes.Hidden) == 0)
                 {
                     models.Add(new FileModel
                     {
-                        Name = item.Name,
-                        Path = item.FullName,
+                        Name = Path.GetFileNameWithoutExtension(file.Name),
+                        Path = file.FullName,
+                        Extension = file.Extension
                     });
                 }
             }
@@ -53,7 +54,7 @@ namespace UnityCommander.Services
                     models.Add(new DirectoryModel
                     {
                         Name = item.Name,
-                        Path = item.FullName,
+                        Path = item.FullName
                     });
                 }
             }

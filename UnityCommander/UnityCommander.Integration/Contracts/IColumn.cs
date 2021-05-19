@@ -16,5 +16,10 @@ namespace UnityCommander.Integration.Contracts
         /// Gets or sets the column header.
         /// </summary>
         string Header { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column template.
+        /// </summary>
+        object ColumnTemplate { get; set; }
     }
 }
