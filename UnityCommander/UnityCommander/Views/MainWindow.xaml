@@ -10,7 +10,8 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
-    WindowStartupLocation="CenterScreen">
+    WindowStartupLocation="CenterScreen"
+    WindowState="Maximized">
 
     <Window.Resources>
         <Style x:Key="MainMenuItem" TargetType="Menu" />
@@ -76,9 +77,9 @@
             The content display region of ​​the left sidebar.
         -->
         <Border
-            Width="{Binding SidebarContentWidth}"
             Grid.Row="2"
             Grid.Column="1"
+            Width="{Binding SidebarContentWidth}"
             Background="#FFF3F2F2">
             <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
         </Border>

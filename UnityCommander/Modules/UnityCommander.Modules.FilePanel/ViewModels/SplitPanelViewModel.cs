@@ -9,7 +9,6 @@
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
@@ -21,13 +20,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Commands;
     using Prism.Regions;
 
-    using UnityCommander.Common.Models;
-    using UnityCommander.Core.Helper;
-    using UnityCommander.Core.Mvvm;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Modules.FilePanel.Commands;
-    using UnityCommander.Modules.FilePanel.Views;
-    using UnityCommander.Services.Interfaces;
+    using Common.Models;
+    using Core.Helper;
+    using Core.Mvvm;
+    using Commands;
+    using Views;
+    using Services.Interfaces;
 
     /// <summary>
     /// The left panel view model.
@@ -100,7 +98,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
             else
             {
-                path = @"C:\";
+                path = @"C:\Windows";
             }
             
             this.directoryProviderManager = directoryProvider;
@@ -120,6 +118,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #endregion
 
         #region Commands
+
+
+        public DelegateCommand SortColumnCommand => new DelegateCommand(() =>
+        {
+            MessageBox.Show("It works!");
+        });
 
         /// <summary>
         /// Goes to the selected directory.
@@ -172,11 +176,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the current
         /// </summary>
-        public GridView DirectoryPanelContainer
-        {
-            get => this.directoryPanelContainer;
-            set => this.SetProperty(ref this.directoryPanelContainer, value);
-        }
+        public GridView DirectoryPanelContainer { get; set; }
 
         /// <summary>
         /// Gets or sets the directory list.
@@ -212,7 +212,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets or sets the selected directory.
         /// </summary>
         public List<DirectoryBase> SelectedDirectories { get; set; } = new List<DirectoryBase>();
-        public ObservableCollection<IColumnService> ColumnsNative { get; private set; }
 
         #endregion
 

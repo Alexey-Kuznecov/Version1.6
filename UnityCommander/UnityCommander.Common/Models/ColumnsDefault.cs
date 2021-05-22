@@ -69,6 +69,26 @@ namespace UnityCommander.Common.Models
                         Width = 150,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnExtensionDataTemplate")
                     }
+                },
+                 new ColumnModel
+                {
+                    Header = "CreationTime",
+                    ColumnTemplate = new GridViewColumn
+                    {
+                        Header = "CreationTime",
+                        Width = 200,
+                        CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnCreationDateDataTemplate")
+                    }
+                },
+                new ColumnModel
+                {
+                    Header = "Last Access Time",
+                    ColumnTemplate = new GridViewColumn
+                    {
+                        Header = "LastAccessTime",
+                        Width = 200,
+                        CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnLastAccessDateDataTemplate")
+                    },
                 }
             };
         }

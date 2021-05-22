@@ -29,7 +29,9 @@ namespace UnityCommander.Services
                     {
                         Name = Path.GetFileNameWithoutExtension(file.Name),
                         Path = file.FullName,
-                        Extension = file.Extension
+                        Extension = file.Extension,
+                        CreationTime = file.CreationTime,
+                        LastAccessTime = file.LastAccessTime
                     });
                 }
             }
@@ -54,7 +56,9 @@ namespace UnityCommander.Services
                     models.Add(new DirectoryModel
                     {
                         Name = item.Name,
-                        Path = item.FullName
+                        Path = item.FullName,
+                        CreationTime = item.CreationTime,
+                        LastAccessTime = item.LastAccessTime
                     });
                 }
             }

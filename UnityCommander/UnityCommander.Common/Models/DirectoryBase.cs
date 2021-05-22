@@ -1,8 +1,9 @@
 ﻿
-using System.Windows.Controls;
-
 namespace UnityCommander.Common.Models
 {
+    using System;
+    using System.Windows.Controls;
+
     /// <summary>
     /// The directory base.
     /// </summary>
@@ -22,5 +23,15 @@ namespace UnityCommander.Common.Models
         /// Gets or sets the icon.
         /// </summary>
         public IconModel Icon { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date and time the file/folder was created.
+        /// </summary>
+        public DateTime CreationTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the date and time the file/folder was last accessed.
+        /// </summary>
+        public DateTime LastAccessTime { get; set; }
     }
 }
