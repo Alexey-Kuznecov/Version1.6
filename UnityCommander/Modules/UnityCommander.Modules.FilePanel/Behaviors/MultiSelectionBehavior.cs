@@ -8,7 +8,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
     using System.Windows.Interactivity;
     using System.Windows.Media;
 
-    using UnityCommander.Common.Models;
+    using UnityCommander.Common.Models.Base;
 
     /// <summary>
     /// The multi selection directory items behavior.
@@ -19,14 +19,14 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         /// The selected items property.
         /// </summary>
         private static readonly DependencyProperty SelectedItemsProperty =
-            DependencyProperty.Register("SelectedItems", typeof(DirectoryBase), typeof(MultiSelectionBehavior), new UIPropertyMetadata(null));
+            DependencyProperty.Register("SelectedItems", typeof(BaseDirectory), typeof(MultiSelectionBehavior), new UIPropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the selected items.
         /// </summary>
-        public DirectoryBase SelectedItems
+        public BaseDirectory SelectedItems
         {
-            get => (DirectoryBase)this.GetValue(SelectedItemsProperty);
+            get => (BaseDirectory)this.GetValue(SelectedItemsProperty);
             set => this.SetValue(SelectedItemsProperty, value);
         }
 
@@ -65,7 +65,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
                 if (container != null)
                 {
-                    this.SelectedItems = (DirectoryBase)container.Content;
+                    this.SelectedItems = (BaseDirectory)container.Content;
                 }
                 else
                 {

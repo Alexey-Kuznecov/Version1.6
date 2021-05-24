@@ -1,11 +1,9 @@
 ﻿
-namespace UnityCommander.Common.Invokers
+namespace UnityCommander.Core.Commands.Base
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using UnityCommander.Core.Commands;
 
     /// <summary>
     /// The procedures.

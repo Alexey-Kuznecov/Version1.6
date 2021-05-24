@@ -1,13 +1,12 @@
 ﻿
-namespace UnityCommander.Common.Models
+namespace UnityCommander.Common.Models.Base
 {
-    using System.Windows.Controls;
     using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The column model.
     /// </summary>
-    public class ColumnModel : IColumn
+    public class BaseColumn : IColumn
     {
         /// <summary>
         /// Gets or sets a value indicating whether is checked.
@@ -22,7 +21,7 @@ namespace UnityCommander.Common.Models
         /// <summary>
         /// Gets or sets the column view.
         /// </summary>
-        public object ColumnTemplate { get; set; }
+        public object Template { get; set; }
 
         /// <summary>
         /// Gets or sets the action.

@@ -35,8 +35,8 @@ namespace UnityCommander.Core.Helper
         public static TypeBuilder MergeObjectProperties(this object mergeObjectL, object mergeObjectR)
         {
             stored = new List<object>();
-            GeneratorType.GenerateAssemblyAndModule("DirectoryModel");
-            typeBuilder = GeneratorType.CreateType("DirectoryModel");
+            GeneratorType.GenerateAssemblyAndModule("FolderModel");
+            typeBuilder = GeneratorType.CreateType("FolderModel");
 
             foreach (var propertyInfo in mergeObjectL.GetType().GetProperties())
             {

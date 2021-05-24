@@ -14,18 +14,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
-
-    using GongSolutions.Wpf.DragDrop;
-
-    using Prism.Commands;
-    using Prism.Regions;
-
+    using Commands;
     using Common.Models;
     using Core.Helper;
     using Core.Mvvm;
-    using Commands;
-    using Views;
+    using GongSolutions.Wpf.DragDrop;
+    using Prism.Commands;
+    using Prism.Regions;
     using Services.Interfaces;
+
+    using UnityCommander.Common.Models.Base;
+
+    using Views;
 
     /// <summary>
     /// The left panel view model.
@@ -48,7 +48,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The directory provider.
         /// </summary>
         private readonly IDirectoryProvider directoryProviderManager;
-        private GridView directoryPanelContainer;
 
         /// <summary>
         /// The file list.
@@ -58,7 +57,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The directoryList.
         /// </summary>
-        private ObservableCollection<DirectoryModel> directoryList;
+        private ObservableCollection<FolderModel> directoryList;
 
         /// <summary>
         /// Indicates the current directory.
@@ -87,48 +86,43 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             : base(regionManager)
         {
             // Initialize properties.
-            this.DirectoryPanelContainer = new GridView();
+            this.FilePanelContainer = new GridView();
+            this.FolderPanelContainer = new GridView();
             this.copyDialog = new CopyDialogView();
             this.invoker = new NavigationInvoker();
 
             if (!singleton)
             {
-                path = @"D:\PortableApps\Applnks\Application";
+                this.path = @"D:\PortableApps\Applnks";
                 singleton = true;
             }
             else
             {
-                path = @"C:\Windows";
+                this.path = @"C:\Windows";
             }
             
             this.directoryProviderManager = directoryProvider;
-            this.AddColumns();
+            this.AddColumnsFilePanel();
+            this.AddColumnsFolderPanel();
 
-            if (Directory.Exists(path))
+            if (Directory.Exists(this.path))
             {
-                this.FileList = this.directoryProviderManager.GetFiles(path);
-                this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
+                this.FileList = this.directoryProviderManager.GetFiles(this.path);
+                this.DirectoryList = this.directoryProviderManager.GetDirectories(this.path);
             }
 
-
-            this.SetCommands(path);
-            this.CurrentDirectory = path;
+            this.SetCommands(this.path);
+            this.CurrentDirectory = this.path;
         }
 
         #endregion
 
         #region Commands
 
-
-        public DelegateCommand SortColumnCommand => new DelegateCommand(() =>
-        {
-            MessageBox.Show("It works!");
-        });
-
         /// <summary>
         /// Goes to the selected directory.
         /// </summary>
-        public DelegateCommand<DirectoryModel> GoToDirectory => new DelegateCommand<DirectoryModel>(
+        public DelegateCommand<FolderModel> GoToDirectory => new DelegateCommand<FolderModel>(
             dir =>
         {
             if (dir != null)
@@ -174,14 +168,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the current
+        /// Gets or sets grid view for file panel.
         /// </summary>
-        public GridView DirectoryPanelContainer { get; set; }
+        public GridView FilePanelContainer { get; set; }
+
+        /// <summary>
+        /// Gets or sets grid view for folder panel.
+        /// </summary>
+        public GridView FolderPanelContainer { get; set; }
 
         /// <summary>
         /// Gets or sets the directory list.
         /// </summary>
-        public ObservableCollection<DirectoryModel> DirectoryList
+        public ObservableCollection<FolderModel> DirectoryList
         {
             get => this.directoryList;
             set => this.SetProperty(ref this.directoryList, value);
@@ -199,7 +198,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Sets the selected directory.
         /// </summary>
-        public DirectoryBase SelectedDirectory
+        public BaseDirectory SelectedBaseDirectory
         {
             set
             {
@@ -211,7 +210,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the selected directory.
         /// </summary>
-        public List<DirectoryBase> SelectedDirectories { get; set; } = new List<DirectoryBase>();
+        public List<BaseDirectory> SelectedDirectories { get; set; } = new List<BaseDirectory>();
 
         #endregion
 
@@ -226,9 +225,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
             bool isMultiSelect = dropInfo.Data is List<object> 
-                           & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is DirectoryBase);
-            bool isSingleSelect = dropInfo.Data is DirectoryBase
-                            & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is DirectoryBase);
+                                 & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
+            bool isSingleSelect = dropInfo.Data is BaseDirectory
+                                  & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
 
 
             if (isMultiSelect || isSingleSelect) 
@@ -247,14 +246,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// [DebuggerStepThrough]
         void IDropTarget.Drop(IDropInfo dropInfo)
         {
-            DirectoryBase sourceItem = dropInfo.Data as DirectoryBase;
-            DirectoryBase targetItem = dropInfo.TargetItem as DirectoryBase;
+            BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
+            BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
             
             // targetItem.Add(sourceItem);
             if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
             {
-                dialogViewModel.Source = (dropInfo.Data as DirectoryBase)?.Path;
-                dialogViewModel.Target = (dropInfo.TargetItem as DirectoryBase)?.Path;
+                dialogViewModel.Source = (dropInfo.Data as BaseDirectory)?.Path;
+                dialogViewModel.Target = (dropInfo.TargetItem as BaseDirectory)?.Path;
             }
 
             this.copyDialog.ShowDialog();
@@ -264,8 +263,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Helper Methods
 
-
-        private void AddColumns()
+        /// <summary>
+        /// The add columns in the file panel.
+        /// </summary>
+        private void AddColumnsFilePanel()
         {
             ColumnsDefault colsDefault = new ColumnsDefault();
 
@@ -274,7 +275,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 foreach (var column in items)
                 {
-                    this.DirectoryPanelContainer.Columns.Add((GridViewColumn)column.ColumnTemplate);
+                    this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                }
+            });
+        }
+
+        /// <summary>
+        /// The add columns in the folder panel.
+        /// </summary>
+        private void AddColumnsFolderPanel()
+        {
+            ColumnsDefault colsDefault = new ColumnsDefault();
+
+            // Forced addition columns to the directory panel.
+            colsDefault.GetColumn((items, error) =>
+            {
+                foreach (var column in items)
+                {
+                    this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
                 }
             });
         }

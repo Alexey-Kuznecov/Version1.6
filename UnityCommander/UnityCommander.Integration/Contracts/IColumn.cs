@@ -20,6 +20,6 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets or sets the column template.
         /// </summary>
-        object ColumnTemplate { get; set; }
+        object Template { get; set; }
     }
 }

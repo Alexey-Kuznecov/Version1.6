@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Core.Commands
+namespace UnityCommander.Core.Commands.Base
 {
     using System;
 

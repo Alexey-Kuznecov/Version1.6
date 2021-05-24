@@ -5,6 +5,8 @@ namespace UnityCommander.Common.Models
     using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
+
+    using UnityCommander.Common.Models.Base;
     using UnityCommander.Integration.Contracts;
 
     /// <summary>
@@ -48,45 +50,45 @@ namespace UnityCommander.Common.Models
         {
             this.columns = new ObservableCollection<IColumn>
             {
-                new ColumnModel
+                new BaseColumn
                 {
                     Header = "Name",
                     IsChecked = true,
-                    ColumnTemplate = new GridViewColumn
+                    Template = new GridViewColumn
                     {
                         Header = "Name",
                         Width = 250,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
                     }
                 },
-                new ColumnModel
+                new BaseColumn
                 {
                     Header = "Extension",
                     IsChecked = true,
-                    ColumnTemplate = new GridViewColumn
+                    Template = new GridViewColumn
                     {
                         Header = "Extension",
                         Width = 150,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnExtensionDataTemplate")
                     }
                 },
-                 new ColumnModel
+                 new BaseColumn
                 {
                     Header = "CreationTime",
-                    ColumnTemplate = new GridViewColumn
+                    Template = new GridViewColumn
                     {
                         Header = "CreationTime",
-                        Width = 200,
+                        Width = 150,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnCreationDateDataTemplate")
                     }
                 },
-                new ColumnModel
+                new BaseColumn
                 {
                     Header = "Last Access Time",
-                    ColumnTemplate = new GridViewColumn
+                    Template = new GridViewColumn
                     {
                         Header = "LastAccessTime",
-                        Width = 200,
+                        Width = 150,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnLastAccessDateDataTemplate")
                     },
                 }

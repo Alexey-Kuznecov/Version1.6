@@ -1,13 +1,12 @@
 ﻿
-namespace UnityCommander.Common.Models
+namespace UnityCommander.Common.Models.Base
 {
     using System;
-    using System.Windows.Controls;
 
     /// <summary>
     /// The directory base.
     /// </summary>
-    public class DirectoryBase : DirectoryTemplate
+    public class BaseDirectory : MetaModel
     {
         /// <summary>
         /// Gets or sets the name.

@@ -3,7 +3,7 @@ namespace UnityCommander.Core.Commands
 {
     using System;
 
-    using UnityCommander.Core.IO;
+    using UnityCommander.Core.Commands.Base;
 
     /// <summary>
     /// The copier.

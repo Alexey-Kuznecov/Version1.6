@@ -20,7 +20,7 @@ namespace UnityCommander.Services.Interfaces
         /// Gets list directories to the specific path.
         /// </summary>
         /// <param name="path"> The path to the directories location. </param>
-        /// <returns> The collection <see cref="DirectoryModel"/> objects. </returns>
-        ObservableCollection<DirectoryModel> GetDirectories(string path);
+        /// <returns> The collection <see cref="FolderModel"/> objects. </returns>
+        ObservableCollection<FolderModel> GetDirectories(string path);
     }
 }

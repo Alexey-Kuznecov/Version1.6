@@ -52,7 +52,7 @@ namespace ImagesColumns
         //        new Column
         //          {
         //              Header = "Dpi",
-        //              ColumnTemplate = new GridViewColumn
+        //              Template = new GridViewColumn
         //              {
         //                  Header = "Dpi",
         //                  Width = 100,
@@ -63,7 +63,7 @@ namespace ImagesColumns
         //          new Column
         //          {
         //              Header = "Sized",
-        //              ColumnTemplate = new GridViewColumn
+        //              Template = new GridViewColumn
         //              {
         //                  Header = "Sized",
         //                  Width = 100,
@@ -74,7 +74,7 @@ namespace ImagesColumns
         //          new Column
         //          {
         //              Header = "Colors",
-        //              ColumnTemplate = new GridViewColumn
+        //              Template = new GridViewColumn
         //              {
         //                  Header = "Colors",
         //                  Width = 100,

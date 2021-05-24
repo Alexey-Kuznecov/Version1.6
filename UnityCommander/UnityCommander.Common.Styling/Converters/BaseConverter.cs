@@ -1,11 +1,11 @@
 ﻿
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Markup;
-
 namespace UnityCommander.Common.Styling.Converters
 {
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+    using System.Windows.Markup;
+
     /// <summary>
     /// The base converter.
     /// </summary>

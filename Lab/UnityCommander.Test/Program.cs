@@ -1,15 +1,6 @@
 ﻿
 namespace UnityCommander.Test
 {
-    using System;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
-
-    using AkuzIcons.Shell;
-    using UnityCommander.Test.TestStart;
-
     /// <summary>
     /// The program.
     /// </summary>

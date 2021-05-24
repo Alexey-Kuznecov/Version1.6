@@ -4,6 +4,8 @@ namespace UnityCommander.Core.Commands
     using System;
     using System.Collections.Generic;
 
+    using UnityCommander.Core.Commands.Base;
+
     /// <summary>
     /// The copy file invoker.
     /// </summary>

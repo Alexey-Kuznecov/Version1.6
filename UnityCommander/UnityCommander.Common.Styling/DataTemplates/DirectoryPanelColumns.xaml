@@ -1,49 +1,66 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:UnityCommander.Common.Models.Base;assembly=UnityCommander.Common"
     xmlns:converter="clr-namespace:UnityCommander.Common.Styling.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:UnityCommander.Common.Models;assembly=UnityCommander.Common"
     mc:Ignorable="d">
 
-    <DataTemplate x:Key="ColumnNameDataTemplate" DataType="{x:Type DataGridCell}">
-        <Grid d:DataContext="{d:DesignData}">
+    <converter:IconConverter x:Key="IconConverter" />
+
+    <DataTemplate x:Key="ColumnNameDataTemplate2" DataType="{x:Type DataGridCell}">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <TextBlock
                 Grid.Column="1"
-                Width="250"
-                Text="{Binding Name, Mode=TwoWay}" />
+                VerticalAlignment="Center"
+                Text="{Binding Name, Mode=OneWay}" />
             <materialDesigh:PackIcon
                 Grid.Column="0"
                 Width="25"
-                Foreground="#7C9BCC"
-                Kind="File" />
+                Height="25"
+                VerticalAlignment="Center"
+                Foreground="Orange"
+                Kind="Folder" />
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="{x:Type DataGridCell}">
+
+    <DataTemplate x:Key="ColumnNameDataTemplate" DataType="base:BaseDirectory">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
+            <ContentPresenter Grid.Column="0">
+                <ContentPresenter.Content>
+                    <converter:BindableParameter
+                        Binding="{Binding Icon}"
+                        Converter="{StaticResource IconConverter}"
+                        ConverterParameter="{Binding Type}" />
+                </ContentPresenter.Content>
+            </ContentPresenter>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="models:FileModel">
         <Grid d:DataContext="{d:DesignData}">
             <TextBlock Text="{Binding Extension}" />
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="{x:Type DataGridCell}">
+    <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="base:BaseDirectory">
         <Grid d:DataContext="{d:DesignData}">
             <TextBlock Foreground="Indigo" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnLastAccessDateDataTemplate" DataType="{x:Type DataGridCell}">
+    <DataTemplate x:Key="ColumnLastAccessDateDataTemplate" DataType="base:BaseDirectory">
         <Grid d:DataContext="{d:DesignData}">
-            <TextBlock Foreground="Indigo" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}">
-                <TextBlock.InputBindings>
-                    <MouseBinding
-                        Command="{Binding SortColumnCommand, Mode=Default}"
-                        Gesture="LeftClick"
-                        MouseAction="LeftClick" />
-                </TextBlock.InputBindings>
-            </TextBlock>
+            <TextBlock Foreground="Indigo" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

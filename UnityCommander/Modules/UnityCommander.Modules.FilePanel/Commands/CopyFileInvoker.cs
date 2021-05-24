@@ -4,8 +4,7 @@ namespace UnityCommander.Modules.FilePanel.Commands
     using System;
     using System.Collections.Generic;
 
-    using UnityCommander.Common.Invokers;
-    using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Commands.Base;
 
     /// <summary>
     /// The copy file invoker.

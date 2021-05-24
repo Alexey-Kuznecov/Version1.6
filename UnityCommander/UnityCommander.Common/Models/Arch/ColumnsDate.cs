@@ -1,14 +1,14 @@
 ﻿
-namespace UnityCommander.Common.Models
+namespace UnityCommander.Common.Models.Arch
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
-    using System.Text;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+
+    using UnityCommander.Common.Models.Base;
     using UnityCommander.Integration.Contracts;
 
     /// <summary>
@@ -75,21 +75,22 @@ namespace UnityCommander.Common.Models
         {
             this.columns = new ObservableCollection<IColumn>
             {
-                new ColumnModel
+                new BaseColumn
                 {
                     Header = "CreationTime",
                     Action = this.GetCreationTime,
-                    ColumnTemplate = new GridViewColumn
+                    Template = new GridViewColumn
                     {
                         Header = "CreationTime",
                         Width = 150,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnDateDataTemplate")
                     }
+
                 },
-                new ColumnModel
+                new BaseColumn
                 {
                     Header = "Last Access Time",
-                    ColumnTemplate = new GridViewColumn
+                    Template = new GridViewColumn
                     {
                         Header = "LastAccessTime",
                         Width = 100,
