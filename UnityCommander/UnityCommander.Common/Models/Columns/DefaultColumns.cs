@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Common.Models
+namespace UnityCommander.Common.Models.Columns
 {
     using System;
     using System.Collections.ObjectModel;
@@ -12,31 +12,32 @@ namespace UnityCommander.Common.Models
     /// <summary>
     /// The columns default.
     /// </summary>
-    public class ColumnsDefault : IColumnService
+    public abstract class DefaultColumns : IColumnService
     {
         /// <summary>
-        /// The columns.
+        /// The collection columns of the file panel.
         /// </summary>
         private ObservableCollection<IColumn> columns;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ColumnsDefault"/> class.
+        /// Initializes a new instance of the <see cref="DefaultColumns"/> class.
         /// </summary>
-        public ColumnsDefault()
+        protected DefaultColumns()
         {
             this.InitialData();
         }
 
         /// <summary>
-        /// Gets or sets the column title.
+        /// Gets or sets the column's name that display in settings.
         /// </summary>
-        public string Title { get; set; } = "Default";
+        public string DisplayName { get; set; } = "Default";
 
         /// <summary>
-        /// The get column.
+        /// Provides collection columns, only columns for which the IsDisplayed property is true.
         /// </summary>
         /// <param name="callback">
-        /// The <paramref name="callback"/>.
+        /// The first parameter of callback function is column collection displayed in the file panel.
+        /// The second parameter is a possible exception that can occur.
         /// </param>
         public void GetColumn(Action<ObservableCollection<IColumn>, Exception> callback)
         {
@@ -44,32 +45,30 @@ namespace UnityCommander.Common.Models
         }
 
         /// <summary>
-        /// The initial data.
+        /// Safely adds a new column to the collection.
         /// </summary>
-        private void InitialData()
+        /// <param name="column"> Add new column </param>
+        public void AddColumn(IColumn column)
+        {
+            this.columns.Add(column);
+        }
+
+        /// <summary>
+        /// Initial the collection of the column.
+        /// </summary>
+        protected void InitialData()
         {
             this.columns = new ObservableCollection<IColumn>
             {
                 new BaseColumn
                 {
                     Header = "Name",
-                    IsChecked = true,
+                    IsDisplayed = true,
                     Template = new GridViewColumn
                     {
                         Header = "Name",
                         Width = 250,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
-                    }
-                },
-                new BaseColumn
-                {
-                    Header = "Extension",
-                    IsChecked = true,
-                    Template = new GridViewColumn
-                    {
-                        Header = "Extension",
-                        Width = 150,
-                        CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnExtensionDataTemplate")
                     }
                 },
                  new BaseColumn

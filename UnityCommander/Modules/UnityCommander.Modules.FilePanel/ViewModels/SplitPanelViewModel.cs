@@ -24,6 +24,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Services.Interfaces;
 
     using UnityCommander.Common.Models.Base;
+    using UnityCommander.Common.Models.Columns;
 
     using Views;
 
@@ -33,6 +34,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
     {
         #region Declaration fields
+
+        /// <summary>
+        /// Time field required only at the development stage.
+        /// </summary>
+        private static bool singleton;
 
         /// <summary>
         /// The copy dialog.
@@ -64,11 +70,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private string currentDirectory;
 
+        /// <summary>
+        /// Time field required only at the development stage.
+        /// </summary>
+        private string dirpath;
 
-        private string path;
-
-
-        private static bool singleton;
         #endregion
 
         #region Constructors
@@ -93,26 +99,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             if (!singleton)
             {
-                this.path = @"D:\PortableApps\Applnks";
+                this.dirpath = @"D:\PortableApps\Applnks";
                 singleton = true;
             }
             else
             {
-                this.path = @"C:\Windows";
+                this.dirpath = @"C:\Windows";
             }
             
             this.directoryProviderManager = directoryProvider;
             this.AddColumnsFilePanel();
             this.AddColumnsFolderPanel();
 
-            if (Directory.Exists(this.path))
+            if (Directory.Exists(this.dirpath))
             {
-                this.FileList = this.directoryProviderManager.GetFiles(this.path);
-                this.DirectoryList = this.directoryProviderManager.GetDirectories(this.path);
+                this.FileList = this.directoryProviderManager.GetFiles(this.dirpath);
+                this.DirectoryList = this.directoryProviderManager.GetDirectories(this.dirpath);
             }
 
-            this.SetCommands(this.path);
-            this.CurrentDirectory = this.path;
+            this.SetCommands(this.dirpath);
+            this.CurrentDirectory = this.dirpath;
         }
 
         #endregion
@@ -268,7 +274,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddColumnsFilePanel()
         {
-            ColumnsDefault colsDefault = new ColumnsDefault();
+            FileColumnModel colsDefault = new FileColumnModel();
 
             // Forced addition columns to the directory panel.
             colsDefault.GetColumn((items, error) =>
@@ -285,7 +291,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddColumnsFolderPanel()
         {
-            ColumnsDefault colsDefault = new ColumnsDefault();
+            FolderColumnModel colsDefault = new FolderColumnModel();
 
             // Forced addition columns to the directory panel.
             colsDefault.GetColumn((items, error) =>

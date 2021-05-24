@@ -4,27 +4,28 @@ namespace UnityCommander.Common.Models.Base
     using UnityCommander.Integration.Contracts;
 
     /// <summary>
-    /// The column model.
+    /// The basic properties that are required for
+    /// correct interaction between the model and the view model.
     /// </summary>
     public class BaseColumn : IColumn
     {
         /// <summary>
-        /// Gets or sets a value indicating whether is checked.
+        /// Gets or sets a value indicating whether the column will be displayed.
         /// </summary>
-        public bool IsChecked { get; set; }
+        public bool IsDisplayed { get; set; }
 
         /// <summary>
-        /// Gets or sets the header.
+        /// Gets or sets the column header.
         /// </summary>
         public string Header { get; set; }
 
         /// <summary>
-        /// Gets or sets the column view.
+        /// Gets or sets the column template.
         /// </summary>
         public object Template { get; set; }
 
         /// <summary>
-        /// Gets or sets the action.
+        /// Gets or sets the action that is always executed when complete the column.
         /// </summary>
         public InjectData Action { get; set; }
     }

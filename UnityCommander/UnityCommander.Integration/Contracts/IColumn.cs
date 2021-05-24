@@ -10,7 +10,7 @@ namespace UnityCommander.Integration.Contracts
         /// Gets or sets a value indicating whether
         /// the column is installed in the directory pane.
         /// </summary>
-        bool IsChecked { get; set; }
+        bool IsDisplayed { get; set; }
 
         /// <summary>
         /// Gets or sets the column header.

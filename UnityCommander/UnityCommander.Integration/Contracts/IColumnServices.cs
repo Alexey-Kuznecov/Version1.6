@@ -12,7 +12,7 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets or sets the column title.
         /// </summary>
-        string Title { get; set; }
+        string DisplayName { get; set; }
 
         /// <summary>
         /// A method for two-way column data transfer between the plugin and the host.

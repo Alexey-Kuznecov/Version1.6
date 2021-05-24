@@ -32,7 +32,7 @@ namespace UnityCommander.Common.Models.Arch
         /// <summary>
         /// Gets or sets the column title.
         /// </summary>
-        public string Title { get; set; } = "Dates";
+        public string DisplayName { get; set; } = "Dates";
 
         /// <summary>
         /// The get column.

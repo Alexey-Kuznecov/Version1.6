@@ -10,10 +10,11 @@
 
 namespace UnityCommander.ViewModels
 {
+    using System.Windows.Controls;
+
     using Prism.Events;
     using Prism.Mvvm;
-    using System;
-    using System.Windows.Controls;
+
     using UnityCommander.Core;
 
     /// <summary>
@@ -35,20 +36,27 @@ namespace UnityCommander.ViewModels
         /// The drag increment.
         /// </summary>
         private UserControl sidebarContent;
+
+        /// <summary>
+        /// The sidebar content width.
+        /// </summary>
         private int sidebarContentWidth;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        /// <param name="viewModelMessage">
+        /// <param name="message">
         /// The view Model Message.
         /// </param>
-        public MainWindowViewModel(IEventAggregator viewModelMessage)
+        public MainWindowViewModel(IEventAggregator message)
         {
-            this.viewModelMessage = viewModelMessage;
+            this.viewModelMessage = message;
             this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
         }
 
+        /// <summary>
+        /// Gets or sets the sidebar content width.
+        /// </summary>
         public int SidebarContentWidth
         {
             get => this.sidebarContentWidth;

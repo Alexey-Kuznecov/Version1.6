@@ -27,9 +27,9 @@ namespace ImagesColumns
         }
 
         /// <summary>
-        /// Gets or sets the title.
+        /// Gets or sets the column title.
         /// </summary>
-        public string Title { get; set; } = "ImageColumn";
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// The get column.

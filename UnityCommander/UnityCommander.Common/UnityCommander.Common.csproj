@@ -49,8 +49,4 @@
     <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Columns\" />
-  </ItemGroup>
-
 </Project>
