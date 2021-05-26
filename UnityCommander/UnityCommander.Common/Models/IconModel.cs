@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Common.Models
 {
+    using System;
     using System.Windows.Media;
     using System.Windows.Shapes;
 
@@ -9,6 +10,7 @@ namespace UnityCommander.Common.Models
     /// <summary>
     /// The icon model.
     /// </summary>
+    [Serializable]
     public class IconModel : IIcon
     {
         /// <summary>

@@ -32,6 +32,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Views;
 
+    
     /// <summary>
     /// The left panel view model.
     /// </summary>
@@ -41,9 +42,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Declaration fields
 
         /// <summary>
-        /// Time field required only at the development stage.
+        /// Indicates the instance number used to determine the orientation of the file panel.   
         /// </summary>
-        private static bool singleton;
+        private static byte numberInstances;
+
+        #region Dependencies
 
         /// <summary>
         /// The copy dialog.
@@ -61,6 +64,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDirectoryProvider directoryProviderManager;
 
         /// <summary>
+        /// The common state service.
+        /// </summary>
+        private readonly ICommonStateService commonStateService;
+
+        #endregion
+
+        #region Collections
+
+        /// <summary>
         /// The file list.
         /// </summary>
         private ObservableCollection<FileModel> fileList;
@@ -69,6 +81,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The directoryList.
         /// </summary>
         private ObservableCollection<FolderModel> directoryList;
+
+        #endregion
+
+        /// <summary>
+        /// Serialization path for saving the file panel state.
+        /// </summary>
+        private string serializedPath;
 
         /// <summary>
         /// Indicates the current directory.
@@ -79,11 +98,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Time field required only at the development stage.
         /// </summary>
         private string dirPath;
-
-        /// <summary>
-        /// The common state service.
-        /// </summary>
-        private ICommonStateService commonStateService;
 
         #endregion
 
@@ -104,9 +118,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider, ICommonStateService commandService) 
             : base(regionManager)
         {
+            this.directoryProviderManager = directoryProvider;
 
+            // Composite command
             this.commonStateService = commandService;
-            this.commonStateService.SaveCommand.RegisterCommand(this.SaveStatePanelCommand);
+            this.commonStateService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
 
             // Initialize properties.
             this.FilePanelContainer = new GridView();
@@ -114,14 +130,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.copyDialog = new CopyDialogView();
             this.invoker = new NavigationInvoker();
 
-
-            this.dirPath = @"c:\";
-            this.directoryProviderManager = directoryProvider;
-            this.SetLastStatePanel();
+            this.DetectPanelOrientation();
+            this.SetLastPanelState();
             this.AddColumnsFilePanel();
             this.AddColumnsFolderPanel();
-            this.SetCommands(this.dirPath);
-            this.CurrentDirectory = this.dirPath;
+            this.SetCommands(this.CurrentDirectory);
         }
 
         #endregion
@@ -164,16 +177,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         });
 
         /// <summary>
-        /// The command name.
+        /// The command serializes the state of the file panel after the program is closed
+        /// to restore it to its original state the next time it starts. <see cref="SetLastStatePanel"/>
         /// </summary>
-        public DelegateCommand SaveStatePanelCommand => new DelegateCommand(
+        public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
         {
             BinaryFormatter formatter = new BinaryFormatter();
 
-            object[] saveObjects = { this.FileList, this.DirectoryList };
+            object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
 
-            using (FileStream fs = new FileStream("filepanel.dat", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, saveObjects);
             }
@@ -287,42 +301,60 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #endregion
 
         /// <summary>
-        /// The destroy.
+        /// Identifies the panel and sets the appropriate path for serialization to the file panel state.
+        /// TODO: Now this is a temporary solution, in the future there should be rework.
+        /// </summary>
+        private void DetectPanelOrientation()
+        {
+            if (numberInstances == 0)
+                this.serializedPath = "leftfilepanel.dat"; // 0 — Left Panel
+            else
+                this.serializedPath = "rightfilepanel.dat";  // 1 — Right Panel
+
+            numberInstances++;
+        }
+
+        /// <summary>
+        /// Finalization of objects when unloading a module.
         /// </summary>
         public override void Destroy()
         {
             base.Destroy();
-            this.commonStateService.SaveCommand.UnregisterCommand(this.SaveStatePanelCommand);
+            // Detaching a command to avoid memory leaks.
+            this.commonStateService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
         }
 
         /// <summary>
-        /// The set last state panel.
+        ///This method will try to restore the original state of the file panel 
+        ///after the last time the program is closed, otherwise it will retry the database request.
+        ///<see cref="SaveStatePanelCommand"/>
         /// </summary>
-        public void SetLastStatePanel()
+        public void SetLastPanelState()
         {
             try
             {
                 BinaryFormatter formatter = new BinaryFormatter();
 
-                using (FileStream fs = new FileStream("filepanel.dat", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
                 {
                     object[] deserializeState = (object[])formatter.Deserialize(fs);
 
                     this.FileList = deserializeState[0] as ObservableCollection<FileModel>;
                     this.DirectoryList = deserializeState[1] as ObservableCollection<FolderModel>;
+                    this.CurrentDirectory = deserializeState[2] as string;
                 }
             }
             catch (Exception e)
             {
-                if (Directory.Exists(this.dirPath))
                 {
-                    this.FileList = this.directoryProviderManager.GetFiles(this.dirPath);
-                    this.DirectoryList = this.directoryProviderManager.GetDirectories(this.dirPath);
+                    string dirPath = @"c:\";
+                    this.FileList = this.directoryProviderManager.GetFiles(dirPath);
+                    this.DirectoryList = this.directoryProviderManager.GetDirectories(dirPath);
                 }
             }
         }
 
-        #region Helper Methods
+        #region Helper Methodsё
 
         /// <summary>
         /// The add columns in the file panel.
