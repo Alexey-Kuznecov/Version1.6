@@ -10,17 +10,21 @@
 
 namespace UnityCommander.ViewModels
 {
+    using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
 
+    using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
 
     using UnityCommander.Core;
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The main window view model.
     /// </summary>
-    public class MainWindowViewModel : BindableBase
+    public partial class MainWindowViewModel : BindableBase
     { 
         /// <summary>
         /// The view model message.
@@ -31,6 +35,11 @@ namespace UnityCommander.ViewModels
         /// The title.
         /// </summary>
         private string title = "Prism Application";
+
+        /// <summary>
+        /// The application commands.
+        /// </summary>
+        private ICommonStateService stateCommands;
 
         /// <summary>
         /// The drag increment.
@@ -48,10 +57,24 @@ namespace UnityCommander.ViewModels
         /// <param name="message">
         /// The view Model Message.
         /// </param>
-        public MainWindowViewModel(IEventAggregator message)
+        /// <param name="commandService">
+        /// The service that respond for composite commands.
+        /// </param>
+        public MainWindowViewModel(IEventAggregator message, ICommonStateService commandService)
         {
+            this.StateCommand = commandService;
+            this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
             this.viewModelMessage = message;
             this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
+        }
+
+        /// <summary>
+        /// Gets or sets the application commands.
+        /// </summary>
+        public ICommonStateService StateCommand
+        {
+            get => this.stateCommands;
+            set => this.SetProperty(ref this.stateCommands, value);
         }
 
         /// <summary>
@@ -80,6 +103,14 @@ namespace UnityCommander.ViewModels
             get => this.sidebarContent;
             set => this.SetProperty(ref this.sidebarContent, value);
         }
+
+        /// <summary>
+        /// The close window command.
+        /// </summary>
+        public DelegateCommand<Window> CloseWindowCommand => new DelegateCommand<Window>(window =>
+        {
+            window.Close();
+        });
 
         /// <summary>
         /// The set sidebar view model.

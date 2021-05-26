@@ -11,9 +11,15 @@ namespace UnityCommander.Modules.FilePanel.Commands
     /// </summary>
     public sealed class NavigationInvoker : InvokerBase
     {
-        /// <summary>                        The module commands.
+        /// <summary>
+        /// The module commands. 
         /// </summary>
         private readonly List<Command> commands;
+
+        /// <summary>
+        /// The current command.
+        /// </summary>
+        private static Command currentCommand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationInvoker"/> class.

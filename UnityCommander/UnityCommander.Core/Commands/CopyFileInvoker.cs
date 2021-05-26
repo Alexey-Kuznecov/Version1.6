@@ -28,14 +28,6 @@ namespace UnityCommander.Core.Commands
         }
 
         /// <summary>
-        /// Adding a command to record macros.
-        /// </summary>
-        private void AddCommand()
-        {
-            Commands.Add(new ConcreteCommand(new FileCopierReceiver()));
-        }
-
-        /// <summary>
         /// The execute.
         /// </summary>
         /// <param name="action"> The command to copy. </param>
@@ -45,6 +37,14 @@ namespace UnityCommander.Core.Commands
             Command command = new ConcreteCommand(new FileCopierReceiver());
             Commands.Add(command);
             command.Execute(action, arg);
+        }
+
+        /// <summary>
+        /// Adding a command to record macros.
+        /// </summary>
+        private void AddCommand()
+        {
+            Commands.Add(new ConcreteCommand(new FileCopierReceiver()));
         }
     }
 }

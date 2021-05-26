@@ -40,11 +40,6 @@ namespace UnityCommander.Core.Commands.Base
         /// <summary>
         /// The current command.
         /// </summary>
-        protected static Command currentCommand;
-
-        /// <summary>
-        /// The current command.
-        /// </summary>
         private static int index;
 
         /// <summary>

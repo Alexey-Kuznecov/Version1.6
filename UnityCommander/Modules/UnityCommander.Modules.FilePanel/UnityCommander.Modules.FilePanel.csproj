@@ -36,4 +36,7 @@
       <HintPath>..\..\..\Source\Gong-Wpf-DragAnDrop\netcoreapp3.1\GongSolutions.WPF.DragDrop.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Settings\" />
+  </ItemGroup>
 </Project>

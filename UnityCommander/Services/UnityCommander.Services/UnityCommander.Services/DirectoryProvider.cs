@@ -7,6 +7,7 @@ namespace UnityCommander.Services
     using UnityCommander.Common.Models;
     using UnityCommander.Services.Interfaces;
     
+
     /// <summary>
     /// The files provider.
     /// </summary>
@@ -62,7 +63,7 @@ namespace UnityCommander.Services
                         CreationTime = item.CreationTime,
                         LastAccessTime = item.LastAccessTime,
                         Type = DirectoryItemType.Folder
-                    }); ;
+                    }); 
                 }
             }
 

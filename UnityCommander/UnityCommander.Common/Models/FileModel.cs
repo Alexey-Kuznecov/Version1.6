@@ -1,11 +1,14 @@
 ﻿
 namespace UnityCommander.Common.Models
 {
+    using System;
+
     using UnityCommander.Common.Models.Base;
 
     /// <summary>
     /// The file model.
     /// </summary>
+    [Serializable]
     public class FileModel : BaseDirectory
     {
         /// <summary>

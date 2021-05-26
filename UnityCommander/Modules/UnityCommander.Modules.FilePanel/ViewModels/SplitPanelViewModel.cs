@@ -9,11 +9,15 @@
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
+
     using Commands;
     using Common.Models;
     using Core.Helper;
@@ -31,6 +35,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// <summary>
     /// The left panel view model.
     /// </summary>
+    [Serializable]
     public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
     {
         #region Declaration fields
@@ -73,7 +78,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Time field required only at the development stage.
         /// </summary>
-        private string dirpath;
+        private string dirPath;
+
+        /// <summary>
+        /// The common state service.
+        /// </summary>
+        private ICommonStateService commonStateService;
 
         #endregion
 
@@ -88,37 +98,30 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="directoryProvider">
         /// The service that provides the files system items.
         /// </param>
-        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider) 
+        /// <param name="commandService">
+        /// The service that respond for composite commands.
+        /// </param>
+        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider, ICommonStateService commandService) 
             : base(regionManager)
         {
+
+            this.commonStateService = commandService;
+            this.commonStateService.SaveCommand.RegisterCommand(this.SaveStatePanelCommand);
+
             // Initialize properties.
             this.FilePanelContainer = new GridView();
             this.FolderPanelContainer = new GridView();
             this.copyDialog = new CopyDialogView();
             this.invoker = new NavigationInvoker();
 
-            if (!singleton)
-            {
-                this.dirpath = @"D:\PortableApps\Applnks";
-                singleton = true;
-            }
-            else
-            {
-                this.dirpath = @"C:\Windows";
-            }
-            
+
+            this.dirPath = @"c:\";
             this.directoryProviderManager = directoryProvider;
+            this.SetLastStatePanel();
             this.AddColumnsFilePanel();
             this.AddColumnsFolderPanel();
-
-            if (Directory.Exists(this.dirpath))
-            {
-                this.FileList = this.directoryProviderManager.GetFiles(this.dirpath);
-                this.DirectoryList = this.directoryProviderManager.GetDirectories(this.dirpath);
-            }
-
-            this.SetCommands(this.dirpath);
-            this.CurrentDirectory = this.dirpath;
+            this.SetCommands(this.dirPath);
+            this.CurrentDirectory = this.dirPath;
         }
 
         #endregion
@@ -157,6 +160,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             if (dir != null)
             {
                 this.invoker.Execute(this.UpdateFilePanel, dir);
+            }
+        });
+
+        /// <summary>
+        /// The command name.
+        /// </summary>
+        public DelegateCommand SaveStatePanelCommand => new DelegateCommand(
+            () =>
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            object[] saveObjects = { this.FileList, this.DirectoryList };
+
+            using (FileStream fs = new FileStream("filepanel.dat", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, saveObjects);
             }
         });
 
@@ -266,6 +285,42 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         #endregion
+
+        /// <summary>
+        /// The destroy.
+        /// </summary>
+        public override void Destroy()
+        {
+            base.Destroy();
+            this.commonStateService.SaveCommand.UnregisterCommand(this.SaveStatePanelCommand);
+        }
+
+        /// <summary>
+        /// The set last state panel.
+        /// </summary>
+        public void SetLastStatePanel()
+        {
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                using (FileStream fs = new FileStream("filepanel.dat", FileMode.OpenOrCreate))
+                {
+                    object[] deserializeState = (object[])formatter.Deserialize(fs);
+
+                    this.FileList = deserializeState[0] as ObservableCollection<FileModel>;
+                    this.DirectoryList = deserializeState[1] as ObservableCollection<FolderModel>;
+                }
+            }
+            catch (Exception e)
+            {
+                if (Directory.Exists(this.dirPath))
+                {
+                    this.FileList = this.directoryProviderManager.GetFiles(this.dirPath);
+                    this.DirectoryList = this.directoryProviderManager.GetDirectories(this.dirPath);
+                }
+            }
+        }
 
         #region Helper Methods
 

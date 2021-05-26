@@ -3,15 +3,22 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
+    x:Name="Window"
     Title="{Binding Title, Mode=OneWay}"
     Width="1350"
     Height="800"
+    d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     WindowStartupLocation="CenterScreen"
-    WindowState="Maximized">
+    WindowState="Normal"
+    WindowStyle="None"
+    mc:Ignorable="d">
 
     <Window.Resources>
         <Style x:Key="MainMenuItem" TargetType="Menu" />
@@ -48,10 +55,13 @@
                 Foreground="White"
                 Header="FILE">
                 <MenuItem Header="Open">
+                    <MenuItem Header="Save stateService and exit" />
                     <MenuItem Header="English" />
-                    <MenuItem Header="English1" />
                 </MenuItem>
-                <MenuItem Header="Close" />
+                <MenuItem
+                    Command="{Binding StateCommand.SaveCommand}"
+                    CommandParameter="{Binding ElementName=Window}"
+                    Header="Close" />
             </MenuItem>
         </Menu>
         <!--

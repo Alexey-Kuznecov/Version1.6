@@ -6,6 +6,7 @@ namespace UnityCommander.Common.Models.Base
     /// <summary>
     /// The directory base.
     /// </summary>
+    [Serializable]
     public class BaseDirectory : MetaModel
     {
         /// <summary>

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>

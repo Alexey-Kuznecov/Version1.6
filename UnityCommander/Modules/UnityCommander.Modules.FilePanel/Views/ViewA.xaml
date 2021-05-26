@@ -19,12 +19,12 @@
             ShowsPreview="True" />
         <ContentControl Grid.Column="0">
             <ContentControl.Content>
-                <local:SplitPanelView />
+                <local:SplitPanelView OrientationPanel="Left" />
             </ContentControl.Content>
         </ContentControl>
         <ContentControl Grid.Column="2">
             <ContentControl.Content>
-                <local:SplitPanelView />
+                <local:SplitPanelView OrientationPanel="Right" />
             </ContentControl.Content>
         </ContentControl>
     </Grid>
