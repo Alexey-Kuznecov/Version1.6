@@ -11,6 +11,7 @@ namespace UnityCommander.ViewModels
 
     using Prism.Commands;
     using Prism.Mvvm;
+    using UnityCommander.Behavior;
 
     /// <summary>
     /// The main window view model.

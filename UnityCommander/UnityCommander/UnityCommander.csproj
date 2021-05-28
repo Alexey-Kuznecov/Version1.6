@@ -9,6 +9,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Behavior\**" />
+    <EmbeddedResource Remove="Behavior\**" />
+    <None Remove="Behavior\**" />
+    <Page Remove="Behavior\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="ViewModels\WindowManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="ViewModels\MainWindowViewModel.cs~RF22052bda.TMP" />
     <None Remove="Views\MainWindow.xaml~RF12940cd.TMP" />
   </ItemGroup>
@@ -16,10 +25,10 @@
     <PackageReference Include="Prism.DryIoc" Version="7.2.0.1422" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Library\WindowCustomizer\WindowCustomizer.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj" />
-    <ProjectReference Include="..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

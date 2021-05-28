@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Icons\Icons.xaml">
+    <Page Update="Images\Icons.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

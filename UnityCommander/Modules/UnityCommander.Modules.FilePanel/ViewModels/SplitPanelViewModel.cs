@@ -12,11 +12,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Input;
 
     using Commands;
     using Common.Models;
@@ -32,7 +32,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Views;
 
-    
     /// <summary>
     /// The left panel view model.
     /// </summary>
@@ -239,6 +238,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public BaseDirectory SelectedBaseDirectory
         {
+            [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:CurlyBracketsMustNotBeOmitted", Justification = "Reviewed. Suppression is OK here.")]
             set
             {
                 if (value == null) return;
@@ -325,9 +325,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        ///This method will try to restore the original state of the file panel 
-        ///after the last time the program is closed, otherwise it will retry the database request.
-        ///<see cref="SaveStatePanelCommand"/>
+        /// This method will try to restore the original state of the file panel 
+        /// after the last time the program is closed, otherwise it will retry the database request.
+        /// <see cref="SaveStatePanelCommand"/>
         /// </summary>
         public void SetLastPanelState()
         {

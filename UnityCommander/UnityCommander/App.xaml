@@ -7,6 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/WindowCustomizer;component/Styles/Windows.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>

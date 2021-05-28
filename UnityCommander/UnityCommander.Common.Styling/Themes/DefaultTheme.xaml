@@ -8,6 +8,6 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/NavigationBarStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Colors/DefaultColors.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/DirectoryPanel.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Icons/Icons.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Images/Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

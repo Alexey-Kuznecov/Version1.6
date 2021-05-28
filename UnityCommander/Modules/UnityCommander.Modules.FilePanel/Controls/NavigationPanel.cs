@@ -12,7 +12,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
     using Prism.Commands;
     using Prism.Mvvm;
-    using UnityCommander.Common;
     using UnityCommander.Core.Helper;
 
     /// <summary>

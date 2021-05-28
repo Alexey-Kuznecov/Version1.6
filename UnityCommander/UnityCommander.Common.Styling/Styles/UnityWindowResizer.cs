@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.ViewModels
+namespace UnityCommander.Common.Styling.Styles.Mvvm.Base
 {
     using System;
     using System.Runtime.InteropServices;
@@ -29,7 +29,7 @@ namespace UnityCommander.ViewModels
     /// <summary>
     /// Fixes the issue with Windows of Style <see cref="WindowStyle.None"/> covering the taskbar
     /// </summary>
-    public class WindowResizer
+    public class UnityWindowResizer
     {
         #region Private Members
 
@@ -95,7 +95,7 @@ namespace UnityCommander.ViewModels
         /// </summary>
         /// <param name="window">The window to monitor and correctly maximize</param>
         /// <param name="adjustSize">The callback for the host to adjust the maximum available size if needed</param>
-        public WindowResizer(Window window)
+        public UnityWindowResizer(Window window)
         {
             this.mWindow = window;
 

@@ -6,8 +6,7 @@ namespace UnityCommander.Services
     using UnityCommander.Common.Enums;
     using UnityCommander.Common.Models;
     using UnityCommander.Services.Interfaces;
-    
-
+ 
     /// <summary>
     /// The files provider.
     /// </summary>
