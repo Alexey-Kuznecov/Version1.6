@@ -20,21 +20,22 @@ namespace UnityCommander.ViewModels
 
     using UnityCommander.Core;
     using UnityCommander.Services.Interfaces;
+    using WindowCustomizer;
 
     /// <summary>
     /// The main window view model.
     /// </summary>
-    public partial class MainWindowViewModel : BindableBase
-    { 
+    public class MainWindowViewModel : BindableBase
+    {
+        /// <summary>
+        /// The index of the sidebar item that used  .
+        /// </summary>
+        private static byte sidebarItemIndex;
+
         /// <summary>
         /// The view model message.
         /// </summary>
         private readonly IEventAggregator viewModelMessage;
-
-        /// <summary>
-        /// The title.
-        /// </summary>
-        private string title = "Prism Application";
 
         /// <summary>
         /// The application commands.
@@ -47,9 +48,19 @@ namespace UnityCommander.ViewModels
         private UserControl sidebarContent;
 
         /// <summary>
+        /// The import custom window.
+        /// </summary>
+        private CustomViewModel importCustomWindow;
+
+        /// <summary>
         /// The sidebar content width.
         /// </summary>
         private int sidebarContentWidth;
+
+        /// <summary>
+        /// The title.
+        /// </summary>
+        private string title = "Prism Application";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -62,10 +73,27 @@ namespace UnityCommander.ViewModels
         /// </param>
         public MainWindowViewModel(IEventAggregator message, ICommonStateService commandService)
         {
+            IEventAggregator viewModelMessage;
             this.StateCommand = commandService;
-            this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
             this.viewModelMessage = message;
+            this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
             this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
+        }
+
+        /// <summary>
+        /// Gets or sets the custom window.
+        /// </summary>
+        public CustomViewModel ImportCustomWindow
+        {
+            get => this.importCustomWindow;
+            set
+            {
+                if (value != null)
+                {
+                    value.CloseCommand = this.StateCommand.SaveCommand;
+                    this.SetProperty(ref this.importCustomWindow, value);
+                }
+            }
         }
 
         /// <summary>
@@ -118,8 +146,16 @@ namespace UnityCommander.ViewModels
         /// <param name="obj"> The sidebar view. </param>
         private void SetSidebarViewModel(object obj)
         {
-            this.SidebarContentWidth = 250;
-            this.SidebarContent = obj as UserControl;
+            if (obj is UserControl sideBarContent)
+            {
+                this.SidebarContent = sideBarContent;
+            }
+
+            if (obj is byte index)
+            {
+                this.SidebarContentWidth = index == sidebarItemIndex ? 0 : 250;
+                sidebarItemIndex = index;
+            }
         }
     }
 }

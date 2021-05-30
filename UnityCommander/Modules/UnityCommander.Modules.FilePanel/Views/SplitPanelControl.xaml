@@ -10,12 +10,9 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
-    xmlns:selectors="clr-namespace:UnityCommander.Modules.FilePanel.Selectors"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
-    xmlns:views="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     d:DataContext="{d:DesignInstance viewModels:SplitPanelViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -42,7 +39,7 @@
             Height="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            ShowsPreview="True" />
+            ShowsPreview="False" />
         <!--
             Directory view
         -->

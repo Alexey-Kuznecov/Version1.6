@@ -5,22 +5,15 @@ namespace WindowCustomizer
     using System.Windows;
     using System.Windows.Input;
 
-    using CustomWindow;
-
     using Prism.Commands;
     using Prism.Mvvm;
 
     /// <summary>
     /// The View Model for the custom flat window
     /// </summary>
-    public class Configuration : BindableBase
+    public class CustomViewModel : BindableBase
     {
         #region Private Member
-
-        /// <summary>
-        /// The window this view model controls
-        /// </summary>
-        private readonly Window window;
 
         /// <summary>
         /// The margin around the window to allow for a drop shadow
@@ -30,7 +23,7 @@ namespace WindowCustomizer
         /// <summary>
         /// The radius of the edges of the window
         /// </summary>
-        private int windowRadius = 10;
+        private int windowRadius;
 
         /// <summary>
         /// The resize border thickness.
@@ -42,47 +35,31 @@ namespace WindowCustomizer
         /// </summary>
         private WindowDockPosition dockPosition = WindowDockPosition.Undocked;
 
-        /// <summary>
-        /// The data context.
-        /// </summary>
-        private Configuration dataContext;
-
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Configuration"/> class.
-        /// </summary>
-        public Configuration()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Configuration"/> class.
+        /// Initializes a new instance of the <see cref="CustomViewModel"/> class.
         /// </summary>
         /// <param name="window">
         /// The window that will be customized.
         /// </param>
-        public Configuration(Window window)
+        public CustomViewModel(Window window)
         {
-            this.window = window;
+            this.Window = window;
 
             // Listen out for the window resizing
-            this.window.StateChanged += (sender, e) =>
+            this.Window.StateChanged += (sender, e) =>
             {
                 // Fire off events for all properties that are affected by a resize
                 this.WindowResized();
             };
 
-            // Create commands
-            this.MinimizeCommand = new DelegateCommand(() => this.window.WindowState = WindowState.Minimized);
-            this.MaximizeCommand = new DelegateCommand(() => this.window.WindowState ^= WindowState.Maximized);
-            this.CloseCommand = new DelegateCommand(() => this.window.Close());
-            this.MenuCommand = new DelegateCommand(() => SystemCommands.ShowSystemMenu(this.window, this.GetMousePosition()));
+            this.CloseCommand = new DelegateCommand(() => { this.Window.Close(); });
 
             // Fix window resize issue
-            var resizer = new WindowResizer(this.window);
+            var resizer = new WindowResizer(this.Window);
 
             // Listen out for dock changes
             resizer.WindowDockChanged += (dock) =>
@@ -100,6 +77,11 @@ namespace WindowCustomizer
         #region Public Properties
 
         /// <summary>
+        /// Gets or sets the window this view model controls
+        /// </summary>
+        public Window Window { get; set; }
+
+        /// <summary>
         /// Gets or sets the height of the title bar / caption of the window
         /// </summary>
         public GridLength TitleHeightGridLength => new GridLength(this.TitleHeight + this.ResizeBorder);
@@ -108,15 +90,6 @@ namespace WindowCustomizer
         /// Gets or sets the radius of the edges of the window
         /// </summary>
         public CornerRadius WindowCornerRadius => new CornerRadius(this.WindowRadius);
-
-        /// <summary>
-        /// Gets or sets the data context.
-        /// </summary>
-        public Configuration DataContext
-        {
-            get => this.dataContext;
-            set => this.SetProperty(ref this.dataContext, value);
-        }
 
         /// <summary>
         /// Gets or sets the size of the resize border around the window, taking into account the outer margin
@@ -156,7 +129,7 @@ namespace WindowCustomizer
         /// Gets a value indicating whether the window should be borderless because it is docked or maximized.
         /// </summary>.
         public bool Borderless =>
-            (this.window.WindowState == WindowState.Maximized
+            (this.Window.WindowState == WindowState.Maximized
              || this.dockPosition != WindowDockPosition.Undocked);
 
         /// <summary>
@@ -196,12 +169,12 @@ namespace WindowCustomizer
         /// <summary>
         /// Gets or sets the command to minimize the window
         /// </summary>
-        public ICommand MinimizeCommand { get; set; }
+        public ICommand MinimizeCommand => new DelegateCommand(() => this.Window.WindowState = WindowState.Minimized);
 
         /// <summary>
         /// Gets or sets the command to maximize the window
         /// </summary>
-        public ICommand MaximizeCommand { get; set; }
+        public ICommand MaximizeCommand => new DelegateCommand(() => this.Window.WindowState ^= WindowState.Maximized);
 
         /// <summary>
         /// Gets or sets the command to close the window
@@ -211,7 +184,7 @@ namespace WindowCustomizer
         /// <summary>
         /// Gets or sets the command to show the system menu of the window
         /// </summary>
-        public ICommand MenuCommand { get; set; }
+        public ICommand MenuCommand => new DelegateCommand(() => SystemCommands.ShowSystemMenu(this.Window, this.GetMousePosition()));
 
         #endregion
 
@@ -224,10 +197,10 @@ namespace WindowCustomizer
         private Point GetMousePosition()
         {
             // Position of the mouse relative to the window
-            var position = Mouse.GetPosition(this.window);
+            var position = Mouse.GetPosition(this.Window);
 
             // Add the window position so its a "ToScreen"
-            return new Point(position.X + this.window.Left, position.Y + this.window.Top);
+            return new Point(position.X + this.Window.Left, position.Y + this.Window.Top);
         }
 
         /// <summary>

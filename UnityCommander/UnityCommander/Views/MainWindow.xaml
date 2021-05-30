@@ -9,22 +9,32 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
     x:Name="Window"
-    Title="{Binding Title, Mode=OneWay}"
+    Title="Unity Commander"
     Width="1350"
     Height="800"
-    custom:WindowControl.WindowInstance="{Binding ElementName=Window}"
+    custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
+    custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
+    Icon="D:\Works\WPF\UnityCommander\Version2.7.1\UnityCommander\UnityCommander\icon.ico"
     WindowStartupLocation="CenterScreen"
-    WindowState="Normal"
+    WindowState="Maximized"
     WindowStyle="None"
     mc:Ignorable="d">
 
+    <!--
+        THE LINE TO INCLUDING A CUSTOM WINDOW
+        AllowsTransparency="True"
+        custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
+        custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
+        WindowState="Normal"
+        WindowStyle="None"
+    -->
+
     <Window.Resources>
-        <Style x:Key="MainMenuItem" TargetType="Menu" />
         <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Height" Value="50" />
@@ -34,7 +44,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" MinWidth="60" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MaxWidth="250" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="3*" MinWidth="800" />
         </Grid.ColumnDefinitions>
@@ -44,28 +54,6 @@
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <Menu
-            Grid.Row="0"
-            Height="25"
-            IsMainMenu="True"
-            Style="{StaticResource MainMenuItem}">
-            <MenuItem
-                Width="100"
-                Height="25"
-                Background="#FF1368"
-                FontWeight="Bold"
-                Foreground="White"
-                Header="FILE">
-                <MenuItem Header="Open">
-                    <MenuItem Header="Save stateService and exit" />
-                    <MenuItem Header="English" />
-                </MenuItem>
-                <MenuItem
-                    Command="{Binding StateCommand.SaveCommand}"
-                    CommandParameter="{Binding ElementName=Window}"
-                    Header="Close" />
-            </MenuItem>
-        </Menu>
         <!--
             Toolbar region.
         -->
@@ -83,15 +71,16 @@
             Width="10"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"
-            DragIncrement="10"
-            ShowsPreview="True" />
+            DragIncrement="1"
+            ResizeDirection="Columns"
+            ShowsPreview="False" />
         <!--
             The content display region of ​​the left sidebar.
         -->
         <Border
             Grid.Row="2"
             Grid.Column="1"
-            Width="{Binding SidebarContentWidth}"
+            Width="{Binding SidebarContentWidth, Mode=TwoWay, FallbackValue=0}"
             Background="#FFF3F2F2">
             <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
         </Border>
@@ -119,4 +108,12 @@
             Grid.ColumnSpan="4"
             Background="#F0F0F0" />
     </Grid>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="46"
+            CornerRadius="0"
+            GlassFrameThickness="0"
+            ResizeBorderThickness="20" />
+    </WindowChrome.WindowChrome>
 </Window>

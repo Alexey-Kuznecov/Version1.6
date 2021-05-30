@@ -3,15 +3,18 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.Views"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:vm="clr-namespace:UnityCommander.Modules.LeftSideBars.ViewModels"
+    d:DataContext="{Binding SidebarViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="Horizontal" TargetType="Menu">
+        <Style TargetType="Menu">
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
@@ -32,6 +35,7 @@
             Foreground="#FF1368"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
+            SelectedIndex="{Binding SelectIndex, Mode=Default}"
             SelectedValue="{Binding SelectItem, Mode=Default}">
             <ListViewItem Height="60">
                 <materialDesigh:PackIcon

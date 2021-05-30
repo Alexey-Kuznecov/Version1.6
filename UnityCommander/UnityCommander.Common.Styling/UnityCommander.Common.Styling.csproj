@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Styles\UnityWindow.cs" />
+    <Compile Remove="Styles\UnityWindowResizer.cs" />
+    <Compile Remove="Styles\UnityWindowVM.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Colors\DefaultColors.xaml~RF45e465bc.TMP" />
     <None Remove="Colors\DefaultColors.xaml~RF45ef6d19.TMP" />
   </ItemGroup>
@@ -44,6 +50,21 @@
     </Page>
     <Page Update="Styles\ScrollBarStyles.xaml">
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Window\Buttons.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Colors.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Fonts.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Texts.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Windows.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>
 

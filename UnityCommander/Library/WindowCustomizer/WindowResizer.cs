@@ -1,7 +1,7 @@
 ﻿
 // ReSharper disable InconsistentNaming
 // ReSharper disable RedundantTypeSpecificationInDefaultExpression
-namespace CustomWindow
+namespace WindowCustomizer
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

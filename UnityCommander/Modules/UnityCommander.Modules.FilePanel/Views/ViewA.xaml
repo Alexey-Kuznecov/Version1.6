@@ -16,7 +16,7 @@
             Width="5"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"
-            ShowsPreview="True" />
+            ShowsPreview="False" />
         <ContentControl Grid.Column="0">
             <ContentControl.Content>
                 <local:SplitPanelView OrientationPanel="Left" />

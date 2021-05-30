@@ -33,7 +33,12 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The message.
         /// </summary>
         private ListViewItem selectItem;
-        
+
+        /// <summary>
+        /// The message.
+        /// </summary>
+        private byte selectIndex;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SidebarViewModel"/> class.
         /// This the signature of the constructor needed for communication with another a view models.
@@ -45,12 +50,29 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the message.
+        /// Gets or sets the sidebar content.
         /// </summary>
         public ListViewItem SelectItem
         {
             get => this.selectItem;
-            set => this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new ColumnsOptionControl());
+            set
+            {
+                this.selectItem = value;
+                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new ColumnsOptionControl());
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the index of the sidebar item is selected.
+        /// </summary>
+        public byte SelectIndex
+        {
+            get => this.selectIndex;
+            set
+            {
+                this.selectIndex = value;
+                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(this.SelectIndex);
+            }
         }
     }
 }

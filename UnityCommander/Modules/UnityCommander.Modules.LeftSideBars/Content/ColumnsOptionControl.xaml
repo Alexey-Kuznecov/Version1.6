@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.SidebarContent"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Grid Background="#FFF3F2F2">
+    <Grid Width="{Binding SidebarContentWidth, FallbackValue=0}" Background="#FFF3F2F2">
         <ListView>
             <ListViewItem>
                 <TextBlock FontSize="15" Text="Colums 1 Control" />

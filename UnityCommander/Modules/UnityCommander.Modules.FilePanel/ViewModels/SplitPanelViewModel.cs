@@ -343,8 +343,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.DirectoryList = deserializeState[1] as ObservableCollection<FolderModel>;
                     this.CurrentDirectory = deserializeState[2] as string;
                 }
+
+                if (!Directory.Exists(this.CurrentDirectory))
+                {
+                    this.CurrentDirectory = @"c:\";
+                    throw new Exception();
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 {
                     string dirPath = @"c:\";
