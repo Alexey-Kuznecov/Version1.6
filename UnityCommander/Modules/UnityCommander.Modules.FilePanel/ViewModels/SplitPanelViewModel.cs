@@ -29,6 +29,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Base;
     using UnityCommander.Common.Models.Columns;
+    using UnityCommander.Common.Models.Directory;
 
     using Views;
 
@@ -60,7 +61,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The directory provider.
         /// </summary>
-        private readonly IDirectoryProvider directoryProviderManager;
+        private readonly IDirectoryProviderService directoryProviderService;
 
         /// <summary>
         /// The common state service.
@@ -103,16 +104,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="regionManager">
         /// The region manager is Prism implementation.
         /// </param>
-        /// <param name="directoryProvider">
+        /// <param name="directoryProviderService">
         /// The service that provides the files system items.
         /// </param>
         /// <param name="commandService">
         /// The service that respond for composite commands.
         /// </param>
-        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider, IGlobalCommandService commandService) 
+        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProviderService directoryProviderService, IGlobalCommandService commandService) 
             : base(regionManager)
         {
-            this.directoryProviderManager = directoryProvider;
+            this.directoryProviderService = directoryProviderService;
 
             // Composite command
             this.globalCommandService = commandService;
@@ -335,9 +336,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             catch (Exception)
             {
                 {
-                    string dirPath = @"c:\";
-                    this.FileList = this.directoryProviderManager.GetFiles(dirPath);
-                    this.DirectoryList = this.directoryProviderManager.GetDirectories(dirPath);
+                    this.CurrentDirectory = @"c:\";
+                    this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
+                    this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
                 }
             }
         }
@@ -395,8 +396,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void UpdateFilePanel(object dirPath)
         {
             string path = (string)dirPath;
-            this.DirectoryList = this.directoryProviderManager.GetDirectories(path);
-            this.FileList = this.directoryProviderManager.GetFiles(path);
+            this.DirectoryList = this.directoryProviderService.GetDirectories(path);
+            this.FileList = this.directoryProviderService.GetFiles(path);
             this.CurrentDirectory = path;
         }
 

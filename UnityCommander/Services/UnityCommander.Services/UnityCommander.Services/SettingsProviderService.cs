@@ -8,7 +8,7 @@ namespace UnityCommander.Services
     /// <summary>
     /// The settings provider.
     /// </summary>
-    public class SettingsProvider : ISettingsProvider
+    public class SettingsProviderService : ISettingsProviderService
     {
         /// <summary>
         /// The get app settings.

@@ -5,12 +5,13 @@ namespace UnityCommander.Services
     using System.IO;
     using UnityCommander.Common.Enums;
     using UnityCommander.Common.Models;
+    using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
  
     /// <summary>
     /// The files provider.
     /// </summary>
-    public class DirectoryProvider : IDirectoryProvider
+    public class DirectoryProviderService : IDirectoryProviderService
     {
         /// <summary>
         /// Gets files list of the specific location.

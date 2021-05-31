@@ -24,13 +24,8 @@ namespace UnityCommander.Modules.FilePanel.Views
                 "OrientationPanel",
                 typeof(string),
                 typeof(SplitPanelView),
-                new FrameworkPropertyMetadata(
-                    ""),ValidateValueCallback);
-        }
-
-        private static bool ValidateValueCallback(object value)
-        {
-            return true;
+                new FrameworkPropertyMetadata(string.Empty),
+                ValidateValueCallback);
         }
 
         /// <summary>
@@ -48,6 +43,20 @@ namespace UnityCommander.Modules.FilePanel.Views
         {
             get => (string)GetValue(OrientationPanelProperty);
             set => this.SetValue(OrientationPanelProperty, value);
+        }
+
+        /// <summary>
+        /// The validate value callback.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private static bool ValidateValueCallback(object value)
+        {
+            return true;
         }
     }
 }

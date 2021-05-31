@@ -10,14 +10,17 @@
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
+    using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Controls;
 
-    using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
 
+    using UnityCommander.Common.Models;
     using UnityCommander.Core;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The view a view model.
@@ -32,7 +35,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// <summary>
         /// The message.
         /// </summary>
-        private ListViewItem selectItem;
+        private SidebarItem selectItem;
 
         /// <summary>
         /// The message.
@@ -40,25 +43,54 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         private byte selectIndex;
 
         /// <summary>
+        /// The pack icon.
+        /// </summary>
+        private ObservableCollection<IconModel> packIcon;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SidebarViewModel"/> class.
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
-        /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
-        public SidebarViewModel(IEventAggregator viewModelMessage)
+        /// <param name="viewModelMessage">
+        /// Communication parameter of the view models. 
+        /// </param>
+        /// <param name="iconProvider">
+        /// The icon Provider.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
+        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider)
         {
             this.viewModelMessage = viewModelMessage;
+            this.packIcon = iconProvider.GetIcons();
+            SidebarItems = new ObservableCollection<SidebarItem>();
+
+            foreach (var icon in this.packIcon)
+            {
+                var sbItem = new SidebarItem
+                {
+                    Content = new ColumnsOptionControl(),
+                    Icon = icon
+                };
+
+                SidebarItems.Add(sbItem);
+            }
         }
+
+        /// <summary>
+        /// Gets or sets the sidebar items.
+        /// </summary>
+        public ObservableCollection<SidebarItem> SidebarItems { get; set; }
 
         /// <summary>
         /// Gets or sets the sidebar content.
         /// </summary>
-        public ListViewItem SelectItem
+        public SidebarItem SelectItem
         {
             get => this.selectItem;
             set
             {
                 this.selectItem = value;
-                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new ColumnsOptionControl());
+                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(value);
             }
         }
 

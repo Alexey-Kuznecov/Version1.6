@@ -37,9 +37,10 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<IDirectoryProvider, DirectoryProvider>();
+            containerRegistry.Register<IDirectoryProviderService, DirectoryProviderService>();
             containerRegistry.Register<IGlobalCommandService, GlobalCommandService>();
-            containerRegistry.Register<ISettingsProvider, SettingsProvider>();
+            containerRegistry.Register<ISettingsProviderService, SettingsProviderService>();
+            containerRegistry.Register<IIconProviderService, IconProviderService>();
         }
 
         /// <summary>

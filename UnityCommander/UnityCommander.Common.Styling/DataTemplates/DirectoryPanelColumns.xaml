@@ -4,6 +4,7 @@
     xmlns:base="clr-namespace:UnityCommander.Common.Models.Base;assembly=UnityCommander.Common"
     xmlns:converter="clr-namespace:UnityCommander.Common.Styling.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:directory="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models;assembly=UnityCommander.Common"
@@ -48,7 +49,7 @@
             </ContentPresenter>
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="models:FileModel">
+    <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="directory:FileModel">
         <Grid d:DataContext="{d:DesignData}">
             <TextBlock Text="{Binding Extension}" />
         </Grid>

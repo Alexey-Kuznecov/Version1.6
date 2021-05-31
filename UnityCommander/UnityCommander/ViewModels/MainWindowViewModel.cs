@@ -15,6 +15,8 @@ namespace UnityCommander.ViewModels
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
+
+    using UnityCommander.Common.Models;
     using UnityCommander.Core;
     using UnityCommander.Services.Interfaces;
     using WindowCustomizer;
@@ -76,7 +78,7 @@ namespace UnityCommander.ViewModels
         /// <param name="command">
         /// Gets interface to execute commands each view model at the time.
         /// </param>
-        public MainWindowViewModel(IEventAggregator message, ISettingsProvider settings, IGlobalCommandService command)
+        public MainWindowViewModel(IEventAggregator message, ISettingsProviderService settings, IGlobalCommandService command)
         {
             this.viewModelMessage = message;
             this.StateCommand = command;
@@ -152,9 +154,9 @@ namespace UnityCommander.ViewModels
         /// <param name="obj"> The sidebar view. </param>
         private void SetSidebarViewModel(object obj)
         {
-            if (obj is UserControl sideBarContent)
+            if (obj is SidebarItem sideBarContent)
             {
-                this.SidebarContent = sideBarContent;
+                this.SidebarContent = sideBarContent.Content;
             }
 
             if (obj is byte index)

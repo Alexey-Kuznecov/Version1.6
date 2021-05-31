@@ -8,14 +8,14 @@ namespace UnityCommander.Services.Interfaces
     /// <summary>
     /// The i icon provider.
     /// </summary>
-    public interface IIconProvider
+    public interface IIconProviderService
     {
         /// <summary>
         /// The get icons.
         /// </summary>
         /// <returns>
-        /// The <see cref="ObservableCollection"/>.
+        /// The collection icons of Icon Model type.
         /// </returns>
-        //ObservableCollection<IconModel> GetIcons();
+        ObservableCollection<IconModel> GetIcons();
     }
 }

@@ -6,7 +6,7 @@ namespace UnityCommander.Services.Interfaces
     /// <summary>
     /// The ProviderSettings interface.
     /// </summary>
-    public interface ISettingsProvider
+    public interface ISettingsProviderService
     {
         /// <summary>
         /// The get app configuration.

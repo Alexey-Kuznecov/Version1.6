@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:vm="clr-namespace:UnityCommander.Modules.LeftSideBars.ViewModels"
-    d:DataContext="{Binding SidebarViewModel}"
+    d:DataContext="{d:DesignInstance vm:SidebarViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
 
@@ -28,47 +28,26 @@
     <Grid Width="60" Background="#173763">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ListView
             Grid.Row="0"
-            Foreground="#FF1368"
+            ItemsSource="{Binding SidebarItems}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             SelectedIndex="{Binding SelectIndex, Mode=Default}"
             SelectedValue="{Binding SelectItem, Mode=Default}">
-            <ListViewItem Height="60">
-                <materialDesigh:PackIcon
-                    Width="25"
-                    Height="25"
-                    Margin="10,0"
-                    VerticalAlignment="Center"
-                    Kind="Column" />
-            </ListViewItem>
-            <ListViewItem Height="60">
-                <materialDesigh:PackIcon
-                    Width="25"
-                    Height="25"
-                    Margin="10,0"
-                    VerticalAlignment="Center"
-                    Kind="Pencil" />
-            </ListViewItem>
-            <ListViewItem Height="60">
-                <materialDesigh:PackIcon
-                    Width="25"
-                    Height="25"
-                    Margin="10,0"
-                    VerticalAlignment="Center"
-                    Kind="Github" />
-            </ListViewItem>
-            <ListViewItem Height="60">
-                <materialDesigh:PackIcon
-                    Width="25"
-                    Height="25"
-                    Margin="10,0"
-                    VerticalAlignment="Center"
-                    Kind="Message" />
-            </ListViewItem>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Viewbox
+                        Width="25"
+                        Height="25"
+                        Margin="6"
+                        Stretch="UniformToFill">
+                        <Path Data="{Binding Icon.Path.Data}" Fill="#FF1368" />
+                    </Viewbox>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
         <DockPanel Grid.Row="1" Dock="Bottom">
             <materialDesigh:PopupBox

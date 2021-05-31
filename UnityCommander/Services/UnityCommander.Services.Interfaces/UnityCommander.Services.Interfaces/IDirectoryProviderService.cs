@@ -3,11 +3,12 @@ namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.ObjectModel;
     using UnityCommander.Common.Models;
+    using UnityCommander.Common.Models.Directory;
 
     /// <summary>
     /// The FilesProvider interface.
     /// </summary>
-    public interface IDirectoryProvider
+    public interface IDirectoryProviderService
     {
         /// <summary>
         /// Gets list files to the specific path.
