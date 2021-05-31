@@ -8,7 +8,7 @@ namespace UnityCommander.Services
     /// <summary>
     /// The common status service.
     /// </summary>
-    public class CommonStateService : ICommonStateService
+    public class GlobalCommandService : IGlobalCommandService
     {
         /// <summary>
         /// The save command.

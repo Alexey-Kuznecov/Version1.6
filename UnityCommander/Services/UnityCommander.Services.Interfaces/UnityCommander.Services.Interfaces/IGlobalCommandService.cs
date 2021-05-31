@@ -6,7 +6,7 @@ namespace UnityCommander.Services.Interfaces
     /// <summary>
     /// The common status service.
     /// </summary>
-    public interface ICommonStateService
+    public interface IGlobalCommandService
     {
         /// <summary>
         /// Gets the save command.

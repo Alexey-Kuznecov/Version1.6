@@ -80,7 +80,7 @@
         <Border
             Grid.Row="2"
             Grid.Column="1"
-            Width="{Binding SidebarContentWidth, Mode=TwoWay, FallbackValue=0}"
+            Width="{Binding SidebarContentWidth, Mode=TwoWay}"
             Background="#FFF3F2F2">
             <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
         </Border>

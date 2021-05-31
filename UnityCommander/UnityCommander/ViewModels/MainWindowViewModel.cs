@@ -12,12 +12,9 @@ namespace UnityCommander.ViewModels
 {
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Input;
-
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
-
     using UnityCommander.Core;
     using UnityCommander.Services.Interfaces;
     using WindowCustomizer;
@@ -40,7 +37,12 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// The application commands.
         /// </summary>
-        private ICommonStateService stateCommands;
+        private IGlobalCommandService stateCommands;
+
+        /// <summary>
+        /// The application settings.
+        /// </summary>
+        private ISettings settingsService;
 
         /// <summary>
         /// The drag increment.
@@ -66,18 +68,22 @@ namespace UnityCommander.ViewModels
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
         /// <param name="message">
-        /// The view Model Message.
+        /// Gets interface to exchange of information between view models.
         /// </param>
-        /// <param name="commandService">
-        /// The service that respond for composite commands.
+        /// <param name="settings">
+        /// Gets interface to configure of application.
         /// </param>
-        public MainWindowViewModel(IEventAggregator message, ICommonStateService commandService)
+        /// <param name="command">
+        /// Gets interface to execute commands each view model at the time.
+        /// </param>
+        public MainWindowViewModel(IEventAggregator message, ISettingsProvider settings, IGlobalCommandService command)
         {
-            IEventAggregator viewModelMessage;
-            this.StateCommand = commandService;
             this.viewModelMessage = message;
+            this.StateCommand = command;
+            this.settingsService = settings.GetAppConfig();
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
             this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
+            this.SidebarContentWidth = this.settingsService.SidebarDisplayContent ? 250 : 0;
         }
 
         /// <summary>
@@ -99,7 +105,7 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// Gets or sets the application commands.
         /// </summary>
-        public ICommonStateService StateCommand
+        public IGlobalCommandService StateCommand
         {
             get => this.stateCommands;
             set => this.SetProperty(ref this.stateCommands, value);

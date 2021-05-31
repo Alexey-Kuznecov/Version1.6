@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LeftPanelViewModel.cs" company="T">
-// Copyright (p) Alexey Kuznecov. All right reserved.  
+// <copyright file="SplitPanelViewModel.cs" company="T">
+//   Copyright (p) Alexey Kuznecov. All right reserved.
 // </copyright>
 // <summary>
 //   The left panel view model.
@@ -65,7 +65,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The common state service.
         /// </summary>
-        private readonly ICommonStateService commonStateService;
+        private readonly IGlobalCommandService globalCommandService;
 
         #endregion
 
@@ -93,11 +93,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private string currentDirectory;
 
-        /// <summary>
-        /// Time field required only at the development stage.
-        /// </summary>
-        private string dirPath;
-
         #endregion
 
         #region Constructors
@@ -114,14 +109,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="commandService">
         /// The service that respond for composite commands.
         /// </param>
-        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider, ICommonStateService commandService) 
+        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider, IGlobalCommandService commandService) 
             : base(regionManager)
         {
             this.directoryProviderManager = directoryProvider;
 
             // Composite command
-            this.commonStateService = commandService;
-            this.commonStateService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            this.globalCommandService = commandService;
+            this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
 
             // Initialize properties.
             this.FilePanelContainer = new GridView();
@@ -177,7 +172,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         /// <summary>
         /// The command serializes the state of the file panel after the program is closed
-        /// to restore it to its original state the next time it starts. <see cref="SetLastStatePanel"/>
+        /// to restore it to its original state the next time it starts. <see cref="SetLastPanelState"/>
         /// </summary>
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
@@ -301,35 +296,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #endregion
 
         /// <summary>
-        /// Identifies the panel and sets the appropriate path for serialization to the file panel state.
-        /// TODO: Now this is a temporary solution, in the future there should be rework.
-        /// </summary>
-        private void DetectPanelOrientation()
-        {
-            if (numberInstances == 0)
-                this.serializedPath = "leftfilepanel.dat"; // 0 — Left Panel
-            else
-                this.serializedPath = "rightfilepanel.dat";  // 1 — Right Panel
-
-            numberInstances++;
-        }
-
-        /// <summary>
         /// Finalization of objects when unloading a module.
         /// </summary>
         public override void Destroy()
         {
             base.Destroy();
+
             // Detaching a command to avoid memory leaks.
-            this.commonStateService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+            this.globalCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
         }
 
         /// <summary>
         /// This method will try to restore the original state of the file panel 
         /// after the last time the program is closed, otherwise it will retry the database request.
-        /// <see cref="SaveStatePanelCommand"/>
+        /// <see cref="SavePanelStateCommand"/>
         /// </summary>
-        public void SetLastPanelState()
+        private void SetLastPanelState()
         {
             try
             {
@@ -358,6 +340,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.DirectoryList = this.directoryProviderManager.GetDirectories(dirPath);
                 }
             }
+        }
+
+        /// <summary>
+        /// Identifies the panel and sets the appropriate path for serialization to the file panel state.
+        /// TODO: Now this is a temporary solution, in the future there should be rework.
+        /// </summary>
+        private void DetectPanelOrientation()
+        {
+            this.serializedPath = numberInstances == 0 ? "leftfilepanel.dat" : "rightfilepanel.dat";
+            numberInstances++;
         }
 
         #region Helper Methodsё

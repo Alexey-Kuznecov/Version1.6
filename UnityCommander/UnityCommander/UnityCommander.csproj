@@ -23,6 +23,7 @@
     <None Remove="Views\MainWindow.xaml~RF12940cd.TMP" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Config.Net" Version="4.15.0" />
     <PackageReference Include="Prism.DryIoc" Version="7.2.0.1422" />
   </ItemGroup>
   <ItemGroup>
