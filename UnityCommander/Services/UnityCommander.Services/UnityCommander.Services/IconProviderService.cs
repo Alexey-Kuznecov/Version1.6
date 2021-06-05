@@ -27,10 +27,10 @@ namespace UnityCommander.Services
         public IconProviderService()
         {
             this.materialDesignIcons.Add("FileTree", PackIconKind.FileTree);
-            this.materialDesignIcons.Add("Column", PackIconKind.Column);
+            this.materialDesignIcons.Add("TableColumn", PackIconKind.TableColumn);
             this.materialDesignIcons.Add("Tag", PackIconKind.Tag);
-            this.materialDesignIcons.Add("Message", PackIconKind.Message);
-            this.materialDesignIcons.Add("Github", PackIconKind.Github);
+            this.materialDesignIcons.Add("Comment", PackIconKind.Comment);
+            this.materialDesignIcons.Add("Plugin", PackIconKind.Plugin);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace UnityCommander.Services
                 packIcon.Kind = icon.Value;
                 icons.Add(new IconModel
                 {
-                    Category = icon.Value.ToString(),
+                    Category = icon.Key,
                     Path = new Path 
                     { 
                         Data = Geometry.Parse(packIcon.Data)

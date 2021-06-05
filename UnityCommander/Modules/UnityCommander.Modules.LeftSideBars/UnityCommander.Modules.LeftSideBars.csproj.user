@@ -5,7 +5,16 @@
     <Compile Update="Content\ColumnsOptionControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Content\CommentControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Content\FolderTreeOverviewControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Content\PluginControlPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Content\TagControlPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -13,7 +22,16 @@
     <Page Update="Content\ColumnsOptionControl.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Content\CommentControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Content\FolderTreeOverviewControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Content\PluginControlPanel.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Content\TagControlPanel.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\SideBar.xaml">

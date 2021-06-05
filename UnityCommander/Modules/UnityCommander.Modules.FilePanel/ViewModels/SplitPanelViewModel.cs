@@ -129,6 +129,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.SetLastPanelState();
             this.AddColumnsFilePanel();
             this.AddColumnsFolderPanel();
+            this.AddExtensionColumns();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -370,6 +371,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
                 }
             });
+        }
+
+        /// <summary>
+        /// The add columns in the file panel.
+        /// </summary>
+        private void AddExtensionColumns()
+        {
+            AdditionalColumns colsDefault = new AdditionalColumns();
+
+            foreach (var service in colsDefault.ImportColumnService)
+            {
+                // Forced addition columns to the directory panel.
+                service.GetColumn((items, error) =>
+                {
+                    foreach (var column in items)
+                    {
+                        this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    }
+                });
+            }
         }
 
         /// <summary>

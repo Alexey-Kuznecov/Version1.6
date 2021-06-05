@@ -49,4 +49,19 @@
     <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.dll</HintPath>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+	  <ProjectReference Condition="'$(TargetFramework)' == 'netcoreapp3.1'" Include="..\UnityCommander.Plugin.Core\UnityCommander.Plugin.Core.csproj">
+	    <Private>false</Private>
+	    <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+	    <EmbedInteropTypes>false</EmbedInteropTypes>
+	  </ProjectReference>
+	  <ProjectReference Condition="'$(TargetFramework)' == 'net472'" Include="..\UnityCommander.Plugin48.Core\UnityCommander.Plugin48.Core.csproj" />
+  </ItemGroup>
+
 </Project>
