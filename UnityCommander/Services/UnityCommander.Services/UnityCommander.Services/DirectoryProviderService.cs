@@ -3,9 +3,8 @@ namespace UnityCommander.Services
 {
     using System.Collections.ObjectModel;
     using System.IO;
-    using UnityCommander.Common.Enums;
-    using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Services.Interfaces;
  
     /// <summary>

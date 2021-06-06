@@ -4,7 +4,7 @@ namespace UnityCommander.Common.Models.Columns
     using System.Windows;
     using System.Windows.Controls;
 
-    using UnityCommander.Common.Models.Base;
+    using UnityCommander.Integration.Models.Base;
 
     /// <summary>
     /// The file column model.
@@ -25,7 +25,7 @@ namespace UnityCommander.Common.Models.Columns
                 Template = new GridViewColumn
                 {
                     Header = "Extension",
-                    Width = 150,
+                    Width = 80,
                     CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnExtensionDataTemplate")
                 }
             });

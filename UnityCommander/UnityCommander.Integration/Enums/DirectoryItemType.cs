@@ -6,5 +6,11 @@ namespace UnityCommander.Integration.Enums
     /// </summary>
     public enum DirectoryItemType
     {
+        Files,
+        Folder,
+        Link,
+        SymbolicLink,
+        VirtualFolder,
+        Networkfolder
     }
 }

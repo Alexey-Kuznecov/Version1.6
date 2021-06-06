@@ -4,6 +4,7 @@ namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.ObjectModel;
     using UnityCommander.Common.Models;
+    using UnityCommander.Integration.Models;
 
     /// <summary>
     /// The i icon provider.

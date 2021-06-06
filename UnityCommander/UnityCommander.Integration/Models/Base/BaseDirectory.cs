@@ -1,15 +1,13 @@
 ﻿
-namespace UnityCommander.Common.Models.Base
+namespace UnityCommander.Integration.Models.Base
 {
     using System;
-
-    using UnityCommander.Common.Models.Directory;
 
     /// <summary>
     /// The directory base.
     /// </summary>
     [Serializable]
-    public class BaseDirectory : MetaModel
+    public abstract class BaseDirectory : MetaModel
     {
         /// <summary>
         /// Gets or sets the name.

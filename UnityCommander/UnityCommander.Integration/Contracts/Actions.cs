@@ -14,5 +14,5 @@ namespace UnityCommander.Integration.Contracts
     /// The path.
     /// </param>
     /// <returns> The objects. </returns>
-    public delegate object InjectData(string path);
+    public delegate object InsertColumnData(string path);
 }

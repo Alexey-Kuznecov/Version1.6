@@ -3,7 +3,7 @@ namespace UnityCommander.Common.Models.Directory
 {
     using System;
 
-    using UnityCommander.Common.Models.Base;
+    using UnityCommander.Integration.Models.Base;
 
     /// <summary>
     /// The file model.

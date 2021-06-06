@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Common.Models.Base
+namespace UnityCommander.Integration.Models.Base
 {
     using UnityCommander.Integration.Contracts;
 
@@ -23,10 +23,5 @@ namespace UnityCommander.Common.Models.Base
         /// Gets or sets the column template.
         /// </summary>
         public object Template { get; set; }
-
-        /// <summary>
-        /// Gets or sets the action that is always executed when complete the column.
-        /// </summary>
-        public InjectData Action { get; set; }
     }
 }

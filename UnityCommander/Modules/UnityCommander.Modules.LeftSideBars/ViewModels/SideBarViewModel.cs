@@ -20,6 +20,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
     using UnityCommander.Common.Models;
     using UnityCommander.Core;
+    using UnityCommander.Integration.Models;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;

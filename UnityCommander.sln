@@ -83,6 +83,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Plugin.Core"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Plugin48.Core", "UnityCommander\UnityCommander.Plugin48.Core\UnityCommander.Plugin48.Core.csproj", "{E2673BAE-4D8A-47DA-B9BC-A1203E3183D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateTimeColumns", "UnityCommander\Plugins\DateTimeColumns\DateTimeColumns.csproj", "{33299643-2888-4414-8F92-D130C2B1BAA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -222,6 +224,12 @@ Global
 		{E2673BAE-4D8A-47DA-B9BC-A1203E3183D2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2673BAE-4D8A-47DA-B9BC-A1203E3183D2}.soft|Any CPU.ActiveCfg = Debug|Any CPU
 		{E2673BAE-4D8A-47DA-B9BC-A1203E3183D2}.soft|Any CPU.Build.0 = Debug|Any CPU
+		{33299643-2888-4414-8F92-D130C2B1BAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33299643-2888-4414-8F92-D130C2B1BAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33299643-2888-4414-8F92-D130C2B1BAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33299643-2888-4414-8F92-D130C2B1BAA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33299643-2888-4414-8F92-D130C2B1BAA3}.soft|Any CPU.ActiveCfg = Debug|Any CPU
+		{33299643-2888-4414-8F92-D130C2B1BAA3}.soft|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -244,6 +252,7 @@ Global
 		{E69312C9-96E1-44CB-8CAA-237E09DFE433} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
 		{260DB9E2-9BC4-4466-B250-D65BE481B57E} = {EB7586E2-3D65-4A29-B0FC-00670AC65636}
 		{7AE2B9FB-7192-448E-9CB5-88866779C9E7} = {30D7551D-E97F-47C2-8E01-2A04C3B5AF63}
+		{33299643-2888-4414-8F92-D130C2B1BAA3} = {CAE06C48-FB47-4EEC-96AC-9B4D401335FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}

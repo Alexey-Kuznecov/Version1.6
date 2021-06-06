@@ -9,6 +9,7 @@ namespace UnityCommander.Services
 
     using MaterialDesignThemes.Wpf;
     using UnityCommander.Common.Models;
+    using UnityCommander.Integration.Models;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>

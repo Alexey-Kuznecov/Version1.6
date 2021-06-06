@@ -4,18 +4,18 @@ namespace ImagesColumns
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
 
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Models;
 
     /// <summary>
     /// The home library book service.
     /// </summary>
     [Export(typeof(IColumnService))]
-    public class ImageColumn : IColumnService
+    public class Image : IColumnService
     {
         /// <summary>
         /// The columns.
@@ -23,9 +23,9 @@ namespace ImagesColumns
         private ObservableCollection<IColumn> columns;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageColumn"/> class.
+        /// Initializes a new instance of the <see cref="Image"/> class.
         /// </summary>
-        public ImageColumn()
+        public Image()
         {
            this.InitialData();
         }
@@ -49,18 +49,31 @@ namespace ImagesColumns
         /// <summary>
         /// The set column value.
         /// </summary>
+        /// <param name="model">
+        /// The model.
+        /// </param>
         /// <param name="currentPath">
         /// The current path.
         /// </param>
-        public void SetColumnValue(Action<object, string> currentPath)
+        public void SetColumnValue(Action<object> model, string currentPath)
         {
             ImageModel imageModel = new ImageModel();
+            var dir = Path.GetFileName(currentPath);
 
-            imageModel.Dpi = "72dpi";
-            imageModel.Sized = "1200x880";
-            imageModel.Colors = "Blue";
+            if (dir != null && dir.Contains("dot"))
+            {
+                imageModel.Dpi = "2dpi";
+                imageModel.Sized = "100x50";
+                imageModel.Colors = "Greed";
+            }
+            else
+            {
+                imageModel.Dpi = "72dpi";
+                imageModel.Sized = "1200x880";
+                imageModel.Colors = "Blue";
+            }
 
-            currentPath(imageModel, null);
+            model(imageModel);
         }
 
         /// <summary>
@@ -72,38 +85,38 @@ namespace ImagesColumns
             {
                 new ImageColumnModel
                   {
-                      Header = "Dpi",
+                      Header = nameof(ImageModel.Dpi),
                       IsDisplayed = true,
                       Template = new GridViewColumn
                       {
-                          Header = "Dpi",
-                          Width = 100,
+                          Header = nameof(ImageModel.Dpi),
+                          Width = 50,
                           DisplayMemberBinding =
-                              new Binding { Path = new PropertyPath("Dpi") }
+                              new Binding(nameof(ImageModel.Dpi))
                       }
                   },
                   new ImageColumnModel
                   {
-                      Header = "Sized",
+                      Header = nameof(ImageModel.Sized),
                       IsDisplayed = true,
                       Template = new GridViewColumn
                       {
-                          Header = "Sized",
-                          Width = 100,
+                          Header = nameof(ImageModel.Sized),
+                          Width = 80,
                           DisplayMemberBinding =
-                              new Binding { Path = new PropertyPath("Sized") }
+                              new Binding(nameof(ImageModel.Sized))
                       }
                   },
                   new ImageColumnModel
                   {
-                      Header = "Colors",
-                      IsDisplayed = false,
+                      Header = nameof(ImageModel.Colors),
+                      IsDisplayed = true,
                       Template = new GridViewColumn
                       {
-                          Header = "Colors",
-                          Width = 100,
+                          Header = nameof(ImageModel.Colors),
+                          Width = 60,
                           DisplayMemberBinding =
-                              new Binding { Path = new PropertyPath("Colors") }
+                              new Binding(nameof(ImageModel.Colors))
                       }
                   }
             };

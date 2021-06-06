@@ -16,7 +16,7 @@ namespace UnityCommander.Common
         /// <summary>
         /// The mod builder.
         /// </summary>
-        public static ModuleBuilder modBuilder;
+        private static ModuleBuilder modBuilder;
 
         /// <summary>
         /// The generate assembly and module.

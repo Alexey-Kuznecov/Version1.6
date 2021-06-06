@@ -32,9 +32,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Services.Interfaces;
 
-    using UnityCommander.Common.Models.Base;
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Integration.Models.Base;
 
     using Views;
 
@@ -80,12 +80,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The file list.
         /// </summary>
-        private IEnumerable<BaseDirectory> fileList;
+        private ObservableCollection<FileModel> fileList;
 
         /// <summary>
         /// The directoryList.
         /// </summary>
-        private IEnumerable<BaseDirectory> directoryList;
+        private ObservableCollection<FolderModel> directoryList;
 
         #endregion
 
@@ -220,7 +220,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the directory list.
         /// </summary>
-        public IEnumerable<BaseDirectory> DirectoryList
+        public ObservableCollection<FolderModel> DirectoryList
         {
             get => this.directoryList;
             set => this.SetProperty(ref this.directoryList, value);
@@ -229,7 +229,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the file list.
         /// </summary>
-        public IEnumerable<BaseDirectory> FileList
+        public ObservableCollection<FileModel> FileList
         {
             get => this.fileList;
             set => this.SetProperty(ref this.fileList, value);
@@ -240,7 +240,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public BaseDirectory SelectedBaseDirectory
         {
-            [SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1503:CurlyBracketsMustNotBeOmitted", Justification = "Reviewed. Suppression is OK here.")]
+            [SuppressMessage("StyleCop.CSharp.LayoutRules", 
+                "SA1503:CurlyBracketsMustNotBeOmitted", 
+                Justification = "Reviewed. Suppression is OK here.")]
             set
             {
                 if (value == null) return;
@@ -339,13 +341,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     throw new Exception();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                {
-                    this.CurrentDirectory = @"c:\";
-                    this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
-                    this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
-                }
+                this.CurrentDirectory = @"c:\";
+
+                this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
+                this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
             }
         }
 
@@ -404,14 +405,40 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var service in colsDefault.ImportColumnService)
             {
+                var models = new ObservableCollection<FileModel>();
+
                 // Forced addition columns to the directory panel.
                 service.GetColumn((items, error) =>
                     {
                         foreach (var column in items)
                         {
-                            this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                            if (column.IsDisplayed)
+                            {
+                                this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                            }
                         }
                     });
+
+                foreach (var file in this.FileList)
+                {
+                    try
+                    {
+                        service.SetColumnValue(
+                            (items) =>
+                                {
+                                    models.Add(file.MergeObjectProperties<FileModel>(items));
+                                },
+                            file.Path);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                }
+
+                this.FileList = models;
+                ExtensionMethod.StoredReset();
             }
         }
 

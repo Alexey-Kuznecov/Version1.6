@@ -3,6 +3,8 @@ namespace UnityCommander.Common.Models
 {
     using System.Windows.Controls;
 
+    using UnityCommander.Integration.Models;
+
     /// <summary>
     /// The sidebar item.
     /// </summary>

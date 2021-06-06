@@ -8,7 +8,7 @@ namespace UnityCommander.Common.Styling.Converters
 
     using MaterialDesignThemes.Wpf;
 
-    using UnityCommander.Common.Enums;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The icon converter.

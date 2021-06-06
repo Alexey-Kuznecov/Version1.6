@@ -3,7 +3,10 @@ namespace UnityCommander.Core.Helper
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Reflection.Emit;
+
+    using UnityCommander.Integration.Models;
 
     /// <summary>
     /// The extension method.
@@ -13,12 +16,20 @@ namespace UnityCommander.Core.Helper
         /// <summary>
         /// The stored.
         /// </summary>
-        private static List<object> stored;
+        private static Dictionary<string, object> stored;
 
         /// <summary>
         /// The type builder.
         /// </summary>
         private static TypeBuilder typeBuilder;
+
+        /// <summary>
+        /// The stored reset.
+        /// </summary>
+        public static void StoredReset()
+        {
+            stored = null;
+        }
 
         /// <summary>
         /// This method will create a new <see langword="object"/> based on two
@@ -34,24 +45,29 @@ namespace UnityCommander.Core.Helper
         /// [DebuggerStepperBoundary]
         public static TypeBuilder MergeObjectProperties(this object mergeObjectL, object mergeObjectR)
         {
-            stored = new List<object>();
+            stored = new Dictionary<string, object>();
+
             GeneratorType.GenerateAssemblyAndModule("FolderModel");
             typeBuilder = GeneratorType.CreateType("FolderModel");
 
-            foreach (var propertyInfo in mergeObjectL.GetType().GetProperties())
+            foreach (var propertyInfo in mergeObjectR.GetType().GetProperties())
             {
-                stored.Add(propertyInfo.GetValue(mergeObjectL));
+                stored.Add(propertyInfo.Name, propertyInfo.GetValue(mergeObjectR));
                 GeneratorType.CreateProperty(typeBuilder, propertyInfo.Name, propertyInfo.PropertyType);
             }
 
-            foreach (var propertyInfo in mergeObjectR.GetType().GetProperties())
+            foreach (var propertyInfo in mergeObjectL.GetType().GetProperties())
             {
-                stored.Add(propertyInfo.GetValue(mergeObjectL));
-                GeneratorType.CreateProperty(typeBuilder, propertyInfo.Name, propertyInfo.PropertyType);
+                if (!stored.ContainsKey(propertyInfo.Name))
+                {
+                    stored.Add(propertyInfo.Name, propertyInfo.GetValue(mergeObjectL));
+                    GeneratorType.CreateProperty(typeBuilder, propertyInfo.Name, propertyInfo.PropertyType);
+                }
             }
 
             return typeBuilder;
         }
+
 
         /// <summary>
         /// This method will create a new <see langword="object"/> based on two objects.
@@ -65,39 +81,57 @@ namespace UnityCommander.Core.Helper
         /// [DebuggerStepperBoundary]
         public static T MergeObjectProperties<T>(this object mergeObjectL, object mergeObjectR, Type[] implInterface = null)
         {
-            typeBuilder = mergeObjectL.MergeObjectProperties(mergeObjectR);
+            typeBuilder = MergeObjectProperties(mergeObjectL, mergeObjectR);
 
             if (implInterface != null)
             {
                 foreach (var type in implInterface)
                 {
                     typeBuilder.AddInterfaceImplementation(type);
-                } 
+                }
             }
 
             typeBuilder.SetParent(typeof(T));
             typeBuilder.CreateType();
             
-            return (T)Activator.CreateInstance(RestoreData(typeBuilder));
+            return RestoreData<T>(typeBuilder);
         }
 
         /// <summary>
         /// The restore data.
         /// </summary>
+        /// <typeparam name="T">
+        /// The type that needs to be made basic for the object.
+        /// </typeparam>
         /// <param name="builder">
         /// The builder.
         /// </param>
         /// <returns>
         /// The <see cref="TypeBuilder"/>.
         /// </returns>
-        private static TypeBuilder RestoreData(TypeBuilder builder)
+        private static T RestoreData<T>(TypeBuilder builder)
         {
+            var instance = (T)Activator.CreateInstance(typeBuilder);
+
             foreach (var property in builder.GetProperties())
             {
-                property.SetValue(builder, (string)stored.ExtractEach());
+                if (stored[property.Name] is string)
+                {
+                    property.SetValue(instance, (string)stored[property.Name]);
+                }
+
+                if (stored[property.Name] is IconModel)
+                {
+                    property.SetValue(instance, (IconModel)stored[property.Name]);
+                }
+
+                if (stored[property.Name] is DateTime)
+                {
+                    property.SetValue(instance, (DateTime)stored[property.Name]);
+                }
             }
 
-            return builder;
+            return instance;
         }
     }
 }

@@ -12,6 +12,7 @@
     <Compile Remove="ExtensionMethod.cs" />
     <Compile Remove="HelperMethods.cs" />
     <Compile Remove="Models\DirectoryPathModel.cs" />
+    <Compile Remove="Models\Directory\MetaModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

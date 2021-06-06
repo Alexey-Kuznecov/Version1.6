@@ -6,8 +6,8 @@ namespace UnityCommander.Common.Models.Columns
     using System.Windows;
     using System.Windows.Controls;
 
-    using UnityCommander.Common.Models.Base;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Models.Base;
 
     /// <summary>
     /// The columns default.
@@ -31,6 +31,20 @@ namespace UnityCommander.Common.Models.Columns
         /// Gets or sets the column's name that display in settings.
         /// </summary>
         public string DisplayName { get; set; } = "Default";
+
+        /// <summary>
+        /// The set column value.
+        /// </summary>
+        /// <param name="yourModel">
+        /// The your model.
+        /// </param>
+        /// <param name="currentPath">
+        /// The current path.
+        /// </param>
+        public void SetColumnValue(Action<object> yourModel, string currentPath)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Provides collection columns, only columns for which the IsDisplayed property is true.
@@ -92,17 +106,6 @@ namespace UnityCommander.Common.Models.Columns
                     },
                 }
             };
-        }
-
-        /// <summary>
-        /// The set column value.
-        /// </summary>
-        /// <param name="currentPath">
-        /// The current path.
-        /// </param>
-        public void SetColumnValue(Action<object, string> currentPath)
-        {
-            throw new NotImplementedException();
         }
     }
 }
