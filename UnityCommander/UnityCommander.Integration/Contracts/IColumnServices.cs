@@ -15,6 +15,14 @@ namespace UnityCommander.Integration.Contracts
         string DisplayName { get; set; }
 
         /// <summary>
+        /// The set column value.
+        /// </summary>
+        /// <param name="currentPath">
+        /// The current path.
+        /// </param>
+        void SetColumnValue(Action<object, string> currentPath);
+
+        /// <summary>
         /// A method for two-way column data transfer between the plugin and the host.
         /// </summary>
         /// <param name="callback">

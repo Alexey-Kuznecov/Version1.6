@@ -7,7 +7,6 @@ namespace UnityCommander.Common.Models.Columns
     using System.ComponentModel.Composition.Hosting;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
 
     using UnityCommander.Integration.Contracts;
 #if NETCOREAPP3_1
@@ -22,23 +21,34 @@ namespace UnityCommander.Common.Models.Columns
     public class AdditionalColumns : DefaultColumns
     {
         /// <summary>
+        /// The loaders.
+        /// </summary>
+        private readonly List<PluginLoader> loaders = new List<PluginLoader>();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AdditionalColumns"/> class.
         /// </summary>
         public AdditionalColumns()
         {
-            var loaders = new List<PluginLoader>();
-            List<IColumnService> services = new List<IColumnService>();
+#if NETCOREAPP3_1
+            this.CreatePluginContext();
+            this.CreatePluginInstance();
+#endif
+        }
 
+#if NETCOREAPP3_1
+        /// <summary>
+        /// The create plugin context.
+        /// </summary>
+        private void CreatePluginContext()
+        {
             // create plugin loaders
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
                 var dirName = Path.GetFileName(dir);
-#if NETCOREAPP3_1
                 var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
-#else
-                var pluginDll = Path.Combine(dir + "\\net48\\", dirName + ".dll");
-#endif
+
                 if (File.Exists(pluginDll))
                 {
                     var loader = PluginLoader.CreateFromAssemblyFile(
@@ -47,8 +57,15 @@ namespace UnityCommander.Common.Models.Columns
                     loaders.Add(loader);
                 }
             }
+        }
 
-            // Create an instance of plugin types
+        /// <summary>
+        /// Creates an instance of plugin types.
+        /// </summary>
+        private void CreatePluginInstance()
+        {
+            List<IColumnService> services = new List<IColumnService>();
+
             foreach (var loader in loaders)
             {
                 foreach (var pluginType in loader
@@ -56,7 +73,7 @@ namespace UnityCommander.Common.Models.Columns
                     .GetTypes()
                     .Where(t => typeof(IColumnService).IsAssignableFrom(t) && !t.IsAbstract))
                 {
-                    // This assumes the implementation of IPlugin has a parameterless constructor
+                    // This assumes the implementation of IPlugin has a parameter less constructor
                     var plugin = Activator.CreateInstance(pluginType, null) as IColumnService;
                     services.Add(plugin);
                 }
@@ -64,13 +81,13 @@ namespace UnityCommander.Common.Models.Columns
 
             ImportColumnService = services;
         }
-
+#endif
         /// <summary>
         /// Gets or sets the column service.
         /// </summary>
         [ImportMany(typeof(IColumnService))]
         public IEnumerable<IColumnService> ImportColumnService { get; set; }
-
+#if NET48
         /// <summary>
         /// Configures the import of plug-ins for column expansion.
         /// </summary>
@@ -93,5 +110,6 @@ namespace UnityCommander.Common.Models.Columns
             // Fill the imports of this object
             container.ComposeParts(this);
         }
+#endif
     }
 }

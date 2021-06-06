@@ -1,9 +1,9 @@
 ﻿
-namespace UnityCommander.Common.Models.Directory
+namespace UnityCommander.Integration.Models
 {
     using System;
 
-    using UnityCommander.Common.Enums;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The meta model.

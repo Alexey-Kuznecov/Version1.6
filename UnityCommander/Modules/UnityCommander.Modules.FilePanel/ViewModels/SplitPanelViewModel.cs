@@ -19,12 +19,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows.Controls;
 
     using Commands;
+
     using Common.Models;
+
     using Core.Helper;
     using Core.Mvvm;
+
     using GongSolutions.Wpf.DragDrop;
+
     using Prism.Commands;
     using Prism.Regions;
+
     using Services.Interfaces;
 
     using UnityCommander.Common.Models.Base;
@@ -75,12 +80,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The file list.
         /// </summary>
-        private ObservableCollection<FileModel> fileList;
+        private IEnumerable<BaseDirectory> fileList;
 
         /// <summary>
         /// The directoryList.
         /// </summary>
-        private ObservableCollection<FolderModel> directoryList;
+        private IEnumerable<BaseDirectory> directoryList;
 
         #endregion
 
@@ -127,9 +132,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             this.DetectPanelOrientation();
             this.SetLastPanelState();
-            this.AddColumnsFilePanel();
-            this.AddColumnsFolderPanel();
-            this.AddExtensionColumns();
+            this.AddFileColumns();
+            this.AddFolderColumns();
+            this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -215,7 +220,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the directory list.
         /// </summary>
-        public ObservableCollection<FolderModel> DirectoryList
+        public IEnumerable<BaseDirectory> DirectoryList
         {
             get => this.directoryList;
             set => this.SetProperty(ref this.directoryList, value);
@@ -224,7 +229,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the file list.
         /// </summary>
-        public ObservableCollection<FileModel> FileList
+        public IEnumerable<BaseDirectory> FileList
         {
             get => this.fileList;
             set => this.SetProperty(ref this.fileList, value);
@@ -354,12 +359,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             numberInstances++;
         }
 
-        #region Helper Methodsё
+        #region Helper Methods
 
         /// <summary>
         /// The add columns in the file panel.
         /// </summary>
-        private void AddColumnsFilePanel()
+        private void AddFileColumns()
         {
             FileColumnModel colsDefault = new FileColumnModel();
 
@@ -374,29 +379,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// The add columns in the file panel.
-        /// </summary>
-        private void AddExtensionColumns()
-        {
-            AdditionalColumns colsDefault = new AdditionalColumns();
-
-            foreach (var service in colsDefault.ImportColumnService)
-            {
-                // Forced addition columns to the directory panel.
-                service.GetColumn((items, error) =>
-                {
-                    foreach (var column in items)
-                    {
-                        this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    }
-                });
-            }
-        }
-
-        /// <summary>
         /// The add columns in the folder panel.
         /// </summary>
-        private void AddColumnsFolderPanel()
+        private void AddFolderColumns()
         {
             FolderColumnModel colsDefault = new FolderColumnModel();
 
@@ -408,6 +393,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
                 }
             });
+        }
+
+        /// <summary>
+        /// The add columns in the file panel.
+        /// </summary>
+        private void SetAdditionalColumns()
+        {
+            AdditionalColumns colsDefault = new AdditionalColumns();
+
+            foreach (var service in colsDefault.ImportColumnService)
+            {
+                // Forced addition columns to the directory panel.
+                service.GetColumn((items, error) =>
+                    {
+                        foreach (var column in items)
+                        {
+                            this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                        }
+                    });
+            }
         }
 
         /// <summary>

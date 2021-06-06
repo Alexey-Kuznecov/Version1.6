@@ -45,7 +45,6 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <ProjectReference Include="..\Library\AkuzIcons\AkuzIcons.csproj" />
     <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 

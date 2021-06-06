@@ -93,5 +93,16 @@ namespace UnityCommander.Common.Models.Columns
                 }
             };
         }
+
+        /// <summary>
+        /// The set column value.
+        /// </summary>
+        /// <param name="currentPath">
+        /// The current path.
+        /// </param>
+        public void SetColumnValue(Action<object, string> currentPath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
