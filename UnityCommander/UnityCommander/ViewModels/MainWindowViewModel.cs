@@ -145,7 +145,7 @@ namespace UnityCommander.ViewModels
         /// </summary>
         public DelegateCommand<Window> CloseWindowCommand => new DelegateCommand<Window>(window =>
         {
-            window.Close();
+            Application.Current.Shutdown();
         });
 
         /// <summary>

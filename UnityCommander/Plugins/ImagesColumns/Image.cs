@@ -8,8 +8,9 @@ namespace ImagesColumns
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
-
+    
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The home library book service.
@@ -36,6 +37,11 @@ namespace ImagesColumns
         public string DisplayName { get; set; }
 
         /// <summary>
+        /// Gets or sets the column title.
+        /// </summary>
+        public TargetPanel TargetType { get; set; }
+
+        /// <summary>
         /// The get column.
         /// </summary>
         /// <param name="callback">
@@ -55,7 +61,7 @@ namespace ImagesColumns
         /// <param name="currentPath">
         /// The current path.
         /// </param>
-        public void SetColumnValue(Action<object> model, string currentPath)
+        public void SetColumnValue(Action<object, TargetPanel> model, string currentPath)
         {
             ImageModel imageModel = new ImageModel();
             var dir = Path.GetFileName(currentPath);
@@ -73,7 +79,7 @@ namespace ImagesColumns
                 imageModel.Colors = "Blue";
             }
 
-            model(imageModel);
+            model(imageModel, TargetPanel.Files);
         }
 
         /// <summary>
@@ -84,9 +90,10 @@ namespace ImagesColumns
             this.columns = new ObservableCollection<IColumn>
             {
                 new ImageColumnModel
-                  {
+                {
                       Header = nameof(ImageModel.Dpi),
                       IsDisplayed = true,
+                      TargetPanel = TargetPanel.Files,
                       Template = new GridViewColumn
                       {
                           Header = nameof(ImageModel.Dpi),
@@ -94,11 +101,12 @@ namespace ImagesColumns
                           DisplayMemberBinding =
                               new Binding(nameof(ImageModel.Dpi))
                       }
-                  },
-                  new ImageColumnModel
-                  {
+                },
+                new ImageColumnModel
+                {
                       Header = nameof(ImageModel.Sized),
                       IsDisplayed = true,
+                      TargetPanel = TargetPanel.Files,
                       Template = new GridViewColumn
                       {
                           Header = nameof(ImageModel.Sized),
@@ -111,6 +119,7 @@ namespace ImagesColumns
                   {
                       Header = nameof(ImageModel.Colors),
                       IsDisplayed = true,
+                      TargetPanel = TargetPanel.Files,
                       Template = new GridViewColumn
                       {
                           Header = nameof(ImageModel.Colors),

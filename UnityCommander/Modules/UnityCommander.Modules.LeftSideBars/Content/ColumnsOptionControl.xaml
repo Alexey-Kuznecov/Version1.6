@@ -2,27 +2,139 @@
     x:Class="UnityCommander.Modules.LeftSideBars.SidebarContent.ColumnsOptionControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.SidebarContent"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:UnityCommander.Modules.LeftSideBars.ViewModels"
+    xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d">
-    <Grid Width="{Binding SidebarContentWidth, FallbackValue=0}" Background="#FFF3F2F2">
-        <ListView>
-            <ListViewItem>
-                <TextBlock FontSize="15" Text="Colums 1 Control" />
-            </ListViewItem>
-            <ListViewItem>
-                <TextBlock FontSize="15" Text="Colums 2 Control" />
-            </ListViewItem>
-            <ListViewItem>
-                <TextBlock FontSize="15" Text="Colums 3 Control" />
-            </ListViewItem>
-            <ListViewItem>
-                <TextBlock FontSize="15" Text="Colums 4 Control" />
-            </ListViewItem>
-            <ListViewItem>
-                <TextBlock FontSize="15" Text="Colums 5 Control" />
-            </ListViewItem>
-        </ListView>
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="ToggleButton">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SecondaryAccentBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Width="{Binding SidebarContentWidth, FallbackValue=250}" Background="#FFF3F2F2">
+        <Grid>
+            <Grid.DataContext>
+                <vm:ColumnOptionViewModel />
+            </Grid.DataContext>
+            <StackPanel>
+                <TextBlock
+                    Margin="20"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Foreground="#3C3C3E"
+                    Text="Managment Cloums Visibility" />
+                <Grid Margin="20,15,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        FontSize="14"
+                        FontWeight="Medium"
+                        Foreground="#3C3C3E"
+                        Text="Attributes" />
+                    <ToggleButton
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Background="#7C9BCC"
+                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
+                        <ToggleButton.Resources>
+                            <!--  Checked thumb foreground  -->
+                            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#673AB7" />
+                            <!--  Unchecked thumb foreground  -->
+                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#C2C3C9" />
+
+                            <!--  Checked track color: There will be an opacity of 0.26 applied to it  -->
+                            <!--  Setting this will also affect the color of the ripple when the thumb is clicked  -->
+                            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#C2C3C9" />
+                            <!--  Unchecked track color: Hard coded to be black with 0.26 opacity  -->
+                        </ToggleButton.Resources>
+                    </ToggleButton>
+                </Grid>
+                <Grid Margin="20,15,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        FontSize="14"
+                        FontWeight="Medium"
+                        Foreground="#3C3C3E"
+                        Text="Creation Date" />
+                    <ToggleButton
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Background="#7C9BCC"
+                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
+                        <ToggleButton.Resources>
+                            <!--  Checked thumb foreground  -->
+                            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#673AB7" />
+                            <!--  Unchecked thumb foreground  -->
+                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#C2C3C9" />
+
+                            <!--  Checked track color: There will be an opacity of 0.26 applied to it  -->
+                            <!--  Setting this will also affect the color of the ripple when the thumb is clicked  -->
+                            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#C2C3C9" />
+                            <!--  Unchecked track color: Hard coded to be black with 0.26 opacity  -->
+                        </ToggleButton.Resources>
+                    </ToggleButton>
+                </Grid>
+                <Grid Margin="20,15,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        FontSize="14"
+                        FontWeight="Medium"
+                        Foreground="#3C3C3E"
+                        Text="Last Access Date" />
+                    <ToggleButton
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Background="#7C9BCC"
+                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
+                        <ToggleButton.Resources>
+                            <!--  Checked thumb foreground  -->
+                            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#673AB7" />
+                            <!--  Unchecked thumb foreground  -->
+                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#C2C3C9" />
+
+                            <!--  Checked track color: There will be an opacity of 0.26 applied to it  -->
+                            <!--  Setting this will also affect the color of the ripple when the thumb is clicked  -->
+                            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#C2C3C9" />
+                            <!--  Unchecked track color: Hard coded to be black with 0.26 opacity  -->
+                        </ToggleButton.Resources>
+                    </ToggleButton>
+                </Grid>
+            </StackPanel>
+
+            <!--<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <RadioButton Margin="0,10,0,0" Style="{StaticResource MaterialDesignActionRadioButton}">
+                    <wpf:PackIcon Kind="Smiley" />
+                </RadioButton>
+                <RadioButton Margin="0,10,0,0" Style="{StaticResource MaterialDesignActionRadioButton}">
+                    <wpf:PackIcon Kind="SmileyAngry" />
+                </RadioButton>
+                <RadioButton Margin="0,10,0,0" Style="{StaticResource MaterialDesignActionRadioButton}">
+                    <wpf:PackIcon Kind="SmileyCry" />
+                </RadioButton>
+                <RadioButton Margin="0,10,0,0" Style="{StaticResource MaterialDesignActionRadioButton}">
+                    <wpf:PackIcon Kind="SmileyExcited" />
+                </RadioButton>
+            </StackPanel>-->
+        </Grid>
     </Grid>
 </UserControl>

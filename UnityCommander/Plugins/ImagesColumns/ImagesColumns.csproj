@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+	  <UseWPF>True</UseWPF>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\ImagesColumns</OutputPath>
-	  <OutputPath Condition="'$(TargetFramework)' == 'net48'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\net472\plugins\ImagesColumns</OutputPath>
+	  <OutputPath Condition="'$(TargetFramework)' == 'net472'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\net472\plugins\ImagesColumns</OutputPath>
 	  <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 

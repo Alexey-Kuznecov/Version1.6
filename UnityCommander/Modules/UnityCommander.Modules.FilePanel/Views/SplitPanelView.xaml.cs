@@ -1,4 +1,7 @@
-﻿
+﻿#if NET472
+using System.Windows.Markup;
+[assembly: XmlnsDefinition("net472", "Namespace")]
+#endif
 namespace UnityCommander.Modules.FilePanel.Views
 {
     using System.Windows;

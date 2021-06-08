@@ -7,6 +7,7 @@ namespace UnityCommander.Common.Models.Columns
     using System.Windows.Controls;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Models.Base;
 
     /// <summary>
@@ -41,7 +42,7 @@ namespace UnityCommander.Common.Models.Columns
         /// <param name="currentPath">
         /// The current path.
         /// </param>
-        public void SetColumnValue(Action<object> yourModel, string currentPath)
+        public void SetColumnValue(Action<object, TargetPanel> yourModel, string currentPath)
         {
             throw new NotImplementedException();
         }

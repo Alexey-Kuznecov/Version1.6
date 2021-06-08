@@ -5,6 +5,7 @@ namespace UnityCommander.Common.Models.Columns
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
@@ -33,6 +34,9 @@ namespace UnityCommander.Common.Models.Columns
 #if NETCOREAPP3_1
             this.CreatePluginContext();
             this.CreatePluginInstance();
+#endif
+#if NET472
+            this.SetImport();
 #endif
         }
 
@@ -68,14 +72,21 @@ namespace UnityCommander.Common.Models.Columns
 
             foreach (var loader in loaders)
             {
-                foreach (var pluginType in loader
-                    .LoadDefaultAssembly()
-                    .GetTypes()
-                    .Where(t => typeof(IColumnService).IsAssignableFrom(t) && !t.IsAbstract))
+                try
                 {
-                    // This assumes the implementation of IPlugin has a parameter less constructor
-                    var plugin = Activator.CreateInstance(pluginType, null) as IColumnService;
-                    services.Add(plugin);
+                    foreach (var pluginType in loader
+                   .LoadDefaultAssembly()
+                   .GetTypes()
+                   .Where(t => typeof(IColumnService).IsAssignableFrom(t) && !t.IsAbstract))
+                    {
+                        // This assumes the implementation of IPlugin has a parameter less constructor
+                        var plugin = Activator.CreateInstance(pluginType, null) as IColumnService;
+                        services.Add(plugin);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
                 }
             }
 
@@ -87,7 +98,7 @@ namespace UnityCommander.Common.Models.Columns
         /// </summary>
         [ImportMany(typeof(IColumnService))]
         public IEnumerable<IColumnService> ImportColumnService { get; set; }
-#if NET48
+#if NET472
         /// <summary>
         /// Configures the import of plug-ins for column expansion.
         /// </summary>
@@ -101,7 +112,7 @@ namespace UnityCommander.Common.Models.Columns
             foreach (var item in Directory.GetDirectories(Directory.GetCurrentDirectory() + "\\plugins"))
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), item);
-                catalog.Catalogs.Add(new DirectoryCatalog(path));
+                catalog.Catalogs.Add(new DirectoryCatalog(path + @"\net472"));
             }
 
             // Create the CompositionContainer with the parts in the catalog.

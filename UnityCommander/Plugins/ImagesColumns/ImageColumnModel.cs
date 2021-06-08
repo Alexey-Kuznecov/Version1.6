@@ -2,6 +2,7 @@
 namespace ImagesColumns
 {
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The image column.
@@ -22,5 +23,10 @@ namespace ImagesColumns
         /// Gets or sets the template.
         /// </summary>
         public object Template { get; set; }
+
+        /// <summary>
+        /// Gets or sets target panel.
+        /// </summary>
+        public TargetPanel TargetPanel { get; set; }
     }
 }

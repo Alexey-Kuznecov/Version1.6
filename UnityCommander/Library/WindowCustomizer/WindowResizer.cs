@@ -449,10 +449,6 @@ namespace WindowCustomizer
     /// The monitor info.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    [SuppressMessage("ReSharper", "StyleCop.SA1401")]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "StyleCop.SA1305")]
-    [SuppressMessage("ReSharper", "StyleCop.SA1307")]
     public class MONITORINFO
     {
         /// <summary>

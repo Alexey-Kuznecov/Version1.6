@@ -33,7 +33,7 @@
     <Page Update="Views\CopyProcessView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\SplitPanelControl.xaml">
+    <Page Update="Views\SplitPanelView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\NTFSSecurityView.xaml">

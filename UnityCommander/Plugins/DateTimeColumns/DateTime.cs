@@ -3,16 +3,19 @@ namespace DateTimeColumns
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.ComponentModel.Composition;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The home library book service.
     /// </summary>
+    [Export(typeof(IColumnService))]
     public class DateTime : IColumnService
     {
         /// <summary>
@@ -53,13 +56,13 @@ namespace DateTimeColumns
         /// <param name="currentPath">
         /// The current path.
         /// </param>
-        public void SetColumnValue(Action<object> model, string currentPath)
+        public void SetColumnValue(Action<object, TargetPanel> model, string currentPath)
         {
             var dateTimeModel = new DateTimeModel();
             DirectoryInfo directoryInfo = new DirectoryInfo(currentPath);
             dateTimeModel.CreationTime = directoryInfo.CreationTime;
             dateTimeModel.LastAccessTime = directoryInfo.LastAccessTime;
-            model(dateTimeModel);
+            model(dateTimeModel, TargetPanel.Files);
         }
 
         /// <summary>

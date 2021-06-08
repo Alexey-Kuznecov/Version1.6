@@ -2,6 +2,7 @@
 namespace DateTimeColumns
 {
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The image column.
@@ -22,5 +23,6 @@ namespace DateTimeColumns
         /// Gets or sets the template.
         /// </summary>
         public object Template { get; set; }
+        public TargetPanel TargetPanel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     }
 }

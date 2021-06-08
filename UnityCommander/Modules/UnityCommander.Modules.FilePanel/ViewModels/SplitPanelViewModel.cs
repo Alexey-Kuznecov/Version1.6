@@ -12,15 +12,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
 
     using Commands;
-
-    using Common.Models;
 
     using Core.Helper;
     using Core.Mvvm;
@@ -69,6 +67,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDirectoryProviderService directoryProviderService;
 
         /// <summary>
+        /// The application settings.
+        /// </summary>
+        private readonly ISettings settingsService;
+
+        /// <summary>
         /// The common state service.
         /// </summary>
         private readonly IGlobalCommandService globalCommandService;
@@ -109,17 +112,25 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="regionManager">
         /// The region manager is Prism implementation.
         /// </param>
+        /// <param name="settingsService">
+        /// Gets interface to configure of application.
+        /// </param>
         /// <param name="directoryProviderService">
         /// The service that provides the files system items.
         /// </param>
         /// <param name="commandService">
         /// The service that respond for composite commands.
         /// </param>
-        public SplitPanelViewModel(IRegionManager regionManager, IDirectoryProviderService directoryProviderService, IGlobalCommandService commandService) 
+        public SplitPanelViewModel(
+            IRegionManager regionManager, 
+            ISettingsProviderService settingsService, 
+            IDirectoryProviderService directoryProviderService, 
+            IGlobalCommandService commandService) 
             : base(regionManager)
         {
             this.directoryProviderService = directoryProviderService;
-
+            this.settingsService = settingsService.GetAppConfig();
+            
             // Composite command
             this.globalCommandService = commandService;
             this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
@@ -240,9 +251,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public BaseDirectory SelectedBaseDirectory
         {
-            [SuppressMessage("StyleCop.CSharp.LayoutRules", 
-                "SA1503:CurlyBracketsMustNotBeOmitted", 
-                Justification = "Reviewed. Suppression is OK here.")]
             set
             {
                 if (value == null) return;
@@ -338,13 +346,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (!Directory.Exists(this.CurrentDirectory))
                 {
                     this.CurrentDirectory = @"c:\";
-                    throw new Exception();
                 }
             }
             catch (Exception e)
             {
                 this.CurrentDirectory = @"c:\";
-
                 this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
                 this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
             }
@@ -356,7 +362,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void DetectPanelOrientation()
         {
-            this.serializedPath = numberInstances == 0 ? "leftfilepanel.dat" : "rightfilepanel.dat";
+            string[] session = this.settingsService.SessionFiles.Split(',');
+            this.serializedPath = numberInstances == 0 ? session[0] : session[1];
             numberInstances++;
         }
 
@@ -402,41 +409,50 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void SetAdditionalColumns()
         {
             AdditionalColumns colsDefault = new AdditionalColumns();
-
+            
             foreach (var service in colsDefault.ImportColumnService)
             {
                 var models = new ObservableCollection<FileModel>();
 
-                // Forced addition columns to the directory panel.
+                // Force columns to be added to the catalog pane.
                 service.GetColumn((items, error) =>
+                {
+                    foreach (var column in items)
                     {
-                        foreach (var column in items)
+                        if (column.IsDisplayed)
                         {
-                            if (column.IsDisplayed)
+                            if (column.TargetPanel == Integration.Enums.TargetPanel.Files)
                             {
                                 this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
                             }
+                            else
+                            {
+                                this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                            }
                         }
-                    });
+                    }
+                });
 
                 foreach (var file in this.FileList)
                 {
                     try
                     {
                         service.SetColumnValue(
-                            (items) =>
+                            (model, panel) => 
+                            {
+                                if (panel.ToString() == "Files")
                                 {
-                                    models.Add(file.MergeObjectProperties<FileModel>(items));
-                                },
+                                    models.Add(file.MergeObjectProperties<FileModel>(model));
+                                }
+                            },
                             file.Path);
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Debug.WriteLine(e);
                         throw;
                     }
                 }
-
                 this.FileList = models;
                 ExtensionMethod.StoredReset();
             }

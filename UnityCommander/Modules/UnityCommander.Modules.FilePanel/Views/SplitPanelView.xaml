@@ -9,6 +9,7 @@
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:net472="net472"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:SplitPanelViewModel}"
@@ -73,24 +74,45 @@
             <!--
                 This markup responds to display directories.
             -->
-            <ListView
-                Grid.Row="1"
-                commands:GridViewSort.AutoSort="True"
-                dd:DragDrop.DropHandler="{Binding Mode=Default}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
-                IsSynchronizedWithCurrentItem="True"
-                ItemsSource="{Binding DirectoryList, Mode=OneWay}"
-                View="{Binding FolderPanelContainer}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                        <i:InvokeCommandAction Command="{Binding GoToDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <i:Interaction.Behaviors>
-                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
-                </i:Interaction.Behaviors>
-            </ListView>
+            <mc:AlternateContent>
+                <mc:Choice Requires="net472">
+                    <ListView
+                        Grid.Row="1"
+                        commands:GridViewSort.AutoSort="True"
+                        IsSynchronizedWithCurrentItem="True"
+                        ItemsSource="{Binding DirectoryList, Mode=OneWay}"
+                        View="{Binding FolderPanelContainer}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding GoToDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <i:Interaction.Behaviors>
+                            <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
+                        </i:Interaction.Behaviors>
+                    </ListView>
+                </mc:Choice>
+                <mc:Fallback>
+                    <ListView
+                        Grid.Row="1"
+                        commands:GridViewSort.AutoSort="True"
+                        dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                        dd:DragDrop.IsDragSource="True"
+                        dd:DragDrop.IsDropTarget="True"
+                        IsSynchronizedWithCurrentItem="True"
+                        ItemsSource="{Binding DirectoryList, Mode=OneWay}"
+                        View="{Binding FolderPanelContainer}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding GoToDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <i:Interaction.Behaviors>
+                            <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
+                        </i:Interaction.Behaviors>
+                    </ListView>
+                </mc:Fallback>
+            </mc:AlternateContent>
         </Grid>
         <!--
             All the logic that is responsible for working and displaying the file panel is behind the code,

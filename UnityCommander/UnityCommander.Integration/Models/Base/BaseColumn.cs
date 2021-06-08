@@ -2,6 +2,7 @@
 namespace UnityCommander.Integration.Models.Base
 {
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The basic properties that are required for
@@ -23,5 +24,10 @@ namespace UnityCommander.Integration.Models.Base
         /// Gets or sets the column template.
         /// </summary>
         public object Template { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column template.
+        /// </summary>
+        public TargetPanel TargetPanel { get; set; }
     }
 }
