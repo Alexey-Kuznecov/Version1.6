@@ -23,6 +23,10 @@ namespace DateTimeColumns
         /// Gets or sets the template.
         /// </summary>
         public object Template { get; set; }
-        public TargetPanel TargetPanel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        /// <summary>
+        /// Gets or sets the target panel.
+        /// </summary>
+        public TargetPanel TargetPanel { get; set; }
     }
 }

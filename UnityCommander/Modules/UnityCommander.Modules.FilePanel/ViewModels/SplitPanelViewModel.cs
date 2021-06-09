@@ -33,6 +33,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Integration.Models.Base;
+    using UnityCommander.Services;
 
     using Views;
 
@@ -49,8 +50,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private static byte numberInstances;
 
-        #region Dependencies
-
         /// <summary>
         /// The copy dialog.
         /// </summary>
@@ -60,6 +59,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The invoker class instance.
         /// </summary>
         private readonly NavigationInvoker invoker;
+
+        #region Dependencies Injection
 
         /// <summary>
         /// The directory provider.
@@ -75,6 +76,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The common state service.
         /// </summary>
         private readonly IGlobalCommandService globalCommandService;
+
+        /// <summary>
+        /// The plugin loader service.
+        /// </summary>
+        private readonly IPluginLoaderService pluginLoaderService;
 
         #endregion
 
@@ -116,21 +122,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets interface to configure of application.
         /// </param>
         /// <param name="directoryProviderService">
-        /// The service that provides the files system items.
+        ///  The service that provides the files system items.
         /// </param>
         /// <param name="commandService">
-        /// The service that respond for composite commands.
+        ///  The service that respond for composite commands.
+        /// </param>
+        /// <param name="pluginLoaderService">
+        /// Service for loading all detected plugin interfaces.
         /// </param>
         public SplitPanelViewModel(
             IRegionManager regionManager, 
             ISettingsProviderService settingsService, 
             IDirectoryProviderService directoryProviderService, 
-            IGlobalCommandService commandService) 
+            IGlobalCommandService commandService, 
+            IPluginLoaderService pluginLoaderService) 
             : base(regionManager)
         {
             this.directoryProviderService = directoryProviderService;
             this.settingsService = settingsService.GetAppConfig();
-            
+            this.pluginLoaderService = pluginLoaderService;
+
             // Composite command
             this.globalCommandService = commandService;
             this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
@@ -146,6 +157,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFileColumns();
             this.AddFolderColumns();
             this.SetAdditionalColumns();
+            this.GetColumnValues();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -408,44 +420,45 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void SetAdditionalColumns()
         {
-            AdditionalColumns colsDefault = new AdditionalColumns();
-            
-            foreach (var service in colsDefault.ImportColumnService)
+            foreach (var column in pluginLoaderService.GetPluginImplements().GetColumns(this.pluginLoaderService))
+            {
+                // Force columns to be added to the catalog pane.
+                if (column.IsDisplayed)
+                {
+                    if (column.TargetPanel == Integration.Enums.TargetPanel.Files)
+                    {
+                        this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    }
+                    else
+                    {
+                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The get column value.
+        /// </summary>
+        private void GetColumnValues()
+        {
+            foreach (var service in pluginLoaderService.GetPluginImplements())
             {
                 var models = new ObservableCollection<FileModel>();
-
-                // Force columns to be added to the catalog pane.
-                service.GetColumn((items, error) =>
-                {
-                    foreach (var column in items)
-                    {
-                        if (column.IsDisplayed)
-                        {
-                            if (column.TargetPanel == Integration.Enums.TargetPanel.Files)
-                            {
-                                this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                            }
-                            else
-                            {
-                                this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                            }
-                        }
-                    }
-                });
 
                 foreach (var file in this.FileList)
                 {
                     try
                     {
-                        service.SetColumnValue(
-                            (model, panel) => 
-                            {
-                                if (panel.ToString() == "Files")
-                                {
-                                    models.Add(file.MergeObjectProperties<FileModel>(model));
-                                }
-                            },
-                            file.Path);
+                        //service.SetColumnValue(
+                        //    (model, panel) =>
+                        //        {
+                        //            if (panel.ToString() == "Files")
+                        //            {
+                        //                models.Add(file.MergeObjectProperties<FileModel>(model));
+                        //            }
+                        //        },
+                        //    file.Path);
                     }
                     catch (Exception e)
                     {
@@ -453,6 +466,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         throw;
                     }
                 }
+
                 this.FileList = models;
                 ExtensionMethod.StoredReset();
             }

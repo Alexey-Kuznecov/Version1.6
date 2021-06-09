@@ -1,35 +1,62 @@
 ﻿
-namespace UnityCommander.Common.Models.Columns
+
+namespace UnityCommander.Services
 {
     using System;
     using System.Collections.Generic;
+#if NET472
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
-    using System.Diagnostics;
+#endif
     using System.IO;
     using System.Linq;
 
-    using Microsoft.Extensions.DependencyInjection;
-
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
 #if NETCOREAPP3_1
-    using System.Reflection;
-
+    using Microsoft.Extensions.DependencyInjection;
+    using UnityCommander.Integration.Contracts;
     using UnityCommander.Plugin.Core;
 #else
+    using UnityCommander.Integration.Contracts;
     using UnityCommander.Plugin48.Core;
 #endif
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
-    /// The additional columns.
+    /// The plugin provider service.
     /// </summary>
-    public class AdditionalColumns : DefaultColumns
+    public class PluginLoaderService : IPluginLoaderService
     {
+#if NETCOREAPP3_1
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="AdditionalColumns"/> class.
+        /// Gets or sets the import plugin factories.
         /// </summary>
-        public AdditionalColumns()
+        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the import plugin implementations.
+        /// </summary>
+        public IEnumerable<IPluginImplements> ImportPluginImplements{ get; set; }
+
+#endif
+#if NET472  
+        /// <summary>
+        /// Gets or sets the import plugin factories.
+        /// </summary>
+        [ImportMany(typeof(IPluginConfigure))]
+        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the import plugin implementations.
+        /// </summary>
+        [ImportMany(typeof(IPluginImplements))]
+        public IEnumerable<IPluginImplements> ImportPluginImplements{ get; set; }
+#endif
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
+        /// </summary>
+        public PluginLoaderService()
         {
 #if NETCOREAPP3_1
             var services = new ServiceCollection();
@@ -38,17 +65,59 @@ namespace UnityCommander.Common.Models.Columns
             ConfigureServices(services, pluginLoaders);
 
             using var serviceProvider = services.BuildServiceProvider();
-
-            ImportColumnService = serviceProvider.GetServices<IColumnService>();
-            var pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
-            
+            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplements>();
+            this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>();
 #endif
+
 #if NET472
             this.SetImport();
 #endif
         }
 
+        /// <summary>
+        /// The get column service.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IPluginImplements"/>.
+        /// </returns>
+        public IEnumerable<IPluginImplements> GetPluginImplements()
+        {
+            return this.ImportPluginImplements;
+        }
+
+        /// <summary>
+        /// The get column service.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The contract type
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public IEnumerable<T> GetPluginContract<T>()
+        {
+            var implement = typeof(T) == typeof(IPluginImplements)
+                ? (IEnumerable<T>)this.ImportPluginImplements
+                : (IEnumerable<T>)this.ImportPluginSettings;
+            return implement;
+        }
+
+        /// <summary>
+        /// The get plugin settings.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IPluginConfigure"/>.
+        /// </returns>
+        public IEnumerable<IPluginConfigure> GetPluginSettings()
+        {
+            return this.ImportPluginSettings;
+        }
+
 #if NETCOREAPP3_1
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private static List<PluginLoader> GetPluginLoaders()
         {
             var loaders = new List<PluginLoader>();
@@ -70,7 +139,11 @@ namespace UnityCommander.Common.Models.Columns
 
             return loaders;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="loaders"></param>
         private static void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
         {
             // Create an instance of plugin types
@@ -89,11 +162,7 @@ namespace UnityCommander.Common.Models.Columns
             }
         }
 #endif
-        /// <summary>
-        /// Gets or sets the column service.
-        /// </summary>
-        [ImportMany(typeof(IColumnService))]
-        public IEnumerable<IColumnService> ImportColumnService { get; set; }
+
 #if NET472
         /// <summary>
         /// Configures the import of plug-ins for column expansion.

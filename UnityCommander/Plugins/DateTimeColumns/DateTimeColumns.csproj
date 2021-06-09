@@ -5,8 +5,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\DateTimeColumns</OutputPath>
-		<OutputPath Condition="'$(TargetFramework)' == 'net472'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\net472\plugins\DateTimeColumns</OutputPath>
+		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">D:\Works\WPF\UnityCommander\Version2.7.4\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\DateTimeColumns</OutputPath>
+		<OutputPath Condition="'$(TargetFramework)' == 'net472'">D:\Works\WPF\UnityCommander\Version2.7.4\UnityCommander\UnityCommander\bin\Debug\net472\plugins\I</OutputPath>
 		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
 	</PropertyGroup>
   <ItemGroup>

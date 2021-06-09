@@ -1,12 +1,6 @@
 ﻿
 namespace UnityCommander.Integration.Contracts
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// The insert data column.
     /// </summary>
@@ -15,4 +9,22 @@ namespace UnityCommander.Integration.Contracts
     /// </param>
     /// <returns> The objects. </returns>
     public delegate object InsertColumnData(string path);
+
+    /// <summary>
+    /// The option handler.
+    /// TODO: Add description here.
+    /// </summary>
+    /// <param name="path">
+    /// The path.
+    /// </param>
+    /// <param name="selected">
+    /// The selected.
+    /// </param>
+    /// <returns>
+    /// The object
+    /// </returns>
+    public delegate string OptionHandler(string path, string selected);
+
+
+
 }

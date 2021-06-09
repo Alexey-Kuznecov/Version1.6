@@ -2,6 +2,7 @@
 namespace DateTimeColumns
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using System.IO;
@@ -10,26 +11,28 @@ namespace DateTimeColumns
     using System.Windows.Data;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The home library book service.
     /// </summary>
-    [Export(typeof(IColumnService))]
-    public class DateTime : IColumnService
+    [Export(typeof(IPluginImplements))]
+    public class Plugin : IPluginImplements
     {
         /// <summary>
-        /// The columns.
+        /// Initializes a new instance of the <see cref="Plugin"/> class.
         /// </summary>
-        private ObservableCollection<IColumn> columns;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DateTime"/> class.
-        /// </summary>
-        public DateTime()
+        public Plugin()
         {
            this.InitialData();
         }
+
+        /// <summary>
+        /// Gets or sets the columns.
+        /// </summary>
+        [OptionHandler(typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
+        public static List<IColumn> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the column title.
@@ -37,44 +40,15 @@ namespace DateTimeColumns
         public string DisplayName { get; set; }
 
         /// <summary>
-        /// The get column.
-        /// </summary>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
-        public void GetColumn(Action<ObservableCollection<IColumn>, Exception> callback)
-        {
-            callback(this.columns, null);
-        }
-
-        /// <summary>
-        /// The set column value.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="currentPath">
-        /// The current path.
-        /// </param>
-        public void SetColumnValue(Action<object, TargetPanel> model, string currentPath)
-        {
-            var dateTimeModel = new DateTimeModel();
-            DirectoryInfo directoryInfo = new DirectoryInfo(currentPath);
-            dateTimeModel.CreationTime = directoryInfo.CreationTime;
-            dateTimeModel.LastAccessTime = directoryInfo.LastAccessTime;
-            model(dateTimeModel, TargetPanel.Files);
-        }
-
-        /// <summary>
         /// The initial data.
         /// </summary>
         private void InitialData()
         {
-            this.columns = new ObservableCollection<IColumn>
+            Columns = new List<IColumn>
             {
                 new DateTimeColumnModel
                 {
-                    IsDisplayed = false,
+                    IsDisplayed = true,
                     Header = nameof(DateTimeModel.CreationTime),
                     Template = new GridViewColumn
                     {

@@ -8,7 +8,7 @@ namespace UnityCommander.Integration.Contracts
     /// <summary>
     /// The <see langword="interface"/> for implementing custom plug-ins for directory panel columns.
     /// </summary>
-    public interface IColumnService
+    public interface IColumnProService
     {
         /// <summary>
         /// Gets or sets the column title.

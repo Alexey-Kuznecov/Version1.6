@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\ImagesColumns</OutputPath>
-	  <OutputPath Condition="'$(TargetFramework)' == 'net472'">D:\Works\WPF\UnityCommander\Version2.7.3\UnityCommander\UnityCommander\bin\Debug\net472\plugins\ImagesColumns</OutputPath>
+	  <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">D:\Works\WPF\UnityCommander\Version2.7.4\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\ImagesColumns</OutputPath>
+	  <OutputPath Condition="'$(TargetFramework)' == 'net472'">D:\Works\WPF\UnityCommander\Version2.7.4\UnityCommander\UnityCommander\bin\Debug\net472\plugins\ImagesColumns</OutputPath>
 	  <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
@@ -15,6 +15,8 @@
     <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
 
