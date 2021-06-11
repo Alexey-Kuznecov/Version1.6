@@ -4,6 +4,7 @@ namespace ImagesColumns
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
 
     /// <summary>
     /// The plugin configuration.
@@ -20,6 +21,7 @@ namespace ImagesColumns
         {
             services.AddSingleton<IPluginConfigure, PluginSettings>();
             services.AddSingleton<IPluginImplements, Plugin>();
+            services.AddSingleton<IColumnService, PluginOptionHandler>();
         }
     }
 }

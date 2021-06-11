@@ -7,6 +7,11 @@ namespace UnityCommander.Integration.Contracts
     public enum OptionRender
     {
         /// <summary>
+        /// The null.
+        /// </summary>
+        Default,
+
+        /// <summary>
         /// Renders the element as a drop-down list.
         /// Note the property must be <see cref="DropBoxModel"/> as a type.
         /// </summary>

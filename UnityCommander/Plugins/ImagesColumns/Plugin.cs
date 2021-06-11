@@ -2,12 +2,13 @@
 namespace ImagesColumns
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using System.IO;
     using System.Windows.Controls;
     using System.Windows.Data;
-    
+
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
@@ -23,19 +24,34 @@ namespace ImagesColumns
         /// </summary>
         public Plugin()
         {
-           this.InitialData();
+            this.Register = new List<Type>();
+            this.InitialData();
         }
 
         /// <summary>
         /// Gets or sets the columns.
         /// </summary>
-        [OptionHandler(typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
+        [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
         public static ObservableCollection<IColumn> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the column title.
         /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the register.
+        /// </summary>
+        public List<Type> Register { get; set; }
+
+        /// <summary>
+        /// The register type.
+        /// </summary>
+        public void RegisterType()
+        {
+            this.Register.Add(typeof(ImageModel));
+            this.Register.Add(typeof(ImageColumnModel));
+        }
 
         /// <summary>
         /// The initial data.

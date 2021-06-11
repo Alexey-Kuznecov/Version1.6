@@ -13,6 +13,7 @@ namespace DateTimeColumns
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Extentions.Helper;
 
     /// <summary>
     /// The home library book service.
@@ -25,13 +26,14 @@ namespace DateTimeColumns
         /// </summary>
         public Plugin()
         {
-           this.InitialData();
+            this.Register = new List<Type>();
+            this.InitialData();
         }
 
         /// <summary>
         /// Gets or sets the columns.
         /// </summary>
-        [OptionHandler(typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
+        [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
         public static List<IColumn> Columns { get; set; }
 
         /// <summary>
@@ -40,36 +42,46 @@ namespace DateTimeColumns
         public string DisplayName { get; set; }
 
         /// <summary>
+        /// Gets or sets the register.
+        /// </summary>
+        public List<Type> Register { get; set; }
+
+        /// <summary>
+        /// The register type.
+        /// </summary>
+        public void RegisterType()
+        {
+            this.Register.Add(typeof(DateTimeModel));
+            this.Register.Add(typeof(DateTimeColumnModel));
+        }
+
+        /// <summary>
+        /// The set date filter.
+        /// </summary>
+        public void SetDateFilter()
+        {
+            MessageBox.Show("Filter date and time have been here");
+        }
+
+        /// <summary>
+        /// The set date filter.
+        /// </summary>
+        public void SortDateTime()
+        {
+            MessageBox.Show("Sorting date and time have been here");
+        }
+
+        /// <summary>
         /// The initial data.
         /// </summary>
         private void InitialData()
         {
-            Columns = new List<IColumn>
-            {
-                new DateTimeColumnModel
-                {
-                    IsDisplayed = true,
-                    Header = nameof(DateTimeModel.CreationTime),
-                    Template = new GridViewColumn
-                    {
-                        Header = nameof(DateTimeModel.CreationTime),
-                        Width = 150,
-                        DisplayMemberBinding =
-                            new Binding { Path = new PropertyPath(nameof(DateTimeModel.CreationTime)) }
-                    }
-                },
-                new DateTimeColumnModel
-                {
-                    IsDisplayed = false,
-                    Header = nameof(DateTimeModel.LastAccessTime),
-                    Template = new GridViewColumn
-                    {
-                        Header = nameof(DateTimeModel.LastAccessTime),
-                        Width = 100,
-                        DisplayMemberBinding = new Binding(nameof(DateTimeModel.LastAccessTime))
-                    }
-                }
-            };
+            var column = PluginScopes.Columns
+                    .Add(nameof(DateTimeModel.CreationTime), 150)
+                    .AddRender(OptionRender.TextBlock)
+                    .AddCommand(this.SortDateTime)
+                    .AddContextItem("Date Filter", this.SetDateFilter)
+                    .AddContextItem("Install Date and Time", this.SortDateTime);
         }
     }
 }

@@ -2,17 +2,25 @@
 namespace UnityCommander.Integration.Contracts
 {
     using System;
-
+    using System.Collections.Generic;
     using UnityCommander.Integration.Contracts.Columns;
+    using UnityCommander.Integration.Enums;
+    using System.Linq;
 
     /// <summary>
     /// The selector type.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class OptionHandlerAttribute : Attribute
+    public class AttachHandlerAttribute : Attribute
     {
+        private IDictionary<PluginScopes, Type>  AssociationActions =
+            new Dictionary<PluginScopes, Type>
+            {
+                { PluginScopes.Columns, typeof(AddColumnsDelegate) }
+            };
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="OptionHandlerAttribute"/> class.
+        /// Initializes a new instance of the <see cref="AttachHandlerAttribute"/> class.
         /// </summary>
         /// <param name="render">
         /// The selector.
@@ -26,16 +34,16 @@ namespace UnityCommander.Integration.Contracts
         /// <param name="handler">
         /// The handler.
         /// </param>
-        public OptionHandlerAttribute(OptionRender render, Type classType, string handlerName, Type handler)
+        public AttachHandlerAttribute(OptionRender render, Type classType, string handlerName, Type handler)
         {
             this.BaseHandler = Activator.CreateInstance(classType);
-            this.OptionHandler = Delegate.CreateDelegate(handler, this.BaseHandler, handlerName);
-            this.OptionHandlerName = handlerName;
+            this.Handler = Delegate.CreateDelegate(handler, this.BaseHandler, handlerName);
+            this.HandlerName = handlerName;
             this.OptionRender = render;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OptionHandlerAttribute"/> class.
+        /// Initializes a new instance of the <see cref="AttachHandlerAttribute"/> class.
         /// </summary>
         /// <param name="classType">
         /// The plugin
@@ -43,17 +51,12 @@ namespace UnityCommander.Integration.Contracts
         /// <param name="handlerName">
         /// The handler name
         /// </param>
-        public OptionHandlerAttribute(Type classType, string handlerName)
+        public AttachHandlerAttribute(PluginScopes target, Type classType, string handlerName)
         {
             this.BaseHandler = Activator.CreateInstance(classType);
-            this.OptionHandler = Delegate.CreateDelegate(typeof(GetColumnsDelegate), this.BaseHandler, handlerName);
-            this.OptionHandlerName = handlerName;
+            this.Handler = Delegate.CreateDelegate(AssociationActions.Where(k => k.Key == target).Single().Value, this.BaseHandler, handlerName);
+            this.HandlerName = handlerName;
         }
-
-        /// <summary>
-        /// Gets or sets the base handler.
-        /// </summary>
-        public object BaseHandler { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
@@ -63,11 +66,16 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets or sets the option handler.
         /// </summary>
-        public Delegate OptionHandler { get; set; }
+        public Delegate Handler { get; set; }
 
         /// <summary>
         /// Gets or sets the option handler.
         /// </summary>
-        public string OptionHandlerName { get; set; }
+        public string HandlerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base handler.
+        /// </summary>
+        public object BaseHandler { get; set; }
     }
 }

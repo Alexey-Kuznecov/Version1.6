@@ -12,27 +12,6 @@ namespace ImagesColumns
     internal class PluginOptionHandler : IColumnService
     {
         /// <summary>
-        /// The date format handler.
-        /// TODO: Add description here.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <param name="selected">
-        /// The selected.
-        /// </param>
-        /// <returns>
-        /// The string
-        /// </returns>
-        public string DateFormatHandler(string path, string selected)
-        {
-            Debug.WriteLine("This is DateTimeColumns plugin!");
-            Debug.WriteLine(path);
-
-            return string.Empty;
-        }
-
-        /// <summary>
         /// The get column.
         /// </summary>
         /// <returns>
@@ -41,6 +20,48 @@ namespace ImagesColumns
         public object GetColumns()
         {
             return Plugin.Columns;
+        }
+
+        /// <summary>
+        /// The get dpi value.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public object GetDpiValue(string path)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// The get dpi value.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public object GetSizeValue(string path)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// The get dpi value.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public object GetColorValue(string path)
+        {
+            return null;
         }
 
         /// <summary>

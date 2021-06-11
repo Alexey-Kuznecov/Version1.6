@@ -5,6 +5,7 @@ namespace UnityCommander.Services.Interfaces
     using System.Linq;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
 
     /// <summary>
     /// The PluginProviderService interface.
@@ -17,9 +18,14 @@ namespace UnityCommander.Services.Interfaces
         IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
 
         /// <summary>
-        /// Gets or sets the import plugin factories.
+        /// Gets or sets the import plugin imlementations.
         /// </summary>
         IEnumerable<IPluginImplements> ImportPluginImplements { get; set; }
+
+        /// <summary>
+        /// Gets or sets the import columns services.
+        /// </summary>
+        IEnumerable<IColumnService> ImportColumnServices { get; set; }
 
         /// <summary>
         /// The get column service.
@@ -47,5 +53,14 @@ namespace UnityCommander.Services.Interfaces
         /// The <see cref="IPluginConfigure"/>.
         /// </returns>
         IEnumerable<IPluginConfigure> GetPluginSettings();
+
+
+        /// <summary>
+        /// The get plugin settings.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IColumnService"/>.
+        /// </returns>`
+        IEnumerable<IColumnService> GetColumnService();
     }
 }

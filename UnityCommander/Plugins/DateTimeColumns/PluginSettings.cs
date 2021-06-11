@@ -29,7 +29,7 @@ namespace DateTimeColumns
         /// Gets or sets the date format.
         /// </summary>
         [OptionDescription("Change date and time output format:")]
-        [OptionHandler(OptionRender.DropBox, typeof(PluginOptionHandler), nameof(PluginOptionHandler.DateFormatHandler), typeof(OptionHandler))]
+        [AttachHandler(OptionRender.DropBox, typeof(PluginOptionHandler), nameof(PluginOptionHandler.DateFormatHandler), typeof(OptionHandler))]
         public List<DropBoxModel> DateFormat { get; set; }
     }
 }

@@ -146,6 +146,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.globalCommandService = commandService;
             this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
 
+            this.pluginLoaderService.SetPluginDependencies();
+
             // Initialize properties.
             this.FilePanelContainer = new GridView();
             this.FolderPanelContainer = new GridView();
@@ -157,7 +159,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFileColumns();
             this.AddFolderColumns();
             this.SetAdditionalColumns();
-            this.GetColumnValues();
+            this.GetFileColumnValues();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -362,7 +364,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
             catch (Exception e)
             {
-                this.CurrentDirectory = @"c:\";
+                this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
                 this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
                 this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
             }
@@ -440,31 +442,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The get column value.
         /// </summary>
-        private void GetColumnValues()
+        private void GetFileColumnValues()
         {
-            foreach (var service in pluginLoaderService.GetPluginImplements())
-            {
-                var models = new ObservableCollection<FileModel>();
+            var models = new ObservableCollection<FileModel>();
 
-                foreach (var file in this.FileList)
+            foreach (var file in this.FileList)
+            {
+                try
                 {
-                    try
-                    {
-                        //service.SetColumnValue(
-                        //    (model, panel) =>
-                        //        {
-                        //            if (panel.ToString() == "Files")
-                        //            {
-                        //                models.Add(file.MergeObjectProperties<FileModel>(model));
-                        //            }
-                        //        },
-                        //    file.Path);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        throw;
-                    }
+                    pluginLoaderService.GetContent(
+                        (import) => models.Add(file.MergeObjectProperties<FileModel>(import.GetColumnValues(file.Path))));
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    throw;
                 }
 
                 this.FileList = models;

@@ -21,7 +21,7 @@ namespace ImagesColumns
         /// <summary>
         /// Gets or sets the date format.
         /// </summary>
-        [OptionHandler(OptionRender.TextField, typeof(PluginSettings), nameof(ImageSizeHandler), typeof(OptionHandler))]
+        [AttachHandler(OptionRender.TextField, typeof(PluginSettings), nameof(ImageSizeHandler), typeof(OptionHandler))]
         [OptionDescription("Change date and time output format:")]
         public string ImageSize { get; set; }
 

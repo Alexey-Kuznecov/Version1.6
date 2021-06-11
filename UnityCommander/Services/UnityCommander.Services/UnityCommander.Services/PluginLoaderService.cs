@@ -14,9 +14,11 @@ namespace UnityCommander.Services
 #if NETCOREAPP3_1
     using Microsoft.Extensions.DependencyInjection;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Plugin.Core;
 #else
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Plugin48.Core;
 #endif
     using UnityCommander.Services.Interfaces;
@@ -26,33 +28,6 @@ namespace UnityCommander.Services
     /// </summary>
     public class PluginLoaderService : IPluginLoaderService
     {
-#if NETCOREAPP3_1
-
-        /// <summary>
-        /// Gets or sets the import plugin factories.
-        /// </summary>
-        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
-
-        /// <summary>
-        /// Gets or sets the import plugin implementations.
-        /// </summary>
-        public IEnumerable<IPluginImplements> ImportPluginImplements{ get; set; }
-
-#endif
-#if NET472  
-        /// <summary>
-        /// Gets or sets the import plugin factories.
-        /// </summary>
-        [ImportMany(typeof(IPluginConfigure))]
-        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
-
-        /// <summary>
-        /// Gets or sets the import plugin implementations.
-        /// </summary>
-        [ImportMany(typeof(IPluginImplements))]
-        public IEnumerable<IPluginImplements> ImportPluginImplements{ get; set; }
-#endif
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
         /// </summary>
@@ -67,6 +42,7 @@ namespace UnityCommander.Services
             using var serviceProvider = services.BuildServiceProvider();
             this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplements>();
             this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>();
+            this.ImportColumnServices = serviceProvider.GetServices<IColumnService>();
 #endif
 
 #if NET472
@@ -75,7 +51,22 @@ namespace UnityCommander.Services
         }
 
         /// <summary>
-        /// The get column service.
+        /// Gets or sets the import plugin factories.
+        /// </summary>
+        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the import plugin implementations.
+        /// </summary>
+        public IEnumerable<IPluginImplements> ImportPluginImplements { get; set; }
+
+        /// <summary>
+        /// Gets or sets the import plugin implementations.
+        /// </summary>
+        public IEnumerable<IColumnService> ImportColumnServices { get; set; }
+
+        /// <summary>
+        /// Get plugin plugin implementation.
         /// </summary>
         /// <returns>
         /// The <see cref="IPluginImplements"/>.
@@ -83,6 +74,28 @@ namespace UnityCommander.Services
         public IEnumerable<IPluginImplements> GetPluginImplements()
         {
             return this.ImportPluginImplements;
+        }
+
+        /// <summary>
+        /// The get plugin settings.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IPluginConfigure"/>.
+        /// </returns>
+        public IEnumerable<IPluginConfigure> GetPluginSettings()
+        {
+            return this.ImportPluginSettings;
+        }
+
+        /// <summary>
+        /// Get column service.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IPluginConfigure"/>.
+        /// </returns>
+        public IEnumerable<IColumnService> GetColumnService()
+        {
+            return this.ImportColumnServices;
         }
 
         /// <summary>
@@ -102,18 +115,8 @@ namespace UnityCommander.Services
             return implement;
         }
 
-        /// <summary>
-        /// The get plugin settings.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IPluginConfigure"/>.
-        /// </returns>
-        public IEnumerable<IPluginConfigure> GetPluginSettings()
-        {
-            return this.ImportPluginSettings;
-        }
-
 #if NETCOREAPP3_1
+        
         /// <summary>
         /// 
         /// </summary>
@@ -139,6 +142,7 @@ namespace UnityCommander.Services
 
             return loaders;
         }
+        
         /// <summary>
         /// 
         /// </summary>
