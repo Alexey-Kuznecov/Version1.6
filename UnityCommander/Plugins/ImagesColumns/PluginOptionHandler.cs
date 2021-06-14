@@ -1,10 +1,9 @@
 ﻿
 namespace ImagesColumns
 {
-    using System.Diagnostics;
     using System.IO;
 
-    using UnityCommander.Integration.Contracts.Columns;
+    using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The plugin option handler.

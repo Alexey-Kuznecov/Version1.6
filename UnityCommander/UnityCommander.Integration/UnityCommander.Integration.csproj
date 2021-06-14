@@ -25,4 +25,8 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Columns\" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Integration.Contracts.Columns
+namespace UnityCommander.Integration.Contracts
 {
     /// <summary>
     /// The ColumnsService interface.

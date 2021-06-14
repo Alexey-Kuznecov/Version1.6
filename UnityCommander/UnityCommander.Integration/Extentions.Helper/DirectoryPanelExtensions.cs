@@ -9,34 +9,38 @@ namespace UnityCommander.Integration.Extentions.Helper
     using UnityCommander.Integration.Enums;
 
     /// <summary>
-    /// The directory panel extensions.
+    /// Provides extension methods for creating a host application context..
     /// </summary>
     [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public static class DirectoryPanelExtensions
     {
         /// <summary>
-        /// The add.
+        /// Adds a new column for folder/file.
         /// </summary>
         /// <param name="scopes">
-        /// The scopes.
+        /// The plugin scopes.
+        /// </param>
+        /// <param name="target">
+        /// The target panel is used only for the split panel.
         /// </param>
         /// <param name="header">
-        /// The header.
+        /// The column header.
         /// </param>
         /// <param name="width">
-        /// The width.
+        /// The column width.
         /// </param>
         /// <returns>
-        /// The <see cref="Column"/>.
+        /// The <see cref="HostAppContext"/> is automatically created.
         /// </returns>
-        public static UnityContext Add(this PluginScopes scopes, string header, int width)
+        public static HostAppContext Add(this PluginScopes scopes, TargetPanel target, string header, int width)
         {
             switch (scopes)
             {
                 case PluginScopes.Columns:
-                    var unity = new UnityContext();
-                    unity.DataContext = new Column { Header = header, Width = width };
+                    var unity = new HostAppContext();
+                    unity.DataContext = new Column { Header = header, Width = width, TargetPanel = target };
                     unity.Context = unity;
+                    unity.PluginScope = scopes;
                     return scopes == PluginScopes.Columns ? unity.Context : null;
                 default:
                     return null;
@@ -44,77 +48,80 @@ namespace UnityCommander.Integration.Extentions.Helper
         }
 
         /// <summary>
-        /// The set render.
+        /// Provides data binding to a element.
         /// </summary>
         /// <param name="context">
-        /// The render.
+        /// The host application context is automatically created.   
         /// </param>
-        /// <param name="template">
-        /// The template.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Column"/>.
-        /// </returns>
-        public static UnityContext AddRender(this UnityContext context, OptionRender template)
-        {
-            return (UnityContext)context.SetRender(template);
-        }
-
-        /// <summary>
-        /// The set action.
-        /// </summary>
-        /// <param name="context">
-        /// The column.
+        /// <param name="source">
+        /// The source of the command, usually a class that implements 
+        /// <see cref="IPluginImplement"/>, but you can specify any class.
         /// </param>
         /// <param name="command">
-        /// The command.
+        /// The name of the command. This method will be called whenever required.
         /// </param>
         /// <returns>
-        /// The <see cref="Column"/>.
+        /// The <see cref="HostAppContext"/> is automatically created.
         /// </returns>
-        public static UnityContext AddCommand(this UnityContext context, Action command)
+        public static HostAppContext AddBindingCommand(this HostAppContext context, Type source, string command)
         {
-            return (UnityContext)context.SetCommand(command);
+            context.SetBindingCommand(context.PluginScope, source, command);
+            return context;
         }
 
         /// <summary>
-        /// The set context menu.
+        /// Specifies the method for rendering a element selected from the <see cref="OptionRender"/> list.
         /// </summary>
         /// <param name="context">
-        /// The context menu.
+        /// The <see cref="HostAppContext"/> is automatically created.
         /// </param>
-        /// <param name="header">
-        /// The header.
-        /// </param>
-        /// <param name="command">
-        /// The command list.
+        /// <param name="method">
+        /// Method rendering a element selected from the <see cref="OptionRender"/> list.
         /// </param>
         /// <returns>
-        /// The <see cref="Column"/>.
+        /// The <see cref="HostAppContext"/> is automatically created.
         /// </returns>
-        public static UnityContext AddContextItem(this UnityContext context, string header, Action command)
+        public static HostAppContext AddRender(this HostAppContext context, OptionRender method)
         {
-            return (UnityContext)context.SetContextMenu(header, command);
+            return (HostAppContext)context.SetRender(method);
         }
 
         /// <summary>
-        /// The set sort command.
+        /// Sets the command to call each time one of the events occurs. 
+        /// See the documentation to see what events can be associated with commands.
         /// </summary>
-        /// <param name="column">
-        /// The column.
+        /// <param name="context">
+        ///  The host app context.
         /// </param>
-        /// <param name="headerList">
-        /// The header list.
-        /// </param>
-        /// <param name="commandList">
-        /// The command list.
+        /// <param name="command">
+        /// The command or method that will be called when the event occurs.
         /// </param>
         /// <returns>
-        /// The <see cref="Column"/>.
+        /// The <see cref="HostAppContext"/> is automatically created.
         /// </returns>
-        public static UnityContext SetSortCommand(this UnityContext column, string[] headerList, Action commandList)
+        public static HostAppContext AddCommand(this HostAppContext context, Action command)
         {
-            return column;
+            return (HostAppContext)context.SetCommand(command);
+        }
+
+        /// <summary>
+        /// Adds a context menu item for elements that have a context menu.
+        /// </summary>
+        /// <param name="context">
+        /// The host app context.
+        /// </param>
+        /// <param name="name">
+        /// Specifies the name of the context menu item.
+        /// </param>
+        /// <param name="command">
+        /// Specifies the command to call when a context menu item is selected.
+        /// </param>
+        /// <returns>
+        /// The <see cref="HostAppContext"/> is automatically created.
+        /// </returns>
+        public static HostAppContext AddContextItem(this HostAppContext context, string name, Action command)
+        {
+            return (HostAppContext)context.SetContextMenu(name, command);
         }
     }
 }

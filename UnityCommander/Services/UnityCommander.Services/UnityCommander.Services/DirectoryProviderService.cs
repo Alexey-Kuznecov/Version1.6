@@ -33,7 +33,7 @@ namespace UnityCommander.Services
                         Extension = file.Extension,
                         CreationTime = file.CreationTime,
                         LastAccessTime = file.LastAccessTime,
-                        Type = DirectoryItemType.Files
+                        TargetPanel = TargetPanel.Files
                     });
                 }
             }
@@ -61,7 +61,7 @@ namespace UnityCommander.Services
                         Path = item.FullName,
                         CreationTime = item.CreationTime,
                         LastAccessTime = item.LastAccessTime,
-                        Type = DirectoryItemType.Folder
+                        TargetPanel = TargetPanel.Folders
                     }); 
                 }
             }

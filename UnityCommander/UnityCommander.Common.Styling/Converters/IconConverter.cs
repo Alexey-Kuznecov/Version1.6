@@ -16,64 +16,65 @@ namespace UnityCommander.Common.Styling.Converters
     public class IconConverter : BaseConverter<IconConverter>
     {
         /// <summary>
-        /// The convert.
+        /// The convert back.
         /// </summary>
         /// <param name="value">
-        /// The value.
+        /// The value produced by the original binding.
         /// </param>
         /// <param name="targetType">
-        /// The target type.
+        /// The type of the target binding property.
         /// </param>
         /// <param name="parameter">
-        /// The parameter.
+        /// The converter parameter used.
         /// </param>
         /// <param name="culture">
-        /// The culture.
+        /// The language and regional settings used in the converter.
         /// </param>
         /// <returns>
-        /// The <see cref="object"/>.
+        /// Converted value. If this method returns null, a valid NULL value is used.
         /// </returns>
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             PackIcon icon = new PackIcon();
 
-            if (parameter is DirectoryItemType item)
+            if (parameter is TargetPanel item)
             {
-                if (item == DirectoryItemType.Files) 
-                { 
-                    icon.Kind = PackIconKind.File;
-                    icon.Foreground = new SolidColorBrush(Color.FromRgb(64, 86, 141));
-                }
-                else 
-                { 
-                    icon.Kind = PackIconKind.Folder;
-                    icon.Foreground = new SolidColorBrush(Color.FromRgb(255, 165, 0));
+                switch (item)
+                {
+                    case TargetPanel.Folders:
+                        icon.Kind = PackIconKind.Folder;
+                        icon.Foreground = new SolidColorBrush(Color.FromRgb(255, 165, 0));
+                        break;
+                    case TargetPanel.Files:
+                        icon.Kind = PackIconKind.File;
+                        icon.Foreground = new SolidColorBrush(Color.FromRgb(64, 86, 141));
+                        break;
                 }
 
                 icon.Width = 25;
                 return icon;
             }
 
-            throw new ArgumentException();
+            throw new Exception("");
         }
 
         /// <summary>
         /// The convert back.
         /// </summary>
         /// <param name="value">
-        /// The value.
+        /// The value produced by the original binding.
         /// </param>
         /// <param name="targetType">
-        /// The target type.
+        /// The type of the target binding property.
         /// </param>
         /// <param name="parameter">
-        /// The parameter.
+        /// The converter parameter used.
         /// </param>
         /// <param name="culture">
-        /// The culture.
+        /// The language and regional settings used in the converter.
         /// </param>
         /// <returns>
-        /// The <see cref="object"/>.
+        /// Converted value. If this method returns null, a valid NULL value is used.
         /// </returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -13,10 +13,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Data;
 
     using Commands;
 
@@ -32,8 +35,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Models.Base;
-    using UnityCommander.Services;
+    using UnityCommander.Services.Plugins.Manager;
 
     using Views;
 
@@ -41,6 +47,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// The left panel view model.
     /// </summary>
     [Serializable]
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
     {
         #region Declaration fields
@@ -146,8 +153,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.globalCommandService = commandService;
             this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
 
-            this.pluginLoaderService.SetPluginDependencies();
-
             // Initialize properties.
             this.FilePanelContainer = new GridView();
             this.FolderPanelContainer = new GridView();
@@ -159,7 +164,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFileColumns();
             this.AddFolderColumns();
             this.SetAdditionalColumns();
-            this.GetFileColumnValues();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -360,6 +364,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (!Directory.Exists(this.CurrentDirectory))
                 {
                     this.CurrentDirectory = @"c:\";
+                    throw new Exception();
                 }
             }
             catch (Exception e)
@@ -370,18 +375,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         }
 
-        /// <summary>
-        /// Identifies the panel and sets the appropriate path for serialization to the file panel state.
-        /// TODO: Now this is a temporary solution, in the future there should be rework.
-        /// </summary>
-        private void DetectPanelOrientation()
-        {
-            string[] session = this.settingsService.SessionFiles.Split(',');
-            this.serializedPath = numberInstances == 0 ? session[0] : session[1];
-            numberInstances++;
-        }
+        #region Initial the folder/file panel.
 
-        #region Helper Methods
+        /// <summary>
+        /// The add columns in the folder panel.
+        /// </summary>
+        private void AddFolderColumns()
+        {
+            FolderColumnModel colsDefault = new FolderColumnModel();
+
+            // Forced addition columns to the directory panel.
+            colsDefault.GetColumn((items, error) =>
+                {
+                    foreach (var column in items)
+                    {
+                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    }
+                });
+        }
 
         /// <summary>
         /// The add columns in the file panel.
@@ -401,68 +412,77 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// The add columns in the folder panel.
-        /// </summary>
-        private void AddFolderColumns()
-        {
-            FolderColumnModel colsDefault = new FolderColumnModel();
-
-            // Forced addition columns to the directory panel.
-            colsDefault.GetColumn((items, error) =>
-            {
-                foreach (var column in items)
-                {
-                    this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                }
-            });
-        }
-
-        /// <summary>
         /// The add columns in the file panel.
         /// </summary>
         private void SetAdditionalColumns()
         {
-            foreach (var column in pluginLoaderService.GetPluginImplements().GetColumns(this.pluginLoaderService))
+            foreach (var unityContext in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
             {
-                // Force columns to be added to the catalog pane.
-                if (column.IsDisplayed)
+                if (!(unityContext.DataContext is Column data)) continue;
+                if (unityContext.PluginScope == PluginScopes.Columns)
                 {
-                    if (column.TargetPanel == Integration.Enums.TargetPanel.Files)
+                    var columnNew = new GridViewColumn
                     {
-                        this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    }
-                    else
+                        Header = data.Header ?? "Error",
+                        Width = data.Width,
+                        DisplayMemberBinding = new Binding(data.Header)
+                    };
+
+                    switch (data.TargetPanel)
                     {
-                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                        case TargetPanel.Folders:
+                            this.FolderPanelContainer.Columns.Add(columnNew);
+                            this.SetAdditionalFolders(unityContext);
+                            break;
+                        case TargetPanel.Files:
+                            this.FilePanelContainer.Columns.Add(columnNew);
+                            this.SetAdditionalFiles(unityContext);
+                            break;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// The get column value.
+        /// The get folder alternative.
         /// </summary>
-        private void GetFileColumnValues()
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        private void SetAdditionalFolders(HostAppContext context)
         {
-            var models = new ObservableCollection<FileModel>();
+            var folderModels = new ObservableCollection<FolderModel>();
 
+            foreach (var folder in this.DirectoryList)
+            {
+                var command = context.DelegateCommand as InsertValueUsePath;
+                folderModels.Add(folder.MergeObjectProperties<FolderModel>(command?.Invoke(folder.Path)));
+            }
+
+            this.DirectoryList = folderModels;
+        }
+
+        /// <summary>
+        /// The get file alternative.
+        /// </summary>
+        /// <param name="context">
+        /// Unity context 
+        /// </param>
+        private void SetAdditionalFiles(HostAppContext context)
+        {
+            var fileModels = new ObservableCollection<FileModel>();
             foreach (var file in this.FileList)
             {
-                try
-                {
-                    pluginLoaderService.GetContent(
-                        (import) => models.Add(file.MergeObjectProperties<FileModel>(import.GetColumnValues(file.Path))));
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    throw;
-                }
-
-                this.FileList = models;
-                ExtensionMethod.StoredReset();
+                var command = context.DelegateCommand as InsertValueUsePath;
+                fileModels.Add(file.MergeObjectProperties<FileModel>(command?.Invoke(file.Path)));
             }
+
+            this.FileList = fileModels;
         }
+
+        #endregion
+
+        #region Helper Methods
 
         /// <summary>
         /// The navigate directory.
@@ -488,6 +508,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 this.invoker.AddCommand(this.UpdateFilePanel, item);
             }
+        }
+
+        /// <summary>
+        /// Identifies the panel and sets the appropriate path for serialization to the file panel state.
+        /// TODO: Now this is a temporary solution, in the future there should be rework.
+        /// </summary>
+        private void DetectPanelOrientation()
+        {
+            string[] session = this.settingsService.SessionFiles.Split(',');
+            this.serializedPath = numberInstances == 0 ? session[0] : session[1];
+            numberInstances++;
         }
 
         #endregion

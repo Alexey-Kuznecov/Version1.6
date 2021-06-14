@@ -14,6 +14,6 @@ namespace UnityCommander.Integration.Models
         /// <summary>
         /// Gets or sets the directory item's type.
         /// </summary>
-        public DirectoryItemType Type { get; set; }
+        public TargetPanel TargetPanel { get; set; }
     }
 }

@@ -1,30 +1,35 @@
 ﻿
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Plugins.Manager
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
+
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Services.Interfaces;
 
+    /// <summary>
+    /// The column helper.
+    /// </summary>
     public static class ColumnHelper
     {
         /// <summary>
-        /// The get plugin implementation.
+        /// Attempts to find all methods in the objects implementing 
+        /// the <see cref="IPluginImplement"/> interface that are responsible
+        /// for getting the list of contexts of the host application 
+        /// using the attribute.
         /// </summary>
         /// <param name="implements">
-        /// The plugin implementation.
+        /// List of interfaces <see cref="IPluginImplement"/>.
         /// </param>
         /// <param name="service">
-        /// The service.
+        /// The interface for managing loaded plugins.
         /// </param>
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public static IEnumerable<IColumn> GetColumns(this IEnumerable<IPluginImplements> implements, IPluginLoaderService service)
+        public static IEnumerable<IColumn> GetContextByAttribute(this IEnumerable<IPluginImplement> implements, IPluginLoaderService service)
         {
-            foreach (var attribute in service.GetHandlerAttributes<IPluginImplements>())
+            foreach (var attribute in service.GetHandlerAttributes<IPluginImplement>())
             {
                 if (attribute is AttachHandlerAttribute attachHandler)
                 {
@@ -38,6 +43,35 @@ namespace UnityCommander.Services
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets all application contexts from all plugin assemblies using 
+        /// the required <see cref="IPluginImplement.SetHostAppContext"/> method
+        /// that the plugin must implement. TODO: Rename the name of method.
+        /// </summary>
+        /// <param name="implements">
+        /// List of interfaces <see cref="IPluginImplement"/>.
+        /// </param>
+        /// <param name="service">
+        /// The interface for managing loaded plugins.
+        /// </param>
+        /// <returns>
+        /// List all host application context found.
+        /// </returns>
+        public static IEnumerable<HostAppContext> GetHostAppContexts(this IEnumerable<IPluginImplement> implements, IPluginLoaderService service)
+        {
+            foreach (var instance in service.GetPluginInstances<IPluginImplement>())
+            {
+               var contexts = ((IPluginImplement)instance).SetHostAppContext();
+
+               foreach (var context in contexts)
+               {
+                   context.DelegateCommand = Delegate.CreateDelegate(
+                       typeof(InsertValueUsePath), instance, context.CommandModel.Command);
+                   yield return context;
+               }
             }
         }
     }

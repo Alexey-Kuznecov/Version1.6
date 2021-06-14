@@ -1,13 +1,13 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:UnityCommander.Integration.Models.Base;assembly=UnityCommander.Integration"
     xmlns:converter="clr-namespace:UnityCommander.Common.Styling.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:directory="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models;assembly=UnityCommander.Common"
-    xmlns:base="clr-namespace:UnityCommander.Integration.Models.Base;assembly=UnityCommander.Integration"
     mc:Ignorable="d">
 
     <converter:IconConverter x:Key="IconConverter" />
@@ -44,7 +44,7 @@
                     <converter:BindableParameter
                         Binding="{Binding Icon}"
                         Converter="{StaticResource IconConverter}"
-                        ConverterParameter="{Binding Type}" />
+                        ConverterParameter="{Binding TargetPanel}" />
                 </ContentPresenter.Content>
             </ContentPresenter>
         </Grid>

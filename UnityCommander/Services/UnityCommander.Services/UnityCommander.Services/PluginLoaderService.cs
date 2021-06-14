@@ -40,9 +40,8 @@ namespace UnityCommander.Services
             ConfigureServices(services, pluginLoaders);
 
             using var serviceProvider = services.BuildServiceProvider();
-            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplements>();
+            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>();
             this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>();
-            this.ImportColumnServices = serviceProvider.GetServices<IColumnService>();
 #endif
 
 #if NET472
@@ -50,37 +49,54 @@ namespace UnityCommander.Services
 #endif
         }
 
-        /// <summary>
-        /// Gets or sets the import plugin factories.
-        /// </summary>
-        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
+        #region Imports Plugins Interfaces
 
         /// <summary>
-        /// Gets or sets the import plugin implementations.
+        /// Gets or sets the imported plugin settings.
         /// </summary>
-        public IEnumerable<IPluginImplements> ImportPluginImplements { get; set; }
+        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; private set; }
 
         /// <summary>
-        /// Gets or sets the import plugin implementations.
+        /// Gets or sets the imported plugin implementations.
         /// </summary>
-        public IEnumerable<IColumnService> ImportColumnServices { get; set; }
+        public IEnumerable<IPluginImplement> ImportPluginImplements { get; private set; }
+
+
+        #endregion
 
         /// <summary>
-        /// Get plugin plugin implementation.
+        /// Obtain an instance of the class that implements the plugin interface.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Required plugin interface.
+        /// </typeparam>
+        /// <returns>
+        /// List class instances.
+        /// </returns>
+        public IEnumerable<object> GetPluginInstances<T>()
+        {
+            foreach (var instance in this.GetPluginContract<T>())
+            {
+                yield return instance;
+            }
+        }
+
+        /// <summary>
+        /// Obtain interfaces to implement plugin functionality.
         /// </summary>
         /// <returns>
-        /// The <see cref="IPluginImplements"/>.
+        /// List of plugin implementations.
         /// </returns>
-        public IEnumerable<IPluginImplements> GetPluginImplements()
+        public IEnumerable<IPluginImplement> GetPluginImplements()
         {
             return this.ImportPluginImplements;
         }
 
         /// <summary>
-        /// The get plugin settings.
+        /// Gets interfaces to configure plugins.
         /// </summary>
         /// <returns>
-        /// The <see cref="IPluginConfigure"/>.
+        /// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
         /// </returns>
         public IEnumerable<IPluginConfigure> GetPluginSettings()
         {
@@ -88,44 +104,37 @@ namespace UnityCommander.Services
         }
 
         /// <summary>
-        /// Get column service.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IPluginConfigure"/>.
-        /// </returns>
-        public IEnumerable<IColumnService> GetColumnService()
-        {
-            return this.ImportColumnServices;
-        }
-
-        /// <summary>
-        /// The get column service.
+        /// Gets a list of the specified plugin interfaces.
         /// </summary>
         /// <typeparam name="T">
-        /// The contract type
+        /// Specify the interface <see cref="IPluginImplement"/> or <see cref="IPluginConfigure"/>,
+        /// otherwise an exception will be thrown.  
         /// </typeparam>
         /// <returns>
-        /// The <see cref="object"/>.
+        /// Returns a plugin implementation or plugin settings, otherwise an exception.
         /// </returns>
         public IEnumerable<T> GetPluginContract<T>()
         {
-            var implement = typeof(T) == typeof(IPluginImplements)
+            var implement = typeof(T) == typeof(IPluginImplement)
                 ? (IEnumerable<T>)this.ImportPluginImplements
                 : (IEnumerable<T>)this.ImportPluginSettings;
+
+            if (implement == null)
+                throw new Exception("The specified interface is not a plugin interface.");
             return implement;
         }
 
 #if NETCOREAPP3_1
-        
+
         /// <summary>
-        /// 
+        /// Scans for a plugins folder in its base directory and attempts to load any plugins it finds.
         /// </summary>
-        /// <returns></returns>
+        /// <returns> List of loaded plugins. </returns>
         private static List<PluginLoader> GetPluginLoaders()
         {
             var loaders = new List<PluginLoader>();
 
-            // create plugin loaders
+            // Create plugin loaders
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
@@ -142,12 +151,12 @@ namespace UnityCommander.Services
 
             return loaders;
         }
-        
+
         /// <summary>
-        /// 
+        /// Configure plugins in a dependency injection collection.
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="loaders"></param>
+        /// <param name="services"> Service collection. </param>
+        /// <param name="loaders"> List of plugins loaded. </param>
         private static void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
         {
             // Create an instance of plugin types
@@ -169,7 +178,7 @@ namespace UnityCommander.Services
 
 #if NET472
         /// <summary>
-        /// Configures the import of plug-ins for column expansion.
+        /// Configures the import of plugins.
         /// </summary>
         private void SetImport()
         {

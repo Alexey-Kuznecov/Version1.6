@@ -18,7 +18,7 @@ namespace DateTimeColumns
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            services.AddSingleton<IPluginImplements, Plugin>();
+            services.AddSingleton<IPluginImplement, Plugin>();
             services.AddSingleton<IPluginConfigure, PluginSettings>();
         }
     }

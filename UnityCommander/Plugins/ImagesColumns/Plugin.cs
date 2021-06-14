@@ -3,21 +3,19 @@ namespace ImagesColumns
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using System.IO;
-    using System.Windows.Controls;
-    using System.Windows.Data;
+    using System.Windows;
 
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Extentions.Helper;
 
     /// <summary>
     /// The home library book service.
     /// </summary>
-    [Export(typeof(IPluginImplements))]
-    public class Plugin : IPluginImplements
+    [Export(typeof(IPluginImplement))]
+    public class Plugin : IPluginImplement
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Plugin"/> class.
@@ -25,14 +23,14 @@ namespace ImagesColumns
         public Plugin()
         {
             this.Register = new List<Type>();
+            Columns = new List<HostAppContext>();
             this.InitialData();
         }
 
         /// <summary>
         /// Gets or sets the columns.
         /// </summary>
-        [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
-        public static ObservableCollection<IColumn> Columns { get; set; }
+        public static List<HostAppContext> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the column title.
@@ -54,52 +52,69 @@ namespace ImagesColumns
         }
 
         /// <summary>
+        /// The get unity context.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="AppHostContext"/>.
+        /// </returns>
+        public List<HostAppContext> SetHostAppContext()
+        {
+            return Columns;
+        }
+
+        /// <summary>
+        /// The set date filter.
+        /// </summary>
+        public void SortDpi()
+        {
+            MessageBox.Show("Sorting date and time have been here");
+        }
+
+        /// <summary>
+        /// The get column value.
+        /// </summary>
+        /// <param name="path">
+        /// The path
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public object SetColumnValue(string path)
+        {
+            var dateTimeModel = new ImageModel();
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            dateTimeModel.Dpi = "100dpi";
+            dateTimeModel.Sized = "100x300";
+            dateTimeModel.Colors = "Red";
+            return dateTimeModel;
+        }
+
+        /// <summary>
         /// The initial data.
         /// </summary>
         private void InitialData()
         {
-            Columns = new ObservableCollection<IColumn>
-            {
-                new ImageColumnModel
-                {
-                      Header = nameof(ImageModel.Dpi),
-                      IsDisplayed = true,
-                      TargetPanel = TargetPanel.Files,
-                      Template = new GridViewColumn
-                      {
-                          Header = nameof(ImageModel.Dpi),
-                          Width = 50,
-                          DisplayMemberBinding =
-                              new Binding(nameof(ImageModel.Dpi))
-                      }
-                },
-                new ImageColumnModel
-                {
-                      Header = nameof(ImageModel.Sized),
-                      IsDisplayed = true,
-                      TargetPanel = TargetPanel.Files,
-                      Template = new GridViewColumn
-                      {
-                          Header = nameof(ImageModel.Sized),
-                          Width = 80,
-                          DisplayMemberBinding =
-                              new Binding(nameof(ImageModel.Sized))
-                      }
-                  },
-                  new ImageColumnModel
-                  {
-                      Header = nameof(ImageModel.Colors),
-                      IsDisplayed = true,
-                      TargetPanel = TargetPanel.Files,
-                      Template = new GridViewColumn
-                      {
-                          Header = nameof(ImageModel.Colors),
-                          Width = 60,
-                          DisplayMemberBinding =
-                              new Binding(nameof(ImageModel.Colors))
-                      }
-                  }
-            };
+            var unityContext = PluginScopes.Columns.Add(TargetPanel.Files, nameof(ImageModel.Dpi), 50)
+                .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
+                .AddRender(OptionRender.TextBlock)
+                .AddCommand(this.SortDpi)
+                .AddContextItem("Sort by dpi", this.SortDpi);
+
+            var unityContext2 = PluginScopes.Columns.Add(TargetPanel.Folders | TargetPanel.Files, nameof(ImageModel.Sized), 60)
+                .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
+                .AddRender(OptionRender.TextBlock)
+                .AddCommand(this.SortDpi)
+                .AddContextItem("Sort by dpi", this.SortDpi);
+
+            var unityContext3 = PluginScopes.Columns.Add(TargetPanel.Folders, nameof(ImageModel.Colors), 50)
+                .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
+                .AddRender(OptionRender.TextBlock)
+                .AddCommand(this.SortDpi)
+                .AddContextItem("Sort by dpi", this.SortDpi);
+
+            Columns.Add(unityContext);
+            Columns.Add(unityContext2);
+            Columns.Add(unityContext3);
         }
     }
 }

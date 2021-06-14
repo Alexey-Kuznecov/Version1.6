@@ -2,65 +2,53 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Contracts.Columns;
 
     /// <summary>
-    /// The PluginProviderService interface.
+    /// Plugin provider service interface.
     /// </summary>
     public interface IPluginLoaderService
     {
         /// <summary>
-        /// Gets or sets the import plugin factories.
+        /// Gets or sets the interfaces to manage plugin settings.
         /// </summary>
-        IEnumerable<IPluginConfigure> ImportPluginSettings { get; set; }
+        IEnumerable<IPluginConfigure> ImportPluginSettings { get; }
 
         /// <summary>
-        /// Gets or sets the import plugin imlementations.
+        /// Gets or sets the plugins implementation.
         /// </summary>
-        IEnumerable<IPluginImplements> ImportPluginImplements { get; set; }
+        IEnumerable<IPluginImplement> ImportPluginImplements { get; }
 
         /// <summary>
-        /// Gets or sets the import columns services.
-        /// </summary>
-        IEnumerable<IColumnService> ImportColumnServices { get; set; }
-
-        /// <summary>
-        /// The get column service.
+        /// Gets a list of plugins that implement the <see cref="IPluginImplement"/> interface.
         /// </summary>
         /// <returns>
-        /// The <see cref="IPluginImplements"/>.
+        /// List of interfaces <see cref="IPluginImplement"/>.
         /// </returns>
-        IEnumerable<IPluginImplements> GetPluginImplements();
+        IEnumerable<IPluginImplement> GetPluginImplements();
 
         /// <summary>
-        /// The get column service.
+        /// Gets list interfaces to manage plugins is imported.
         /// </summary>
         /// <typeparam name="T">
-        /// The contract type
+        /// Required plugin interface.
         /// </typeparam>
         /// <returns>
-        /// The <see cref="object"/>.
+        /// List of plugins that implement the specified interface.
         /// </returns>
         public IEnumerable<T> GetPluginContract<T>();
 
         /// <summary>
-        /// The get plugin settings.
+        /// Gets an instance of the class that implements the plugin interface.
         /// </summary>
+        /// <typeparam name="T">
+        /// Required plugin interface.
+        /// </typeparam>
         /// <returns>
-        /// The <see cref="IPluginConfigure"/>.
+        /// List class instances.
         /// </returns>
-        IEnumerable<IPluginConfigure> GetPluginSettings();
-
-
-        /// <summary>
-        /// The get plugin settings.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IColumnService"/>.
-        /// </returns>`
-        IEnumerable<IColumnService> GetColumnService();
+        public IEnumerable<object> GetPluginInstances<T>();
     }
 }

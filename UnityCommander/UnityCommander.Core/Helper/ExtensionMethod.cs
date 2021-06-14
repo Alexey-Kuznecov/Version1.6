@@ -5,7 +5,7 @@ namespace UnityCommander.Core.Helper
     using System.Collections.Generic;
     using System.Reflection;
     using System.Reflection.Emit;
-
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Models;
 
     /// <summary>
@@ -47,8 +47,8 @@ namespace UnityCommander.Core.Helper
         {
             stored = new Dictionary<string, object>();
 
-            GeneratorType.GenerateAssemblyAndModule("FolderModel");
-            typeBuilder = GeneratorType.CreateType("FolderModel");
+            GeneratorType.GenerateAssemblyAndModule(mergeObjectL.GetType().Name);
+            typeBuilder = GeneratorType.CreateType(mergeObjectL.GetType().Name);
 
             foreach (var propertyInfo in mergeObjectR.GetType().GetProperties())
             {
@@ -128,6 +128,11 @@ namespace UnityCommander.Core.Helper
                 if (stored[property.Name] is DateTime)
                 {
                     property.SetValue(instance, (DateTime)stored[property.Name]);
+                }
+
+                if (stored[property.Name] is TargetPanel)
+                {
+                    property.SetValue(instance, (TargetPanel)stored[property.Name]);
                 }
             }
 

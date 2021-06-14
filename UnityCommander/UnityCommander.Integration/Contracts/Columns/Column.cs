@@ -3,6 +3,8 @@ namespace UnityCommander.Integration.Contracts.Columns
 {
     using System;
 
+    using UnityCommander.Integration.Enums;
+
     /// <summary>
     /// The column.
     /// </summary>
@@ -16,6 +18,11 @@ namespace UnityCommander.Integration.Contracts.Columns
         /// <summary>
         /// Gets or sets the width.
         /// </summary>
-        public int Width { get; set; }
+        public double Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
+        public TargetPanel TargetPanel { get; set; }
     }
 }

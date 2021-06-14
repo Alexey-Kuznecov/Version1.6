@@ -18,8 +18,8 @@ namespace DateTimeColumns
     /// <summary>
     /// The home library book service.
     /// </summary>
-    [Export(typeof(IPluginImplements))]
-    public class Plugin : IPluginImplements
+    [Export(typeof(IPluginImplement))]
+    public class Plugin : IPluginImplement
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Plugin"/> class.
@@ -27,6 +27,7 @@ namespace DateTimeColumns
         public Plugin()
         {
             this.Register = new List<Type>();
+            Columns = new List<HostAppContext>();
             this.InitialData();
         }
 
@@ -34,7 +35,7 @@ namespace DateTimeColumns
         /// Gets or sets the columns.
         /// </summary>
         [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
-        public static List<IColumn> Columns { get; set; }
+        public static List<HostAppContext> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the column title.
@@ -56,6 +57,17 @@ namespace DateTimeColumns
         }
 
         /// <summary>
+        /// The get unity context.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="UnityContext"/>.
+        /// </returns>
+        public List<HostAppContext> SetHostAppContext()
+        {
+            return Columns;
+        }
+
+        /// <summary>
         /// The set date filter.
         /// </summary>
         public void SetDateFilter()
@@ -72,16 +84,36 @@ namespace DateTimeColumns
         }
 
         /// <summary>
+        /// The get column value.
+        /// </summary>
+        /// <param name="path">
+        /// The path
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public object SetColumnValue(string path)
+        {
+            var dateTimeModel = new DateTimeModel();
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            dateTimeModel.CreationTime = directoryInfo.CreationTime;
+            dateTimeModel.LastAccessTime = directoryInfo.LastAccessTime;
+            return dateTimeModel;
+        }
+
+        /// <summary>
         /// The initial data.
         /// </summary>
         private void InitialData()
         {
-            var column = PluginScopes.Columns
-                    .Add(nameof(DateTimeModel.CreationTime), 150)
+            var unityContext = PluginScopes.Columns.Add(TargetPanel.Files, nameof(DateTimeModel.CreationTime), 150)
+                    .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
                     .AddRender(OptionRender.TextBlock)
                     .AddCommand(this.SortDateTime)
                     .AddContextItem("Date Filter", this.SetDateFilter)
                     .AddContextItem("Install Date and Time", this.SortDateTime);
+            
+            Columns.Add(unityContext);
         }
     }
 }

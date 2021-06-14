@@ -7,7 +7,7 @@ namespace UnityCommander.Common.Styling.Converters
     using System.Windows.Markup;
 
     /// <summary>
-    /// The base converter.
+    /// The base converter 
     /// </summary>
     /// <typeparam name="T"> General Type. </typeparam>
     public abstract class BaseConverter<T> : MarkupExtension, IValueConverter
@@ -19,23 +19,25 @@ namespace UnityCommander.Common.Styling.Converters
         private static T converter = null;
 
         /// <summary>
+        /// The data binding handler calls this method when it propagates 
+        /// a value from the binding source to the binding target.
         /// Must be implemented in inheritor.
         /// </summary>
-        /// <param name="value"> The <c>value</c>. </param>
-        /// <param name="targetType"> The target type. </param>
-        /// <param name="parameter"> The <c>parameter</c>. </param>
-        /// <param name="culture"> The <c>culture</c>. </param>
-        /// <returns> The <see cref="object"/>. </returns>
+        /// <param name="value"> The value produced by the original binding. </param>
+        /// <param name="targetType"> The type of the target binding property. </param>
+        /// <param name="parameter"> The converter parameter used. </param>
+        /// <param name="culture"> The language and regional settings used in the converter. </param>
+        /// <returns> Converted value. If this method returns null, a valid NULL value is used. </returns>
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
 
         /// <summary>
         /// Override if needed.
         /// </summary>
-        /// <param name="value"> The value. </param>
-        /// <param name="targetType"> The target type. </param>
-        /// <param name="parameter"> The parameter. </param>
-        /// <param name="culture"> The culture. </param>
-        /// <returns> The <see cref="object"/>. </returns>
+        /// <param name="value"> The value produced by the original binding. </param>
+        /// <param name="targetType"> The type of the target binding property. </param>
+        /// <param name="parameter"> The converter parameter used. </param>
+        /// <param name="culture"> The language and regional settings used in the converter. </param>
+        /// <returns> Converted value. If this method returns null, a valid NULL value is used. </returns>
         public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

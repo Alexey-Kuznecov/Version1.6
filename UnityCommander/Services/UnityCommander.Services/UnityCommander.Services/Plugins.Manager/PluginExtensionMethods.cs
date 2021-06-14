@@ -1,12 +1,13 @@
 ﻿
 
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Plugins.Manager
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
+
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Services.Interfaces;
@@ -18,45 +19,29 @@ namespace UnityCommander.Services
     public static class PluginExtensionMethods
     {
         /// <summary>
-        /// The set plugin dependencies.
+        /// Gets a list of plugins that implement the <see cref="IPluginImplement"/> interface.
         /// </summary>
-        /// <param name="loaderService">
-        /// The loader service.
-        /// </param>
-        public static void SetPluginDependencies(this IPluginLoaderService loaderService)
-        {
-            foreach (var item in loaderService.GetPluginImplements())
-            {
-                PropertyInfo[] properties = item.GetType().GetProperties();
-            }
-        }
-
-        /// <summary>
-        /// The get plugin implementation.
-        /// </summary>
-        /// <param name="loaderService">
-        /// The plugin implementation.
-        /// </param>
         /// <returns>
-        /// The <see cref="object"/>.
+        /// List of interfaces <see cref="IPluginImplement"/>.
         /// </returns>
-        public static IEnumerable<IPluginImplements> GetPluginImplements(this IPluginLoaderService loaderService)
+        public static IEnumerable<IPluginImplement> GetPluginImplements(this IPluginLoaderService loaderService)
         {
             return loaderService.ImportPluginImplements;
         }
 
         /// <summary>
-        /// The get content.
+        /// Attempts to find methods that match the signature of the
+        /// <see cref="InsertValueUsePath"/> delegate in plugin assemblies using attributes.
         /// </summary>
         /// <param name="implements">
-        /// The implements.
+        /// Plugin implementation interface.
         /// </param>
         /// <param name="action">
-        /// The path.
+        /// Dispatches the <see cref="InsertValueUsePath"/> delegate in the external function parameters.
         /// </param>
-        public static void GetContent(this IEnumerable<IPluginImplements> implements, Action<InsertValueUsePath> action)
+        public static void GetContent(this IEnumerable<IPluginImplement> implements, Action<InsertValueUsePath> action)
         {
-            var pluginImplements = implements as IPluginImplements[] ?? implements.ToArray();
+            var pluginImplements = implements as IPluginImplement[] ?? implements.ToArray();
             
             foreach (var implement in pluginImplements)
             {
@@ -76,33 +61,16 @@ namespace UnityCommander.Services
         }
 
         /// <summary>
-        /// The get content.
-        /// </summary>
-        /// <param name="services">
-        /// The implements.
-        /// </param>
-        /// <param name="action">
-        /// The path.
-        /// </param>
-        public static void GetContent(this IPluginLoaderService services, Action<IColumnService> action)
-        {
-            foreach (var service in services.ImportColumnServices)
-            {
-                action(service);
-            }
-        }
-
-        /// <summary>
-        /// The get handler attributes.
+        /// Attempts to find all handlers attributes in assemblies with plugins.
         /// </summary>
         /// <param name="service">
-        /// The contract.
+        /// Interfaces for managing loaded plugins.
         /// </param>
         /// <typeparam name="T">
-        /// The contract
+        /// Required plugin interface.
         /// </typeparam>
         /// <returns>
-        /// The option handler attribute.
+        /// All handler attributes found.
         /// </returns>
         public static IEnumerable<Attribute> GetHandlerAttributes<T>(this IPluginLoaderService service)
         {
@@ -119,16 +87,16 @@ namespace UnityCommander.Services
         }
 
         /// <summary>
-        /// The get handler attributes.
+        /// Attempts to find all handlers attributes in assemblies with plugins.
         /// </summary>
         /// <param name="contract">
-        /// The contract.
+        /// Any plugin interface needed to manage plugin.
         /// </param>
         /// <typeparam name="T">
-        /// The contract
+        /// Required plugin interface.
         /// </typeparam>
         /// <returns>
-        /// The option handler attribute.
+        /// All handler attributes found.
         /// </returns>
         public static IEnumerable<Attribute> GetHandlerAttributes<T>(this IEnumerable<T> contract)
         {

@@ -3,9 +3,10 @@ namespace UnityCommander.Integration.Contracts
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+
     using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
-    using System.Linq;
 
     /// <summary>
     /// The selector type.
@@ -13,8 +14,10 @@ namespace UnityCommander.Integration.Contracts
     [AttributeUsage(AttributeTargets.Property)]
     public class AttachHandlerAttribute : Attribute
     {
-        private IDictionary<PluginScopes, Type>  AssociationActions =
-            new Dictionary<PluginScopes, Type>
+        /// <summary>
+        /// The association actions.
+        /// </summary>
+        private readonly IDictionary<PluginScopes, Type> associationActions = new Dictionary<PluginScopes, Type>
             {
                 { PluginScopes.Columns, typeof(AddColumnsDelegate) }
             };
@@ -45,6 +48,9 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Initializes a new instance of the <see cref="AttachHandlerAttribute"/> class.
         /// </summary>
+        /// <param name="target">
+        /// The target.
+        /// </param>
         /// <param name="classType">
         /// The plugin
         /// </param>
@@ -54,7 +60,7 @@ namespace UnityCommander.Integration.Contracts
         public AttachHandlerAttribute(PluginScopes target, Type classType, string handlerName)
         {
             this.BaseHandler = Activator.CreateInstance(classType);
-            this.Handler = Delegate.CreateDelegate(AssociationActions.Where(k => k.Key == target).Single().Value, this.BaseHandler, handlerName);
+            this.Handler = Delegate.CreateDelegate(this.associationActions.Single(k => k.Key == target).Value, this.BaseHandler, handlerName);
             this.HandlerName = handlerName;
         }
 
