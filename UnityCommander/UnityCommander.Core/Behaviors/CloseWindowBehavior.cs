@@ -2,7 +2,7 @@
 namespace UnityCommander.Core.Behaviors
 {
     using System.Windows;
-    using System.Windows.Interactivity;
+    using Microsoft.Xaml.Behaviors;
 
     /// <summary>
     /// The close window behavior.

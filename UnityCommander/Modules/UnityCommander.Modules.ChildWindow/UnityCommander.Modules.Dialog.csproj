@@ -2,9 +2,13 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <AssemblyName>UnityCommander.Modules.ChildWindow</AssemblyName>
+    <AssemblyName>UnityCommander.Modules.Dialog</AssemblyName>
+    <RootNamespace>UnityCommander.Modules.Dialog</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 </Project>

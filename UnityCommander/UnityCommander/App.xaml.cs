@@ -3,14 +3,17 @@ namespace UnityCommander
 {
     using System.Windows;
 
+    using Prism.DryIoc;
     using Prism.Ioc;
     using Prism.Modularity;
+    using Prism.Services.Dialogs;
 
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.LeftSideBars;
     using UnityCommander.Modules.ToolBar;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.ViewModels;
     using UnityCommander.Views;
 
     /// <summary>
@@ -37,11 +40,13 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
+            containerRegistry.RegisterDialog<DialogView, DialogViewModel>();
             containerRegistry.Register<IDirectoryProviderService, DirectoryProviderService>();
             containerRegistry.Register<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.Register<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.Register<IIconProviderService, IconProviderService>();
-            // containerRegistry.Register<IPluginLoaderService, PluginLoaderService>();
+            containerRegistry.Register<IPluginLoaderService, PluginLoaderService>();
         }
 
         /// <summary>

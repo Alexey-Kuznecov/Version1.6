@@ -10,15 +10,19 @@
 
 namespace UnityCommander.ViewModels
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
+    using Prism.Services.Dialogs;
 
     using UnityCommander.Common.Models;
     using UnityCommander.Core;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Views;
+
     using WindowCustomizer;
 
     /// <summary>
@@ -57,6 +61,16 @@ namespace UnityCommander.ViewModels
         private CustomViewModel importCustomWindow;
 
         /// <summary>
+        /// The show dialog command.
+        /// </summary>
+        private DelegateCommand showDialogCommand;
+
+        /// <summary>
+        /// The import custom window.
+        /// </summary>
+        private IDialogService dialogService;
+
+        /// <summary>
         /// The sidebar content width.
         /// </summary>
         private int sidebarContentWidth;
@@ -69,6 +83,9 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
+        /// <param name="dialogService">
+        /// The dialog Service.
+        /// </param>
         /// <param name="message">
         /// Gets interface to exchange of information between view models.
         /// </param>
@@ -78,8 +95,9 @@ namespace UnityCommander.ViewModels
         /// <param name="command">
         /// Gets interface to execute commands each view model at the time.
         /// </param>
-        public MainWindowViewModel(IEventAggregator message, ISettingsProviderService settings, IGlobalCommandService command)
+        public MainWindowViewModel(IDialogService dialogService, IEventAggregator message, ISettingsProviderService settings, IGlobalCommandService command)
         {
+            this.dialogService = dialogService;
             this.viewModelMessage = message;
             this.StateCommand = command;
             this.settingsService = settings.GetAppConfig();
@@ -147,6 +165,20 @@ namespace UnityCommander.ViewModels
         {
             Application.Current.Shutdown();
         });
+
+        /// <summary>
+        /// The show dialog command.
+        /// </summary>
+        public DelegateCommand ShowDialogCommand => 
+            this.showDialogCommand ?? (this.showDialogCommand = new DelegateCommand(this.ExecuteShowDialogCommand));
+
+        /// <summary>
+        /// The execute show dialog command.
+        /// </summary>
+        private void ExecuteShowDialogCommand()
+        {
+            this.dialogService.ShowDialog("DialogView", null, r => { });
+        }
 
         /// <summary>
         /// The set sidebar view model.

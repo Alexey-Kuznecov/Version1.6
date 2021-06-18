@@ -23,7 +23,7 @@
     <None Remove="Views\SplitPanelControl.xaml.cs~RF441d883d.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
@@ -35,5 +35,23 @@
     <Reference Include="GongSolutions.WPF.DragDrop">
       <HintPath>..\..\..\Source\Gong-Wpf-DragAnDrop\netcoreapp3.1\GongSolutions.WPF.DragDrop.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\..\..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
   </ItemGroup>
+
+	<Choose>
+		<When Condition="'$(TargetFramework)' == 'net472'">
+			<ItemGroup>
+				<PackageReference  Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
+				</PackageReference>
+			</ItemGroup>
+		</When>
+		<When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+			<ItemGroup>
+				<Reference Include="System.Windows.Interactivity" Version="4.0.0.0"  />
+			</ItemGroup>
+		</When>
+	</Choose>
+
 </Project>

@@ -95,9 +95,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconMaker", "UnityCommander
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlexLibWpf", "Lab\AlexLibWpf\AlexLibWpf.csproj", "{5220E741-C062-46DC-95F1-E4755F48E0AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconBrowser", "UnityCommander\Plugins\IconBrowser\IconBrowser.csproj", "{530B81EF-0894-4283-B5F3-0F4A3BBE19DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IconBrowser", "UnityCommander\Plugins\IconBrowser\IconBrowser.csproj", "{530B81EF-0894-4283-B5F3-0F4A3BBE19DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Modules.ChildWindow", "UnityCommander\Modules\UnityCommander.Modules.ChildWindow\UnityCommander.Modules.ChildWindow.csproj", "{C95A16C6-C4D9-4C93-92F5-7EAD5BB14DCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Modules.Dialog", "UnityCommander\Modules\UnityCommander.Modules.ChildWindow\UnityCommander.Modules.Dialog.csproj", "{C95A16C6-C4D9-4C93-92F5-7EAD5BB14DCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -291,6 +291,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{5FD899C8-D9FE-4084-9E2B-5B555C3532C6} = {EB7586E2-3D65-4A29-B0FC-00670AC65636}
 		{25EF82CF-DCA5-452C-983B-34830097D77A} = {5FD899C8-D9FE-4084-9E2B-5B555C3532C6}
 		{479ED3A8-0141-420B-861E-EC89F5185927} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}
 		{D4B517D9-0A06-489D-A764-16B720A809C0} = {A2053B60-B6BB-4D66-B49D-ACA7938878FC}

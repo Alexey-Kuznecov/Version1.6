@@ -9,7 +9,9 @@
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <Grid>
+    <StackPanel>
+        <Button Command="{Binding ShowDialogCommand}" Cursor="Hand">Show my Dialog</Button>
+
         <control:Ribbon BubbleSource="{Binding UserControls, Mode=TwoWay}" SetCommand="{Binding SetRibbon}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -29,5 +31,5 @@
                 </control:RibbonContainer>
             </Grid>
         </control:Ribbon>
-    </Grid>
+    </StackPanel>
 </UserControl>

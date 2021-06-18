@@ -1,27 +1,33 @@
 ﻿
 namespace UnityCommander.Modules.ToolBar.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Controls;
     using System.Windows.Input;
 
     using AlexLibWpf.Mvvm.Base;
 
-    using Prism.Commands;
     using Prism.Mvvm;
+    using Prism.Services.Dialogs;
 
+    using UnityCommander.Core.Mvvm;
     using UnityCommander.Modules.ToolBar.Views;
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
     public class ViewAViewModel : BindableBase
     {
+        /// <summary>
+        /// The dialog service.
+        /// </summary>
+        private readonly IDialogService dialogService;
+
+        /// <summary>
+        /// The plugin loader service.
+        /// </summary>
+        private readonly IPluginLoaderService pluginLoaderService;
+
         /// <summary>
         /// The _message.
         /// </summary>
@@ -35,8 +41,16 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewAViewModel"/> class.
         /// </summary>
-        public ViewAViewModel()
+        /// <param name="dialogService">
+        /// The dialog Service.
+        /// </param>
+        /// <param name="pluginLoaderService">
+        /// The plugin Loader Service.
+        /// </param>
+        public ViewAViewModel(IDialogService dialogService, IPluginLoaderService pluginLoaderService)
         {
+            this.dialogService = dialogService;
+            this.pluginLoaderService = pluginLoaderService;
             this.Message = "This Toolbar View";
             this.UserControls = new MainTabControl();
         }
@@ -80,6 +94,19 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         {
             get => this.message;
             set => this.SetProperty(ref this.message, value);
+        }
+
+        /// <summary>
+        /// The execute show dialog command.
+        /// </summary>
+        private void ExecuteShowDialogCommand()
+        {
+            var dialogs = pluginLoaderService.GetDialogService();
+
+            foreach (var dialog in dialogs)
+            {
+                this.dialogService.ShowDialog("DialogView", new OverrideDialogParameters(dialog), r => { });
+            }
         }
     }
 }

@@ -138,13 +138,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IRegionManager regionManager, 
             ISettingsProviderService settingsService, 
             IDirectoryProviderService directoryProviderService, 
-            IGlobalCommandService commandService)
-           // IPluginLoaderService pluginLoaderService) 
+            IGlobalCommandService commandService,
+            IPluginLoaderService pluginLoaderService) 
             : base(regionManager)
         {
             this.directoryProviderService = directoryProviderService;
             this.settingsService = settingsService.GetAppConfig();
-            // this.pluginLoaderService = pluginLoaderService;
+            this.pluginLoaderService = pluginLoaderService;
 
             // Composite command
             this.globalCommandService = commandService;
@@ -160,7 +160,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.SetLastPanelState();
             this.AddFileColumns();
             this.AddFolderColumns();
-           // this.SetAdditionalColumns();
+            this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
 

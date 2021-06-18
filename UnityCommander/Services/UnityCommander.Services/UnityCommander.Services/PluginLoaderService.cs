@@ -10,15 +10,15 @@ namespace UnityCommander.Services
 #endif
     using System.IO;
     using System.Linq;
-
+   
 #if NETCOREAPP3_1
     using Microsoft.Extensions.DependencyInjection;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
+    using UnityCommander.Integration.Dialog;
     using UnityCommander.Plugin.Core;
 #else
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
+    using UnityCommander.Integration.Dialog;
     using UnityCommander.Plugin48.Core;
 #endif
     using UnityCommander.Services.Interfaces;
@@ -42,6 +42,7 @@ namespace UnityCommander.Services
             using var serviceProvider = services.BuildServiceProvider();
             this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>();
             this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>();
+            this.ImportDialogService = serviceProvider.GetServices<IDialogService>();
 #endif
 
 #if NET472
@@ -52,14 +53,19 @@ namespace UnityCommander.Services
         #region Imports Plugins Interfaces
 
         /// <summary>
-        /// Gets or sets the imported plugin settings.
+        /// Gets the imported plugin settings.
         /// </summary>
         public IEnumerable<IPluginConfigure> ImportPluginSettings { get; private set; }
 
         /// <summary>
-        /// Gets or sets the imported plugin implementations.
+        /// Gets  the imported plugin implementations.
         /// </summary>
         public IEnumerable<IPluginImplement> ImportPluginImplements { get; private set; }
+
+        /// <summary>
+        /// Gets the import dialog service.
+        /// </summary>
+        public IEnumerable<IDialogService> ImportDialogService { get; private set; }
 
 
         #endregion
@@ -92,6 +98,18 @@ namespace UnityCommander.Services
             return this.ImportPluginImplements;
         }
 
+
+        /// <summary>
+        /// Obtain interfaces to implement plugin functionality.
+        /// </summary>
+        /// <returns>
+        /// List of plugin implementations.
+        /// </returns>
+        public IEnumerable<IDialogService> GetDialogService()
+        {
+            return this.ImportDialogService;
+        }
+
         /// <summary>
         /// Gets interfaces to configure plugins.
         /// </summary>
@@ -120,7 +138,10 @@ namespace UnityCommander.Services
                 : (IEnumerable<T>)this.ImportPluginSettings;
 
             if (implement == null)
+            {
                 throw new Exception("The specified interface is not a plugin interface.");
+            }
+
             return implement;
         }
 
