@@ -12,10 +12,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
@@ -35,8 +33,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Models.Base;
     using UnityCommander.Services.Plugins.Manager;
@@ -47,7 +45,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// The left panel view model.
     /// </summary>
     [Serializable]
-    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
     {
         #region Declaration fields
@@ -141,13 +138,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IRegionManager regionManager, 
             ISettingsProviderService settingsService, 
             IDirectoryProviderService directoryProviderService, 
-            IGlobalCommandService commandService, 
-            IPluginLoaderService pluginLoaderService) 
+            IGlobalCommandService commandService)
+           // IPluginLoaderService pluginLoaderService) 
             : base(regionManager)
         {
             this.directoryProviderService = directoryProviderService;
             this.settingsService = settingsService.GetAppConfig();
-            this.pluginLoaderService = pluginLoaderService;
+            // this.pluginLoaderService = pluginLoaderService;
 
             // Composite command
             this.globalCommandService = commandService;
@@ -163,7 +160,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.SetLastPanelState();
             this.AddFileColumns();
             this.AddFolderColumns();
-            this.SetAdditionalColumns();
+           // this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -414,6 +411,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The add columns in the file panel.
         /// </summary>
+        [SuppressMessage("ReSharper", "StyleCop.SA1503")]
         private void SetAdditionalColumns()
         {
             foreach (var unityContext in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
@@ -432,11 +430,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     {
                         case TargetPanel.Folders:
                             this.FolderPanelContainer.Columns.Add(columnNew);
-                            this.SetAdditionalFolders(unityContext);
+                            this.InitialFolderColumnValues(unityContext);
                             break;
                         case TargetPanel.Files:
                             this.FilePanelContainer.Columns.Add(columnNew);
-                            this.SetAdditionalFiles(unityContext);
+                            this.InitialFileColumnValues(unityContext);
                             break;
                     }
                 }
@@ -444,12 +442,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// The get folder alternative.
+        /// Initializes the folder column with values produce from the plugin.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        /// The host application context.
         /// </param>
-        private void SetAdditionalFolders(HostAppContext context)
+        private void InitialFolderColumnValues(HostAppContext context)
         {
             var folderModels = new ObservableCollection<FolderModel>();
 
@@ -463,12 +461,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// The get file alternative.
+        /// Initializes the file column with values produce from the plugin.
         /// </summary>
         /// <param name="context">
-        /// Unity context 
+        /// The host application context.
         /// </param>
-        private void SetAdditionalFiles(HostAppContext context)
+        private void InitialFileColumnValues(HostAppContext context)
         {
             var fileModels = new ObservableCollection<FileModel>();
             foreach (var file in this.FileList)

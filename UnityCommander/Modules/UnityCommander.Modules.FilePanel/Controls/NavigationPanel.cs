@@ -1,4 +1,5 @@
 ﻿
+// ReSharper disable All
 namespace UnityCommander.Modules.FilePanel.Controls
 {
     using System.Collections.ObjectModel;

@@ -20,7 +20,7 @@ namespace UnityCommander.Integration.Contracts
             new Dictionary<PluginScopes, Type>
                   {
                       { PluginScopes.Columns, typeof(AddColumnsDelegate) }
-    };
+        };
 
         /// <summary>
         /// Gets the list of the context menu item.

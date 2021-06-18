@@ -1,8 +1,6 @@
 ﻿
-namespace UnityCommander.Integration.Contracts.Columns
+namespace UnityCommander.Integration.Columns
 {
-    using System;
-
     using UnityCommander.Integration.Enums;
 
     /// <summary>

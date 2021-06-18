@@ -41,7 +41,7 @@ namespace UnityCommander
             containerRegistry.Register<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.Register<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.Register<IIconProviderService, IconProviderService>();
-            containerRegistry.Register<IPluginLoaderService, PluginLoaderService>();
+            // containerRegistry.Register<IPluginLoaderService, PluginLoaderService>();
         }
 
         /// <summary>

@@ -58,7 +58,8 @@
             Toolbar region.
         -->
         <ContentControl
-            Grid.Row="1"
+            Grid.Row="0"
+            Grid.RowSpan="2"
             Grid.Column="0"
             Grid.ColumnSpan="4"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}" />
@@ -114,6 +115,6 @@
             CaptionHeight="46"
             CornerRadius="0"
             GlassFrameThickness="0"
-            ResizeBorderThickness="20" />
+            ResizeBorderThickness="15" />
     </WindowChrome.WindowChrome>
 </Window>

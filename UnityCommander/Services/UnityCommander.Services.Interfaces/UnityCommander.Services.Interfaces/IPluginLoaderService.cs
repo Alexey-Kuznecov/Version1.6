@@ -12,12 +12,12 @@ namespace UnityCommander.Services.Interfaces
     public interface IPluginLoaderService
     {
         /// <summary>
-        /// Gets or sets the interfaces to manage plugin settings.
+        /// Gets the interfaces to manage plugin settings.
         /// </summary>
         IEnumerable<IPluginConfigure> ImportPluginSettings { get; }
 
         /// <summary>
-        /// Gets or sets the plugins implementation.
+        /// Gets the plugins implementation.
         /// </summary>
         IEnumerable<IPluginImplement> ImportPluginImplements { get; }
 

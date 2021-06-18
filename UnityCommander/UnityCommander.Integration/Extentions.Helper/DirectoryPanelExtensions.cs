@@ -4,8 +4,8 @@ namespace UnityCommander.Integration.Extentions.Helper
     using System;
     using System.Diagnostics.CodeAnalysis;
 
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
 
     /// <summary>

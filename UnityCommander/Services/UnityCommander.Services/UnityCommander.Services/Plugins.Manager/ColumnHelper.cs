@@ -13,9 +13,8 @@ namespace UnityCommander.Services.Plugins.Manager
     public static class ColumnHelper
     {
         /// <summary>
-        /// Attempts to find all methods in the objects implementing 
-        /// the <see cref="IPluginImplement"/> interface that are responsible
-        /// for getting the list of contexts of the host application 
+        /// Attempts to find all methods in the objects implementing the <see cref="IPluginImplement"/> interface
+        /// that are responsible for getting the list of contexts of the host application 
         /// using the attribute.
         /// </summary>
         /// <param name="implements">
@@ -47,9 +46,8 @@ namespace UnityCommander.Services.Plugins.Manager
         }
 
         /// <summary>
-        /// Gets all application contexts from all plugin assemblies using 
-        /// the required <see cref="IPluginImplement.SetHostAppContext"/> method
-        /// that the plugin must implement. TODO: Rename the name of method.
+        /// Gets all application contexts from all plugin assemblies using the required <see cref="IPluginImplement.SetHostAppContext"/> method
+        /// that the plugin must implement.
         /// </summary>
         /// <param name="implements">
         /// List of interfaces <see cref="IPluginImplement"/>.
