@@ -3,14 +3,20 @@
 namespace UnityCommander.Services
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
 #if NET472
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
 #endif
     using System.IO;
     using System.Linq;
-   
+    using System.Reflection;
+    using System.Resources;
+    using System.Windows;
+    using System.Windows.Baml2006;
+
 #if NETCOREAPP3_1
     using Microsoft.Extensions.DependencyInjection;
     using UnityCommander.Integration.Contracts;
@@ -36,14 +42,15 @@ namespace UnityCommander.Services
 #if NETCOREAPP3_1
             var services = new ServiceCollection();
             var pluginLoaders = GetPluginLoaders();
-
+            var serviceOption = new ServiceProviderOptions();
             ConfigureServices(services, pluginLoaders);
+            using var serviceProvider = services.BuildServiceProvider(serviceOption);
 
-            using var serviceProvider = services.BuildServiceProvider();
             this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>();
             this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>();
             this.ImportDialogService = serviceProvider.GetServices<IDialogService>();
 #endif
+
 
 #if NET472
             this.SetImport();
@@ -67,8 +74,9 @@ namespace UnityCommander.Services
         /// </summary>
         public IEnumerable<IDialogService> ImportDialogService { get; private set; }
 
-
         #endregion
+
+        #region Implementations Methods
 
         /// <summary>
         /// Obtain an instance of the class that implements the plugin interface.
@@ -97,7 +105,6 @@ namespace UnityCommander.Services
         {
             return this.ImportPluginImplements;
         }
-
 
         /// <summary>
         /// Obtain interfaces to implement plugin functionality.
@@ -145,6 +152,8 @@ namespace UnityCommander.Services
             return implement;
         }
 
+        #endregion
+
 #if NETCOREAPP3_1
 
         /// <summary>
@@ -190,12 +199,74 @@ namespace UnityCommander.Services
                 {
                     // This assumes the implementation of IPluginFactory has a parameter less constructor
                     var plugin = Activator.CreateInstance(pluginType) as IPluginFactory;
-
+                    
                     plugin?.Configure(services);
+                    GetResourceDictionary(pluginType.Assembly);
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method will attempt to find shared resource files in plugin assemblies.
+        /// Searches only for files named General, because links can be looped 
+        /// if multiple dictionaries refer the same resources.
+        /// TODO: This method is called more than once, resulting in duplicate resource dictionaries. We'll need to fix it.
+        /// </summary>
+        /// <param name="assembly"> The assembly to search for resource files. </param>
+        public static void GetResourceDictionary(Assembly assembly)
+        {
+            Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".g.resources");
+            if (stream == null) return;
+
+            using (ResourceReader reader = new ResourceReader(stream))
+            {
+                foreach (DictionaryEntry entry in reader)
+                {
+                    var extension = Path.GetExtension(entry.Key.ToString());
+                    if (extension != ".baml") continue;
+
+                    if (entry.Key.ToString().Contains("general"))
+                    {
+                        var readStream = entry.Value as Stream;
+                        Baml2006Reader bamlReader = new Baml2006Reader(readStream);
+
+                        var loadedObject = System.Windows.Markup.XamlReader.Load(bamlReader);
+                        if (loadedObject is ResourceDictionary resource)
+                        {
+                            var dictionary = Application.Current.Resources.MergedDictionaries;
+
+                            if (!dictionary.Contains(resource))
+                            {
+                                dictionary.Add(resource);
+                            }
+                        }
+                    }                   
                 }
             }
         }
 #endif
+        //public void GetResourceDictionary(string assemblyName)
+        //{
+        //    List<Stream> bamlStreams = new List<Stream>();
+        //    Assembly skinAssembly = Assembly.LoadFrom(this._mainAssemblyPath);
+        //    string[] resourceDictionaries = skinAssembly.GetManifestResourceNames();
+        //    foreach (string resourceName in resourceDictionaries)
+        //    {
+        //        ManifestResourceInfo info = skinAssembly.GetManifestResourceInfo(resourceName);
+        //        if (info.ResourceLocation != ResourceLocation.ContainedInAnotherAssembly)
+        //        {
+        //            Stream resourceStream = skinAssembly.GetManifestResourceStream(resourceName);
+        //            using (ResourceReader reader = new ResourceReader(resourceStream))
+        //            {
+        //                foreach (DictionaryEntry entry in reader)
+        //                {
+        //                    //Here you can see all your ResourceDictionaries
+        //                    //entry is your ResourceDictionary from assembly
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
 #if NET472
         /// <summary>

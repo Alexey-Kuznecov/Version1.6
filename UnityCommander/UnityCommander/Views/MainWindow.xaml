@@ -107,9 +107,7 @@
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="4"
-            Background="#F0F0F0">
-            <Button Command="{Binding ShowDialogCommand}" Cursor="Hand">Show my Dialog</Button>
-        </Grid>
+            Background="#F0F0F0" />
     </Grid>
 
     <WindowChrome.WindowChrome>

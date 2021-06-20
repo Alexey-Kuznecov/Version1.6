@@ -4,6 +4,7 @@ namespace UnityCommander.ViewModels
     using System;
     using System.Windows.Controls;
 
+    using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
@@ -14,20 +15,18 @@ namespace UnityCommander.ViewModels
     /// </summary>
     public class DialogViewModel : BindableBase, IDialogAware
     {
-/*
         /// <summary>
         /// The close dialog command.
         /// </summary>
         public DelegateCommand CloseDialogCommand =>
             this.closeDialogCommand ?? (this.closeDialogCommand = new DelegateCommand(this.ExecuteCloseDialogCommand));
-*/
 
-/*
+
         /// <summary>
         /// The close dialog command.
         /// </summary>
         private DelegateCommand closeDialogCommand;
-*/
+
 
         /// <summary>
         /// The control.

@@ -18,6 +18,12 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
+                <Button
+                    Width="25"
+                    Height="25"
+                    Command="{Binding ShowDialogCommand}"
+                    Content="Show"
+                    Cursor="Hand" />
             </Grid>
         </WrapPanel>
 

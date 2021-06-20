@@ -10,9 +10,7 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <StackPanel>
-        <Button Command="{Binding ShowDialogCommand}" Cursor="Hand">Show my Dialog</Button>
-
-        <control:Ribbon BubbleSource="{Binding UserControls, Mode=TwoWay}" SetCommand="{Binding SetRibbon}">
+        <control:Ribbon BubbleSource="{Binding UserControls}" SetCommand="{Binding SetRibbon}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />

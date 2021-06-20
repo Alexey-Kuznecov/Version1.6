@@ -1,6 +1,6 @@
 ﻿
 // ReSharper disable All
-namespace IconMaker.Converter
+namespace IconBrowser.Converter
 {
     using System;
     using System.Collections.Generic;

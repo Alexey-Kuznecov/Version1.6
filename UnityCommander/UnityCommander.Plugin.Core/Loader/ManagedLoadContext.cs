@@ -8,9 +8,13 @@ namespace UnityCommander.Plugin.Core.Loader
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Loader;
+    using System.Resources;
+    using System.Text;
+    using System.Windows;
 
     using UnityCommander.Plugin.Core.Internal;
     using UnityCommander.Plugin.Core.LibraryModel;
+    using System.Collections;
 
     /// <summary>
     /// An implementation of <see cref="AssemblyLoadContext" /> which attempts to load managed and native
@@ -149,6 +153,7 @@ namespace UnityCommander.Plugin.Core.Loader
             {
                 foreach (var resourceRoot in this._resourceRoots)
                 {
+                    // this.GetResourceDictionary(assemblyName.Name);
                     var resourcePath = Path.Combine(resourceRoot, assemblyName.CultureName, assemblyName.Name + ".dll");
                     if (File.Exists(resourcePath))
                     {

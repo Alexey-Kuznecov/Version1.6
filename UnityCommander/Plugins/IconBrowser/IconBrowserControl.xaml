@@ -5,16 +5,261 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:IconBrowser"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/IconBrowser;component/General.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <UserControl.DataContext>
         <local:IconBrowserViewModel />
     </UserControl.DataContext>
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock
+    <Grid Background="{Binding Background, ElementName=window}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="170*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15*" />
+            <RowDefinition Height="40*" />
+            <RowDefinition Height="220*" />
+            <RowDefinition Height="70*" />
+        </Grid.RowDefinitions>
+        <Menu
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Background="#FFFFFF">
+            <MenuItem FontSize="12" Header="File">
+                <MenuItem Command="{Binding AddNewIconCommand}" Header="Open" />
+                <MenuItem Header="Save" />
+                <Separator />
+                <MenuItem Command="{Binding ShutdownCommand}" Header="Close" />
+            </MenuItem>
+            <MenuItem FontSize="12" Header="View">
+                <MenuItem Header="Lists" />
+                <MenuItem Header="Tiles" />
+                <MenuItem Header="Cards" />
+            </MenuItem>
+            <MenuItem FontSize="12" Header="Tools">
+                <MenuItem Header="Resource" />
+                <MenuItem Header="Palette" />
+                <MenuItem Header="Formatter" />
+                <MenuItem Header="Plugins" />
+            </MenuItem>
+        </Menu>
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="300"
+            Height="35"
+            Margin="10,11,246,9"
+            AllowDrop="True"
             FontSize="16"
-            FontWeight="Medium"
-            Text="{Binding Message}" />
+            FontStyle="Italic"
+            Tag="Имя..."
+            Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ListBox
+            x:Name="ListBox"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            ContextMenu="{Binding IconCollectionName/ContextMenu}"
+            ItemsSource="{Binding IconCollectionName}"
+            SelectedIndex="{Binding SelectIndex}"
+            Style="{StaticResource ListBox}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ItemsControl
+                        Width="180"
+                        Height="30"
+                        VerticalAlignment="Center"
+                        AllowDrop="True"
+                        Cursor="Hand">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="30" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Padding="5"
+                                AllowDrop="True"
+                                ContextMenu="{Binding CollectionContextMenu}"
+                                Cursor="Hand"
+                                DragEnter="{x:Static local:DragDropHandler.DragEnterHandler}"
+                                DragLeave="{x:Static local:DragDropHandler.DragLeaveHandler}"
+                                DragOver="{x:Static local:DragDropHandler.DragOverHandler}"
+                                Drop="{x:Static local:DragDropHandler.DropHandler}"
+                                MouseMove="{x:Static local:DragDropHandler.MouseMoveHandler}"
+                                Text="{Binding CollectionName}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Icons.Count}" />
+                        </Grid>
+                        <ItemContainerTemplate>
+                            <ListBoxItem Padding="5" Cursor="Hand" />
+                        </ItemContainerTemplate>
+                    </ItemsControl>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ScrollViewer
+            Grid.Row="2"
+            Grid.Column="1"
+            VerticalScrollBarVisibility="Visible">
+            <ItemsControl ItemsSource="{Binding Icons, Mode=TwoWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid x:Name="grid">
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Cursor="Hand" Header="Install" />
+                                    <MenuItem Cursor="Hand" Header="Move to" />
+                                    <MenuItem
+                                        Command="{Binding RenameIcon}"
+                                        CommandParameter="{Binding CommandParameter}"
+                                        Cursor="Hand"
+                                        Header="Rename" />
+                                    <MenuItem
+                                        Command="{Binding RemoveIcon}"
+                                        CommandParameter="{Binding CommandParameter}"
+                                        Cursor="Hand"
+                                        Header="Delete" />
+                                </ContextMenu>
+                            </Grid.ContextMenu>
+                            <ContentControl
+                                x:Name="d"
+                                Uid="{Binding CollectionName}"
+                                Content="{Binding Brush}"
+                                GiveFeedback="{x:Static local:DragDropHandler.GiveFeedbackHandler}"
+                                MouseMove="{x:Static local:DragDropHandler.MouseMoveHandler}"
+                                Style="{Binding Style}"
+                                Tag="{Binding Id}"
+                                Template="{Binding Template}">
+                                <ContentControl.ToolTip>
+                                    <ToolTip>
+                                        <Grid Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="30" />
+                                            </Grid.RowDefinitions>
+                                            <ContentControl
+                                                Width="64"
+                                                Height="64"
+                                                Padding="10"
+                                                BorderBrush="{x:Null}"
+                                                Content="{Binding Brush}"
+                                                Foreground="{x:Null}" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Padding="3"
+                                                Background="#F3F3EC"
+                                                Foreground="#3C3C3B"
+                                                Text="{Binding IconName}"
+                                                TextAlignment="Center" />
+                                        </Grid>
+                                    </ToolTip>
+                                </ContentControl.ToolTip>
+                                <ContentControl.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding DataContext.SelectIconCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}}"
+                                        CommandParameter="{Binding CommandParameter}"
+                                        Gesture="LeftClick" />
+                                </ContentControl.InputBindings>
+                            </ContentControl>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="20,10,10,0" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+        <Grid
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Background="#EDEDED">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="200*" />
+                <ColumnDefinition Width="160" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Grid.ColumnSpan="3" Background="#FFFFFF">
+                <Label
+                    Width="50"
+                    Margin="720,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Content="{Binding ElementName=S, Path=Value}" />
+            </Grid>
+            <ComboBox
+                x:Name="ComboBox"
+                Grid.Row="1"
+                Grid.Column="0"
+                Width="200"
+                Height="35"
+                VerticalContentAlignment="Center"
+                Cursor="Hand"
+                SelectedIndex="0"
+                SelectedItem="{Binding ColorBrush}">
+                <ComboBoxItem Content="#FF3676AE" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#ee2c2c00" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF79ED9A" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF184B9C" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFE1D854" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF9b993a" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFbb4b9c" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFF17A07" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF78c696" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFf59eb3" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFc5a3cc" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFcec82b" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FFe0b03a" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF8d663a" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF028d5b" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF009FE3" Template="{StaticResource ComboBoxItemTemplate}" />
+                <ComboBoxItem Content="#FF672f8f" Template="{StaticResource ComboBoxItemTemplate}" />
+            </ComboBox>
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*" />
+                    <ColumnDefinition Width="50*" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="10*" />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Height="34"
+                    VerticalAlignment="Center"
+                    Content="Цветные иконки"
+                    Cursor="Hand"
+                    IsChecked="{Binding EnableColorIcon, Mode=TwoWay}" />
+                <Slider
+                    x:Name="S"
+                    Grid.Column="1"
+                    Height="30"
+                    VerticalAlignment="Center"
+                    Maximum="256"
+                    Minimum="12"
+                    Value="35" />
+            </Grid>
+            <Button
+                Grid.Row="1"
+                Grid.Column="2"
+                Width="100"
+                Height="35"
+                Command="{Binding ResetByDefaultCommand}"
+                CommandParameter="{Binding ItemTemplate.Template, ElementName=ccc}"
+                Content="Сбросить" />
+            <Grid
+                Grid.Row="1"
+                Grid.Column="2"
+                AllowDrop="True" />
+        </Grid>
     </Grid>
 </UserControl>

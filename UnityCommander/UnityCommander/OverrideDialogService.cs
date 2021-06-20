@@ -117,16 +117,6 @@ namespace UnityCommander
             dialogWindow.Close();
         }
 
-        protected override void ConfigureDialogWindowProperties(IDialogWindow window, FrameworkElement dialogContent, IDialogAware viewModel)
-        {
-            base.ConfigureDialogWindowProperties(window, dialogContent, viewModel);
-        }
-
-        protected override void ConfigureDialogWindowContent(string dialogName, IDialogWindow window, IDialogParameters parameters)
-        {
-            base.ConfigureDialogWindowContent(dialogName, window, parameters);
-        }
-
         /// <summary>
         /// The configure dialog window events.
         /// </summary>
@@ -164,9 +154,8 @@ namespace UnityCommander
         {
             var dialogWindow = base.CreateDialogWindow(name);
 
-            if (dialogWindow is FrameworkElement fe)
+            if (dialogWindow is Window window)
             {
-                fe.Tag = dialogWindow;
             }
 
             this.token = new WindowToken();

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Library\AkuzIcons\AkuzIcons.csproj" />
+    <ProjectReference Include="..\..\Lab\AlexLibWpf\AlexLibWpf.csproj" />
   </ItemGroup>
 
 </Project>

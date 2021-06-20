@@ -1,17 +1,18 @@
 ﻿
+// ReSharper disable All
 namespace UnityCommander.Modules.ToolBar.ViewModels
 {
     using System.Windows.Controls;
     using System.Windows.Input;
 
-    using AlexLibWpf.Mvvm.Base;
-
+    using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Modules.ToolBar.Views;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Common.Styling;
 
     /// <summary>
     /// The view a view model.
@@ -39,6 +40,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private UserControl userControls;
 
         /// <summary>
+        /// The show dialog command.
+        /// </summary>
+        private DelegateCommand showDialogCommand;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ViewAViewModel"/> class.
         /// </summary>
         /// <param name="dialogService">
@@ -56,9 +62,15 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         }
 
         /// <summary>
+        /// The show dialog command.
+        /// </summary>
+        public DelegateCommand ShowDialogCommand =>
+            this.showDialogCommand ?? (this.showDialogCommand = new DelegateCommand(this.ExecuteShowDialogCommand));
+
+        /// <summary>
         /// The set ribbon.
         /// </summary>
-        public ICommand SetRibbon => new RelayCommand(
+        public DelegateCommand<object> SetRibbon => new DelegateCommand<object>(
             (obj) =>
         {
             if (obj is Button bt)

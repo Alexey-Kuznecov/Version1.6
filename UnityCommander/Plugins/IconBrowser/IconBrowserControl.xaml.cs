@@ -4,6 +4,7 @@ namespace IconBrowser
     using System.Windows.Controls;
 
     using UnityCommander.Integration.Dialog;
+    using static System.Net.Mime.MediaTypeNames;
 
     /// <summary>
     /// The icon browser control.

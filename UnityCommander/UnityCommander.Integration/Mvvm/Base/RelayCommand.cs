@@ -1,6 +1,6 @@
 ﻿
 // ReSharper disable All
-namespace AkuzIcons.Mvvm.Base
+namespace UnityCommander.Integration.Mvvm.Base
 {
     using System;
     using System.Diagnostics;
