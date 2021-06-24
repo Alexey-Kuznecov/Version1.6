@@ -24,12 +24,6 @@
     <Page Update="Controls\NavigationPopup.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Resources\MergedModuleResources.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Resources\NavigationBarStyles.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\CopyDialogControl.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -39,13 +33,7 @@
     <Page Update="Views\CopyProcessView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\LeftPanelControl.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\NTFSSecurityView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\RightPanelControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ViewA.xaml">
