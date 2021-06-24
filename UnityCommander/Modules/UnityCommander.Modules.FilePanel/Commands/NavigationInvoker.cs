@@ -4,8 +4,7 @@ namespace UnityCommander.Modules.FilePanel.Commands
     using System;
     using System.Collections.Generic;
 
-    using UnityCommander.Common.Invokers;
-    using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Commands.Base;
 
     /// <summary>
     /// The navigation invoker.
@@ -13,9 +12,14 @@ namespace UnityCommander.Modules.FilePanel.Commands
     public sealed class NavigationInvoker : InvokerBase
     {
         /// <summary>
-        /// The module commands.
+        /// The module commands. 
         /// </summary>
         private readonly List<Command> commands;
+
+        /// <summary>
+        /// The current command.
+        /// </summary>
+        private static Command currentCommand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationInvoker"/> class.

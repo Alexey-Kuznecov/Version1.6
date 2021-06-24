@@ -9,7 +9,7 @@ namespace UnityCommander.Test
     /// <summary>
     /// The log formatter.
     /// </summary>
-    public class LogFormatter
+    public class LogFormatter : IFormatProvider
     {
         /// <summary>
         /// The headers arr.
@@ -332,6 +332,22 @@ namespace UnityCommander.Test
             }
 
             return rows;
+        }
+
+        /// <summary>
+        /// The get format.
+        /// </summary>
+        /// <param name="formatType">
+        /// The format type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object?"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public object? GetFormat(Type? formatType)
+        {
+            throw new NotImplementedException();
         }
     }
 }

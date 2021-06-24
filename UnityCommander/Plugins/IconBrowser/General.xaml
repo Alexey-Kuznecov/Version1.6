@@ -1,0 +1,139 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:IconBrowser">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/IconBrowser;component/Resources/DefaultStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/IconBrowser;component/Resources/Icons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--<Style x:Key="ListBox" TargetType="{x:Type ListBox}">
+        <Setter Property="Margin" Value="10,10,0,10" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="#FF6A6A6A" />
+        <Setter Property="BorderBrush">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0" Color="#FF919090" />
+                    <GradientStop Offset="1" Color="White" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Offset="0" Color="#FFEEEEEE" />
+                    <GradientStop Offset="1" Color="White" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+
+    <!--
+        КНОПКИ И ТЕКСТОВЫЕ ПОЛЯ
+    -->
+    <!--
+    <Style x:Key="btIcon">
+        <Setter Property="Control.Background" Value="{x:Null}" />
+        <Setter Property="Control.BorderBrush" Value="{x:Null}" />
+    </Style>
+
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="FontFamily" Value="Roboto" />
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>-->
+
+    <!--  TEXTBOX STYLES  -->
+    <!--<Style x:Key="BaseTextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="Foreground" Value="DarkGray" />
+        <Setter Property="FontFamily" Value="Segeo UI" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CaretBrush" Value="Black" />
+        <Setter Property="Background" Value="LightGray" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border
+                        BorderBrush="LightGray"
+                        BorderThickness="1"
+                        CornerRadius="2">
+                        <Grid Margin="5">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Margin="0"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Name="hint"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="Gray"
+                                IsHitTestVisible="False"
+                                Text="{TemplateBinding Tag}"
+                                TextAlignment="{TemplateBinding TextAlignment}"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Text" Value="" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="hint" Property="Visibility" Value="Visible" />
+                            <Setter Property="BorderBrush" Value="#AED500" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="#AED500" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style BasedOn="{StaticResource BaseTextBox}" TargetType="{x:Type TextBox}">
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="true">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TextBox}">
+                            <Border
+                                BorderBrush="#ADD8E6"
+                                BorderThickness="2"
+                                CornerRadius="2">
+                                <Grid Margin="5">
+                                    <ScrollViewer
+                                        x:Name="PART_ContentHost"
+                                        Margin="0"
+                                        VerticalAlignment="Center" />
+                                    <TextBlock
+                                        x:Name="hint"
+                                        VerticalAlignment="Center"
+                                        Background="Transparent"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        Foreground="Gray"
+                                        IsHitTestVisible="False"
+                                        Text="{TemplateBinding Tag}"
+                                        TextAlignment="{TemplateBinding TextAlignment}"
+                                        Visibility="Collapsed" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Text" Value="" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="hint" Property="Visibility" Value="Visible" />
+                                    <Setter Property="BorderBrush" Value="#AED500" />
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>-->
+</ResourceDictionary>

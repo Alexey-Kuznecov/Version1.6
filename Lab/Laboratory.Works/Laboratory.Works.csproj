@@ -52,6 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConverterBytes.cs" />
+    <Compile Include="CopyWatch.cs" />
+    <Compile Include="CopyWatchTest.cs" />
+    <Compile Include="ProcessCounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PSRunner.cs" />
   </ItemGroup>

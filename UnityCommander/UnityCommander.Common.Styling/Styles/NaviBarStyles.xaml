@@ -1,0 +1,153 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  DIRECTORY PREVIEW PANEL STYLE  -->
+    <SolidColorBrush x:Key="PreviewPanelBackgroundColor" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="PreviewPanelForegroundColor" Color="#373737" />
+    <SolidColorBrush x:Key="PreviewPanelPowerIconColor" Color="#E138AA" />
+    <SolidColorBrush x:Key="PreviewPanelPowerSepatatorColor" Color="#373737" />
+    <!--  Triggers styles  -->
+    <SolidColorBrush x:Key="PreviewPanelBgMouseOverColor" Color="#DCDDFC" />
+    <SolidColorBrush x:Key="PreviewPanelFgMouseOverColor" Color="#373737" />
+    <SolidColorBrush x:Key="PreviewPanelBgPressedColor" Color="#C6C7DC" />
+    <SolidColorBrush x:Key="PreviewPanelFgPressedColor" Color="#373737" />
+    <SolidColorBrush x:Key="PreviewPanelBgEnabledColor" Color="#DCDDFC" />
+    <SolidColorBrush x:Key="PreviewPanelFgEnabledColor" Color="#F6F7FF" />
+
+    <!--
+        POP-UP BOX STYLES
+    -->
+    <Style x:Key="NavigationPopupHeaderStyle" TargetType="{x:Type Grid}">
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource GeneralHeaderColor}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NavigationPopupContainerStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="#F1F2FF" />
+        <Setter Property="BorderBrush" Value="#A7A8B5" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Width" Value="400" />
+        <Setter Property="Height" Value="250" />
+    </Style>
+
+    <!--
+        NAVIGATION ITEM STYLES
+    -->
+    <Style x:Key="NavigationButtonShadowStyle" TargetType="{x:Type Grid}">
+        <Setter Property="Margin" Value="5,0,0,0" />
+        <Setter Property="BitmapEffect">
+            <Setter.Value>
+                <DropShadowBitmapEffect
+                    Direction="0"
+                    Opacity="0.5"
+                    ShadowDepth="1"
+                    Softness="0.2"
+                    Color="Black" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NavigationBackButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="25" />
+        <Setter Property="MinWidth" Value="30" />
+        <Setter Property="Background" Value="{StaticResource PreviewPanelBackgroundColor}" />
+        <Setter Property="Foreground" Value="{StaticResource PreviewPanelForegroundColor}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        Padding="5,0"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="3,0,0,3">
+                        <!--<Border.Effect>
+                            <DropShadowEffect BlurRadius="2" ShadowDepth="0" />
+                        </Border.Effect>-->
+                        <Grid>
+                            <ContentPresenter
+                                x:Name="MyContentPresenter"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgMouseOverColor}" />
+                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgMouseOverColor}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgPressedColor}" />
+                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgPressedColor}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  DIRECTORY PREVIEW PANEL STYLE  -->
+    <Style x:Key="NavigationPopupButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Background" Value="{StaticResource PreviewPanelBackgroundColor}" />
+        <Setter Property="Foreground" Value="{StaticResource PreviewPanelForegroundColor}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="0,3,3,0">
+                        <Grid>
+                            <Path
+                                x:Name="PathIcon"
+                                Width="8"
+                                Height="12"
+                                HorizontalAlignment="Center"
+                                Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z "
+                                Fill="{StaticResource PreviewPanelPowerIconColor}"
+                                Stretch="Fill" />
+                            <Line
+                                Width="2"
+                                Height="20"
+                                Margin="0,0,28,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Opacity="0.5"
+                                Stroke="{StaticResource PreviewPanelPowerSepatatorColor}"
+                                Y1="0"
+                                Y2="640" />
+                            <ContentPresenter
+                                x:Name="MyContentPresenter"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgMouseOverColor}" />
+                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgMouseOverColor}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgPressedColor}" />
+                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgPressedColor}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgEnabledColor}" />
+                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgEnabledColor}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

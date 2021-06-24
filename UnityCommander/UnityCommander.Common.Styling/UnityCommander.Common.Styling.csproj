@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Styles\UnityWindow.cs" />
+    <Compile Remove="Styles\UnityWindowResizer.cs" />
+    <Compile Remove="Styles\UnityWindowVM.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Colors\DefaultColors.xaml~RF45e465bc.TMP" />
+    <None Remove="Colors\DefaultColors.xaml~RF45ef6d19.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MaterialDesignTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Settings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Images\Icons.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\DirectoryBarStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\NaviBarStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\ScrollBarStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\Window\Buttons.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Colors.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Fonts.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Texts.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Styles\Window\Windows.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+
+</Project>

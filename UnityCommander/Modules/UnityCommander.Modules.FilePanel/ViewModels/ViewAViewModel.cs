@@ -16,10 +16,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="regionManager">
         /// The region manager.
         /// </param>
-        /// <param name="directoryProvider">
+        /// <param name="directoryProviderService">
         /// The file provider.
         /// </param>
-        public ViewAViewModel(IRegionManager regionManager, IDirectoryProvider directoryProvider)
+        public ViewAViewModel(IRegionManager regionManager, IDirectoryProviderService directoryProviderService)
             : base(regionManager)
         {
         }

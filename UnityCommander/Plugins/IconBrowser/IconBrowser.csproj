@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\IconBrowser</OutputPath>
+		<OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\IconBrowser</OutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Resources\IconsData.xml" />
+	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Lab\AlexLibWpf\AlexLibWpf.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\IconsData.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Resources\DefaultStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="General.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Icons.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>

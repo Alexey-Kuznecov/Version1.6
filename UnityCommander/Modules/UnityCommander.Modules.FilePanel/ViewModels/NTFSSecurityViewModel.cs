@@ -29,7 +29,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var account in ntfsAccounts)
             {
-                this.NTAccount.Add(account.IdentityReference.Value.Split('\\', 1).ToString());
+                //this.NTAccount.Add(account.IdentityReference.Value.Split('\\', 1).ToString());
             }
         }
 

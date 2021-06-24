@@ -2,12 +2,20 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net472;net48</TargetFrameworks>
+	<UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="HDDCounter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Program.cs~RF5d4019b0.TMP" />
+    <None Remove="Program.cs~RF5da5fe39.TMP" />
+    <None Remove="TestStart\CommandArch.cs~RF6d9db964.TMP" />
+    <None Remove="TestStart\CopyWatchTest.cs~RF70806a.TMP" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander\Library\AkuzIcons\AkuzIcons.csproj" />
     <ProjectReference Include="..\..\UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
 
@@ -31,6 +40,11 @@
     </ItemGroup>
   </When>
   <When Condition="'$(TargetFramework)' == 'net472'">
+    <ItemGroup>
+      <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
+    </ItemGroup>
+  </When>
+  <When Condition="'$(TargetFramework)' == 'net48'">
     <ItemGroup>
       <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
     </ItemGroup>

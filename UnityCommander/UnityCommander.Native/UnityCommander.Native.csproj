@@ -4,6 +4,9 @@
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="ManagedWinapi" Version="0.3.0" />
   </ItemGroup>

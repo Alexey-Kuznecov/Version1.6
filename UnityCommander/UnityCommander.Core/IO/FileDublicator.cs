@@ -13,6 +13,7 @@ namespace UnityCommander.Core.IO
     /// <summary>
     /// The flags external control of the copy behavior.
     /// </summary>
+    [Obsolete]
     public enum Status : byte
     {
         /// <summary>
@@ -30,10 +31,11 @@ namespace UnityCommander.Core.IO
         /// </summary>
         Cancel = 2
     }
-    
+
     /// <summary>
     /// The file duplicator.
     /// </summary>
+    [Obsolete]
     public class FileDublicator
     {
         #region Declaration Field

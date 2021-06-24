@@ -2,21 +2,23 @@
 namespace UnityCommander.Core.Helper
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Threading;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// The types builder.
     /// </summary>
-    [DebuggerStepThrough]
+   /// [DebuggerStepThrough]
     public class GeneratorType
     {
         /// <summary>
         /// The mod builder.
         /// </summary>
-        public static ModuleBuilder modBuilder;
+        private static ModuleBuilder modBuilder;
 
         /// <summary>
         /// The generate assembly and module.
@@ -26,14 +28,25 @@ namespace UnityCommander.Core.Helper
         /// </param>
         public static void GenerateAssemblyAndModule(string name)
         {
-            //AssemblyName assemblyName = new AssemblyName { Name = name };
-            //System.AppDomain thisDomain = Thread.GetDomain();
+            AssemblyName assemblyName = new AssemblyName { Name = name };
+            AppDomain thisDomain = Thread.GetDomain();
+#if NETCOREAPP
 
-            //// To generate a persistable assembly, specify AssemblyBuilderAccess.RunAndSave.
-            //var asmBuilder = thisDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            AssemblyBuilder asmBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            modBuilder = asmBuilder.DefineDynamicModule(asmBuilder.GetName().Name);
+#elif NET472
+            var asmBuilder = thisDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            modBuilder = asmBuilder.DefineDynamicModule(asmBuilder.GetName().Name, false);
+#endif
+        }
 
-            //// Generate a persistable single-module assembly.
-            //modBuilder = asmBuilder.DefineDynamicModule(asmBuilder.GetName().Name, false);
+        public static void CanAddAttribute()
+        {
+            var type = typeof(SerializableAttribute);
+
+            var attrCtorParams = new Type[] { };
+            var attrCtorInfo = typeof(SerializableAttribute).GetConstructor(attrCtorParams);
+            var attrBuilder = new CustomAttributeBuilder(attrCtorInfo, new object[] { });
         }
 
         /// <summary>
@@ -46,12 +59,13 @@ namespace UnityCommander.Core.Helper
             // ReSharper disable once ComplexConditionExpression
             TypeBuilder typeBuilder = modBuilder.DefineType(
                 typeName,
-                 TypeAttributes.Public
-                | TypeAttributes.Class
-                | TypeAttributes.AutoClass
-                | TypeAttributes.AnsiClass
-                | TypeAttributes.BeforeFieldInit
-                | TypeAttributes.AutoLayout,
+                  TypeAttributes.Public
+                    | TypeAttributes.Class
+                    | TypeAttributes.AutoClass
+                    | TypeAttributes.AnsiClass
+                    | TypeAttributes.BeforeFieldInit
+                    | TypeAttributes.AutoLayout
+                    | TypeAttributes.Serializable,
                 typeof(object));
 
             return typeBuilder;

@@ -32,7 +32,7 @@ namespace UnityCommander.Modules.LeftSideBars
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, "ViewA");
+            this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, "Sidebar");
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace UnityCommander.Modules.LeftSideBars
         /// <param name="containerRegistry"> The container registry. </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<ViewA>();
+            containerRegistry.RegisterForNavigation<Sidebar>();
         }
     }
 }

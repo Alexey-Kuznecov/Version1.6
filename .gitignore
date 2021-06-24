@@ -165,5 +165,6 @@ Source/
 #/Other/IconMaker/Resources/XamlImages
 /Other/
 /Lab/
-/UnityCommander/UnityCommander.Common.Styling/Fonts/lato
 /UnityCommander/Library/IconMaker
+/UnityCommander/Plugins/IconMaker
+/UnityCommander/UnityCommander.Common.Styling/Fonts/lato

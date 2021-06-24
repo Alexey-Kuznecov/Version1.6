@@ -4,7 +4,7 @@ namespace UnityCommander.Views
     using System.Windows;
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// The main window.
     /// </summary>
     public partial class MainWindow : Window
     {

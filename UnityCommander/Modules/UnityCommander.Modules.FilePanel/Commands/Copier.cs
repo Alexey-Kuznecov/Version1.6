@@ -2,8 +2,7 @@
 namespace UnityCommander.Modules.FilePanel.Commands
 {
     using System;
-
-    using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Commands.Base;
 
     /// <summary>
     /// The copier.

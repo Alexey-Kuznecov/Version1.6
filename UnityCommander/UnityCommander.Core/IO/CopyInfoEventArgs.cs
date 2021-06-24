@@ -15,6 +15,7 @@ namespace UnityCommander.Core.IO
     /// <summary>
     /// The class is a data wrapper for the file copy event. <see cref="FileDublicator.CopyingEvent"/>.
     /// </summary>
+    [Obsolete]
     public class CopyInfoEventArgs : EventArgs
     {
         /// <summary>

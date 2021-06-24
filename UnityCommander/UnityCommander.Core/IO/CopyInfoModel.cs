@@ -17,7 +17,6 @@ namespace UnityCommander.Core.IO
     /// </summary>
     public class CopyInfoModel
     {
-
         /// <summary>
         /// Gets or sets the files name.
         /// </summary>

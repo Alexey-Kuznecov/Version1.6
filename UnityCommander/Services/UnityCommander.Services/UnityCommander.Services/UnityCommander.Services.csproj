@@ -1,11 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+	  <UseWPF>true</UseWPF>
+	  <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

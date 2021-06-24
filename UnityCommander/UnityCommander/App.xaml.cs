@@ -1,19 +1,25 @@
 ﻿
+using UnityCommander.Services.Plugins;
+
 namespace UnityCommander
 {
     using System.Windows;
 
+    using Prism.DryIoc;
     using Prism.Ioc;
     using Prism.Modularity;
+    using Prism.Services.Dialogs;
 
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.LeftSideBars;
+    using UnityCommander.Modules.ToolBar;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.ViewModels;
     using UnityCommander.Views;
 
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// The application.
     /// </summary>
     public partial class App
     {
@@ -36,7 +42,13 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<IDirectoryProvider, DirectoryProvider>(); 
+            containerRegistry.RegisterDialog<DialogView, DialogViewModel>();
+            containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
+            containerRegistry.RegisterSingleton<IDirectoryProviderService, DirectoryProviderService>();
+            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
+            containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
+            containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
+            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
         }
 
         /// <summary>
@@ -49,6 +61,7 @@ namespace UnityCommander
         {
             moduleCatalog.AddModule<FilePanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
+            moduleCatalog.AddModule<ToolBarModule>();
         }
     }
 }

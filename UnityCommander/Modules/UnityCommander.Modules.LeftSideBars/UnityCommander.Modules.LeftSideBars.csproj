@@ -1,16 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander.Modules.LeftSideBars</AssemblyName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  </PropertyGroup>
   <ItemGroup>
-    <None Remove="ViewModels\ViewAViewModel.cs~RF220cb962.TMP" />
+    <None Remove="ViewModels\SidebarViewModel.cs~RF220cb962.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,33 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.ToolBar.Views.ViewA"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="clr-namespace:UnityCommander.Controls.Ribbon;assembly=UnityCommander.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:UnityCommander.Modules.ToolBar.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <StackPanel>
+        <control:Ribbon BubbleSource="{Binding UserControls}" SetCommand="{Binding SetRibbon}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <control:RibbonTaber Grid.Row="0">
+                    <Button Width="100" Content="Main" />
+                    <Button Width="100" Content="View" />
+                    <Button
+                        Width="100"
+                        Content="Bar"
+                        Cursor="Hand" />
+                </control:RibbonTaber>
+                <control:RibbonContainer Grid.Row="1">
+                    <ContentControl Content="{Binding UserControls}" />
+                </control:RibbonContainer>
+            </Grid>
+        </control:Ribbon>
+    </StackPanel>
+</UserControl>

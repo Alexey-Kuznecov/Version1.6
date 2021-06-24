@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\DateTimeColumns</OutputPath>
+		<OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\DateTimeColumns</OutputPath>
+		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+	</PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
