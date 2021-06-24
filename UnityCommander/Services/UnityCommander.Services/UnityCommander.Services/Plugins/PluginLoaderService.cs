@@ -1,59 +1,60 @@
-﻿
+﻿#define Unity
 
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Plugins
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
-#if NET472
-    using System.ComponentModel.Composition;
-    using System.ComponentModel.Composition.Hosting;
-#endif
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Resources;
-    using System.Windows;
-    using System.Windows.Baml2006;
+    using Microsoft.Extensions.DependencyInjection;
+    using Integration.Contracts;
+    using Integration.Dialog;
+    using Interfaces;
+
+    using System.ComponentModel.Composition;
+    using System.ComponentModel.Composition.Hosting;
 
 #if NETCOREAPP3_1
-    using Microsoft.Extensions.DependencyInjection;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
-    using UnityCommander.Plugin.Core;
+    using System.Runtime.Loader;
+
+#if MsMaster
+    using Plugin.Core;
+#endif
+#if Unity
+    using Plugin.NETCore;
+#endif
 #else
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
     using UnityCommander.Plugin48.Core;
 #endif
-    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The plugin provider service.
     /// </summary>
     public class PluginLoaderService : IPluginLoaderService
     {
+        public PluginManager PluginManager { get; } = new PluginManager();
+#if NETCOREAPP3_1
+        public PluginLoadContext pluginContext { get; private set; }
+        public HashSet<WeakReference> pluginContextList { get; private set; } = new HashSet<WeakReference>();
+#endif
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
         /// </summary>
         public PluginLoaderService()
         {
 #if NETCOREAPP3_1
-            var services = new ServiceCollection();
-            var pluginLoaders = GetPluginLoaders();
-            var serviceOption = new ServiceProviderOptions();
-            ConfigureServices(services, pluginLoaders);
-            using var serviceProvider = services.BuildServiceProvider(serviceOption);
-
-            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>();
-            this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>();
-            this.ImportDialogService = serviceProvider.GetServices<IDialogService>();
-#endif
-
-
-#if NET472
-            this.SetImport();
+            var service = new ServiceCollection();
+            var pluginLoaders = this.GetPluginLoaders();
+            ConfigureServices(service, pluginLoaders);
+            using var serviceProvider = service.BuildServiceProvider();
+            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>().ToList();
+            this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>().ToList();
+            this.ImportDialogService = serviceProvider.GetServices<IDialogService>().ToList();
+            this.ImportPluginMeta = serviceProvider.GetServices<IPluginDescriptor>().ToList();
 #endif
         }
 
@@ -73,6 +74,12 @@ namespace UnityCommander.Services
         /// Gets the import dialog service.
         /// </summary>
         public IEnumerable<IDialogService> ImportDialogService { get; private set; }
+
+
+        /// <summary>
+        /// Gets the imported the name and description for plugin.
+        /// </summary>
+        public IEnumerable<IPluginDescriptor> ImportPluginMeta { get; private set; }
 
         #endregion
 
@@ -154,27 +161,85 @@ namespace UnityCommander.Services
 
         #endregion
 
+        public void UnloadInterface(AssemblyName assemblyName)
+        {
+            ((List<IPluginConfigure>)ImportPluginSettings).RemoveAll(p 
+                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
+            ((List<IPluginImplement>)ImportPluginImplements).RemoveAll(p
+                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
+            ((List<IDialogService>)ImportDialogService).RemoveAll(p
+                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
+            ((List<IPluginDescriptor>)ImportPluginMeta).RemoveAll(p
+                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
+        }
+
+        /// <summary>
+        /// Gets interfaces to configure plugins.
+        /// </summary>
+        /// <returns>
+        /// The list interfaces to configure plugins.
+        /// </returns>
+        public IPluginManager GetPluginManager()
+        {
+            foreach (var plugin in this.ImportPluginMeta)
+            {
+                if (plugin is not null)
+                {
+                    var assembly = Assembly.GetAssembly(plugin.GetType());
+
+                    var record = PluginManager.ALCRecords.Single(r => r.AssemblyName.FullName == assembly?.FullName);
+
+                    PluginManager.PluginRecords.Add(new PluginRecord
+                    {
+                        Name = plugin.DisplayName,
+                        Description = plugin.Description,
+                        AssemblyName = record.AssemblyName,
+                        Token = record.Token
+                    });
+                }
+            }
+
+            return PluginManager;
+        }
+
 #if NETCOREAPP3_1
 
         /// <summary>
         /// Scans for a plugins folder in its base directory and attempts to load any plugins it finds.
         /// </summary>
         /// <returns> List of loaded plugins. </returns>
-        private static List<PluginLoader> GetPluginLoaders()
+        private List<PluginLoader> GetPluginLoaders()
         {
             var loaders = new List<PluginLoader>();
-
             // Create plugin loaders
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
                 var dirName = Path.GetFileName(dir);
                 var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
+
+                var alcRecords = new ALCRecords
+                {
+                    Alc = new AssemblyLoadContext(dirName, true),
+                    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
+                };
+
+                pluginContext = new PluginLoadContext(pluginDll);
+                var alcWeakRef = new WeakReference(pluginContext);
+                pluginContextList.Add(alcWeakRef);
+
+                PluginManager.ALCRecords.Add(alcRecords);
+
                 if (File.Exists(pluginDll))
                 {
                     var loader = PluginLoader.CreateFromAssemblyFile(
                         pluginDll,
-                        sharedTypes: new[] { typeof(IPluginFactory), typeof(IServiceCollection) });
+                        sharedTypes: new[] { typeof(IPluginFactory), typeof(IServiceCollection) },
+                        (config) =>
+                        {
+                            // config.IsLazyLoaded = true;
+                            config.DefaultContext = alcRecords.Alc;
+                        });
                     loaders.Add(loader);
                 }
             }
@@ -187,7 +252,7 @@ namespace UnityCommander.Services
         /// </summary>
         /// <param name="services"> Service collection. </param>
         /// <param name="loaders"> List of plugins loaded. </param>
-        private static void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
+        private void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
         {
             // Create an instance of plugin types
             foreach (var loader in loaders)
@@ -199,74 +264,13 @@ namespace UnityCommander.Services
                 {
                     // This assumes the implementation of IPluginFactory has a parameter less constructor
                     var plugin = Activator.CreateInstance(pluginType) as IPluginFactory;
-                    
+
                     plugin?.Configure(services);
-                    GetResourceDictionary(pluginType.Assembly);
-                }
-            }
-        }
-
-        /// <summary>
-        /// This method will attempt to find shared resource files in plugin assemblies.
-        /// Searches only for files named General, because links can be looped 
-        /// if multiple dictionaries refer the same resources.
-        /// TODO: This method is called more than once, resulting in duplicate resource dictionaries. We'll need to fix it.
-        /// </summary>
-        /// <param name="assembly"> The assembly to search for resource files. </param>
-        public static void GetResourceDictionary(Assembly assembly)
-        {
-            Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".g.resources");
-            if (stream == null) return;
-
-            using (ResourceReader reader = new ResourceReader(stream))
-            {
-                foreach (DictionaryEntry entry in reader)
-                {
-                    var extension = Path.GetExtension(entry.Key.ToString());
-                    if (extension != ".baml") continue;
-
-                    if (entry.Key.ToString().Contains("general"))
-                    {
-                        var readStream = entry.Value as Stream;
-                        Baml2006Reader bamlReader = new Baml2006Reader(readStream);
-
-                        var loadedObject = System.Windows.Markup.XamlReader.Load(bamlReader);
-                        if (loadedObject is ResourceDictionary resource)
-                        {
-                            var dictionary = Application.Current.Resources.MergedDictionaries;
-
-                            if (!dictionary.Contains(resource))
-                            {
-                                dictionary.Add(resource);
-                            }
-                        }
-                    }                   
+                    ResourceManager.GetResourceDictionary(pluginType.Assembly);
                 }
             }
         }
 #endif
-        //public void GetResourceDictionary(string assemblyName)
-        //{
-        //    List<Stream> bamlStreams = new List<Stream>();
-        //    Assembly skinAssembly = Assembly.LoadFrom(this._mainAssemblyPath);
-        //    string[] resourceDictionaries = skinAssembly.GetManifestResourceNames();
-        //    foreach (string resourceName in resourceDictionaries)
-        //    {
-        //        ManifestResourceInfo info = skinAssembly.GetManifestResourceInfo(resourceName);
-        //        if (info.ResourceLocation != ResourceLocation.ContainedInAnotherAssembly)
-        //        {
-        //            Stream resourceStream = skinAssembly.GetManifestResourceStream(resourceName);
-        //            using (ResourceReader reader = new ResourceReader(resourceStream))
-        //            {
-        //                foreach (DictionaryEntry entry in reader)
-        //                {
-        //                    //Here you can see all your ResourceDictionaries
-        //                    //entry is your ResourceDictionary from assembly
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
 #if NET472
         /// <summary>

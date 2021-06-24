@@ -1,4 +1,5 @@
-﻿
+﻿#define FEATURE_UNLOAD
+
 namespace UnityCommander.Plugin.Core
 {
     using System;

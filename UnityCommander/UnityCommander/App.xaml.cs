@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Services.Plugins;
+
 namespace UnityCommander
 {
     using System.Windows;
@@ -40,13 +42,13 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>();
-            containerRegistry.Register<IDirectoryProviderService, DirectoryProviderService>();
-            containerRegistry.Register<IGlobalCommandService, GlobalCommandService>();
-            containerRegistry.Register<ISettingsProviderService, SettingsProviderService>();
-            containerRegistry.Register<IIconProviderService, IconProviderService>();
-            containerRegistry.Register<IPluginLoaderService, PluginLoaderService>();
+            containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
+            containerRegistry.RegisterSingleton<IDirectoryProviderService, DirectoryProviderService>();
+            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
+            containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
+            containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
+            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
         }
 
         /// <summary>

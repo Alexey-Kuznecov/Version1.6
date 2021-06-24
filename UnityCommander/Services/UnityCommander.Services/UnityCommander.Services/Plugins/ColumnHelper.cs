@@ -67,7 +67,7 @@ namespace UnityCommander.Services.Plugins.Manager
                foreach (var context in contexts)
                {
                    context.DelegateCommand = Delegate.CreateDelegate(
-                       typeof(InsertValueUsePath), instance, context.CommandModel.Command);
+                       typeof(InsertValueUsePath), instance, context.HostAppCommandModel.Command);
                    yield return context;
                }
             }

@@ -10,7 +10,7 @@ namespace UnityCommander.Plugin.Core.Loader
     using UnityCommander.Plugin.Core.Internal;
 
     /// <summary>
-    /// Extensions for creating a load context using settings from a runtimeconfig.json file
+    /// Extensions for creating a load context using settings from a runtime config.json file
     /// </summary>
     public static class RuntimeConfigExtensions
     {
@@ -21,13 +21,13 @@ namespace UnityCommander.Plugin.Core.Loader
         };
 
         /// <summary>
-        /// Adds additional probing paths to a managed load context using settings found in the runtimeconfig.json
-        /// and runtimeconfig.dev.json files.
+        /// Adds additional probing paths to a managed load context using settings found in the runtime config.json
+        /// and runtime config.dev.json files.
         /// </summary>
         /// <param name="builder">The context builder</param>
-        /// <param name="runtimeConfigPath">The path to the runtimeconfig.json file</param>
-        /// <param name="includeDevConfig">Also read runtimeconfig.dev.json file, if present.</param>
-        /// <param name="error">The error, if one occurs while parsing runtimeconfig.json</param>
+        /// <param name="runtimeConfigPath">The path to the runtime config.json file</param>
+        /// <param name="includeDevConfig">Also read runtime config.dev.json file, if present.</param>
+        /// <param name="error">The error, if one occurs while parsing runtime config.json</param>
         /// <returns>The builder.</returns>
         public static AssemblyLoadContextBuilder TryAddAdditionalProbingPathFromRuntimeConfig(
             this AssemblyLoadContextBuilder builder,
@@ -39,7 +39,7 @@ namespace UnityCommander.Plugin.Core.Loader
             try
             {
                 var config = TryReadConfig(runtimeConfigPath);
-                if (config == null)
+                if (config is null)
                 {
                     return builder;
                 }
@@ -53,25 +53,30 @@ namespace UnityCommander.Plugin.Core.Loader
 
                 var tfm = config.runtimeOptions?.Tfm ?? devConfig?.runtimeOptions?.Tfm;
 
-                if (config.runtimeOptions != null)
+                if (config.runtimeOptions is not null)
                 {
                     AddProbingPaths(builder, config.runtimeOptions, tfm);
                 }
 
-                if (devConfig?.runtimeOptions != null)
+                if (devConfig?.runtimeOptions is not null)
                 {
                     AddProbingPaths(builder, devConfig.runtimeOptions, tfm);
                 }
 
-                if (tfm != null)
+                if (tfm is not null)
                 {
-                    var dotnet = Process.GetCurrentProcess().MainModule.FileName;
-                    if (string.Equals(Path.GetFileNameWithoutExtension(dotnet), "dotnet", StringComparison.OrdinalIgnoreCase))
+                    var processModule = Process.GetCurrentProcess().MainModule;
+                    
+                    if (processModule is not null)
                     {
-                        var dotnetHome = Path.GetDirectoryName(dotnet);
-                        if (dotnetHome != null)
+                        var dotnet = processModule.FileName;
+                        if (string.Equals(Path.GetFileNameWithoutExtension(dotnet), "dotnet", StringComparison.OrdinalIgnoreCase))
                         {
-                            builder.AddProbingPath(Path.Combine(dotnetHome, "store", RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant(), tfm));
+                            var dotnetHome = Path.GetDirectoryName(dotnet);
+                            if (dotnetHome is not null)
+                            {
+                                builder.AddProbingPath(Path.Combine(dotnetHome, "store", RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant(), tfm));
+                            }
                         }
                     }
                 }

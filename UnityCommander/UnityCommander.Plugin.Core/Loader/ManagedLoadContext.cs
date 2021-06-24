@@ -110,26 +110,23 @@ namespace UnityCommander.Plugin.Core.Loader
                 try
                 {
                     var defaultAssembly = this._defaultLoadContext.LoadFromAssemblyName(assemblyName);
-                    if (defaultAssembly != null)
+                    // Add referenced assemblies to the list of default assemblies.
+                    // This is basically lazy loading
+                    if (this._lazyLoadReferences)
                     {
-                        // Add referenced assemblies to the list of default assemblies.
-                        // This is basically lazy loading
-                        if (this._lazyLoadReferences)
+                        foreach (var reference in defaultAssembly.GetReferencedAssemblies())
                         {
-                            foreach (var reference in defaultAssembly.GetReferencedAssemblies())
+                            if (reference.Name != null && !this._defaultAssemblies.Contains(reference.Name))
                             {
-                                if (reference.Name != null && !this._defaultAssemblies.Contains(reference.Name))
-                                {
-                                    this._defaultAssemblies.Add(reference.Name);
-                                }
+                                this._defaultAssemblies.Add(reference.Name);
                             }
                         }
-
-                        // Older versions used to return null here such that returned assembly would be resolved from the default ALC.
-                        // However, with the addition of custom default ALCs, the Default ALC may not be the user's chosen ALC when
-                        // this context was built. As such, we simply return the Assembly from the user's chosen default load context.
-                        return defaultAssembly;
                     }
+
+                    // Older versions used to return null here such that returned assembly would be resolved from the default ALC.
+                    // However, with the addition of custom default ALCs, the Default ALC may not be the user's chosen ALC when
+                    // this context was built. As such, we simply return the Assembly from the user's chosen default load context.
+                    return defaultAssembly;
                 }
                 catch
                 {
@@ -203,8 +200,8 @@ namespace UnityCommander.Plugin.Core.Loader
                 using var pdbFile = File.Open(pdbPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 return this.LoadFromStream(file, pdbFile);
             }
-            return this.LoadFromStream(file);
 
+            return this.LoadFromStream(file);
         }
 
         /// <summary>

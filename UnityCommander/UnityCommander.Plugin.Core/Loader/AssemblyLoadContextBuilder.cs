@@ -1,4 +1,5 @@
-﻿
+﻿#define FEATURE_UNLOAD
+
 namespace UnityCommander.Plugin.Core.Loader
 {
     using System;
@@ -27,11 +28,10 @@ namespace UnityCommander.Plugin.Core.Loader
         private bool _preferDefaultLoadContext;
         private bool _lazyLoadReferences;
 
-#if FEATURE_UNLOAD
+
         private bool _isCollectible;
         private bool _loadInMemory;
         private bool _shadowCopyNativeLibraries;
-#endif
 
         /// <summary>
         /// Creates an assembly load context using settings specified on the builder.

@@ -1,4 +1,6 @@
-﻿
+﻿#define FEATURE_UNLOAD
+using UnityCommander.Plugin.Core.Internal;
+
 namespace UnityCommander.Plugin.Core
 {
     using System;
@@ -7,7 +9,7 @@ namespace UnityCommander.Plugin.Core
     using System.Reflection;
     using System.Runtime.Loader;
 
-    using UnityCommander.Plugin.Core.Loader;
+    using Loader;
 
     /// <summary>
     /// This loader attempts to load binaries for execution (both managed assemblies and native libraries)
@@ -401,7 +403,7 @@ namespace UnityCommander.Plugin.Core
 
             builder.TryAddAdditionalProbingPathFromRuntimeConfig(pluginRuntimeConfigFile, includeDevConfig: true, out _);
 
-            // Always include runtimeconfig.json from the host app.
+            // Always include runtime config.json from the host app.
             // in some cases, like `dotnet test`, the entry assembly does not actually match with the
             // runtime config file which is why we search for all files matching this extensions.
             foreach (var runtimeconfig in Directory.GetFiles(AppContext.BaseDirectory, "*.runtimeconfig.json"))
@@ -411,6 +413,16 @@ namespace UnityCommander.Plugin.Core
 #endif
 
             return builder;
+        }
+    }
+
+    public class PluginReloadedEventArgs
+    {
+        private PluginLoader pluginLoader;
+
+        public PluginReloadedEventArgs(PluginLoader pluginLoader)
+        {
+            this.pluginLoader = pluginLoader;
         }
     }
 }

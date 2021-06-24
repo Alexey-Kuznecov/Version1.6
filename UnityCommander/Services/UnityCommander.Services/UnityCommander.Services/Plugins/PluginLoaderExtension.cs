@@ -1,21 +1,17 @@
 ﻿
 
-namespace UnityCommander.Services.Plugins.Manager
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Services.Interfaces;
+
+namespace UnityCommander.Services.Plugins
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
-
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
-    using UnityCommander.Services.Interfaces;
-
     /// <summary>
     /// The plugin extension methods.
     /// </summary>
-    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public static class PluginExtensionMethods
     {
         /// <summary>
