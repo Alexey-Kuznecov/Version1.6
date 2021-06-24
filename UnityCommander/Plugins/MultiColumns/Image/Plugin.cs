@@ -1,9 +1,8 @@
 ﻿
-namespace ImagesColumns
+namespace MultiColumns.Images
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.IO;
     using System.Windows;
 
@@ -30,21 +29,21 @@ namespace ImagesColumns
         /// Gets or sets the columns.
         /// </summary>
         public static List<HostAppContext> Columns { get; set; }
+        
+        /// <summary>
+        /// Gets or sets plugin name.
+        /// </summary>
+        public string DisplayName { get; set; } = "Image columns";
+
+        /// <summary>
+        /// Gets or sets plugin description.
+        /// </summary>
+        public string Description { get; set; } = "Plugin creates additional columns for image files";
 
         /// <summary>
         /// Gets or sets the register.
         /// </summary>
         public List<Type> Register { get; set; }
-
-        /// <summary>
-        /// Gets or sets plugin name.
-        /// </summary>
-        public string DisplayName { get; set; } = "Image columns";
-        
-        /// <summary>
-        /// Gets or sets plugin description.
-        /// </summary>
-        public string Description { get; set; } = "Plugin creates additional columns for image files";
 
         /// <summary>
         /// The register type.
@@ -59,7 +58,7 @@ namespace ImagesColumns
         /// The get unity context.
         /// </summary>
         /// <returns>
-        /// The <see cref="HostAppContext"/>.
+        /// The <see cref="AppHostContext"/>.
         /// </returns>
         public List<HostAppContext> SetHostAppContext()
         {
@@ -98,31 +97,27 @@ namespace ImagesColumns
         /// </summary>
         private void InitialData()
         {
-            var context = PluginScopes.Columns.Add(TargetPanel.Files, nameof(ImageModel.Dpi), 50)
+            var unityContext = PluginScopes.Columns.Add(TargetPanel.Files, nameof(ImageModel.Dpi), 50)
                 .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
                 .AddRender(OptionRender.TextBlock)
                 .AddCommand(this.SortDpi)
                 .AddContextItem("Sort by dpi", this.SortDpi);
 
-            var context2 = PluginScopes.Columns.Add(TargetPanel.Folders | TargetPanel.Files, nameof(ImageModel.Sized), 60)
+            var unityContext2 = PluginScopes.Columns.Add(TargetPanel.Folders | TargetPanel.Files, nameof(ImageModel.Sized), 60)
                 .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
                 .AddRender(OptionRender.TextBlock)
                 .AddCommand(this.SortDpi)
                 .AddContextItem("Sort by dpi", this.SortDpi);
 
-            var context3 = PluginScopes.Columns.Add(TargetPanel.Folders, nameof(ImageModel.Colors), 50)
+            var unityContext3 = PluginScopes.Columns.Add(TargetPanel.Folders, nameof(ImageModel.Colors), 50)
                 .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
                 .AddRender(OptionRender.TextBlock)
                 .AddCommand(this.SortDpi)
                 .AddContextItem("Sort by dpi", this.SortDpi);
 
-            context.RegisterType(PluginScopes.Columns, typeof(ImageModel));
-            context2.RegisterType(PluginScopes.Columns, typeof(ImageModel));
-            context3.RegisterType(PluginScopes.Columns, typeof(ImageModel));
-
-            Columns.Add(context);
-            Columns.Add(context2);
-            Columns.Add(context3);
+            Columns.Add(unityContext);
+            Columns.Add(unityContext2);
+            Columns.Add(unityContext3);
         }
     }
 }

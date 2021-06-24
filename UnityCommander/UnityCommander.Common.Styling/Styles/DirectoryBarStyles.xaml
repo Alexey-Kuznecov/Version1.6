@@ -19,7 +19,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Type ListBox}" TargetType="ListBox">
+    <!--<Style x:Key="{x:Type ListBox}" TargetType="ListBox">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
@@ -50,9 +50,9 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
-    <Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+    <!--<Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
         <Setter Property="Height" Value="30" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="Fonts/#Lato-Regular" />
@@ -114,5 +114,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

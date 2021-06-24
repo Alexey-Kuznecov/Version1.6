@@ -1,11 +1,10 @@
 ﻿
-using UnityCommander.Integration.Enums;
-
-namespace DateTimeColumns
+namespace MultiColumns.Images
 {
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
 
     /// <summary>
     /// The plugin configuration.
@@ -20,9 +19,9 @@ namespace DateTimeColumns
         /// </param>
         public void Configure(IServiceCollection services)
         {
+            services.AddSingleton<IPluginConfigure, PluginSettings>();
             services.AddSingleton<IPluginImplement, Plugin>();
             services.AddSingleton<IPluginDescriptor, Plugin>();
-            services.AddSingleton<IPluginConfigure, PluginSettings>();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace IconBrowser
         public void Configure(IServiceCollection services)
         {
             services.AddSingleton<IDialogService, IconBrowserControl>();
+            services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
         }
     }
 }

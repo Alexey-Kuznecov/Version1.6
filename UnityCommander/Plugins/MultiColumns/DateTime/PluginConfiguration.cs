@@ -1,7 +1,5 @@
 ﻿
-using UnityCommander.Integration.Enums;
-
-namespace DateTimeColumns
+namespace MultiColumns.DateTime
 {
     using Microsoft.Extensions.DependencyInjection;
 

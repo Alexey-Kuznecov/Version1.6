@@ -3,10 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:AlexLibWpf.Converters;assembly=AlexLibWpf">
 
-    <Style x:Key="CollectionMenuDragDropStyle" TargetType="TextBlock">
+    <!--<Style x:Key="CollectionMenuDragDropStyle" TargetType="TextBlock">
         <Setter Property="Background" Value="#F0F0F0" />
         <Setter Property="FontWeight" Value="Bold" />
-    </Style>
+    </Style>-->
 
     <ControlTemplate x:Key="ComboBoxItemTemplate" TargetType="ComboBoxItem">
         <Grid>

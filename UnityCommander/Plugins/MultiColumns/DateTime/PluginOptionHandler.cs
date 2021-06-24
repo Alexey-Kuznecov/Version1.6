@@ -1,5 +1,5 @@
 ﻿
-namespace DateTimeColumns
+namespace MultiColumns.DateTime
 {
     using System.Diagnostics;
     using System.IO;
@@ -38,7 +38,7 @@ namespace DateTimeColumns
         /// </returns>
         public object GetColumns()
         {
-            return Plugin.AppContext;
+            return Plugin.Columns;
         }
 
         /// <summary>

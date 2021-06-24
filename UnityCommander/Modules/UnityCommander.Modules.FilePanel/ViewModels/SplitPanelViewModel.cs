@@ -7,6 +7,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Reflection;
+
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
@@ -171,7 +173,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Goes to the selected directory.
         /// </summary>
-        public DelegateCommand<FolderModel> GoToDirectory => new DelegateCommand<FolderModel>(
+        public DelegateCommand<FolderModel> NavigateDirCommand => new DelegateCommand<FolderModel>(
             dir =>
         {
             if (dir != null)
@@ -183,7 +185,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         ///  Goes back to the previous directory.
         /// </summary>
-        public DelegateCommand GoBackDirectory => new DelegateCommand(() =>
+        public DelegateCommand NavigateBackDirCommand => new DelegateCommand(() =>
         {
             if (this.invoker.CanUndo)
             {
@@ -214,10 +216,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
 
-            using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, saveObjects);
-            }
+            using FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate);
+            formatter.Serialize(fs, saveObjects);
         });
 
         #endregion
@@ -411,13 +411,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The add columns in the file panel.
         /// </summary>
-        [SuppressMessage("ReSharper", "StyleCop.SA1503")]
         private void SetAdditionalColumns()
         {
-            foreach (var unityContext in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
+            foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
             {
-                if (!(unityContext.DataContext is Column data)) continue;
-                if (unityContext.PluginScope == PluginScopes.Columns)
+                if (!(context.DataContext is Column data)) continue;
+                if (context.PluginScope == PluginScopes.Columns)
                 {
                     var columnNew = new GridViewColumn
                     {
@@ -430,11 +429,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     {
                         case TargetPanel.Folders:
                             this.FolderPanelContainer.Columns.Add(columnNew);
-                            this.InitialFolderColumnValues(unityContext);
+                            this.InitialFolderColumnValues(context);
                             break;
                         case TargetPanel.Files:
                             this.FilePanelContainer.Columns.Add(columnNew);
-                            this.InitialFileColumnValues(unityContext);
+                            this.InitialFileColumnValues(context);
                             break;
                     }
                 }
@@ -449,12 +448,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         private void InitialFolderColumnValues(HostAppContext context)
         {
+            using var objectBuilder = new ObjectBuilder<FolderModel>();
+            objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
             var folderModels = new ObservableCollection<FolderModel>();
-
             foreach (var folder in this.DirectoryList)
             {
                 var command = context.DelegateCommand as InsertValueUsePath;
-                folderModels.Add(folder.MergeObjectProperties<FolderModel>(command?.Invoke(folder.Path)));
+                folderModels.Add(objectBuilder.ObjectInit(folder, command?.Invoke(folder.Path)));
             }
 
             this.DirectoryList = folderModels;
@@ -468,11 +468,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         private void InitialFileColumnValues(HostAppContext context)
         {
+            using var objectBuilder = new ObjectBuilder<FileModel>();
+            objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
             var fileModels = new ObservableCollection<FileModel>();
             foreach (var file in this.FileList)
             {
                 var command = context.DelegateCommand as InsertValueUsePath;
-                fileModels.Add(file.MergeObjectProperties<FileModel>(command?.Invoke(file.Path)));
+                fileModels.Add(objectBuilder.ObjectInit(file, command?.Invoke(file.Path)));
             }
 
             this.FileList = fileModels;
@@ -492,6 +494,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.DirectoryList = this.directoryProviderService.GetDirectories(path);
             this.FileList = this.directoryProviderService.GetFiles(path);
             this.CurrentDirectory = path;
+
+            foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
+            {
+                if (!(context.DataContext is Column data)) continue;
+                if (context.PluginScope == PluginScopes.Columns)
+                {
+                    switch (data.TargetPanel)
+                    {
+                        case TargetPanel.Folders:
+                            this.InitialFolderColumnValues(context);
+                            break;
+                        case TargetPanel.Files:
+                            this.InitialFileColumnValues(context);
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>

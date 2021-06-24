@@ -1,11 +1,16 @@
 ﻿
-namespace DateTimeColumns
+namespace MultiColumns.DateTime
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Extentions.Helper;
 
@@ -20,7 +25,7 @@ namespace DateTimeColumns
         public Plugin()
         {
             this.Register = new List<Type>();
-            AppContext = new List<HostAppContext>();
+            Columns = new List<HostAppContext>();
             this.InitialData();
         }
 
@@ -28,17 +33,12 @@ namespace DateTimeColumns
         /// Gets or sets the columns.
         /// </summary>
         [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
-        public static List<HostAppContext> AppContext { get; set; }
+        public static List<HostAppContext> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the register.
         /// </summary>
         public List<Type> Register { get; set; }
-
-        /// <summary>
-        /// Gets or sets the register.
-        /// </summary>
-        public Dictionary<PluginScopes, Type> RegisterModel { get; set; }
 
         /// <summary>
         ///  Gets or sets plugin name.
@@ -63,11 +63,11 @@ namespace DateTimeColumns
         /// The get unity context.
         /// </summary>
         /// <returns>
-        /// The <see cref="HostAppContext"/>.
+        /// The <see cref="UnityContext"/>.
         /// </returns>
         public List<HostAppContext> SetHostAppContext()
         {
-            return AppContext;
+            return Columns;
         }
 
         /// <summary>
@@ -109,15 +109,14 @@ namespace DateTimeColumns
         /// </summary>
         private void InitialData()
         {
-            var context = PluginScopes.Columns.Add(TargetPanel.Files, nameof(DateTimeModel.CreationTime), 150)
+            var unityContext = PluginScopes.Columns.Add(TargetPanel.Files, nameof(DateTimeModel.CreationTime), 150)
                     .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
                     .AddRender(OptionRender.TextBlock)
                     .AddCommand(this.SortDateTime)
                     .AddContextItem("Date Filter", this.SetDateFilter)
                     .AddContextItem("Install Date and Time", this.SortDateTime);
-
-            context.RegisterType(PluginScopes.Columns, typeof(DateTimeModel));
-            AppContext.Add(context);
+            
+            Columns.Add(unityContext);
         }
     }
 }

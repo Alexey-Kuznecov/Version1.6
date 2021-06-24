@@ -2,14 +2,13 @@
 namespace IconBrowser
 {
     using System.Windows.Controls;
-
+    using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
-    using static System.Net.Mime.MediaTypeNames;
 
     /// <summary>
     /// The icon browser control.
     /// </summary>
-    public partial class IconBrowserControl : UserControl, IDialogService
+    public partial class IconBrowserControl : UserControl, IDialogService, IPluginDescriptor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IconBrowserControl"/> class.
@@ -18,5 +17,15 @@ namespace IconBrowser
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// Gets or sets plugin name.
+        /// </summary>
+        public string DisplayName { get; set; } = "Icon Browser for UC";
+
+        /// <summary>
+        /// Gets or sets plugin description.
+        /// </summary>
+        public string Description { get; set; } = "Plugin for management and viewing the collection of icons.";
     }
 }

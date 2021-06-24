@@ -21,7 +21,7 @@ namespace ImagesColumns
         {
             services.AddSingleton<IPluginConfigure, PluginSettings>();
             services.AddSingleton<IPluginImplement, Plugin>();
-            services.AddSingleton<IColumnService, PluginOptionHandler>();
+            services.AddSingleton<IPluginDescriptor, Plugin>();
         }
     }
 }

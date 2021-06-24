@@ -23,6 +23,11 @@ namespace UnityCommander.Integration.Contracts
         };
 
         /// <summary>
+        /// TODO: Give a description of this
+        /// </summary>
+        private readonly IDictionary<PluginScopes, Type> TypeRegistry = new Dictionary<PluginScopes, Type>();
+
+        /// <summary>
         /// Gets the list of the context menu item.
         /// </summary>
         public List<ContextItem> ContextItem { get; internal set; }
@@ -45,7 +50,7 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets the model that describes the command.
         /// </summary>
-        public HostAppCommand CommandModel { get; internal set; }
+        public HostAppCommand HostAppCommandModel { get; internal set; }
 
         /// <summary>
         /// Gets or sets delegate to mapping a command.
@@ -56,6 +61,26 @@ namespace UnityCommander.Integration.Contracts
         /// Gets the enumeration member that defines the scope of the plugin.
         /// </summary>
         public PluginScopes PluginScope { get; internal set; }
+
+        /// <summary>
+        ///  TODO: Give a description of this
+        /// </summary>
+        /// <param name="scopes"></param>
+        /// <param name="type"></param>
+        public void RegisterType(PluginScopes scopes, Type type)
+        {
+            TypeRegistry.Add(scopes, type);
+        }
+
+        /// <summary>
+        ///  TODO: Give a description of this
+        /// </summary>
+        /// <param name="scopes"></param>
+        /// <returns></returns>
+        public Type GetRegisteredType(PluginScopes scopes)
+        {
+            return TypeRegistry.Single(k => k.Key == scopes).Value;
+        }
 
         /// <summary>
         /// Sets the item rendering option based on the selected scope of the plugin.
@@ -132,7 +157,7 @@ namespace UnityCommander.Integration.Contracts
         /// </returns>
         internal object SetBindingCommand(PluginScopes scopes, Type commandSource, string command)
         {
-            this.CommandModel = new HostAppCommand
+            this.HostAppCommandModel = new HostAppCommand
               {
                   Command = command,
                   SourceCommand = commandSource,

@@ -66,7 +66,7 @@
                         VerticalAlignment="Center"
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
-                        Command="{Binding GoBackDirectory, Mode=Default}"
+                        Command="{Binding NavigateBackDirCommand, Mode=Default}"
                         Content="Back"
                         Foreground="#E8E8EC" />
                 </Grid>
@@ -84,7 +84,7 @@
                         View="{Binding FolderPanelContainer}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding GoToDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                                <i:InvokeCommandAction Command="{Binding NavigateDirCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <i:Interaction.Behaviors>
@@ -104,7 +104,7 @@
                         View="{Binding FolderPanelContainer}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding GoToDirectory, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                                <i:InvokeCommandAction Command="{Binding NavigateDirCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <i:Interaction.Behaviors>

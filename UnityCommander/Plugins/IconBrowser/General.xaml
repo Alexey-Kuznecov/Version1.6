@@ -8,7 +8,7 @@
         <ResourceDictionary Source="pack://application:,,,/IconBrowser;component/Resources/Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="ListBox" TargetType="{x:Type ListBox}">
+    <!--<Style x:Key="ListBox" TargetType="{x:Type ListBox}">
         <Setter Property="Margin" Value="10,10,0,10" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="Foreground" Value="#FF6A6A6A" />
@@ -28,11 +28,12 @@
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
     <!--
         КНОПКИ И ТЕКСТОВЫЕ ПОЛЯ
     -->
+    <!--
     <Style x:Key="btIcon">
         <Setter Property="Control.Background" Value="{x:Null}" />
         <Setter Property="Control.BorderBrush" Value="{x:Null}" />
@@ -41,10 +42,10 @@
     <Style TargetType="{x:Type Button}">
         <Setter Property="FontFamily" Value="Roboto" />
         <Setter Property="Cursor" Value="Hand" />
-    </Style>
+    </Style>-->
 
     <!--  TEXTBOX STYLES  -->
-    <Style x:Key="BaseTextBox" TargetType="{x:Type TextBox}">
+    <!--<Style x:Key="BaseTextBox" TargetType="{x:Type TextBox}">
         <Setter Property="Foreground" Value="DarkGray" />
         <Setter Property="FontFamily" Value="Segeo UI" />
         <Setter Property="FontSize" Value="12" />
@@ -134,5 +135,5 @@
                 </Setter>
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

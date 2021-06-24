@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:IconBrowser"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="UserControl"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,7 +17,7 @@
     <UserControl.DataContext>
         <local:IconBrowserViewModel />
     </UserControl.DataContext>
-    <Grid Background="{Binding Background, ElementName=window}">
+    <Grid Background="{Binding Background, ElementName=UserControl}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210" />
             <ColumnDefinition Width="170*" />
@@ -67,8 +68,7 @@
             Grid.Column="0"
             ContextMenu="{Binding IconCollectionName/ContextMenu}"
             ItemsSource="{Binding IconCollectionName}"
-            SelectedIndex="{Binding SelectIndex}"
-            Style="{StaticResource ListBox}">
+            SelectedIndex="{Binding SelectIndex}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <ItemsControl
@@ -78,12 +78,8 @@
                         AllowDrop="True"
                         Cursor="Hand">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="30" />
-                            </Grid.ColumnDefinitions>
                             <TextBlock
-                                Padding="5"
+                                Padding="2"
                                 AllowDrop="True"
                                 ContextMenu="{Binding CollectionContextMenu}"
                                 Cursor="Hand"
@@ -93,11 +89,7 @@
                                 Drop="{x:Static local:DragDropHandler.DropHandler}"
                                 MouseMove="{x:Static local:DragDropHandler.MouseMoveHandler}"
                                 Text="{Binding CollectionName}" />
-                            <TextBlock Grid.Column="1" Text="{Binding Icons.Count}" />
                         </Grid>
-                        <ItemContainerTemplate>
-                            <ListBoxItem Padding="5" Cursor="Hand" />
-                        </ItemContainerTemplate>
                     </ItemsControl>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -161,7 +153,7 @@
                                 </ContentControl.ToolTip>
                                 <ContentControl.InputBindings>
                                     <MouseBinding
-                                        Command="{Binding DataContext.SelectIconCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}}"
+                                        Command="{Binding DataContext.SelectIconCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}, Mode=FindAncestor}}"
                                         CommandParameter="{Binding CommandParameter}"
                                         Gesture="LeftClick" />
                                 </ContentControl.InputBindings>
@@ -236,7 +228,7 @@
                 <CheckBox
                     Height="34"
                     VerticalAlignment="Center"
-                    Content="Цветные иконки"
+                    Content="Color icons"
                     Cursor="Hand"
                     IsChecked="{Binding EnableColorIcon, Mode=TwoWay}" />
                 <Slider
@@ -254,8 +246,7 @@
                 Width="100"
                 Height="35"
                 Command="{Binding ResetByDefaultCommand}"
-                CommandParameter="{Binding ItemTemplate.Template, ElementName=ccc}"
-                Content="Сбросить" />
+                Content="Reset" />
             <Grid
                 Grid.Row="1"
                 Grid.Column="2"

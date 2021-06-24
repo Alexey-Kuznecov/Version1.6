@@ -10,9 +10,18 @@
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
+    using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Reflection;
+#if NETCOREAPP3_1
+    using System.Runtime.Loader;
+#endif
+    using System.Windows;
     using System.Windows.Controls;
 
     using Prism.Events;
@@ -73,8 +82,24 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The icon Provider.
         /// </param>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider)
+        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider, IPluginLoaderService pluginCofiguration)
         {
+            var manager = pluginCofiguration.GetPluginManager();
+            var records = manager.GetPluginRecords();
+            var asmb = AppDomain.CurrentDomain.GetAssemblies();
+
+            //var typeConverterAssembly = typeof(TypeConverter).Assembly;
+            //var reflectTypeDescriptionProviderType = typeConverterAssembly.GetType("System.ComponentModel.ReflectTypeDescriptionProvider");
+
+            //var reflectTypeDescriptorProviderTable = reflectTypeDescriptionProviderType.GetField("s_attributeCache", BindingFlags.Static | BindingFlags.NonPublic);
+            //var attributeCacheTable = (Hashtable)reflectTypeDescriptorProviderTable.GetValue(null);
+            //attributeCacheTable.Clear();
+
+            //var pluginRecords = records as IPluginRecord[] ?? records.ToArray();
+            //pluginCofiguration.UnloadInterface(pluginRecords.ToList()[3].AssemblyName);
+            //manager.UnloadPlugin(pluginRecords.ToList()[3]);
+            
+            asmb = AppDomain.CurrentDomain.GetAssemblies();
             this.viewModelMessage = viewModelMessage;
             this.packIcon = iconProvider.GetIcons();
             SidebarItems = new ObservableCollection<SidebarItem>();

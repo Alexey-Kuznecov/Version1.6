@@ -82,6 +82,7 @@ namespace IconBrowser
 
             // Init collection.
             IconCollectionBase.OnCollectionChanged += this.UpdateCollection;
+            
             this.IconCollectionName = IconsCollectionModel.GetCollection();
             this.AddMenuItem();
             //// Loading icons...
@@ -207,18 +208,17 @@ namespace IconBrowser
         /// </summary>
         public ICommand SelectIconCommand => new RelayCommand(obj =>
         {
-            //ButtonExtension bt = obj as ButtonExtension;            
-            //IconModel iconModel = new IconModel
-            //{
-            //    Name = bt?.IconName,
-            //    Path = bt?.Path,
-            //    FgroundColor = "#FFFFFF".StringFormatToSolidColor(),
-            //    BgroundColor = ColorBrush.Content.ToString().StringFormatToSolidColor(),
-            //    Scale = 254,
-            //    Brush = bt?.Brush
-            //};
-            //OnPropertyChanged("CurrnButtonExtension");
-            //DataSync.IconLoad.Invoke(iconModel);
+            ButtonExtension bt = obj as ButtonExtension;
+            IconModel iconModel = new IconModel
+            {
+                Name = bt?.IconName,
+                Path = bt?.Path,
+                FgroundColor = "#FFFFFF".StringFormatToSolidColor(),
+                BgroundColor = ColorBrush.Content.ToString().StringFormatToSolidColor(),
+                Scale = 254,
+                Brush = bt?.Brush
+            };
+            OnPropertyChanged("CurrnButtonExtension");
         });
 
         /// <summary>
