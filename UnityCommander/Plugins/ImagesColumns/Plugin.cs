@@ -55,6 +55,11 @@ namespace ImagesColumns
             this.Register.Add(typeof(ImageColumnModel));
         }
 
+        public static string GetVersion()
+        {
+            return "Version 2.8";
+        } 
+
         /// <summary>
         /// The get unity context.
         /// </summary>

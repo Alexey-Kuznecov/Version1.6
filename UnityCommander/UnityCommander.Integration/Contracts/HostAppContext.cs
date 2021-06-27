@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 namespace UnityCommander.Integration.Contracts
 {
     using System;
@@ -79,9 +81,14 @@ namespace UnityCommander.Integration.Contracts
         /// <returns></returns>
         public Type GetRegisteredType(PluginScopes scopes)
         {
-            return TypeRegistry.Single(k => k.Key == scopes).Value;
-        }
+            if (TypeRegistry.Count > 0)
+            {
+                Trace.WriteLine("No registered types found.", category: "Plugin");
+            }
 
+            return TypeRegistry.SingleOrDefault(k => k.Key == scopes).Value;
+        }
+        
         /// <summary>
         /// Sets the item rendering option based on the selected scope of the plugin.
         /// </summary>

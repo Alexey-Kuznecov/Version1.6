@@ -8,20 +8,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Linq;
+
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
-#if NETCOREAPP3_1
-    using System.Runtime.Loader;
-#endif
-    using System.Windows;
     using System.Windows.Controls;
 
     using Prism.Events;
@@ -33,6 +27,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
+#if NETCOREAPP3_1
+    using UnityCommander.Services.Plugins.NETCORE3_1;
+#endif
+
 
     /// <summary>
     /// The view a view model.
@@ -82,24 +80,20 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The icon Provider.
         /// </param>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider, IPluginLoaderService pluginCofiguration)
+        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider)
         {
-            var manager = pluginCofiguration.GetPluginManager();
-            var records = manager.GetPluginRecords();
-            var asmb = AppDomain.CurrentDomain.GetAssemblies();
-
-            //var typeConverterAssembly = typeof(TypeConverter).Assembly;
-            //var reflectTypeDescriptionProviderType = typeConverterAssembly.GetType("System.ComponentModel.ReflectTypeDescriptionProvider");
-
-            //var reflectTypeDescriptorProviderTable = reflectTypeDescriptionProviderType.GetField("s_attributeCache", BindingFlags.Static | BindingFlags.NonPublic);
-            //var attributeCacheTable = (Hashtable)reflectTypeDescriptorProviderTable.GetValue(null);
-            //attributeCacheTable.Clear();
-
-            //var pluginRecords = records as IPluginRecord[] ?? records.ToArray();
-            //pluginCofiguration.UnloadInterface(pluginRecords.ToList()[3].AssemblyName);
-            //manager.UnloadPlugin(pluginRecords.ToList()[3]);
+#if NETCOREAPP3_1
+            var asm = AppDomain.CurrentDomain.GetAssemblies();
+            WeakReference<IPluginManager> weakReference = new WeakReference<IPluginManager>(new PluginManagerService().GetPluginManager());
+            IPluginManager manager;
+            asm = AppDomain.CurrentDomain.GetAssemblies();
+            weakReference.TryGetTarget(out manager);
+            if (manager != null) manager.PluginUnload();
+            weakReference = null;
+           
             
-            asmb = AppDomain.CurrentDomain.GetAssemblies();
+            asm = AppDomain.CurrentDomain.GetAssemblies();
+#endif
             this.viewModelMessage = viewModelMessage;
             this.packIcon = iconProvider.GetIcons();
             SidebarItems = new ObservableCollection<SidebarItem>();

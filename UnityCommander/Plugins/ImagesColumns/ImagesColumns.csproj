@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <UseWPF>True</UseWPF>
   </PropertyGroup>
 
@@ -13,10 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <Private>false</Private>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
+		<ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
   </ItemGroup>
 

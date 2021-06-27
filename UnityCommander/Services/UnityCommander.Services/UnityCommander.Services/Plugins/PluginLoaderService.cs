@@ -1,5 +1,4 @@
-﻿#define Unity
-
+﻿
 namespace UnityCommander.Services.Plugins
 {
     using System;
@@ -16,37 +15,22 @@ namespace UnityCommander.Services.Plugins
     using System.ComponentModel.Composition.Hosting;
 
 #if NETCOREAPP3_1
-    using System.Runtime.Loader;
-
-#if MsMaster
-    using Plugin.Core;
-#endif
-#if Unity
     using Plugin.NETCore;
-#endif
 #else
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
-    using UnityCommander.Plugin48.Core;
+    using Plugin.NET48;
 #endif
+
 
     /// <summary>
     /// The plugin provider service.
     /// </summary>
     public class PluginLoaderService : IPluginLoaderService
     {
-        public PluginManager PluginManager { get; } = new PluginManager();
-#if NETCOREAPP3_1
-        public PluginLoadContext pluginContext { get; private set; }
-        public HashSet<WeakReference> pluginContextList { get; private set; } = new HashSet<WeakReference>();
-#endif
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
         /// </summary>
         public PluginLoaderService()
         {
-#if NETCOREAPP3_1
             var service = new ServiceCollection();
             var pluginLoaders = this.GetPluginLoaders();
             ConfigureServices(service, pluginLoaders);
@@ -55,10 +39,9 @@ namespace UnityCommander.Services.Plugins
             this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>().ToList();
             this.ImportDialogService = serviceProvider.GetServices<IDialogService>().ToList();
             this.ImportPluginMeta = serviceProvider.GetServices<IPluginDescriptor>().ToList();
-#endif
         }
 
-        #region Imports Plugins Interfaces
+    #region Imports Plugins Interfaces
 
         /// <summary>
         /// Gets the imported plugin settings.
@@ -81,9 +64,9 @@ namespace UnityCommander.Services.Plugins
         /// </summary>
         public IEnumerable<IPluginDescriptor> ImportPluginMeta { get; private set; }
 
-        #endregion
+    #endregion
 
-        #region Implementations Methods
+    #region Implementations Methods
 
         /// <summary>
         /// Obtain an instance of the class that implements the plugin interface.
@@ -159,7 +142,7 @@ namespace UnityCommander.Services.Plugins
             return implement;
         }
 
-        #endregion
+    #endregion
 
         public void UnloadInterface(AssemblyName assemblyName)
         {
@@ -187,22 +170,12 @@ namespace UnityCommander.Services.Plugins
                 {
                     var assembly = Assembly.GetAssembly(plugin.GetType());
 
-                    var record = PluginManager.ALCRecords.Single(r => r.AssemblyName.FullName == assembly?.FullName);
 
-                    PluginManager.PluginRecords.Add(new PluginRecord
-                    {
-                        Name = plugin.DisplayName,
-                        Description = plugin.Description,
-                        AssemblyName = record.AssemblyName,
-                        Token = record.Token
-                    });
                 }
             }
 
-            return PluginManager;
+            return null;
         }
-
-#if NETCOREAPP3_1
 
         /// <summary>
         /// Scans for a plugins folder in its base directory and attempts to load any plugins it finds.
@@ -218,17 +191,13 @@ namespace UnityCommander.Services.Plugins
                 var dirName = Path.GetFileName(dir);
                 var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
 
-                var alcRecords = new ALCRecords
-                {
-                    Alc = new AssemblyLoadContext(dirName, true),
-                    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
-                };
+                //var alcRecords = new ALCRecords
+                //{
+                //    Alc = new AssemblyLoadContext(dirName, true),
+                //    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
+                //};
 
-                pluginContext = new PluginLoadContext(pluginDll);
-                var alcWeakRef = new WeakReference(pluginContext);
-                pluginContextList.Add(alcWeakRef);
-
-                PluginManager.ALCRecords.Add(alcRecords);
+                //PluginManager.ALCRecords.Add(alcRecords);
 
                 if (File.Exists(pluginDll))
                 {
@@ -238,7 +207,7 @@ namespace UnityCommander.Services.Plugins
                         (config) =>
                         {
                             // config.IsLazyLoaded = true;
-                            config.DefaultContext = alcRecords.Alc;
+                            //config.DefaultContext = alcRecords.Alc;
                         });
                     loaders.Add(loader);
                 }
@@ -254,25 +223,9 @@ namespace UnityCommander.Services.Plugins
         /// <param name="loaders"> List of plugins loaded. </param>
         private void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
         {
-            // Create an instance of plugin types
-            foreach (var loader in loaders)
-            {
-                foreach (var pluginType in loader
-                    .LoadDefaultAssembly()
-                    .GetTypes()
-                    .Where(t => typeof(IPluginFactory).IsAssignableFrom(t) && !t.IsAbstract))
-                {
-                    // This assumes the implementation of IPluginFactory has a parameter less constructor
-                    var plugin = Activator.CreateInstance(pluginType) as IPluginFactory;
-
-                    plugin?.Configure(services);
-                    ResourceManager.GetResourceDictionary(pluginType.Assembly);
-                }
-            }
+         
         }
-#endif
 
-#if NET472
         /// <summary>
         /// Configures the import of plugins.
         /// </summary>
@@ -295,6 +248,5 @@ namespace UnityCommander.Services.Plugins
             // Fill the imports of this object
             container.ComposeParts(this);
         }
-#endif
     }
 }

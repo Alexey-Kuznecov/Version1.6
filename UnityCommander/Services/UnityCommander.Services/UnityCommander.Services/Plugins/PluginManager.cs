@@ -1,61 +1,138 @@
 ﻿
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using UnityCommander.Services.Plugins.Helper;
+
 namespace UnityCommander.Services.Plugins
 {
+
+
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Linq;
     using UnityCommander.Services.Interfaces;
+    using System.IO;
+    using System.Reflection;
+    using UnityCommander.Integration.Contracts;
+    using Microsoft.Extensions.DependencyInjection;
+
+#if NETCOREAPP3_1
+    using UnityCommander.Services.Plugins.NETCORE3_1;
+#else
+    using UnityCommander.Services.Plugins.NET48;
+#endif
 
     public class PluginManager : IPluginManager
     {
-        internal List<ALCRecords> ALCRecords { get; } = new List<ALCRecords>();
+        private WeakReference loader;
+        
+        private static List<WeakReference> weaks = new List<WeakReference>();
 
-        internal List<PluginRecord> PluginRecords { get; } = new List<PluginRecord>();
+        /// <summary>
+        /// Gets  the imported plugin implementations.
+        /// </summary>
+        private IEnumerable<IPluginImplement> pluginImplements;
 
-        public PluginManager()
+        public PluginManager(string path)
         {
-        }
-
-        public void EnablePlugin()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DisablePlugin()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UninstallPlugin()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InstallPlugin()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IPluginRecord> GetPluginRecords()
-        {
-            return PluginRecords;
-        }
-
-        public void UnloadPlugin(IPluginRecord record)
-        {
-#if NETCOREAPP3_1
-            ALCRecords alcRecords = ALCRecords.Single(r => r.Token.Equals(record.Token));
+            var service = new ServiceCollection();
+            var loaders = LoadPlugin(path);
+            ConfigureServices(service, loaders);
+            using var serviceProvider = service.BuildServiceProvider();
             
-            bool isUnload = PluginRecords.Any(r => r.IsUnload == true && r.AssemblyName.FullName == record.AssemblyName.FullName);
+            pluginImplements = serviceProvider.GetServices<IPluginImplement>();
+        }
 
-            if (!isUnload)
+        public List<WeakReference> LoadPlugin(string relativePath)
+        {
+            var loaders = new List<WeakReference>();
+
+            // Navigate up to the solution root
+            string root = Path.GetFullPath(Path.Combine(
+                Path.GetDirectoryName(
+                    Path.GetDirectoryName(
+                        Path.GetDirectoryName(
+                            Path.GetDirectoryName(
+                                Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory))))) ?? string.Empty));
+
+            string pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
+
+            if (File.Exists(pluginLocation))
             {
-                alcRecords.Alc.Unload(); 
-                alcRecords.Alc = null;
+                loader = new WeakReference(PluginLoader.CreateFromAssemblyFile(
+                    pluginLocation,
+                    sharedTypes: new[] {typeof(IPluginFactory), typeof(IServiceCollection)}));
+                loaders.Add(loader);
             }
 
-            record.IsUnload = true;
+            return loaders;
+        }
+
+        public IEnumerable<IPluginImplement> GetPluginImplement()
+        {
+            foreach (var item in pluginImplements)
+            {
+                yield return item;
+            }
+
+            yield return null;
+        }
+
+        public IPluginFactory GetPluginFactory(Assembly assembly)
+        {
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (typeof(IPluginFactory).IsAssignableFrom(type))
+                {
+                    IPluginFactory result = Activator.CreateInstance(type) as IPluginFactory;
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Configure plugins in a dependency injection collection.
+        /// </summary>
+        /// <param name="services"> Service collection. </param>
+        /// <param name="loaders"> List of plugins loaded. </param>
+        private void ConfigureServices(ServiceCollection services, List<WeakReference> loaders)
+        {
+            // Create an instance of plugin types
+            foreach (var reference in loaders)
+            {
+                if (reference.Target is PluginLoader pluginLoader)
+                    
+                    foreach (var pluginType in pluginLoader
+                        .LoadDefaultAssembly()
+                        .GetTypes()
+                        .Where(t => typeof(IPluginFactory).IsAssignableFrom(t) && !t.IsAbstract))
+                    {
+                        // This assumes the implementation of IPluginFactory has a parameter less constructor
+                        var plugin = Activator.CreateInstance(pluginType) as IPluginFactory;
+
+                        plugin?.Configure(services);
+                        //ResourceManager.GetResourceDictionary(pluginType.Assembly);
+                    }
+            }
+        }
+        
+        public void PluginUnload()
+        {
+#if FEATURE_UNLOAD
+            foreach (var weak in weaks)
+            {
+                weak.Target = null;
+            }
+
+            pluginImplements = null;
+            if (loader.Target is PluginLoader referenceLoader)
+            {
+                referenceLoader.PluginUnload();
+            }
 #endif
         }
     }

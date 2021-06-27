@@ -1,11 +1,11 @@
 ﻿
-namespace UnityCommander.Plugin.Core
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Reflection;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
+namespace UnityCommander.Plugin48.Core
+{
     /// <summary>
     /// Represents the configuration for a .NET Core plugin.
     /// </summary>

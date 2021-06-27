@@ -4,8 +4,6 @@ using UnityCommander.Services.Plugins;
 namespace UnityCommander
 {
     using System.Windows;
-
-    using Prism.DryIoc;
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Services.Dialogs;
@@ -18,6 +16,12 @@ namespace UnityCommander
     using UnityCommander.ViewModels;
     using UnityCommander.Views;
 
+
+#if NETCOREAPP3_1
+    using UnityCommander.Services.Plugins.NETCORE3_1;
+#elif NET472
+    using UnityCommander.Services.Plugins.NET48;
+#endif
     /// <summary>
     /// The application.
     /// </summary>
@@ -49,6 +53,7 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
+            //containerRegistry.RegisterSingleton<IPluginManagerService, PluginManagerService>();
         }
 
         /// <summary>

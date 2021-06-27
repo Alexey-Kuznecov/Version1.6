@@ -19,6 +19,8 @@ namespace UnityCommander.Core.Helper
 
         public T ObjectInit(T objectL, object objectR)
         {
+            if (objectR is null) return new T();
+
             Instance = (T)Activator.CreateInstance(TypeBuilder);
             weakReference = new WeakReference(Instance);
 
@@ -53,8 +55,10 @@ namespace UnityCommander.Core.Helper
             return this.Instance;
         }
 
-        public void MergeObjectProperties(Type objectR)
+        public bool MergeObjectProperties(Type objectR)
         {
+            if(objectR is null) return false;
+
             this.mergeObjectL = new T();
             this.mergeObjectR = Activator.CreateInstance(objectR);
 
@@ -64,6 +68,8 @@ namespace UnityCommander.Core.Helper
                 TypeBuilder.SetParent(typeof(T));
                 TypeBuilder.CreateType();
             }
+
+            return true;
         }
 
         public void Dispose()

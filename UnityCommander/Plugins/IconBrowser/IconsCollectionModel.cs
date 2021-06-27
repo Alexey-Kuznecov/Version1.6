@@ -6,7 +6,7 @@ namespace IconBrowser
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using AkuzIcons.Mvvm.Base;
+    using AlexLibWpf.Mvvm.Base;
     using AlexLibWpf.Components.InputBox;
 
     using IconBrowser.Models;

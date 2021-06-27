@@ -28,13 +28,13 @@ namespace UnityCommander.Services.Interfaces
 
         public void UnloadInterface(AssemblyName assemblyName);
 
-        /// <summary>
-        /// Gets interfaces to configure plugins.
-        /// </summary>
-        /// <returns>
-        /// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
-        /// </returns>
-        public IPluginManager GetPluginManager();
+        ///// <summary>
+        ///// Gets interfaces to configure plugins.
+        ///// </summary>
+        ///// <returns>
+        ///// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
+        ///// </returns>
+        //public IPluginManager GetPluginManager();
 
         /// <summary>
         /// Gets a list of plugins that implement the <see cref="IPluginImplement"/> interface.

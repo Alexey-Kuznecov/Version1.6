@@ -22,6 +22,6 @@ namespace UnityCommander.Services.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IPluginRecord> GetPluginManager();
+        public IPluginManager GetPluginManager();
     }
 }

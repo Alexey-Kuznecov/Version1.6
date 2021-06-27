@@ -424,14 +424,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         Width = data.Width,
                         DisplayMemberBinding = new Binding(data.Header)
                     };
-
+                    
                     switch (data.TargetPanel)
                     {
                         case TargetPanel.Folders:
+                            var IsCreated = context.GetRegisteredType(PluginScopes.Columns);
+                            if (IsCreated is null) return;
                             this.FolderPanelContainer.Columns.Add(columnNew);
                             this.InitialFolderColumnValues(context);
                             break;
                         case TargetPanel.Files:
+                            IsCreated = context.GetRegisteredType(PluginScopes.Columns);
+                            if (IsCreated is null) return;
                             this.FilePanelContainer.Columns.Add(columnNew);
                             this.InitialFileColumnValues(context);
                             break;
@@ -450,6 +454,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             using var objectBuilder = new ObjectBuilder<FolderModel>();
             objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
+
             var folderModels = new ObservableCollection<FolderModel>();
             foreach (var folder in this.DirectoryList)
             {
@@ -470,6 +475,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             using var objectBuilder = new ObjectBuilder<FileModel>();
             objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
+
             var fileModels = new ObservableCollection<FileModel>();
             foreach (var file in this.FileList)
             {
@@ -511,6 +517,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     }
                 }
             }
+
+            var asm = AppDomain.CurrentDomain.GetAssemblies();
         }
 
         /// <summary>
