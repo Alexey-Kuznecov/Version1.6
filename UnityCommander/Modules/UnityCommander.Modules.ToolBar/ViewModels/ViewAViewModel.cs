@@ -27,7 +27,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <summary>
         /// The plugin loader service.
         /// </summary>
-        private readonly IPluginLoaderService pluginLoaderService;
+        //private readonly IPluginLoaderService pluginLoaderService;
 
         /// <summary>
         /// The _message.
@@ -53,10 +53,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <param name="pluginLoaderService">
         /// The plugin Loader Service.
         /// </param>
-        public ViewAViewModel(IDialogService dialogService, IPluginLoaderService pluginLoaderService)
+        public ViewAViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            this.pluginLoaderService = pluginLoaderService;
             this.Message = "This Toolbar View";
             this.UserControls = new MainTabControl();
         }
@@ -113,12 +112,12 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// </summary>
         private void ExecuteShowDialogCommand()
         {
-            var dialogs = pluginLoaderService.GetDialogService();
+            //var dialogs = pluginLoaderService.GetDialogService();
 
-            foreach (var dialog in dialogs)
-            {
-                this.dialogService.ShowDialog("DialogView", new OverrideDialogParameters(dialog), r => { });
-            }
+            //foreach (var dialog in dialogs)
+            //{
+            //    this.dialogService.ShowDialog("DialogView", new OverrideDialogParameters(dialog), r => { });
+            //}
         }
     }
 }

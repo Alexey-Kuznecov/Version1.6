@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Resources;
-using System.Text;
 using System.Windows;
 using System.Windows.Baml2006;
 
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Plugins
 {
     public class ResourceManager
     {
@@ -24,27 +21,26 @@ namespace UnityCommander.Services
             Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".g.resources");
             if (stream == null) return;
 
-            using (ResourceReader reader = new ResourceReader(stream))
+            using ResourceReader reader = new ResourceReader(stream);
+
+            foreach (DictionaryEntry entry in reader)
             {
-                foreach (DictionaryEntry entry in reader)
+                var extension = Path.GetExtension(entry.Key.ToString());
+                if (extension != ".baml") continue;
+
+                if (entry.Key.ToString().Contains("general"))
                 {
-                    var extension = Path.GetExtension(entry.Key.ToString());
-                    if (extension != ".baml") continue;
+                    var readStream = entry.Value as Stream;
+                    Baml2006Reader bamlReader = new Baml2006Reader(readStream);
 
-                    if (entry.Key.ToString().Contains("general"))
+                    var loadedObject = System.Windows.Markup.XamlReader.Load(bamlReader);
+                    if (loadedObject is ResourceDictionary resource)
                     {
-                        var readStream = entry.Value as Stream;
-                        Baml2006Reader bamlReader = new Baml2006Reader(readStream);
+                        var dictionary = Application.Current.Resources.MergedDictionaries;
 
-                        var loadedObject = System.Windows.Markup.XamlReader.Load(bamlReader);
-                        if (loadedObject is ResourceDictionary resource)
+                        if (!dictionary.Contains(resource))
                         {
-                            var dictionary = Application.Current.Resources.MergedDictionaries;
-
-                            if (!dictionary.Contains(resource))
-                            {
-                                dictionary.Add(resource);
-                            }
+                            dictionary.Add(resource);
                         }
                     }
                 }

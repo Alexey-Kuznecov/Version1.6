@@ -20,10 +20,10 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// List of interfaces <see cref="IPluginImplement"/>.
         /// </returns>
-        public static IEnumerable<IPluginImplement> GetPluginImplements(this IPluginLoaderService loaderService)
-        {
-            return loaderService.ImportPluginImplements;
-        }
+        //public static IEnumerable<IPluginImplement> GetPluginImplements(this IPluginLoaderService loaderService)
+        //{
+        //    return loaderService.ImportPluginImplements;
+        //}
 
         /// <summary>
         /// Attempts to find methods that match the signature of the
@@ -68,19 +68,19 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// All handler attributes found.
         /// </returns>
-        public static IEnumerable<Attribute> GetHandlerAttributes<T>(this IPluginLoaderService service)
-        {
-            foreach (var parameter in service.GetPluginContract<T>())
-            {
-                foreach (PropertyInfo property in parameter.GetType().GetProperties())
-                {
-                    foreach (var attribute in property.GetCustomAttributes())
-                    {
-                        yield return attribute;
-                    }
-                }
-            }
-        }
+        //public static IEnumerable<Attribute> GetHandlerAttributes<T>(this IPluginLoaderService service)
+        //{
+        //    foreach (var parameter in service.GetPluginContract<T>())
+        //    {
+        //        foreach (PropertyInfo property in parameter.GetType().GetProperties())
+        //        {
+        //            foreach (var attribute in property.GetCustomAttributes())
+        //            {
+        //                yield return attribute;
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Attempts to find all handlers attributes in assemblies with plugins.

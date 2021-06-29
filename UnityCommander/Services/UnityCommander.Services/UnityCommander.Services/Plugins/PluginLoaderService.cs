@@ -4,9 +4,7 @@ namespace UnityCommander.Services.Plugins
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
-    using Microsoft.Extensions.DependencyInjection;
     using Integration.Contracts;
     using Integration.Dialog;
     using Interfaces;
@@ -14,34 +12,46 @@ namespace UnityCommander.Services.Plugins
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
 
-#if NETCOREAPP3_1
-    using Plugin.NETCore;
-#else
-    using Plugin.NET48;
-#endif
-
-
     /// <summary>
     /// The plugin provider service.
     /// </summary>
     public class PluginLoaderService : IPluginLoaderService
     {
+        private static readonly List<IPluginLoader> pluginLoaders = new ();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
         /// </summary>
         public PluginLoaderService()
         {
-            var service = new ServiceCollection();
-            var pluginLoaders = this.GetPluginLoaders();
-            ConfigureServices(service, pluginLoaders);
-            using var serviceProvider = service.BuildServiceProvider();
-            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>().ToList();
-            this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>().ToList();
-            this.ImportDialogService = serviceProvider.GetServices<IDialogService>().ToList();
-            this.ImportPluginMeta = serviceProvider.GetServices<IPluginDescriptor>().ToList();
+            string mainPath = GetMainPath() + "\\UnityCommander\\bin\\Debug\\netcoreapp3.1\\";
+            var pluginsDir = Path.Combine(mainPath, "plugins");
+            foreach (var dir in Directory.GetDirectories(pluginsDir))
+            {
+                var dirName = Path.GetFileName(dir);
+                var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
+
+                if (File.Exists(pluginDll))
+                {
+                    var pluginLoader = new WeakPluginLoader();
+                    pluginLoader.ExecuteAndUnload(pluginDll);
+                    Console.WriteLine($"{dirName} is loaded.");
+                    pluginLoaders.Add(pluginLoader);
+                }
+            }
         }
 
-    #region Imports Plugins Interfaces
+        private static string GetMainPath()
+        {
+            return Path.GetFullPath(Path.Combine(
+                Path.GetDirectoryName(
+                    Path.GetDirectoryName(
+                        Path.GetDirectoryName(
+                            Path.GetDirectoryName(
+                                Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory))))) ?? string.Empty));
+        }
+
+        #region Imports Plugins Interfaces
 
         /// <summary>
         /// Gets the imported plugin settings.
@@ -66,7 +76,7 @@ namespace UnityCommander.Services.Plugins
 
     #endregion
 
-    #region Implementations Methods
+        #region Implementations Methods
 
         /// <summary>
         /// Obtain an instance of the class that implements the plugin interface.
@@ -156,6 +166,28 @@ namespace UnityCommander.Services.Plugins
                 => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
         }
 
+        public List<IPluginLoader> GetPluginLoaders()
+        {
+            return pluginLoaders;
+        }
+
+        public bool UnloadPlugins()
+        {
+            bool isLoaded = default(bool);
+
+            foreach (var plugin in pluginLoaders)
+            {
+                if (plugin.UnloadPlugin())
+                {
+                    pluginLoaders.Remove(plugin);
+                    isLoaded = true;
+                    break;
+                }
+            }
+            
+            return isLoaded;
+        }
+
         /// <summary>
         /// Gets interfaces to configure plugins.
         /// </summary>
@@ -168,9 +200,7 @@ namespace UnityCommander.Services.Plugins
             {
                 if (plugin is not null)
                 {
-                    var assembly = Assembly.GetAssembly(plugin.GetType());
-
-
+                    Assembly.GetAssembly(plugin.GetType());
                 }
             }
 
@@ -181,50 +211,40 @@ namespace UnityCommander.Services.Plugins
         /// Scans for a plugins folder in its base directory and attempts to load any plugins it finds.
         /// </summary>
         /// <returns> List of loaded plugins. </returns>
-        private List<PluginLoader> GetPluginLoaders()
-        {
-            var loaders = new List<PluginLoader>();
-            // Create plugin loaders
-            var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
-            foreach (var dir in Directory.GetDirectories(pluginsDir))
-            {
-                var dirName = Path.GetFileName(dir);
-                var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
+        //private List<PluginLoader> GetPluginLoaders()
+        //{
+        //    var loaders = new List<PluginLoader>();
+        //    // Create plugin loaders
+        //    var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
+        //    foreach (var dir in Directory.GetDirectories(pluginsDir))
+        //    {
+        //        var dirName = Path.GetFileName(dir);
+        //        var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
 
-                //var alcRecords = new ALCRecords
-                //{
-                //    Alc = new AssemblyLoadContext(dirName, true),
-                //    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
-                //};
+        //        //var alcRecords = new ALCRecords
+        //        //{
+        //        //    Alc = new AssemblyLoadContext(dirName, true),
+        //        //    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
+        //        //};
 
-                //PluginManager.ALCRecords.Add(alcRecords);
+        //        //PluginManager.ALCRecords.Add(alcRecords);
 
-                if (File.Exists(pluginDll))
-                {
-                    var loader = PluginLoader.CreateFromAssemblyFile(
-                        pluginDll,
-                        sharedTypes: new[] { typeof(IPluginFactory), typeof(IServiceCollection) },
-                        (config) =>
-                        {
-                            // config.IsLazyLoaded = true;
-                            //config.DefaultContext = alcRecords.Alc;
-                        });
-                    loaders.Add(loader);
-                }
-            }
+        //        if (File.Exists(pluginDll))
+        //        {
+        //            var loader = PluginLoader.CreateFromAssemblyFile(
+        //                pluginDll,
+        //                sharedTypes: new[] { typeof(IPluginFactory), typeof(IServiceCollection) },
+        //                (config) =>
+        //                {
+        //                    // config.IsLazyLoaded = true;
+        //                    //config.DefaultContext = alcRecords.Alc;
+        //                });
+        //            loaders.Add(loader);
+        //        }
+        //    }
 
-            return loaders;
-        }
-
-        /// <summary>
-        /// Configure plugins in a dependency injection collection.
-        /// </summary>
-        /// <param name="services"> Service collection. </param>
-        /// <param name="loaders"> List of plugins loaded. </param>
-        private void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
-        {
-         
-        }
+        //    return loaders;
+        //}
 
         /// <summary>
         /// Configures the import of plugins.

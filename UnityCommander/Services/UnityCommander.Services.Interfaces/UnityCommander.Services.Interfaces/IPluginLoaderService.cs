@@ -36,6 +36,10 @@ namespace UnityCommander.Services.Interfaces
         ///// </returns>
         //public IPluginManager GetPluginManager();
 
+        public List<IPluginLoader> GetPluginLoaders();
+
+        public bool UnloadPlugins();
+
         /// <summary>
         /// Gets a list of plugins that implement the <see cref="IPluginImplement"/> interface.
         /// </summary>

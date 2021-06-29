@@ -1,4 +1,6 @@
 ﻿
+using DryIoc;
+using Prism.DryIoc;
 using UnityCommander.Services.Plugins;
 
 namespace UnityCommander
@@ -16,12 +18,6 @@ namespace UnityCommander
     using UnityCommander.ViewModels;
     using UnityCommander.Views;
 
-
-#if NETCOREAPP3_1
-    using UnityCommander.Services.Plugins.NETCORE3_1;
-#elif NET472
-    using UnityCommander.Services.Plugins.NET48;
-#endif
     /// <summary>
     /// The application.
     /// </summary>
@@ -46,14 +42,18 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.Register(typeof(PluginLoaderService));
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDirectoryProviderService, DirectoryProviderService>();
             containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
-            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
-            //containerRegistry.RegisterSingleton<IPluginManagerService, PluginManagerService>();
+        }
+
+        protected override Rules CreateContainerRules()
+        {
+            return base.CreateContainerRules();
         }
 
         /// <summary>

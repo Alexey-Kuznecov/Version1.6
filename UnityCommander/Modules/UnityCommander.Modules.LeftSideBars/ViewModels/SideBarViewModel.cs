@@ -15,6 +15,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows.Controls;
 
@@ -27,6 +28,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Plugins;
 #if NETCOREAPP3_1
     using UnityCommander.Services.Plugins.NETCORE3_1;
 #endif
@@ -80,20 +82,30 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The icon Provider.
         /// </param>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider)
+        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider, PluginLoaderService pluginLoader)
         {
-#if NETCOREAPP3_1
-            var asm = AppDomain.CurrentDomain.GetAssemblies();
-            WeakReference<IPluginManager> weakReference = new WeakReference<IPluginManager>(new PluginManagerService().GetPluginManager());
-            IPluginManager manager;
-            asm = AppDomain.CurrentDomain.GetAssemblies();
-            weakReference.TryGetTarget(out manager);
-            if (manager != null) manager.PluginUnload();
-            weakReference = null;
-           
-            
-            asm = AppDomain.CurrentDomain.GetAssemblies();
-#endif
+            bool isLoaded = pluginLoader.UnloadPlugins();
+            pluginLoader = null;
+            if (isLoaded)
+            {
+                //Trace.WriteLine("Plugin has been unload");
+            }
+            else
+            {
+                Trace.WriteLine("Plugin has not been unloaded");
+            }
+
+            //if (weakReference.Target is IPluginLoaderService service)
+            //{
+            //    foreach (var plugin in service.GetPluginLoaders())
+            //    {
+            //        foreach (var descriptor in plugin.GetDescriptors())
+            //        {
+            //            Trace.WriteLine($"{descriptor.DisplayName}", "Plugin");
+            //        }
+            //    }
+            //}
+
             this.viewModelMessage = viewModelMessage;
             this.packIcon = iconProvider.GetIcons();
             SidebarItems = new ObservableCollection<SidebarItem>();

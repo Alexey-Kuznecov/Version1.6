@@ -12,6 +12,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
 	    <Private>false</Private>
+		  <ExcludeAssets>runtime</ExcludeAssets>
 	  </ProjectReference>
 	</ItemGroup>
   <ItemGroup>

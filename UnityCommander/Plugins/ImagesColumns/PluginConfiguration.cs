@@ -23,5 +23,15 @@ namespace ImagesColumns
             services.AddSingleton<IPluginImplement, Plugin>();
             services.AddSingleton<IPluginDescriptor, Plugin>();
         }
+
+        public IServiceCollection GetConfigure()
+        {
+            ServiceCollection services = new ServiceCollection();
+            services.AddSingleton<IPluginConfigure, PluginSettings>();
+            services.AddSingleton<IPluginImplement, Plugin>();
+            services.AddSingleton<IPluginDescriptor, Plugin>();
+
+            return services;
+        }
     }
 }
