@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 	<UseWPF>true</UseWPF>
 	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
@@ -18,18 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
-  </ItemGroup>
-	<Choose>
-		<When Condition="'$(TargetFramework)'=='netcoreapp3.1'">
-			<ItemGroup>
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin.NETCore\UnityCommander.Plugin.NETCore.csproj" />
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin.Core\UnityCommander.Plugin.Core.csproj" />
-			</ItemGroup>
-		</When>
-		<When Condition="'$(TargetFramework)'=='net472'">
-			<ItemGroup>
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin.NET48\UnityCommander.Plugin.NET48.csproj" />
-			</ItemGroup>
-		</When>
-	</Choose>
+	</ItemGroup>
+
 </Project>

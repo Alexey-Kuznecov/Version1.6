@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net472;net48</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 	<UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\UnityCommander\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\..\UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
 
