@@ -1,10 +1,10 @@
 ﻿
-namespace IconBrowser
-{
-    using System.Windows.Controls;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
+using System.Windows.Controls;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Integration.Dialog;
 
+namespace AIconBrowser
+{
     /// <summary>
     /// The icon browser control.
     /// </summary>

@@ -8,7 +8,10 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Collections;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
@@ -28,10 +31,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
-#if NETCOREAPP3_1
-    using UnityCommander.Services.Plugins.NETCORE3_1;
-#endif
 
 
     /// <summary>
@@ -43,6 +42,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The view model message.
         /// </summary>
         private readonly IEventAggregator viewModelMessage;
+
+        /// <summary>
+        /// The plugin loader service.
+        /// </summary>
+        private readonly IPluginLoaderService pluginLoaderService;
 
         /// <summary>
         /// Gets or sets the type.
@@ -82,29 +86,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The icon Provider.
         /// </param>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider, PluginLoaderService pluginLoader)
+        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider, IPluginLoaderService pluginLoader)
         {
-            bool isLoaded = pluginLoader.UnloadPlugins();
-            pluginLoader = null;
-            if (isLoaded)
-            {
-                //Trace.WriteLine("Plugin has been unload");
-            }
-            else
-            {
-                Trace.WriteLine("Plugin has not been unloaded");
-            }
-
-            //if (weakReference.Target is IPluginLoaderService service)
-            //{
-            //    foreach (var plugin in service.GetPluginLoaders())
-            //    {
-            //        foreach (var descriptor in plugin.GetDescriptors())
-            //        {
-            //            Trace.WriteLine($"{descriptor.DisplayName}", "Plugin");
-            //        }
-            //    }
-            //}
+            this.pluginLoaderService = pluginLoader;
+            //bool isLoaded = pluginLoaderService.UnloadPlugins();
+            //Trace.WriteLine(isLoaded ? "Plugin has been unload" : "Plugin has not been unloaded", "Plugin");
 
             this.viewModelMessage = viewModelMessage;
             this.packIcon = iconProvider.GetIcons();

@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:AlexLibWpf.Converters;assembly=AlexLibWpf">
+    xmlns:converters="clr-namespace:AIconBrowser.Converters">
 
     <!--<Style x:Key="CollectionMenuDragDropStyle" TargetType="TextBlock">
         <Setter Property="Background" Value="#F0F0F0" />

@@ -1,16 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using UnityCommander.Integration.Contracts;
 using UnityCommander.Integration.Dialog;
 using UnityCommander.Services.Interfaces;
 
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Plugins
 {
     public class WeakPluginLoader : IPluginLoader
     {
@@ -20,6 +22,7 @@ namespace UnityCommander.Services
         private IEnumerable<IPluginDescriptor> pluginMeta;
         private HostPluginLoadContext alc;
         private WeakReference weakReference;
+        private HashSet<ResourceDictionary> pluginResources = new ();
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void ExecuteAndUnload(string assemblyPath)
@@ -28,7 +31,19 @@ namespace UnityCommander.Services
             var services = new ServiceCollection();
             weakReference = new WeakReference(alc);
             Assembly a = alc.LoadFromAssemblyPath(assemblyPath);
-            UnityCommander.Services.Plugins.ResourceManager.GetResourceDictionary(a);
+
+            pluginResources = PluginResourceManager.GetResourceDictionary(a);
+
+            if (pluginResources?.Count is not 0 && pluginResources != null)
+            {
+                var dictionary = Application.Current.Resources.MergedDictionaries;
+
+                foreach (var resource in pluginResources)
+                {
+                    dictionary.Add(resource);
+                }
+            }
+
             foreach (var type in a.GetTypes()
                 .Where(t => typeof(IPluginFactory)
                 .IsAssignableFrom(t) && !t.IsAbstract))
@@ -43,8 +58,7 @@ namespace UnityCommander.Services
                 dialogService = serviceProvider.GetServices<IDialogService>();
             }
         }
-
-
+        
         public IEnumerable<IPluginConfigure> GetConfigurations()
         {
             return pluginSettings;
@@ -73,6 +87,17 @@ namespace UnityCommander.Services
             pluginMeta       = null;
             dialogService    = null;
             alc              = null;
+
+            if (pluginResources?.Count > 0 && pluginResources != null)
+            {
+                foreach (var resource in pluginResources)
+                {
+                    var dictionary = Application.Current.Resources.MergedDictionaries;
+                    dictionary.Remove(resource);
+                }
+            }
+
+            pluginResources = null;
 
             for (int i = 0; weakReference.IsAlive && (i < 10); i++)
             {

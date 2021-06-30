@@ -2,7 +2,6 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
-    using System.Reflection;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
 
@@ -25,18 +24,6 @@ namespace UnityCommander.Services.Interfaces
         /// Gets the dialog service to create owner dialog box.
         /// </summary>
         IEnumerable<IDialogService> ImportDialogService { get; }
-
-        public void UnloadInterface(AssemblyName assemblyName);
-
-        ///// <summary>
-        ///// Gets interfaces to configure plugins.
-        ///// </summary>
-        ///// <returns>
-        ///// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
-        ///// </returns>
-        //public IPluginManager GetPluginManager();
-
-        public List<IPluginLoader> GetPluginLoaders();
 
         public bool UnloadPlugins();
 

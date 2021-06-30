@@ -1,16 +1,14 @@
 ﻿
-namespace IconBrowser.Models
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Xml.Linq;
+using AIconBrowser.Help;
+
+namespace AIconBrowser.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
-    using System.Xml.Linq;
-
-    using AlexLibWpf.Models;
-    using AlexLibWpf.Help;
-
     class IconsDataReader : IDisposable
     {
         private const string DocumentName = @"d:\Resources\IconsData.xml";

@@ -1,25 +1,16 @@
-﻿
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using UnityCommander.Services.Plugins.Helper;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Services.Interfaces;
 
-namespace UnityCommander.Services.Plugins
+namespace UnityCommander.Services.Plugins.NETCORE3_1
 {
-
-
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using UnityCommander.Services.Interfaces;
-    using System.IO;
-    using System.Reflection;
-    using UnityCommander.Integration.Contracts;
-    using Microsoft.Extensions.DependencyInjection;
-
 #if NETCOREAPP3_1
-    using UnityCommander.Services.Plugins.NETCORE3_1;
+
 #else
     using UnityCommander.Services.Plugins.NET48;
 #endif
@@ -115,7 +106,7 @@ namespace UnityCommander.Services.Plugins
                         var plugin = Activator.CreateInstance(pluginType) as IPluginFactory;
 
                         plugin?.Configure(services);
-                        //ResourceManager.GetResourceDictionary(pluginType.Assembly);
+                        //PluginResourceManager.GetResourceDictionary(pluginType.Assembly);
                     }
             }
         }

@@ -19,7 +19,7 @@ namespace UnityCommander.ViewModels
         /// The close dialog command.
         /// </summary>
         public DelegateCommand CloseDialogCommand =>
-            this.closeDialogCommand ?? (this.closeDialogCommand = new DelegateCommand(this.ExecuteCloseDialogCommand));
+            this.closeDialogCommand ??= new DelegateCommand(this.ExecuteCloseDialogCommand);
 
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// Gets the title.
         /// </summary>
-        public string Title { get; } = "My Dialog";
+        public string Title => "My Dialog";
 
         /// <summary>
         /// The can close dialog.

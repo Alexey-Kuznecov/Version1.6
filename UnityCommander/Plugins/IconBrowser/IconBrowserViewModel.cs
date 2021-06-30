@@ -1,26 +1,22 @@
-﻿
-namespace IconBrowser
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Shapes;
+using AIconBrowser.Components.InputBox;
+using AIconBrowser.Contracts;
+using AIconBrowser.Help;
+using AIconBrowser.Models;
+using AIconBrowser.Mvvm.Base;
+using AIconBrowser.Services;
+using IconBrowser.Converter;
+
+namespace AIconBrowser
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics.Contracts;
-    using System.Linq;
-    using System.Text;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using System.Windows.Shapes;
-    using AlexLibWpf.Contracts;
-    using AlexLibWpf.Help;
-    using AlexLibWpf.Models;
-    using AlexLibWpf.Mvvm.Base;
-    using AlexLibWpf.Patterns;
-    using AlexLibWpf.Services;
-
-    using IconBrowser.Converter;
-    using IconBrowser.Models;
-
     /// <summary>
     /// The icon browser view model.
     /// </summary>
@@ -34,7 +30,7 @@ namespace IconBrowser
         /// <summary>
         /// The _file service.
         /// </summary>
-        private readonly IFileService _fileService;
+        private readonly Contracts.IFileService _fileService;
 
         /// <summary>
         /// The _filter text.
@@ -77,8 +73,8 @@ namespace IconBrowser
         /// </summary>
         public IconBrowserViewModel()
         {
-            this._dialogService = Singleton.SingleInstance<DefaultDialogService>();
-            this._fileService = Singleton.SingleInstance<XamlFileService>();
+            this._dialogService = Patterns.Singleton.SingleInstance<DefaultDialogService>();
+            this._fileService = Patterns.Singleton.SingleInstance<XamlFileService>();
 
             // Init collection.
             IconCollectionBase.OnCollectionChanged += this.UpdateCollection;
@@ -206,7 +202,7 @@ namespace IconBrowser
         /// <summary>
         /// The command sets the brush color, background color, and name for the icon.
         /// </summary>
-        public ICommand SelectIconCommand => new RelayCommand(obj =>
+        public ICommand SelectIconCommand => new Mvvm.Base.RelayCommand(obj =>
         {
             ButtonExtension bt = obj as ButtonExtension;
             IconModel iconModel = new IconModel
@@ -224,7 +220,7 @@ namespace IconBrowser
         /// <summary>
         /// Close icon editor.
         /// </summary>
-        public ICommand ShutdownCommand => new RelayCommand(obj =>
+        public ICommand ShutdownCommand => new Mvvm.Base.RelayCommand(obj =>
         {
             Application app = Application.Current;
             app.Shutdown();
@@ -233,14 +229,14 @@ namespace IconBrowser
         /// <summary>
         /// Loads an xaml format icon from a computer and writes it to an xml file.
         /// </summary>
-        public ICommand AddNewIconCommand => new RelayCommand(obj =>
+        public ICommand AddNewIconCommand => new Mvvm.Base.RelayCommand(obj =>
         {
             if (this._dialogService.OpenFileDialog())
             {
                 var path = this._fileService.Open(this._dialogService.FilePath);
 
                 // filename and extract geometry path of xaml file and .
-                string name = HelperFunctions.ClearExtension(this._dialogService.FileShortName);
+                string name = Help.HelperFunctions.ClearExtension(this._dialogService.FileShortName);
                 List<Path> paths = ConverterForeignPlugins.XamlExport64PathArray(path as Viewbox);
 
                 // Icon data packing to saving.
@@ -261,7 +257,7 @@ namespace IconBrowser
         /// <summary>
         /// Command assign new name for icon.
         /// </summary>
-        private ICommand RemaneIconCommand => new RelayCommand(name =>
+        private ICommand RemaneIconCommand => new Mvvm.Base.RelayCommand(name =>
         {
             string newName = (string)name;
 
@@ -277,7 +273,7 @@ namespace IconBrowser
 
             // Sort by name and updated the collection.
             this.Icons = this.Icons.OrderBy(p => p.IconName.Substring(0, 2)).ToObservableCollection();
-            AlexLibWpf.Components.InputBox.InputBox.Close();
+            InputBox.Close();
         });
 
         #endregion
@@ -339,17 +335,17 @@ namespace IconBrowser
             foreach (var bt in buttons)
             {
                 bt.CommandParameter = bt;
-                bt.RemoveIcon = new RelayCommand(obj =>
+                bt.RemoveIcon = new Mvvm.Base.RelayCommand(obj =>
                 {
                     IconsDataModifier.Remove(bt.Id, bt.CollectionName);
                     this.Icons.Remove(obj as ButtonExtension);
                 });
-                bt.RenameIcon = new RelayCommand(obj =>
+                bt.RenameIcon = new Mvvm.Base.RelayCommand(obj =>
                 {
                     _buttonExtension = obj as ButtonExtension;
-                    AlexLibWpf.Components.InputBox.InputBox.Show(this.RemaneIconCommand, AlexLibWpf.Components.InputBox.Actions.Change, (obj as ButtonExtension)?.IconName);
+                    InputBox.Show(this.RemaneIconCommand, Actions.Change, (obj as ButtonExtension)?.IconName);
                 });
-                bt.ReplaceIcon = new RelayCommand(obj =>
+                bt.ReplaceIcon = new Mvvm.Base.RelayCommand(obj =>
                 {
                     IconsDataWriter.IconReplace(((ButtonExtension)obj).Id, "Неподшитые", "Игры");
                     this.Icons.Remove((ButtonExtension)obj);
@@ -398,7 +394,7 @@ namespace IconBrowser
         /// </summary>
         public void Dispose()
         {
-            Singleton.Status = true;
+            Patterns.Singleton.Status = true;
         }
 
         #endregion

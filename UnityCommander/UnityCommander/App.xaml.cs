@@ -42,8 +42,8 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register(typeof(PluginLoaderService));
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>();
+            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDirectoryProviderService, DirectoryProviderService>();
             containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();

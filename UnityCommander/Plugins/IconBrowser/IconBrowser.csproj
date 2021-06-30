@@ -1,18 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <AssemblyName>AIconBrowser</AssemblyName>
+    <RootNamespace>AIconBrowser</RootNamespace>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\IconBrowser</OutputPath>
-		<OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\IconBrowser</OutputPath>
+		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\AIconBrowser</OutputPath>
+		<OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\AIconBrowser</OutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Resources\IconsData.xml" />
 	</ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Lab\AlexLibWpf\AlexLibWpf.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
       <Private>false</Private>
 		<ExcludeAssets>runtime</ExcludeAssets>
@@ -22,6 +23,14 @@
     <Resource Include="Resources\IconsData.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Components\InputBox\InputBox.xaml.cs">
+      <DependentUpon>InputBox.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Components\InputBox\InputBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Resources\DefaultStyles.xaml">
       <SubType>Designer</SubType>
     </Page>

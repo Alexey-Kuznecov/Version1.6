@@ -8,6 +8,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Reflection;
+using System.Windows.Data;
+using UnityCommander.Integration.Columns;
 using UnityCommander.Services.Plugins;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
@@ -83,7 +85,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The plugin loader service.
         /// </summary>
-        //private readonly IPluginLoaderService pluginLoaderService;
+        private readonly IPluginLoaderService pluginLoaderService;
 
         #endregion
 
@@ -130,16 +132,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="commandService">
         ///  The service that respond for composite commands.
         /// </param>
-        /// <param name="pluginLoaderService">
+        /// <param name="pluginService">
         /// Service for loading all detected plugin interfaces.
         /// </param>
         public SplitPanelViewModel(
             IRegionManager regionManager, 
             ISettingsProviderService settingsService, 
             IDirectoryProviderService directoryProviderService, 
-            IGlobalCommandService commandService) 
+            IGlobalCommandService commandService, IPluginLoaderService pluginService) 
             : base(regionManager)
         {
+            this.pluginLoaderService = pluginService;
             this.directoryProviderService = directoryProviderService;
             this.settingsService = settingsService.GetAppConfig();
 
@@ -157,7 +160,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.SetLastPanelState();
             this.AddFileColumns();
             this.AddFolderColumns();
-            //this.SetAdditionalColumns();
+            this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -408,35 +411,35 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void SetAdditionalColumns()
         {
-            //foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
-            //{
-            //    if (!(context.DataContext is Column data)) continue;
-            //    if (context.PluginScope == PluginScopes.Columns)
-            //    {
-            //        var columnNew = new GridViewColumn
-            //        {
-            //            Header = data.Header ?? "Error",
-            //            Width = data.Width,
-            //            DisplayMemberBinding = new Binding(data.Header)
-            //        };
-                    
-            //        switch (data.TargetPanel)
-            //        {
-            //            case TargetPanel.Folders:
-            //                var IsCreated = context.GetRegisteredType(PluginScopes.Columns);
-            //                if (IsCreated is null) return;
-            //                this.FolderPanelContainer.Columns.Add(columnNew);
-            //                this.InitialFolderColumnValues(context);
-            //                break;
-            //            case TargetPanel.Files:
-            //                IsCreated = context.GetRegisteredType(PluginScopes.Columns);
-            //                if (IsCreated is null) return;
-            //                this.FilePanelContainer.Columns.Add(columnNew);
-            //                this.InitialFileColumnValues(context);
-            //                break;
-            //        }
-            //    }
-            //}
+            foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts())
+            {
+                if (!(context.DataContext is Column data)) continue;
+                if (context.PluginScope == PluginScopes.Columns)
+                {
+                    var columnNew = new GridViewColumn
+                    {
+                        Header = data.Header ?? "Error",
+                        Width = data.Width,
+                        DisplayMemberBinding = new Binding(data.Header)
+                    };
+
+                    switch (data.TargetPanel)
+                    {
+                        case TargetPanel.Folders:
+                            var IsCreated = context.GetRegisteredType(PluginScopes.Columns);
+                            if (IsCreated is null) return;
+                            this.FolderPanelContainer.Columns.Add(columnNew);
+                            this.InitialFolderColumnValues(context);
+                            break;
+                        case TargetPanel.Files:
+                            IsCreated = context.GetRegisteredType(PluginScopes.Columns);
+                            if (IsCreated is null) return;
+                            this.FilePanelContainer.Columns.Add(columnNew);
+                            this.InitialFileColumnValues(context);
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -496,22 +499,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.FileList = this.directoryProviderService.GetFiles(path);
             this.CurrentDirectory = path;
 
-            //foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts(this.pluginLoaderService))
-            //{
-            //    if (!(context.DataContext is Column data)) continue;
-            //    if (context.PluginScope == PluginScopes.Columns)
-            //    {
-            //        switch (data.TargetPanel)
-            //        {
-            //            case TargetPanel.Folders:
-            //                this.InitialFolderColumnValues(context);
-            //                break;
-            //            case TargetPanel.Files:
-            //                this.InitialFileColumnValues(context);
-            //                break;
-            //        }
-            //    }
-            //}
+            foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts())
+            {
+                if (!(context.DataContext is Column data)) continue;
+                if (context.PluginScope == PluginScopes.Columns)
+                {
+                    switch (data.TargetPanel)
+                    {
+                        case TargetPanel.Folders:
+                            this.InitialFolderColumnValues(context);
+                            break;
+                        case TargetPanel.Files:
+                            this.InitialFileColumnValues(context);
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>

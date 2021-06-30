@@ -1,4 +1,9 @@
 ﻿
+using System.Collections;
+using System.ComponentModel;
+using System.Linq;
+using System.Net;
+
 namespace UnityCommander.Services.Plugins
 {
     using System;
@@ -103,7 +108,14 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IPluginImplement> GetPluginImplements()
         {
-            return this.ImportPluginImplements;
+            foreach (var plugin in pluginLoaders)
+            {
+                foreach (var implement in plugin.GetImplements())
+                {
+                    yield return implement;
+                }
+            }
+            yield return null;
         }
 
         /// <summary>
@@ -114,7 +126,15 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IDialogService> GetDialogService()
         {
-            return this.ImportDialogService;
+            foreach (var loader in pluginLoaders)
+            {
+                foreach (var dialog in loader.GetDialogs())
+                {
+                    yield return dialog;
+                }
+            }
+
+            yield return null;
         }
 
         /// <summary>
@@ -152,19 +172,7 @@ namespace UnityCommander.Services.Plugins
             return implement;
         }
 
-    #endregion
-
-        public void UnloadInterface(AssemblyName assemblyName)
-        {
-            ((List<IPluginConfigure>)ImportPluginSettings).RemoveAll(p 
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-            ((List<IPluginImplement>)ImportPluginImplements).RemoveAll(p
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-            ((List<IDialogService>)ImportDialogService).RemoveAll(p
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-            ((List<IPluginDescriptor>)ImportPluginMeta).RemoveAll(p
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-        }
+        #endregion
 
         public List<IPluginLoader> GetPluginLoaders()
         {
@@ -173,78 +181,41 @@ namespace UnityCommander.Services.Plugins
 
         public bool UnloadPlugins()
         {
-            bool isLoaded = default(bool);
+            this.ClearHashTable();
 
+            bool isLoaded = default(bool);
+            
+            Research:
             foreach (var plugin in pluginLoaders)
             {
                 if (plugin.UnloadPlugin())
                 {
-                    pluginLoaders.Remove(plugin);
                     isLoaded = true;
-                    break;
                 }
+
+                pluginLoaders.Remove(plugin);
+                goto Research;
             }
             
             return isLoaded;
         }
 
-        /// <summary>
-        /// Gets interfaces to configure plugins.
-        /// </summary>
-        /// <returns>
-        /// The list interfaces to configure plugins.
-        /// </returns>
-        public IPluginManager GetPluginManager()
+
+        void ClearHashTable()
         {
-            foreach (var plugin in this.ImportPluginMeta)
+            var typeConverterAssembly = typeof(TypeConverter).Assembly;
+            var reflectTypeDescriptionProviderType = typeConverterAssembly.GetType("System.ComponentModel.ReflectTypeDescriptionProvider");
+
+            if (reflectTypeDescriptionProviderType != null)
             {
-                if (plugin is not null)
+                var reflectTypeDescriptorProviderTable = reflectTypeDescriptionProviderType.GetField("s_attributeCache", BindingFlags.Static | BindingFlags.NonPublic);
+                if (reflectTypeDescriptorProviderTable is not null)
                 {
-                    Assembly.GetAssembly(plugin.GetType());
+                    var attributeCacheTable = (Hashtable)reflectTypeDescriptorProviderTable.GetValue(null);
+                    if (attributeCacheTable != null) attributeCacheTable.Clear();
                 }
             }
-
-            return null;
         }
-
-        /// <summary>
-        /// Scans for a plugins folder in its base directory and attempts to load any plugins it finds.
-        /// </summary>
-        /// <returns> List of loaded plugins. </returns>
-        //private List<PluginLoader> GetPluginLoaders()
-        //{
-        //    var loaders = new List<PluginLoader>();
-        //    // Create plugin loaders
-        //    var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
-        //    foreach (var dir in Directory.GetDirectories(pluginsDir))
-        //    {
-        //        var dirName = Path.GetFileName(dir);
-        //        var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
-
-        //        //var alcRecords = new ALCRecords
-        //        //{
-        //        //    Alc = new AssemblyLoadContext(dirName, true),
-        //        //    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
-        //        //};
-
-        //        //PluginManager.ALCRecords.Add(alcRecords);
-
-        //        if (File.Exists(pluginDll))
-        //        {
-        //            var loader = PluginLoader.CreateFromAssemblyFile(
-        //                pluginDll,
-        //                sharedTypes: new[] { typeof(IPluginFactory), typeof(IServiceCollection) },
-        //                (config) =>
-        //                {
-        //                    // config.IsLazyLoaded = true;
-        //                    //config.DefaultContext = alcRecords.Alc;
-        //                });
-        //            loaders.Add(loader);
-        //        }
-        //    }
-
-        //    return loaders;
-        //}
 
         /// <summary>
         /// Configures the import of plugins.

@@ -1,12 +1,11 @@
 ﻿
-namespace UnityCommander.Services.Plugins.Manager
+using System;
+using System.Collections.Generic;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Services.Interfaces;
+
+namespace UnityCommander.Services.Plugins
 {
-    using System;
-    using System.Collections.Generic;
-
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Services.Interfaces;
-
     /// <summary>
     /// The column helper.
     /// </summary>
@@ -26,24 +25,26 @@ namespace UnityCommander.Services.Plugins.Manager
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        //public static IEnumerable<IColumn> GetContextByAttribute(this IEnumerable<IPluginImplement> implements, IPluginLoaderService service)
-        //{
-        //    foreach (var attribute in service.GetHandlerAttributes<IPluginImplement>())
-        //    {
-        //        if (attribute is AttachHandlerAttribute attachHandler)
-        //        {
-        //            var getColumnsDelegate = attachHandler.Handler as AddColumnsDelegate;
+        public static IEnumerable<IColumn> GetContextByAttribute(this IEnumerable<IPluginImplement> implements, IPluginLoaderService service)
+        {
+            //foreach (var attribute in service.GetHandlerAttributes<IPluginImplement>())
+            //{
+            //    if (attribute is AttachHandlerAttribute attachHandler)
+            //    {
+            //        var getColumnsDelegate = attachHandler.Handler as AddColumnsDelegate;
 
-        //            if (getColumnsDelegate?.Invoke() is IEnumerable<IColumn> columns)
-        //            {
-        //                foreach (var column in columns)
-        //                {
-        //                    yield return column;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+            //        if (getColumnsDelegate?.Invoke() is IEnumerable<IColumn> columns)
+            //        {
+            //            foreach (var column in columns)
+            //            {
+            //                yield return column;
+            //            }
+            //        }
+            //    }
+            //}
+
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Gets all application contexts from all plugin assemblies using the required <see cref="IPluginImplement.SetHostAppContext"/> method
@@ -58,19 +59,22 @@ namespace UnityCommander.Services.Plugins.Manager
         /// <returns>
         /// List all host application context found.
         /// </returns>
-        //public static IEnumerable<HostAppContext> GetHostAppContexts(this IEnumerable<IPluginImplement> implements, IPluginLoaderService service)
-        //{
-        //    foreach (var instance in service.GetPluginInstances<IPluginImplement>())
-        //    {
-        //       var contexts = ((IPluginImplement)instance).SetHostAppContext();
+        public static IEnumerable<HostAppContext> GetHostAppContexts(this IEnumerable<IPluginImplement> implements)
+        {
+            foreach (var instance in implements)
+            {
+                if (instance != null)
+                {
+                    var contexts = instance.SetHostAppContext();
 
-        //       foreach (var context in contexts)
-        //       {
-        //           context.DelegateCommand = Delegate.CreateDelegate(
-        //               typeof(InsertValueUsePath), instance, context.HostAppCommandModel.Command);
-        //           yield return context;
-        //       }
-        //    }
-        //}
+                    foreach (var context in contexts)
+                    {
+                        context.DelegateCommand = Delegate.CreateDelegate(
+                            typeof(InsertValueUsePath), instance, context.HostAppCommandModel.Command);
+                        yield return context;
+                    }
+                }
+            }
+        }
     }
 }
