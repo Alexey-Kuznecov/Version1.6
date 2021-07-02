@@ -10,21 +10,6 @@ namespace UnityCommander.Services.Interfaces
     /// </summary>
     public interface IPluginLoaderService
     {
-        /// <summary>
-        /// Gets the interfaces to manage plugin settings.
-        /// </summary>
-        IEnumerable<IPluginConfigure> ImportPluginSettings { get; }
-
-        /// <summary>
-        /// Gets the plugins implementation.
-        /// </summary>
-        IEnumerable<IPluginImplement> ImportPluginImplements { get; }
-
-        /// <summary>
-        /// Gets the dialog service to create owner dialog box.
-        /// </summary>
-        IEnumerable<IDialogService> ImportDialogService { get; }
-
         public bool UnloadPlugins();
 
         /// <summary>
@@ -42,6 +27,12 @@ namespace UnityCommander.Services.Interfaces
         /// List of plugin implementations.
         /// </returns>
         public IEnumerable<IDialogService> GetDialogService();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IPluginDescriptor> GetPluginDescriptors();
 
         /// <summary>
         /// Gets list interfaces to manage plugins is imported.

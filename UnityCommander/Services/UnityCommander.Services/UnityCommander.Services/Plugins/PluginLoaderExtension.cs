@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityCommander.Integration.Attributes;
 using UnityCommander.Integration.Contracts;
 using UnityCommander.Services.Interfaces;
 
@@ -14,17 +15,6 @@ namespace UnityCommander.Services.Plugins
     /// </summary>
     public static class PluginExtensionMethods
     {
-        /// <summary>
-        /// Gets a list of plugins that implement the <see cref="IPluginImplement"/> interface.
-        /// </summary>
-        /// <returns>
-        /// List of interfaces <see cref="IPluginImplement"/>.
-        /// </returns>
-        //public static IEnumerable<IPluginImplement> GetPluginImplements(this IPluginLoaderService loaderService)
-        //{
-        //    return loaderService.ImportPluginImplements;
-        //}
-
         /// <summary>
         /// Attempts to find methods that match the signature of the
         /// <see cref="InsertValueUsePath"/> delegate in plugin assemblies using attributes.
@@ -59,7 +49,7 @@ namespace UnityCommander.Services.Plugins
         /// <summary>
         /// Attempts to find all handlers attributes in assemblies with plugins.
         /// </summary>
-        /// <param name="service">
+        /// <param name="pluginConfigures">
         /// Interfaces for managing loaded plugins.
         /// </param>
         /// <typeparam name="T">
@@ -68,19 +58,53 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// All handler attributes found.
         /// </returns>
-        //public static IEnumerable<Attribute> GetHandlerAttributes<T>(this IPluginLoaderService service)
-        //{
-        //    foreach (var parameter in service.GetPluginContract<T>())
-        //    {
-        //        foreach (PropertyInfo property in parameter.GetType().GetProperties())
-        //        {
-        //            foreach (var attribute in property.GetCustomAttributes())
-        //            {
-        //                yield return attribute;
-        //            }
-        //        }
-        //    }
-        //}
+        public static IEnumerable<Attribute> GetHandlerAttributes<T>(this IEnumerable<IPluginConfigure> pluginConfigures)
+        {
+            foreach (var configure in pluginConfigures)
+            {
+                foreach (PropertyInfo property in configure.GetType().GetProperties())
+                {
+                    foreach (var attribute in property.GetCustomAttributes())
+                    {
+                        yield return attribute;
+                    }
+                }
+            }
+        }
+        
+        public static IEnumerable<Attribute> GetPluginConfigs(this Type type)
+        {
+            var pluginType = type.GetTypeByContract<IPluginConfigure>();
+
+            if (pluginType == null) yield break;
+            foreach (PropertyInfo property in pluginType.GetProperties())
+            {
+                foreach (var attribute in property.GetCustomAttributes())
+                {
+                    yield return attribute;
+                }
+            }
+        }
+
+        public static Type GetTypeByContract<T>(this Type type)
+        {
+            foreach (var exportedType in type.Assembly.ExportedTypes
+                .Where(t => typeof(T).IsAssignableFrom(t)))
+            {
+                if (type.Namespace == exportedType.Namespace)
+                {
+                    return exportedType;
+                }
+            }
+
+            return null;
+        }
+
+
+        public static Assembly GetAssembly<T>(this IEnumerable<T> contracts)
+        {
+            return contracts.Select(contract => Assembly.GetAssembly(contract.GetType())).FirstOrDefault();
+        }
 
         /// <summary>
         /// Attempts to find all handlers attributes in assemblies with plugins.

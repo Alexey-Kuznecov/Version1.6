@@ -115,7 +115,6 @@ namespace UnityCommander.Services.Plugins
                     yield return implement;
                 }
             }
-            yield return null;
         }
 
         /// <summary>
@@ -133,8 +132,6 @@ namespace UnityCommander.Services.Plugins
                     yield return dialog;
                 }
             }
-
-            yield return null;
         }
 
         /// <summary>
@@ -143,9 +140,15 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
         /// </returns>
-        public IEnumerable<IPluginConfigure> GetPluginSettings()
+        public IEnumerable<IPluginDescriptor> GetPluginDescriptors()
         {
-            return this.ImportPluginSettings;
+            foreach (var loader in pluginLoaders)
+            {
+                foreach (var descriptor in loader.GetDescriptors())
+                {
+                    yield return descriptor;
+                }
+            }
         }
 
         /// <summary>

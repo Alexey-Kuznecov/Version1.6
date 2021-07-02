@@ -3,12 +3,11 @@ namespace UnityCommander.Services
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Windows;
+    using System.Linq;
     using System.Windows.Media;
     using System.Windows.Shapes;
 
     using MaterialDesignThemes.Wpf;
-    using UnityCommander.Common.Models;
     using UnityCommander.Integration.Models;
     using UnityCommander.Services.Interfaces;
 
@@ -32,7 +31,19 @@ namespace UnityCommander.Services
             this.materialDesignIcons.Add("Tag", PackIconKind.Tag);
             this.materialDesignIcons.Add("Comment", PackIconKind.Comment);
             this.materialDesignIcons.Add("Plugin", PackIconKind.Plugin);
+            this.materialDesignIcons.Add("Settings", PackIconKind.Settings);
         }
+
+        public IconModel GetIcon(string iconName)
+        {
+            var iconModel = new IconModel();
+            PackIcon packIcon = new PackIcon { Kind = materialDesignIcons.Single(pack => pack.Key == iconName).Value };
+            iconModel.Path = new Path() {
+                Data = Geometry.Parse(packIcon.Data)
+            };
+            return iconModel;
+        }
+
 
         /// <summary>
         /// The get icons.

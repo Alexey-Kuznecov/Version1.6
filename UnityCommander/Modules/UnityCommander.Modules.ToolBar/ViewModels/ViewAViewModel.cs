@@ -117,10 +117,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
             foreach (var dialog in dialogs)
             {
-                if (dialog != null)
-                {
-                    this.dialogService.ShowDialog("DialogView", new OverrideDialogParameters(dialog), r => { });
-                }
+                this.dialogService.ShowDialog("DialogPlugin", new OverrideDialogParameters(dialog), r => { });
             }
         }
     }

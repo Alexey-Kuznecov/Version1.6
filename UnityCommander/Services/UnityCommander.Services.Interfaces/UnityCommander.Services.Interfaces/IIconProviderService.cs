@@ -18,5 +18,12 @@ namespace UnityCommander.Services.Interfaces
         /// The collection icons of Icon Model type.
         /// </returns>
         ObservableCollection<IconModel> GetIcons();
+
+        /// <summary>
+        /// Provides an icon by the name specified in the arguments.
+        /// </summary>
+        /// <param name="iconName"> Icon name. </param>
+        /// <returns></returns>
+        public IconModel GetIcon(string iconName);
     }
 }

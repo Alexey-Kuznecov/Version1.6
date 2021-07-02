@@ -16,6 +16,7 @@ namespace UnityCommander.Services.Plugins
 {
     public class WeakPluginLoader : IPluginLoader
     {
+        private Guid pluginToken = Guid.NewGuid();
         private IEnumerable<IPluginImplement> pluginImplements;
         private IEnumerable<IPluginConfigure> pluginSettings;
         private IEnumerable<IDialogService> dialogService;
@@ -30,21 +31,11 @@ namespace UnityCommander.Services.Plugins
             alc = new HostPluginLoadContext(assemblyPath);
             var services = new ServiceCollection();
             weakReference = new WeakReference(alc);
-            Assembly a = alc.LoadFromAssemblyPath(assemblyPath);
+            Assembly assembly = alc.LoadFromAssemblyPath(assemblyPath);
 
-            pluginResources = PluginResourceManager.GetResourceDictionary(a);
+            this.GetPluginResources(assembly);
 
-            if (pluginResources?.Count is not 0 && pluginResources != null)
-            {
-                var dictionary = Application.Current.Resources.MergedDictionaries;
-
-                foreach (var resource in pluginResources)
-                {
-                    dictionary.Add(resource);
-                }
-            }
-
-            foreach (var type in a.GetTypes()
+            foreach (var type in assembly.GetTypes()
                 .Where(t => typeof(IPluginFactory)
                 .IsAssignableFrom(t) && !t.IsAbstract))
             {
@@ -56,6 +47,21 @@ namespace UnityCommander.Services.Plugins
                 pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
                 pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
                 dialogService = serviceProvider.GetServices<IDialogService>();
+            }
+        }
+
+        private void GetPluginResources(Assembly assembly)
+        {
+            pluginResources = PluginResourceManager.GetResourceDictionary(assembly);
+
+            if (pluginResources?.Count is not 0 && pluginResources != null)
+            {
+                var dictionary = Application.Current.Resources.MergedDictionaries;
+
+                foreach (var resource in pluginResources)
+                {
+                    dictionary.Add(resource);
+                }
             }
         }
         
