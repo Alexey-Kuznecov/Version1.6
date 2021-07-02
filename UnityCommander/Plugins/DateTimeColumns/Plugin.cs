@@ -1,10 +1,13 @@
 ﻿
+
+
 namespace DateTimeColumns
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Windows;
+    using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Extentions.Helper;
@@ -99,8 +102,8 @@ namespace DateTimeColumns
         {
             var dateTimeModel = new DateTimeModel();
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            dateTimeModel.CreationTime = directoryInfo.CreationTime;
-            dateTimeModel.LastAccessTime = directoryInfo.LastAccessTime;
+            dateTimeModel.NewCreationTime = directoryInfo.CreationTime;
+            dateTimeModel.NewLastAccessTime = directoryInfo.LastAccessTime;
             return dateTimeModel;
         }
 
@@ -109,7 +112,7 @@ namespace DateTimeColumns
         /// </summary>
         private void InitialData()
         {
-            var context = PluginScopes.Columns.Add(TargetPanel.Files, nameof(DateTimeModel.CreationTime), 150)
+            var context = PluginScopes.Columns.Add(TargetPanel.Files, nameof(DateTimeModel.NewCreationTime), 150)
                     .AddBindingCommand(typeof(Plugin), nameof(this.SetColumnValue))
                     .AddRender(OptionRender.TextBlock)
                     .AddCommand(this.SortDateTime)

@@ -1,8 +1,8 @@
 ﻿
-namespace MultiColumns.Images
+namespace MultiColumns.Image
 {
     using System.Diagnostics;
-
+    using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
 
     /// <summary>

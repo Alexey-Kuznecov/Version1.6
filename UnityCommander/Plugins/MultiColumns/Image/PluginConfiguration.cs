@@ -1,11 +1,10 @@
 ﻿
-namespace MultiColumns.Images
+using Microsoft.Extensions.DependencyInjection;
+using MultiColumns.Images;
+using UnityCommander.Integration.Contracts;
+
+namespace MultiColumns.Image
 {
-    using Microsoft.Extensions.DependencyInjection;
-
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
-
     /// <summary>
     /// The plugin configuration.
     /// </summary>

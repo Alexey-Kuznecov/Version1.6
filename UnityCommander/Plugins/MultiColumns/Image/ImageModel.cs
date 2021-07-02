@@ -1,9 +1,11 @@
 ﻿
-namespace MultiColumns.Images
-{
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
+using MultiColumns.Images;
+using UnityCommander.Integration.Attributes;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Integration.Enums;
 
+namespace MultiColumns.Image
+{
     /// <summary>
     /// The image model.
     /// </summary>

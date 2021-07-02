@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Attributes;
+
 namespace UnityCommander.Integration.Contracts
 {
     using System;

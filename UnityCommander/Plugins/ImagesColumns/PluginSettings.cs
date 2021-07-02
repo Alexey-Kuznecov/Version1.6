@@ -2,7 +2,7 @@
 namespace ImagesColumns
 {
     using System.Diagnostics;
-
+    using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
 
     /// <summary>

@@ -1,16 +1,14 @@
 ﻿
 namespace MultiColumns.DateTime
 {
-    using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-
+    using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The plugin settings.
     /// </summary>
-    internal class PluginSettings : IPluginConfigure
+    public class PluginSettings : IPluginConfigure
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginSettings"/> class.

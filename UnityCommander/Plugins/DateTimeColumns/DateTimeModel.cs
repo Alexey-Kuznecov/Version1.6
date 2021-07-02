@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityCommander.Integration.Enums;
 
 namespace DateTimeColumns
@@ -11,11 +12,11 @@ namespace DateTimeColumns
         /// <summary>
         /// Gets or sets the date and time the file/folder was created.
         /// </summary>
-        public System.DateTime CreationTime { get; set; }
+        public DateTime NewCreationTime { get; set; }
 
         /// <summary>
         /// Gets or sets the date and time the file/folder was last accessed.
         /// </summary>
-        public System.DateTime LastAccessTime { get; set; }
+        public DateTime NewLastAccessTime { get; set; }
     }
 }

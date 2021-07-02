@@ -1,10 +1,9 @@
 ﻿
-namespace MultiColumns.Images
+using System.IO;
+using UnityCommander.Integration.Contracts;
+
+namespace MultiColumns.Image
 {
-    using System.IO;
-
-    using UnityCommander.Integration.Contracts;
-
     /// <summary>
     /// The plugin option handler.
     /// </summary>

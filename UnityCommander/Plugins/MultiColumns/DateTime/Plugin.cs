@@ -3,14 +3,10 @@ namespace MultiColumns.DateTime
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-
+    using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Extentions.Helper;
 
@@ -63,7 +59,7 @@ namespace MultiColumns.DateTime
         /// The get unity context.
         /// </summary>
         /// <returns>
-        /// The <see cref="UnityContext"/>.
+        /// The <see cref="HostAppContext"/>.
         /// </returns>
         public List<HostAppContext> SetHostAppContext()
         {

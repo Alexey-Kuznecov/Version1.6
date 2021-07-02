@@ -1,15 +1,15 @@
 ﻿
-namespace MultiColumns.Images
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows;
+using MultiColumns.Images;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Integration.Enums;
+using UnityCommander.Integration.Extentions.Helper;
+
+namespace MultiColumns.Image
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Windows;
-
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Extentions.Helper;
-
     /// <summary>
     /// The home library book service.
     /// </summary>
