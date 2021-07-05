@@ -3,13 +3,13 @@ namespace ImagesColumns
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
     using System.IO;
     using System.Windows;
 
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Extentions.Helper;
+    using UnityCommander.Integration.Extensions;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The home library book service.
@@ -22,14 +22,14 @@ namespace ImagesColumns
         public Plugin()
         {
             this.Register = new List<Type>();
-            Columns = new List<HostAppContext>();
+            Columns = new List<PluginBuilder>();
             this.InitialData();
         }
 
         /// <summary>
         /// Gets or sets the columns.
         /// </summary>
-        public static List<HostAppContext> Columns { get; set; }
+        public static List<PluginBuilder> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the register.
@@ -64,9 +64,9 @@ namespace ImagesColumns
         /// The get unity context.
         /// </summary>
         /// <returns>
-        /// The <see cref="HostAppContext"/>.
+        /// The <see cref="PluginBuilder"/>.
         /// </returns>
-        public List<HostAppContext> SetHostAppContext()
+        public List<PluginBuilder> SetHostAppContext()
         {
             return Columns;
         }

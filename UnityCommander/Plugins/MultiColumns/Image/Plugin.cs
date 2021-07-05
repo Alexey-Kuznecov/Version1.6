@@ -1,15 +1,16 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows;
-using MultiColumns.Images;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Integration.Enums;
-using UnityCommander.Integration.Extentions.Helper;
-
 namespace MultiColumns.Image
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Windows;
+    using MultiColumns.Images;
+    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Extensions;
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The home library book service.
     /// </summary>
@@ -21,14 +22,14 @@ namespace MultiColumns.Image
         public Plugin()
         {
             this.Register = new List<Type>();
-            Columns = new List<HostAppContext>();
+            Columns = new List<PluginBuilder>();
             this.InitialData();
         }
 
         /// <summary>
         /// Gets or sets the columns.
         /// </summary>
-        public static List<HostAppContext> Columns { get; set; }
+        public static List<PluginBuilder> Columns { get; set; }
         
         /// <summary>
         /// Gets or sets plugin name.
@@ -60,7 +61,7 @@ namespace MultiColumns.Image
         /// <returns>
         /// The <see cref="AppHostContext"/>.
         /// </returns>
-        public List<HostAppContext> SetHostAppContext()
+        public List<PluginBuilder> SetHostAppContext()
         {
             return Columns;
         }

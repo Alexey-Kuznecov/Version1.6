@@ -1,6 +1,8 @@
 ﻿
-namespace UnityCommander.Integration.Contracts
+namespace UnityCommander.Integration.Options
 {
+    using UnityCommander.Integration.Contracts;
+
     /// <summary>
     /// The selector type.
     /// </summary>

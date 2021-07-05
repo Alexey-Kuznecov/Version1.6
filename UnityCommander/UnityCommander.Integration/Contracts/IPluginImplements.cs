@@ -34,6 +34,6 @@ namespace UnityCommander.Integration.Contracts
         /// List of contexts that have been configured with a plugin 
         /// for the host application.
         /// </returns>
-        List<HostAppContext> SetHostAppContext();
+        List<PluginBuilder> SetHostAppContext();
     }
 }

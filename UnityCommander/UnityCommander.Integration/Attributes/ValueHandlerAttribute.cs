@@ -1,10 +1,10 @@
 ﻿
-using System;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Integration.Enums;
-
 namespace UnityCommander.Integration.Attributes
 {
+    using System;
+    using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The selector type.
     /// </summary>

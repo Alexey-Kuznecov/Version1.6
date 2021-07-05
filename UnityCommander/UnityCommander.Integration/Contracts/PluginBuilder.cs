@@ -1,19 +1,18 @@
 ﻿
-using System.Diagnostics;
-
 namespace UnityCommander.Integration.Contracts
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using UnityCommander.Integration.Contracts.Columns;
     using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The context host application is an object that allows plugins 
     /// to make changes and expand the functionality of the application.
     /// </summary>
-    public class HostAppContext : RenderTemplate
+    public class PluginBuilder : RenderTemplate
     {
         /// <summary>
         /// Mapping enumeration members to delegates.
@@ -32,12 +31,12 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets the list of the context menu item.
         /// </summary>
-        public List<ContextItem> ContextItem { get; internal set; }
+        public List<ContextMenuItem> ContextMenuItem { get; internal set; }
 
         /// <summary>
         /// Gets the host application context.
         /// </summary>
-        public HostAppContext Context { get; internal set; }
+        public PluginBuilder Builder { get; internal set; }
 
         /// <summary>
         /// Gets the object to deploy to ​the application
@@ -96,12 +95,12 @@ namespace UnityCommander.Integration.Contracts
         /// Specifies the item rendering option.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
         internal object SetRender(OptionRender render)
         {
             this.RenderAs = render;
-            return this.Context;
+            return this.Builder;
         }
 
         /// <summary>
@@ -111,12 +110,12 @@ namespace UnityCommander.Integration.Contracts
         /// Specifies the command to execute,
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
         internal object SetCommand(Action command)
         {
             this.Command = command;
-            return this.Context;
+            return this.Builder;
         }
 
         /// <summary>
@@ -129,22 +128,22 @@ namespace UnityCommander.Integration.Contracts
         /// The command to execute when the conetext menu item is selected.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
         internal object SetContextMenu(string menu, Action command)
         {
-            if (this.ContextItem == null)
+            if (this.ContextMenuItem == null)
             {
-                this.ContextItem = new List<ContextItem>();
+                this.ContextMenuItem = new List<ContextMenuItem>();
             }
 
-            this.ContextItem.Add(new ContextItem
+            this.ContextMenuItem.Add(new ContextMenuItem
                  {
                      Name = menu,
                      Command = command
                  });
 
-            return this.Context;
+            return this.Builder;
         }
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace UnityCommander.Integration.Contracts
         /// Specifies the name of command.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
         internal object SetBindingCommand(PluginScopes scopes, Type commandSource, string command)
         {
@@ -170,7 +169,7 @@ namespace UnityCommander.Integration.Contracts
                   SourceCommand = commandSource,
                   DelegateCommand = AssociateCommands.Single(k => k.Key == scopes).Value
               };
-            return this.Context;
+            return this.Builder;
         }
     }
 }

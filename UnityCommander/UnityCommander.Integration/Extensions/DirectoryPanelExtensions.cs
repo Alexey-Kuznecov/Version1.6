@@ -1,12 +1,12 @@
 ﻿
-namespace UnityCommander.Integration.Extentions.Helper
+namespace UnityCommander.Integration.Extensions
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// Provides extension methods for creating a host application context..
@@ -30,18 +30,18 @@ namespace UnityCommander.Integration.Extentions.Helper
         /// The column width.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
-        public static HostAppContext Add(this PluginScopes scopes, TargetPanel target, string header, int width)
+        public static PluginBuilder Add(this PluginScopes scopes, TargetPanel target, string header, int width)
         {
             switch (scopes)
             {
                 case PluginScopes.Columns:
-                    var unity = new HostAppContext();
+                    var unity = new PluginBuilder();
                     unity.DataContext = new Column { Header = header, Width = width, TargetPanel = target };
-                    unity.Context = unity;
+                    unity.Builder = unity;
                     unity.PluginScope = scopes;
-                    return scopes == PluginScopes.Columns ? unity.Context : null;
+                    return unity.Builder;
                 default:
                     return null;
             }
@@ -61,9 +61,9 @@ namespace UnityCommander.Integration.Extentions.Helper
         /// The name of the command. This method will be called whenever required.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
-        public static HostAppContext AddBindingCommand(this HostAppContext context, Type source, string command)
+        public static PluginBuilder AddBindingCommand(this PluginBuilder context, Type source, string command)
         {
             context.SetBindingCommand(context.PluginScope, source, command);
             return context;
@@ -73,17 +73,17 @@ namespace UnityCommander.Integration.Extentions.Helper
         /// Specifies the method for rendering a element selected from the <see cref="OptionRender"/> list.
         /// </summary>
         /// <param name="context">
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </param>
         /// <param name="method">
         /// Method rendering a element selected from the <see cref="OptionRender"/> list.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
-        public static HostAppContext AddRender(this HostAppContext context, OptionRender method)
+        public static PluginBuilder AddRender(this PluginBuilder context, OptionRender method)
         {
-            return (HostAppContext)context.SetRender(method);
+            return (PluginBuilder)context.SetRender(method);
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace UnityCommander.Integration.Extentions.Helper
         /// The command or method that will be called when the event occurs.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
-        public static HostAppContext AddCommand(this HostAppContext context, Action command)
+        public static PluginBuilder AddCommand(this PluginBuilder context, Action command)
         {
-            return (HostAppContext)context.SetCommand(command);
+            return (PluginBuilder)context.SetCommand(command);
         }
 
         /// <summary>
@@ -117,11 +117,11 @@ namespace UnityCommander.Integration.Extentions.Helper
         /// Specifies the command to call when a context menu item is selected.
         /// </param>
         /// <returns>
-        /// The <see cref="HostAppContext"/> is automatically created.
+        /// The <see cref="PluginBuilder"/> is automatically created.
         /// </returns>
-        public static HostAppContext AddContextItem(this HostAppContext context, string name, Action command)
+        public static PluginBuilder AddContextItem(this PluginBuilder context, string name, Action command)
         {
-            return (HostAppContext)context.SetContextMenu(name, command);
+            return (PluginBuilder)context.SetContextMenu(name, command);
         }
     }
 }

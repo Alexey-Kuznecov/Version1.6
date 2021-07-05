@@ -4,7 +4,6 @@ namespace ImagesColumns
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Contracts.Columns;
 
     /// <summary>
     /// The plugin configuration.

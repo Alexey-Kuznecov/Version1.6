@@ -1,10 +1,10 @@
 ﻿
-using UnityCommander.Integration.Attributes;
-
 namespace ImagesColumns
 {
+    using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The image model.

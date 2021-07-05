@@ -1,6 +1,4 @@
 ﻿
-
-
 namespace DateTimeColumns
 {
     using System;
@@ -10,7 +8,8 @@ namespace DateTimeColumns
     using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Extentions.Helper;
+    using UnityCommander.Integration.Extensions;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The home library book service.
@@ -23,7 +22,7 @@ namespace DateTimeColumns
         public Plugin()
         {
             this.Register = new List<Type>();
-            AppContext = new List<HostAppContext>();
+            AppContext = new List<PluginBuilder>();
             this.InitialData();
         }
 
@@ -31,7 +30,7 @@ namespace DateTimeColumns
         /// Gets or sets the columns.
         /// </summary>
         [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
-        public static List<HostAppContext> AppContext { get; set; }
+        public static List<PluginBuilder> AppContext { get; set; }
 
         /// <summary>
         /// Gets or sets the register.
@@ -66,9 +65,9 @@ namespace DateTimeColumns
         /// The get unity context.
         /// </summary>
         /// <returns>
-        /// The <see cref="HostAppContext"/>.
+        /// The <see cref="PluginBuilder"/>.
         /// </returns>
-        public List<HostAppContext> SetHostAppContext()
+        public List<PluginBuilder> SetHostAppContext()
         {
             return AppContext;
         }

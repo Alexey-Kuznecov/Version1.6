@@ -1,6 +1,8 @@
 ﻿
 namespace UnityCommander.Integration.Contracts
 {
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The render template.
     /// </summary>

@@ -4,6 +4,7 @@ namespace MultiColumns.DateTime
     using System.Collections.Generic;
     using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The plugin settings.

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using UnityCommander.Integration.Attributes;
 using UnityCommander.Integration.Contracts;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Plugins
 {

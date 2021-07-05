@@ -1,12 +1,13 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Integration.Enums;
-
 namespace UnityCommander.Integration.Attributes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The selector type.
     /// </summary>

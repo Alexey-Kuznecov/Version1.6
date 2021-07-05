@@ -16,7 +16,6 @@ namespace UnityCommander.Services.Plugins
 {
     public class WeakPluginLoader : IPluginLoader
     {
-        private Guid pluginToken = Guid.NewGuid();
         private IEnumerable<IPluginImplement> pluginImplements;
         private IEnumerable<IPluginConfigure> pluginSettings;
         private IEnumerable<IDialogService> dialogService;

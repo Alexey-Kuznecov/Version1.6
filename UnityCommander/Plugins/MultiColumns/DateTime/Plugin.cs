@@ -8,7 +8,8 @@ namespace MultiColumns.DateTime
     using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Extentions.Helper;
+    using UnityCommander.Integration.Extensions;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The home library book service.
@@ -21,7 +22,7 @@ namespace MultiColumns.DateTime
         public Plugin()
         {
             this.Register = new List<Type>();
-            Columns = new List<HostAppContext>();
+            Columns = new List<PluginBuilder>();
             this.InitialData();
         }
 
@@ -29,7 +30,7 @@ namespace MultiColumns.DateTime
         /// Gets or sets the columns.
         /// </summary>
         [AttachHandler(PluginScopes.Columns, typeof(PluginOptionHandler), nameof(IColumnService.GetColumns))]
-        public static List<HostAppContext> Columns { get; set; }
+        public static List<PluginBuilder> Columns { get; set; }
 
         /// <summary>
         /// Gets or sets the register.
@@ -59,9 +60,9 @@ namespace MultiColumns.DateTime
         /// The get unity context.
         /// </summary>
         /// <returns>
-        /// The <see cref="HostAppContext"/>.
+        /// The <see cref="PluginBuilder"/>.
         /// </returns>
-        public List<HostAppContext> SetHostAppContext()
+        public List<PluginBuilder> SetHostAppContext()
         {
             return Columns;
         }

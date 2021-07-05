@@ -21,7 +21,7 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// List all host application context found.
         /// </returns>
-        public static IEnumerable<HostAppContext> GetHostAppContexts(this IEnumerable<IPluginImplement> implements)
+        public static IEnumerable<PluginBuilder> GetHostAppContexts(this IEnumerable<IPluginImplement> implements)
         {
             foreach (var instance in implements)
             {

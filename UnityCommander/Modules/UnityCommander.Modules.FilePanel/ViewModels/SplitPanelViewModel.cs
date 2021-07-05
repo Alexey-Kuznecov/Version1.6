@@ -448,7 +448,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="context">
         /// The host application context.
         /// </param>
-        private void InitialFolderColumnValues(HostAppContext context)
+        private void InitialFolderColumnValues(PluginBuilder context)
         {
             using var objectBuilder = new ObjectBuilder<FolderModel>();
             objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
@@ -469,7 +469,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="context">
         /// The host application context.
         /// </param>
-        private void InitialFileColumnValues(HostAppContext context)
+        private void InitialFileColumnValues(PluginBuilder context)
         {
             using var objectBuilder = new ObjectBuilder<FileModel>();
             objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));

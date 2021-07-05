@@ -13,7 +13,7 @@ namespace UnityCommander.Common.Models.Columns
     /// <summary>
     /// The columns default.
     /// </summary>
-    public abstract class DefaultColumns : IColumnProService
+    public abstract class DefaultColumns 
     {
         /// <summary>
         /// The collection columns of the file panel.

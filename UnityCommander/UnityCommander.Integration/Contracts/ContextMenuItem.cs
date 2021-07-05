@@ -1,12 +1,12 @@
 ﻿
-namespace UnityCommander.Integration.Contracts.Columns
-{
-    using System;
+using System;
 
+namespace UnityCommander.Integration.Contracts
+{
     /// <summary>
     /// The context menu.
     /// </summary>
-    public class ContextItem
+    public class ContextMenuItem
     {
         /// <summary>
         /// Gets or sets the menu header.
