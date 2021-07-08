@@ -9,6 +9,8 @@ namespace UnityCommander.Integration.Enums
     [Flags]
     public enum TargetPanel
     {
+        All,
+
         /// <summary>
         /// The files.
         /// </summary>

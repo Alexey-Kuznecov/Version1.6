@@ -12,6 +12,7 @@ namespace UnityCommander.Integration.Contracts
     /// The context host application is an object that allows plugins 
     /// to make changes and expand the functionality of the application.
     /// </summary>
+    [Obsolete]
     public class PluginBuilder : RenderTemplate
     {
         /// <summary>
@@ -31,7 +32,7 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets the list of the context menu item.
         /// </summary>
-        public List<ContextMenuItem> ContextMenuItem { get; internal set; }
+        public List<ContextItem> ContextMenuItem { get; internal set; }
 
         /// <summary>
         /// Gets the host application context.
@@ -134,10 +135,10 @@ namespace UnityCommander.Integration.Contracts
         {
             if (this.ContextMenuItem == null)
             {
-                this.ContextMenuItem = new List<ContextMenuItem>();
+                this.ContextMenuItem = new List<ContextItem>();
             }
 
-            this.ContextMenuItem.Add(new ContextMenuItem
+            this.ContextMenuItem.Add(new ContextItem
                  {
                      Name = menu,
                      Command = command

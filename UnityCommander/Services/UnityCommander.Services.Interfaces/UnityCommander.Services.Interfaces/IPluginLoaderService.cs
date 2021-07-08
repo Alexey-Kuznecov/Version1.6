@@ -2,6 +2,7 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
 
@@ -27,6 +28,12 @@ namespace UnityCommander.Services.Interfaces
         /// List of plugin implementations.
         /// </returns>
         public IEnumerable<IDialogService> GetDialogService();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IColumnBuilder> GetColumnBuilders();
 
         /// <summary>
         /// 

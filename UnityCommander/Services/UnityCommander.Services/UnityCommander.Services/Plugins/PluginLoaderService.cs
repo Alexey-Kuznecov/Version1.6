@@ -1,8 +1,6 @@
 ﻿
 using System.Collections;
 using System.ComponentModel;
-using System.Linq;
-using System.Net;
 
 namespace UnityCommander.Services.Plugins
 {
@@ -16,6 +14,7 @@ namespace UnityCommander.Services.Plugins
 
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
+    using UnityCommander.Integration.Columns;
 
     /// <summary>
     /// The plugin provider service.
@@ -97,6 +96,23 @@ namespace UnityCommander.Services.Plugins
             foreach (var instance in this.GetPluginContract<T>())
             {
                 yield return instance;
+            }
+        }
+
+        /// <summary>
+        /// Obtain interfaces to implement plugin functionality.
+        /// </summary>
+        /// <returns>
+        /// List of plugin implementations.
+        /// </returns>
+        public IEnumerable<IColumnBuilder> GetColumnBuilders()
+        {
+            foreach (var plugin in pluginLoaders)
+            {
+                foreach (var builder in plugin.GetColumnBuilders())
+                {
+                    yield return builder;
+                }
             }
         }
 

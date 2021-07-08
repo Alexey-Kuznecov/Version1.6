@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using UnityCommander.Integration.Columns;
 using UnityCommander.Integration.Contracts;
 using UnityCommander.Integration.Dialog;
 using UnityCommander.Services.Interfaces;
@@ -20,6 +19,8 @@ namespace UnityCommander.Services.Plugins
         private IEnumerable<IPluginConfigure> pluginSettings;
         private IEnumerable<IDialogService> dialogService;
         private IEnumerable<IPluginDescriptor> pluginMeta;
+        private IEnumerable<IColumnBuilder> columnBuilders;
+
         private HostPluginLoadContext alc;
         private WeakReference weakReference;
         private HashSet<ResourceDictionary> pluginResources = new ();
@@ -29,9 +30,8 @@ namespace UnityCommander.Services.Plugins
         {
             alc = new HostPluginLoadContext(assemblyPath);
             var services = new ServiceCollection();
-            weakReference = new WeakReference(alc);
+            this.weakReference = new WeakReference(alc);
             Assembly assembly = alc.LoadFromAssemblyPath(assemblyPath);
-
             this.GetPluginResources(assembly);
 
             foreach (var type in assembly.GetTypes()
@@ -46,6 +46,7 @@ namespace UnityCommander.Services.Plugins
                 pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
                 pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
                 dialogService = serviceProvider.GetServices<IDialogService>();
+                columnBuilders = serviceProvider.GetServices<IColumnBuilder>();
             }
         }
 
@@ -112,6 +113,11 @@ namespace UnityCommander.Services.Plugins
 
             Debug.WriteLine($"Unload success: {!weakReference.IsAlive}");
             return !weakReference.IsAlive;
+        }
+
+        public IEnumerable<IColumnBuilder> GetColumnBuilders()
+        {
+            return columnBuilders;
         }
     }
 }

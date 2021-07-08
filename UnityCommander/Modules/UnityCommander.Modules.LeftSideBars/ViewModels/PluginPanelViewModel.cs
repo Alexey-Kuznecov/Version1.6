@@ -37,10 +37,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IIconProviderService iconProvider,
             IEnumerable<IPluginDescriptor> descriptors)
         {
-            var enumerable = descriptors as IPluginDescriptor[] ?? descriptors.ToArray();
-            this.PluginDescriptors = enumerable;
-            this.dialogService = dialogService;
-            this.Icon = iconProvider.GetIcon("Settings").Path;
+            //var enumerable = descriptors as IPluginDescriptor[] ?? descriptors.ToArray();
+            //this.PluginDescriptors = enumerable;
+            //this.dialogService = dialogService;
+            //this.Icon = iconProvider.GetIcon("Settings").Path;
         }
 
         /// <summary>

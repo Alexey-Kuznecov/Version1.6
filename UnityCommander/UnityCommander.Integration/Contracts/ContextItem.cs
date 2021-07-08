@@ -6,7 +6,7 @@ namespace UnityCommander.Integration.Contracts
     /// <summary>
     /// The context menu.
     /// </summary>
-    public class ContextMenuItem
+    public class ContextItem
     {
         /// <summary>
         /// Gets or sets the menu header.
