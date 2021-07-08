@@ -31,7 +31,6 @@ namespace UnityCommander.Core.Helper
             AssemblyName assemblyName = new AssemblyName { Name = name };
             AppDomain thisDomain = Thread.GetDomain();
 #if NETCOREAPP
-
             AssemblyBuilder asmBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             modBuilder = asmBuilder.DefineDynamicModule(asmBuilder.GetName().Name);
 #elif NET472

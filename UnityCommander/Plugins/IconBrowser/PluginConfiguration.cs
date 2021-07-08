@@ -11,17 +11,8 @@ namespace AIconBrowser
     /// </summary>
     public class PluginConfiguration : IPluginFactory
     {
-        /// <summary>
-        /// The configure.
-        /// </summary>
-        /// <param name="services">
-        /// The services.
-        /// </param>
-        public void Configure(IServiceCollection services)
+        public PluginConfiguration()
         {
-            services.AddSingleton<IDialogService, IconBrowserControl>();
-            services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
-
             // We register handler for the Unloading event of the context that we are running in
             // so that we can perform cleanup of stuff that would otherwise prevent unloading
             // (Like freeing GCHandles for objects of types loaded into the unloadable AssemblyLoadContext,
@@ -33,9 +24,20 @@ namespace AIconBrowser
             if (currentContext != null) currentContext.Unloading += OnPluginUnloadingRequested;
         }
 
+        /// <summary>
+        /// The configure.
+        /// </summary>
+        /// <param name="services">
+        /// The services.
+        /// </param>
+        public void Configure(IServiceCollection services)
+        {
+            services.AddSingleton<IDialogService, IconBrowserControl>();
+            services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
+        }
+
         private void OnPluginUnloadingRequested(AssemblyLoadContext obj)
         {
-            ///throw new NotImplementedException();
         }
     }
 }

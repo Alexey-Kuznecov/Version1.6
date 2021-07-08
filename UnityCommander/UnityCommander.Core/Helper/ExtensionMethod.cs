@@ -68,7 +68,6 @@ namespace UnityCommander.Core.Helper
             return typeBuilder;
         }
 
-
         /// <summary>
         /// This method will create a new <see langword="object"/> based on two objects.
         /// Note, that this method copies only the properties of objects.  
@@ -79,6 +78,7 @@ namespace UnityCommander.Core.Helper
         /// <typeparam name="T"> The type that needs to be made basic for the object. </typeparam>
         /// <returns> Returns an object of type. </returns>
         /// [DebuggerStepperBoundary]
+        [Obsolete]
         public static T MergeObjectProperties<T>(this object mergeObjectL, object mergeObjectR, Type[] implInterface = null)
         {
             typeBuilder = MergeObjectProperties(mergeObjectL, mergeObjectR);
@@ -109,6 +109,7 @@ namespace UnityCommander.Core.Helper
         /// <returns>
         /// The <see cref="TypeBuilder"/>.
         /// </returns>
+        [Obsolete]
         private static T RestoreData<T>(TypeBuilder builder)
         {
             var instance = (T)Activator.CreateInstance(typeBuilder);
