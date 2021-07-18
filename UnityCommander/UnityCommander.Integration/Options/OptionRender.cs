@@ -33,6 +33,11 @@ namespace UnityCommander.Integration.Options
         /// <summary>
         /// Renders the element as a simple text.
         /// </summary>
-        TextBlock
+        TextBlock,
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        Checkbox
     } 
 }

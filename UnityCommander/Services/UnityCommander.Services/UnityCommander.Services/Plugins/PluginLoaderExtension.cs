@@ -1,14 +1,14 @@
 ﻿
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityCommander.Integration.Attributes;
-using UnityCommander.Integration.Contracts;
-
 namespace UnityCommander.Services.Plugins
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using UnityCommander.Integration.Attributes;
+    using UnityCommander.Integration.Contracts;
+
     /// <summary>
     /// The plugin extension methods.
     /// </summary>
@@ -70,7 +70,16 @@ namespace UnityCommander.Services.Plugins
                 }
             }
         }
-        
+
+        /// <summary>
+        /// The get plugin configs.
+        /// </summary>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        /// <returns>
+        /// The attributes.
+        /// </returns>
         public static IEnumerable<Attribute> GetPluginConfigs(this Type type)
         {
             var pluginType = type.GetTypeByContract<IPluginConfigure>();
@@ -85,6 +94,18 @@ namespace UnityCommander.Services.Plugins
             }
         }
 
+        /// <summary>
+        /// The get type by contract.
+        /// </summary>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        /// <typeparam name="T">
+        /// The type.
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="Type"/>.
+        /// </returns>
         public static Type GetTypeByContract<T>(this Type type)
         {
             foreach (var exportedType in type.Assembly.ExportedTypes
@@ -99,7 +120,18 @@ namespace UnityCommander.Services.Plugins
             return null;
         }
 
-
+        /// <summary>
+        /// The get assembly.
+        /// </summary>
+        /// <param name="contracts">
+        /// The contracts.
+        /// </param>
+        /// <typeparam name="T">
+        /// The type.
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="Assembly"/>.
+        /// </returns>
         public static Assembly GetAssembly<T>(this IEnumerable<T> contracts)
         {
             return contracts.Select(contract => Assembly.GetAssembly(contract.GetType())).FirstOrDefault();

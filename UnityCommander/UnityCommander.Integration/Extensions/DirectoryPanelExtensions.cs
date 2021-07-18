@@ -38,7 +38,7 @@ namespace UnityCommander.Integration.Extensions
             {
                 case PluginScopes.Columns:
                     var unity = new PluginBuilder();
-                    unity.DataContext = new Column { Header = header, Width = width, TargetPanel = target };
+                    unity.DataContext = new Column { Header = header, Width = width };
                     unity.Builder = unity;
                     unity.PluginScope = scopes;
                     return unity.Builder;

@@ -212,7 +212,7 @@ namespace UnityCommander.Services.Plugins
         /// The index.
         /// </param>
         /// <returns>
-        /// The <see cref="IPluginContext"/>.
+        /// The interface <see cref="IPluginContext"/>.
         /// </returns>
         public IPluginContext GetPluginContext(int index) => this.pluginLoadContexts[index];
 
@@ -220,7 +220,7 @@ namespace UnityCommander.Services.Plugins
         /// The get plugin context.
         /// </summary>
         /// <returns>
-        /// The <see cref="IEnumerable"/>.
+        /// List of interfaces <see cref="IPluginContext"/>.
         /// </returns>
         public IEnumerable<IPluginContext> GetPluginContext() => this.pluginLoadContexts;
 

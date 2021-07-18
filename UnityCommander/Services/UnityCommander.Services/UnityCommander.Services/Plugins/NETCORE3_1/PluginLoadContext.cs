@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-
+﻿
 namespace UnityCommander.Services.Plugins.NETCORE3_1
 {
 #if NETCOREAPP3_1
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Reflection;
     using System.Runtime.Loader;
+
     public class PluginLoadContext : AssemblyLoadContext
     {
         private AssemblyDependencyResolver resolver;

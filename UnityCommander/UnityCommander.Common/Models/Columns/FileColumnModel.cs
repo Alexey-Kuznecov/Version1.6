@@ -21,7 +21,6 @@ namespace UnityCommander.Common.Models.Columns
             this.AddColumn(new BaseColumn
             {
                 Header = "Extension",
-                IsDisplayed = true,
                 Template = new GridViewColumn
                 {
                     Header = "Extension",

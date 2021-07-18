@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace UnityCommander.Services.Plugins.Helper
 {
-    public class HelperMethod
+    public class WeekRefMethod
     {
         private static List<WeakReference> weaks = new List<WeakReference>();
 

@@ -1,16 +1,14 @@
 ﻿#define Unity
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Services.Interfaces;
-
 namespace UnityCommander.Services.Plugins.NETCORE3_1
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+
+    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Services.Interfaces;
+
 #if NETCOREAPP3_1
     /// <summary>
     /// The plugin provider service.

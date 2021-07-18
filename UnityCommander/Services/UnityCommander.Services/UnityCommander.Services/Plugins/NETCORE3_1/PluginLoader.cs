@@ -1,12 +1,10 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using UnityCommander.Services.Plugins.Helper;
-
 namespace UnityCommander.Services.Plugins.NETCORE3_1
 {
+    using System;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+
 #if NETCOREAPP3_1
     public class PluginLoader
     {
@@ -105,10 +103,10 @@ namespace UnityCommander.Services.Plugins.NETCORE3_1
             WeakReference reference = new WeakReference(config);
             WeakReference reference2 = new WeakReference(loadBuilder);
 
-            Helper.HelperMethod.AddWatcher(this.weak);
-            Helper.HelperMethod.AddWatcher(reference);
-            Helper.HelperMethod.AddWatcher(reference2);
-            Helper.HelperMethod.WeekRef();
+            Helper.WeekRefMethod.AddWatcher(this.weak);
+            Helper.WeekRefMethod.AddWatcher(reference);
+            Helper.WeekRefMethod.AddWatcher(reference2);
+            Helper.WeekRefMethod.WeekRef();
 #endif
         }
     }

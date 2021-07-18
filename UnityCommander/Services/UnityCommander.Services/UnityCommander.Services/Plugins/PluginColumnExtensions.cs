@@ -1,11 +1,11 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Services.Interfaces;
-
 namespace UnityCommander.Services.Plugins
 {
+    using System;
+    using System.Collections.Generic;
+
+    using UnityCommander.Integration.Contracts;
+
     /// <summary>
     /// The column helper.
     /// </summary>

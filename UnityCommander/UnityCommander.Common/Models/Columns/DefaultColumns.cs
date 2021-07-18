@@ -78,7 +78,6 @@ namespace UnityCommander.Common.Models.Columns
                 new BaseColumn
                 {
                     Header = "Name",
-                    IsDisplayed = true,
                     Template = new GridViewColumn
                     {
                         Header = "Name",
