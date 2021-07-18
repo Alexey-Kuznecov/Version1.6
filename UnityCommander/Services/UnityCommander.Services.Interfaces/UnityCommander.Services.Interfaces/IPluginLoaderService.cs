@@ -11,7 +11,13 @@ namespace UnityCommander.Services.Interfaces
     /// </summary>
     public interface IPluginLoaderService
     {
-        public bool UnloadPlugins();
+        /// <summary>
+        /// The unload plugins.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        bool UnloadPlugins();
 
         /// <summary>
         /// Gets a list of plugins that implement the <see cref="IPluginImplement"/> interface.
@@ -27,19 +33,47 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// List of plugin implementations.
         /// </returns>
-        public IEnumerable<IDialogService> GetDialogService();
+        IEnumerable<IDialogService> GetDialogService();
 
         /// <summary>
-        /// 
+        /// The get column builders.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IColumnBuilder> GetColumnBuilders();
+        /// <returns>
+        /// List of interfaces <see cref="IColumnBuilder"/>.
+        /// </returns>
+        IEnumerable<IColumnBuilder> GetColumnBuilders();
 
         /// <summary>
-        /// 
+        /// The get plugin context.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IPluginDescriptor> GetPluginDescriptors();
+        /// <returns>
+        /// List of interfaces <see cref="IPluginContext"/>.
+        /// </returns>
+        IEnumerable<IPluginContext> GetPluginContext();
+
+        /// <summary>
+        /// The get plugin context.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The interface <see cref="IColumnBuilder"/>.
+        /// </returns>
+        IPluginContext GetPluginContext(int index);
+
+        /// <summary>
+        /// The create plugin context.
+        /// </summary>
+        void CreatePluginContext();
+
+        /// <summary>
+        /// The get plugin descriptors.
+        /// </summary>
+        /// <returns>
+        /// List of interfaces <see cref="IPluginDescriptor"/>.
+        /// </returns>
+        IEnumerable<IPluginDescriptor> GetPluginDescriptors();
 
         /// <summary>
         /// Gets list interfaces to manage plugins is imported.
@@ -50,7 +84,7 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// List of plugins that implement the specified interface.
         /// </returns>
-        public IEnumerable<T> GetPluginContract<T>();
+        IEnumerable<T> GetPluginContract<T>();
 
         /// <summary>
         /// Gets an instance of the class that implements the plugin interface.
@@ -61,6 +95,6 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// List class instances.
         /// </returns>
-        public IEnumerable<object> GetPluginInstances<T>();
+        IEnumerable<object> GetPluginInstances<T>();
     }
 }

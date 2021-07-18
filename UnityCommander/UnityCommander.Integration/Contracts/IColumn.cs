@@ -1,19 +1,16 @@
 ﻿
 namespace UnityCommander.Integration.Contracts
 {
-    using UnityCommander.Integration.Enums;
+    using System;
+    using System.Collections.Generic;
+
+    using UnityCommander.Integration.Columns;
 
     /// <summary>
-    /// The i columns.
+    /// The interface column.
     /// </summary>
     public interface IColumn
     {
-        /// <summary>
-        /// Gets or sets a value indicating whether
-        /// the column is installed in the directory panel.
-        /// </summary>
-        bool IsDisplayed { get; set; }
-
         /// <summary>
         /// Gets or sets the column header.
         /// </summary>
@@ -22,12 +19,26 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets or sets the column template.
         /// </summary>
-        object Template { get; set; }
+        public object Template { get; set; }
 
         /// <summary>
-        /// Gets or sets the target panel for which the plug-in is intended, such as a folder panel or a file panel.
-        /// This property is typically used for a split panel.
+        /// Gets or sets the width.
         /// </summary>
-        TargetPanel TargetPanel { get; set; }
+        public double Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets a command to sort values in a column.
+        /// </summary>
+        public Action SortCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets context menu item for a column.
+        /// </summary>
+        public List<ContextItem> ContextItems { get; set; }
+
+        /// <summary>
+        /// Gets or sets the option builders.
+        /// </summary>
+        public List<OptionBuilder> OptionBuilders { get; set; }
     }
 }

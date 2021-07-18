@@ -44,9 +44,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         private readonly IPluginLoaderService pluginLoaderService;
 
         /// <summary>
-        /// Gets or sets the type.
+        /// The content control register.
         /// </summary>
-        private Dictionary<string, UserControl> ContentControlRegister = new Dictionary<string, UserControl>()
+        private readonly Dictionary<string, UserControl> contentControlRegister = new Dictionary<string, UserControl>
         {
             { "TableColumn",  new ColumnsOptionControl() },
             { "FileTree", new FolderTreeOverviewControl() },
@@ -54,11 +54,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             { "Tag", new TagControlPanel() },
             { "Plugin", new PluginControlPanel() },
         };
-        
+
         /// <summary>
-        /// 
+        /// The data context register.
         /// </summary>
-        private Dictionary<string, object> DataContextRegister = new Dictionary<string, object>()
+        private readonly Dictionary<string, object> dataContextRegister = new Dictionary<string, object>()
         {
             { "TableColumn", null },
             { "FileTree", null },
@@ -109,14 +109,13 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IIconProviderService iconProvider,
             IPluginLoaderService pluginLoader)
         {
-            this.pluginLoaderService = pluginLoader;
-            //bool isLoaded = pluginLoaderService.UnloadPlugins();
-            //Trace.WriteLine(isLoaded ? "Plugin has been unload" : "Plugin has not been unloaded", "Plugin");
-
+            // this.pluginLoaderService = pluginLoader;
+            // bool isLoaded = pluginLoaderService.UnloadPlugins();
+            // Trace.WriteLine(isLoaded ? "Plugin has been unload" : "Plugin has not been unloaded", "Plugin");
             this.viewModelMessage = viewModelMessage;
             this.packIcon = iconProvider.GetIcons();
-            DataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader.GetPluginDescriptors()));
-            SidebarItems = new ObservableCollection<SidebarItem>();
+            this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader));
+            this.SidebarItems = new ObservableCollection<SidebarItem>();
             this.SidebarContentRender();
         }
 
@@ -156,11 +155,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// </summary>
         private void SidebarContentRender()
         {
-            foreach (var content in ContentControlRegister)
+            foreach (var content in this.contentControlRegister)
             {
                 var icon = this.packIcon.Single(i => i.Category == content.Key);
                 var userControl = content.Value;
-                userControl.DataContext = this.DataContextRegister[content.Key];
+                userControl.DataContext = this.dataContextRegister[content.Key];
 
                 var sbItem = new SidebarItem
                 {
@@ -168,7 +167,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                     Icon = icon
                 };
 
-                SidebarItems.Add(sbItem);
+                this.SidebarItems.Add(sbItem);
             }
         }
     }

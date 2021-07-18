@@ -1,26 +1,27 @@
 ﻿
 using System;
-using System.Collections.Generic;
 using UnityCommander.Integration.Columns;
-using UnityCommander.Integration.Enums;
+using UnityCommander.Integration.Contracts;
 using UnityCommander.Integration.Options;
 
-namespace W3Manager
+namespace W3Manager.WP2
 {
-    public class ModCategory : IColumnBuilder
+    public class ModStatusColumn : IColumnBuilder
     {
+        private OptionRender optionRender;
+
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("Mod Category", 50, TargetPanel.Folders);
+            builder.Add("Mod Status", 50);
             builder.AddContextItem("Install", InstallMod);
-            builder.BindOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), DisplayAsHandler);
+            builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), DisplayAsHandler, OptionRender.DropBox);
         }
 
         private void DisplayAsHandler(object selected)
         {
             if (selected is OptionRender render)
             {
-                
+                this.optionRender = render;
             }
         }
 
@@ -29,14 +30,15 @@ namespace W3Manager
             throw new System.NotImplementedException();
         }
 
-        public object ColumnValueValidate(object value)
+        public object ColumnValueValidate(IPluginContext context)
         {
-            return value;
+            return context;
         }
 
-        public object ColumnValueHandler(object path)
+        public object ColumnValueHandler(string path)
         {
-            return "Ca";
+            Guid guid = Guid.NewGuid();
+            return guid.ToString();
         }
 
         public OptionRender ColumnValueRender()

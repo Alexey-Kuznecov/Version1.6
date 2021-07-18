@@ -1,16 +1,15 @@
 ﻿
-using System;
-
 namespace UnityCommander.Integration.Columns
 {
+    using System;
     using System.Collections.Generic;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
+
+    using Contracts;
 
     /// <summary>
     /// The column.
     /// </summary>
-    public class Column
+    public class Column : IColumn
     {
         /// <summary>
         /// Gets or sets the header.
@@ -23,11 +22,6 @@ namespace UnityCommander.Integration.Columns
         public double Width { get; set; }
 
         /// <summary>
-        /// Gets or sets the width.
-        /// </summary>
-        public TargetPanel TargetPanel { get; set; }
-
-        /// <summary>
         /// Gets or sets a command to sort values in a column.
         /// </summary>
         public Action SortCommand { get; set; }
@@ -35,6 +29,16 @@ namespace UnityCommander.Integration.Columns
         /// <summary>
         /// Gets or sets context menu item for a column.
         /// </summary>
-        public List<ContextItem> ContextItems { get; set; } = new();
+        public List<ContextItem> ContextItems { get; set; } = new ();
+
+        /// <summary>
+        /// Gets or sets the column template.
+        /// </summary>
+        public object Template { get; set; }
+
+        /// <summary>
+        /// Gets or sets the option builders.
+        /// </summary>
+        public List<OptionBuilder> OptionBuilders { get; set; } = new ();
     }
 }

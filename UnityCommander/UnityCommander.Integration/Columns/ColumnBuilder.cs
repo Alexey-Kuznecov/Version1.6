@@ -1,49 +1,113 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Integration.Options;
-
 namespace UnityCommander.Integration.Columns
 {
-    using Enums;
+    using System;
+    using System.Collections.Generic;
 
+    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Options;
+
+    /// <summary>
+    /// The column builder.
+    /// </summary>
     public class ColumnBuilder
     {
+        /// <summary>
+        /// The columns.
+        /// </summary>
+        private readonly List<Column> columns = new ();
+
+        /// <summary>
+        /// The column.
+        /// </summary>
         private Column column;
 
-        public void Add(string header, double width, TargetPanel target = TargetPanel.All)
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <param name="width">
+        /// The width.
+        /// </param>
+        public void Add(string header, double width)
         {
             this.column = new Column
             {
                 Header = header,
-                Width = width,
-                TargetPanel = target
+                Width = width
             };
+
+            this.columns.Add(this.column);
         }
 
+        /// <summary>
+        /// The add command.
+        /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         public void AddCommand(Action action)
         {
-            column.SortCommand = action;
+            this.column.SortCommand = action;
         }
 
-        public void BindOption(Type source, string propertyName, Selector handler)
+        /// <summary>
+        /// The binding option.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="propertyName">
+        /// The property name.
+        /// </param>
+        /// <param name="handler">
+        /// The handler.
+        /// </param>
+        /// <param name="render">
+        /// The render.
+        /// </param>
+        public void BindingOption(Type source, string propertyName, Selector handler, OptionRender render = OptionRender.Default)
         {
+            var opt = new OptionBuilder 
+            {
+                Source = source,
+                PropertyName = propertyName,
+                Handler = handler,
+                OptionRender = render
+            };
 
+            this.column.OptionBuilders.Add(opt);
         }
 
+        /// <summary>
+        /// The add context item.
+        /// </summary>
+        /// <param name="header">
+        /// The header.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         public void AddContextItem(string header, Action action)
         {
-            column.ContextItems.Add(new ContextItem
+            this.column.ContextItems.Add(new ContextItem
             {
                 Name = header,
                 Command = action
             });
         }
 
-        public Column GetColumn()
+        /// <summary>
+        /// The get columns.
+        /// </summary>
+        /// <returns>
+        /// The list of columns.
+        /// </returns>
+        public List<Column> GetColumns()
         {
-            return column;
+            return this.columns;
         }
     }
 }

@@ -1,32 +1,26 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using Prism.Services.Dialogs;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Controls;
-using DryIoc;
-using UnityCommander.Core.Mvvm;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Plugins;
-
+﻿
 namespace UnityCommander.ViewModels
 {
-    class DialogPluginConfigVm : BindableBase, IDialogAware
+    using System;
+    using System.Windows.Controls;
+
+    using Prism.Commands;
+    using Prism.Mvvm;
+    using Prism.Services.Dialogs;
+
+    using UnityCommander.Core.Mvvm;
+    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Plugins;
+
+    /// <summary>
+    /// The dialog plugin config vm.
+    /// </summary>
+    internal class DialogPluginConfigVm : BindableBase, IDialogAware
     {
-        private IPluginLoaderService pluginLoader;
-
-        public DialogPluginConfigVm(IPluginLoaderService pluginLoader)
-        {
-            this.pluginLoader = pluginLoader;
-        }
-
         /// <summary>
-        /// The close dialog command.
+        /// The plugin loader.
         /// </summary>
-        public DelegateCommand CloseDialogCommand =>
-            this.closeDialogCommand ??= new DelegateCommand(this.ExecuteCloseDialogCommand);
+        private IPluginLoaderService pluginLoader;
 
         /// <summary>
         /// The close dialog command.
@@ -39,10 +33,27 @@ namespace UnityCommander.ViewModels
         private UserControl control;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="DialogPluginConfigVm"/> class.
+        /// </summary>
+        /// <param name="pluginLoader">
+        /// The plugin loader.
+        /// </param>
+        public DialogPluginConfigVm(IPluginLoaderService pluginLoader)
+        {
+            this.pluginLoader = pluginLoader;
+        }
+
+        /// <summary>
         /// The request close.
         /// </summary>
         public event Action<IDialogResult> RequestClose;
 
+        /// <summary>
+        /// The close dialog command.
+        /// </summary>
+        public DelegateCommand CloseDialogCommand =>
+            this.closeDialogCommand ??= new DelegateCommand(this.ExecuteCloseDialogCommand);
+        
         /// <summary>
         /// Gets or sets the user control.
         /// </summary>
@@ -86,11 +97,9 @@ namespace UnityCommander.ViewModels
             var param = parameters as OverrideDialogParameters;
             var type = param?.Package.GetType();
 
-            foreach (var VARIABLE in type.GetPluginConfigs())
+            foreach (var attribute in type.GetPluginConfigs())
             {
-                
             }
-            
         }
 
         /// <summary>
@@ -101,6 +110,9 @@ namespace UnityCommander.ViewModels
             this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
         }
 
+        /// <summary>
+        /// The unload plugin.
+        /// </summary>
         private void UnloadPlugin()
         {
             this.pluginLoader = null;

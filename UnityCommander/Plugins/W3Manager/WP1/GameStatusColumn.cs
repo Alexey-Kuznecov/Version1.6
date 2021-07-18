@@ -1,20 +1,20 @@
 ﻿
-namespace W3Manager
-{
-    using System;
-    using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Options;
+using System;
+using UnityCommander.Integration.Columns;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Integration.Options;
 
-    public class ModStatus : IColumnBuilder
+namespace W3Manager.WP1
+{
+    public class GameStatusColumn : IColumnBuilder
     {
         private OptionRender optionRender;
 
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("Mod Status", 50, TargetPanel.Folders);
+            builder.Add("Game Status", 50);
             builder.AddContextItem("Install", InstallMod);
-            builder.BindOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), DisplayAsHandler);
+            builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), DisplayAsHandler, OptionRender.DropBox);
         }
 
         private void DisplayAsHandler(object selected)
@@ -30,12 +30,12 @@ namespace W3Manager
             throw new System.NotImplementedException();
         }
 
-        public object ColumnValueValidate(object value)
+        public object ColumnValueValidate(IPluginContext context)
         {
-            return value;
+            return context;
         }
 
-        public object ColumnValueHandler(object path)
+        public object ColumnValueHandler(string path)
         {
             Guid guid = Guid.NewGuid();
             return guid.ToString();
