@@ -97,9 +97,9 @@ namespace UnityCommander.ViewModels
             var param = parameters as OverrideDialogParameters;
             var type = param?.Package.GetType();
 
-            foreach (var attribute in type.GetPluginConfigs())
-            {
-            }
+            //foreach (var attribute in type.GetPluginConfigs())
+            //{
+            //}
         }
 
         /// <summary>

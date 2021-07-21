@@ -6,7 +6,7 @@ namespace UnityCommander.Common.Models.Columns
     using System.Windows;
     using System.Windows.Controls;
 
-    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Models.Base;
 

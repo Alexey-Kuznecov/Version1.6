@@ -1,37 +1,26 @@
 ﻿
-namespace DateTimeColumns
+namespace UnityCommander.Integration.Columns
 {
     using System;
     using System.Collections.Generic;
-    
+
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
-    /// The image column.
+    /// The interface column.
     /// </summary>
-    public class DateTimeColumnModel : IColumn
+    public interface IColumn
     {
         /// <summary>
-        /// Gets or sets a value indicating whether is displayed.
+        /// Gets or sets the column header.
         /// </summary>
-        public bool IsDisplayed { get; set; }
+        string Header { get; set; }
 
         /// <summary>
-        /// Gets or sets the header.
-        /// </summary>
-        public string Header { get; set; }
-
-        /// <summary>
-        /// Gets or sets the template.
+        /// Gets or sets the column template.
         /// </summary>
         public object Template { get; set; }
-
-        /// <summary>
-        /// Gets or sets the target panel.
-        /// </summary>
-        public TargetPanel TargetPanel { get; set; }
 
         /// <summary>
         /// Gets or sets the width.
@@ -39,12 +28,12 @@ namespace DateTimeColumns
         public double Width { get; set; }
 
         /// <summary>
-        /// Gets or sets the sort command.
+        /// Gets or sets a command to sort values in a column.
         /// </summary>
         public Action SortCommand { get; set; }
 
         /// <summary>
-        /// Gets or sets the context items.
+        /// Gets or sets context menu item for a column.
         /// </summary>
         public List<ContextItem> ContextItems { get; set; }
 
@@ -52,5 +41,10 @@ namespace DateTimeColumns
         /// Gets or sets the option builders.
         /// </summary>
         public List<OptionBuilder> OptionBuilders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column builder.
+        /// </summary>
+        public IColumnBuilder ColumnBuilder { get; set; }
     }
 }

@@ -25,11 +25,6 @@ namespace UnityCommander.Services.Plugins
         #region Loaded contracts
 
         /// <summary>
-        /// The plugin implements.
-        /// </summary>
-        private IEnumerable<IPluginImplement> pluginImplements;
-
-        /// <summary>
         /// The plugin settings.
         /// </summary>
         private IEnumerable<IPluginConfigure> pluginSettings;
@@ -98,14 +93,6 @@ namespace UnityCommander.Services.Plugins
         public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
 
         /// <summary>
-        /// The get implements.
-        /// </summary>
-        /// <returns>
-        /// The interface plugin implement.
-        /// </returns>
-        public IEnumerable<IPluginImplement> GetImplements() => this.pluginImplements;
-
-        /// <summary>
         /// The get column builders.
         /// </summary>
         /// <returns>
@@ -146,7 +133,6 @@ namespace UnityCommander.Services.Plugins
                 plugin?.Configure(services);
 
                 var serviceProvider = services.BuildServiceProvider();
-                this.pluginImplements = serviceProvider.GetServices<IPluginImplement>();
                 this.pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
                 this.pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
                 this.dialogService = serviceProvider.GetServices<IDialogService>();
@@ -164,7 +150,6 @@ namespace UnityCommander.Services.Plugins
         public bool UnloadPlugin()
         {
             this.alc.Unload();
-            this.pluginImplements = null;
             this.pluginSettings = null;
             this.pluginMeta = null;
             this.dialogService = null;

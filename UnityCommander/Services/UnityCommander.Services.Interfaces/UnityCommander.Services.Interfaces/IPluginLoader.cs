@@ -21,14 +21,6 @@ namespace UnityCommander.Services.Interfaces
         public bool UnloadPlugin();
 
         /// <summary>
-        /// The get implements.
-        /// </summary>
-        /// <returns>
-        /// The interface plugin implement.
-        /// </returns>
-        public IEnumerable<IPluginImplement> GetImplements();
-
-        /// <summary>
         /// The get configurations.
         /// </summary>
         /// <returns>
