@@ -5,6 +5,7 @@ namespace UnityCommander.Services.Interfaces
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The PluginLoader interface.
@@ -58,5 +59,13 @@ namespace UnityCommander.Services.Interfaces
         /// The interface column builder.
         /// </returns>
         public IEnumerable<IColumnBuilder> GetColumnBuilders();
+
+        /// <summary>
+        /// The get option builders.
+        /// </summary>
+        /// <returns>
+        ///  The interface option builders.
+        /// </returns>
+        public IEnumerable<IOptionBuilder> GetOptionBuilders();
     }
 }

@@ -1,11 +1,11 @@
 ﻿
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Markup;
-
 namespace UnityCommander.Integration.Converters
 {
+    using System;
+    using System.Globalization;
+    using System.Windows.Data;
+    using System.Windows.Markup;
+
     /// <summary>
     /// The bind-able parameter.
     /// </summary>
@@ -50,17 +50,17 @@ namespace UnityCommander.Integration.Converters
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             var multiBinding = new MultiBinding();
-            Binding.Mode = Mode;
+            Binding.Mode = this.Mode;
             multiBinding.Bindings.Add(Binding);
-            if (ConverterParameter != null)
+            if (this.ConverterParameter != null)
             {
-                ConverterParameter.Mode = BindingMode.OneWay;
-                multiBinding.Bindings.Add(ConverterParameter);
+                this.ConverterParameter.Mode = BindingMode.OneWay;
+                multiBinding.Bindings.Add(this.ConverterParameter);
             }
 
             var adapter = new MultiValueConverterAdapter
             {
-                Converter = Converter
+                Converter = this.Converter
             };
             multiBinding.Converter = adapter;
             return multiBinding.ProvideValue(serviceProvider);

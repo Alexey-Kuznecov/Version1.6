@@ -3,6 +3,8 @@ namespace UnityCommander.Integration.Contracts
 {
     using System;
     using System.Collections.Generic;
+
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -39,5 +41,10 @@ namespace UnityCommander.Integration.Contracts
         /// Gets or sets the option builders.
         /// </summary>
         public List<OptionBuilder> OptionBuilders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column builder.
+        /// </summary>
+        public IColumnBuilder ColumnBuilder { get; set; }
     }
 }

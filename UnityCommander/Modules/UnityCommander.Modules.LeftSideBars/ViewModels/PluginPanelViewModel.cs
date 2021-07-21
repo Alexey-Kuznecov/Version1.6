@@ -7,11 +7,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-
-    using UnityCommander.Core.Mvvm;
+    
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Plugins;
 
     /// <summary>
     /// The plugin panel view model.
@@ -39,11 +39,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         private IPluginDescriptor selectedDescriptor;
         
         /// <summary>
-        /// The selected index.
-        /// </summary>
-        private int selectedIndex;
-
-        /// <summary>
         /// The icon.
         /// </summary>
         private Path icon;
@@ -51,7 +46,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// <summary>
         /// The option render.
         /// </summary>
-        private IEnumerable<OptionBuilder> optionRender;
+        private IEnumerable<IOption> optionRender;
 
         /// <summary>
         /// The show dialog command.
@@ -89,15 +84,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the selected index.
-        /// </summary>
-        public int SelectedIndex
-        {
-            get => this.selectedIndex;
-            set => this.SetProperty(ref this.selectedIndex, value);
-        }
-
-        /// <summary>
         /// Gets or sets the selected descriptor.
         /// </summary>
         public IPluginDescriptor SelectedDescriptor
@@ -105,8 +91,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             get => this.selectedDescriptor;
             set
             {
-                this.OptionRender = this.pluginLoaders.GetPluginContext(this.SelectedIndex).GetOptions();
                 this.SetProperty(ref this.selectedDescriptor, value);
+                this.OptionRender = this.pluginLoaders.GetPluginContext().GetOption(value);
             } 
         }
 
@@ -131,27 +117,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// <summary>
         /// Gets or sets the option render.
         /// </summary>
-        public IEnumerable<OptionBuilder> OptionRender
+        public IEnumerable<IOption> OptionRender
         {
             get => this.optionRender;
             set => this.SetProperty(ref this.optionRender, value);
-        }
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
-        public DelegateCommand<object> ShowDialogCommand =>
-            this.showDialogCommand ??= new DelegateCommand<object>(this.ExecuteShowDialogCommand);
-
-        /// <summary>
-        /// The execute show dialog command.
-        /// </summary>
-        /// <param name="selected">
-        /// The selected.
-        /// </param>
-        private void ExecuteShowDialogCommand(object selected)
-        {
-            this.dialogService.ShowDialog("DialogPluginConfig", new OverrideDialogParameters(selected), r => { });
         }
     }
 }

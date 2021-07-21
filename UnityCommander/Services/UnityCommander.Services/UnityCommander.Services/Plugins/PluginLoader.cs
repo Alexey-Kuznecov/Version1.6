@@ -14,6 +14,7 @@ namespace UnityCommander.Services.Plugins
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
+    using UnityCommander.Integration.Options;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
@@ -47,6 +48,11 @@ namespace UnityCommander.Services.Plugins
         /// The column builders.
         /// </summary>
         private IEnumerable<IColumnBuilder> columnBuilders;
+
+        /// <summary>
+        /// The option builders
+        /// </summary>
+        private IEnumerable<IOptionBuilder> optionBuilders;
 
         #endregion
 
@@ -107,6 +113,14 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IColumnBuilder> GetColumnBuilders() => this.columnBuilders;
 
+        /// <summary>
+        /// The get option builders.
+        /// </summary>
+        /// <returns>
+        ///  The interface option builders.
+        /// </returns>
+        public IEnumerable<IOptionBuilder> GetOptionBuilders() => this.optionBuilders;
+        
         #endregion
 
         /// <summary>
@@ -137,6 +151,7 @@ namespace UnityCommander.Services.Plugins
                 this.pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
                 this.dialogService = serviceProvider.GetServices<IDialogService>();
                 this.columnBuilders = serviceProvider.GetServices<IColumnBuilder>();
+                this.optionBuilders = serviceProvider.GetServices<IOptionBuilder>();
             }
         }
 
@@ -154,6 +169,7 @@ namespace UnityCommander.Services.Plugins
             this.pluginMeta = null;
             this.dialogService = null;
             this.columnBuilders = null;
+            this.optionBuilders = null;
             this.alc = null;
 
             if (this.pluginResources?.Count > 0 && this.pluginResources != null)
@@ -187,11 +203,11 @@ namespace UnityCommander.Services.Plugins
         {
             this.pluginResources = PluginResourceManager.GetResourceDictionary(assembly);
 
-            if (pluginResources?.Count is not 0 && pluginResources != null)
+            if (this.pluginResources?.Count != 0 && this.pluginResources != null)
             {
                 var dictionary = Application.Current.Resources.MergedDictionaries;
 
-                foreach (var resource in pluginResources)
+                foreach (var resource in this.pluginResources)
                 {
                     dictionary.Add(resource);
                 }

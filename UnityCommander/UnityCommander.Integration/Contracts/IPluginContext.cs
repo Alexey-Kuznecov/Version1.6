@@ -26,14 +26,6 @@ namespace UnityCommander.Integration.Contracts
         /// <returns>
         /// List of the <see cref="OptionBuilder"/>.
         /// </returns>
-        IEnumerable<OptionBuilder> GetOptions();
-
-        /// <summary>
-        /// The get column builder.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IColumnBuilder"/>.
-        /// </returns>
-        IColumnBuilder GetColumnBuilder();
+        IEnumerable<IOption> GetOptions();
     }
 }

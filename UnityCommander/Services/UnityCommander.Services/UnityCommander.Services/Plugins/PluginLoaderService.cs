@@ -9,7 +9,6 @@ namespace UnityCommander.Services.Plugins
     using System.Linq;
     using System.Reflection;
 
-    using Integration.Columns;
     using Integration.Contracts;
     using Integration.Dialog;
 
@@ -28,7 +27,7 @@ namespace UnityCommander.Services.Plugins
         /// <summary>
         /// The plugin load contexts.
         /// </summary>
-        private readonly List<IPluginContext> pluginLoadContexts = new ();
+        private readonly List<IPluginContext> pluginContexts = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
@@ -54,88 +53,7 @@ namespace UnityCommander.Services.Plugins
             this.CreatePluginContext();
         }
 
-        #region Imports Plugins Interfaces
-
-        /// <summary>
-        /// Gets the imported plugin settings.
-        /// </summary>
-        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; private set; }
-
-        /// <summary>
-        /// Gets  the imported plugin implementations.
-        /// </summary>
-        public IEnumerable<IPluginImplement> ImportPluginImplements { get; private set; }
-
-        /// <summary>
-        /// Gets the import dialog service.
-        /// </summary>
-        public IEnumerable<IDialogService> ImportDialogService { get; private set; }
-
-
-        /// <summary>
-        /// Gets the imported the name and description for plugin.
-        /// </summary>
-        public IEnumerable<IPluginDescriptor> ImportPluginMeta { get; private set; }
-
-        #endregion
-
         #region Implementations Methods
-
-        /// <summary>
-        /// Obtain an instance of the class that implements the plugin interface.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Required plugin interface.
-        /// </typeparam>
-        /// <returns>
-        /// List class instances.
-        /// </returns>
-        public IEnumerable<object> GetPluginInstances<T>()
-        {
-            foreach (var instance in this.GetPluginContract<T>())
-            {
-                yield return instance;
-            }
-        }
-
-        /// <summary>
-        /// Obtain interfaces to implement plugin functionality.
-        /// </summary>
-        /// <returns>
-        /// List of plugin implementations.
-        /// </returns>
-        public IEnumerable<IColumnBuilder> GetColumnBuilders()
-        {
-            foreach (var plugin in PluginLoaders)
-            {
-                foreach (var builder in plugin.GetColumnBuilders())
-                {
-                    yield return builder;
-                }
-            }
-        }
-
-        public IEnumerable<Column> GetColumn()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Obtain interfaces to implement plugin functionality.
-        /// </summary>
-        /// <returns>
-        /// List of plugin implementations.
-        /// </returns>
-        public IEnumerable<IPluginImplement> GetPluginImplements()
-        {
-            foreach (var plugin in PluginLoaders)
-            {
-                foreach (var implement in plugin.GetImplements())
-                {
-                    yield return implement;
-                }
-            }
-        }
 
         /// <summary>
         /// Obtain interfaces to implement plugin functionality.
@@ -171,30 +89,6 @@ namespace UnityCommander.Services.Plugins
             }
         }
 
-        /// <summary>
-        /// Gets a list of the specified plugin interfaces.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Specify the interface <see cref="IPluginImplement"/> or <see cref="IPluginConfigure"/>,
-        /// otherwise an exception will be thrown.  
-        /// </typeparam>
-        /// <returns>
-        /// Returns a plugin implementation or plugin settings, otherwise an exception.
-        /// </returns>
-        public IEnumerable<T> GetPluginContract<T>()
-        {
-            var implement = typeof(T) == typeof(IPluginImplement)
-                ? (IEnumerable<T>)this.ImportPluginImplements
-                : (IEnumerable<T>)this.ImportPluginSettings;
-
-            if (implement == null)
-            {
-                throw new Exception("The specified interface is not a plugin interface.");
-            }
-
-            return implement;
-        }
-
         #endregion
 
         /// <summary>
@@ -208,21 +102,10 @@ namespace UnityCommander.Services.Plugins
         /// <summary>
         /// The get plugin context.
         /// </summary>
-        /// <param name="index">
-        /// The index.
-        /// </param>
-        /// <returns>
-        /// The interface <see cref="IPluginContext"/>.
-        /// </returns>
-        public IPluginContext GetPluginContext(int index) => this.pluginLoadContexts[index];
-
-        /// <summary>
-        /// The get plugin context.
-        /// </summary>
         /// <returns>
         /// List of interfaces <see cref="IPluginContext"/>.
         /// </returns>
-        public IEnumerable<IPluginContext> GetPluginContext() => this.pluginLoadContexts;
+        public IEnumerable<IPluginContext> GetPluginContext() => this.pluginContexts;
 
         /// <summary>
         /// The create plugin context.
@@ -231,42 +114,23 @@ namespace UnityCommander.Services.Plugins
         {
             foreach (var loader in PluginLoaders)
             {
-                var builders = loader.GetColumnBuilders().ToList();
-                
-                foreach (var nameSpace in this.GetPluginSpaces(builders).Distinct())
+                var pluginContext = new PluginContext();
+
+                var columnBuilders = loader.GetColumnBuilders().ToList();
+                var optionBuilders = loader.GetOptionBuilders().ToList();
+
+                foreach (var columnBuilder in columnBuilders)
                 {
-                    var pluginContext = new PluginContext();
-                    var filterBuilder = builders.Where(b => b.GetType().Namespace == nameSpace);
-
-                    foreach (var builder in filterBuilder)
-                    {
-                        pluginContext.AddColumn(builder);
-                    }
-
-                    this.pluginLoadContexts.Add(pluginContext);
+                    pluginContext.AddColumn(columnBuilder);
                 }
-            }
-        }
+                
+                foreach (var optionBuilder in optionBuilders)
+                {
+                    pluginContext.AddOption(optionBuilder);
+                }
 
-        /// <summary>
-        /// The get plugin spaces.
-        /// </summary>
-        /// <param name="builders">
-        /// The builders.
-        /// </param>
-        /// <returns>
-        /// The namespaces.
-        /// </returns>
-        public HashSet<string> GetPluginSpaces(IEnumerable<IColumnBuilder> builders)
-        {
-            HashSet<string> namespaces = new ();
-
-            foreach (var builder in builders)
-            {
-                namespaces.Add(builder.GetType().Namespace);
+                this.pluginContexts.Add(pluginContext);
             }
-           
-            return namespaces;
         }
 
         /// <summary>

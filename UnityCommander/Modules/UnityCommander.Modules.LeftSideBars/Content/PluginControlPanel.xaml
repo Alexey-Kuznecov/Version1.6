@@ -29,7 +29,6 @@
         <ListBox
             Grid.Row="1"
             ItemsSource="{Binding PluginDescriptors}"
-            SelectedIndex="{Binding SelectedIndex}"
             SelectedItem="{Binding SelectedDescriptor}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -60,8 +59,8 @@
                             Height="14"
                             DataContext="{Binding DataContext, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type UserControl}}}"
                             Foreground="#E4E4E4"
-                            Style="{StaticResource CustomButtonStyles}"
-                            Template="{StaticResource CustomButtonTemplate}">
+                            Style="{DynamicResource CustomButtonStyles}"
+                            Template="{DynamicResource CustomButtonTemplate}">
                             <ContentControl.InputBindings>
                                 <MouseBinding
                                     Command="{Binding ShowDialogCommand}"
@@ -82,8 +81,7 @@
                                 <converter:MultiParameter
                                     Binding="{Binding}"
                                     Converter="{StaticResource OptionRenderConverter}"
-                                    ConverterParameter="{Binding RelativeSource={RelativeSource Self}}"
-                                    Mode="Default" />
+                                    ConverterParameter="{Binding}" />
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </DataTemplate>

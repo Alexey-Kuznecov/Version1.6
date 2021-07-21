@@ -6,8 +6,7 @@ namespace UnityCommander.Integration.Converters
     using System.Globalization;
     using System.Windows;
     using System.Windows.Controls;
-
-    using UnityCommander.Integration.Columns;
+    
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -15,29 +14,73 @@ namespace UnityCommander.Integration.Converters
     /// </summary>
     public class OptionRenderConverter : BaseConverter<OptionRenderConverter>
     {
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="targetType">
+        /// The target type.
+        /// </param>
+        /// <param name="parameter">
+        /// The parameter.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is OptionBuilder { OptionRender: OptionRender.DropBox } opt)
+            if (value is IOption opt)
             {
-                var pluginOptVal = opt.GetList();
-                ComboBox comboBox = new ComboBox();
-                var grid = new FrameworkElementFactory(typeof(Grid));
-                comboBox.Width = 250;
-                var comboBoxItemsSource = (IEnumerable)pluginOptVal;
-
-                foreach (var o in comboBoxItemsSource)
+                if (opt.Render == OptionRender.DropBox)
                 {
-                    comboBox.Items.Add(o);
-                    comboBox.SelectedItem = o;
-                }
+                    var pluginOptVal = opt.Option;
+                    var comboBoxItemsSource = (IEnumerable)pluginOptVal;
 
-                WrapPanel wrapPanel = new WrapPanel();
-                wrapPanel.Children.Add(comboBox);
-                wrapPanel.Margin = new Thickness(10);
-                return wrapPanel;
+                    if (comboBoxItemsSource != null)
+                    {
+                        var comboBox = new ComboBox
+                           {
+                               ItemTemplate =
+                                   (DataTemplate)Application.Current.FindResource("CombinedTemplate"),
+                               Width = 200,
+                               ItemsSource = comboBoxItemsSource,
+                               SelectedItem = opt.DefaultOption,
+                               Tag = opt
+                           };
+                        comboBox.SelectionChanged += this.ComboBox_OnSelectionChanged;
+                        return comboBox;
+                    }
+                }
             }
 
             return value?.ToString();
+        }
+
+        /// <summary>
+        /// The combo box_ on selection changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void ComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                var selectItem = comboBox.SelectedItem;
+
+                if (comboBox.Tag is IOption option)
+                {
+                    option.Handler.DynamicInvoke(selectItem);
+                }
+            }
         }
     }
 }

@@ -42,5 +42,10 @@ namespace UnityCommander.Integration.Columns
         /// Gets or sets the option builders.
         /// </summary>
         public List<OptionBuilder> OptionBuilders { get; set; } = new ();
+
+        /// <summary>
+        /// Gets or sets the column builder.
+        /// </summary>
+        public IColumnBuilder ColumnBuilder { get; set; }
     }
 }

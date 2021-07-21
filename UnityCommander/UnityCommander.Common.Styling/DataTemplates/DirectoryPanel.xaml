@@ -2,5 +2,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/DirectoryPanelGeneral.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/DirectoryPanelColumns.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/SidebarDataTemplate.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

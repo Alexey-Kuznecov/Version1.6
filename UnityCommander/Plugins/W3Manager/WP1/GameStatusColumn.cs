@@ -2,7 +2,7 @@
 namespace W3Manager.WP1
 {
     using System;
-
+    using System.Collections.Generic;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
@@ -10,12 +10,40 @@ namespace W3Manager.WP1
     /// <summary>
     /// The game status column.
     /// </summary>
-    public class GameStatusColumn : IColumnBuilder
+    public class GameStatusColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
     {
         /// <summary>
         /// The option render.
         /// </summary>
         private OptionRender optionRender;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameStatusColumn"/> class.
+        /// </summary>
+        public GameStatusColumn()
+        {
+            this.GameStatusFormat = new List<object>
+            {
+                "Option One",
+                "Option Two",
+                "Option Three",
+            };
+        }
+
+        /// <summary>
+        /// Gets or sets the display name.
+        /// </summary>
+        public string DisplayName { get; set; } = "Game Status Column";
+
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        public string Description { get; set; } = "Plugin add new status column.";
+
+        /// <summary>
+        /// Gets the date time format.
+        /// </summary>
+        public List<object> GameStatusFormat { get; private set; }
 
         /// <summary>
         /// The column initial.
@@ -27,7 +55,6 @@ namespace W3Manager.WP1
         {
             builder.Add("Game Status", 50);
             builder.AddContextItem("Install", this.InstallMod);
-            builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), this.DisplayAsHandler, OptionRender.DropBox);
         }
 
         /// <summary>
@@ -71,6 +98,17 @@ namespace W3Manager.WP1
         }
 
         /// <summary>
+        /// The option build.
+        /// </summary>
+        /// <param name="optionBuilder">
+        /// The option builder.
+        /// </param>
+        public void OptionBuild(OptionBuilder optionBuilder)
+        {
+            optionBuilder.Add("Game Status Option", this.GameStatusFormat, this.GameStatusHandler, OptionRender.DropBox);
+        }
+
+        /// <summary>
         /// The install mod.
         /// </summary>
         private void InstallMod()
@@ -90,6 +128,17 @@ namespace W3Manager.WP1
             {
                 this.optionRender = render;
             }
+        }
+        
+        /// <summary>
+        /// The date time format handler.
+        /// </summary>
+        /// <param name="selected">
+        /// The selected.
+        /// </param>
+        private void GameStatusHandler(object selected)
+        {
+            // throw new NotImplementedException();
         }
     }
 }

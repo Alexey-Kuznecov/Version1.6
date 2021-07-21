@@ -163,7 +163,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFileColumns();
             this.AddFolderColumns();
             //this.SetAdditionalColumns();
-            this.NewSetAdditionalColumns();
+            this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
 
@@ -418,55 +418,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             });
         }
 
-        /// <summary>
-        /// The add columns in the file panel.
-        /// </summary>
-        [Obsolete]
         private void SetAdditionalColumns()
-        {
-            foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts())
-            {
-                //if (!(context.DataContext is Column data)) continue;
-                //if (context.PluginScope == PluginScopes.Columns)
-                //{
-                //    var columnNew = new GridViewColumn
-                //    {
-                //        Header = data.Header ?? "Error",
-                //        Width = data.Width,
-                //        DisplayMemberBinding = new Binding(data.Header)
-                //    };
-
-                //    switch (data.TargetPanel)
-                //    {
-                //        case TargetPanel.Folders:
-                //            var IsCreated = context.GetRegisteredType(PluginScopes.Columns);
-                //            if (IsCreated is null) return;
-                //            this.FolderPanelContainer.Columns.Add(columnNew);
-                //            this.InitialFolderColumnValues(context);
-                //            break;
-                //        case TargetPanel.Files:
-                //            IsCreated = context.GetRegisteredType(PluginScopes.Columns);
-                //            if (IsCreated is null) return;
-                //            this.FilePanelContainer.Columns.Add(columnNew);
-                //            this.InitialFileColumnValues(context);
-                //            break;
-                //    }
-                //}
-            }
-        }
-
-        private void NewSetAdditionalColumns()
         {
             foreach (var pluginContext in pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
-                    if (this.InitialFolderColumnValues(pluginContext.GetColumnBuilder(), column.Header))
+                    if (this.InitialFolderColumnValues(column))
                     {
-                        var cleanup = this.FolderPanelContainer.Columns.SingleOrDefault(predicate: grid
-                            => (string)grid.Header == column.Header);
-                        this.FolderPanelContainer.Columns.Remove(cleanup);
-
                         var columnNew = new GridViewColumn
                         {
                             Header = column.Header ?? "Error",
@@ -476,12 +435,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         
                         this.FolderPanelContainer.Columns.Add(columnNew);
                     }
-                    if (this.InitialFileColumnValues(pluginContext.GetColumnBuilder(), column.Header))
-                    {
-                        var cleanup = this.FilePanelContainer.Columns.SingleOrDefault(predicate: grid
-                            => (string)grid.Header == column.Header);
-                        this.FilePanelContainer.Columns.Remove(cleanup);
 
+                    if (this.InitialFileColumnValues(column))
+                    {
                         var columnNew = new GridViewColumn
                         {
                             Header = column.Header ?? "Error",
@@ -495,19 +451,31 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         }
 
-        private bool InitialFolderColumnValues(IColumnBuilder builder, string objectName)
+        private void UpdateAdditionalColumns()
+        {
+            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
+            {
+                foreach (var column in pluginContext.GetColumns())
+                {
+                    this.InitialFolderColumnValues(column);
+                    this.InitialFileColumnValues(column);
+                }
+            }
+        }
+
+        private bool InitialFolderColumnValues(IColumn column)
         {
             var isAllEqNull = false;
 
             foreach (var folder in this.DirectoryList)
             {
-                var columnValue = builder.ColumnValueHandler(folder.Path);
+                var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
                 
                 if (columnValue is not null)
                 {
-                    if (!folder.Additional.ContainsKey(objectName))
+                    if (!folder.Additional.ContainsKey(column.Header))
                     {
-                        folder.Additional.Add(objectName, builder.ColumnValueHandler(folder.Path));
+                        folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(folder.Path));
                         isAllEqNull = true;
                     }
                 }
@@ -516,19 +484,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             return isAllEqNull;
         }
         
-        private bool InitialFileColumnValues(IColumnBuilder builder, string objectName)
+        private bool InitialFileColumnValues(IColumn column)
         {
             var isAllEqNull = false;
 
             foreach (var file in this.FileList)
             {
-                var columnValue = builder.ColumnValueHandler(file.Path);
+                var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
 
                 if (columnValue is not null)
                 {
-                    if (!file.Additional.ContainsKey(objectName))
+                    if (!file.Additional.ContainsKey(column.Header))
                     {
-                        file.Additional.Add(objectName, builder.ColumnValueHandler(file.Path));
+                        file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(file.Path));
                         isAllEqNull = true;
                     }
                 }
@@ -596,24 +564,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.FileList = this.directoryProviderService.GetFiles(path);
             this.CurrentDirectory = path;
 
-            //foreach (var context in pluginLoaderService.GetPluginImplements().GetHostAppContexts())
-            //{
-            //    if (!(context.DataContext is Column data)) continue;
-            //    if (context.PluginScope == PluginScopes.Columns)
-            //    {
-            //        switch (data.TargetPanel)
-            //        {
-            //            case TargetPanel.Folders:
-            //                this.InitialFolderColumnValues(context);
-            //                break;
-            //            case TargetPanel.Files:
-            //                this.InitialFileColumnValues(context);
-            //                break;
-            //        }
-            //    }
-            //}
-
-            this.NewSetAdditionalColumns();
+            this.UpdateAdditionalColumns();
         }
 
         /// <summary>

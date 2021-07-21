@@ -15,22 +15,14 @@ namespace UnityCommander.Services.Plugins
     public class PluginContext : IPluginContext
     {
         /// <summary>
-        /// The column builder.
-        /// </summary>
-        private IColumnBuilder? columnBuilder;
-
-        /// <summary>
         /// Gets or sets the columns.
         /// </summary>
         public IReadOnlyList<IColumn> Columns { get; set; } = new List<IColumn>();
 
         /// <summary>
-        /// The get column builder.
+        /// Gets or sets the option.
         /// </summary>
-        /// <returns>
-        /// The interface column builder.
-        /// </returns>
-        public IColumnBuilder? GetColumnBuilder() => this.columnBuilder;
+        public IReadOnlyList<IOption> Option { get; set; } = new List<IOption>();
 
         /// <summary>
         /// The get columns.
@@ -52,14 +44,11 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         ///  The option builders.
         /// </returns>
-        public IEnumerable<OptionBuilder> GetOptions()
+        public IEnumerable<IOption> GetOptions()
         {
-            foreach (var column in this.Columns)
+            foreach (var option in this.Option)
             {
-                foreach (var option in column.OptionBuilders)
-                {
-                    yield return option;
-                }
+                yield return option;
             }
         }
 
@@ -76,10 +65,27 @@ namespace UnityCommander.Services.Plugins
 
             foreach (var column in instance.GetColumns())
             {
-                ((List<IColumn>)this.Columns).Add(column);
+                column.ColumnBuilder = builder;
+                   ((List<IColumn>)this.Columns).Add(column);
             }
+        }
 
-            this.columnBuilder = builder;
+        /// <summary>
+        /// The add column.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder.
+        /// </param>
+        public void AddOption(IOptionBuilder builder)
+        {
+            OptionBuilder instance = new ();
+            builder.OptionBuild(instance);
+
+            foreach (var option in instance.GetOptions())
+            {
+                option.OptionBuilders = builder;
+                ((List<IOption>)this.Option).Add(option);
+            }
         }
     }
 }
