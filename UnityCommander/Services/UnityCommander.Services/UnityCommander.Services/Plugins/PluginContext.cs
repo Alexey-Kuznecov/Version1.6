@@ -7,6 +7,7 @@ namespace UnityCommander.Services.Plugins
 
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The plugin context.

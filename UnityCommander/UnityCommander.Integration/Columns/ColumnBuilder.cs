@@ -70,15 +70,6 @@ namespace UnityCommander.Integration.Columns
         /// </param>
         public void BindingOption(Type source, string propertyName, Selector handler, OptionRender render = OptionRender.Default)
         {
-            var opt = new OptionBuilder 
-            {
-                Source = source,
-                PropertyName = propertyName,
-                Handler = handler,
-                OptionRender = render
-            };
-
-            this.column.OptionBuilders.Add(opt);
         }
 
         /// <summary>

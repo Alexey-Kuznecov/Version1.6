@@ -5,6 +5,8 @@ namespace UnityCommander.Integration.Contracts
 
     using Columns;
 
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The PluginContext interface.
     /// </summary>

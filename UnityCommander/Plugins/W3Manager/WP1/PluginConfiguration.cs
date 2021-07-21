@@ -1,10 +1,13 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using UnityCommander.Integration.Columns;
-using UnityCommander.Integration.Contracts;
-
+﻿
 namespace W3Manager.WP1
 {
+    using System;
+
+    using Microsoft.Extensions.DependencyInjection;
+
+    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Contracts;
+
     /// <summary>
     /// The plugin configuration.
     /// </summary>
@@ -23,6 +26,12 @@ namespace W3Manager.WP1
             services.AddSingleton<IPluginDescriptor, PluginDescription>();
         }
 
+        /// <summary>
+        /// The render register.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
         public object RenderRegister()
         {
             throw new NotImplementedException();

@@ -3,10 +3,10 @@ namespace DateTimeColumns
 {
     using System;
     using System.Collections.Generic;
-
-    using UnityCommander.Integration.Columns;
+    
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The image column.

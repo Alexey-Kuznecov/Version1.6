@@ -12,9 +12,9 @@ namespace W3Manager.WP1
         /// Gets or sets the display as.
         /// </summary>
         public List<string> DisplayAs { get; set; } = new List<string>
-                                                          {
-                                                              "Set Game Column",
-                                                              "Set Game Cell"
-                                                          };
+        {
+            "Set Game Column",
+            "Set Game Cell"
+        };
     }
 }

@@ -9,8 +9,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using Prism.Services.Dialogs;
 
     using UnityCommander.Core.Mvvm;
-    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Options;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>

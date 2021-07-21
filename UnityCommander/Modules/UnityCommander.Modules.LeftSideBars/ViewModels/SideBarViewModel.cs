@@ -10,7 +10,6 @@
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;

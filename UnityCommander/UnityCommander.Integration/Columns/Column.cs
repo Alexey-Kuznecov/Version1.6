@@ -6,6 +6,8 @@ namespace UnityCommander.Integration.Columns
 
     using Contracts;
 
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The column.
     /// </summary>

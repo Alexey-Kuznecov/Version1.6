@@ -3,8 +3,7 @@ namespace UnityCommander.Integration.Contracts
 {
     using System;
     using System.Collections.Generic;
-
-    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The interface column.

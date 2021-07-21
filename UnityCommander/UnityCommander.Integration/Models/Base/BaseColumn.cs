@@ -3,8 +3,8 @@ namespace UnityCommander.Integration.Models.Base
 {
     using System;
     using System.Collections.Generic;
-    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The basic properties that are required for
@@ -36,6 +36,10 @@ namespace UnityCommander.Integration.Models.Base
         /// Gets or sets context menu item for a column.
         /// </summary>
         public List<ContextItem> ContextItems { get; set; }
+
+        /// <summary>
+        /// Gets or sets the option builders.
+        /// </summary>
         public List<OptionBuilder> OptionBuilders { get; set; }
     }
 }
