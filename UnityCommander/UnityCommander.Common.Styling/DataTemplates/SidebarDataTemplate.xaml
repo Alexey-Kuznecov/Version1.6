@@ -2,33 +2,17 @@
 
     <DataTemplate x:Key="NormalItemTemplate">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="25" />
-            </Grid.ColumnDefinitions>
             <TextBlock
                 Grid.Column="0"
                 Height="auto"
                 Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBoxItem}, Path=Content}">
-                <!--<TextBlock.InputBindings>
-                    <MouseBinding
-                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.PluginOptionCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}, Path=Tag}"
-                        Gesture="LeftClick" />
-                </TextBlock.InputBindings>-->
             </TextBlock>
-            <TextBlock Grid.Column="1" Text="***" />
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="SelectionBoxTemplate">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="25" />
-            </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBox}, Path=SelectedItem}" />
-            <TextBlock Grid.Column="1" Text="*" />
         </Grid>
     </DataTemplate>
 

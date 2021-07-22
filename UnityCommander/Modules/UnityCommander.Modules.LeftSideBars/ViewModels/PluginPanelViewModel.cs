@@ -81,6 +81,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             this.pluginLoaders = pluginLoaders;
             this.dialogService = dialogService;
             this.Icon = iconProvider.GetIcon("Settings").Path;
+            this.OptionRender ??= this.pluginLoaders.GetPluginContext().GetOption(null);
         }
 
         /// <summary>

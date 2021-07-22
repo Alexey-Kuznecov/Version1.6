@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using UnityCommander.Integration.Columns;
-using UnityCommander.Integration.Contracts;
-
+﻿
 namespace W3Manager.WP2
 {
+    using Microsoft.Extensions.DependencyInjection;
+    using UnityCommander.Integration.Contracts;
+
     /// <summary>
     /// The plugin configuration.
     /// </summary>
@@ -17,9 +17,9 @@ namespace W3Manager.WP2
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            services.AddSingleton<IColumnBuilder, ModStatusColumn>();
-            services.AddSingleton<IColumnBuilder, ModCategoryColumn>();
-            services.AddSingleton<IPluginDescriptor, PluginDescription>();
+            //services.AddSingleton<IColumnBuilder, ModStatusColumn>();
+            //services.AddSingleton<IColumnBuilder, ModCategoryColumn>();
+            //services.AddSingleton<IPluginDescriptor, PluginDescription>();
         }
     }
 }

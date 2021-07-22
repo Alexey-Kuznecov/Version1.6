@@ -12,11 +12,13 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <converter:OptionRenderConverter x:Key="OptionRenderConverter" />
+        <converter:OptionRenderSelector x:Key="OptionRenderSelector" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="250" />
         </Grid.RowDefinitions>
         <TextBlock
@@ -63,7 +65,7 @@
                             Template="{DynamicResource CustomButtonTemplate}">
                             <ContentControl.InputBindings>
                                 <MouseBinding
-                                    Command="{Binding ShowDialogCommand}"
+                                    Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.ShowDialogCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}, Path=SelectedItem}"
                                     Gesture="LeftClick" />
                             </ContentControl.InputBindings>
@@ -72,21 +74,22 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="2">
-            <ItemsControl ItemsSource="{Binding OptionRender}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ContentPresenter>
-                            <ContentPresenter.Content>
-                                <converter:MultiParameter
-                                    Binding="{Binding}"
-                                    Converter="{StaticResource OptionRenderConverter}"
-                                    ConverterParameter="{Binding}" />
-                            </ContentPresenter.Content>
-                        </ContentPresenter>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <TextBlock
+            Grid.Row="2"
+            Width="250"
+            Height="35"
+            Padding="10,10,10,10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="Gainsboro"
+            FontSize="16"
+            FontWeight="Medium"
+            Text="Plugin settings" />
+        <StackPanel Grid.Row="3">
+            <ItemsControl
+                Margin="10"
+                ItemTemplateSelector="{StaticResource OptionRenderSelector}"
+                ItemsSource="{Binding OptionRender}" />
         </StackPanel>
     </Grid>
 </UserControl>

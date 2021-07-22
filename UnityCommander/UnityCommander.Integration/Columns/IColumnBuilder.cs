@@ -46,5 +46,13 @@ namespace UnityCommander.Integration.Columns
         /// The <see cref="object"/>.
         /// </returns>
         public object ColumnValueHandler(string path);
+
+        /// <summary>
+        /// The update column value.
+        /// </summary>
+        /// <param name="columnManager">
+        /// The column manager.
+        /// </param>
+        public void UpdateColumnValue(ColumnManager columnManager);
     }
 }

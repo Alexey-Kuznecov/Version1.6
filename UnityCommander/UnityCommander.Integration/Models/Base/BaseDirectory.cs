@@ -2,13 +2,15 @@
 namespace UnityCommander.Integration.Models.Base
 {
     using System;
-    using System.Collections.Generic;
+    using NSwag.Collections;
+
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The directory base.
     /// </summary>
     [Serializable]
-    public abstract class BaseDirectory : MetaModel
+    public abstract class BaseDirectory
     {
         /// <summary>
         /// Gets or sets the name.
@@ -38,6 +40,11 @@ namespace UnityCommander.Integration.Models.Base
         /// <summary>
         /// Gets or sets additional columns that are provided by plugin.
         /// </summary>
-        public Dictionary<string, object> Additional { get; set; } = new();
+        public ObservableDictionary<string, object> Additional { get; set; } = new ();
+
+        /// <summary>
+        /// Gets or sets the directory item's type.
+        /// </summary>
+        public TargetPanel TargetPanel { get; set; }
     }
 }

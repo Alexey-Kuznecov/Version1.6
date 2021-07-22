@@ -7,11 +7,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Linq;
-using System.Reflection;
 using System.Windows.Data;
 using UnityCommander.Integration.Columns;
-using UnityCommander.Services.Plugins;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -30,6 +27,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using GongSolutions.Wpf.DragDrop;
 
+    using NSwag.Collections;
+
     using Prism.Commands;
     using Prism.Regions;
 
@@ -37,8 +36,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Models.Base;
 
     using Views;
@@ -162,7 +159,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.SetLastPanelState();
             this.AddFileColumns();
             this.AddFolderColumns();
-            //this.SetAdditionalColumns();
             this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
@@ -213,12 +209,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
-
-            using FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate);
-            formatter.Serialize(fs, saveObjects);
+            if (settingsService.IsSessionSaved)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
+                using FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate);
+                formatter.Serialize(fs, saveObjects);
+            }
         });
 
         #endregion
@@ -424,14 +421,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
+                    column.ColumnManager.SetUpdate(this.PluginUpdateColumns);
+                    column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
+
                     if (this.InitialFolderColumnValues(column))
                     {
-                        var columnNew = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
-                        };
+                       var columnNew = new GridViewColumn
+                       {
+                           Header = column.Header ?? "Error",
+                           Width = column.Width,
+                           DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
+                       };
                         
                         this.FolderPanelContainer.Columns.Add(columnNew);
                     }
@@ -459,6 +459,35 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     this.InitialFolderColumnValues(column);
                     this.InitialFileColumnValues(column);
+                }
+            }
+        }
+
+        private void PluginUpdateColumns()
+        {
+            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
+            {
+                foreach (var column in pluginContext.GetColumns())
+                {
+                    foreach (var folder in this.DirectoryList)
+                    {
+                        var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                        
+                        if (columnValue is not null)
+                        {
+                            folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                        }
+                    }
+
+                    foreach (var file in this.FileList)
+                    {
+                        var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
+                        
+                        if (columnValue is not null)
+                        {
+                            file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(file.Path);
+                        }
+                    }
                 }
             }
         }
@@ -505,50 +534,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             return isAllEqNull;
         }
 
-        /// <summary>
-        /// Initializes the folder column with values produce from the plugin.
-        /// </summary>
-        /// <param name="context">
-        /// The host application context.
-        /// </param>
-        [Obsolete]
-        private void InitialFolderColumnValues(PluginBuilder context)
-        {
-            using var objectBuilder = new ObjectBuilder<FolderModel>();
-            objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
-
-            var folderModels = new ObservableCollection<FolderModel>();
-            foreach (var folder in this.DirectoryList)
-            {
-                var command = context.DelegateCommand as InsertValueUsePath;
-                folderModels.Add(objectBuilder.ObjectInit(folder, command?.Invoke(folder.Path)));
-            }
-
-            this.DirectoryList = folderModels;
-        }
-
-        /// <summary>
-        /// Initializes the file column with values produce from the plugin.
-        /// </summary>
-        /// <param name="context">
-        /// The host application context.
-        /// </param>
-        [Obsolete]
-        private void InitialFileColumnValues(PluginBuilder context)
-        {
-            using var objectBuilder = new ObjectBuilder<FileModel>();
-            objectBuilder.MergeObjectProperties(context.GetRegisteredType(PluginScopes.Columns));
-
-            var fileModels = new ObservableCollection<FileModel>();
-            foreach (var file in this.FileList)
-            {
-                var command = context.DelegateCommand as InsertValueUsePath;
-                fileModels.Add(objectBuilder.ObjectInit(file, command?.Invoke(file.Path)));
-            }
-
-            this.FileList = fileModels;
-        }
-
         #endregion
 
         #region Helper Methods
@@ -559,11 +544,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dirPath"> Expected the path to the directory. </param>
         private void UpdateFilePanel(object dirPath)
         {
-            string path = (string)dirPath;
+            var path = Directory.Exists(dirPath.ToString()) ? (string)dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
             this.DirectoryList = this.directoryProviderService.GetDirectories(path);
             this.FileList = this.directoryProviderService.GetFiles(path);
             this.CurrentDirectory = path;
-
             this.UpdateAdditionalColumns();
         }
 

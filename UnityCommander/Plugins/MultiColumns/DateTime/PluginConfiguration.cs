@@ -17,7 +17,7 @@ namespace MultiColumns.DateTime
         /// <summary>
         /// The category column.
         /// </summary>
-        private ImageColumn dateTimeColumn;
+        private DateTimeColumn dateTimeColumn;
 
         /// <summary>
         /// The configure.
@@ -52,9 +52,9 @@ namespace MultiColumns.DateTime
         /// The service.
         /// </param>
         /// <returns>
-        /// The <see cref="ImageColumn"/>.
+        /// The <see cref="DateTimeColumn"/>.
         /// </returns>
-        private ImageColumn DateTimeFactory(IServiceProvider service)
+        private DateTimeColumn DateTimeFactory(IServiceProvider service)
         {
             return this.dateTimeColumn;
         }

@@ -81,7 +81,7 @@ namespace UnityCommander.Common.Models.Columns
                     Template = new GridViewColumn
                     {
                         Header = "Name",
-                        Width = 250,
+                        Width = 200,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
                     }
                 },
@@ -91,7 +91,7 @@ namespace UnityCommander.Common.Models.Columns
                     Template = new GridViewColumn
                     {
                         Header = "CreationTime",
-                        Width = 150,
+                        Width = 100,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnCreationDateDataTemplate")
                     }
                 },
@@ -101,7 +101,7 @@ namespace UnityCommander.Common.Models.Columns
                     Template = new GridViewColumn
                     {
                         Header = "LastAccessTime",
-                        Width = 150,
+                        Width = 100,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnLastAccessDateDataTemplate")
                     },
                 }

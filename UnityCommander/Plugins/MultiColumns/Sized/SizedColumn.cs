@@ -1,7 +1,9 @@
 ﻿
-namespace W3Manager.WP1
+namespace MultiColumns.Sized
 {
+    using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
 
     using UnityCommander.Integration.Columns;
@@ -11,7 +13,7 @@ namespace W3Manager.WP1
     /// <summary>
     /// The game category column.
     /// </summary>
-    public class GameCategoryColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
+    public class SizedColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
     {
         /// <summary>
         /// The option render.
@@ -19,47 +21,43 @@ namespace W3Manager.WP1
         private OptionRender optionRender;
 
         /// <summary>
-        /// The date and time format.
+        /// The sized format.
         /// </summary>
-        private string dateTimeFormat;
+        private string sizedUnit;
+        
+        private ColumnManager.UpdateColumnValue updateColumn;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameCategoryColumn"/> class.
+        /// Initializes a new instance of the <see cref="SizedColumn"/> class.
         /// </summary>
-        public GameCategoryColumn()
+        public SizedColumn()
         {
-            this.DateTimeFormat = new List<object>
-            {
-                "12-30-11",
-                "12/30/2011"
-            };
+            this.sizedUnit = "Auto";
 
-            this.DateTimeFormat2 = new List<object>
+            this.SizedUnit = new List<object>
             {
-                "ddd",
-                "aaaa"
-            };
+                "Auto",
+                "In bytes",
+                "In kbyte",
+                "In mbyte",
+                "In gbyte"
+            }; 
         }
 
         /// <summary>
         /// Gets or sets the display as.
         /// </summary>
-        public List<object> DateTimeFormat { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date time format 2.
-        /// </summary>
-        public List<object> DateTimeFormat2 { get; set; }
+        public List<object> SizedUnit { get; set; }
 
         /// <summary>
         /// Gets or sets the display name.
         /// </summary>
-        public string DisplayName { get; set; } = "Game Category";
+        public string DisplayName { get; set; } = "Sized column";
 
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
-        public string Description { get; set; } = "Game Category Columns";
+        public string Description { get; set; } = "Sized columns";
         
         /// <summary>
         /// The column initial.
@@ -69,7 +67,7 @@ namespace W3Manager.WP1
         /// </param>
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("Game Category", 50);
+            builder.Add("Sized", 60);
             builder.AddContextItem("Install", this.InstallMod);
         }
 
@@ -88,6 +86,17 @@ namespace W3Manager.WP1
         }
 
         /// <summary>
+        /// The update column value.
+        /// </summary>
+        /// <param name="columnManager">
+        /// The column manager.
+        /// </param>
+        public void UpdateColumnValue(ColumnManager columnManager)
+        {
+            this.updateColumn = columnManager.Update;
+        }
+
+        /// <summary>
         /// The column value handler.
         /// </summary>
         /// <param name="path">
@@ -98,13 +107,26 @@ namespace W3Manager.WP1
         /// </returns>
         public object ColumnValueHandler(string path)
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-
-            if (this.dateTimeFormat == "12/30/2011")
+            if (File.Exists(path))
             {
+                FileInfo info = new FileInfo(path);
+                
+                switch (this.sizedUnit)
+                {
+                    case "In bytes":
+                        return $"{info.Length:f2} b";
+                    case "In kbyte":
+                        return $"{ConverterBytes.BytesToKibiBytes(info.Length):f2} kb";
+                    case "In mbyte":
+                        return $"{ConverterBytes.BytesToMebiBytes(info.Length):f2} mb";
+                    case "In gbyte":
+                        return $"{ConverterBytes.BytesToGibiBytes(info.Length):f2} gb";
+                    default:
+                        return ConverterBytes.AutoConvertFormatBytes(info.Length);
+                }
             }
 
-            return directoryInfo.CreationTime;
+            return null;
         }
 
         /// <summary>
@@ -127,8 +149,7 @@ namespace W3Manager.WP1
         /// </param>
         public void OptionBuild(OptionBuilder optionBuilder)
         {
-            optionBuilder.Add("Format output the date and time", this.DateTimeFormat, this.DateTimeFormatHandler, OptionRender.DropBox);
-            optionBuilder.Add("Format output the date and time2", this.DateTimeFormat2, this.DateTimeFormatHandler2, OptionRender.DropBox);
+            optionBuilder.Add("Unformation unit:", this.SizedUnit, this.sizedUnit, this.SeizedUnitHandler, OptionRender.DropBox);
         }
 
         /// <summary>
@@ -137,21 +158,10 @@ namespace W3Manager.WP1
         /// <param name="selected">
         /// The selected.
         /// </param>
-        private void DateTimeFormatHandler(object selected)
+        private void SeizedUnitHandler(object selected)
         {
-            this.dateTimeFormat = selected as string;
-        }
-
-
-        /// <summary>
-        /// The display as handler.
-        /// </summary>
-        /// <param name="selected">
-        /// The selected.
-        /// </param>
-        private void DateTimeFormatHandler2(object selected)
-        {
-            this.dateTimeFormat = selected as string;
+            this.sizedUnit = selected as string;
+            this.updateColumn();
         }
 
         /// <summary>

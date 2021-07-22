@@ -30,19 +30,34 @@ namespace UnityCommander.Integration.Options
         /// <param name="option">
         /// The option.
         /// </param>
+        /// <param name="defaultValue">
+        /// The default value.
+        /// </param>
         /// <param name="handler">
         /// The handler.
         /// </param>
         /// <param name="render">
         /// The render.
         /// </param>
-        public void Add(string title, List<object> option, Selector handler, OptionRender render = OptionRender.Default)
+        public void Add(string title, List<object> option, object defaultValue, Selector handler, OptionRender render = OptionRender.Default)
         {
             this.pluginOptions.Add(new PluginOption
             {
                 Title = title,
                 Option = option,
-                DefaultOption = option[0],
+                DefaultOption = defaultValue,
+                Handler = handler,
+                Render = render
+            });
+        }
+
+        public void Add(string title, bool value, Predictor handler, OptionRender render = OptionRender.Checkbox)
+        {
+            this.pluginOptions.Add(new PluginOption
+            {
+                Title = title,
+                Option = value,
+                DefaultOption = value,
                 Handler = handler,
                 Render = render
             });

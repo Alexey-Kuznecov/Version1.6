@@ -5,7 +5,6 @@ namespace UnityCommander.Integration.Columns
     using System.Collections.Generic;
 
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The column builder.
@@ -51,25 +50,6 @@ namespace UnityCommander.Integration.Columns
         public void AddCommand(Action action)
         {
             this.column.SortCommand = action;
-        }
-
-        /// <summary>
-        /// The binding option.
-        /// </summary>
-        /// <param name="source">
-        /// The source.
-        /// </param>
-        /// <param name="propertyName">
-        /// The property name.
-        /// </param>
-        /// <param name="handler">
-        /// The handler.
-        /// </param>
-        /// <param name="render">
-        /// The render.
-        /// </param>
-        public void BindingOption(Type source, string propertyName, Selector handler, OptionRender render = OptionRender.Default)
-        {
         }
 
         /// <summary>

@@ -5,6 +5,8 @@ namespace MultiColumns.Image
 
     using Microsoft.Extensions.DependencyInjection;
 
+    using MultiColumns.Sized;
+
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
@@ -15,7 +17,7 @@ namespace MultiColumns.Image
     public class PluginConfiguration : IPluginFactory
     {
         /// <summary>
-        /// The category column.
+        /// The image column.
         /// </summary>
         private ImageColumn imageColumn;
 
@@ -52,7 +54,7 @@ namespace MultiColumns.Image
         /// The service.
         /// </param>
         /// <returns>
-        /// The <see cref="ImageColumn"/>.
+        /// The <see cref="SizedColumn"/>.
         /// </returns>
         private ImageColumn ImageFactory(IServiceProvider service)
         {

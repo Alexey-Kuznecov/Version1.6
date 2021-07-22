@@ -47,5 +47,10 @@ namespace UnityCommander.Integration.Models.Base
         /// Gets or sets the column builder.
         /// </summary>
         public IColumnBuilder ColumnBuilder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the column manager.
+        /// </summary>
+        public ColumnManager ColumnManager { get; set; }
     }
 }

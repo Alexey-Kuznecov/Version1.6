@@ -1,10 +1,9 @@
 ﻿
-namespace W3Manager.WP1
+namespace MultiColumns.Sized
 {
     using System;
 
     using Microsoft.Extensions.DependencyInjection;
-
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
@@ -17,7 +16,7 @@ namespace W3Manager.WP1
         /// <summary>
         /// The category column.
         /// </summary>
-        private DateTimeColumn dateTimeColumn;
+        private SizedColumn sizedColumn;
 
         /// <summary>
         /// The configure.
@@ -27,13 +26,13 @@ namespace W3Manager.WP1
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            this.dateTimeColumn = new DateTimeColumn();
+            this.sizedColumn = new SizedColumn();
 
-            services.AddSingleton<IColumnBuilder>(this.DateTimeFactory);
-            services.AddSingleton<IOptionBuilder>(this.DateTimeFactory);
-            services.AddSingleton<IPluginDescriptor>(this.DateTimeFactory);
+            services.AddSingleton<IColumnBuilder>(this.SizedFactory);
+            services.AddSingleton<IOptionBuilder>(this.SizedFactory);
+            services.AddSingleton<IPluginDescriptor>(this.SizedFactory);
         }
-        
+
         /// <summary>
         /// The render register.
         /// </summary>
@@ -52,11 +51,11 @@ namespace W3Manager.WP1
         /// The service.
         /// </param>
         /// <returns>
-        /// The <see cref="DateTimeColumn"/>.
+        /// The <see cref="SizedColumn"/>.
         /// </returns>
-        private DateTimeColumn DateTimeFactory(IServiceProvider service)
+        private SizedColumn SizedFactory(IServiceProvider service)
         {
-            return this.dateTimeColumn;
+            return this.sizedColumn;
         }
     }
 }

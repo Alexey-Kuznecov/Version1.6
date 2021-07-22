@@ -30,6 +30,12 @@ namespace UnityCommander.Services.Plugins
 
                foreach (var option in options)
                {
+                    if (o is null)
+                    {
+                        yield return option;
+                        yield break;
+                    }
+
                    if (option.OptionBuilders.Equals(o))
                    {
                        yield return option;

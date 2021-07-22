@@ -61,12 +61,14 @@ namespace UnityCommander.Services.Plugins
         public void AddColumn(IColumnBuilder builder)
         {
             ColumnBuilder instance = new ();
+            ColumnManager columnManager = new ();
             builder.ColumnInitial(instance);
 
             foreach (var column in instance.GetColumns())
             {
                 column.ColumnBuilder = builder;
-                   ((List<IColumn>)this.Columns).Add(column);
+                column.ColumnManager = columnManager;
+                ((List<IColumn>)this.Columns).Add(column);
             }
         }
 

@@ -1,7 +1,8 @@
 ﻿
-namespace MultiColumns.Image
+namespace W3Manager.WP1
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
 
     using UnityCommander.Integration.Columns;
@@ -11,7 +12,7 @@ namespace MultiColumns.Image
     /// <summary>
     /// The game category column.
     /// </summary>
-    public class ImageColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
+    public class DateTimeColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
     {
         /// <summary>
         /// The option render.
@@ -21,29 +22,36 @@ namespace MultiColumns.Image
         /// <summary>
         /// The date and time format.
         /// </summary>
-        private string imageFormat;
+        private string dateTimeFormat;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageColumn"/> class.
+        /// Initializes a new instance of the <see cref="DateTimeColumn"/> class.
         /// </summary>
-        public ImageColumn()
+        public DateTimeColumn()
         {
+            this.dateTimeFormat = "15.3.2008";
+
+            this.DateTimeFormat = new List<object>
+            {
+                "15.3.2008",
+                "15/3/2008"
+            };
         }
 
         /// <summary>
         /// Gets or sets the display as.
         /// </summary>
-        public List<object> ImageFormat { get; set; }
+        public List<object> DateTimeFormat { get; set; }
 
         /// <summary>
         /// Gets or sets the display name.
         /// </summary>
-        public string DisplayName { get; set; } = "Image column";
+        public string DisplayName { get; set; } = "Date creation column";
 
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
-        public string Description { get; set; } = "Image columns";
+        public string Description { get; set; } = "Date creation columns";
         
         /// <summary>
         /// The column initial.
@@ -53,7 +61,7 @@ namespace MultiColumns.Image
         /// </param>
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("Dimension", 80);
+            builder.Add("Creation", 100);
             builder.AddContextItem("Install", this.InstallMod);
         }
 
@@ -82,23 +90,32 @@ namespace MultiColumns.Image
         /// </returns>
         public object ColumnValueHandler(string path)
         {
-            if (File.Exists(path))
+            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+
+            if (this.dateTimeFormat == "15/3/2008")
             {
-                return "Imaged";
+                var d = directoryInfo.CreationTime.Date;
+                CultureInfo culture = new CultureInfo("pt-BR");
+                return d.ToString("d", culture);
+            }
+            else if (this.dateTimeFormat == "15.3.2008")
+            {
+                var d = directoryInfo.CreationTime.Date;
+                return d.ToString("d");
             }
 
-            return null;
+            return directoryInfo.CreationTime.Date;
         }
 
         /// <summary>
-        /// The update column value.
+        /// The option build.
         /// </summary>
-        /// <param name="columnManager">
-        /// The column manager.
+        /// <param name="optionBuilder">
+        /// The option builder.
         /// </param>
-        public void UpdateColumnValue(ColumnManager columnManager)
+        public void OptionBuild(OptionBuilder optionBuilder)
         {
-            // throw new System.NotImplementedException();
+            optionBuilder.Add("Format output the date and time", this.DateTimeFormat, this.dateTimeFormat, this.DateTimeFormatHandler, OptionRender.DropBox);
         }
 
         /// <summary>
@@ -114,31 +131,25 @@ namespace MultiColumns.Image
         }
 
         /// <summary>
-        /// The option build.
-        /// </summary>
-        /// <param name="optionBuilder">
-        /// The option builder.
-        /// </param>
-        public void OptionBuild(OptionBuilder optionBuilder)
-        {
-            // optionBuilder.Add("Format output the date and time", this.SizedUnit, this.imageFormat, this.ImageFormatHandler, OptionRender.DropBox);
-        }
-
-        /// <summary>
         /// The display as handler.
         /// </summary>
         /// <param name="selected">
         /// The selected.
         /// </param>
-        private void ImageFormatHandler(object selected)
+        private void DateTimeFormatHandler(object selected)
         {
-            this.imageFormat = selected as string;
+            this.dateTimeFormat = selected as string;
         }
 
         /// <summary>
         /// The install mod.
         /// </summary>
         private void InstallMod()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateColumnValue(ColumnManager columnManager)
         {
             throw new System.NotImplementedException();
         }

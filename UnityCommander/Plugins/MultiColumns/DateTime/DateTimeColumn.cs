@@ -12,25 +12,31 @@ namespace MultiColumns.DateTime
     /// <summary>
     /// The game category column.
     /// </summary>
-    public class ImageColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
+    public class DateTimeColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
     {
+        /// <summary>
+        /// The date and time format.
+        /// </summary>
+        private string dateTimeFormat;
+        
+        private bool includeTime;
+
         /// <summary>
         /// The option render.
         /// </summary>
         private OptionRender optionRender;
 
         /// <summary>
-        /// The date and time format.
+        /// The update column value.
         /// </summary>
-        private string dateTimeFormat;
+        private ColumnManager.UpdateColumnValue updateColumnValue;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageColumn"/> class.
+        /// Initializes a new instance of the <see cref="DateTimeColumn"/> class.
         /// </summary>
-        public ImageColumn()
+        public DateTimeColumn()
         {
             this.dateTimeFormat = "15.3.2008";
-
             this.DateTimeFormat = new List<object>
             {
                 "15.3.2008",
@@ -61,7 +67,7 @@ namespace MultiColumns.DateTime
         /// </param>
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("DateTime", 100);
+            builder.Add("Creation Date", 80);
             builder.AddContextItem("Install", this.InstallMod);
         }
 
@@ -91,23 +97,34 @@ namespace MultiColumns.DateTime
         public object ColumnValueHandler(string path)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            var nt = directoryInfo.CreationTime.ToLongTimeString();
+            var nd = default(string);
 
             if (this.dateTimeFormat == "15/3/2008")
             {
                 var d = directoryInfo.CreationTime.Date;
                 CultureInfo culture = new CultureInfo("pt-BR");
-                var nd = d.ToString("d", culture); 
-                return nd;
+                nd = d.ToString("d", culture);
             }
             else if (this.dateTimeFormat == "15.3.2008")
             {
                 var d = directoryInfo.CreationTime.Date;
-                var nd = d.ToString("d");
-                return nd;
+                nd = d.ToString("d");
             }
 
-            return directoryInfo.CreationTime.Date;
+            return this.includeTime ? nd + " " + nt : nd;
         }
+
+        /// <summary>
+        /// The update column value.
+        /// </summary>
+        /// <param name="columnManager">
+        /// The column manager.
+        /// </param>
+        public void UpdateColumnValue(ColumnManager columnManager)
+        {
+            this.updateColumnValue = columnManager.Update;
+        } 
 
         /// <summary>
         /// The column value render.
@@ -129,7 +146,14 @@ namespace MultiColumns.DateTime
         /// </param>
         public void OptionBuild(OptionBuilder optionBuilder)
         {
-            optionBuilder.Add("Format output the date and time", this.DateTimeFormat, this.dateTimeFormat, this.DateTimeFormatHandler, OptionRender.DropBox);
+            optionBuilder.Add("Select date format:", this.DateTimeFormat, dateTimeFormat, this.DateTimeFormatHandler, OptionRender.DropBox);
+            optionBuilder.Add("Shown date and time:", this.includeTime, this.IncludeTimeHandler, OptionRender.Checkbox);
+        }
+
+        private void IncludeTimeHandler(bool value)
+        {
+            this.includeTime = value;
+            this.updateColumnValue();        
         }
 
         /// <summary>
@@ -140,7 +164,8 @@ namespace MultiColumns.DateTime
         /// </param>
         private void DateTimeFormatHandler(object selected)
         {
-            this.dateTimeFormat = selected as string;
+            dateTimeFormat = selected as string;
+            this.updateColumnValue();
         }
 
         /// <summary>
