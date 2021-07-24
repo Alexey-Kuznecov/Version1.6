@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace UnityCommander.Modules.ToolBar.Views
 {
     /// <summary>
-    /// Логика взаимодействия для FileOperationControl.xaml
+    /// Логика взаимодействия для AppControl.xaml
     /// </summary>
-    public partial class FileOperationControl : UserControl
+    public partial class AppTabControl : UserControl
     {
-        public FileOperationControl()
+        public AppTabControl()
         {
             InitializeComponent();
         }

@@ -26,9 +26,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Core.Mvvm;
 
     using GongSolutions.Wpf.DragDrop;
-
-    using NSwag.Collections;
-
+    
     using Prism.Commands;
     using Prism.Regions;
 
@@ -36,7 +34,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Integration.Models.Base;
 
     using Views;
 

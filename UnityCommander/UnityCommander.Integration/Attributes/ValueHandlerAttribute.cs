@@ -2,7 +2,6 @@
 namespace UnityCommander.Integration.Attributes
 {
     using System;
-    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -11,29 +10,6 @@ namespace UnityCommander.Integration.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class ValueHandlerAttribute : Attribute
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ValueHandlerAttribute"/> class.
-        /// </summary>
-        /// <param name="render">
-        /// The selector.
-        /// </param>
-        /// <param name="classType">
-        /// The plugin
-        /// </param>
-        /// <param name="handlerName">
-        /// The handler name
-        /// </param>
-        /// <param name="handler">
-        /// The handler.
-        /// </param>
-        public ValueHandlerAttribute(OptionRender render, TargetPanel targetPanel, Type classType, string handlerName, Type handler)
-        {
-            this.BaseHandler = Activator.CreateInstance(classType);
-            this.OptionHandler = Delegate.CreateDelegate(handler, this.BaseHandler, handlerName);
-            this.OptionHandlerName = handlerName;
-            this.OptionRender = render;
-        }
-
         /// <summary>
         /// Gets or sets the base handler.
         /// </summary>

@@ -5,8 +5,7 @@
             <TextBlock
                 Grid.Column="0"
                 Height="auto"
-                Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBoxItem}, Path=Content}">
-            </TextBlock>
+                Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ComboBoxItem}, Path=Content}" />
         </Grid>
     </DataTemplate>
 

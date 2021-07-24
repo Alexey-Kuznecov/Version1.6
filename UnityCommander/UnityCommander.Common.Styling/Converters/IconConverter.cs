@@ -8,6 +8,7 @@ namespace UnityCommander.Common.Styling.Converters
 
     using MaterialDesignThemes.Wpf;
 
+    using UnityCommander.Common.Models.Directory;
     using UnityCommander.Integration.Enums;
 
     /// <summary>

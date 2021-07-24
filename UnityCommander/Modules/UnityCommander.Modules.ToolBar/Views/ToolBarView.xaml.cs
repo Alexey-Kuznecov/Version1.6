@@ -6,12 +6,12 @@ namespace UnityCommander.Modules.ToolBar.Views
     /// <summary>
     /// The view a.
     /// </summary>
-    public partial class ViewA : UserControl
+    public partial class ToolBarView : UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ViewA"/> class.
+        /// Initializes a new instance of the <see cref="ToolBarView"/> class.
         /// </summary>
-        public ViewA()
+        public ToolBarView()
         {
             InitializeComponent();
         }

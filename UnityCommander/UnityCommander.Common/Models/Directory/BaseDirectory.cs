@@ -1,10 +1,11 @@
 ﻿
-namespace UnityCommander.Integration.Models.Base
+namespace UnityCommander.Common.Models.Directory
 {
     using System;
+
     using NSwag.Collections;
 
-    using UnityCommander.Integration.Enums;
+    using UnityCommander.Common.Models.Icons;
 
     /// <summary>
     /// The directory base.
@@ -25,7 +26,7 @@ namespace UnityCommander.Integration.Models.Base
         /// <summary>
         /// Gets or sets the icon.
         /// </summary>
-        public IconModel Icon { get; set; }
+        public Icon Icon { get; set; }
 
         /// <summary>
         /// Gets or sets the date and time the file/folder was created.

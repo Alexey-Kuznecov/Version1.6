@@ -3,7 +3,7 @@ namespace UnityCommander.Common.Models
 {
     using System.Windows.Controls;
 
-    using UnityCommander.Integration.Models;
+    using UnityCommander.Common.Models.Icons;
 
     /// <summary>
     /// The sidebar item.
@@ -18,6 +18,6 @@ namespace UnityCommander.Common.Models
         /// <summary>
         /// Gets or sets the icon.
         /// </summary>
-        public IconModel Icon { get; set; }
+        public IIcon Icon { get; set; }
     }
 }

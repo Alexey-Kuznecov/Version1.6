@@ -7,8 +7,7 @@ namespace UnityCommander.Common.Models.Columns
     using System.Windows.Controls;
 
     using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Models.Base;
+    using TargetPanel = UnityCommander.Common.Models.Directory.TargetPanel;
 
     /// <summary>
     /// The columns default.

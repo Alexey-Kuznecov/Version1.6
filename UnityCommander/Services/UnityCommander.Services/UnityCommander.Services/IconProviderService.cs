@@ -8,8 +8,11 @@ namespace UnityCommander.Services
     using System.Windows.Shapes;
 
     using MaterialDesignThemes.Wpf;
-    using UnityCommander.Integration.Models;
+
+    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Services.Interfaces;
+
+    using Icon = UnityCommander.Common.Models.Icons.Icon;
 
     /// <summary>
     /// The icon provider.
@@ -34,13 +37,24 @@ namespace UnityCommander.Services
             this.materialDesignIcons.Add("Settings", PackIconKind.Settings);
         }
 
-        public IconModel GetIcon(string iconName)
+        /// <summary>
+        /// TODO The get icon.
+        /// </summary>
+        /// <param name="iconName">
+        /// TODO The icon name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Common.Models.Icons.Icon"/>.
+        /// </returns>
+        public IIcon GetIcon(string iconName)
         {
-            var iconModel = new IconModel();
-            PackIcon packIcon = new PackIcon { Kind = materialDesignIcons.Single(pack => pack.Key == iconName).Value };
-            iconModel.Path = new Path() {
+            var iconModel = new Icon();
+            PackIcon packIcon = new PackIcon { Kind = this.materialDesignIcons.Single(pack => pack.Key == iconName).Value };
+            iconModel.Path = new Path
+            {
                 Data = Geometry.Parse(packIcon.Data)
             };
+
             return iconModel;
         }
 
@@ -49,24 +63,23 @@ namespace UnityCommander.Services
         /// The get icons.
         /// </summary>
         /// <returns>
-        /// The collection icons of type IconModel.
+        /// The collection icons of type Icon.
         /// </returns>
-        public ObservableCollection<IconModel> GetIcons()
+        public ObservableCollection<IIcon> GetIcons()
         {
-            var icons = new ObservableCollection<IconModel>();
+            var icons = new ObservableCollection<IIcon>();
 
             foreach (var icon in this.materialDesignIcons)
             {
-                PackIcon packIcon = new PackIcon();
-                packIcon.Kind = icon.Value;
-                icons.Add(new IconModel
-                {
-                    Category = icon.Key,
-                    Path = new Path 
-                    { 
-                        Data = Geometry.Parse(packIcon.Data)
-                    }
-                });
+                PackIcon packIcon = new PackIcon { Kind = icon.Value };
+                icons.Add(new Icon
+                              {
+                                  Category = icon.Key,
+                                  Path = new Path 
+                                             { 
+                                                 Data = Geometry.Parse(packIcon.Data)
+                                             }
+                              });
             }
 
             return icons;

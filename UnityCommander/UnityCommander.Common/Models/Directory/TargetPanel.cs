@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Integration.Enums
+namespace UnityCommander.Common.Models.Directory
 {
     using System;
 

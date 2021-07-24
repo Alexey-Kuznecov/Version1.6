@@ -4,8 +4,6 @@ namespace UnityCommander.Common.Models.Columns
     using System.Windows;
     using System.Windows.Controls;
 
-    using UnityCommander.Integration.Models.Base;
-
     /// <summary>
     /// The file column model.
     /// </summary>

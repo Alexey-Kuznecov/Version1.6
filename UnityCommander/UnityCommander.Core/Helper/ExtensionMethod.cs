@@ -3,10 +3,10 @@ namespace UnityCommander.Core.Helper
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Reflection.Emit;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Models;
+
+    using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Common.Models.Icons;
 
     /// <summary>
     /// The extension method.
@@ -121,9 +121,9 @@ namespace UnityCommander.Core.Helper
                     property.SetValue(instance, (string)stored[property.Name]);
                 }
 
-                if (stored[property.Name] is IconModel)
+                if (stored[property.Name] is Icon)
                 {
-                    property.SetValue(instance, (IconModel)stored[property.Name]);
+                    property.SetValue(instance, (Icon)stored[property.Name]);
                 }
 
                 if (stored[property.Name] is DateTime)

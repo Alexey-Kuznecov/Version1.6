@@ -33,7 +33,7 @@ namespace UnityCommander.Modules.ToolBar
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this.regionManager.RequestNavigate(RegionNames.ToolBarRegion, "ViewA");
+            this.regionManager.RequestNavigate(RegionNames.ToolBarRegion, "ToolBarView");
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace UnityCommander.Modules.ToolBar
         /// <param name="containerRegistry"> The container registry. </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<ViewA>();
+            containerRegistry.RegisterForNavigation<ToolBarView>();
         }
     }
 }

@@ -3,8 +3,7 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.ObjectModel;
-    using UnityCommander.Common.Models;
-    using UnityCommander.Integration.Models;
+    using UnityCommander.Common.Models.Icons;
 
     /// <summary>
     /// The i icon provider.
@@ -17,13 +16,13 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// The collection icons of Icon Model type.
         /// </returns>
-        ObservableCollection<IconModel> GetIcons();
+        ObservableCollection<IIcon> GetIcons();
 
         /// <summary>
         /// Provides an icon by the name specified in the arguments.
         /// </summary>
         /// <param name="iconName"> Icon name. </param>
-        /// <returns></returns>
-        public IconModel GetIcon(string iconName);
+        /// <returns> Icon as type of <see cref="Icon"/>. </returns>
+        public IIcon GetIcon(string iconName);
     }
 }

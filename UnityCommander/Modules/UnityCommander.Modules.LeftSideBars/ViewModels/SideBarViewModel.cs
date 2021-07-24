@@ -20,8 +20,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
     using UnityCommander.Common.Models;
+    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Core;
-    using UnityCommander.Integration.Models;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
@@ -83,7 +83,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// <summary>
         /// The pack icon.
         /// </summary>
-        private ObservableCollection<IconModel> packIcon;
+        private ObservableCollection<IIcon> packIcon;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SidebarViewModel"/> class.
@@ -156,7 +156,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         {
             foreach (var content in this.contentControlRegister)
             {
-                var icon = this.packIcon.Single(i => i.Category == content.Key);
+                var icon = this.packIcon.Single(i => ((Icon)i).Category == content.Key);
                 var userControl = content.Value;
                 userControl.DataContext = this.dataContextRegister[content.Key];
 

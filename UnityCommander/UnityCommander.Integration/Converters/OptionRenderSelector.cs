@@ -33,7 +33,7 @@ namespace UnityCommander.Integration.Converters
         {
             if (value is IOption opt)
             {
-                var cellTemplate = new DataTemplate();
+                DataTemplate cellTemplate = new ();
 
                 switch (opt.Render)
                 {
@@ -77,7 +77,7 @@ namespace UnityCommander.Integration.Converters
             gridRowFactory.SetValue(RowDefinition.HeightProperty, GridLength.Auto);
 
             FrameworkElementFactory gridRowFactory2 = new FrameworkElementFactory(typeof(RowDefinition));
-            gridRowFactory2.SetValue(RowDefinition.HeightProperty, new GridLength(1, GridUnitType.Star));
+            gridRowFactory2.SetValue(RowDefinition.HeightProperty, new GridLength(1d, GridUnitType.Star));
             gridFactory.AppendChild(gridRowFactory);
             gridFactory.AppendChild(gridRowFactory2);
             return gridFactory;
@@ -100,7 +100,7 @@ namespace UnityCommander.Integration.Converters
             if (source == null) return null;
 
             FrameworkElementFactory comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
-            comboBoxFactory.SetValue(FrameworkElement.WidthProperty, 230.0);
+            comboBoxFactory.SetValue(FrameworkElement.WidthProperty, 230d);
             comboBoxFactory.SetValue(Grid.RowProperty, 1);
             comboBoxFactory.SetValue(ItemsControl.ItemTemplateProperty, (DataTemplate)Application.Current.FindResource("CombinedTemplate"));
             comboBoxFactory.SetValue(ItemsControl.ItemsSourceProperty, source);
@@ -140,8 +140,8 @@ namespace UnityCommander.Integration.Converters
             TextBlockFactory.SetValue(TextBlock.FontStyleProperty, FontStyles.Italic);
             TextBlockFactory.SetValue(TextBlock.FontWeightProperty, FontWeights.Medium);
             // ColumnDefinition
-            ckColumnFactory.SetValue(ColumnDefinition.WidthProperty, new GridLength(1, GridUnitType.Star));
-            tbColumnFactory.SetValue(ColumnDefinition.WidthProperty, new GridLength(25));
+            ckColumnFactory.SetValue(ColumnDefinition.WidthProperty, new GridLength(1d, GridUnitType.Star));
+            tbColumnFactory.SetValue(ColumnDefinition.WidthProperty, new GridLength(25d));
             // Grid
             gridFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(0,15,0,0));
             gridFactory.AppendChild(checkboxFactory);
@@ -163,7 +163,7 @@ namespace UnityCommander.Integration.Converters
         private FrameworkElementFactory CreateTitle(IOption opt)
         {
             FrameworkElementFactory textFactory = new FrameworkElementFactory(typeof(TextBlock));
-            textFactory.SetValue(FrameworkElement.HeightProperty, 25.0);
+            textFactory.SetValue(FrameworkElement.HeightProperty, 25d);
             textFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 5, 0, 5));
             textFactory.SetValue(TextBlock.TextProperty, opt.Title);
             textFactory.SetValue(TextBlock.FontStyleProperty, FontStyles.Italic);
