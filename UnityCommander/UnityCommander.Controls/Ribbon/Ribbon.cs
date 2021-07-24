@@ -1,8 +1,7 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-    using System;
-    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
@@ -38,6 +37,11 @@ namespace UnityCommander.Controls.Ribbon
             new PropertyMetadata(new RelayCommand(() => { })));
 
         #endregion
+
+        /// <summary>
+        /// The section.
+        /// </summary>
+        private HashSet<RibbonSectionBuilder.Section> Section;
 
         /// <summary>
         /// The tab controls.
@@ -155,23 +159,10 @@ namespace UnityCommander.Controls.Ribbon
         {
             double margin = 0;
 
-            foreach (UIElement child in this.InternalChildren)
+            foreach (UIElement child in this.Children)
             {
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
                 margin += child.DesiredSize.Width;
-                this.tabControls = ((RibbonTaber)((Grid)child).Children[0])?.Children;
-                this.ribbonContainer = ((RibbonContainer)((Grid)child).Children[1])?.Children;
-
-                if (this.tabControls == null) continue;
-
-                foreach (var tab in this.tabControls)
-                {
-                    if (tab is Button bt)
-                    {
-                        bt.Command = this.TabCommand;
-                        bt.CommandParameter = bt;
-                    }
-                }
             }
 
             return finalSize;
@@ -189,7 +180,7 @@ namespace UnityCommander.Controls.Ribbon
         protected override Size MeasureOverride(Size availableSize)
         {
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
-            foreach (UIElement child in this.InternalChildren)
+            foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
             }

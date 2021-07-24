@@ -1,20 +1,14 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Input;
     using System.Windows.Media;
 
-    using AlexLibWpf.Mvvm.Base;
-
     /// <summary>
-    /// The ribbon taber.
+    /// The ribbon tab.
     /// </summary>
-    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
-    public class RibbonTaber : Panel
+    public class RibbonTab : Panel
     {
         /// <summary>
         /// The on render.
@@ -24,10 +18,10 @@ namespace UnityCommander.Controls.Ribbon
         /// </param>
         protected override void OnRender(DrawingContext dc)
         {
-            SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
-            Pen myPen = new Pen(new SolidColorBrush(Color.FromRgb(200, 85, 255)), 0);
-            Rect myRect = new Rect(0, 0, double.MaxValue, 25);
-            dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
+            //SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
+            //Pen myPen = new Pen(new SolidColorBrush(Color.FromRgb(200, 85, 255)), 0);
+            //Rect myRect = new Rect(0, 0, double.MaxValue, 25);
+            //dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
 
         /// <summary>
@@ -43,11 +37,11 @@ namespace UnityCommander.Controls.Ribbon
         {
             double margin = 0;
 
-            for (var index = 0; index < this.InternalChildren.Count; index++)
+            for (var index = 0; index < this.Children.Count; index++)
             {
-                UIElement child = this.InternalChildren[index];
+                UIElement child = this.Children[index];
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
-                margin += child.DesiredSize.Width + 5;
+                margin += child.DesiredSize.Width + 2;
 
                 if (child is Button bt)
                 {
@@ -73,7 +67,7 @@ namespace UnityCommander.Controls.Ribbon
 
             // In our example, we just have one child. 
             // Report that our panel requires just the size of its only child.
-            foreach (UIElement child in this.InternalChildren)
+            foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
             }

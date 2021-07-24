@@ -1,30 +1,19 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-    using System;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
 
     /// <summary>
-    /// The ribbon item.
+    /// The ribbon section.
     /// </summary>
-    public class RibbonContainer : Panel
+    public class RibbonGroup : Panel
     {
         /// <summary>
-        /// Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// The container group width.
         /// </summary>
-        public static readonly DependencyProperty MyPropertyProperty =
-            DependencyProperty.Register("MyProperty", typeof(int), typeof(Ribbon), new PropertyMetadata(0));
-
-        /// <summary>
-        /// Gets or sets the my property.
-        /// </summary>
-        public int MyProperty
-        {
-            get => (int)this.GetValue(MyPropertyProperty);
-            set => this.SetValue(MyPropertyProperty, value);
-        }
+        private Size containerGroupWidth;
 
         /// <summary>
         /// The on render.
@@ -34,9 +23,9 @@ namespace UnityCommander.Controls.Ribbon
         /// </param>
         protected override void OnRender(DrawingContext dc)
         {
-            SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(237, 237, 237));
-            Pen myPen = new Pen(new SolidColorBrush(Color.FromArgb(0, 255, 85, 255)), 1);
-            Rect myRect = new Rect(0, 0, 1950, 120);
+            SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(247, 246, 245));
+            Pen myPen = new Pen(new SolidColorBrush(Color.FromArgb(255, 229, 228, 229)), 2);
+            Rect myRect = new Rect(0, 1, this.containerGroupWidth.Width, this.containerGroupWidth.Height);
             dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
 
@@ -53,13 +42,13 @@ namespace UnityCommander.Controls.Ribbon
         {
             double margin = 0;
 
-            for (var index = 0; index < this.InternalChildren.Count; index++)
+            for (var index = 0; index < this.Children.Count; index++)
             {
-                UIElement child = this.InternalChildren[index];
+                UIElement child = this.Children[index];
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
                 margin += child.DesiredSize.Width;
             }
-
+            
             return arrangeBounds;
         }
 
@@ -74,13 +63,17 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
-            foreach (UIElement child in this.InternalChildren)
+            double margin = 0;
+
+            Size size = new Size(50, 50);
+            foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
+                margin += 50;
             }
 
-            return new Size();
+            this.containerGroupWidth = new Size(margin + 2, 100);
+            return this.containerGroupWidth;
         }
     }
 }

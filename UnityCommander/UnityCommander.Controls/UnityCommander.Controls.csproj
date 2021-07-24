@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-	  <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <UseWPF>true</UseWPF>
 	  <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Lab\AlexLibWpf\AlexLibWpf.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 
 </Project>
