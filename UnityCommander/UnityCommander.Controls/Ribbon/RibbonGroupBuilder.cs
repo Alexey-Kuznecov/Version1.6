@@ -15,6 +15,9 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         private RibbonGroup group;
 
+
+        private RibbonGroupAdorner groupAdorner;
+
         /// <summary>
         /// The add group.
         /// </summary>
@@ -27,6 +30,7 @@ namespace UnityCommander.Controls.Ribbon
         public RibbonGroupBuilder AddGroup(string groupName)
         {
             this.group = new RibbonGroup();
+            this.groupAdorner = new RibbonGroupAdorner().SetAdorner(groupName, this.group);
             return this;
         }
 
@@ -56,5 +60,13 @@ namespace UnityCommander.Controls.Ribbon
         /// The <see cref="RibbonGroup"/>.
         /// </returns>
         internal RibbonGroup GetGroup() => this.group;
+
+        /// <summary>
+        /// The get group.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="RibbonGroupAdorner"/>.
+        /// </returns>
+        internal RibbonGroupAdorner GetAdorner() => this.groupAdorner;
     }
 }

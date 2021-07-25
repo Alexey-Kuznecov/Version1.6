@@ -74,7 +74,6 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         public static Button FirstTab { get; set; }
 
-#if ADORNER
         /// <summary>
         /// Gets or sets the groups.
         /// </summary>
@@ -84,17 +83,6 @@ namespace UnityCommander.Controls.Ribbon
         /// Gets or sets the tab.
         /// </summary>
         public static HashSet<RibbonGroupAdorner> FirstAdorner { get; set; }
-#else
-        /// <summary>
-        /// Gets or sets the groups.
-        /// </summary>
-        public HashSet<RibbonGroup> Groups { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets the tab.
-        /// </summary>
-        public static HashSet<RibbonGroup> FirstSection { get; set; }
-#endif
 
         /// <summary>
         /// Gets or sets a command that set a section and makes the current button unavailable.
@@ -146,17 +134,10 @@ namespace UnityCommander.Controls.Ribbon
                 button.IsEnabled = !button.Equals(FirstTab);
             }
             
-#if ADORNER
             foreach (var group in FirstAdorner)
             {
                 this.ribbonSection.Children.Add(group);
             }
-#else
-            foreach (var group in FirstSection)
-            {
-                this.ribbonSection.Children.Add(group);
-            }
-#endif
 
             sectionContainer.Children.Add(this.ribbonTab);
             sectionContainer.Children.Add(this.ribbonSection);
@@ -178,15 +159,9 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         public RibbonBuilder SetSection(RibbonGroupBuilder groupBuilder)
         {
-            RibbonGroup ribbonGroup = groupBuilder.GetGroup();
-#if ADORNER
-            var adorner = new RibbonGroupAdorner().SetAdorner(ribbonGroup);
+            var adorner = groupBuilder.GetAdorner();
             GroupsAdorner.Add(adorner);
             FirstAdorner ??= GroupsAdorner;
-#else
-            this.Groups.Add(ribbonGroup);
-            FirstSection ??= this.Groups;
-#endif
             return this;
         }
 

@@ -42,9 +42,8 @@ namespace UnityCommander.Controls.Ribbon
         {
             double margin = 0;
 
-            for (var index = 0; index < this.Children.Count; index++)
+            foreach (UIElement child in this.Children)
             {
-                UIElement child = this.Children[index]; 
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
                 margin += child.DesiredSize.Width;
             }

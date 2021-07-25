@@ -174,7 +174,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private RibbonBuilder RibbonViewBuild()
         {
             var viewGroup = new RibbonGroupBuilder();
-            viewGroup.AddGroup("View Group");
+            viewGroup.AddGroup("Group Name");
             viewGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
             viewGroup.AddButton(this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
             viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);

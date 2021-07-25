@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
+    using System.Globalization;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -19,9 +20,17 @@ namespace UnityCommander.Controls.Ribbon
         /// <returns>
         /// The <see cref="RibbonGroupAdorner"/>.
         /// </returns>
-        public RibbonGroupAdorner SetAdorner(RibbonGroup ribbonGroup)
+        public RibbonGroupAdorner SetAdorner(string groupName, RibbonGroup ribbonGroup)
         {
+            TextBlock groupNameContainer = new TextBlock()
+            {
+                TextAlignment = TextAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = groupName
+            };
+           
             this.Children.Add(ribbonGroup);
+            this.Children.Add(groupNameContainer);
             return this;
         }
 
@@ -37,34 +46,34 @@ namespace UnityCommander.Controls.Ribbon
         protected override Size ArrangeOverride(Size arrangeSize)
         {
             double margin = 0;
-
-            for (var index = 0; index < this.Children.Count; index++)
+            
+            foreach (UIElement child in this.Children)
             {
-                UIElement child = this.Children[index];
-                child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
+                if (child is TextBlock groupName)
+                {
+                    groupName.Width = arrangeSize.Width - 2;
+                }
+               
+                child.Arrange(new Rect(new Point(margin + 2, child is TextBlock ? 80 : 0), child.DesiredSize));
             }
 
             return arrangeSize;
         }
 
-        /// <summary>
-        /// The get visual child.
-        /// </summary>
-        /// <param name="index">
-        /// The index.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Visual"/>.
-        /// </returns>
-        protected override Visual GetVisualChild(int index)
+        private Size MeasureText(Label label, double width)
         {
-            return base.GetVisualChild(index);
-        }
+            var formattedText = new FormattedText(
+                label.Content.ToString(),
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(label.FontFamily, label.FontStyle, label.FontWeight, label.FontStretch),
+                label.FontSize,
+                Brushes.Black,
+                new NumberSubstitution(),
+                1);
 
-        /// <summary>
-        /// The width adorner.
-        /// </summary>
-        private static double widthAdorner;
+            return new Size(formattedText.Width, formattedText.Height);
+        }
 
         /// <summary>
         /// The measure override.
@@ -84,8 +93,12 @@ namespace UnityCommander.Controls.Ribbon
             foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
-                height = child.DesiredSize.Height;
-                width += child.DesiredSize.Width;
+
+                if (child is RibbonGroup)
+                {
+                    height = child.DesiredSize.Height;
+                    width += child.DesiredSize.Width;
+                }
             }
 
             return new Size(width, height);
