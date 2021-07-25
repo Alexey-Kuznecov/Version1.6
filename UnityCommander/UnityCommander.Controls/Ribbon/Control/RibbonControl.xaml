@@ -7,7 +7,7 @@
     <Style x:Key="RibbonButtonStyles" TargetType="ContentControl">
         <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Height}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Background" Value="#D8D8D8" />
+        <Setter Property="Foreground" Value="#5077BE" />
     </Style>
 
     <ControlTemplate x:Key="RibbonButtonTemplate" TargetType="ContentControl">
@@ -43,7 +43,7 @@
                     <Setter Property="Margin" Value="5" />
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#D2D2D2" />
+                            <Setter Property="Background" Value="#E3E3E3" />
                             <Setter Property="Border.BorderBrush" Value="#828282" />
                         </Trigger>
                     </Style.Triggers>
@@ -53,7 +53,7 @@
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="rect" Property="Fill" Value="{x:Null}" />
-                <Setter TargetName="shape" Property="Fill" Value="CornflowerBlue" />
+                <Setter TargetName="shape" Property="Fill" Value="#6495ED" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

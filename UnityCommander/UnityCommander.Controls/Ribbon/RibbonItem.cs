@@ -22,7 +22,7 @@ namespace UnityCommander.Controls.Ribbon
                 OnPropertyChanged));
 
         #endregion
-
+        
         private readonly ContentControl contentControl = new ();
 
         public Path Icon

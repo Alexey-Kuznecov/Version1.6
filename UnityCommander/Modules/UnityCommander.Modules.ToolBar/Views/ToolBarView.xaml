@@ -11,31 +11,6 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <StackPanel>
-        <!--<control:Ribbon BubbleSource="{Binding UserControls}" SetCommand="{Binding SetRibbon}">
-            <Grid>
-        -->
-        <!--<Grid.RowDefinitions>
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <control:RibbonTab Grid.Row="0">
-                    <Button Width="100" Content="Main" />
-                    <Button Width="100" Content="View" />
-                    <Button
-                        Width="100"
-                        Content="Bar"
-                        Cursor="Hand" />
-                </control:RibbonTab>
-                <control:RibbonSection Grid.Row="1">
-        -->
-        <!--<control:RibbonGroup Width="200" Children="{Binding FileOperationTools}" />-->
-        <!--
-                </control:RibbonSection>-->
-        <!--
-            </Grid>
-        </control:Ribbon>-->
-
-
-        <ContentControl Content="{Binding RibbonGroup}" />
+        <ContentControl Content="{Binding Ribbon}" />
     </StackPanel>
 </UserControl>

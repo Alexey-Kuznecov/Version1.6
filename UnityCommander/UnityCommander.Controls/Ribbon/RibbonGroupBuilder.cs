@@ -55,9 +55,6 @@ namespace UnityCommander.Controls.Ribbon
         /// <returns>
         /// The <see cref="RibbonGroup"/>.
         /// </returns>
-        internal RibbonGroup GetGroup()
-        {
-            return this.group;
-        }
+        internal RibbonGroup GetGroup() => this.group;
     }
 }

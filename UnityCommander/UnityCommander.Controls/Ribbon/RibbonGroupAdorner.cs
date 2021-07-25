@@ -6,67 +6,76 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows.Media;
 
     /// <summary>
-    /// The ribbon item.
+    /// The group adorner.
     /// </summary>
-    public class RibbonSection : Panel
+    public class RibbonGroupAdorner : Grid
     {
         /// <summary>
-        /// TODO The margin section.
+        /// The set adorner.
         /// </summary>
-        private static double marginGroup;
-
-        /// <summary>
-        /// The on render.
-        /// </summary>
-        /// <param name="dc">
-        /// The dc.
+        /// <param name="ribbonGroup">
+        /// The ribbon Group.
         /// </param>
-        protected override void OnRender(DrawingContext dc)
+        /// <returns>
+        /// The <see cref="RibbonGroupAdorner"/>.
+        /// </returns>
+        public RibbonGroupAdorner SetAdorner(RibbonGroup ribbonGroup)
         {
-            SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(247, 246, 245));
-            Pen myPen = new Pen(new SolidColorBrush(Color.FromArgb(255, 229, 228, 229)), 1);
-            Rect myRect = new Rect(0, 1, 1920, 104);
-            dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
+            this.Children.Add(ribbonGroup);
+            return this;
         }
 
         /// <summary>
         /// The arrange override.
         /// </summary>
-        /// <param name="arrangeBounds">
-        /// The arrange bounds.
+        /// <param name="arrangeSize">
+        /// The arrange size.
         /// </param>
         /// <returns>
         /// The <see cref="Size"/>.
         /// </returns>
-        protected override Size ArrangeOverride(Size arrangeBounds)
+        protected override Size ArrangeOverride(Size arrangeSize)
         {
             double margin = 0;
 
             for (var index = 0; index < this.Children.Count; index++)
             {
-                UIElement child = this.Children[index]; 
+                UIElement child = this.Children[index];
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
-                margin += child.DesiredSize.Width;
             }
 
-            return arrangeBounds;
+            return arrangeSize;
+        }
+
+        /// <summary>
+        /// The get visual child.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Visual"/>.
+        /// </returns>
+        protected override Visual GetVisualChild(int index)
+        {
+            return base.GetVisualChild(index);
         }
 
         /// <summary>
         /// The width adorner.
         /// </summary>
-        private static double widthSection;
+        private static double widthAdorner;
 
         /// <summary>
         /// The measure override.
         /// </summary>
-        /// <param name="availableSize">
-        /// The available size.
+        /// <param name="constraint">
+        /// The constraint.
         /// </param>
         /// <returns>
         /// The <see cref="Size"/>.
         /// </returns>
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size MeasureOverride(Size constraint)
         {
             double width = 0;
             double height = 0;
@@ -75,11 +84,11 @@ namespace UnityCommander.Controls.Ribbon
             foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
-                width += child.DesiredSize.Width;
                 height = child.DesiredSize.Height;
+                width += child.DesiredSize.Width;
             }
 
-            return new Size();
+            return new Size(width, height);
         }
     }
 }

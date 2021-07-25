@@ -39,11 +39,6 @@ namespace UnityCommander.Controls.Ribbon
         #endregion
 
         /// <summary>
-        /// The section.
-        /// </summary>
-        private HashSet<RibbonSectionBuilder.Section> Section;
-
-        /// <summary>
         /// The tab controls.
         /// </summary>
         private UIElementCollection tabControls;
@@ -168,6 +163,8 @@ namespace UnityCommander.Controls.Ribbon
             return finalSize;
         }
 
+        private static double ribbonWidth;
+
         /// <summary>
         /// The measure override.
         /// </summary>
@@ -179,13 +176,17 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
+            double height = 0;
+
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
             foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
+                ribbonWidth += child.DesiredSize.Width;
+                height = child.DesiredSize.Height;
             }
 
-            return new Size();
+            return new Size(ribbonWidth, height);
         }
 
         #endregion

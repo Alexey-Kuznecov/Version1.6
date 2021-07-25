@@ -37,7 +37,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private readonly IIconProviderService iconProvider;
 
         #endregion
-        
+
         /// <summary>
         /// The icon.
         /// </summary>
@@ -49,9 +49,14 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private UserControl userControls;
 
         /// <summary>
-        /// TODO The file operation tools.
+        /// The file operation tools.
         /// </summary>
-        private Ribbon ribbonGroup;
+        private Ribbon ribbon;
+
+        /// <summary>
+        /// The ribbon section builder.
+        /// </summary>
+        private RibbonBuilder ribbonSectionBuilder;
 
         /// <summary>
         /// The show dialog command.
@@ -84,31 +89,10 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             this.UserControls = new MainTabControl();
             this.Icon = iconProvider.GetIcon("Tag").GetIconPath();
             
-            var editGroup = new RibbonGroupBuilder();
-            editGroup.AddGroup("File Operation");
-            editGroup.AddButton(iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-            editGroup.AddButton(iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-            editGroup.AddButton(iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-            editGroup.AddButton(iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-
-            var copyGroup = new RibbonGroupBuilder();
-            copyGroup.AddGroup("View Group");
-            copyGroup.AddButton(iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            copyGroup.AddButton(iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-
-            var sectionBuilder = new RibbonSectionBuilder("File");
-            sectionBuilder.SetSection(editGroup);
-            sectionBuilder.SetSection(copyGroup);
-
-            var viewGroup = new RibbonGroupBuilder();
-            viewGroup.AddGroup("View Group");
-            viewGroup.AddButton(iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            viewGroup.AddButton(iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-
-            var sectionBuilder2 = new RibbonSectionBuilder("View");
-            sectionBuilder2.SetSection(viewGroup);
-
-            this.RibbonGroup = sectionBuilder.Build();
+            this.ribbonSectionBuilder = this.RibbonFileBuild();
+            this.ribbonSectionBuilder = this.RibbonViewBuild();
+            this.ribbonSectionBuilder = this.RibbonViewBuild2();
+            this.Ribbon = this.ribbonSectionBuilder.Build();
         }
 
         /// <summary>
@@ -123,10 +107,10 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <summary>
         /// Gets or sets the file operation tools.
         /// </summary>
-        public Ribbon RibbonGroup
+        public Ribbon Ribbon
         {
-            get => this.ribbonGroup;
-            set => this.SetProperty(ref this.ribbonGroup, value);
+            get => this.ribbon;
+            set => this.SetProperty(ref this.ribbon, value);
         }
 
         /// <summary>
@@ -134,32 +118,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// </summary>
         public DelegateCommand ShowDialogCommand =>
             this.showDialogCommand ?? new DelegateCommand(this.ExecuteShowDialogCommand);
-
-        /// <summary>
-        /// The set ribbon.
-        /// </summary>
-        public DelegateCommand<object> SetRibbon => new DelegateCommand<object>(
-            (obj) =>
-        {
-            if (obj is Button bt)
-            {
-                switch (bt.Content)
-                {
-                    case "Main":
-                        this.UserControls = new MainTabControl();
-                        this.UserControls.DataContext = new MainTabViewModel(this.iconProvider);
-                        break;
-                    case "View":
-                        this.UserControls = new FileTabControl();
-                        this.UserControls.DataContext = new FileTabViewModel();
-                        break;
-                    default:
-                        this.UserControls = new AppTabControl();
-                        this.UserControls.DataContext = new AppTabViewModel();
-                        break;
-                }
-            }
-        });
 
         /// <summary>
         /// Gets or sets the user controls.
@@ -177,6 +135,81 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         {
             get => this.message;
             set => this.SetProperty(ref this.message, value);
+        }
+
+        /// <summary>
+        /// The ribbon build.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="RibbonBuilder"/>.
+        /// </returns>
+        private RibbonBuilder RibbonFileBuild()
+        {
+            var editGroup = new RibbonGroupBuilder();
+            editGroup.AddGroup("File Operation");
+            editGroup.AddButton(this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
+
+            var copyGroup = new RibbonGroupBuilder();
+            copyGroup.AddGroup("View Group");
+            copyGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            copyGroup.AddButton(this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+
+            var sectionFile = new RibbonBuilder("File");
+            sectionFile.SetSection(editGroup);
+            sectionFile.SetSection(copyGroup);
+
+            return sectionFile;
+        }
+
+        /// <summary>
+        /// The ribbon view build.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="RibbonBuilder"/>.
+        /// </returns>
+        private RibbonBuilder RibbonViewBuild()
+        {
+            var viewGroup = new RibbonGroupBuilder();
+            viewGroup.AddGroup("View Group");
+            viewGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            viewGroup.AddButton(this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
+            viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+
+            var sectionView = new RibbonBuilder("View");
+            sectionView.SetSection(viewGroup);
+            return sectionView;
+        }
+
+        /// <summary>
+        /// The ribbon view build.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="RibbonBuilder"/>.
+        /// </returns>
+        private RibbonBuilder RibbonViewBuild2()
+        {
+            var viewGroup = new RibbonGroupBuilder();
+            viewGroup.AddGroup("View Group");
+            viewGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+            viewGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+            viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+
+
+            var copyGroup = new RibbonGroupBuilder();
+            copyGroup.AddGroup("View Group");
+            copyGroup.AddButton(this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
+            copyGroup.AddButton(this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+            copyGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+
+            var sectionView = new RibbonBuilder("Plugin");
+            sectionView.SetSection(viewGroup);
+            sectionView.SetSection(copyGroup);
+            return sectionView;
         }
 
         /// <summary>
