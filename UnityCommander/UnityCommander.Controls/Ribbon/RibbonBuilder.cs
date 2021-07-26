@@ -178,7 +178,7 @@ namespace UnityCommander.Controls.Ribbon
                 Grid.SetColumn(button, 0);
             }
 
-            ContentControl collapseButton = new ContentControl()
+            ContentControl collapseButton = new ContentControl
             {
                 Content = "adsd",
                 Width = 15,
@@ -186,8 +186,6 @@ namespace UnityCommander.Controls.Ribbon
                 Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
                 Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
             };
-
-            //TextBlock collapseButton = new TextBlock() { Text = "***8" };
 
             grid.Children.Add(collapseButton);
             Grid.SetColumn(collapseButton, 1);

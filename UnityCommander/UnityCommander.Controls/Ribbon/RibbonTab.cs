@@ -1,7 +1,6 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -13,17 +12,6 @@ namespace UnityCommander.Controls.Ribbon
     /// </summary>
     public class RibbonTab : Panel
     {
-        private Size windowSize;
-
-        public RibbonTab()
-        {
-            //var window = this.GetWindow();
-            //if (window != null)
-            //{
-            //    window.SizeChanged += Window_SizeChanged;
-            //}
-        }
-
         /// <summary>
         /// Gets or sets the tab command.
         /// </summary>
@@ -56,10 +44,6 @@ namespace UnityCommander.Controls.Ribbon
         /// </param>
         protected override void OnRender(DrawingContext dc)
         {
-            //SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
-            //Pen myPen = new Pen(new SolidColorBrush(Color.FromRgb(200, 85, 255)), 0);
-            //Rect myRect = new Rect(0, 0, double.MaxValue, 25);
-            //dc.DrawRectangle(mySolidColorBrush, myPen, myRect); 
         }
 
         /// <summary>
@@ -103,12 +87,6 @@ namespace UnityCommander.Controls.Ribbon
             return finalSize;
         }
 
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var window = (Window)sender;
-            this.windowSize = new Size(window.Width, window.Height);
-        }
-
         /// <summary>
         /// The measure override.
         /// </summary>
@@ -122,8 +100,6 @@ namespace UnityCommander.Controls.Ribbon
         {
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
-            // In our example, we just have one child. 
-            // Report that our panel requires just the size of its only child.
             foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
