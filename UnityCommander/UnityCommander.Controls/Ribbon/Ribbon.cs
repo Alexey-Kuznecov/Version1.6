@@ -38,49 +38,11 @@ namespace UnityCommander.Controls.Ribbon
 
         #endregion
 
-        /// <summary>
-        /// The tab controls.
-        /// </summary>
-        private UIElementCollection tabControls;
+        private static double ribbonWidth;
 
-        /// <summary>
-        /// The tab controls.
-        /// </summary>
-        private UIElementCollection ribbonContainer;
-
-        /// <summary>
-        /// The window width.
-        /// </summary>
-        private Size windowSize;
-
-        /// <summary>
-        /// Gets or sets the set command.
-        /// </summary>
-        public ICommand SetCommand
+        public Ribbon()
         {
-            get => (ICommand)this.GetValue(SetCommandProperty);
-            set => this.SetValue(SetCommandProperty, value);
         }
-
-        /// <summary>
-        /// Gets or sets the tab command.
-        /// </summary>
-        public ICommand TabCommand => new RelayCommand(obj =>
-        {
-            foreach (var tab in this.tabControls)
-            {
-                if (!(tab is Button child)) continue;
-                if (obj is Button bt)
-                {
-                    child.IsEnabled = child.GetHashCode() != bt.GetHashCode();
-
-                    if (!child.IsEnabled)
-                    {
-                        SetCommand.Execute(bt);
-                    }
-                }
-            }
-        });
 
         #region Setters/Getters Method
 
@@ -123,22 +85,11 @@ namespace UnityCommander.Controls.Ribbon
         /// The dc.
         /// </param>
         protected override void OnRender(DrawingContext dc)
-        {
-            FrameworkElement parent = this.Parent as FrameworkElement;
-
-            while (!(parent is Window))
-            {
-                parent = parent?.Parent as FrameworkElement;
-
-                if (parent is Window w)
-                {
-                    this.windowSize = new Size(w.Width, w.Height);
-                    SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(222, 222, 222));
-                    Pen myPen = new Pen(new SolidColorBrush(Color.FromRgb(200, 22, 33)), 1);
-                    Rect myRect = new Rect(0, 0, double.PositiveInfinity, 120);
-                    dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
-                }
-            }
+        {      
+            SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(222, 222, 222));
+            Pen myPen = new Pen(new SolidColorBrush(Color.FromRgb(200, 22, 33)), 1);
+            Rect myRect = new Rect(0, 0, double.PositiveInfinity, 120);
+            dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
 
         /// <summary>
@@ -162,8 +113,6 @@ namespace UnityCommander.Controls.Ribbon
 
             return finalSize;
         }
-
-        private static double ribbonWidth;
 
         /// <summary>
         /// The measure override.
@@ -191,6 +140,23 @@ namespace UnityCommander.Controls.Ribbon
 
         #endregion
 
+        private Window GetWindow()
+        {
+            FrameworkElement parent = this.Parent as FrameworkElement;
+
+            while (!(parent is Window))
+            {
+                parent = parent?.Parent as FrameworkElement;
+
+                if (parent is Window w)
+                {
+                    return w;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// The on bubble source changed.
         /// </summary>
@@ -202,18 +168,6 @@ namespace UnityCommander.Controls.Ribbon
         /// </param>
         private static void OnBubbleSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Ribbon ribbon)
-            {
-                if (ribbon.ribbonContainer == null) return;
-                ribbon.ribbonContainer.Clear();
-                ribbon.ribbonContainer.Add(
-                    new ContentControl
-                        {
-                            Content = GetBubbleSource(ribbon),
-                            Width = ribbon.windowSize.Width,
-                            Height = 100
-                        });
-            }
         }
 
         /// <summary>

@@ -126,13 +126,8 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         public Ribbon Build()
         {
-            sectionContainer = this.BuildGrid();
-
-            foreach (var button in Tabs)
-            {
-                this.ribbonTab.Children.Add(button);
-                button.IsEnabled = !button.Equals(FirstTab);
-            }
+            this.GridBuild();
+            this.TabBuild();
             
             foreach (var group in FirstAdorner)
             {
@@ -166,19 +161,50 @@ namespace UnityCommander.Controls.Ribbon
         }
 
         /// <summary>
+        /// The create tab.
+        /// </summary>
+        private void TabBuild()
+        {
+            Grid grid = new Grid();
+            ColumnDefinition columnDefinition = new ColumnDefinition() { Width = new GridLength(800) };
+            ColumnDefinition columnDefinition1 = new ColumnDefinition() { Width = new GridLength(100) };
+            grid.ColumnDefinitions.Add(columnDefinition);
+            grid.ColumnDefinitions.Add(columnDefinition1);
+
+            foreach (var button in Tabs)
+            {
+                button.IsEnabled = !button.Equals(FirstTab);
+                grid.Children.Add(button);
+                Grid.SetColumn(button, 0);
+            }
+
+            ContentControl collapseButton = new ContentControl()
+            {
+                Content = "adsd",
+                Width = 15,
+                Height = 15,
+                Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
+                Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
+            };
+
+            //TextBlock collapseButton = new TextBlock() { Text = "***8" };
+
+            grid.Children.Add(collapseButton);
+            Grid.SetColumn(collapseButton, 1);
+            this.ribbonTab.Children.Add(grid);
+        }
+
+        /// <summary>
         /// The create grid.
         /// </summary>
-        /// <returns>
-        /// The <see cref="Grid"/>.
-        /// </returns>
-        private Grid BuildGrid()
+        private void GridBuild()
         {
             Grid dynamicGrid = new ();
             RowDefinition tabRow = new () { Height = new GridLength(25) };
             RowDefinition sectionRow = new () { Height = new GridLength(1, GridUnitType.Star) };
             dynamicGrid.RowDefinitions.Add(tabRow);
             dynamicGrid.RowDefinitions.Add(sectionRow);
-            return dynamicGrid;
+            sectionContainer = dynamicGrid;
         }
     }
 }

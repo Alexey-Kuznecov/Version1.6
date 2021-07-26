@@ -11,5 +11,6 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/IconStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/DirectoryPanel.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Controls/RadioButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Images/Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

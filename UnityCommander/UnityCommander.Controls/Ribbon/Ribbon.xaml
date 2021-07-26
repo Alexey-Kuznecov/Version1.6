@@ -4,6 +4,60 @@
         <ResourceDictionary Source="Control/RibbonControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <Style x:Key="RibbonCollapseButtonStyle" TargetType="ContentControl">
+        <Setter Property="Foreground" Value="{x:Null}" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
+        <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Height}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <DrawingBrush Stretch="Uniform">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#5077BE" Geometry="M0.739,215.19L73.799,261.75 217.716,70.833 361.716,261.75 434.383,216.833 264.049,0.5 173.049,0.5 0.739,215.19z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="RibbonCollapseButtonTemplate" TargetType="ContentControl">
+        <Grid>
+            <Path
+                x:Name="rect"
+                Width="25"
+                Height="25"
+                Fill="#F6F6F1"
+                Stretch="Uniform">
+                <Path.Data>
+                    <!--<RectangleGeometry Rect="0,0,50,50" />-->
+                    <EllipseGeometry
+                        Center="50,50"
+                        RadiusX="50"
+                        RadiusY="50" />
+                </Path.Data>
+            </Path>
+            <Path
+                x:Name="icon"
+                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}"
+                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}"
+                Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background}"
+                Stretch="Uniform">
+                <Path.Data>
+                    <RectangleGeometry Rect="0,0,40,40" />
+                </Path.Data>
+            </Path>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="rect" Property="Fill" Value="#EDEDE8" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <Style x:Key="RibbonTabStyle" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="25" />
         <Setter Property="MinWidth" Value="30" />
