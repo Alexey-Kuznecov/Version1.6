@@ -19,11 +19,30 @@
             </Path>
             <Path
                 x:Name="shape"
-                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}"
-                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}"
-                Data="{Binding Icon.Data}"
+                Width="{Binding RelativeSource={RelativeSource Self}, Path=Height}"
+                Height="15"
+                Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentControl}}, Path=Content}"
                 Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}"
-                Stretch="Uniform" />
+                Stretch="Uniform">
+                <Path.InputBindings>
+                    <MouseBinding
+                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentControl}}, Path=InputBindings[0].Command}"
+                        Gesture="LeftClick"
+                        MouseAction="LeftClick" />
+                </Path.InputBindings>
+            </Path>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Height}" />
+                    <Setter Property="Height" Value="20" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#E3E3E3" />
+                            <Setter Property="Border.BorderBrush" Value="#828282" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">

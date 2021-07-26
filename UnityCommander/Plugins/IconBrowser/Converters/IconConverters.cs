@@ -64,9 +64,9 @@ namespace AIconBrowser.Converters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Path pathdata = value as Path ?? (value as IconModel)?.Path;
+            Path pathData = value as Path ?? (value as IconModel)?.Path;
 
-            if (pathdata == null)
+            if (pathData == null)
             {
                 PathGeometry path = new PathGeometry();
                 DrawingGroup draw = value is IconModel
@@ -74,14 +74,18 @@ namespace AIconBrowser.Converters
                     : (value as DrawingBrush)?.Drawing as DrawingGroup;
 
                 if (draw != null)
+                {
                     foreach (var drawing in draw.Children)
                     {
                         var item = (GeometryDrawing)drawing;
                         path.AddGeometry(item.Geometry);
                     }
+                }
+
                 return path;
             }
-            return pathdata.Data;
+
+            return pathData.Data;
         }
     }
 }

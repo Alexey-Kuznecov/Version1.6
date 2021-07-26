@@ -3,26 +3,40 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.ObjectModel;
+
+    using MaterialDesignThemes.Wpf;
+
     using UnityCommander.Common.Models.Icons;
 
     /// <summary>
-    /// The i icon provider.
+    /// The service consists of methods that provide icons.
     /// </summary>
     public interface IIconProviderService
     {
         /// <summary>
-        /// The get icons.
+        /// Provides all icons is available.
         /// </summary>
         /// <returns>
-        /// The collection icons of Icon Model type.
+        /// The collection icons of <see cref="IIcon"/> types.
         /// </returns>
         ObservableCollection<IIcon> GetIcons();
 
         /// <summary>
-        /// Provides an icon by the name specified in the arguments.
+        /// Provides an icon using the name specified in the arguments.
         /// </summary>
         /// <param name="iconName"> Icon name. </param>
-        /// <returns> Icon as type of <see cref="Icon"/>. </returns>
+        /// <returns> Icon as type of <see cref="IIcon"/>. </returns>
         public IIcon GetIcon(string iconName);
+
+        /// <summary>
+        /// Gets an icon provided by the material design library.
+        /// </summary>
+        /// <param name="icon">
+        /// Specifies an icon from list of available icons.
+        /// </param>
+        /// <returns>
+        /// Returns an icon of type <see cref="IIcon"/> that is known to the program.
+        /// </returns>
+        public IIcon GetIcon(PackIconKind icon);
     }
 }

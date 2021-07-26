@@ -54,20 +54,20 @@
             -->
             <Grid Grid.Row="0" Style="{DynamicResource DirectoryPanelHeaderStyle}">
                 <Grid>
-                    <Grid.ColumnDefinitions>
+                    <!--<Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70" />
                         <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                    </Grid.ColumnDefinitions>-->
                     <Button
                         Grid.Column="0"
                         Width="100"
                         Margin="0"
-                        HorizontalAlignment="Right"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
                         Command="{Binding NavigateBackDirCommand, Mode=Default}"
-                        Content="Back"
+                        Content="Go back"
                         Foreground="#E8E8EC" />
                 </Grid>
             </Grid>

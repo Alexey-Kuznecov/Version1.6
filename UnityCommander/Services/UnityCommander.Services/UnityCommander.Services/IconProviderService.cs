@@ -38,14 +38,31 @@ namespace UnityCommander.Services
         }
 
         /// <summary>
-        /// TODO The get icon.
+        /// Gets an icon provided by the material design library.
         /// </summary>
-        /// <param name="iconName">
-        /// TODO The icon name.
+        /// <param name="icon">
+        /// Specifies an icon from list of available icons.
         /// </param>
         /// <returns>
-        /// The <see cref="Common.Models.Icons.Icon"/>.
+        /// Returns an icon of type <see cref="IIcon"/> that is known to the program.
         /// </returns>
+        public IIcon GetIcon(PackIconKind icon)
+        {
+            var iconModel = new Icon();
+            PackIcon packIcon = new PackIcon { Kind = icon };
+            iconModel.Path = new Path
+            {
+                Data = Geometry.Parse(packIcon.Data)
+            };
+
+            return iconModel;
+        }
+
+        /// <summary>
+        /// Provides an icon using the name specified in the arguments.
+        /// </summary>
+        /// <param name="iconName"> Icon name. </param>
+        /// <returns> Icon as type of <see cref="IIcon"/>. </returns>
         public IIcon GetIcon(string iconName)
         {
             var iconModel = new Icon();
@@ -58,12 +75,11 @@ namespace UnityCommander.Services
             return iconModel;
         }
 
-
         /// <summary>
-        /// The get icons.
+        /// Provides all icons is available.
         /// </summary>
         /// <returns>
-        /// The collection icons of type Icon.
+        /// The collection icons of <see cref="IIcon"/> types.
         /// </returns>
         public ObservableCollection<IIcon> GetIcons()
         {
