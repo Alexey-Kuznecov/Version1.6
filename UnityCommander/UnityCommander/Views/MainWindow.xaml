@@ -84,13 +84,13 @@
             <ContentControl
                 Grid.Row="0"
                 Height="25"
-                Margin="0,0,20,10"
+                Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Content="{Binding IconHideSidebar.Data}"
                 Foreground="Gray"
-                Style="{StaticResource CustomButtonStyles}"
-                Template="{StaticResource CustomButtonTemplate}">
+                Style="{DynamicResource CustomButtonStyles}"
+                Template="{DynamicResource CustomButtonTemplate}">
                 <ContentControl.InputBindings>
                     <MouseBinding Command="{Binding HideSidebarCommand}" Gesture="LeftClick" />
                 </ContentControl.InputBindings>
@@ -98,10 +98,7 @@
                     <ToolTip Content="Collapse sidebar" />
                 </ContentControl.ToolTip>
             </ContentControl>
-            <Border
-                Grid.Row="1"
-                Margin="0,0,10,0"
-                Background="#FFF3F2F2">
+            <Border Grid.Row="1" Background="#FFF3F2F2">
                 <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
             </Border>
         </Grid>

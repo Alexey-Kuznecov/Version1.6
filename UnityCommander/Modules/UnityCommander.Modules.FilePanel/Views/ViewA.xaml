@@ -55,7 +55,7 @@
                     Height="25"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Content="{Binding MyComputerIcon.Path.Data}"
+                    Content="{Binding ThisComputerIcon.Path.Data}"
                     Foreground="#E8E8EC"
                     Style="{DynamicResource CustomButtonStyles}"
                     Template="{DynamicResource CustomButtonTemplate}">

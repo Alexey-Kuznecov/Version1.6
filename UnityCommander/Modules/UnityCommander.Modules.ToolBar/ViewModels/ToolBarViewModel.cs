@@ -5,6 +5,8 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using System.Windows.Controls;
     using System.Windows.Shapes;
 
+    using MaterialDesignThemes.Wpf;
+
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
@@ -39,6 +41,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         #endregion
 
         /// <summary>
+        /// The ribbon section builder.
+        /// </summary>
+        private readonly RibbonBuilder ribbonSectionBuilder;
+
+        /// <summary>
         /// The icon.
         /// </summary>
         private Path icon;
@@ -52,11 +59,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// The file operation tools.
         /// </summary>
         private Ribbon ribbon;
-
-        /// <summary>
-        /// The ribbon section builder.
-        /// </summary>
-        private RibbonBuilder ribbonSectionBuilder;
 
         /// <summary>
         /// The show dialog command.
@@ -147,11 +149,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         {
             var editGroup = new RibbonGroupBuilder();
             editGroup.AddGroup("File Operation");
-            editGroup.AddButton(this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.DesktopWindows), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.FileCloud), this.ShowDialogCommand);
+            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
 
             var copyGroup = new RibbonGroupBuilder();
             copyGroup.AddGroup("View Group");
@@ -206,7 +208,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             copyGroup.AddButton(this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
             copyGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
 
-            var sectionView = new RibbonBuilder("Plugin");
+            var sectionView = new RibbonBuilder("Launcher");
             sectionView.SetSection(viewGroup);
             sectionView.SetSection(copyGroup);
             return sectionView;

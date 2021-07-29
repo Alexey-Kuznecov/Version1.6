@@ -56,8 +56,8 @@ namespace UnityCommander.Controls.Ribbon.Control
         public RibbonButton(IIcon buttonIcon, ICommand buttonCommand)
         {
             this.DataContext = new RibbonControlModel { Command = buttonCommand, Icon = buttonIcon.GetIconPath() };
-            this.Template = this.buttonTemplate ?? (ControlTemplate)Application.Current.TryFindResource("RibbonButtonTemplate");
-            this.Style = this.buttonStyle ?? (Style)Application.Current.TryFindResource("RibbonButtonStyles");
+            this.Template = this.buttonTemplate ?? (ControlTemplate)Application.Current.FindResource("RibbonButtonTemplate");
+            this.Style = this.buttonStyle ?? (Style)Application.Current.FindResource("RibbonButtonStyles");
         }
 
         /// <summary>

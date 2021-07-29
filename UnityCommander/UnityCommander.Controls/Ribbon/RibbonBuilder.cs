@@ -178,17 +178,17 @@ namespace UnityCommander.Controls.Ribbon
                 Grid.SetColumn(button, 0);
             }
 
-            ContentControl collapseButton = new ContentControl
-            {
-                Content = "adsd",
-                Width = 15,
-                Height = 15,
-                Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
-                Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
-            };
-
-            grid.Children.Add(collapseButton);
-            Grid.SetColumn(collapseButton, 1);
+            // ContentControl collapseButton = new ContentControl
+            // {
+            //     Content = "adsd",
+            //     Width = 15,
+            //     Height = 15,
+            //     Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
+            //     Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
+            // };
+               
+            // grid.Children.Add(collapseButton);
+            // Grid.SetColumn(collapseButton, 1);
             this.ribbonTab.Children.Add(grid);
         }
 

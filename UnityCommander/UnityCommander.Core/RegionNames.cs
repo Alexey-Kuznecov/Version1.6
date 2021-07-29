@@ -20,10 +20,5 @@ namespace UnityCommander.Core
         /// The left side bar region.
         /// </summary>
         public const string ToolBarRegion = "ToolBarRegion";
-
-        /// <summary>
-        /// The left side bar region.
-        /// </summary>
-        public const string ChildWindowRegion = "ChildWindowRegion";
     }
 }

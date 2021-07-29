@@ -16,12 +16,18 @@
     <Compile Update="Views\CopyProcessView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\ImageViewerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\NTFSSecurityView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\NavigationPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\Generic.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\CopyDialogControl.xaml">
@@ -31,6 +37,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\CopyProcessView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ImageViewerView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\SplitPanelView.xaml">
