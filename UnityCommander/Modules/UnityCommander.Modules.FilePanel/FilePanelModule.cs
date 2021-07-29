@@ -24,7 +24,7 @@ namespace UnityCommander.Modules.FilePanel
         /// <summary>
         /// The _region manager.
         /// </summary>
-        private readonly IRegionManager regionManager;
+        private IRegionManager regionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FilePanelModule"/> class.
@@ -41,7 +41,11 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
+            this.regionManager.RequestNavigate("LeftPanelRegion", "SplitPanelView");
+            this.regionManager.RequestNavigate("RightPanelRegion", "SplitPanelView");
             this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, "ViewA");
+            this.regionManager.AddToRegion("LeftPanelRegion", new SplitPanelView());
+            this.regionManager.AddToRegion("RightPanelRegion", new SplitPanelView());
         }
 
         /// <summary>
@@ -51,6 +55,8 @@ namespace UnityCommander.Modules.FilePanel
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<ViewA>();
+            containerRegistry.RegisterForNavigation<SplitPanelView>();
+            containerRegistry.RegisterForNavigation<SplitPanelView>();
         }
     }
 }

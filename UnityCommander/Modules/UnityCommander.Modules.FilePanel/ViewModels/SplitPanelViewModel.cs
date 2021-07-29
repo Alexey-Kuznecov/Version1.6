@@ -20,8 +20,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows;
     using System.Windows.Controls;
 
-    using Commands;
-
     using Core.Helper;
     using Core.Mvvm;
 
@@ -34,14 +32,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
-
+    using UnityCommander.Core;
+    using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Modules;
     using Views;
 
     /// <summary>
     /// The left panel view model.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget
+    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
     {
         #region Declaration fields
 
@@ -56,16 +56,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly CopyDialogView copyDialog;
 
         /// <summary>
-        /// The invoker class instance.
+        /// The navigationCommand class instance.
         /// </summary>
-        private readonly NavigationInvoker invoker;
+        private readonly NavigationInvoker navigationCommand;
 
         #region Dependencies Injection
 
         /// <summary>
         /// The directory provider.
         /// </summary>
-        private readonly IDirectoryProviderService directoryProviderService;
+        private readonly IDataProviderService dataProviderService;
 
         /// <summary>
         /// The application settings.
@@ -92,11 +92,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<FileModel> fileList;
 
         /// <summary>
-        /// The directoryList.
+        /// The directory list.
         /// </summary>
         private ObservableCollection<FolderModel> directoryList;
 
+        /// <summary>
+        /// The drive list.
+        /// </summary>
+        private ObservableCollection<DriveModel> driveList;
+
         #endregion
+
+        /// <summary>
+        /// Control template for panel items.
+        /// </summary>
+        private ControlTemplate viewTemplate;
 
         /// <summary>
         /// Serialization path for saving the file panel state.
@@ -121,8 +131,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="settingsService">
         /// Gets interface to configure of application.
         /// </param>
-        /// <param name="directoryProviderService">
-        ///  The service that provides the files system items.
+        /// <param name="dataProviderService">
+        ///  The service that provides the info of the file system items.
         /// </param>
         /// <param name="commandService">
         ///  The service that respond for composite commands.
@@ -130,16 +140,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="pluginService">
         /// Service for loading all detected plugin interfaces.
         /// </param>
+        /// <param name="manager">
+        /// 
+        /// </param>
         public SplitPanelViewModel(
             IRegionManager regionManager, 
             ISettingsProviderService settingsService, 
-            IDirectoryProviderService directoryProviderService, 
+            IDataProviderService dataProviderService, 
             IGlobalCommandService commandService,
-            IPluginLoaderService pluginService) 
+            IPluginLoaderService pluginService, 
+            CommandManager manager) 
             : base(regionManager)
         {
+            var dds = regionManager.Regions;
             this.pluginLoaderService = pluginService;
-            this.directoryProviderService = directoryProviderService;
+            this.dataProviderService = dataProviderService;
             this.settingsService = settingsService.GetAppConfig();
 
             // Composite command
@@ -147,15 +162,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
 
             // Initialize properties.
-            this.FilePanelContainer = new GridView();
-            this.FolderPanelContainer = new GridView();
-            this.copyDialog = new CopyDialogView();
-            this.invoker = new NavigationInvoker();
-
+            this.FilePanelContainer = new ();
+            this.FolderPanelContainer = new ();
+            this.DrivePanelContainer = new ();
+            this.copyDialog = new ();
+            this.navigationCommand = (NavigationInvoker)manager.CommandRegister(new NavigationInvoker());
+           
             this.DetectPanelOrientation();
             this.SetLastPanelState();
-            this.AddFileColumns();
-            this.AddFolderColumns();
+            {
+                this.AddFileColumns();
+                this.AddFolderColumns();
+                this.AddDriveColumns();
+            }
             this.SetAdditionalColumns();
             this.SetCommands(this.CurrentDirectory);
         }
@@ -172,18 +191,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (dir != null)
             {
-                this.invoker.Execute(this.UpdateFilePanel, dir.Path);
-            }
-        });
-
-        /// <summary>
-        ///  Goes back to the previous directory.
-        /// </summary>
-        public DelegateCommand NavigateBackDirCommand => new DelegateCommand(() =>
-        {
-            if (this.invoker.CanUndo)
-            {
-                this.invoker.Previous();
+                this.navigationCommand.Execute(this.UpdateFilePanel, dir.Path);
             }
         });
 
@@ -195,7 +203,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (dir != null)
             {
-                this.invoker.Execute(this.UpdateFilePanel, dir);
+                this.navigationCommand.Execute(this.UpdateFilePanel, dir);
             }
         });
 
@@ -239,6 +247,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public GridView FolderPanelContainer { get; set; }
 
         /// <summary>
+        /// Gets or sets grid view for folder panel.
+        /// </summary>
+        public GridView DrivePanelContainer { get; set; }
+
+        #region Collection Data
+
+        /// <summary>
         /// Gets or sets the directory list.
         /// </summary>
         public ObservableCollection<FolderModel> DirectoryList
@@ -257,6 +272,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets the file list.
+        /// </summary>
+        public ObservableCollection<DriveModel> DriveList
+        {
+            get => this.driveList;
+            set => this.SetProperty(ref this.driveList, value);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets or sets the template for panel items.
+        /// </summary>
+        public ControlTemplate ViewTemplate 
+        {
+            get => this.viewTemplate;
+            set => this.SetProperty(ref this.viewTemplate, value);
+        }
+
+        /// <summary>
         /// Sets the selected directory.
         /// </summary>
         public BaseDirectory SelectedBaseDirectory
@@ -272,6 +307,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets or sets the selected directory.
         /// </summary>
         public List<BaseDirectory> SelectedDirectories { get; set; } = new List<BaseDirectory>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid Token { get; set; } = Guid.NewGuid();
 
         #endregion
 
@@ -325,55 +365,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Finalization of objects when unloading a module.
         /// </summary>
+        
         public override void Destroy()
         {
             base.Destroy();
 
             // Detaching a command to avoid memory leaks.
             this.globalCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
-        }
-
-        /// <summary>
-        /// This method will try to restore the original state of the file panel 
-        /// after the last time the program is closed, otherwise it will retry the database request.
-        /// <see cref="SavePanelStateCommand"/>
-        /// </summary>
-        private void SetLastPanelState()
-        {
-            if (settingsService.IsSessionSaved)
-            {
-                try
-                {
-                    BinaryFormatter formatter = new BinaryFormatter();
-
-                    using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
-                    {
-                        object[] deserializeState = (object[])formatter.Deserialize(fs);
-
-                        this.FileList = deserializeState[0] as ObservableCollection<FileModel>;
-                        this.DirectoryList = deserializeState[1] as ObservableCollection<FolderModel>;
-                        this.CurrentDirectory = deserializeState[2] as string;
-                    }
-
-                    if (!Directory.Exists(this.CurrentDirectory))
-                    {
-                        this.CurrentDirectory = @"c:\";
-                        throw new Exception();
-                    }
-                }
-                catch (Exception)
-                {
-                    this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
-                    this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
-                    this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
-                }
-            }
-            else
-            {
-                this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
-                this.FileList = this.directoryProviderService.GetFiles(this.CurrentDirectory);
-                this.DirectoryList = this.directoryProviderService.GetDirectories(this.CurrentDirectory);
-            }
         }
 
         #region Initial the folder/file panel.
@@ -383,16 +381,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddFolderColumns()
         {
-            FolderColumnModel colsDefault = new FolderColumnModel();
-
-            // Forced addition columns to the directory panel.
-            colsDefault.GetColumn((items, error) =>
+            new FolderColumnModel().GetColumn(
+                (items, error) =>
+            {
+                foreach (var column in items)
                 {
-                    foreach (var column in items)
-                    {
-                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    }
-                });
+                    this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                }
+            });
         }
 
         /// <summary>
@@ -400,14 +396,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddFileColumns()
         {
-            FileColumnModel colsDefault = new FileColumnModel();
-
-            // Forced addition columns to the directory panel.
-            colsDefault.GetColumn((items, error) =>
+            new FileColumnModel().GetColumn((items, error) =>
             {
                 foreach (var column in items)
                 {
                     this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                }
+            });
+        }
+
+        /// <summary>
+        /// The add columns in the file panel.
+        /// </summary>
+        private void AddDriveColumns()
+        {
+            new DriveContainerModel().GetColumn(
+                (columns, error) =>
+            {
+                foreach (var column in columns)
+                {
+                    this.DrivePanelContainer.Columns.Add((GridViewColumn)column.Template);
                 }
             });
         }
@@ -536,16 +544,70 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Helper Methods
 
         /// <summary>
-        /// The navigate directory.
+        /// This method will try to restore the original state of the file panel 
+        /// after the last time the program is closed, otherwise it will retry the database request.
+        /// <see cref="SavePanelStateCommand"/>
+        /// </summary>
+        private void SetLastPanelState()
+        {
+            this.ViewTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+
+            if (settingsService.IsSessionSaved)
+            {
+                try
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+
+                    using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
+                    {
+                        object[] deserializeState = (object[])formatter.Deserialize(fs);
+
+                        this.FileList = deserializeState[0] as ObservableCollection<FileModel>;
+                        this.DirectoryList = deserializeState[1] as ObservableCollection<FolderModel>;
+                        this.CurrentDirectory = deserializeState[2] as string;
+                    }
+
+                    if (!Directory.Exists(this.CurrentDirectory))
+                    {
+                        this.CurrentDirectory = @"c:\";
+                        throw new Exception();
+                    }
+                }
+                catch (Exception)
+                {
+                    this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
+                    this.FileList = this.dataProviderService.GetFiles(this.CurrentDirectory);
+                    this.DirectoryList = this.dataProviderService.GetDirectories(this.CurrentDirectory);
+                }
+            }
+            else
+            {
+                this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
+                this.FileList = this.dataProviderService.GetFiles(this.CurrentDirectory);
+                this.DirectoryList = this.dataProviderService.GetDirectories(this.CurrentDirectory);
+            }
+        }
+
+        /// <summary>
+        /// Goes to the directory panel.
         /// </summary>
         /// <param name="dirPath"> Expected the path to the directory. </param>
         private void UpdateFilePanel(object dirPath)
         {
             var path = Directory.Exists(dirPath.ToString()) ? (string)dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
-            this.DirectoryList = this.directoryProviderService.GetDirectories(path);
-            this.FileList = this.directoryProviderService.GetFiles(path);
+            this.DirectoryList = this.dataProviderService.GetDirectories(path);
+            this.FileList = this.dataProviderService.GetFiles(path);
             this.CurrentDirectory = path;
             this.UpdateAdditionalColumns();
+        }
+
+        /// <summary>
+        /// Goes to the drive panel.
+        /// </summary>
+        private void GoDrivePanel()
+        {
+            this.ViewTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
+            this.DriveList = this.dataProviderService.GetDrives();
         }
 
         /// <summary>
@@ -556,9 +618,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             string[] paths = HelperFunctions.ParsePath(dirPath);
 
-            foreach (var item in paths)
+            this.navigationCommand.AddCommand(this.GoDrivePanel);
+
+            foreach (var path in paths)
             {
-                this.invoker.AddCommand(this.UpdateFilePanel, item);
+                this.navigationCommand.AddCommand(this.UpdateFilePanel, path);
             }
         }
 

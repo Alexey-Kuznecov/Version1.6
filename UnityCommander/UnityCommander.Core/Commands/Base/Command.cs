@@ -15,9 +15,18 @@ namespace UnityCommander.Core.Commands.Base
         public int Id { get; set; }
 
         /// <summary>
-        /// Execute new command.
+        /// Executes the command no arguments.
         /// </summary>
-        public abstract void Execute();
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        public abstract void Execute(Action action);
+
+        /// <summary>
+        /// Cancels the changes that were made by <see cref="Execute"/> command.
+        /// </summary>
+        /// <param name="action"> Determines the method of the caller. </param>
+        public abstract void UnExecute(Action action);
 
         /// <summary>
         /// Delegates execution command to invoker with the <see langword="object"/> parameter.

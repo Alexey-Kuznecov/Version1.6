@@ -40,6 +40,8 @@ namespace UnityCommander.Common.Styling.Converters
 
             if (parameter is TargetPanel item)
             {
+                icon.Width = 25;
+                
                 switch (item)
                 {
                     case TargetPanel.Folders:
@@ -50,9 +52,13 @@ namespace UnityCommander.Common.Styling.Converters
                         icon.Kind = PackIconKind.File;
                         icon.Foreground = new SolidColorBrush(Color.FromRgb(64, 86, 141));
                         break;
+                    case TargetPanel.LocalDisk:
+                        icon.Kind = PackIconKind.Scanner;
+                        icon.Foreground = new SolidColorBrush(Color.FromRgb(80, 119, 190));
+                        icon.Width = 32;
+                        break;
                 }
-
-                icon.Width = 25;
+                
                 return icon;
             }
 

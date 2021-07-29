@@ -4,13 +4,12 @@ namespace UnityCommander.Services
     using System.Collections.ObjectModel;
     using System.IO;
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Integration.Enums;
     using UnityCommander.Services.Interfaces;
  
     /// <summary>
     /// The files provider.
     /// </summary>
-    public class DirectoryProviderService : IDirectoryProviderService
+    public class DataProviderService : IDataProviderService
     {
         /// <summary>
         /// Gets files list of the specific location.
@@ -63,6 +62,32 @@ namespace UnityCommander.Services
                         LastAccessTime = item.LastAccessTime,
                         TargetPanel = TargetPanel.Folders
                     }); 
+                }
+            }
+
+            return models;
+        }
+
+        /// <summary>
+        /// Gets directories list of the specific location.
+        /// </summary>
+        /// <returns> The directories collection. </returns>
+        public ObservableCollection<DriveModel> GetDrives()
+        {
+            ObservableCollection<DriveModel> models = new ObservableCollection<DriveModel>();
+            
+            foreach (var drive in DriveInfo.GetDrives())
+            {
+                if (drive.IsReady)
+                {
+                    models.Add(new DriveModel
+                    {
+                        Letter = drive.Name,
+                        FreeSpace = drive.AvailableFreeSpace,
+                        UsedSpace = drive.TotalSize - drive.AvailableFreeSpace,
+                        TotalAmount = drive.TotalSize,
+                        TargetPanel = TargetPanel.LocalDisk
+                    });
                 }
             }
 

@@ -52,18 +52,6 @@ namespace UnityCommander.Core.Commands.Base
         }
 
         /// <summary>
-        /// Executes the module commands in turn.
-        /// </summary>
-        public void Execute()
-        {
-            foreach (var cmd in ModuleCommands)
-            {
-                if (!cmd.CanExecute()) continue;
-                cmd.Execute();
-            }
-        }
-
-        /// <summary>
         /// Gets a commands of modules in turn for the function invoker.
         /// To enumerate commands, you need to use a loop.
         /// </summary>
@@ -92,6 +80,22 @@ namespace UnityCommander.Core.Commands.Base
         /// the execution of the command to its methods.
         /// </summary>
         /// <param name="action"> The method to be called. </param>
+        public virtual void Execute(Action action)
+        {
+            foreach (var cmd in ModuleCommands)
+            {
+                if (!cmd.CanExecute()) continue;
+                cmd.Execute(action);
+            }
+
+            Index++;
+        }
+
+        /// <summary>
+        /// Enumerates module commands that can delegates
+        /// the execution of the command to its methods.
+        /// </summary>
+        /// <param name="action"> The method to be called. </param>
         /// <param name="arg"> The string argument to be passed. </param>
         public virtual void Execute(Action<object> action, object arg)
         {
@@ -104,8 +108,7 @@ namespace UnityCommander.Core.Commands.Base
         }
 
         /// <summary>
-        /// Cancels the changes that were made by execution command. For example,
-        /// the command that can restore object or UI components previous state
+        /// Cancels the changes that were made by execution command.
         /// </summary>
         /// <param name="action"> Determines the method of the caller. </param>
         /// <param name="arg"> Determines the argument of the invoker. </param>
@@ -114,6 +117,20 @@ namespace UnityCommander.Core.Commands.Base
             if (ModuleCommands.Count > 0)
             {
                 ModuleCommands[index].UnExecute(action, ModuleCommands[index]);
+            }
+
+            Index--;
+        }
+
+        /// <summary>
+        /// Cancels the changes that were made by execution command.
+        /// </summary>
+        /// <param name="action"> Determines the method of the caller. </param>
+        public virtual void UnExecute(Action action)
+        {
+            if (ModuleCommands.Count > 0)
+            {
+                ModuleCommands[index].UnExecute(action);
             }
 
             Index--;

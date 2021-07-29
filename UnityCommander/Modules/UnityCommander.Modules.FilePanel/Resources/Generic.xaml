@@ -1,0 +1,50 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
+    xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+    <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
+        <Grid>
+            <ListView
+                commands:GridViewSort.AutoSort="True"
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
+                dd:DragDrop.IsDropTarget="True"
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding DirectoryList, Mode=OneWay}"
+                View="{Binding FolderPanelContainer}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding NavigateDirCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <i:Interaction.Behaviors>
+                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
+            </ListView>
+        </Grid>
+    </ControlTemplate>
+    <ControlTemplate x:Key="DriveListViewTemplate" TargetType="ContentControl">
+        <Grid>
+            <ListView
+                commands:GridViewSort.AutoSort="True"
+                ItemsSource="{Binding DriveList, Mode=OneWay}"
+                View="{Binding DrivePanelContainer}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                        <i:InvokeCommandAction
+                            Command="{Binding NavigateDirCommand, Mode=OneWay}"
+                            CommandName="NavigateDirectoryCommand"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <i:Interaction.Behaviors>
+                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
+            </ListView>
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

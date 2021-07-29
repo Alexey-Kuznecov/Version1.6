@@ -32,7 +32,17 @@ namespace UnityCommander.Core.Commands.Base
         /// <summary>
         /// Execute new command no arguments.
         /// </summary>
-        public abstract void Execute();
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        public abstract void Execute(Action action);
+
+        /// <summary>
+        /// Cancels the changes that were made by <see cref="Execute"/> command. For example,
+        /// the command that can restore object or UI components previous state
+        /// </summary>
+        /// <param name="action"> Determines the method of the caller. </param>
+        public abstract void UnExecute(Action action);
 
         /// <summary>
         /// Delegates execution command to invoker with the string parameter.

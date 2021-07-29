@@ -18,6 +18,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Events;
     using Prism.Mvvm;
     using UnityCommander.Core;
+    using UnityCommander.Core.Commands;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
 
@@ -36,7 +37,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The invoker class instance.
         /// </summary>
-        private readonly Commands.CopyFileInvoker invoker;
+        private readonly CopyFileInvoker invoker;
 
         /// <summary>
         /// Contains the current progress bar for copying a file.
@@ -84,7 +85,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyProcessViewModel(IEventAggregator viewModelMessage)
         {
-            this.invoker = new Commands.CopyFileInvoker(this.invoker);
+            this.invoker = new CopyFileInvoker(this.invoker);
             viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupCopyFiles);
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);

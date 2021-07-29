@@ -1,20 +1,20 @@
 ﻿
-using DryIoc;
-using Prism.DryIoc;
-using UnityCommander.Services.Plugins;
-
 namespace UnityCommander
 {
     using System.Windows;
+
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Services.Dialogs;
 
+    using UnityCommander.Core.Commands;
     using UnityCommander.Modules.FilePanel;
+    using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Modules.LeftSideBars;
     using UnityCommander.Modules.ToolBar;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Plugins;
     using UnityCommander.ViewModels;
     using UnityCommander.Views;
 
@@ -31,6 +31,11 @@ namespace UnityCommander
         /// </returns>
         protected override Window CreateShell()
         {
+            foreach (var dictionary in SharedDictionaryManager.SharedDictionary)
+            {
+                this.Resources.MergedDictionaries.Add(dictionary);
+            }
+            
             return this.Container.Resolve<MainWindow>();
         }
 
@@ -46,15 +51,15 @@ namespace UnityCommander
             containerRegistry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig");
             containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
-            containerRegistry.RegisterSingleton<IDirectoryProviderService, DirectoryProviderService>();
+            containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
-        }
+            
+            // Commander Manager
+            containerRegistry.RegisterSingleton<CommandManager>();
 
-        protected override Rules CreateContainerRules()
-        {
-            return base.CreateContainerRules();
+            containerRegistry.RegisterForNavigation<ViewA>("ViewA");
         }
 
         /// <summary>

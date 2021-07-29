@@ -9,12 +9,12 @@ namespace UnityCommander
     using Prism.Services.Dialogs;
 
     /// <summary>
-    /// 
+    /// The override dialog service.
     /// </summary>
     public class OverrideDialogService : DialogService
     {
         /// <summary>
-        /// Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// Using a DependencyProperty as the backing store for Source.  This enables animation, styling, binding, etc...
         /// </summary>
         public static readonly DependencyProperty WindowTokenProperty =
             DependencyProperty.RegisterAttached("WindowToken", typeof(WindowToken), typeof(OverrideDialogService), new PropertyMetadata(null));

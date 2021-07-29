@@ -8,12 +8,12 @@ namespace UnityCommander.Core.Commands
     /// <summary>
     /// The copier.
     /// </summary>
-    public class FileCopierReceiver : ReceiverBase
+    public class Copier : ReceiverBase
     {
         /// <summary>
-        /// Gets or sets the path.
+        /// Gets the path.
         /// </summary>
-        public string Path { get; set; }
+        public string Path { get; private set; }
 
         /// <summary>
         /// Determines can whether the command be executed.
@@ -43,15 +43,10 @@ namespace UnityCommander.Core.Commands
         /// <param name="path"> Expected path to directory. </param>
         public override void Execute(Action<object> action, object path)
         {
+            this.Path = path as string;
             action(path);
         }
 
-        /// <summary>
-        /// Execute new command no arguments.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
         public override void Execute(Action action)
         {
             throw new NotImplementedException();
@@ -68,12 +63,6 @@ namespace UnityCommander.Core.Commands
             action(arg);
         }
 
-        /// <summary>
-        /// The un execute.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
         public override void UnExecute(Action action)
         {
             throw new NotImplementedException();

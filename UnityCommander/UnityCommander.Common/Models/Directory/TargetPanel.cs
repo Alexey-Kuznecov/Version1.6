@@ -10,15 +10,19 @@ namespace UnityCommander.Common.Models.Directory
     public enum TargetPanel
     {
         All,
-
         /// <summary>
-        /// The files.
+        /// File.
         /// </summary>
         Files,
 
         /// <summary>
-        /// The folders.
+        /// Folder.
         /// </summary>
-        Folders
+        Folders,
+
+        /// <summary>
+        /// Local disk.
+        /// </summary>
+        LocalDisk
     }
 }

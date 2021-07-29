@@ -1,18 +1,28 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:base="clr-namespace:UnityCommander.Integration.Models.Base;assembly=UnityCommander.Integration"
     xmlns:converter="clr-namespace:UnityCommander.Common.Styling.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:directory="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
-    xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:UnityCommander.Common.Models;assembly=UnityCommander.Common"
+    xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
     mc:Ignorable="d">
 
     <converter:IconConverter x:Key="IconConverter" />
 
-    <DataTemplate x:Key="ColumnNameDataTemplate2" DataType="{x:Type DataGridCell}">
+    <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
+        <Grid>
+            <ContentPresenter Grid.Column="0">
+                <ContentPresenter.Content>
+                    <converter:BindableParameter
+                        Binding="{Binding Icon}"
+                        Converter="{StaticResource IconConverter}"
+                        ConverterParameter="{Binding TargetPanel}" />
+                </ContentPresenter.Content>
+            </ContentPresenter>
+        </Grid>
+    </DataTemplate>
+
+    <!--<DataTemplate x:Key="ColumnNameDataTemplate2" DataType="{x:Type DataGridCell}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
@@ -30,9 +40,9 @@
                 Foreground="Orange"
                 Kind="Folder" />
         </Grid>
-    </DataTemplate>
+    </DataTemplate>-->
 
-    <DataTemplate x:Key="ColumnNameDataTemplate" DataType="base:BaseDirectory">
+    <DataTemplate x:Key="ColumnNameDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
@@ -49,17 +59,17 @@
             </ContentPresenter>
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="directory:FileModel">
-        <Grid d:DataContext="{d:DesignData}">
+    <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="{x:Type models:FileModel}">
+        <Grid>
             <TextBlock Text="{Binding Extension}" />
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="base:BaseDirectory">
-        <Grid d:DataContext="{d:DesignData}">
+    <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
+        <Grid>
             <TextBlock Foreground="Indigo" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
-    <DataTemplate x:Key="ColumnLastAccessDateDataTemplate" DataType="base:BaseDirectory">
+    <DataTemplate x:Key="ColumnLastAccessDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid d:DataContext="{d:DesignData}">
             <TextBlock Foreground="Indigo" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}" />
         </Grid>

@@ -2,16 +2,4 @@
     x:Class="UnityCommander.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:UnityCommander"
-    xmlns:prism="http://prismlibrary.com/">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/Window/Windows.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/UnityCommander.Controls;component/Ribbon/Ribbon.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
-</prism:PrismApplication>
+    xmlns:prism="http://prismlibrary.com/" />
