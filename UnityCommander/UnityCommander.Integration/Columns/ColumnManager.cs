@@ -25,7 +25,7 @@ namespace UnityCommander.Integration.Columns
         {
             foreach (var command in this.updateCommand)
             {
-                command.Invoke();
+                command();
             }
         }
 

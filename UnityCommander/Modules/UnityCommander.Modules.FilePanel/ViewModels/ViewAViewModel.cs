@@ -1,30 +1,39 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System;
-    using System.Windows.Controls;
-
     using Prism.Commands;
     using Prism.Regions;
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Commands.Base;
+    using UnityCommander.Core.Modules;
     using UnityCommander.Core.Mvvm;
+    using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
-    public class ViewAViewModel : RegionViewModelBase
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
+    public class ViewAViewModel : RegionViewModelBase, IPanelContainer
     {
         /// <summary>
         /// The navigationCommand class instance.
         /// </summary>
         private NavigationInvoker navigationCommand;
-        
+
         /// <summary>
         /// The navigationCommand class instance.
         /// </summary>
         private NavigationInvoker navigationRCommand;
+
+        /// <summary>
+        /// The region manager.
+        /// </summary>
+        private IRegionManager regionManager;
 
         /// <summary>
         /// The computer icon.
@@ -32,7 +41,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private IIcon thisComputerIcon;
 
         /// <summary>
-        /// The commandManager.
+        /// The computer icon.
+        /// </summary>
+        private bool thisComputerIconIsEnabled;
+
+        /// <summary>
+        /// The computer icon.
+        /// </summary>
+        private bool backButtonIsEnabled;
+
+        /// <summary>
+        /// The command manager.
         /// </summary>
         private CommandManager commandManager;
 
@@ -51,8 +70,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public ViewAViewModel(IRegionManager regionManager, IIconProviderService iconProvider, CommandManager manager)
             : base(regionManager)
         {
+            this.regionManager = regionManager;
             this.commandManager = manager;
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
+            this.ThisComputerIconIsEnabled = true;
+            this.BackButtonIsEnabled = true;
         }
 
         /// <summary>
@@ -65,39 +87,112 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        ///  Goes back to the previous directory.
+        /// Gets or sets a value indicating whether this computer icon is enabled.
         /// </summary>
-        public DelegateCommand<object> NavigateBackDirLeftCommand =>
-            new DelegateCommand<object>(
-                index =>
+        public bool ThisComputerIconIsEnabled
         {
-            this.navigationCommand ??= (NavigationInvoker)this.commandManager.GetCommand(Convert.ToInt32(index));
+            get => this.thisComputerIconIsEnabled;
+            set => this.SetProperty(ref this.thisComputerIconIsEnabled, value);
+        }
 
-            if (this.navigationCommand.CanUndo)
-                this.navigationCommand.Previous();
-        });
-
-        public DelegateCommand<object> GotoDrivePanel =>
-            new DelegateCommand<object>(
-                index =>
+        /// <summary>
+        /// Gets or sets a value indicating whether back button is enabled.
+        /// </summary>
+        public bool BackButtonIsEnabled
         {
-            this.navigationCommand ??= (NavigationInvoker)this.commandManager.GetCommand(Convert.ToInt32(index));
+            get => this.backButtonIsEnabled;
+            set => this.SetProperty(ref this.backButtonIsEnabled, value);
+        }
 
-            if (this.navigationCommand.CanUndo)
-                this.navigationCommand.Previous();
-        });
+        /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
+        public Guid Token { get; set; }
 
         /// <summary>
         ///  Goes back to the previous directory.
         /// </summary>
-        public DelegateCommand<object> NavigateBackDirRightCommand =>
+        public DelegateCommand<object> GoBackDirectoryLeftPanelCommand =>
             new DelegateCommand<object>(
                 index =>
         {
-            this.navigationRCommand ??= (NavigationInvoker)this.commandManager.GetCommand(Convert.ToInt32(index));
+            if (this.navigationCommand.CanUndo)
+                this.navigationCommand.Previous();
 
-            if (this.navigationRCommand.CanUndo)
-                this.navigationRCommand.Previous();
+            if (!this.navigationCommand.CanUndo)
+            {
+                this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
+                this.BackButtonIsEnabled = false;
+                this.ThisComputerIconIsEnabled = false;
+            }
         });
+
+        /// <summary>
+        ///  Goes to the device and drive panel.
+        /// </summary>
+        public DelegateCommand<object> GoDrivePanelCommand => new DelegateCommand<object>(
+            index =>
+                {
+                    var command = (ConcreteCommand)this.navigationCommand.FirstCommand;
+
+                    if (command?.Receiver is Navigator navigator)
+                    {
+                        if (navigator.Path.Contains("Root:"))
+                        {
+                            navigator.CommandArg.Invoke(navigator.Path);
+                        }
+                    }
+
+                    this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
+                    this.ThisComputerIconIsEnabled = false;
+                });
+
+        /// <summary>
+        ///  Goes back to the previous directory.
+        /// </summary>
+        public DelegateCommand<object> GoBackDirectoryRightPanelCommand =>
+            new DelegateCommand<object>(
+                index =>
+                    {
+                        if (this.navigationRCommand.CanUndo)
+                            this.navigationRCommand.Previous();
+
+                        if (!this.navigationRCommand.CanUndo)
+                        {
+                            this.navigationRCommand.OnExecuteChanged += OnExecuteChanged;
+                            this.BackButtonIsEnabled = false;
+                            this.ThisComputerIconIsEnabled = false;
+                        }
+                    });
+
+        /// <summary>
+        /// The initial panel.
+        /// </summary>
+        /// <param name="panelToken">
+        /// The panel token.
+        /// </param>
+        public void InitialPanel(Guid[] panelToken)
+        {
+            this.navigationCommand ??= (NavigationInvoker)this.commandManager.GetCommand(panelToken[0]);
+            this.navigationRCommand ??= (NavigationInvoker)this.commandManager.GetCommand(panelToken[1]);
+        }
+
+        /// <summary>
+        /// Goes back to the previous directory.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        private void OnExecuteChanged(ConcreteCommand command)
+        {
+            if (command.Receiver is Navigator navigator)
+            {
+                if (!navigator.Path.Contains("Root:"))
+                {
+                    this.ThisComputerIconIsEnabled = true;
+                    this.BackButtonIsEnabled = true;
+                }
+            }
+        }
     }
 }

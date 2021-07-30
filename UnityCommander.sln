@@ -115,6 +115,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Common", "Un
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3Manager", "UnityCommander\Plugins\W3Manager\W3Manager.csproj", "{E08AB24D-73B3-49D9-8A1E-7C93A1CBF1DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlexeyKuznecov.Library", "UnityCommander\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj", "{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -332,6 +334,12 @@ Global
 		{E08AB24D-73B3-49D9-8A1E-7C93A1CBF1DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E08AB24D-73B3-49D9-8A1E-7C93A1CBF1DD}.soft|Any CPU.ActiveCfg = Debug|Any CPU
 		{E08AB24D-73B3-49D9-8A1E-7C93A1CBF1DD}.soft|Any CPU.Build.0 = Debug|Any CPU
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}.soft|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C}.soft|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -368,6 +376,7 @@ Global
 		{211B46C2-1437-43AC-99C2-020D9981381A} = {78E5E9C8-3D01-4E9A-9EAF-3F0EBEB6EA7E}
 		{26C7007A-57D8-416A-A161-5677AD522D9B} = {78E5E9C8-3D01-4E9A-9EAF-3F0EBEB6EA7E}
 		{E08AB24D-73B3-49D9-8A1E-7C93A1CBF1DD} = {CAE06C48-FB47-4EEC-96AC-9B4D401335FC}
+		{9A96E63D-F635-47B4-8B17-4B9CB3F2A41C} = {EB7586E2-3D65-4A29-B0FC-00670AC65636}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E77244A7-B125-4E40-945C-AD1C519E88CD}

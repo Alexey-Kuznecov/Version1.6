@@ -1,26 +1,45 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Xml.Linq;
-using AIconBrowser.Help;
-
 namespace AIconBrowser.Models
 {
-    class IconsDataReader : IDisposable
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
+    using System.Xml.Linq;
+
+    using AIconBrowser.Help;
+
+    /// <summary>
+    /// The icons data reader.
+    /// </summary>
+    public class IconsDataReader : IDisposable
     {
+        /// <summary>
+        /// The document name.
+        /// </summary>
         private const string DocumentName = @"d:\Resources\IconsData.xml";
+
+        /// <summary>
+        /// The _element icons.
+        /// </summary>
         private static IEnumerable<XElement> _elementIcons; // Gets all element named Icon
+
+        /// <summary>
+        /// The _element collection.
+        /// </summary>
         private static IEnumerable<XElement> _elementCollection; // Gets all collection element
 
+        /// <summary>
+        /// The initial fields.
+        /// </summary>
         private static void InitialFields()
         {
             XElement root = XElement.Load(DocumentName);
             _elementCollection    = from element in root.Elements() select element;
             _elementIcons         = from icon in _elementCollection.Elements() select icon;
         }
+
         /// <summary>
         /// Loads xml document and get icon categories from xml file.
         /// </summary>
@@ -36,6 +55,7 @@ namespace AIconBrowser.Models
                 collection.Add(cat.FirstAttribute.Value);
             return collection;
         }
+
         /// <summary>
         /// Searches a icon in document that been specified value argument passing.
         /// </summary>
@@ -60,6 +80,7 @@ namespace AIconBrowser.Models
             paths.Data = Geometry.Parse(str);
             return paths;
         }
+
         /// <summary>
         /// Extract icon attribute values from an xml file.
         /// Icon attribute repacking from xml markup to icon type.

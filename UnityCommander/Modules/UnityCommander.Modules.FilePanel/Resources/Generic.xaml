@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
     <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
@@ -18,7 +17,7 @@
                 View="{Binding FolderPanelContainer}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                        <i:InvokeCommandAction Command="{Binding NavigateDirCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        <i:InvokeCommandAction Command="{Binding NavigateDirectoryCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <i:Interaction.Behaviors>
@@ -36,14 +35,11 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
                         <i:InvokeCommandAction
-                            Command="{Binding NavigateDirCommand, Mode=OneWay}"
-                            CommandName="NavigateDirectoryCommand"
+                            Command="{Binding GotoDiskCommand, Mode=OneWay}"
+                            CommandName="NavigateDirCommand"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <i:Interaction.Behaviors>
-                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
-                </i:Interaction.Behaviors>
             </ListView>
         </Grid>
     </ControlTemplate>

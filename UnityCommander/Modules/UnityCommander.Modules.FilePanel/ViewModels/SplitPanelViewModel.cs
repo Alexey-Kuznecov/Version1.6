@@ -32,9 +32,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Core;
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Modules;
+
     using Views;
 
     /// <summary>
@@ -54,11 +54,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The copy dialog.
         /// </summary>
         private readonly CopyDialogView copyDialog;
-
-        /// <summary>
-        /// The navigationCommand class instance.
-        /// </summary>
-        private readonly NavigationInvoker navigationCommand;
 
         #region Dependencies Injection
 
@@ -104,9 +99,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #endregion
 
         /// <summary>
+        /// The navigation command.
+        /// </summary>
+        private NavigationInvoker navigationCommand;
+
+        /// <summary>
+        /// The command manager.
+        /// </summary>
+        private CommandManager commandManager;
+
+        /// <summary>
         /// Control template for panel items.
         /// </summary>
-        private ControlTemplate viewTemplate;
+        private ControlTemplate directoryPanelTemplate;
 
         /// <summary>
         /// Serialization path for saving the file panel state.
@@ -132,16 +137,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets interface to configure of application.
         /// </param>
         /// <param name="dataProviderService">
-        ///  The service that provides the info of the file system items.
+        /// The service that provides the info of the file system items.
         /// </param>
         /// <param name="commandService">
-        ///  The service that respond for composite commands.
+        /// The service that respond for composite commands.
         /// </param>
         /// <param name="pluginService">
         /// Service for loading all detected plugin interfaces.
         /// </param>
         /// <param name="manager">
-        /// 
+        /// Command manager
         /// </param>
         public SplitPanelViewModel(
             IRegionManager regionManager, 
@@ -149,10 +154,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IDataProviderService dataProviderService, 
             IGlobalCommandService commandService,
             IPluginLoaderService pluginService, 
-            CommandManager manager) 
+            CommandManager manager)
             : base(regionManager)
         {
-            var dds = regionManager.Regions;
+            this.commandManager = manager;
             this.pluginLoaderService = pluginService;
             this.dataProviderService = dataProviderService;
             this.settingsService = settingsService.GetAppConfig();
@@ -166,17 +171,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.FolderPanelContainer = new ();
             this.DrivePanelContainer = new ();
             this.copyDialog = new ();
-            this.navigationCommand = (NavigationInvoker)manager.CommandRegister(new NavigationInvoker());
            
             this.DetectPanelOrientation();
             this.SetLastPanelState();
-            {
-                this.AddFileColumns();
-                this.AddFolderColumns();
-                this.AddDriveColumns();
-            }
-            this.SetAdditionalColumns();
-            this.SetCommands(this.CurrentDirectory);
+            this.AddFileColumns();
+            this.AddFolderColumns();
+            this.AddDriveColumns();
+            this.InitialAdditionalColumns();
         }
 
         #endregion
@@ -186,12 +187,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Goes to the selected directory.
         /// </summary>
-        public DelegateCommand<FolderModel> NavigateDirCommand => new DelegateCommand<FolderModel>(
+        public DelegateCommand<FolderModel> NavigateDirectoryCommand => new DelegateCommand<FolderModel>(
             dir =>
         {
             if (dir != null)
             {
                 this.navigationCommand.Execute(this.UpdateFilePanel, dir.Path);
+            }
+        });
+
+        /// <summary>
+        /// Goes to the selected disk.
+        /// </summary>
+        public DelegateCommand<DriveModel> GotoDiskCommand => new DelegateCommand<DriveModel>(
+    dir =>
+        {
+            if (dir != null)
+            {
+                this.navigationCommand.Execute(this.UpdateFilePanel, dir.Letter);
             }
         });
 
@@ -216,10 +229,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (settingsService.IsSessionSaved)
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
-                using FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate);
-                formatter.Serialize(fs, saveObjects);
+                //BinaryFormatter formatter = new BinaryFormatter();
+                //object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
+                //using FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate);
+                //formatter.Serialize(fs, saveObjects);
             }
         });
 
@@ -285,10 +298,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the template for panel items.
         /// </summary>
-        public ControlTemplate ViewTemplate 
+        public ControlTemplate DirectoryPanelTemplate 
         {
-            get => this.viewTemplate;
-            set => this.SetProperty(ref this.viewTemplate, value);
+            get => this.directoryPanelTemplate;
+            set => this.SetProperty(ref this.directoryPanelTemplate, value);
         }
 
         /// <summary>
@@ -306,12 +319,25 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Gets or sets the selected directory.
         /// </summary>
-        public List<BaseDirectory> SelectedDirectories { get; set; } = new List<BaseDirectory>();
-
+        public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
+        
         /// <summary>
-        /// 
+        /// Gets or sets the token.
         /// </summary>
         public Guid Token { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// The initial panel.
+        /// </summary>
+        /// <param name="panelToken">
+        /// The panel token.
+        /// </param>
+        public void InitialPanel(Guid panelToken)
+        {
+            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(panelToken, new NavigationInvoker());
+            this.Token = panelToken;
+            this.SetCommands(this.CurrentDirectory);
+        }
 
         #endregion
 
@@ -365,7 +391,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Finalization of objects when unloading a module.
         /// </summary>
-        
         public override void Destroy()
         {
             base.Destroy();
@@ -377,7 +402,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Initial the folder/file panel.
 
         /// <summary>
-        /// The add columns in the folder panel.
+        /// Adds columns in the folder panel.
         /// </summary>
         private void AddFolderColumns()
         {
@@ -392,7 +417,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// The add columns in the file panel.
+        /// Adds columns in the file panel.
         /// </summary>
         private void AddFileColumns()
         {
@@ -406,7 +431,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// The add columns in the file panel.
+        /// Adds columns for devices or drives.
         /// </summary>
         private void AddDriveColumns()
         {
@@ -420,9 +445,61 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             });
         }
 
-        private void SetAdditionalColumns()
+        /// <summary>
+        /// Updates additional columns that are provided by plugins.
+        /// </summary>
+        private void UpdateAdditionalColumns()
         {
-            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            {
+                foreach (var column in pluginContext.GetColumns())
+                {
+                    this.InitialFolderColumnValues(column);
+                    this.InitialFileColumnValues(column);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Plugins uses this method to update columns.
+        /// </summary>
+        private void PluginUpdateColumns()
+        {
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            {
+                foreach (var column in pluginContext.GetColumns())
+                {
+                    foreach (var folder in this.DirectoryList)
+                    {
+                        var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                        
+                        if (columnValue != null)
+                        {
+                            folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                        }
+                    }
+
+                    foreach (var file in this.FileList)
+                    {
+                        var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
+                        
+                        if (columnValue != null)
+                        {
+                            file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(file.Path);
+                        }
+                    }
+                }
+            }
+        }
+
+        #region Initial Plugin Columns
+
+        /// <summary>
+        /// Adds an additional columns that are provided by plugins.
+        /// </summary>
+        private void InitialAdditionalColumns()
+        {
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
@@ -431,13 +508,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                     if (this.InitialFolderColumnValues(column))
                     {
-                       var columnNew = new GridViewColumn
-                       {
-                           Header = column.Header ?? "Error",
-                           Width = column.Width,
-                           DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
-                       };
-                        
+                        var columnNew = new GridViewColumn
+                        {
+                            Header = column.Header ?? "Error",
+                            Width = column.Width,
+                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
+                        };
+
                         this.FolderPanelContainer.Columns.Add(columnNew);
                     }
 
@@ -449,54 +526,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             Width = column.Width,
                             DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
                         };
-                        
+
                         this.FilePanelContainer.Columns.Add(columnNew);
                     }
                 }
             }
         }
 
-        private void UpdateAdditionalColumns()
-        {
-            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
-            {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    this.InitialFolderColumnValues(column);
-                    this.InitialFileColumnValues(column);
-                }
-            }
-        }
-
-        private void PluginUpdateColumns()
-        {
-            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
-            {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    foreach (var folder in this.DirectoryList)
-                    {
-                        var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-                        
-                        if (columnValue is not null)
-                        {
-                            folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-                        }
-                    }
-
-                    foreach (var file in this.FileList)
-                    {
-                        var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
-                        
-                        if (columnValue is not null)
-                        {
-                            file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(file.Path);
-                        }
-                    }
-                }
-            }
-        }
-
+        /// <summary>
+        /// Initializes folder columns with values provided by plugins.
+        /// </summary>
+        /// <param name="column">
+        /// Object implements contract of <see cref="IColumn"/>.
+        /// </param>
+        /// <returns>
+        /// True if the ColumnValueHandler method returned all non-NULL values.
+        /// The idea is to show the column where needed. In this way,
+        /// you can independently implement the columns for folders and files.
+        /// </returns>
         private bool InitialFolderColumnValues(IColumn column)
         {
             var isAllEqNull = false;
@@ -504,8 +551,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             foreach (var folder in this.DirectoryList)
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-                
-                if (columnValue is not null)
+
+                if (columnValue != null)
                 {
                     if (!folder.Additional.ContainsKey(column.Header))
                     {
@@ -517,7 +564,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             return isAllEqNull;
         }
-        
+
+        /// <summary>
+        /// Initializes file columns with values provided by plugins.
+        /// </summary>
+        /// <param name="column">
+        /// Object implements contract of <see cref="IColumn"/>.
+        /// </param>
+        /// <returns>
+        /// True if the ColumnValueHandler method returned all non-NULL values.
+        /// The idea is to show the column where needed. In this way,
+        /// you can independently implement the columns for folders and files.
+        /// </returns>
         private bool InitialFileColumnValues(IColumn column)
         {
             var isAllEqNull = false;
@@ -526,7 +584,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
 
-                if (columnValue is not null)
+                if (columnValue != null)
                 {
                     if (!file.Additional.ContainsKey(column.Header))
                     {
@@ -540,6 +598,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         #endregion
+        
+        #endregion
 
         #region Helper Methods
 
@@ -550,9 +610,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void SetLastPanelState()
         {
-            this.ViewTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
-            if (settingsService.IsSessionSaved)
+            if (this.settingsService.IsSessionSaved)
             {
                 try
                 {
@@ -589,11 +649,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Goes to the directory panel.
+        /// Updates the file pane and sets the appropriate template.
         /// </summary>
         /// <param name="dirPath"> Expected the path to the directory. </param>
         private void UpdateFilePanel(object dirPath)
         {
+            var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+
+            if (!this.DirectoryPanelTemplate.Equals(template))
+            {
+                this.DirectoryPanelTemplate = template;
+            }
+            
             var path = Directory.Exists(dirPath.ToString()) ? (string)dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
             this.DirectoryList = this.dataProviderService.GetDirectories(path);
             this.FileList = this.dataProviderService.GetFiles(path);
@@ -602,12 +669,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Goes to the drive panel.
+        /// Goes to the drive panel and sets the appropriate template..
         /// </summary>
-        private void GoDrivePanel()
+        /// <param name="root">
+        /// The root.
+        /// </param>
+        private void GoDrivePanel(object root)
         {
-            this.ViewTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
+            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
             this.DriveList = this.dataProviderService.GetDrives();
+            this.CurrentDirectory = (string)root;
         }
 
         /// <summary>
@@ -618,7 +689,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             string[] paths = HelperFunctions.ParsePath(dirPath);
 
-            this.navigationCommand.AddCommand(this.GoDrivePanel);
+            this.navigationCommand.AddCommand(this.GoDrivePanel, "Root:C:\\");
 
             foreach (var path in paths)
             {

@@ -3,13 +3,11 @@ namespace UnityCommander.Common.Styling.Converters
 {
     using System;
     using System.Globalization;
-    using System.Windows.Data;
     using System.Windows.Media;
 
     using MaterialDesignThemes.Wpf;
 
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The icon converter.
@@ -55,7 +53,6 @@ namespace UnityCommander.Common.Styling.Converters
                     case TargetPanel.LocalDisk:
                         icon.Kind = PackIconKind.Scanner;
                         icon.Foreground = new SolidColorBrush(Color.FromRgb(80, 119, 190));
-                        icon.Width = 32;
                         break;
                 }
                 

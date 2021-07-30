@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Core.Commands
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -19,7 +20,7 @@ namespace UnityCommander.Core.Commands
         /// <summary>
         /// The navigation collection.
         /// </summary>
-        private readonly List<InvokerBase> commandCollection = new ();
+        private readonly Dictionary<Guid, InvokerBase> commandCollection = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandManager"/> class.
@@ -40,39 +41,30 @@ namespace UnityCommander.Core.Commands
         /// <summary>
         /// The get navigation command.
         /// </summary>
-        /// <param name="index">
+        /// <param name="token">
         /// The index.
         /// </param>
         /// <returns>
         /// The <see cref="NavigationInvoker"/>.
         /// </returns>
-        public InvokerBase GetCommand(int index) 
-            => this.commandCollection[index];
-
-        /// <summary>
-        /// The get command.
-        /// </summary>
-        /// <typeparam name="TInvokerBase">
-        /// Type of command.
-        /// </typeparam>
-        /// <returns>
-        /// The <see cref="InvokerBase"/>.
-        /// </returns>
-        public IEnumerable<InvokerBase> GetCommand<TInvokerBase>() 
-            => this.commandCollection.Where(command => command is TInvokerBase);
+        public InvokerBase GetCommand(Guid token) 
+            => this.commandCollection.Single(cmd => cmd.Key.Equals(token)).Value;
 
         /// <summary>
         /// The set navigation command.
         /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
         /// <param name="register">
         /// The navigation invoker.
         /// </param>
         /// <returns>
         /// The <see cref="InvokerBase"/>.
         /// </returns>
-        public InvokerBase CommandRegister(InvokerBase register)
+        public InvokerBase CommandRegister(Guid token, InvokerBase register)
         {
-            this.commandCollection.Add(register);
+            this.commandCollection.Add(token, register);
             return register;
         } 
     }

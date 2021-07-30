@@ -18,4 +18,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="NSwag.Core" Version="13.12.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
+  </ItemGroup>
 </Project>

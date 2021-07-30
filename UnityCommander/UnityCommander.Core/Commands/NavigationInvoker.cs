@@ -3,19 +3,16 @@ namespace UnityCommander.Core.Commands
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     using UnityCommander.Core.Commands.Base;
 
     /// <summary>
     /// The navigation invoker.
     /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public sealed class NavigationInvoker : InvokerBase
     {
-        /// <summary>
-        /// The module commands. 
-        /// </summary>
-        private readonly List<Command> commands;
-
         /// <summary>
         /// The current command.
         /// </summary>
@@ -26,13 +23,13 @@ namespace UnityCommander.Core.Commands
         /// </summary>
         public NavigationInvoker()
         {
-            this.commands = new List<Command>();
+            this.ModuleCommands = new List<Command>();
         }
 
         /// <summary>
         /// Gets a value indicating whether the command can be canceled.
         /// </summary>
-        public bool CanUndo => this.commands.Count != 1;
+        public bool CanUndo => this.ModuleCommands.Count != 1;
 
         /// <summary>
         /// Gets a value indicating whether the command can be repeated.
@@ -40,9 +37,29 @@ namespace UnityCommander.Core.Commands
         public bool CanRedo => this.CurrentIndex > 0 && this.CurrentIndex < this.CurrentIndex - 1;
 
         /// <summary>
+        /// The next.
+        /// </summary>
+        public Command NextCommand => this.ModuleCommands.Count > 1 ? this.ModuleCommands[this.CurrentIndex + 1] : default(Command);
+
+        /// <summary>
+        /// The previous command.
+        /// </summary>
+        public Command PreviousCommand => this.ModuleCommands.Count > 0 ? this.ModuleCommands[this.CurrentIndex - 1] : default(Command);
+
+        /// <summary>
+        /// The current command.
+        /// </summary>
+        public Command CurrentCommand => this.ModuleCommands.Count != 0 ? this.ModuleCommands[this.CurrentIndex] : default(Command);
+
+        /// <summary>
+        /// The current command.
+        /// </summary>
+        public Command FirstCommand => this.ModuleCommands.Count != 0 ? this.ModuleCommands[0] : default(Command);
+
+        /// <summary>
         /// The current index.
         /// </summary>
-        public int CurrentIndex => this.commands.Count - 1;
+        public int CurrentIndex => this.ModuleCommands.Count - 1;
 
         /// <summary>
         /// Adds a new command to the command execution history.
@@ -52,9 +69,8 @@ namespace UnityCommander.Core.Commands
         public void AddCommand(Action<object> action, object path)
         {
             NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator(action, path));
-            this.commands.Add(NavigationInvoker.currentCommand);
+            this.ModuleCommands.Add(NavigationInvoker.currentCommand);
         }
-
 
         /// <summary>
         /// Adds a new command without argument to the command execution history.
@@ -63,12 +79,15 @@ namespace UnityCommander.Core.Commands
         public void AddCommand(Action action)
         {
             NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator(action));
-            this.commands.Add(NavigationInvoker.currentCommand);
+            this.ModuleCommands.Add(NavigationInvoker.currentCommand);
         }
 
         /// <summary>
         /// Execute new command no arguments.
         /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         public override void Execute(Action action)
         {
             action();
@@ -81,9 +100,10 @@ namespace UnityCommander.Core.Commands
         /// <param name="path"> Allows defining the command arguments. </param>
         public override void Execute(Action<object> action, object path)
         {
-            NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator());            
-            this.commands.Add(NavigationInvoker.currentCommand);
-            this.commands[this.CurrentIndex]?.Execute(action, path);
+            NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator());
+            this.ModuleCommands.Add(NavigationInvoker.currentCommand);
+            this.ModuleCommands[this.CurrentIndex]?.Execute(action, path);
+            this.RaiseExecuteChanged((ConcreteCommand)currentCommand);
         }
 
         /// <summary>
@@ -93,7 +113,7 @@ namespace UnityCommander.Core.Commands
         {
             if (this.CanRedo)
             {
-                var command = this.commands[this.CurrentIndex];
+                var command = this.ModuleCommands[this.CurrentIndex];
                 var receiver = (Navigator)((ConcreteCommand)command)?.Receiver;
                 command?.Execute(receiver.CommandArg, receiver.Path);
             }
@@ -106,17 +126,31 @@ namespace UnityCommander.Core.Commands
         {
             if (this.CanUndo)
             {
-                this.commands.RemoveAt(this.CurrentIndex);
-                NavigationInvoker.currentCommand = this.commands[this.CurrentIndex];
+                this.ModuleCommands.RemoveAt(this.CurrentIndex);
+                NavigationInvoker.currentCommand = this.ModuleCommands[this.CurrentIndex];
                 var receiver = (Navigator)((ConcreteCommand)NavigationInvoker.currentCommand)?.Receiver;
                 
                 if (receiver != null)
                 {
-                    if (receiver.CommandArg is not null)
+                    if (receiver.CommandArg != null)
                         currentCommand.UnExecute(receiver.CommandArg, receiver.Path);
                     else
                         currentCommand.UnExecute(receiver.Command);
                 }
+            }
+        }
+
+        /// <summary>
+        /// The remove all.
+        /// </summary>
+        public override void RemoveAll()
+        {
+            var count = this.ModuleCommands.Count - 1;
+
+            for (int i = count; i >= 1; i--)
+            {
+                var item = this.ModuleCommands[i];
+                this.ModuleCommands.Remove(item);
             }
         }
     }

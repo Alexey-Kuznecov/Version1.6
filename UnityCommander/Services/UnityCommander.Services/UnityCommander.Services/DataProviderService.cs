@@ -3,6 +3,9 @@ namespace UnityCommander.Services
 {
     using System.Collections.ObjectModel;
     using System.IO;
+
+    using AlexeyKuznecov.Library.Converters;
+
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
  
@@ -78,14 +81,19 @@ namespace UnityCommander.Services
             
             foreach (var drive in DriveInfo.GetDrives())
             {
+                if (drive.DriveType == DriveType.Network)
+                {
+                    continue;
+                }
+
                 if (drive.IsReady)
                 {
                     models.Add(new DriveModel
                     {
                         Letter = drive.Name,
-                        FreeSpace = drive.AvailableFreeSpace,
-                        UsedSpace = drive.TotalSize - drive.AvailableFreeSpace,
-                        TotalAmount = drive.TotalSize,
+                        FreeSpace = ConverterBytes.AutoConvertFormatBytes(drive.AvailableFreeSpace),
+                        UsedSpace = ConverterBytes.AutoConvertFormatBytes(drive.TotalSize - drive.AvailableFreeSpace),
+                        TotalAmount = ConverterBytes.AutoConvertFormatBytes(drive.TotalSize),
                         TargetPanel = TargetPanel.LocalDisk
                     });
                 }

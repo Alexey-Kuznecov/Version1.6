@@ -49,6 +49,10 @@
                 <Setter TargetName="rect" Property="Fill" Value="{x:Null}" />
                 <Setter TargetName="shape" Property="Fill" Value="#747474" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="rect" Property="Fill" Value="{x:Null}" />
+                <Setter TargetName="shape" Property="Fill" Value="#687690" />
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 </ResourceDictionary>
