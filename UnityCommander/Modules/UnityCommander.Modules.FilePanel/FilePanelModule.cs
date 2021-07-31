@@ -9,20 +9,16 @@
 
 namespace UnityCommander.Modules.FilePanel
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
+    using System.Windows;
 
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Regions;
 
     using UnityCommander.Core;
-    using UnityCommander.Core.Commands;
     using UnityCommander.Core.Modules;
-    using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.FilePanel.Views;
 
     /// <summary>
@@ -50,47 +46,10 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this.regionManager.RequestNavigate("LeftPanelRegion", "SplitPanelView");
-            this.regionManager.RequestNavigate("RightPanelRegion", "SplitPanelView");
-            this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, "ViewA");
-            this.regionManager.AddToRegion("LeftPanelRegion", new SplitPanelView());
-            this.regionManager.AddToRegion("RightPanelRegion", new SplitPanelView());
-            this.regionManager.AddToRegion("RightPanelRegion", new SplitPanelView());
-            
-            var viewsLeftPanel = this.regionManager.Regions["LeftPanelRegion"].Views.ToList();
-            var viewsRightPanel = this.regionManager.Regions["RightPanelRegion"].Views.ToList();
-            var views = this.regionManager.Regions[RegionNames.FilePanelRegion].Views.ToList();
-
-            Guid[] guids = new Guid[2];
-            guids[0] = Guid.NewGuid();
-            guids[1] = Guid.NewGuid();
-
-            for (int i = 0; i < 1; i++)
-            {
-                if (viewsLeftPanel[i] is UserControl leftPanel)
-                {
-                    if (leftPanel.DataContext is IDirectoryPanel directoryPanel)
-                    {
-                        directoryPanel.InitialPanel(guids[0]);
-                    }
-                }
-
-                if (viewsRightPanel[i] is UserControl rightPanel)
-                {
-                    if (rightPanel.DataContext is IDirectoryPanel directoryPanel)
-                    {
-                        directoryPanel.InitialPanel(guids[1]);
-                    }
-                }
-
-                if (views[i] is UserControl view)
-                {
-                    if (view.DataContext is IPanelContainer directoryPanel)
-                    {
-                        directoryPanel.InitialPanel(guids);
-                    }
-                }
-            }
+            this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, nameof(ViewA));
+            this.regionManager.RequestNavigate(NestedRegionNames.LeftPanelRegion, nameof(SplitPanelView));
+            this.regionManager.RequestNavigate(NestedRegionNames.RightPanelRegion, nameof(SplitPanelView));
+            this.InitialPanelRegion();
         }
 
         /// <summary>
@@ -101,6 +60,62 @@ namespace UnityCommander.Modules.FilePanel
         {
             containerRegistry.RegisterForNavigation<ViewA>();
             containerRegistry.RegisterForNavigation<SplitPanelView>();
+        }
+
+        /// <summary>
+        /// The initial panel region.
+        /// </summary>
+        private void InitialPanelRegion()
+        {
+            var filePanelRegion = from region in this.regionManager.Regions
+                                  where region.Name == RegionNames.FilePanelRegion
+                                  select region.Views;
+
+            var panelRegion = filePanelRegion as IViewsCollection[] ?? filePanelRegion.ToArray();
+
+            foreach (var dir in this.InitialNestedPanelRegion())
+            {
+                foreach (var views in panelRegion)
+                {
+                    foreach (var view in views)
+                    {
+                        if (view is FrameworkElement { DataContext: IPanelContainer panelContainer })
+                        {
+                            panelContainer.InitialDirectoryPanel(dir);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The initial nested panel region.
+        /// </summary>
+        /// <returns>
+        /// The collection of the <see cref="IDirectoryPanel"/> types.
+        /// </returns>
+        private List<IDirectoryPanel> InitialNestedPanelRegion()
+        {
+            var nestedPanelRegion =
+                from region in this.regionManager.Regions
+                where region.Name == NestedRegionNames.RightPanelRegion || region.Name == NestedRegionNames.LeftPanelRegion
+                select region.Views;
+
+            var dirs = new List<IDirectoryPanel>();
+
+            foreach (var views in nestedPanelRegion.ToList())
+            {
+                foreach (var view in views)
+                {
+                    if (view is FrameworkElement { DataContext: IDirectoryPanel directoryPanel })
+                    {
+                        dirs.Add(directoryPanel);
+                        directoryPanel.InitializedViewModel();
+                    }
+                }
+            }
+
+            return dirs;
         }
     }
 }

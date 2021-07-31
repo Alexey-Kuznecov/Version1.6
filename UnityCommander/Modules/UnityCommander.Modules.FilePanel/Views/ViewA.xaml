@@ -2,6 +2,7 @@
     x:Class="UnityCommander.Modules.FilePanel.Views.ViewA"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:UnityCommander.Controls.Taber;assembly=UnityCommander.Controls"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True">
 
@@ -17,6 +18,45 @@
             <Setter Property="Content" Value="Goback" />
             <Setter Property="Foreground" Value="#E8E8EC" />
         </Style>
+
+        <ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Style="{DynamicResource DirectoryPanelHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="25" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding GoBackDirectoryLeftPanelCommand}"
+                        CommandParameter="0"
+                        IsEnabled="{Binding BackButtonIsEnabled}"
+                        Style="{StaticResource BackButtonStyle}" />
+                    <ContentControl
+                        Grid.Column="1"
+                        Height="25"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Content="{Binding ThisComputerIcon.Path.Data}"
+                        Foreground="#E8E8EC"
+                        IsEnabled="{Binding ThisComputerIconIsEnabled}"
+                        Style="{DynamicResource CustomButtonStyles}"
+                        Template="{DynamicResource CustomButtonTemplate}">
+                        <ContentControl.InputBindings>
+                            <MouseBinding Command="{Binding GoDrivePanelCommand}" Gesture="LeftClick" />
+                        </ContentControl.InputBindings>
+                        <ContentControl.ToolTip>
+                            <ToolTip Content="Go to this computer" />
+                        </ContentControl.ToolTip>
+                    </ContentControl>
+                </Grid>
+            </Grid>
+        </ControlTemplate>
     </UserControl.Resources>
 
     <Grid>
@@ -26,53 +66,50 @@
             <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
 
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+            <ContentControl Grid.Row="0" Template="{StaticResource ContentDirectoryPanelTemplate}" />
+            <controls:TaberPanel
+                Grid.Row="1"
+                InitialElements="{Binding TabCollection, Mode=TwoWay}">
+                <!--<Button
+                    Margin="0,0,1,0"
+                    Background="#E0E5F1"
+                    BorderBrush="{x:Null}"
+                    Command="{Binding ActivateTabCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Tag}"
+                    Content="Tab Control 1"
+                    Foreground="DarkSlateGray" />
+                <Button
+                    Margin="10,0"
+                    Background="{x:Null}"
+                    BorderBrush="{x:Null}"
+                    Command="{Binding AddNewTabCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type controls:TaberControl}}}"
+                    Content="+"
+                    Foreground="DarkSlateGray" />-->
+            </controls:TaberPanel>
+            <ContentControl Grid.Row="2" prism:RegionManager.RegionName="LeftPanelRegion" />
+            <!--<TextBlock Grid.Row="3" Text="{Binding DisplayToken}" />-->
+            <Grid Grid.Row="2">
+                <!--<controls:TaberControl
+                    Width="100"
+                    Height="50"
+                    Content="saddddds" />-->
+            </Grid>
+        </Grid>
+
         <GridSplitter
             Grid.Column="1"
             Width="5"
             HorizontalAlignment="Center"
             VerticalAlignment="Stretch"
             ShowsPreview="False" />
-
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Style="{DynamicResource DirectoryPanelHeaderStyle}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="25" />
-                </Grid.ColumnDefinitions>
-                <Button
-                    Grid.Column="0"
-                    Command="{Binding GoBackDirectoryLeftPanelCommand}"
-                    CommandParameter="0"
-                    IsEnabled="{Binding BackButtonIsEnabled}"
-                    Style="{StaticResource BackButtonStyle}" />
-                <ContentControl
-                    Grid.Column="1"
-                    Height="25"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Content="{Binding ThisComputerIcon.Path.Data}"
-                    Foreground="#E8E8EC"
-                    IsEnabled="{Binding ThisComputerIconIsEnabled}"
-                    Style="{DynamicResource CustomButtonStyles}"
-                    Template="{DynamicResource CustomButtonTemplate}">
-                    <ContentControl.InputBindings>
-                        <MouseBinding Command="{Binding GoDrivePanelCommand}" Gesture="LeftClick" />
-                    </ContentControl.InputBindings>
-                    <ContentControl.ToolTip>
-                        <ToolTip Content="Go to this computer" />
-                    </ContentControl.ToolTip>
-                </ContentControl>
-            </Grid>
-            <!--<local:DirectoryPanelControl
-                Grid.Row="1"
-                Parameter="{Binding ParameterPanel}"
-                Source="{Binding OriginLeftPanel}" />-->
-            <ContentControl Grid.Row="1" prism:RegionManager.RegionName="LeftPanelRegion" />
-        </Grid>
 
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
@@ -90,7 +127,10 @@
                     CommandParameter="1"
                     Style="{StaticResource BackButtonStyle}" />
             </Grid>
-            <ContentControl Grid.Row="1" prism:RegionManager.RegionName="RightPanelRegion" />
+            <ContentControl
+                Grid.Row="1"
+                prism:RegionManager.RegionContext="{Binding RegionContext}"
+                prism:RegionManager.RegionName="RightPanelRegion" />
         </Grid>
     </Grid>
 </UserControl>

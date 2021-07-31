@@ -7,9 +7,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Windows.Data;
-using UnityCommander.Integration.Columns;
-
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
@@ -19,12 +16,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Data;
 
     using Core.Helper;
     using Core.Mvvm;
 
     using GongSolutions.Wpf.DragDrop;
-    
+
     using Prism.Commands;
     using Prism.Regions;
 
@@ -34,6 +32,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Modules;
+    using UnityCommander.Integration.Columns;
 
     using Views;
 
@@ -320,24 +319,64 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets or sets the selected directory.
         /// </summary>
         public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
-        
+
+        #region ADDITIONAL INITIALIZATION VIEW MODEL
+
         /// <summary>
         /// Gets or sets the token.
         /// </summary>
-        public Guid Token { get; set; } = Guid.NewGuid();
+        public Guid Token { get; set; }
+
+        /// <summary>
+        /// Gets or sets the instance number.
+        /// </summary>
+        public byte InstanceNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
+        public static byte InstanceCount { get; set; }
 
         /// <summary>
         /// The initial panel.
         /// </summary>
-        /// <param name="panelToken">
-        /// The panel token.
-        /// </param>
-        public void InitialPanel(Guid panelToken)
+        public void InitializedViewModel()
         {
-            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(panelToken, new NavigationInvoker());
-            this.Token = panelToken;
+            this.InstanceNumber = ++InstanceCount;
+            this.Token = this.Token == Guid.Empty ? Guid.NewGuid() : this.Token;
+            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(this.Token, new NavigationInvoker());
             this.SetCommands(this.CurrentDirectory);
         }
+
+        /// <summary>
+        /// The initial panel.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
+        public byte GetInstanceNumber()
+        {
+            return this.InstanceNumber;
+        }
+
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public Guid GetPanelToken()
+        {
+            if (this.Token == Guid.Empty)
+            {
+                this.Token = Guid.NewGuid();
+                return this.Token;
+            }
+
+            return this.Token;
+        }
+
+        #endregion
 
         #endregion
 
@@ -412,6 +451,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 foreach (var column in items)
                 {
                     this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    //this.FolderPanelContainer.ColumnHeaderContainerStyle = (Style)Application.Current.FindResource("DirectoryPanelListHeaderStyle");
                 }
             });
         }

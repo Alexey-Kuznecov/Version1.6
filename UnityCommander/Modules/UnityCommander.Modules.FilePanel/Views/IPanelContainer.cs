@@ -1,7 +1,7 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Views
 {
-    using System;
+    using UnityCommander.Core.Modules;
 
     /// <summary>
     /// The PanelContainer interface.
@@ -9,11 +9,11 @@ namespace UnityCommander.Modules.FilePanel.Views
     public interface IPanelContainer
     {
         /// <summary>
-        /// Gets or sets the initial command.
+        /// Initial directory panel.
         /// </summary>
-        /// <param name="panelToken">
-        /// The command manager.
+        /// <param name="directoryPanel">
+        /// The directory Panel.
         /// </param>
-        public void InitialPanel(Guid[] panelToken);
+        public void InitialDirectoryPanel(IDirectoryPanel directoryPanel);
     } 
 }
