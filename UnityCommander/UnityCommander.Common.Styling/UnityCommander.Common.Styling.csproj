@@ -45,10 +45,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\DirectoryBarStyles.xaml">
+    <Page Update="Styles\DirectoryPanelStyles.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\NaviBarStyles.xaml">
+    <Page Update="Styles\NavigationBarStyles.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\ScrollBarStyles.xaml">

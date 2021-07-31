@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
+    <ProjectReference Include="..\UnityCommander.Controls\UnityCommander.Controls.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
   <ItemGroup>

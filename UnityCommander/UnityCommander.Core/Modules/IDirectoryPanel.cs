@@ -14,11 +14,24 @@ namespace UnityCommander.Core.Modules
         public Guid Token { get; set; }
 
         /// <summary>
+        /// Gets or sets the   panel.
+        /// </summary>
+        public void InitializedViewModel();
+        
+        /// <summary>
         /// Gets or sets the initial command.
         /// </summary>
-        /// <param name="panelToken">
-        /// The command manager.
-        /// </param>
-        public void InitialPanel(Guid panelToken);
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public Guid GetPanelToken();
+
+        /// <summary>
+        /// The get instance number.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public byte GetInstanceNumber();
     }
 }

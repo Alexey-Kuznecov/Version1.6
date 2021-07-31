@@ -1,17 +1,27 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Resources;
-using System.Text;
-using System.Windows;
-using System.Windows.Baml2006;
-
+﻿
 namespace UnityCommander.Common.Styling
 {
+    using System.Collections;
+    using System.IO;
+    using System.Reflection;
+    using System.Resources;
+    using System.Windows;
+    using System.Windows.Baml2006;
+
+    /// <summary>
+    /// The resource manager.
+    /// </summary>
     public class ResourceManager
     {
+        /// <summary>
+        /// The get resource dictionary.
+        /// </summary>
+        /// <param name="assemblyName">
+        /// The assembly name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ResourceDictionary"/>.
+        /// </returns>
         public ResourceDictionary GetResourceDictionary(string assemblyName)
         {
             Assembly asm = Assembly.LoadFrom(assemblyName);

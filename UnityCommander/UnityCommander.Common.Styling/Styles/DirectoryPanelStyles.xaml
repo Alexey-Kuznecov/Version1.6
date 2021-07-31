@@ -3,7 +3,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes">
 
+    <!--<Style
+        x:Key="DirectoryPanelListHeaderStyle"
+        BasedOn="{StaticResource {x:Type GridViewColumnHeader}}"
+        TargetType="{x:Type GridViewColumnHeader}">
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="{DynamicResource GeneralHeaderColor}" />
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+
     <Style x:Key="DirectoryPanelHeaderStyle" TargetType="{x:Type Grid}">
+        <Setter Property="Height" Value="25" />
         <Setter Property="Background">
             <Setter.Value>
                 <SolidColorBrush Color="{DynamicResource GeneralHeaderColor}" />

@@ -14,7 +14,9 @@
 
     <UserControl.Resources>
         <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="Padding" Value="8,10,0,10" />
+            <!--<Setter Property="Padding" Value="8,10,0,10" />-->
+            <Setter Property="Padding" Value="8,2,0,0" />
+            <Setter Property="Height" Value="35" />
         </Style>
     </UserControl.Resources>
     <Grid>

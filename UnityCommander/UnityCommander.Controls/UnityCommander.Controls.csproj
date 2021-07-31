@@ -15,4 +15,11 @@
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Taber\TabControlStylesExample.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
