@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Core.Helper
 {
+    using NSwag.Collections;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -198,6 +199,48 @@ namespace UnityCommander.Core.Helper
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The select each.
+        /// </summary>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public static Dictionary<TKey, TValue> ConvertToDictionary<TKey,TValue>(this IDictionary<TKey, TValue> oldPairs)
+        {
+            Dictionary<TKey, TValue> newPairs = new ();
+
+            foreach (var item in oldPairs)
+            {
+                newPairs.Add(item.Key, item.Value);
+            }
+
+            return newPairs;
+        }
+
+        /// <summary>
+        /// The select each.
+        /// </summary>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public static ObservableDictionary<TKey, TValue> ConvertToObservableDictionary<TKey, TValue>(this IDictionary<TKey, TValue> oldPairs)
+        {
+            ObservableDictionary<TKey, TValue> newPairs = new();
+
+            foreach (var item in oldPairs)
+            {
+                newPairs.Add(item.Key, item.Value);
+            }
+
+            return newPairs;
         }
     }
 }

@@ -101,7 +101,7 @@ namespace UnityCommander.Controls.Taber
         private void OnControlTabClick(object sender, RoutedEventArgs e)
         {
             var control = (TaberControl)sender;
-            var panel = (e as TabCommandExecutedEventArg).Content as TaberPanel;
+            var panel = (e as TabCommandExecutedEventArg)?.Content as TaberPanel;
 
             if ((string)control.Content == "+")
                 return;

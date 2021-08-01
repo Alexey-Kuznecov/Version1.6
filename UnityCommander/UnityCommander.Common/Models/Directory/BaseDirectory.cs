@@ -2,7 +2,7 @@
 namespace UnityCommander.Common.Models.Directory
 {
     using System;
-
+    using System.Collections.Generic;
     using NSwag.Collections;
 
     using UnityCommander.Common.Models.Icons;
@@ -41,7 +41,7 @@ namespace UnityCommander.Common.Models.Directory
         /// <summary>
         /// Gets or sets additional columns that are provided by plugin.
         /// </summary>
-        public ObservableDictionary<string, object> Additional { get; set; } = new ();
+        public IDictionary<string, object> Additional { get; set; } = new ObservableDictionary<string, object>();
 
         /// <summary>
         /// Gets or sets the directory item's type.

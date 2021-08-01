@@ -46,7 +46,10 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
+            //this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, nameof(MainView));
             this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, nameof(ViewA));
+            //this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, nameof(ViewA));
+            this.regionManager.RequestNavigate(NestedRegionNames.LeftPanelRegion, nameof(ViewA));
             this.regionManager.RequestNavigate(NestedRegionNames.LeftPanelRegion, nameof(SplitPanelView));
             this.regionManager.RequestNavigate(NestedRegionNames.RightPanelRegion, nameof(SplitPanelView));
             this.InitialPanelRegion();
@@ -58,6 +61,7 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="containerRegistry"> The container registry. </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterForNavigation<MainView>();
             containerRegistry.RegisterForNavigation<ViewA>();
             containerRegistry.RegisterForNavigation<SplitPanelView>();
         }

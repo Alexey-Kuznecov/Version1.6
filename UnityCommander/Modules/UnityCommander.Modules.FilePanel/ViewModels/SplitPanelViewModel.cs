@@ -54,6 +54,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private readonly CopyDialogView copyDialog;
 
+        /// <summary>
+        /// If true, the plugin was cached and the result will be restored
+        /// from the cache table the next time the program starts.
+        /// </summary>
+        private bool pluginValuesIsCached;
+
         #region Dependencies Injection
 
         /// <summary>
@@ -173,10 +179,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
            
             this.DetectPanelOrientation();
             this.SetLastPanelState();
-            this.AddFileColumns();
-            this.AddFolderColumns();
-            this.AddDriveColumns();
-            this.InitialAdditionalColumns();
         }
 
         #endregion
@@ -199,7 +201,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Goes to the selected disk.
         /// </summary>
         public DelegateCommand<DriveModel> GotoDiskCommand => new DelegateCommand<DriveModel>(
-    dir =>
+            dir =>
         {
             if (dir != null)
             {
@@ -211,7 +213,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Gets or sets a navigate command.
         /// </summary>
         public DelegateCommand<object> UpdateCommand => new DelegateCommand<object>(
-        dir =>
+            dir =>
         {
             if (dir != null)
             {
@@ -228,10 +230,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (settingsService.IsSessionSaved)
             {
-                //BinaryFormatter formatter = new BinaryFormatter();
-                //object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
-                //using FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate);
-                //formatter.Serialize(fs, saveObjects);
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                foreach (var file in this.FileList)
+                {
+                    file.Additional = file.Additional.ConvertToDictionary();
+                }
+
+                foreach (var folder in this.DirectoryList)
+                {
+                    folder.Additional = folder.Additional.ConvertToDictionary();
+                }
+
+                object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
+                
+                using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(fs, saveObjects);
+                }
             }
         });
 
@@ -441,6 +457,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Initial the folder/file panel.
 
         /// <summary>
+        /// The set columns.
+        /// </summary>
+        private void InitializeColumns()
+        {
+            this.AddFileColumns();
+            this.AddFolderColumns();
+            this.AddDriveColumns();
+            this.AddPluginColumns();
+        }
+
+        /// <summary>
         /// Adds columns in the folder panel.
         /// </summary>
         private void AddFolderColumns()
@@ -451,7 +478,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 foreach (var column in items)
                 {
                     this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    //this.FolderPanelContainer.ColumnHeaderContainerStyle = (Style)Application.Current.FindResource("DirectoryPanelListHeaderStyle");
                 }
             });
         }
@@ -485,10 +511,51 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             });
         }
 
+        #region Initial Plugin Columns
+
+        /// <summary>
+        /// Adds an additional columns that are provided by plugins.
+        /// </summary>
+        private void AddPluginColumns()
+        {
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            {
+                foreach (var column in pluginContext.GetColumns())
+                {
+                    column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
+                    column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
+
+                    if (this.InitialFolderColumnValues(column) || this.pluginValuesIsCached)
+                    {
+                        var columnNew = new GridViewColumn
+                        {
+                            Header = column.Header ?? "Error",
+                            Width = column.Width,
+                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
+                        };
+
+                        this.FolderPanelContainer.Columns.Add(columnNew);
+                    }
+
+                    if (this.InitialFileColumnValues(column) || this.pluginValuesIsCached)
+                    {
+                        var columnNew = new GridViewColumn
+                        {
+                            Header = column.Header ?? "Error",
+                            Width = column.Width,
+                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
+                        };
+
+                        this.FilePanelContainer.Columns.Add(columnNew);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Updates additional columns that are provided by plugins.
         /// </summary>
-        private void UpdateAdditionalColumns()
+        private void UpdatePluginColumns()
         {
             foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
@@ -503,7 +570,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Plugins uses this method to update columns.
         /// </summary>
-        private void PluginUpdateColumns()
+        private void UpdateColumnsCommand()
         {
             foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
@@ -512,7 +579,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     foreach (var folder in this.DirectoryList)
                     {
                         var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-                        
+
                         if (columnValue != null)
                         {
                             folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(folder.Path);
@@ -522,52 +589,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     foreach (var file in this.FileList)
                     {
                         var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
-                        
+
                         if (columnValue != null)
                         {
                             file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(file.Path);
                         }
-                    }
-                }
-            }
-        }
-
-        #region Initial Plugin Columns
-
-        /// <summary>
-        /// Adds an additional columns that are provided by plugins.
-        /// </summary>
-        private void InitialAdditionalColumns()
-        {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
-            {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    column.ColumnManager.SetUpdate(this.PluginUpdateColumns);
-                    column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
-
-                    if (this.InitialFolderColumnValues(column))
-                    {
-                        var columnNew = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
-                        };
-
-                        this.FolderPanelContainer.Columns.Add(columnNew);
-                    }
-
-                    if (this.InitialFileColumnValues(column))
-                    {
-                        var columnNew = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
-                        };
-
-                        this.FilePanelContainer.Columns.Add(columnNew);
                     }
                 }
             }
@@ -651,10 +677,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void SetLastPanelState()
         {
             this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-
-            if (this.settingsService.IsSessionSaved)
+            
+            try
             {
-                try
+                if (this.settingsService.IsSessionSaved)
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
 
@@ -662,31 +688,36 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     {
                         object[] deserializeState = (object[])formatter.Deserialize(fs);
 
-                        this.FileList = deserializeState[0] as ObservableCollection<FileModel>;
-                        this.DirectoryList = deserializeState[1] as ObservableCollection<FolderModel>;
+                        this.FileList = (ObservableCollection<FileModel>)deserializeState[0];
+                        this.DirectoryList = (ObservableCollection<FolderModel>)deserializeState[1];
+
                         this.CurrentDirectory = deserializeState[2] as string;
                     }
 
+
+                    this.pluginValuesIsCached = true;
+                    this.InitializeColumns();
+
                     if (!Directory.Exists(this.CurrentDirectory))
                     {
-                        this.CurrentDirectory = @"c:\";
                         throw new Exception();
                     }
                 }
-                catch (Exception)
+                else
                 {
-                    this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
-                    this.FileList = this.dataProviderService.GetFiles(this.CurrentDirectory);
-                    this.DirectoryList = this.dataProviderService.GetDirectories(this.CurrentDirectory);
+                    throw new Exception();
                 }
-            }
-            else
+            } 
+            catch
             {
-                this.CurrentDirectory = @"D:\Works\WPF\UnityCommander\Version2.7.4";
+                this.CurrentDirectory = @"C:\";
                 this.FileList = this.dataProviderService.GetFiles(this.CurrentDirectory);
                 this.DirectoryList = this.dataProviderService.GetDirectories(this.CurrentDirectory);
+                this.InitializeColumns();
             }
         }
+
+
 
         /// <summary>
         /// Updates the file pane and sets the appropriate template.
@@ -705,7 +736,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.DirectoryList = this.dataProviderService.GetDirectories(path);
             this.FileList = this.dataProviderService.GetFiles(path);
             this.CurrentDirectory = path;
-            this.UpdateAdditionalColumns();
+            this.UpdatePluginColumns();
         }
 
         /// <summary>

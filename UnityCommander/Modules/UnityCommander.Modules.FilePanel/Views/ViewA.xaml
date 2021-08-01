@@ -17,6 +17,11 @@
             <Setter Property="BorderBrush" Value="{x:Null}" />
             <Setter Property="Content" Value="Goback" />
             <Setter Property="Foreground" Value="#E8E8EC" />
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
@@ -27,16 +32,32 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Style="{DynamicResource DirectoryPanelHeaderStyle}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="25" />
                         <ColumnDefinition Width="25" />
                     </Grid.ColumnDefinitions>
-                    <Button
+                    <ContentControl
+                        Grid.Column="0"
+                        Height="25"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Content="{Binding BackButtonIcon.Path.Data}"
+                        Foreground="#E8E8EC"
+                        IsEnabled="{Binding BackButtonIsEnabled}"
+                        Style="{DynamicResource CustomButtonStyles}"
+                        Template="{DynamicResource CustomButtonTemplate}">
+                        <ContentControl.InputBindings>
+                            <MouseBinding Command="{Binding GoBackDirectoryLeftPanelCommand}" Gesture="LeftClick" />
+                        </ContentControl.InputBindings>
+                        <ContentControl.ToolTip>
+                            <ToolTip Content="Go to this computer" />
+                        </ContentControl.ToolTip>
+                    </ContentControl>
+                    <!--<Button
                         Grid.Column="0"
                         Command="{Binding GoBackDirectoryLeftPanelCommand}"
                         CommandParameter="0"
                         IsEnabled="{Binding BackButtonIsEnabled}"
-                        Style="{StaticResource BackButtonStyle}" />
+                        Style="{StaticResource BackButtonStyle}" />-->
                     <ContentControl
                         Grid.Column="1"
                         Height="25"
@@ -68,15 +89,12 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="30" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
-            <ContentControl Grid.Row="0" Template="{StaticResource ContentDirectoryPanelTemplate}" />
-            <controls:TaberPanel
-                Grid.Row="1"
-                InitialElements="{Binding TabCollection, Mode=TwoWay}">
+            <ContentControl Grid.Row="1" Template="{StaticResource ContentDirectoryPanelTemplate}" />
+            <controls:TaberPanel Grid.Row="0" InitialElements="{Binding TabCollection, Mode=TwoWay}">
                 <!--<Button
                     Margin="0,0,1,0"
                     Background="#E0E5F1"
@@ -95,13 +113,6 @@
                     Foreground="DarkSlateGray" />-->
             </controls:TaberPanel>
             <ContentControl Grid.Row="2" prism:RegionManager.RegionName="LeftPanelRegion" />
-            <!--<TextBlock Grid.Row="3" Text="{Binding DisplayToken}" />-->
-            <Grid Grid.Row="2">
-                <!--<controls:TaberControl
-                    Width="100"
-                    Height="50"
-                    Content="saddddds" />-->
-            </Grid>
         </Grid>
 
         <GridSplitter

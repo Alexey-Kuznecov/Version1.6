@@ -60,6 +60,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The computer icon.
         /// </summary>
+        private IIcon backButtonIcon;
+
+        /// <summary>
+        /// The computer icon.
+        /// </summary>
         private bool thisComputerIconIsEnabled;
 
         /// <summary>
@@ -97,6 +102,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.regionManager = regionManager;
             this.commandManager = manager;
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
+            this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
             this.ThisComputerIconIsEnabled = true;
             this.BackButtonIsEnabled = true;
         }
@@ -119,6 +125,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.thisComputerIcon;
             set => this.SetProperty(ref this.thisComputerIcon, value);
+        }
+        
+        /// <summary>
+        /// Gets or sets a computer icon.
+        /// </summary>
+        public IIcon BackButtonIcon
+        {
+            get => this.backButtonIcon;
+            set => this.SetProperty(ref this.backButtonIcon, value);
         }
 
         /// <summary>

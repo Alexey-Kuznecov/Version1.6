@@ -35,7 +35,7 @@ namespace UnityCommander.Integration.Columns
         /// <param name="updateMethod">
         /// The update command.
         /// </param>
-        public void SetUpdate(UpdateColumnValue updateMethod)
+        public void SetUpdateCommand(UpdateColumnValue updateMethod)
         {
             this.updateCommand.Add(updateMethod);
         }

@@ -81,10 +81,7 @@ namespace UnityCommander.Services
             
             foreach (var drive in DriveInfo.GetDrives())
             {
-                if (drive.DriveType == DriveType.Network)
-                {
-                    continue;
-                }
+                if (drive.DriveType == DriveType.Network) continue;
 
                 if (drive.IsReady)
                 {
