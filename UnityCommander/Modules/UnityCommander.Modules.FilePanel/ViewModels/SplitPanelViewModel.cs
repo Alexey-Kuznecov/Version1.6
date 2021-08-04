@@ -54,11 +54,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private readonly CopyDialogView copyDialog;
 
-        /// <summary>
-        /// If true, the plugin was cached and the result will be restored
-        /// from the cache table the next time the program starts.
-        /// </summary>
-        private bool pluginValuesIsCached;
 
         #region Dependencies Injection
 
@@ -82,6 +77,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private readonly IPluginLoaderService pluginLoaderService;
 
+        /// <summary>
+        /// If true, the plugin was cached and the result will be restored
+        /// from the cache table the next time the program starts.
+        /// </summary>
+        private bool pluginValuesIsCached;
         #endregion
 
         #region Collections
@@ -356,12 +356,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The initial panel.
         /// </summary>
-        public void InitializedViewModel()
+        /// <returns>
+        /// The <see cref="IDirectoryPanel"/>.
+        /// </returns>
+        public IDirectoryPanel InitializedViewModel()
         {
             this.InstanceNumber = ++InstanceCount;
             this.Token = this.Token == Guid.Empty ? Guid.NewGuid() : this.Token;
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(this.Token, new NavigationInvoker());
             this.SetCommands(this.CurrentDirectory);
+            return this;
         }
 
         /// <summary>
@@ -412,7 +416,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                                   & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
 
 
-            if (isMultiSelect || isSingleSelect) 
+            if (isMultiSelect || isSingleSelect)
             {
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
                 dropInfo.Effects = DragDropEffects.Copy;
@@ -430,7 +434,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
             BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
-            
+
             // targetItem.Add(sourceItem);
             if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
             {

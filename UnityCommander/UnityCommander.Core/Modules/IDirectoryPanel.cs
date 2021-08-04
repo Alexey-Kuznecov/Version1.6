@@ -16,7 +16,10 @@ namespace UnityCommander.Core.Modules
         /// <summary>
         /// Gets or sets the   panel.
         /// </summary>
-        public void InitializedViewModel();
+        /// <returns>
+        /// The <see cref="IDirectoryPanel"/>.
+        /// </returns>
+        public IDirectoryPanel InitializedViewModel();
         
         /// <summary>
         /// Gets or sets the initial command.

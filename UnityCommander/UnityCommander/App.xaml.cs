@@ -1,14 +1,18 @@
 ﻿
 namespace UnityCommander
 {
+    using System;
+    using System.Reflection;
     using System.Windows;
 
     using Prism.Ioc;
     using Prism.Modularity;
+    using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
     using UnityCommander.Core.Commands;
     using UnityCommander.Modules.FilePanel;
+    using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Modules.LeftSideBars;
     using UnityCommander.Modules.ToolBar;
@@ -60,6 +64,16 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<CommandManager>();
 
             containerRegistry.RegisterForNavigation<ViewA>("ViewA");
+        }
+
+        /// <summary>
+        /// The configure view model locator.
+        /// </summary>
+        protected override void ConfigureViewModelLocator()
+        {
+            base.ConfigureViewModelLocator();
+            ViewModelLocationProvider.Register(typeof(ViewB).ToString(), () => Container.Resolve<ViewAViewModel>());
+            ViewModelLocationProvider.Register(typeof(ViewA).ToString(), () => Container.Resolve<ViewAViewModel>());
         }
 
         /// <summary>

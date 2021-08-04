@@ -22,6 +22,9 @@
     <Compile Update="Views\NTFSSecurityView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\ViewB.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\NavigationPopup.xaml">
@@ -49,6 +52,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ViewA.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\ViewB.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

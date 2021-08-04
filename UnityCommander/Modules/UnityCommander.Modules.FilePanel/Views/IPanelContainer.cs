@@ -12,8 +12,11 @@ namespace UnityCommander.Modules.FilePanel.Views
         /// Initial directory panel.
         /// </summary>
         /// <param name="directoryPanel">
-        /// The directory Panel.
+        /// The directory panel.
         /// </param>
-        public void InitialDirectoryPanel(IDirectoryPanel directoryPanel);
+        /// <param name="regionName">
+        /// The region name.
+        /// </param>
+        public void InitialDirectoryPanel(IDirectoryPanel directoryPanel, string regionName);
     } 
 }

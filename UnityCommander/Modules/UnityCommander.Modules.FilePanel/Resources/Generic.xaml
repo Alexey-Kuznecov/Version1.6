@@ -5,6 +5,29 @@
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+
+    <!--
+        Back button style in file panel.
+    -->
+    <Style
+        x:Key="BackButtonStyle"
+        BasedOn="{StaticResource MaterialDesignRaisedButton}"
+        TargetType="{x:Type Button}">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
+        <Setter Property="Content" Value="Goback" />
+        <Setter Property="Foreground" Value="#E8E8EC" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <!--
+        Style for back button in file panel
+    -->
     <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
@@ -26,6 +49,9 @@
             </ListView>
         </Grid>
     </ControlTemplate>
+    <!--
+        Style for back button in file panel
+    -->
     <ControlTemplate x:Key="DriveListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
@@ -41,6 +67,57 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ListView>
+        </Grid>
+    </ControlTemplate>
+    <!--
+        Style for back button in file panel
+    -->
+    <ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Style="{DynamicResource DirectoryPanelHeaderStyle}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="25" />
+                </Grid.ColumnDefinitions>
+                <ContentControl
+                    Grid.Column="0"
+                    Height="25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="{Binding BackButtonIcon.Path.Data}"
+                    Foreground="#E8E8EC"
+                    IsEnabled="{Binding BackButtonIsEnabled}"
+                    Style="{DynamicResource CustomButtonStyles}"
+                    Template="{DynamicResource CustomButtonTemplate}">
+                    <ContentControl.InputBindings>
+                        <MouseBinding Command="{Binding GoBackDirectoryPanelCommand}" Gesture="LeftClick" />
+                    </ContentControl.InputBindings>
+                    <ContentControl.ToolTip>
+                        <ToolTip Content="Go back to previous directory." />
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl
+                    Grid.Column="1"
+                    Height="25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="{Binding ThisComputerIcon.Path.Data}"
+                    Foreground="#E8E8EC"
+                    IsEnabled="{Binding ThisComputerIconIsEnabled}"
+                    Style="{DynamicResource CustomButtonStyles}"
+                    Template="{DynamicResource CustomButtonTemplate}">
+                    <ContentControl.InputBindings>
+                        <MouseBinding Command="{Binding GoDrivePanelCommand}" Gesture="LeftClick" />
+                    </ContentControl.InputBindings>
+                    <ContentControl.ToolTip>
+                        <ToolTip Content="Go to this computer" />
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </Grid>
         </Grid>
     </ControlTemplate>
 </ResourceDictionary>

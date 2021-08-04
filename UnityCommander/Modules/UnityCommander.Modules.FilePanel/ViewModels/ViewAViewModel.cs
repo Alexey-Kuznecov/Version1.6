@@ -2,7 +2,6 @@
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
-    using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Windows;
@@ -51,6 +50,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The region manager.
         /// </summary>
         private IRegionManager regionManager;
+
+        /// <summary>
+        /// The region manager.
+        /// </summary>
+        private string currentRegionName;
 
         /// <summary>
         /// The computer icon.
@@ -170,20 +174,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         ///  Goes back to the previous directory.
         /// </summary>
-        public DelegateCommand<object> GoBackDirectoryLeftPanelCommand =>
+        public DelegateCommand<object> GoBackDirectoryPanelCommand =>
             new DelegateCommand<object>(
                 index =>
-        {
-            if (this.navigationCommand.CanUndo)
-                this.navigationCommand.Previous();
+                    {
+                        if (this.navigationCommand.CanUndo)
+                            this.navigationCommand.Previous();
 
-            if (!this.navigationCommand.CanUndo)
-            {
-                this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
-                this.BackButtonIsEnabled = false;
-                this.ThisComputerIconIsEnabled = false;
-            }
-        });
+                        if (!this.navigationCommand.CanUndo)
+                        {
+                            this.BackButtonIsEnabled = false;
+                            this.ThisComputerIconIsEnabled = false;
+                        }
+                    });
 
         /// <summary>
         ///  Goes to the device and drive panel.
@@ -204,25 +207,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
                     this.ThisComputerIconIsEnabled = false;
                 });
-
-        /// <summary>
-        ///  Goes back to the previous directory.
-        /// </summary>
-        public DelegateCommand<object> GoBackDirectoryRightPanelCommand =>
-            new DelegateCommand<object>(
-                index =>
-                    {
-                        if (this.navigationRCommand.CanUndo)
-                            this.navigationRCommand.Previous();
-
-                        if (!this.navigationRCommand.CanUndo)
-                        {
-                            this.navigationRCommand.OnExecuteChanged += OnExecuteChanged;
-                            this.BackButtonIsEnabled = false;
-                            this.ThisComputerIconIsEnabled = false;
-                        }
-                    });
-
+        
         /// <summary>
         ///  Goes back to the previous directory.
         /// </summary>
@@ -230,18 +215,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             new DelegateCommand<object>(
                 obj =>
                     {
-                        var newDirectoryPanel = new SplitPanelView();
-                        var directoryPanel = this.FindDirectoryPanel(newDirectoryPanel);
-                        directoryPanel.InitializedViewModel();
-                        var token = directoryPanel.GetPanelToken();
-                        this.regionManager.AddToRegion(NestedRegionNames.LeftPanelRegion, newDirectoryPanel);
+                        var directoryPanel = new SplitPanelView();
+                        var token = this.FindDirectoryPanel(directoryPanel).InitializedViewModel().GetPanelToken();
+                        this.regionManager.AddToRegion(this.DefineCurrentRegion().Name, directoryPanel);
 
                         if (obj is TaberPanel control)
                         {
                             control.InitialElements.Add(this.CreateTabControl(token, $"Tab Control {control.InitialElements.Count}"));
                         }
-
-                        this.DisplayToken = token.ToString();
                     });
         
         /// <summary>
@@ -249,11 +230,27 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public DelegateCommand<object> ActivateTabCommand =>
             new DelegateCommand<object>(
-                number =>
+                token =>
                     {
-                        this.regionManager.Regions[NestedRegionNames.LeftPanelRegion]
-                             .Activate(this.regionManager.Regions[NestedRegionNames.LeftPanelRegion].Views
-                                 .Single(view => FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == (Guid)number));
+                        this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand((Guid)token);
+
+                        if (this.navigationCommand.CanUndo)
+                        {
+                            this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
+                            this.BackButtonIsEnabled = true;
+                            this.ThisComputerIconIsEnabled = true;
+                        }
+
+                        if (!this.navigationCommand.CanUndo)
+                        { 
+                            this.navigationCommand.OnExecuteChanged -= OnExecuteChanged;
+                            this.BackButtonIsEnabled = false;
+                            this.ThisComputerIconIsEnabled = false;
+                        }
+
+                        var regions = this.DefineCurrentRegion();
+                        regions.Activate(regions.Views.Single(view =>
+                            this.FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == (Guid)token));
                     });
 
         #endregion
@@ -264,27 +261,43 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="directoryPanel">
         /// The directory Panel.
         /// </param>
-        public void InitialDirectoryPanel(IDirectoryPanel directoryPanel)
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        public void InitialDirectoryPanel(IDirectoryPanel directoryPanel, string name)
         {
-            if (directoryPanel.GetInstanceNumber() == 2)
-            {
-                var token = directoryPanel.GetPanelToken();
+            var token = directoryPanel.GetPanelToken();
 
-                var control = new TabCollection
+            var control = new TabCollection
+            {
+                this.CreateTabControl(token, "Tab Control"),
+                this.CreateAddTabControl()
+            };
+            this.TabCollection = control;
+            this.TabCollection.CollectionChanged += this.TabCollection_CollectionChanged;
+            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
+            this.currentRegionName = name;
+        }
+
+        /// <summary>
+        /// The tab collection_ collection changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void TabCollection_CollectionChanged(object sender, EventArgs e)
+        {
+            var arg = e as CollectionChangedEventArg;
+            TaberControl tabIndex = arg?.Collection[^1];
+
+            if (arg != null)
+                foreach (TaberControl tab in arg.Collection)
                 {
-                    this.CreateTabControl(token, "Tab Control"),
-                    this.CreateAddTabControl()
-                };
-                this.TabCollection = control;
-                this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-            }
-
-            if (directoryPanel.GetInstanceNumber() == 1)
-            {
-                var token = directoryPanel.GetPanelToken();
-
-                this.navigationRCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-            } 
+                    tab.IsEnabled = tab != tabIndex;
+                }
         }
 
         /// <summary>
@@ -341,6 +354,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             button.SetBinding(TaberControl.CommandParameterProperty, binding);
             return button;
         }
+        
+        /// <summary>
+        /// The define current region.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IRegion"/>.
+        /// </returns>
+        private IRegion DefineCurrentRegion() =>
+            this.currentRegionName == NestedRegionNames.LeftFilePanelRegion
+                ? this.regionManager.Regions[NestedRegionNames.LeftPanelContentRegion]
+                : this.regionManager.Regions[NestedRegionNames.RightPanelContentRegion];
 
         /// <summary>
         /// The find directory panel token.

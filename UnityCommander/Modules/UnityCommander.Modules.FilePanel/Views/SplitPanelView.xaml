@@ -5,6 +5,7 @@
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
@@ -31,7 +32,8 @@
         -->
         <Grid Grid.Row="0">
             <!--
-                This markup responds to display directories.
+                This markup responds to display folder items. 
+                Template path: Resource\Generic.xml Name: DirectoryListViewTemplate
             -->
             <ContentControl Template="{Binding DirectoryPanelTemplate}" />
         </Grid>
