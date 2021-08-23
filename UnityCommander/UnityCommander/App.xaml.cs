@@ -21,6 +21,8 @@ namespace UnityCommander
     using UnityCommander.Services.Plugins;
     using UnityCommander.ViewModels;
     using UnityCommander.Views;
+    using UnityCommander.Views.CopyDialogs;
+    using UnityCommander.Views.Dialogs;
 
     /// <summary>
     /// The application.
@@ -52,6 +54,7 @@ namespace UnityCommander
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
+            containerRegistry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
             containerRegistry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig");
             containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();

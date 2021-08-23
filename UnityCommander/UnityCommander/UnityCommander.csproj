@@ -35,8 +35,31 @@
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="GongSolutions.WPF.DragDrop">
+      <HintPath>..\Library\GongSolutions.WPF.DragDrop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <ApplicationDefinition Update="App.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\CopyDialogs\CopyDialogControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\CopyDialogs\CopyProcessView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\CopyDialogs\CopyDialogControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CopyDialogs\CopyProcessView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

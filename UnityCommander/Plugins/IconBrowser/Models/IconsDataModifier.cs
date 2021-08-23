@@ -1,10 +1,10 @@
 ﻿
-using System;
-using System.Linq;
-using System.Xml.Linq;
-
 namespace AIconBrowser.Models
 {
+    using System;
+    using System.Linq;
+    using System.Xml.Linq;
+
     /// <summary>
     /// The icons data modifier.
     /// </summary>

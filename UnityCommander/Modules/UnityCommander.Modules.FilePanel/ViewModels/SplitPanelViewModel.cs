@@ -17,6 +17,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+    using System.Windows.Documents;
 
     using Core.Helper;
     using Core.Mvvm;
@@ -25,7 +26,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Prism.Commands;
     using Prism.Regions;
-
+    using Prism.Services.Dialogs;
     using Services.Interfaces;
 
     using UnityCommander.Common.Models.Columns;
@@ -36,6 +37,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Views;
 
+    using DragDrop = GongSolutions.Wpf.DragDrop.DragDrop;
+
     /// <summary>
     /// The left panel view model.
     /// </summary>
@@ -45,17 +48,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Declaration fields
 
         /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
+        private static byte instanceNumber;
+
+        /// <summary>
         /// Indicates the instance number used to determine the orientation of the file panel.   
         /// </summary>
         private static byte numberInstances;
 
-        /// <summary>
-        /// The copy dialog.
-        /// </summary>
-        private readonly CopyDialogView copyDialog;
-
-
         #region Dependencies Injection
+
+        /// <summary>
+        /// The dialog service.
+        /// </summary>
+        private readonly IDialogService dialogService;
 
         /// <summary>
         /// The directory provider.
@@ -135,6 +142,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="SplitPanelViewModel"/> class.
         /// </summary>
+        /// <param name="dialogService">
+        /// The dialog service.
+        /// </param>
         /// <param name="regionManager">
         /// The region manager is Prism implementation.
         /// </param>
@@ -154,6 +164,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Command manager
         /// </param>
         public SplitPanelViewModel(
+            IDialogService dialogService,
             IRegionManager regionManager, 
             ISettingsProviderService settingsService, 
             IDataProviderService dataProviderService, 
@@ -162,6 +173,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             CommandManager manager)
             : base(regionManager)
         {
+            this.dialogService = dialogService;
             this.commandManager = manager;
             this.pluginLoaderService = pluginService;
             this.dataProviderService = dataProviderService;
@@ -175,7 +187,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.FilePanelContainer = new ();
             this.FolderPanelContainer = new ();
             this.DrivePanelContainer = new ();
-            this.copyDialog = new ();
            
             this.DetectPanelOrientation();
             this.SetLastPanelState();
@@ -349,11 +360,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public byte InstanceNumber { get; set; }
 
         /// <summary>
-        /// Gets or sets the token.
-        /// </summary>
-        public static byte InstanceCount { get; set; }
-
-        /// <summary>
         /// The initial panel.
         /// </summary>
         /// <returns>
@@ -361,7 +367,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         public IDirectoryPanel InitializedViewModel()
         {
-            this.InstanceNumber = ++InstanceCount;
+            this.InstanceNumber = ++instanceNumber;
             this.Token = this.Token == Guid.Empty ? Guid.NewGuid() : this.Token;
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(this.Token, new NavigationInvoker());
             this.SetCommands(this.CurrentDirectory);
@@ -418,8 +424,38 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             if (isMultiSelect || isSingleSelect)
             {
+                var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
+
+                if (adorner == null)
+                {
+                    this.CreateAdornerLayer(dropInfo.VisualTarget);
+                }
+
+                //var list = dropInfo.VisualTarget as ListView;
+                //var template = Application.Current.FindResource("DragAdorner");
+                //list?.SetValue(DragDrop.DragAdornerTemplateProperty, template);
+
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
                 dropInfo.Effects = DragDropEffects.Copy;
+            }
+        }
+
+        /// <summary>
+        /// The create adorner layer.
+        /// </summary>
+        /// <param name="element">
+        /// The element.
+        /// </param>
+        private void CreateAdornerLayer(UIElement element)
+        {
+            var listBox = element as ListView;
+            var ad = new AdornerDecorator();
+
+            if (listBox?.Parent is Grid parent)
+            {
+                parent.Children.Remove(listBox);
+                ad.Child = listBox;
+                parent.Children.Add(ad);
             }
         }
 
@@ -436,13 +472,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
 
             // targetItem.Add(sourceItem);
-            if (this.copyDialog.DataContext is CopyDialogViewModel dialogViewModel)
-            {
-                dialogViewModel.Source = (dropInfo.Data as BaseDirectory)?.Path;
-                dialogViewModel.Target = (dropInfo.TargetItem as BaseDirectory)?.Path;
-            }
 
-            this.copyDialog.ShowDialog();
+            var copyParameters = new CopyParameters()
+            {
+                Source = (dropInfo.Data as BaseDirectory)?.Path,
+                Target = (dropInfo.TargetItem as BaseDirectory)?.Path
+            };
+
+            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
         }
 
         #endregion
@@ -684,28 +721,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             
             try
             {
+                StatePanelSerializer.XmlSerialize(this.CurrentDirectory);
                 if (this.settingsService.IsSessionSaved)
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
+                    //BinaryFormatter formatter = new BinaryFormatter();
 
-                    using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
-                    {
-                        object[] deserializeState = (object[])formatter.Deserialize(fs);
+                    //using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
+                    //{
+                    //    object[] deserializeState = (object[])formatter.Deserialize(fs);
 
-                        this.FileList = (ObservableCollection<FileModel>)deserializeState[0];
-                        this.DirectoryList = (ObservableCollection<FolderModel>)deserializeState[1];
+                    //    this.FileList = (ObservableCollection<FileModel>)deserializeState[0];
+                    //    this.DirectoryList = (ObservableCollection<FolderModel>)deserializeState[1];
 
-                        this.CurrentDirectory = deserializeState[2] as string;
-                    }
+                    //    this.CurrentDirectory = deserializeState[2] as string;
+                    //}
 
 
-                    this.pluginValuesIsCached = true;
-                    this.InitializeColumns();
+                    //this.pluginValuesIsCached = true;
+                    //this.InitializeColumns();
 
-                    if (!Directory.Exists(this.CurrentDirectory))
-                    {
-                        throw new Exception();
-                    }
+                    //if (!Directory.Exists(this.CurrentDirectory))
+                    //{
+                    //    throw new Exception();
+                    //}
                 }
                 else
                 {
@@ -714,15 +752,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             } 
             catch
             {
-                this.CurrentDirectory = @"C:\";
+                this.CurrentDirectory = this.GetInstanceNumber() == 0 ? @"C:\" : @"D:\Works\WPF\Test";
                 this.FileList = this.dataProviderService.GetFiles(this.CurrentDirectory);
                 this.DirectoryList = this.dataProviderService.GetDirectories(this.CurrentDirectory);
                 this.InitializeColumns();
             }
         }
-
-
-
+        
         /// <summary>
         /// Updates the file pane and sets the appropriate template.
         /// </summary>

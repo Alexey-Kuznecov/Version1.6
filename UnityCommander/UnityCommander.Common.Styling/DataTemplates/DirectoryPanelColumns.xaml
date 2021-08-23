@@ -11,14 +11,16 @@
 
     <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
-            <ContentPresenter Grid.Column="0">
-                <ContentPresenter.Content>
-                    <converter:BindableParameter
-                        Binding="{Binding Icon}"
-                        Converter="{StaticResource IconConverter}"
-                        ConverterParameter="{Binding TargetPanel}" />
-                </ContentPresenter.Content>
-            </ContentPresenter>
+            <AdornerDecorator>
+                <ContentPresenter>
+                    <ContentPresenter.Content>
+                        <converter:BindableParameter
+                            Binding="{Binding Icon}"
+                            Converter="{StaticResource IconConverter}"
+                            ConverterParameter="{Binding TargetPanel}" />
+                    </ContentPresenter.Content>
+                </ContentPresenter>
+            </AdornerDecorator>
         </Grid>
     </DataTemplate>
 

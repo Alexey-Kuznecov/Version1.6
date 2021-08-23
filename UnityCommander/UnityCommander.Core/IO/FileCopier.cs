@@ -185,6 +185,24 @@ namespace UnityCommander.Core.IO
         }
 
         /// <summary>
+        /// The copy files.
+        /// </summary>
+        /// <param name="filePath"> The path to the old directory. </param>
+        /// <param name="dirPath"> The path to the new directory. </param>
+        public void CopyFile(string filePath, string dirPath)
+        {
+            FileInfo info = new FileInfo(filePath);
+            string newFile = Path.Combine(dirPath, new DirectoryInfo(filePath).Name);
+            this.totalBytesLeft += info.Length;
+            this.fileSize = info.Length;
+            this.parameters.Name = info.Name;
+            this.parameters.Length = info.Length;
+            this.parameters.Source = info.FullName;
+            this.parameters.Destination = newFile;
+            this.operations.XCopy(filePath, newFile, this.CopyProgressHandle);
+        }
+
+        /// <summary>
         /// Calculates the total size of files on another thread.
         /// </summary>
         /// <param name="source">
@@ -323,6 +341,9 @@ namespace UnityCommander.Core.IO
 
         #region Timer Handlers
 
+        /// <summary>
+        /// The bytes transferred.
+        /// </summary>
         private long bytesTransferred;
 
         /// <summary>

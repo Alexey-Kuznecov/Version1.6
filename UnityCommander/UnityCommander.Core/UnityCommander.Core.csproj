@@ -28,6 +28,12 @@
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="GongSolutions.WPF.DragDrop">
+      <HintPath>..\Library\GongSolutions.WPF.DragDrop.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

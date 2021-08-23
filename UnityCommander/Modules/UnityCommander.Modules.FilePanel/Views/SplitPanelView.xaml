@@ -32,7 +32,7 @@
         -->
         <Grid Grid.Row="0">
             <!--
-                This markup responds to display folder items. 
+                This markup responds to display folder items.
                 Template path: Resource\Generic.xml Name: DirectoryListViewTemplate
             -->
             <ContentControl Template="{Binding DirectoryPanelTemplate}" />
@@ -52,6 +52,8 @@
         <Grid Grid.Row="2">
             <ListView
                 commands:GridViewSort.AutoSort="True"
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
                 SelectionMode="Single"

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-
+﻿
 namespace UnityCommander.Controls.Taber
 {
+    using System;
+    using System.Collections;
+    using System.Windows;
+
     public class TabCollection : CollectionBase
     {
         public event EventHandler CollectionChanged;

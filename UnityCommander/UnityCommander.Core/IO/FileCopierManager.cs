@@ -72,9 +72,36 @@ namespace UnityCommander.Core.IO
                     {
                         this.fileCopier.CopyFiles(this.source, this.target);
                     }
+
+                    this.fileCopier.CopyProgressReport -= this.FileCopier_CopyProgressReport;
                 }
 
                 this.CopyFileFinish?.Invoke(this.fileCopier.GetParameters);
+            });
+        }
+
+        /// <summary>
+        /// The copy file.
+        /// </summary>
+        /// <param name="sourcePath">
+        /// The source path.
+        /// </param>
+        /// <param name="targetPath">
+        /// The target path.
+        /// </param>
+        public void CopyFile(string sourcePath, string targetPath)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                using (this.fileCopier = new FileCopier())
+                {
+                    this.source = sourcePath;
+                    this.target = targetPath;
+                    this.fileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
+                    this.fileCopier.GetSpeedTimer.Start();
+                    this.fileCopier.GetElapsedTimer.Start();
+                    this.fileCopier.CopyFile(this.source, this.target);
+                }
             });
         }
 

@@ -1,15 +1,16 @@
 ﻿
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Xml.Linq;
-using AIconBrowser.Help;
-
 namespace AIconBrowser.Models
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Xml.Linq;
+
+    using AIconBrowser.Help;
+
     /// <summary>
     /// The icons data writer.
     /// </summary>

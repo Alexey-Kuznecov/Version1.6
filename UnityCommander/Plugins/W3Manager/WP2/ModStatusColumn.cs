@@ -41,6 +41,11 @@ namespace W3Manager.WP2
             return guid.ToString();
         }
 
+        public void UpdateColumnValue(ColumnManager columnManager)
+        {
+            // throw new NotImplementedException();
+        }
+
         public OptionRender ColumnValueRender()
         {
             return OptionRender.TextBlock;

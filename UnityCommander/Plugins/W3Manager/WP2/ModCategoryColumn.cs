@@ -28,7 +28,7 @@ namespace W3Manager.WP2
             builder.Add("Mod Category", 50);
             builder.Add("Mod Category2", 50);
             builder.AddContextItem("Install", this.InstallMod);
-            builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), this.DisplayAsHandler, OptionRender.DropBox);
+            //builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), this.DisplayAsHandler, OptionRender.DropBox);
         }
 
         /// <summary>
@@ -88,6 +88,17 @@ namespace W3Manager.WP2
             }
 
             return "Folder";
+        }
+
+        /// <summary>
+        /// The update column value.
+        /// </summary>
+        /// <param name="columnManager">
+        /// The column manager.
+        /// </param>
+        public void UpdateColumnValue(ColumnManager columnManager)
+        {
+            // throw new System.NotImplementedException();
         }
 
         /// <summary>
