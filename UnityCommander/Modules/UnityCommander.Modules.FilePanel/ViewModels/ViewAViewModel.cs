@@ -42,19 +42,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private NavigationInvoker navigationCommand;
 
         /// <summary>
-        /// The navigationCommand class instance.
-        /// </summary>
-        private NavigationInvoker navigationRCommand;
-
-        /// <summary>
         /// The region manager.
         /// </summary>
         private IRegionManager regionManager;
+        
+        /// <summary>
+        /// The region manager.
+        /// </summary>
+        private IAppConfigService appConfigService;
 
         /// <summary>
         /// The region manager.
         /// </summary>
         private string currentRegionName;
+
+        /// <summary>
+        /// The region manager.
+        /// </summary>
+        private TaberControl currentTab;
 
         /// <summary>
         /// The computer icon.
@@ -97,14 +102,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="iconProvider">
         /// The icon Provider.
         /// </param>
+        /// <param name="configService">
+        /// </param>
         /// <param name="manager">
         /// The commandManager.
         /// </param>
-        public ViewAViewModel(IRegionManager regionManager, IIconProviderService iconProvider, CommandManager manager)
+        public ViewAViewModel(IRegionManager regionManager, IIconProviderService iconProvider, IAppConfigService configService, CommandManager manager)
             : base(regionManager)
         {
             this.regionManager = regionManager;
             this.commandManager = manager;
+            this.appConfigService = configService;
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
             this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
             this.ThisComputerIconIsEnabled = true;
@@ -215,8 +223,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             new DelegateCommand<object>(
                 obj =>
                     {
+                        var token = Guid.NewGuid();
                         var directoryPanel = new SplitPanelView();
-                        var token = this.FindDirectoryPanel(directoryPanel).InitializedViewModel().GetPanelToken();
+                        this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, "C:\\");
                         this.regionManager.AddToRegion(this.DefineCurrentRegion().Name, directoryPanel);
 
                         if (obj is TaberPanel control)
@@ -258,25 +267,34 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The initial panel.
         /// </summary>
-        /// <param name="directoryPanel">
-        /// The directory Panel.
-        /// </param>
         /// <param name="name">
         /// The name.
         /// </param>
-        public void InitialDirectoryPanel(IDirectoryPanel directoryPanel, string name)
+        public void InitialDirectoryPanel(string name)
         {
-            var token = directoryPanel.GetPanelToken();
+            this.currentRegionName = name;
+            var token = Guid.Empty;
+            var control = new TabCollection();
 
-            var control = new TabCollection
+            foreach (var config in this.appConfigService.GetAppSession().GetTabConfigs(name))
             {
-                this.CreateTabControl(token, "Tab Control"),
-                this.CreateAddTabControl()
-            };
+                var view = new SplitPanelView();
+                token = config.Token;
+                var path = config.Path;
+                
+                if (view.DataContext is IDirectoryPanel directoryPanel)
+                {
+                    directoryPanel.InitializedViewModel(token, path);
+                }
+
+                this.regionManager.AddToRegion(DefineCurrentRegion().Name, view);
+                control.Add(this.CreateTabControl(token, path));
+            }
+
+            control.Add(this.CreateAddTabControl());
             this.TabCollection = control;
             this.TabCollection.CollectionChanged += this.TabCollection_CollectionChanged;
             this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-            this.currentRegionName = name;
         }
 
         /// <summary>

@@ -254,6 +254,11 @@ namespace UnityCommander.Modules.FilePanel.Controls
             NavigationPanel panel = (NavigationPanel)d;
             panel.InternalChildren.Clear();
 
+            if (panel.parsePath == null)
+            {
+                return;
+            }
+
             while (counter < panel.parsePath.Length)
             {
                 if (panel.parsePath[counter] == string.Empty) break;

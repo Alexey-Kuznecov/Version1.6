@@ -3,6 +3,9 @@ namespace UnityCommander.Core.Modules
 {
     using System;
 
+    using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Commands.Base;
+
     /// <summary>
     /// The DirectoryPanel interface.
     /// </summary>
@@ -16,10 +19,16 @@ namespace UnityCommander.Core.Modules
         /// <summary>
         /// Gets or sets the   panel.
         /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <param name="path">
+        /// The path.
+        /// </param>
         /// <returns>
         /// The <see cref="IDirectoryPanel"/>.
         /// </returns>
-        public IDirectoryPanel InitializedViewModel();
+        public IDirectoryPanel InitializedViewModel(Guid token, string path);
         
         /// <summary>
         /// Gets or sets the initial command.
@@ -30,11 +39,11 @@ namespace UnityCommander.Core.Modules
         public Guid GetPanelToken();
 
         /// <summary>
-        /// The get instance number.
+        /// The get current path.
         /// </summary>
         /// <returns>
-        /// The <see cref="Guid"/>.
+        /// The <see cref="string"/>.
         /// </returns>
-        public byte GetInstanceNumber();
+        public string GetCurrentPath();
     }
 }

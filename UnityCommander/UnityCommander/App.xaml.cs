@@ -62,7 +62,8 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
-            
+            containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
+
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
 

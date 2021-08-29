@@ -9,6 +9,7 @@
 
 namespace UnityCommander.Modules.FilePanel
 {
+    using System;
     using System.Windows;
 
     using Prism.Ioc;
@@ -28,8 +29,6 @@ namespace UnityCommander.Modules.FilePanel
         /// The _region manager.
         /// </summary>
         private IRegionManager regionManager;
-        private SplitPanelView leftPanelContent;
-        private SplitPanelView rightPanelContent;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FilePanelModule"/> class.
@@ -46,44 +45,11 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this.leftPanelContent = new SplitPanelView();
-            this.rightPanelContent = new SplitPanelView();
-            var parameter1 = new NavigationParameters { { "viewmodel", this.leftPanelContent } };
-            var parameter2 = new NavigationParameters { { "viewmodel", this.rightPanelContent } };
-
             this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, nameof(MainView));
-            this.regionManager.RequestNavigate(NestedRegionNames.LeftFilePanelRegion, nameof(ViewA), this.NavigationCallback, parameter1);
-            this.regionManager.RequestNavigate(NestedRegionNames.RightFilePanelRegion, nameof(ViewB), this.NavigationCallback, parameter2);
-            this.regionManager.RegisterViewWithRegion(NestedRegionNames.LeftPanelContentRegion, this.GetLeftPanelContent);
-            this.regionManager.RegisterViewWithRegion(NestedRegionNames.RightPanelContentRegion, this.GetRightPanelContent);
-        }
-
-        private object GetLeftPanelContent()
-        {
-            return this.leftPanelContent;
-        }
-
-        private object GetRightPanelContent()
-        {
-            return this.rightPanelContent;
-        }
-
-        private void NavigationCallback(NavigationResult obj)
-        {
-            var region = obj.Context.NavigationService.Region;
-            var viewModel = obj.Context.Parameters;
-
-            foreach (var view in region.Views)
-            {
-                if (view is FrameworkElement { DataContext: IPanelContainer container })
-                {
-                    if (((FrameworkElement)viewModel["viewmodel"]).DataContext is IDirectoryPanel directoryPanel)
-                    {
-                        directoryPanel.InitializedViewModel();
-                        container.InitialDirectoryPanel(directoryPanel, region.Name);
-                    }
-                }
-            }
+            this.regionManager.RequestNavigate(NestedRegionNames.LeftFilePanelRegion, nameof(ViewA), this.NavigationCallback);
+            this.regionManager.RequestNavigate(NestedRegionNames.RightFilePanelRegion, nameof(ViewB), this.NavigationCallback);
+            this.regionManager.RegisterViewWithRegion(NestedRegionNames.LeftPanelContentRegion, typeof(SplitPanelView));
+            this.regionManager.RegisterViewWithRegion(NestedRegionNames.RightPanelContentRegion, typeof(SplitPanelView));
         }
 
         /// <summary>
@@ -96,6 +62,28 @@ namespace UnityCommander.Modules.FilePanel
             containerRegistry.RegisterForNavigation<ViewA>();
             containerRegistry.RegisterForNavigation<ViewB>();
             containerRegistry.RegisterForNavigation<SplitPanelView>();
+        }
+
+        /// <summary>
+        /// The navigation callback.
+        /// </summary>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        private void NavigationCallback(NavigationResult result)
+        {
+            var region = result.Context.NavigationService.Region;
+
+            foreach (var view in region.Views)
+            {
+                if (view is FrameworkElement vm)
+                {
+                    if (vm.DataContext is IPanelContainer container)
+                    {
+                        container.InitialDirectoryPanel(region.Name);
+                    }
+                }
+            }
         }
     }
 }

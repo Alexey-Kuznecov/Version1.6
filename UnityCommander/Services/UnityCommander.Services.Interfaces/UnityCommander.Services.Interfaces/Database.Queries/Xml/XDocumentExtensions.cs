@@ -1,8 +1,7 @@
 ﻿
-namespace UnityCommander.Core.Database.Xml
+namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
 {
     using System.Collections.Generic;
-    using System.Reflection;
 
     /// <summary>
     /// The x document extensions.
@@ -20,13 +19,6 @@ namespace UnityCommander.Core.Database.Xml
         /// </param>
         public static void Add(this XDocument document, string elementName)
         {
-            //foreach (var element in document.ChildrenInfo)
-            //{
-            //    if (element.Name == elementName)
-            //    {
-            //        element.Children.Add(null);
-            //    }
-            //}
         }
 
         /// <summary>
@@ -43,16 +35,6 @@ namespace UnityCommander.Core.Database.Xml
         /// </param>
         public static void SerializeObject(this XDocument document, string elementName, object data)
         {
-            //XElementInfo info = new XElementInfo() 
-
-            //PropertyInfo[] propertyInfos = data.GetType().GetProperties();
-
-            //foreach (var propertyInfo in propertyInfos)
-            //{
-            //    propertyInfo.Name
-            //}
-
-            //document
         }
 
         /// <summary>

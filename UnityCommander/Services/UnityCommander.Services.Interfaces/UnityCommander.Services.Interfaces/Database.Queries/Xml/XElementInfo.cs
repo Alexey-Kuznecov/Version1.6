@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Core.Database.Xml
+namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
 {
     using System.Collections.Generic;
     using System.Xml.Linq;
@@ -9,6 +9,7 @@ namespace UnityCommander.Core.Database.Xml
     /// </summary>
     public class XElementInfo
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="XElementInfo"/> class.
         /// </summary>
@@ -54,11 +55,6 @@ namespace UnityCommander.Core.Database.Xml
         public XElement Element { get; set; }
 
         /// <summary>
-        /// Gets or sets the current path.
-        /// </summary>
-        public XPath CurrentPath { get; set; }
-
-        /// <summary>
         /// Gets or sets the attributes.
         /// </summary>
         public List<XAttribute> Attributes { get; set; } = new ();
@@ -72,6 +68,11 @@ namespace UnityCommander.Core.Database.Xml
         /// Gets the children info.
         /// </summary>
         public XElementInfo ChildrenInfo { get; private set; }
+
+        /// <summary>
+        /// Gets the children info.
+        /// </summary>
+        public XElementInfo ParentInfo { get; private set; }
 
         /// <summary>
         /// Gets the children info.
@@ -94,6 +95,32 @@ namespace UnityCommander.Core.Database.Xml
         public object Data { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// The find ancestor.
+        /// </summary>
+        /// <param name="element">
+        /// The element.
+        /// </param>
+        /// <param name="level">
+        /// The level.
+        /// </param>
+        /// <returns>
+        /// The <see cref="XElementInfo"/>.
+        /// </returns>
+        public XElementInfo FindAncestor(XElementInfo element, byte level)
+        {
+            var counter = 0;
+            var parent = element;
+
+            while (counter < level)
+            {
+                parent = parent.ParentInfo;
+                counter++;
+            }
+
+            return parent;
+        }
 
         /// <summary>
         /// The add.
@@ -138,6 +165,7 @@ namespace UnityCommander.Core.Database.Xml
         {
             var info = this.CreateOf(new XElementInfo(element));
 
+            this.ParentInfo = info.ParentInfo;
             this.ChildrenInfo = info.ChildrenInfo;
             this.ChildrenInfos = info.ChildrenInfos;
             this.Element = info.Element;
@@ -198,6 +226,7 @@ namespace UnityCommander.Core.Database.Xml
             foreach (var child in parent.Elements())
             {
                 var elementInfo = new XElementInfo(child);
+                elementInfo.ParentInfo = element;
                 element.ChildrenInfo = elementInfo.CreateOf(elementInfo);
                 element.ChildrenInfos.Add(element.ChildrenInfo);
                 element.Children.Add(child);

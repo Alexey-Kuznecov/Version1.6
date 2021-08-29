@@ -3,19 +3,22 @@ namespace UnityCommander.Controls.Taber
 {
     using System;
     using System.Collections;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
 
+    /// <summary>
+    /// The tab collection.
+    /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class TabCollection : CollectionBase
     {
+        /// <summary>
+        /// The collection changed.
+        /// </summary>
         public event EventHandler CollectionChanged;
 
-        protected virtual void OnCollectionChangedEvent(EventArgs e)
-        {
-            EventHandler handler = CollectionChanged;
-            handler?.Invoke(this, e);
-        }
-
         #region Properties
+        
         /// <summary>
         /// Gets/Sets value for the item by that index
         /// </summary>
@@ -29,15 +32,34 @@ namespace UnityCommander.Controls.Taber
 
         #region Public Methods
 
+        /// <summary>
+        /// The index of.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int IndexOf(TaberControl control)
         {
             if (control != null)
             {
                 return base.List.IndexOf(control);
             }
+
             return -1;
         }
 
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
         public int Add(TaberControl control)
         {
             if (control != null)
@@ -50,6 +72,12 @@ namespace UnityCommander.Controls.Taber
             return -1;
         }
 
+        /// <summary>
+        /// The remove.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
         public void Remove(TaberControl control)
         {
             control.TabClick -= this.OnControlTabClick;
@@ -57,6 +85,12 @@ namespace UnityCommander.Controls.Taber
             this.RaiseEvent(this);
         }
 
+        /// <summary>
+        /// The add range.
+        /// </summary>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
         public void AddRange(TabCollection collection)
         {
             if (collection != null)
@@ -65,6 +99,15 @@ namespace UnityCommander.Controls.Taber
             }
         }
 
+        /// <summary>
+        /// The insert.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="control">
+        /// The control.
+        /// </param>
         public void Insert(int index, TaberControl control)
         {
             if (index <= List.Count && control != null)
@@ -74,11 +117,40 @@ namespace UnityCommander.Controls.Taber
             }
         }
 
+        /// <summary>
+        /// The contains.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         public bool Contains(TaberControl control)
         {
             return this.List.Contains(control);
         }
 
+        #endregion
+
+        /// <summary>
+        /// The on collection changed event.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        protected virtual void OnCollectionChangedEvent(EventArgs e)
+        {
+            EventHandler handler = this.CollectionChanged;
+            handler?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// The raise event.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void RaiseEvent(object sender)
         {
             if (this.CollectionChanged != null)
@@ -114,7 +186,5 @@ namespace UnityCommander.Controls.Taber
                     item.IsEnabled = true;
             }
         }
-
-        #endregion
     }
 }
