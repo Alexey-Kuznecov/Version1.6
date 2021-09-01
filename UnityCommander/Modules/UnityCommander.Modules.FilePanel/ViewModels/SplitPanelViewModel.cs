@@ -23,7 +23,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Core.Mvvm;
 
     using GongSolutions.Wpf.DragDrop;
-
+    using NLog;
     using Prism.Commands;
     using Prism.Regions;
     using Prism.Services.Dialogs;
@@ -31,8 +31,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using UnityCommander.Common.Models.Columns;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Core;
     using UnityCommander.Core.Commands;
-    using UnityCommander.Core.Commands.Base;
     using UnityCommander.Core.Modules;
     using UnityCommander.Integration.Columns;
 
@@ -70,17 +70,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The plugin loader service.
         /// </summary>
         private readonly IPluginLoaderService pluginLoaderService;
+        
+        /// <summary>
+        /// The command manager.
+        /// </summary>
+        private readonly CommandManager commandManager;
 
         /// <summary>
-        /// The config service.
+        /// The logger.
         /// </summary>
-        private readonly IAppConfigService appConfigService;
+        private readonly Logger logger;
 
         /// <summary>
         /// If true, the plugin was cached and the result will be restored
         /// from the cache table the next time the program starts.
         /// </summary>
         private bool pluginValuesIsCached;
+        
         #endregion
 
         #region Collections
@@ -106,22 +112,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The navigation command.
         /// </summary>
         private NavigationInvoker navigationCommand;
-
-        /// <summary>
-        /// The command manager.
-        /// </summary>
-        private CommandManager commandManager;
-
+        
         /// <summary>
         /// Control template for panel items.
         /// </summary>
         private ControlTemplate directoryPanelTemplate;
-
-        /// <summary>
-        /// Serialization path for saving the file panel state.
-        /// </summary>
-        private string serializedPath;
-
+        
         /// <summary>
         /// Indicates the current directory.
         /// </summary>
@@ -152,11 +148,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="pluginService">
         /// Service for loading all detected plugin interfaces.
         /// </param>
-        /// <param name="configService">
-        /// Service for d.
-        /// </param>
         /// <param name="manager">
         /// Command manager
+        /// </param>
+        /// <param name="logger">
+        /// Log manager.
         /// </param>
         public SplitPanelViewModel(
             IDialogService dialogService,
@@ -165,13 +161,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IDataProviderService dataService,
             IGlobalCommandService commandService,
             IPluginLoaderService pluginService,
-            IAppConfigService configService,
-            CommandManager manager)
+            CommandManager manager,
+            ModuleLogger logger)
             : base(regionManager)
         {
-            this.appConfigService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
+            this.logger = logger.GetLogger();
             this.pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
@@ -193,6 +189,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (dir != null)
                 {
+#if (Nlog)
+                    this.logger.Info("File Panel: '{0}'", dir.Path);
+#endif
                     this.navigationCommand.Execute(this.UpdateFilePanel, dir.Path);
                 }
             });
@@ -205,6 +204,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (dir != null)
                 {
+#if (Nlog)
+                    this.logger.Info("Driv Panel: '{0}'", dir.Letter);
+#endif
                     this.navigationCommand.Execute(this.UpdateFilePanel, dir.Letter);
                 }
             });
@@ -217,6 +219,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (dir != null)
                 {
+#if (Nlog)
+                    this.logger.Info("Navi Panel: '{0}'", dir);
+#endif
                     this.navigationCommand.Execute(this.UpdateFilePanel, dir);
                 }
             });
@@ -230,24 +235,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (settingsService.IsSessionSaved)
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
-
-                    foreach (var file in this.FileList)
-                    {
-                        file.Additional = file.Additional.ConvertToDictionary();
-                    }
-
-                    foreach (var folder in this.DirectoryList)
-                    {
-                        folder.Additional = folder.Additional.ConvertToDictionary();
-                    }
-
-                    object[] saveObjects = { this.FileList, this.DirectoryList, this.CurrentDirectory };
-
-                    using (FileStream fs = new FileStream(this.serializedPath, FileMode.OpenOrCreate))
-                    {
-                        formatter.Serialize(fs, saveObjects);
-                    }
                 }
             });
 
@@ -326,22 +313,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             set
             {
-                if (value == null) return;
-                this.SelectedDirectories.Add(value);
+                if (value != null)
+                {
+                    this.SelectedDirectories.Add(value);
+                }
             }
         }
 
         /// <summary>
         /// Gets or sets the selected directory.
         /// </summary>
-        public List<BaseDirectory> SelectedDirectories { get; set; } = new();
-
-        #region ADDITIONAL INITIALIZATION VIEW MODEL
+        public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the token.
         /// </summary>
-        public Guid Token { get; set; } = Guid.NewGuid();
+        public Guid Token { get; set; }
 
         /// <summary>
         /// The initial panel.
@@ -357,6 +344,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         public IDirectoryPanel InitializedViewModel(Guid token, string path)
         {
+#if (Nlog)
+            this.logger.Info("Token: {0} Path: {1}", token, path);
+#endif
             this.CurrentDirectory = path;
             this.Token = token;
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
@@ -371,26 +361,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Guid"/>.
         /// </returns>
-        public Guid GetPanelToken()
-        {
-            if (this.Token == Guid.Empty)
-            {
-                this.Token = Guid.NewGuid();
-                return this.Token;
-            }
-
-            return this.Token;
-        }
+        public Guid GetPanelToken() => this.Token;
 
         /// <summary>
-        /// The get current path.
+        /// The get panel token.
         /// </summary>
         /// <returns>
-        /// The <see cref="string"/>.
+        /// The <see cref="Guid"/>.
         /// </returns>
         public string GetCurrentPath() => this.CurrentDirectory;
-
-        #endregion
 
         #endregion
 
@@ -438,6 +417,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// The drop.
+        /// </summary>
+        /// <param name="dropInfo">
+        /// The drop event handler.
+        /// </param>
+        /// [DebuggerStepThrough]
+        void IDropTarget.Drop(IDropInfo dropInfo)
+        {
+            BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
+            BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
+
+            // targetItem.Add(sourceItem);
+            var copyParameters = new CopyParameters()
+            {
+                Source = (dropInfo.Data as BaseDirectory)?.Path,
+                Target = (dropInfo.TargetItem as BaseDirectory)?.Path
+            };
+
+            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
+        }
+
         /// <summary>
         /// The create adorner layer.
         /// </summary>
@@ -455,29 +457,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 ad.Child = listBox;
                 parent.Children.Add(ad);
             }
-        }
-
-        /// <summary>
-        /// The drop.
-        /// </summary>
-        /// <param name="dropInfo">
-        /// The drop event handler.
-        /// </param>
-        /// [DebuggerStepThrough]
-        void IDropTarget.Drop(IDropInfo dropInfo)
-        {
-            BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
-            BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
-
-            // targetItem.Add(sourceItem);
-
-            var copyParameters = new CopyParameters()
-            {
-                Source = (dropInfo.Data as BaseDirectory)?.Path,
-                Target = (dropInfo.TargetItem as BaseDirectory)?.Path
-            };
-
-            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
         }
 
         #endregion

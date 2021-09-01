@@ -20,6 +20,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Interfaces.Database.Queries.Xml;
 
     using CommandManager = UnityCommander.Core.Commands.CommandManager;
     using TabControl = UnityCommander.Controls.Taber.TabControl;
@@ -38,6 +39,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly CommandManager commandManager;
 
         /// <summary>
+        /// The region manager.
+        /// </summary>
+        private readonly IRegionManager regionManager;
+
+        /// <summary>
+        /// The region manager.
+        /// </summary>
+        private readonly IAppConfigService appConfigService;
+
+        /// <summary>
         /// The navigationCommand class instance.
         /// </summary>
         private NavigationInvoker navigationCommand;
@@ -45,22 +56,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The region manager.
         /// </summary>
-        private IRegionManager regionManager;
-        
-        /// <summary>
-        /// The region manager.
-        /// </summary>
-        private IAppConfigService appConfigService;
-
-        /// <summary>
-        /// The region manager.
-        /// </summary>
         private string currentRegionName;
-
-        /// <summary>
-        /// The region manager.
-        /// </summary>
-        private TabControl currentTab;
 
         /// <summary>
         /// The computer icon.
@@ -85,7 +81,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The token display.
         /// </summary>
-        private string displayToken;
+        private string currentPath;
+
+        /// <summary>
+        /// The token display.
+        /// </summary>
+        private TabControl currentTab;
 
         /// <summary>
         /// The tab initial.
@@ -103,12 +104,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="iconProvider">
         /// The icon Provider.
         /// </param>
+        /// <param name="commandService">
+        /// The service that respond for composite commands.
+        /// </param>
         /// <param name="configService">
+        /// The config Service.
         /// </param>
         /// <param name="manager">
         /// The commandManager.
         /// </param>
-        public ViewAViewModel(IRegionManager regionManager, IIconProviderService iconProvider, IAppConfigService configService, CommandManager manager)
+        public ViewAViewModel(
+            IRegionManager regionManager, 
+            IIconProviderService iconProvider, 
+            IGlobalCommandService commandService, 
+            IAppConfigService configService, 
+            CommandManager manager)
             : base(regionManager)
         {
             this.regionManager = regionManager;
@@ -118,6 +128,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
             this.ThisComputerIconIsEnabled = true;
             this.BackButtonIsEnabled = true;
+            
+            // Composite command
+            commandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
         }
 
         #region Public Properties
@@ -167,18 +180,53 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             set => this.SetProperty(ref this.backButtonIsEnabled, value);
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether back button is enabled.
-        /// </summary>
-        public string DisplayToken
-        {
-            get => this.displayToken;
-            set => this.SetProperty(ref this.displayToken, value);
-        }
-
         #endregion
 
         #region Commands
+        
+        /// <summary>
+        /// The command serializes the state of the file panel after the program is closed
+        /// to restore it to its original state the next time it starts.
+        /// </summary>
+        public DelegateCommand SavePanelStateCommand => new DelegateCommand(
+            () =>
+                {
+                    var appConfig = this.appConfigService.GetSession();
+                    var tabs = appConfig.Find("Tabs").ToList();
+                    var currentPanel = this.GetCurrentRegion().Name;
+
+                    foreach (var region in regionManager.Regions.Where(r => r.Name.Contains(currentPanel)))
+                    {
+                        var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.currentRegionName);
+                        tabsResult.RemoveAll();
+
+                        foreach (var view in region.Views)
+                        {
+                            if (view is FrameworkElement element)
+                            {
+                                var directoryPanel = (IDirectoryPanel)element.DataContext;
+                                var existTab = tabsResult.ChildrenInfos.SingleOrDefault(
+                                    tab => tab.GetAttributeValueByName("Id").Contains(directoryPanel.GetPanelToken().ToString()));
+
+                                if (existTab == null)
+                                {   
+                                    tabsResult.Add(
+                                        elementRecord =>
+                                            {
+                                                elementRecord.Tag = "Tab";
+                                                elementRecord.Attributes.Add("Id", "{" + directoryPanel.GetPanelToken() + "}");
+                                                elementRecord.Attributes.Add("Path", directoryPanel.GetCurrentPath());
+                                                return elementRecord;
+                                            });
+                                }
+                                else
+                                    existTab.SetAttributeValueByName("Path", directoryPanel.GetCurrentPath());
+                            }
+                        }
+                    }
+
+                    appConfig.Save();
+                });
 
         /// <summary>
         ///  Goes back to the previous directory.
@@ -187,6 +235,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             new DelegateCommand<object>(
                 index =>
                     {
+                        this.currentTab.Content = this.TabContentFormat(this.currentPath);
+
                         if (this.navigationCommand.CanUndo)
                             this.navigationCommand.Previous();
 
@@ -213,27 +263,32 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         }
                     }
 
-                    this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
                     this.ThisComputerIconIsEnabled = false;
                 });
-        
+
         /// <summary>
         ///  Goes back to the previous directory.
         /// </summary>
         public DelegateCommand<object> AddNewTabCommand =>
             new DelegateCommand<object>(
                 obj =>
+                {
+                    if (obj is TabPanel tabPanel)
                     {
                         var token = Guid.NewGuid();
+                        var path = tabPanel.Collection.GetActive().Tag;
                         var directoryPanel = new SplitPanelView();
-                        this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, "C:\\");
-                        this.regionManager.AddToRegion(this.DefineCurrentRegion().Name, directoryPanel);
+                        
+                        this.currentTab = this.CreateTabControl(token, (string)path, directoryPanel);
+                        tabPanel.Collection.Add(this.currentTab);
 
-                        if (obj is TabPanel control)
-                        {
-                            control.InitialElements.Add(this.CreateTabControl(token, $"Tab Control {control.InitialElements.Count}"));
-                        }
-                    });
+                        this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, (string)path);
+                        this.regionManager.AddToRegion(this.GetCurrentRegion().Name, directoryPanel);
+                        this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
+                        this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
+                        this.ActivateFilePanel(token);
+                    }
+                });
         
         /// <summary>
         ///  Goes back to the previous directory.
@@ -246,21 +301,33 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                         if (this.navigationCommand.CanUndo)
                         {
-                            this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
                             this.BackButtonIsEnabled = true;
                             this.ThisComputerIconIsEnabled = true;
                         }
 
                         if (!this.navigationCommand.CanUndo)
                         { 
-                            this.navigationCommand.OnExecuteChanged -= OnExecuteChanged;
                             this.BackButtonIsEnabled = false;
                             this.ThisComputerIconIsEnabled = false;
                         }
 
-                        var regions = this.DefineCurrentRegion();
-                        regions.Activate(regions.Views.Single(view =>
-                            this.FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == (Guid)token));
+                        this.ActivateFilePanel((Guid)token);
+                    });
+
+        /// <summary>
+        /// The close tab command.
+        /// </summary>
+        public DelegateCommand<object[]> CloseTabCommand =>
+            new DelegateCommand<object[]>(
+                view  =>
+                    {
+                        // var directoryPanel = this.FindDirectoryPanel((FrameworkElement)view[2]);
+                        var currentPanel = this.GetCurrentRegion().Name;
+                        var region = this.regionManager.Regions[currentPanel];
+
+                        //this.ActivateFilePanel((Guid)((TabControl)this.TabCollection[^2]).CommandParameter);
+                        this.TabCollection.Remove((TabControl)view[0]);
+                        region.Remove(view[2]);
                     });
 
         #endregion
@@ -274,48 +341,34 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void InitialDirectoryPanel(string name)
         {
             this.currentRegionName = name;
-            var token = Guid.Empty;
-            var control = new TabCollection();
+            var collection = new TabCollection();
 
-            foreach (var config in this.appConfigService.GetAppSession().GetTabConfigs(name))
+            foreach (var config in this.appConfigService.GetSession().GetTabConfigs(this.currentRegionName))
             {
                 var view = new SplitPanelView();
-                token = config.Token;
-                
+                var token = config.Token;
+
                 if (view.DataContext is IDirectoryPanel directoryPanel)
                 {
                     directoryPanel.InitializedViewModel(token, config.Path);
+                    this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
                 }
 
-                this.regionManager.AddToRegion(DefineCurrentRegion().Name, view);
-                control.Add(this.CreateTabControl(token, config.Path));
+                this.regionManager.AddToRegion(this.GetCurrentRegion().Name, view);
+                collection.Add(this.CreateTabControl(token, config.Path, view));
             }
 
-            control.Add(this.CreateAddTabControl());
-            this.TabCollection = control;
-            this.TabCollection.CollectionChanged += this.TabCollection_CollectionChanged;
-            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-        }
+            collection.Add(this.CreateAddTabControl());
+            collection.CollectionChanged += this.OnTabCollectionChanged;
+            
+            if (collection[0] is TabControl tabControl)
+            {
+                this.currentTab = tabControl;
+                this.currentTab.IsEnabled = false;
+            }
 
-        /// <summary>
-        /// The tab collection_ collection changed.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        private void TabCollection_CollectionChanged(object sender, EventArgs e)
-        {
-            var arg = e as CollectionChangedEventArg;
-            TabControl tabIndex = arg?.Collection[^1];
-
-            if (arg != null)
-                foreach (TabControl tab in arg.Collection)
-                {
-                    tab.IsEnabled = tab != tabIndex;
-                }
+            this.TabCollection = collection;
+            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand((Guid)this.currentTab.CommandParameter);
         }
 
         /// <summary>
@@ -327,22 +380,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="content">
         /// The content.
         /// </param>
+        /// <param name="element">
+        /// The element.
+        /// </param>
         /// <returns>
         /// The <see cref="Button"/>.
         /// </returns>
-        private TabControl CreateTabControl(Guid token, string content)
+        private TabControl CreateTabControl(Guid token, string content, FrameworkElement element)
         {
             TabControl button = new TabControl
             {
-                Content = content,
+                Content = this.TabContentFormat(content),
                 Margin = new Thickness(0, 0, 1, 0),
                 Background = new SolidColorBrush(Color.FromRgb(224, 229, 241)),
                 Foreground = new SolidColorBrush(Color.FromRgb(47, 78, 79)),
                 BorderBrush = null,
+                CloseCommand = this.CloseTabCommand,
                 Command = this.ActivateTabCommand,
-                CommandParameter = token
+                CommandParameter = token,
+                Tag = content,
             };
 
+            button.CloseCommandParameter = new object[] { button, token, element };
+            button.TabClick += this.OnTabControlClick;
             return button;
         }
 
@@ -352,14 +412,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Button"/>.
         /// </returns>
-        private TabControl CreateAddTabControl()
+        private AddTabControl CreateAddTabControl()
         {
-            Binding binding = new Binding
+            var binding = new Binding
             {
                 RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(Panel), 1)
             };
 
-            TabControl button = new TabControl
+            var button = new AddTabControl
             {
                 Content = "+",
                 Margin = new Thickness(0, 0, 1, 0),
@@ -368,18 +428,110 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 BorderBrush = null,
                 Command = this.AddNewTabCommand
             };
-
-            button.SetBinding(TabControl.CommandParameterProperty, binding);
+            
+            button.SetBinding(AddTabControl.CommandParameterProperty, binding);
             return button;
         }
-        
+
+        #region Event Handlers
+
+        /// <summary>
+        /// The tab collection changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void OnTabCollectionChanged(object sender, EventArgs e)
+        {
+            var arg = e as CollectionChangedEventArg;
+            TabControl tabIndex = arg?.Collection[^1] as TabControl;
+
+            if (arg != null)
+                foreach (Control tab in arg.Collection)
+                {
+                    if (tab is AddTabControl) return;
+                    tab.IsEnabled = tab != tabIndex;
+                }
+        }
+
+        /// <summary>
+        /// The on tab control click.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void OnTabControlClick(object sender, RoutedEventArgs e)
+        {
+            var control = (TabControl)sender;
+            this.currentTab = control;
+        }
+
+        /// <summary>
+        /// Goes back to the previous directory.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        private void OnExecuteChanged(ConcreteCommand command)
+        {
+            if (command.Receiver is Navigator navigator)
+            {
+                this.currentPath = navigator.Path;
+
+                if (this.currentTab != null)
+                {
+                    this.currentTab.Content = this.TabContentFormat(this.currentPath);
+                    this.currentTab.Tag = this.currentPath;
+                }
+
+                if (!navigator.Path.Contains("Root:"))
+                {
+                    this.ThisComputerIconIsEnabled = true;
+                    this.BackButtonIsEnabled = true;
+                }
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// The tab content format.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string TabContentFormat(string path) 
+            => $"{path.Substring(0, path.IndexOf(':'))}:{path.Substring(path.LastIndexOf('\\') + 1)}".ToUpper();
+
+        /// <summary>
+        /// The activate file panel.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        private void ActivateFilePanel(Guid token)
+        {
+            var regions = this.GetCurrentRegion();
+            regions.Activate(regions.Views.Single(
+                view => this.FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == token));
+        } 
+
         /// <summary>
         /// The define current region.
         /// </summary>
         /// <returns>
         /// The <see cref="IRegion"/>.
         /// </returns>
-        private IRegion DefineCurrentRegion() =>
+        private IRegion GetCurrentRegion() =>
             this.currentRegionName == NestedRegionNames.LeftFilePanelRegion
                 ? this.regionManager.Regions[NestedRegionNames.LeftPanelContentRegion]
                 : this.regionManager.Regions[NestedRegionNames.RightPanelContentRegion];
@@ -395,23 +547,5 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         private IDirectoryPanel FindDirectoryPanel(FrameworkElement element) =>
             element.DataContext is IDirectoryPanel directoryPanel ? directoryPanel : null;
-
-        /// <summary>
-        /// Goes back to the previous directory.
-        /// </summary>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        private void OnExecuteChanged(ConcreteCommand command)
-        {
-            if (command.Receiver is Navigator navigator)
-            {
-                if (!navigator.Path.Contains("Root:"))
-                {
-                    this.ThisComputerIconIsEnabled = true;
-                    this.BackButtonIsEnabled = true;
-                }
-            }
-        }
     }
 }

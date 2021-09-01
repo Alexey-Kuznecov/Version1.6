@@ -26,9 +26,9 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
 
             if (File.Exists(this.Path))
             {
-                var root = XElement.Load(this.Path);
+                this.Root = XElement.Load(this.Path);
                 this.ElementInfo = new XElementInfo();
-                this.ElementInfo.CreateOf(root);
+                this.ElementInfo.CreateOf(this.Root);
             }
             else
             {
@@ -54,11 +54,9 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
         /// <summary>
         /// The initial.
         /// </summary>
-        /// <param name="element">
-        /// The element.
-        /// </param>
-        private void Save(XElement element)
+        public void Save()
         {
+            this.Root.Save(this.Path);
         }
     }
 }

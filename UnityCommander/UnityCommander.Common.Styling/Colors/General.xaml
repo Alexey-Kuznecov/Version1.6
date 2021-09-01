@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <!--
+        FILE PANEL COLORS
+        Module: UnityCommander.Modules.FilePanel
+    -->
+    <Color x:Key="FilePanelControlButtonColor">#E8E8EC</Color>
+    <Color x:Key="FilePanelTabsForegroundColor">#FFFFFF</Color>
+
+</ResourceDictionary>

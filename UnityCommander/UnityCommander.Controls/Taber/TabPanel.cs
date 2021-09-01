@@ -1,6 +1,8 @@
 ﻿
 namespace UnityCommander.Controls.Taber
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -10,21 +12,22 @@ namespace UnityCommander.Controls.Taber
     /// <summary>
     /// The taber control.
     /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class TabPanel : Panel
     {
         /// <summary>
         /// The my property property.
         /// </summary>
-        public static readonly DependencyProperty InitialElementsProperty =
-            DependencyProperty.Register("InitialElements", typeof(TabCollection), typeof(TabPanel), new PropertyMetadata(null, OnInitialElementsChangedCallback, CoerceValueCallback));
+        public static readonly DependencyProperty CollectionProperty =
+            DependencyProperty.Register("Collection", typeof(TabCollection), typeof(TabPanel), new PropertyMetadata(null, OnInitialElementsChangedCallback, CoerceValueCallback));
 
         /// <summary>
         /// Gets or sets the my property.
         /// </summary>
-        public TabCollection InitialElements
+        public TabCollection Collection
         {
-            get => (TabCollection)this.GetValue(InitialElementsProperty);
-            set => this.SetValue(InitialElementsProperty, value);
+            get => (TabCollection)this.GetValue(CollectionProperty);
+            set => this.SetValue(CollectionProperty, value);
         }
 
         /// <summary>
@@ -42,10 +45,6 @@ namespace UnityCommander.Controls.Taber
             foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
-
-                if (child is TabControl control)
-                {
-                }
             }
 
             return new Size();
@@ -84,24 +83,16 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private static void OnInitialElementsChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabPanel tabControl && tabControl.InitialElements != null)
+            if (d is TabPanel tabControl && tabControl.Collection != null)
             {
-                if (tabControl.InitialElements.Count > 0)
+                if (tabControl.Collection.Count > 0)
                 {
-                    tabControl.InitialElements.CollectionChanged += tabControl.OnCollectionChanged;
+                    tabControl.Collection.CollectionChanged += tabControl.OnCollectionChanged;
 
-                    var lastItem = default(TabControl);
-
-                    foreach (TabControl element in tabControl.InitialElements)
+                    foreach (Control control in tabControl.Collection)
                     {
-                        if ((string)element.Content != "+")
-                            tabControl.Children.Add(element);
-                        else
-                            lastItem = element;
+                        tabControl.Children.Add(control);
                     }
-
-                    lastItem.Width = 50;
-                    tabControl.Children.Insert(tabControl.InitialElements.Count -1, lastItem);
                 } 
             }
         }
@@ -134,26 +125,23 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private void OnCollectionChanged(object sender, System.EventArgs e)
         {
-            if (sender is TabCollection collectionChanged)
+            if (sender is TabCollection collection)
             {
-                var lastItem = default(TabControl);
+                Control addControl = default(Control);
+                this.Children.Clear();
 
-                foreach (var item in collectionChanged)
+                foreach (Control control in collection)
                 {
-                    var control = (TabControl)item;
-                    if (!this.Children.Contains(control))
+                    if (control is AddTabControl)
                     {
-                        this.Children.Add(control);
+                        addControl = control;
+                        continue;
                     }
 
-                    if ((string)control.Content == "+")
-                    {
-                        lastItem = control;
-                        this.Children.Remove(control);
-                    }
+                    this.Children.Add(control);
                 }
 
-                this.Children.Insert(collectionChanged.Count - 1, lastItem);
+                this.Children.Add(addControl ?? throw new InvalidOperationException());
             }
         }
     }

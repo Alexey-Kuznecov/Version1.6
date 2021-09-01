@@ -15,6 +15,7 @@ namespace AIconBrowser.Models
     /// The icons data writer.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed. Suppression is OK here.")]
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     class IconsDataWriter : IDisposable
     {
         /// <summary>
@@ -181,6 +182,7 @@ namespace AIconBrowser.Models
             var queryTarget = from collect in root.Elements()
                               where collect.FirstAttribute.Value == NamesEnum.Unsigned.GetName()
                               select collect;
+            
             // Find source collection.
             var querySource = from collect in root.Elements()
                               where collect.FirstAttribute.Value == source
@@ -243,7 +245,10 @@ namespace AIconBrowser.Models
             id = idList.MaxValue() + 1;
             return id;
         }
-   
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             idList = new ArrayList();

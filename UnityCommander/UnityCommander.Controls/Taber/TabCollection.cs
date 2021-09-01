@@ -4,7 +4,9 @@ namespace UnityCommander.Controls.Taber
     using System;
     using System.Collections;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Windows;
+    using System.Windows.Controls;
 
     /// <summary>
     /// The tab collection.
@@ -18,13 +20,19 @@ namespace UnityCommander.Controls.Taber
         public event EventHandler CollectionChanged;
 
         #region Properties
-        
+
         /// <summary>
-        /// Gets/Sets value for the item by that index
+        /// Gets or sets value for the item by that index
         /// </summary>
-        public TabControl this[int index]
+        /// <param name="index">
+        /// The tab control index,
+        /// </param>
+        /// <returns>
+        /// The tab control at the specified index.
+        /// </returns>
+        public Control this[int index]
         {
-            get => (TabControl)this.List[index];
+            get => (Control)this.List[index];
             set => this.List[index] = value;
         }
 
@@ -41,11 +49,11 @@ namespace UnityCommander.Controls.Taber
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public int IndexOf(TabControl control)
+        public int IndexOf(Control control)
         {
             if (control != null)
             {
-                return base.List.IndexOf(control);
+                return this.List.IndexOf(control);
             }
 
             return -1;
@@ -60,13 +68,12 @@ namespace UnityCommander.Controls.Taber
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public int Add(TabControl control)
+        public int Add(Control control)
         {
             if (control != null)
             {
-                control.TabClick += this.OnControlTabClick;
                 var position = this.List.Add(control);
-                this.RaiseEvent(this);
+                this.RaiseEvent();
                 return position;
             }
             return -1;
@@ -78,11 +85,10 @@ namespace UnityCommander.Controls.Taber
         /// <param name="control">
         /// The control.
         /// </param>
-        public void Remove(TabControl control)
+        public void Remove(Control control)
         {
-            control.TabClick -= this.OnControlTabClick;
-            this.InnerList.Remove(control);
-            this.RaiseEvent(this);
+            this.List.Remove(control);
+            this.RaiseEvent();
         }
 
         /// <summary>
@@ -108,13 +114,35 @@ namespace UnityCommander.Controls.Taber
         /// <param name="control">
         /// The control.
         /// </param>
-        public void Insert(int index, TabControl control)
+        public void Insert(int index, Control control)
         {
             if (index <= List.Count && control != null)
             {
                 this.List.Insert(index, control);
-                this.RaiseEvent(this);
+                this.RaiseEvent();
             }
+        }
+
+        /// <summary>
+        /// The get active.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Control"/>.
+        /// </returns>
+        public Control GetActive()
+        {
+            byte counter = 0;
+            TabCollection collection = (TabCollection)this.List;
+            Control control;
+
+            do
+            {
+                control = collection[counter];
+                counter++;
+            } 
+            while (control.IsEnabled);
+
+            return control;
         }
 
         /// <summary>
@@ -147,43 +175,12 @@ namespace UnityCommander.Controls.Taber
 
         /// <summary>
         /// The raise event.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        private void RaiseEvent(object sender)
+        /// </summary>>
+        private void RaiseEvent()
         {
             if (this.CollectionChanged != null)
             {
                 this.CollectionChanged.Invoke(this, new CollectionChangedEventArg((TabCollection)this.List));
-            }
-        }
-
-        /// <summary>
-        /// The control_ tab click.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        private void OnControlTabClick(object sender, RoutedEventArgs e)
-        {
-            var control = (TabControl)sender;
-            var panel = (e as TabCommandExecutedEventArg)?.Content as TabPanel;
-
-            if ((string)control.Content == "+")
-                return;
-
-            foreach (TabControl item in this.List)
-            {
-                if ((string)item.Content == "+")
-                    continue;
-                if (item.Equals(control))
-                    item.IsEnabled = false;
-                else
-                    item.IsEnabled = true;
             }
         }
     }

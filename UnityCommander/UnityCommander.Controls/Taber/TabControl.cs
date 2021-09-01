@@ -9,12 +9,12 @@ namespace UnityCommander.Controls.Taber
     /// <summary>
     /// The taber control.
     /// </summary>
-    [TemplatePart(Name = "ControlTab", Type = typeof(RepeatButton))]
+    [TemplatePart(Name = "Control", Type = typeof(RepeatButton))]
     [TemplateVisualState(Name = "Positive", GroupName = "ValueStates")]
     [TemplateVisualState(Name = "Negative", GroupName = "ValueStates")]
     [TemplateVisualState(Name = "Focused", GroupName = "FocusedStates")]
     [TemplateVisualState(Name = "Unfocused", GroupName = "FocusedStates")]
-    public class TabControl : Control
+    public partial class TabControl : Control
     {
         /// <summary>
         /// The value property.
@@ -47,14 +47,9 @@ namespace UnityCommander.Controls.Taber
             EventManager.RegisterRoutedEvent("TabClick", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(TabControl));
 
         /// <summary>
-        /// The width.
+        /// The control.
         /// </summary>
-        private double width;
-
-        /// <summary>
-        /// The controlTab.
-        /// </summary>
-        private RepeatButton controlTab;
+        private RepeatButton control;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TabControl"/> class.
@@ -115,46 +110,23 @@ namespace UnityCommander.Controls.Taber
         #endregion
 
         /// <summary>
-        /// Gets or sets a value indicating whether is selected tab.
-        /// </summary>
-        public bool IsSelectedTab { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is selected tab.
-        /// </summary>
-        public TabControl CurrentTab { get; set; }
-
-        /// <summary>
-        /// Gets or sets the width.
-        /// </summary>
-        public new double Width 
-        {
-            get => this.width;
-            set 
-            {
-                this.width = value;
-                //this.ControlTab.Width = this.width;
-            } 
-        }
-
-        /// <summary>
         /// Gets or sets the control tab.
         /// </summary>
-        private RepeatButton ControlTab
+        private RepeatButton Control
         {
-            get => this.controlTab;
+            get => this.control;
             set
             {
-                if (this.controlTab != null)
+                if (this.control != null)
                 {
-                    this.controlTab.Click -= this.ControlTab_Click;
+                    this.control.Click -= this.OnTabControlClick;
                 }
 
-                this.controlTab = value;
+                this.control = value;
 
-                if (this.controlTab != null)
+                if (this.control != null)
                 {
-                    this.controlTab.Click += this.ControlTab_Click;
+                    this.control.Click += this.OnTabControlClick;
                 }
             }
         }
@@ -164,18 +136,8 @@ namespace UnityCommander.Controls.Taber
         /// </summary>
         public override void OnApplyTemplate()
         {
-            this.ControlTab = GetTemplateChild("ControlTab") as RepeatButton;
-
-            if ((string)this.Content == "+")
-            {
-                this.ControlTab.Width = 50;
-                this.ControlTab.FontSize = 18;
-                this.ControlTab.FontWeight = FontWeights.Bold;
-                this.ControlTab.Background = null;
-                this.ControlTab.BorderBrush = null;
-            }
-
-            // TextElement = GetTemplateChild("TextBlock") as TextBlock;
+            this.Control = GetTemplateChild("TabControl") as RepeatButton;
+            this.CloseControl = GetTemplateChild("CloseTabControl") as RepeatButton;
             this.UpdateStates(false);
         }
 
@@ -216,19 +178,29 @@ namespace UnityCommander.Controls.Taber
         /// <param name="e">
         /// The e.
         /// </param>
-        protected void ControlTab_Click(object sender, RoutedEventArgs e)
+        protected void OnTabControlClick(object sender, RoutedEventArgs e)
         {
-            this.IsSelectedTab = true;
             this.Command.Execute(this.CommandParameter);
 
-            var parent = this.Parent as TabPanel;
+            if (this.Parent is TabPanel parent)
+            {
+                foreach (Control tabControl in parent.Children)
+                {
+                    if (tabControl is AddTabControl)
+                    {
+                        continue;
+                    }
+                    
+                    tabControl.IsEnabled = !tabControl.Equals(this);
+                }
 
-            // Call OnContentChanged to raise the ContentChanged event.
-            this.OnTabCommandExecuted(new TabCommandExecutedEventArg(TabControl.TabClickEvent, parent));
+                // Call OnContentChanged to raise the ContentChanged event.
+                this.OnTabCommandExecuted(new TabCommandExecutedEventArg(TabControl.TabClickEvent, parent));
+            }
         }
 
         /// <summary>
-        /// The on mouse left controlTab down.
+        /// The on mouse left control down.
         /// </summary>
         /// <param name="e">
         /// The e.

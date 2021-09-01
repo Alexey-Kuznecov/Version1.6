@@ -1,21 +1,24 @@
 ﻿
 namespace UnityCommander.Core.Helper
 {
-    using NSwag.Collections;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
 
+    using NSwag.Collections;
+
     /// <summary>
     /// The helper functions.
     /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public static class HelperFunctions
     {
         /// <summary>

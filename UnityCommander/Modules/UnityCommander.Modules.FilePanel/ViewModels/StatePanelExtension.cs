@@ -18,23 +18,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private static List<XElementInfo> tabsInfos;
 
         /// <summary>
-        /// The xml serializer.
-        /// </summary>
-        /// <param name="o">
-        /// The o.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public static bool XmlSerialize(object o)
-        {
-            XDocument document = new XDocument("app.session", "AppSession");
-            document.SerializeObject("FilePanel", o);
-            var ddd = document.SearchElement("Icon");
-            return false;
-        }
-
-        /// <summary>
         /// The xml deserialize.
         /// </summary>
         /// <param name="o">
@@ -59,8 +42,32 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         public static List<XElementInfo> GetTabConfigs(this XDocument document)
         {
-            tabsInfos = document.SearchElement("Tab");
+            // tabsInfos = document.Find("Tab");
             return tabsInfos;
+        }
+
+        /// <summary>
+        /// The set tab config.
+        /// </summary>
+        /// <param name="elementInfos">
+        /// The document.
+        /// </param>
+        /// <param name="tabRecord">
+        /// The record.
+        /// </param>
+        /// <param name="panel">
+        /// The panel.
+        /// </param>
+        /// <returns>
+        /// The collection of <see cref="XElementInfo"/>.
+        /// </returns>
+        public static List<XElementInfo> SetTabConfigs(this List<XElementInfo> elementInfos, TabRecord tabRecord, string panel)
+        {
+            foreach (var info in elementInfos)
+            {
+            }
+
+            return elementInfos;
         }
 
         /// <summary>
@@ -77,22 +84,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         public static IEnumerable<TabRecord> GetTabConfigs(this XDocument document, string filter)
         {
-            tabsInfos = document.SearchElement("Tab");
-
-            foreach (var item in tabsInfos)
+            foreach (var element in document.Find("Tab"))
             {
-                var parent = item.FindAncestor(item, 2);
+                var parent = element.FindAncestor(element, 2);
                 
                 if (filter.Contains(parent.Element.FirstAttribute.Value))
                 {
-                    if (Directory.Exists(item.Attributes[1].Value))
+                    if (Directory.Exists(element.GetAttributeValueByName("Path")))
                     {
                         var record = new TabRecord
                          {
-                             Path = item.Attributes[1].Value,
-                             Token = Guid.Parse(item.Attributes[0].Value),
-                             Panel = parent.Attributes[0].Value
-                         };
+                             Path = element.GetAttributeValueByName("Path"),
+                             Token = Guid.Parse(element.GetAttributeValueByName("Id")),
+                             Panel = parent.GetAttributeValueByName("Name")
+                        };
 
                         yield return record;
                     }
@@ -113,14 +118,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             int counter = 0;
 
-            if (tabsInfos == null)
-            {
-                tabsInfos = document.SearchElement("Tab");
-            }
-
             string[] paths = new string[tabsInfos.Count];
 
-            foreach (var info in tabsInfos)
+            foreach (var info in document.Find("Tab"))
             {
                 foreach (var attribute in info.Attributes)
                 {

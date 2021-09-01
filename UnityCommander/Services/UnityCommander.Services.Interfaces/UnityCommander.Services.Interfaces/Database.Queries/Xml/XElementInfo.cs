@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
 {
+    using System;
     using System.Collections.Generic;
     using System.Xml.Linq;
 
@@ -9,7 +10,6 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
     /// </summary>
     public class XElementInfo
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="XElementInfo"/> class.
         /// </summary>
@@ -123,13 +123,83 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
         }
 
         /// <summary>
+        /// The get attribute by name.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetAttributeValueByName(string name)
+        {
+            foreach (var attribute in this.Attributes)
+            {
+                if (attribute.Name == name)
+                {
+                    return attribute.Value;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The set attribute value by name.
+        /// </summary>
+        /// <param name="attributeName">
+        /// The name.
+        /// </param>
+        /// <param name="newValue">
+        /// The new Value.
+        /// </param>
+        public void SetAttributeValueByName(string attributeName, object newValue)
+        {
+            foreach (var attribute in this.Attributes)
+            {
+                if (attribute.Name == attributeName)
+                {
+                    attribute.Value = newValue.ToString() ?? string.Empty;
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The add.
+        /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <returns>
+        /// The <see cref="XElementInfo"/>.
+        /// </returns>
+        public XElementInfo Add(Func<XElementRecord, XElementRecord> action)
+        {
+            var result = action(new XElementRecord());
+            var element = new XElement(result.Tag);
+            this.Element.Add(element);
+
+            if (result.Attributes.Count > 0)
+            {
+                foreach (var attribute in result.Attributes)
+                {
+                    element.SetAttributeValue(attribute.Key, attribute.Value);
+                }
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// The add.
         /// </summary>
         /// <returns>
         /// The <see cref="XElementInfo"/>.
         /// </returns>
-        internal XElementInfo Add()
+        public XElementInfo RemoveAll()
         {
+            this.Element.RemoveAll();
             return this;
         }
 

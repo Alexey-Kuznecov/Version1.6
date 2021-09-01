@@ -48,8 +48,6 @@ namespace UnityCommander.Modules.FilePanel
             this.regionManager.RequestNavigate(RegionNames.FilePanelRegion, nameof(MainView));
             this.regionManager.RequestNavigate(NestedRegionNames.LeftFilePanelRegion, nameof(ViewA), this.NavigationCallback);
             this.regionManager.RequestNavigate(NestedRegionNames.RightFilePanelRegion, nameof(ViewB), this.NavigationCallback);
-            this.regionManager.RegisterViewWithRegion(NestedRegionNames.LeftPanelContentRegion, typeof(SplitPanelView));
-            this.regionManager.RegisterViewWithRegion(NestedRegionNames.RightPanelContentRegion, typeof(SplitPanelView));
         }
 
         /// <summary>

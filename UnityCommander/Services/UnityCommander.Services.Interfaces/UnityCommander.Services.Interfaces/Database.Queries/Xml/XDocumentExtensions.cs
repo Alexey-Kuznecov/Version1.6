@@ -49,19 +49,15 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
         /// <returns>
         /// The <see cref="XElementInfo"/>.
         /// </returns>
-        public static List<XElementInfo> SearchElement(this XDocument document, string name)
+        public static IEnumerable<XElementInfo> Find(this XDocument document, string name)
         {
-            List<XElementInfo> infos = new List<XElementInfo>();
-
             foreach (var elementInfo in document.ElementInfo.ChildrenInfos)
             {
                 foreach (var r in elementInfo.FindOf(elementInfo, name))
                 {
-                    infos.Add(r);
+                    yield return r;
                 }
             }
-
-            return infos;
         }
     }
 }

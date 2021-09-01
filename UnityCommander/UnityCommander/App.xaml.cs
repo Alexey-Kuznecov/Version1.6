@@ -10,6 +10,7 @@ namespace UnityCommander
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
+    using UnityCommander.Core;
     using UnityCommander.Core.Commands;
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.FilePanel.ViewModels;
@@ -22,7 +23,6 @@ namespace UnityCommander
     using UnityCommander.ViewModels;
     using UnityCommander.Views;
     using UnityCommander.Views.CopyDialogs;
-    using UnityCommander.Views.Dialogs;
 
     /// <summary>
     /// The application.
@@ -67,7 +67,9 @@ namespace UnityCommander
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
 
-            containerRegistry.RegisterForNavigation<ViewA>("ViewA");
+            containerRegistry.RegisterSingleton<ModuleLogger>();
+
+            // containerRegistry.RegisterForNavigation<ViewA>("ViewA");
         }
 
         /// <summary>

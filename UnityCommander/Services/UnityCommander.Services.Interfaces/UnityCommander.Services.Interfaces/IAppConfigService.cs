@@ -14,6 +14,6 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         /// The <see cref="XDocument"/>.
         /// </returns>
-        XDocument GetAppSession();
+        XDocument GetSession();
     }
 }

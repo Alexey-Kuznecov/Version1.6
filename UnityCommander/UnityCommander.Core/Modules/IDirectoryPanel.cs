@@ -3,9 +3,6 @@ namespace UnityCommander.Core.Modules
 {
     using System;
 
-    using UnityCommander.Core.Commands;
-    using UnityCommander.Core.Commands.Base;
-
     /// <summary>
     /// The DirectoryPanel interface.
     /// </summary>
@@ -39,10 +36,10 @@ namespace UnityCommander.Core.Modules
         public Guid GetPanelToken();
 
         /// <summary>
-        /// The get current path.
+        /// Gets or sets the initial command.
         /// </summary>
         /// <returns>
-        /// The <see cref="string"/>.
+        /// The <see cref="Guid"/>.
         /// </returns>
         public string GetCurrentPath();
     }

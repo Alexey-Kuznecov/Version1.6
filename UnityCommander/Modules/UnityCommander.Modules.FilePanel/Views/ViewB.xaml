@@ -18,8 +18,8 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+            <tab:TabPanel Grid.Row="0" Collection="{Binding TabCollection, Mode=TwoWay}" />
             <ContentControl Grid.Row="1" Template="{StaticResource ContentDirectoryPanelTemplate}" />
-            <tab:TabPanel Grid.Row="0" InitialElements="{Binding TabCollection, Mode=TwoWay}" />
             <ContentControl Grid.Row="2" regions:RegionManager.RegionName="{x:Static module:NestedRegionNames.RightPanelContentRegion}" />
         </Grid>
     </Grid>

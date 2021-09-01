@@ -254,10 +254,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             NavigationPanel panel = (NavigationPanel)d;
             panel.InternalChildren.Clear();
 
-            if (panel.parsePath == null)
-            {
-                return;
-            }
+            if (panel.parsePath == null) return;
 
             while (counter < panel.parsePath.Length)
             {
@@ -272,9 +269,12 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 {
                     Style = (Style)Application.Current.FindResource("NavigationBackButtonStyle"),
                     Content = panel.parsePath[counter],
-                    Command = panel.NavigateCommand,
-                    CommandParameter = panel.parseParams[counter]
+                    Command = panel.NavigateCommand
                 };
+                
+                navButton.CommandParameter = panel.parseParams[counter].Substring(
+                    0,
+                    panel.parseParams[counter].LastIndexOf('\\'));
 
                 var grid = CreateGridNavigationItem(navButton, popButton);
                 popButton.CommandParameter = new PopupParameters { CurrentItem = grid, Panel = panel, CurrentPath = panel.parseParams[counter] };

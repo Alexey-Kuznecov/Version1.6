@@ -12,7 +12,7 @@ namespace UnityCommander.Services
         /// <summary>
         /// The app session.
         /// </summary>
-        private XDocument appSession;
+        private readonly XDocument appSession;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="AppConfigService"/> class.
@@ -28,6 +28,6 @@ namespace UnityCommander.Services
         /// <returns>
         /// The <see cref="XDocument"/>.
         /// </returns>
-        public XDocument GetAppSession() => this.appSession;
+        public XDocument GetSession() => this.appSession;
     }
 }

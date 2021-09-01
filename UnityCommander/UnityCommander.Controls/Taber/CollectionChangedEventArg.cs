@@ -23,11 +23,8 @@ namespace UnityCommander.Controls.Taber
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionChangedEventArg"/> class.
         /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <param name="command">
-        /// The command.
+        /// <param name="collection">
+        /// The collection.
         /// </param>
         public CollectionChangedEventArg(TabCollection collection)
         {

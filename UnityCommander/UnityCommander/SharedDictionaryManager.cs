@@ -18,7 +18,7 @@ namespace UnityCommander
             "/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml",
             "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml",
             "/UnityCommander.Controls;component/Ribbon/Ribbon.xaml",
-            "/UnityCommander.Controls;component/Taber/TabControlStyles.xaml",
+            "/UnityCommander.Controls;component/Taber/Generic.xaml",
             "/UnityCommander.Modules.FilePanel;component/Resources/Generic.xaml",
         };
 
