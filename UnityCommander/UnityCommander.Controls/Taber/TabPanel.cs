@@ -10,13 +10,13 @@ namespace UnityCommander.Controls.Taber
     /// <summary>
     /// The taber control.
     /// </summary>
-    public class TaberPanel : Panel
+    public class TabPanel : Panel
     {
         /// <summary>
         /// The my property property.
         /// </summary>
         public static readonly DependencyProperty InitialElementsProperty =
-            DependencyProperty.Register("InitialElements", typeof(TabCollection), typeof(TaberPanel), new PropertyMetadata(null, OnInitialElementsChangedCallback, CoerceValueCallback));
+            DependencyProperty.Register("InitialElements", typeof(TabCollection), typeof(TabPanel), new PropertyMetadata(null, OnInitialElementsChangedCallback, CoerceValueCallback));
 
         /// <summary>
         /// Gets or sets the my property.
@@ -43,7 +43,7 @@ namespace UnityCommander.Controls.Taber
             {
                 child.Measure(size);
 
-                if (child is TaberControl control)
+                if (child is TabControl control)
                 {
                 }
             }
@@ -84,21 +84,22 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private static void OnInitialElementsChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TaberPanel tabControl && tabControl.InitialElements != null)
+            if (d is TabPanel tabControl && tabControl.InitialElements != null)
             {
                 if (tabControl.InitialElements.Count > 0)
                 {
                     tabControl.InitialElements.CollectionChanged += tabControl.OnCollectionChanged;
 
-                    var lastItem = default(TaberControl);
+                    var lastItem = default(TabControl);
 
-                    foreach (TaberControl element in tabControl.InitialElements)
+                    foreach (TabControl element in tabControl.InitialElements)
                     {
                         if ((string)element.Content != "+")
                             tabControl.Children.Add(element);
                         else
                             lastItem = element;
                     }
+
                     lastItem.Width = 50;
                     tabControl.Children.Insert(tabControl.InitialElements.Count -1, lastItem);
                 } 
@@ -122,15 +123,24 @@ namespace UnityCommander.Controls.Taber
             return value;
         }
 
+        /// <summary>
+        /// The on collection changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private void OnCollectionChanged(object sender, System.EventArgs e)
         {
             if (sender is TabCollection collectionChanged)
             {
-                var lastItem = default(TaberControl);
+                var lastItem = default(TabControl);
 
                 foreach (var item in collectionChanged)
                 {
-                    var control = (TaberControl)item;
+                    var control = (TabControl)item;
                     if (!this.Children.Contains(control))
                     {
                         this.Children.Add(control);

@@ -4,15 +4,15 @@
     xmlns:local="clr-namespace:UnityCommander.Controls.Taber">
 
 
-    <Style TargetType="{x:Type local:TaberPanel}">
+    <Style TargetType="{x:Type local:TabPanel}">
         <Setter Property="Background" Value="#4C71B5" />
     </Style>
 
-    <Style TargetType="{x:Type local:TaberControl}">
+    <Style TargetType="{x:Type local:TabControl}">
 
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:TaberControl">
+                <ControlTemplate TargetType="local:TabControl">
                     <Grid Margin="0">
                         <Grid>
                             <RepeatButton
@@ -20,7 +20,7 @@
                                 Grid.Row="0"
                                 Width="100"
                                 Height="30"
-                                Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TaberControl}}, Path=Content}">
+                                Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:TabControl}}, Path=Content}">
                                 <RepeatButton.Style>
                                     <Style TargetType="{x:Type RepeatButton}">
                                         <Setter Property="Background" Value="#4C71B5" />

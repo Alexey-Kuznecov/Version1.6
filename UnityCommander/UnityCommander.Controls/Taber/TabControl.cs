@@ -14,38 +14,41 @@ namespace UnityCommander.Controls.Taber
     [TemplateVisualState(Name = "Negative", GroupName = "ValueStates")]
     [TemplateVisualState(Name = "Focused", GroupName = "FocusedStates")]
     [TemplateVisualState(Name = "Unfocused", GroupName = "FocusedStates")]
-    public class TaberControl : Control
+    public class TabControl : Control
     {
         /// <summary>
         /// The value property.
         /// </summary>
         public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(ICommand), typeof(TaberControl), new PropertyMetadata(CommandChangedCallback));
+            DependencyProperty.Register("Command", typeof(ICommand), typeof(TabControl), new PropertyMetadata(CommandChangedCallback));
 
         /// <summary>
         /// The value property.
         /// </summary>
         public static readonly DependencyProperty CommandParameterProperty =
-            DependencyProperty.Register("CommandParameter", typeof(object), typeof(TaberControl), new PropertyMetadata(CommandParameterChangedCallback));
+            DependencyProperty.Register("CommandParameter", typeof(object), typeof(TabControl), new PropertyMetadata(CommandParameterChangedCallback));
 
         /// <summary>
         /// The value property.
         /// </summary>
         public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register("Content", typeof(object), typeof(TaberControl), new PropertyMetadata(ContentChangedCallback));
+            DependencyProperty.Register("Content", typeof(object), typeof(TabControl), new PropertyMetadata(ContentChangedCallback));
 
         /// <summary>
         /// The value changed event.
         /// </summary>
         public static readonly RoutedEvent ContentChangedEvent = 
-            EventManager.RegisterRoutedEvent("ContentChanged", RoutingStrategy.Direct, typeof(ContentChangedEventHandler), typeof(TaberControl));
+            EventManager.RegisterRoutedEvent("ContentChanged", RoutingStrategy.Direct, typeof(ContentChangedEventHandler), typeof(TabControl));
 
         /// <summary>
         /// The click tab event.
         /// </summary>
         public static readonly RoutedEvent TabClickEvent =
-            EventManager.RegisterRoutedEvent("TabClick", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(TaberControl));
+            EventManager.RegisterRoutedEvent("TabClick", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(TabControl));
 
+        /// <summary>
+        /// The width.
+        /// </summary>
         private double width;
 
         /// <summary>
@@ -54,11 +57,11 @@ namespace UnityCommander.Controls.Taber
         private RepeatButton controlTab;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaberControl"/> class.
+        /// Initializes a new instance of the <see cref="TabControl"/> class.
         /// </summary>
-        public TaberControl()
+        public TabControl()
         {
-            this.DefaultStyleKey = typeof(TaberControl);
+            this.DefaultStyleKey = typeof(TabControl);
             this.IsTabStop = true;
         }
 
@@ -119,9 +122,13 @@ namespace UnityCommander.Controls.Taber
         /// <summary>
         /// Gets or sets a value indicating whether is selected tab.
         /// </summary>
-        public TaberControl CurrentTab { get; set; }
-        
-        public new double Width {
+        public TabControl CurrentTab { get; set; }
+
+        /// <summary>
+        /// Gets or sets the width.
+        /// </summary>
+        public new double Width 
+        {
             get => this.width;
             set 
             {
@@ -214,10 +221,10 @@ namespace UnityCommander.Controls.Taber
             this.IsSelectedTab = true;
             this.Command.Execute(this.CommandParameter);
 
-            var parent = this.Parent as TaberPanel;
+            var parent = this.Parent as TabPanel;
 
             // Call OnContentChanged to raise the ContentChanged event.
-            this.OnTabCommandExecuted(new TabCommandExecutedEventArg(TaberControl.TabClickEvent, parent));
+            this.OnTabCommandExecuted(new TabCommandExecutedEventArg(TabControl.TabClickEvent, parent));
         }
 
         /// <summary>
@@ -271,7 +278,7 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private static void CommandChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs args)
         {
-            TaberControl control = (TaberControl)d;
+            TabControl control = (TabControl)d;
             ICommand newValue = (ICommand)args.NewValue;
 
             // Call UpdateStates because the Command might have caused the
@@ -310,10 +317,10 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private static void ContentChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs args)
         {
-            TaberControl ctl = (TaberControl)d;
+            TabControl ctl = (TabControl)d;
 
             // Call OnContentChanged to raise the ContentChanged event.
-            ctl.OnContentChanged(new ContentChangedEventArgs(TaberControl.ContentChangedEvent, args.NewValue));
+            ctl.OnContentChanged(new ContentChangedEventArgs(TabControl.ContentChangedEvent, args.NewValue));
         }
         
         #endregion

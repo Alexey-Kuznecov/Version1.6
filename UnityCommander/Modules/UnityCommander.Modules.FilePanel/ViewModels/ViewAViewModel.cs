@@ -22,6 +22,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Services.Interfaces;
 
     using CommandManager = UnityCommander.Core.Commands.CommandManager;
+    using TabControl = UnityCommander.Controls.Taber.TabControl;
 
     /// <summary>
     /// The view a view model.
@@ -59,7 +60,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The region manager.
         /// </summary>
-        private TaberControl currentTab;
+        private TabControl currentTab;
 
         /// <summary>
         /// The computer icon.
@@ -228,7 +229,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, "C:\\");
                         this.regionManager.AddToRegion(this.DefineCurrentRegion().Name, directoryPanel);
 
-                        if (obj is TaberPanel control)
+                        if (obj is TabPanel control)
                         {
                             control.InitialElements.Add(this.CreateTabControl(token, $"Tab Control {control.InitialElements.Count}"));
                         }
@@ -280,15 +281,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 var view = new SplitPanelView();
                 token = config.Token;
-                var path = config.Path;
                 
                 if (view.DataContext is IDirectoryPanel directoryPanel)
                 {
-                    directoryPanel.InitializedViewModel(token, path);
+                    directoryPanel.InitializedViewModel(token, config.Path);
                 }
 
                 this.regionManager.AddToRegion(DefineCurrentRegion().Name, view);
-                control.Add(this.CreateTabControl(token, path));
+                control.Add(this.CreateTabControl(token, config.Path));
             }
 
             control.Add(this.CreateAddTabControl());
@@ -309,10 +309,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void TabCollection_CollectionChanged(object sender, EventArgs e)
         {
             var arg = e as CollectionChangedEventArg;
-            TaberControl tabIndex = arg?.Collection[^1];
+            TabControl tabIndex = arg?.Collection[^1];
 
             if (arg != null)
-                foreach (TaberControl tab in arg.Collection)
+                foreach (TabControl tab in arg.Collection)
                 {
                     tab.IsEnabled = tab != tabIndex;
                 }
@@ -330,9 +330,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Button"/>.
         /// </returns>
-        private TaberControl CreateTabControl(Guid token, string content)
+        private TabControl CreateTabControl(Guid token, string content)
         {
-            TaberControl button = new TaberControl
+            TabControl button = new TabControl
             {
                 Content = content,
                 Margin = new Thickness(0, 0, 1, 0),
@@ -352,14 +352,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Button"/>.
         /// </returns>
-        private TaberControl CreateAddTabControl()
+        private TabControl CreateAddTabControl()
         {
             Binding binding = new Binding
             {
                 RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(Panel), 1)
             };
 
-            TaberControl button = new TaberControl
+            TabControl button = new TabControl
             {
                 Content = "+",
                 Margin = new Thickness(0, 0, 1, 0),
@@ -369,7 +369,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 Command = this.AddNewTabCommand
             };
 
-            button.SetBinding(TaberControl.CommandParameterProperty, binding);
+            button.SetBinding(TabControl.CommandParameterProperty, binding);
             return button;
         }
         

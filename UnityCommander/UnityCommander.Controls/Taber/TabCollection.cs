@@ -22,9 +22,9 @@ namespace UnityCommander.Controls.Taber
         /// <summary>
         /// Gets/Sets value for the item by that index
         /// </summary>
-        public TaberControl this[int index]
+        public TabControl this[int index]
         {
-            get => (TaberControl)this.List[index];
+            get => (TabControl)this.List[index];
             set => this.List[index] = value;
         }
 
@@ -41,7 +41,7 @@ namespace UnityCommander.Controls.Taber
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public int IndexOf(TaberControl control)
+        public int IndexOf(TabControl control)
         {
             if (control != null)
             {
@@ -60,7 +60,7 @@ namespace UnityCommander.Controls.Taber
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public int Add(TaberControl control)
+        public int Add(TabControl control)
         {
             if (control != null)
             {
@@ -78,7 +78,7 @@ namespace UnityCommander.Controls.Taber
         /// <param name="control">
         /// The control.
         /// </param>
-        public void Remove(TaberControl control)
+        public void Remove(TabControl control)
         {
             control.TabClick -= this.OnControlTabClick;
             this.InnerList.Remove(control);
@@ -108,7 +108,7 @@ namespace UnityCommander.Controls.Taber
         /// <param name="control">
         /// The control.
         /// </param>
-        public void Insert(int index, TaberControl control)
+        public void Insert(int index, TabControl control)
         {
             if (index <= List.Count && control != null)
             {
@@ -126,7 +126,7 @@ namespace UnityCommander.Controls.Taber
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool Contains(TaberControl control)
+        public bool Contains(TabControl control)
         {
             return this.List.Contains(control);
         }
@@ -170,13 +170,13 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private void OnControlTabClick(object sender, RoutedEventArgs e)
         {
-            var control = (TaberControl)sender;
-            var panel = (e as TabCommandExecutedEventArg)?.Content as TaberPanel;
+            var control = (TabControl)sender;
+            var panel = (e as TabCommandExecutedEventArg)?.Content as TabPanel;
 
             if ((string)control.Content == "+")
                 return;
 
-            foreach (TaberControl item in this.List)
+            foreach (TabControl item in this.List)
             {
                 if ((string)item.Content == "+")
                     continue;

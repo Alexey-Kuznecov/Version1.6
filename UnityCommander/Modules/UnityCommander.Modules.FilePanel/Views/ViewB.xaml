@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:module="clr-namespace:UnityCommander.Modules.FilePanel"
     xmlns:regions="http://prismlibrary.com/"
-    xmlns:taber="clr-namespace:UnityCommander.Controls.Taber;assembly=UnityCommander.Controls"
+    xmlns:tab="clr-namespace:UnityCommander.Controls.Taber;assembly=UnityCommander.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -19,7 +19,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <ContentControl Grid.Row="1" Template="{StaticResource ContentDirectoryPanelTemplate}" />
-            <taber:TaberPanel Grid.Row="0" InitialElements="{Binding TabCollection, Mode=TwoWay}" />
+            <tab:TabPanel Grid.Row="0" InitialElements="{Binding TabCollection, Mode=TwoWay}" />
             <ContentControl Grid.Row="2" regions:RegionManager.RegionName="{x:Static module:NestedRegionNames.RightPanelContentRegion}" />
         </Grid>
     </Grid>
