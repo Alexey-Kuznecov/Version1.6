@@ -5,6 +5,7 @@ namespace UnityCommander.Test
 {
     using System;
     using System.Diagnostics;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using NLog;
@@ -31,7 +32,7 @@ namespace UnityCommander.Test
         /// </param>
         public CopyWatch(Process process)
         {
-            LogManager.Configuration = new XmlLoggingConfiguration("G:\\Works\\UnityCommander\\Version2.6\\NLog.config");
+            LogManager.Configuration = new XmlLoggingConfiguration(@"D:\Works\Version2.8.9\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\NLog.config");
             this.Counter = new ProcessCounter(process);
         }
 
@@ -66,12 +67,15 @@ namespace UnityCommander.Test
          public async void WatchProcess()
          {
              // TODO: Task doesn't work when debugging something breaks.
-             bool taskCalcBytes = await Task<bool>.Factory.StartNew(this.CalcBytesInterval).ConfigureAwait(true);
-             bool taskCalcTime = await Task<bool>.Factory.StartNew(this.CalcTime).ConfigureAwait(true);
+             //bool taskCalcBytes = await Task<bool>.Factory.StartNew(this.CalcBytesInterval).ConfigureAwait(true);
+             //bool taskCalcTime = await Task<bool>.Factory.StartNew(this.CalcTime).ConfigureAwait(true);
 
-             if (!taskCalcBytes && !taskCalcTime) return;
+             this.CalcBytesInterval();
+             this.CalcTime();
+
+             //if (!taskCalcBytes && !taskCalcTime) return;
 #if (Nlog)
-             if (Speed != 0)
+            if (Speed != 0)
              {
                  Logger.Info("\nTotalBytes: {0}\nSpeed {1}", TotalBytes, Speed);
                  Logger.Info("BytesCounter: {0}", this.BytesCounter);
@@ -87,13 +91,11 @@ namespace UnityCommander.Test
          /// </summary>
          public void Show()
          {
-             if (Speed != 0)
-             {
+             
                  Console.WriteLine("Received Auto: {0}", ConverterBytes.AutoConvertFormatBytes((decimal)this.BytesCounter));
                  Console.WriteLine("Speed: {0}/s", ConverterBytes.AutoConvertFormatBytes(Speed));
                  Console.WriteLine("Remain Time: {0} second", RemainTime.Seconds);
                  Console.WriteLine(new string('-', 20));
-             }
          }
 
          /// <summary>
@@ -114,10 +116,7 @@ namespace UnityCommander.Test
              }
 
 #if (Nlog)
-            if (Speed != 0)
-            {
-                Logger.Info("BytesCounter: {0}", this.BytesCounter);
-            }
+                //Console.WriteLine("BytesCounter: {0}", this.BytesCounter);
 #endif
              return true;
         }
@@ -132,13 +131,14 @@ namespace UnityCommander.Test
          {
             if (Speed != 0)
             {
-                // Thread.Sleep(200);
+                Thread.Sleep(200);
                 Speed = (long)this.Counter.IOReadBytes.NextValue();
                 RemainTime = TimeSpan.FromMilliseconds((TotalBytes - this.BytesCounter) / Speed);
-#if (Nlog)
-                Logger.Info("RemainTime: {0}", RemainTime);
-#endif
             }
+
+#if (Nlog)
+            //Console.WriteLine("RemainTime: {0}", RemainTime);
+#endif
 
             return true;
          }

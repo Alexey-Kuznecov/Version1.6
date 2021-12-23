@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Core.Mvvm;
+
 namespace UnityCommander
 {
     using System;
@@ -45,6 +47,11 @@ namespace UnityCommander
             return this.Container.Resolve<MainWindow>();
         }
 
+        protected override void InitializeShell(Window shell)
+        {
+            base.InitializeShell(shell);
+        }
+        
         /// <summary>
         /// The register types.
         /// </summary>

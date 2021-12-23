@@ -183,7 +183,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #endregion
 
         #region Commands
-        
+
         /// <summary>
         /// The command serializes the state of the file panel after the program is closed
         /// to restore it to its original state the next time it starts.
@@ -194,39 +194,30 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     var appConfig = this.appConfigService.GetSession();
                     var tabs = appConfig.Find("Tabs").ToList();
                     var currentPanel = this.GetCurrentRegion().Name;
+                    var region = regionManager.Regions.Single(r => r.Name.Contains(currentPanel));
+                    var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.currentRegionName);
+                    tabsResult.RemoveAll();
 
-                    foreach (var region in regionManager.Regions.Where(r => r.Name.Contains(currentPanel)))
+                    foreach (var view in region.Views)
                     {
-                        var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.currentRegionName);
-                        tabsResult.RemoveAll();
-
-                        foreach (var view in region.Views)
+                        if (view is FrameworkElement element)
                         {
-                            if (view is FrameworkElement element)
-                            {
-                                var directoryPanel = (IDirectoryPanel)element.DataContext;
-                                var existTab = tabsResult.ChildrenInfos.SingleOrDefault(
-                                    tab => tab.GetAttributeValueByName("Id").Contains(directoryPanel.GetPanelToken().ToString()));
+                            var directoryPanel = (IDirectoryPanel)element.DataContext;
 
-                                if (existTab == null)
-                                {   
-                                    tabsResult.Add(
-                                        elementRecord =>
-                                            {
-                                                elementRecord.Tag = "Tab";
-                                                elementRecord.Attributes.Add("Id", "{" + directoryPanel.GetPanelToken() + "}");
-                                                elementRecord.Attributes.Add("Path", directoryPanel.GetCurrentPath());
-                                                return elementRecord;
-                                            });
-                                }
-                                else
-                                    existTab.SetAttributeValueByName("Path", directoryPanel.GetCurrentPath());
-                            }
+                            tabsResult.Add(
+                                elementRecord =>
+                                    {
+                                        elementRecord.Tag = "Tab";
+                                        elementRecord.Attributes.Add("Id", "{" + directoryPanel.GetPanelToken() + "}");
+                                        elementRecord.Attributes.Add("Path", directoryPanel.GetCurrentPath());
+                                        return elementRecord;
+                                    });
                         }
                     }
 
                     appConfig.Save();
                 });
+
 
         /// <summary>
         ///  Goes back to the previous directory.
@@ -321,11 +312,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             new DelegateCommand<object[]>(
                 view  =>
                     {
-                        // var directoryPanel = this.FindDirectoryPanel((FrameworkElement)view[2]);
                         var currentPanel = this.GetCurrentRegion().Name;
                         var region = this.regionManager.Regions[currentPanel];
-
-                        //this.ActivateFilePanel((Guid)((TabControl)this.TabCollection[^2]).CommandParameter);
                         this.TabCollection.Remove((TabControl)view[0]);
                         region.Remove(view[2]);
                     });

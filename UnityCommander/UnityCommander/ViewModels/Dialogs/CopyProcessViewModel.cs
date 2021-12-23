@@ -21,6 +21,7 @@ namespace UnityCommander.ViewModels.Dialogs
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
+    using UnityCommander.Core.IO.Operations;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
@@ -32,7 +33,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// The manager.
         /// </summary>
-        private static readonly FileCopierManager FileCopierCommand = (FileCopierManager)Commander<FileCopier>.GetManager();
+        private static readonly CopyManager CopyFileCommand = (CopyManager)Commander<CopyFiles>.GetManager();
 
         /// <summary>
         /// The invoker class instance.
@@ -63,6 +64,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// The time left.
         /// </summary>
         private string timeLeft;
+
+        /// <summary>
+        /// The time left.
+        /// </summary>
+        private string totalTimeLeft;
 
         /// <summary>
         /// The average speed.
@@ -160,6 +166,17 @@ namespace UnityCommander.ViewModels.Dialogs
             set => this.SetProperty(ref this.timeLeft, value);
         }
 
+
+        /// <summary>
+        /// Gets or sets the time left.
+        /// </summary>
+        public string TotalTimeLeft
+        {
+            get => this.totalTimeLeft;
+            set => this.SetProperty(ref this.totalTimeLeft, value);
+        }
+
+
         /// <summary>
         /// Gets or sets the remainder.
         /// </summary>
@@ -187,7 +204,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void CopyCancel()
         {
-            FileCopierCommand.Cancel();
+            CopyFileCommand.Cancel();
         }
 
         /// <summary>
@@ -195,7 +212,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void CopyResume()
         {
-            FileCopierCommand.Resume();
+            CopyFileCommand.Resume();
         }
 
         /// <summary>
@@ -203,7 +220,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void CopySuspend()
         {
-            FileCopierCommand.Pause();
+            CopyFileCommand.Pause();
         }
 
         #endregion
@@ -229,15 +246,15 @@ namespace UnityCommander.ViewModels.Dialogs
 
                         if (File.Exists(source.FullName))
                         {
-                            FileCopierCommand.CopyFile(source.FullName, destination.FullName);
+                            CopyFileCommand.CopyFile(source.FullName, destination.FullName);
                         }
                         else
                         {
-                            FileCopierCommand.Copy(source.FullName, destination.FullName);
+                            CopyFileCommand.Copy(source.FullName, destination.FullName);
                         }
 
-                        FileCopierCommand.CopyFileReport += this.CopyProgressReport;
-                        FileCopierCommand.CopyFileResult += this.CopyFileResult;
+                        CopyFileCommand.CopyFileReport += this.CopyFileReport;
+                        CopyFileCommand.CopyFileResult += this.CopyFileResult;
                     }
                 },
             obj);
@@ -247,7 +264,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// The event handle for initialization report a copy progress.
         /// </summary>>
         /// <param name="progressInfo"> The copy progress information. </param>
-        private void CopyFileResult(FileCopier.Parameters progressInfo)
+        private void CopyFileResult(CopyInfo progressInfo)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -277,12 +294,14 @@ namespace UnityCommander.ViewModels.Dialogs
         /// The event handle for initialization report a copy progress.
         /// </summary>
         /// <param name="progressInfo"> The copy progress information. </param>
-        private void CopyProgressReport(FileCopier.Parameters progressInfo)
+        private void CopyFileReport(CopyInfo progressInfo)
         {
-            this.CurrentPercent = (int)progressInfo.Percentage;
+            //var currentTotalPercent = (int)progressInfo.TotalPercentage;
+            this.CurrentPercent = (int)progressInfo.TotalPercentage;
             this.AverageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)progressInfo.AverageSpeed), 2) + " Mb/s";
-            this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.ByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.FileSize)}";
-            this.TimeLeft = this.ConvertTimeElapsed(progressInfo.TotalTimeLeft, "ru-RU");
+            this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalBytes)}";        
+            //this.TimeLeft = progressInfo.TimeLeft.ToString();
+            this.TotalTimeLeft = progressInfo.TotalTimeLeft.ToString();
         }
 
         /// <summary>

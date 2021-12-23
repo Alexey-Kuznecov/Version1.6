@@ -1,10 +1,10 @@
 ﻿
-using System;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Plugins;
+using UnityCommander.Test.IO;
 
 namespace UnityCommander.Test
 {
+    using UnityCommander.Test.TestStart;
+
     /// <summary>
     /// The program.
     /// </summary>
@@ -18,21 +18,12 @@ namespace UnityCommander.Test
         /// </param>
         public static void Main(string[] args)
         {
-#if NETCOREAPP3_1
-            //var asm = AppDomain.CurrentDomain.GetAssemblies();
-            //WeakReference<IPluginManager> weakReference = new WeakReference<IPluginManager>(new PluginManagerService().GetPluginManager());
-            //IPluginManager manager;
-            //asm = AppDomain.CurrentDomain.GetAssemblies();
-            //weakReference.TryGetTarget(out manager);
-            //if (manager != null) manager.PluginUnload();
-            //weakReference = null;
+            var source = "D:\\Works\\WPF\\CopyTest\\Source";
+            var target = "D:\\Works\\WPF\\CopyTest\\Target";
+            var file = @"D:\Works\WPF\CopyTest\Target\Adobe Acrobat Reader.rar";
 
-            //var asm = AppDomain.CurrentDomain.GetAssemblies();
-            //PluginSingleLoader weakReference = new PluginSingleLoader();
-            //asm = AppDomain.CurrentDomain.GetAssemblies();
-
-#endif
-
+            FileManager manager = new FileManager();
+            manager.Create(file, ".txt");
         }
     }
 }

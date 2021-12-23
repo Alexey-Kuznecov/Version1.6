@@ -210,19 +210,29 @@ namespace UnityCommander.Core.IO
         /// </param>
         public void CalculateTotalFilesSize(string source)
         {
-            Task.Factory.StartNew(
-            () =>
+            //Task.Factory.StartNew(() =>
+            //{
+            //    this.totalFileSize = 0;
+
+            //    foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+            //    {
+            //        FileInfo info = new FileInfo(path);
+            //        Interlocked.Add(ref this.totalFileSize, info.Length);
+            //    }
+
+            //    this.percentTotalSize = this.totalFileSize > 0 ? this.totalFileSize / 100 : throw new DivideByZeroException();
+            //});
+
+            this.totalFileSize = 0;
+
+            foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
             {
-                this.totalFileSize = 0;
+                FileInfo info = new FileInfo(path);
+                // Interlocked.Add(ref this.totalFileSize, info.Length);
+                this.totalFileSize = info.Length;
+            }
 
-                foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
-                {
-                    FileInfo info = new FileInfo(path);
-                    Interlocked.Add(ref this.totalFileSize, info.Length);
-                }
-
-                this.percentTotalSize = this.totalFileSize > 0 ? this.totalFileSize / 100 : throw new DivideByZeroException();
-            });
+            this.percentTotalSize = this.totalFileSize > 0 ? this.totalFileSize / 100 : throw new DivideByZeroException();
         }
 
         /// <summary>

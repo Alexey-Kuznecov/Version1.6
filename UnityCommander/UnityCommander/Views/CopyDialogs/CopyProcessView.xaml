@@ -17,9 +17,9 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
                 <TextBlock
                     Grid.Row="0"
@@ -29,17 +29,14 @@
                     Grid.Row="1"
                     Width="400"
                     Height="20"
-                    Maximum="100"
                     Margin="10"
+                    Maximum="100"
                     Minimum="0"
                     Value="{Binding CurrentPercent}" />
                 <WrapPanel Grid.Row="2">
-                    <TextBlock
-                        Margin="10"
-                        Text="{Binding TimeLeft}" />
-                    <TextBlock
-                        Margin="10"
-                        Text="{Binding AverageSpeed, StringFormat={}AverageSpeed: {0}}" />
+                    <TextBlock Margin="10" Text="{Binding TimeLeft}" />
+                    <TextBlock Margin="10" Text="{Binding AverageSpeed, StringFormat={}AverageSpeed: {0}}" />
+                    <TextBlock Margin="10" Text="{Binding TotalTimeLeft}" />
                 </WrapPanel>
             </Grid>
             <TextBlock
@@ -73,7 +70,7 @@
                 Command="{Binding CancelCommand}"
                 Content="Cancel" />
         </WrapPanel>
-        <TabControl Grid.Row="2">
+        <!--<TabControl Grid.Row="2">
             <TabItem Width="100" Header="Copy">
                 <ListView ItemsSource="{Binding CopyReport}">
                     <ListView.ItemTemplate>
@@ -106,6 +103,6 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </TabItem>
-        </TabControl>
+        </TabControl>-->
     </Grid>
 </UserControl>

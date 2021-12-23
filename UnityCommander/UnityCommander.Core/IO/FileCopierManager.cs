@@ -55,7 +55,7 @@ namespace UnityCommander.Core.IO
                 using (this.fileCopier = new FileCopier())
                 {
                     this.fileCopier.CopyProgressReport += this.FileCopier_CopyProgressReport;
-                    this.fileCopier.CalculateTotalFilesSize(this.source);
+                    //this.fileCopier.CalculateTotalFilesSize(this.source);
                     this.fileCopier.GetSpeedTimer.Start();
                     this.fileCopier.GetElapsedTimer.Start();
 
