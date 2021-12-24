@@ -19,10 +19,7 @@ namespace UnityCommander.Core.Commands
         /// <summary>
         /// Initializes a new instance of the <see cref="CopyFileInvoker"/> class.
         /// </summary>
-        /// <param name="invoker">
-        /// The invoker.
-        /// </param>
-        public CopyFileInvoker(CopyFileInvoker invoker)
+        public CopyFileInvoker()
             : base()
         {
         }

@@ -33,7 +33,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// The manager.
         /// </summary>
-        private static readonly CopyManager CopyFileCommand = (CopyManager)Commander<CopyFiles>.GetManager();
+        private readonly CopyManager copyManager = (CopyManager)Commander<CopyFiles>.GetManager();
 
         /// <summary>
         /// The invoker class instance.
@@ -44,6 +44,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// Contains the current progress bar for copying a file.
         /// </summary>
         private int currentPercent;
+
+        /// <summary>
+        /// Contains the current progress bar for copying a file.
+        /// </summary>
+        private double exactPercent;
 
         /// <summary>
         /// Contains the min value of the progress bar.
@@ -68,7 +73,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// The time left.
         /// </summary>
-        private string totalTimeLeft;
+        private TimeSpan totalTimeLeft;
 
         /// <summary>
         /// The average speed.
@@ -84,6 +89,9 @@ namespace UnityCommander.ViewModels.Dialogs
         /// The remainder.
         /// </summary>
         private string current;
+
+        private readonly MessageSendEvent messenger;
+
         #endregion
 
         #region Constructors
@@ -95,8 +103,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyProcessViewModel(IEventAggregator viewModelMessage)
         {
-            this.invoker = new CopyFileInvoker(this.invoker);
-            viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetupCopyFiles);
+            this.invoker = new CopyFileInvoker();
+
+            messenger = viewModelMessage.GetEvent<MessageSendEvent>();
+            messenger.Subscribe(this.SetupCopyFiles);
+            
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
             this.ResumeCommand = new DelegateCommand(this.CopyResume);
@@ -149,12 +160,21 @@ namespace UnityCommander.ViewModels.Dialogs
         }
 
         /// <summary>
-        /// Gets or sets the current progress bar for copying a file.
+        /// Gets or sets the integer percent for the file copy progress bar.
         /// </summary>
         public int CurrentPercent
         {
             get => this.currentPercent;
             set => this.SetProperty(ref this.currentPercent, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the exact percentage for the smoother file copy progress bar.
+        /// </summary>
+        public double ExactPercent
+        {
+            get => this.exactPercent;
+            set => this.SetProperty(ref this.exactPercent, value);
         }
 
         /// <summary>
@@ -170,7 +190,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// Gets or sets the time left.
         /// </summary>
-        public string TotalTimeLeft
+        public TimeSpan TotalTimeLeft
         {
             get => this.totalTimeLeft;
             set => this.SetProperty(ref this.totalTimeLeft, value);
@@ -204,7 +224,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void CopyCancel()
         {
-            CopyFileCommand.Cancel();
+            this.copyManager.Cancel();
         }
 
         /// <summary>
@@ -212,7 +232,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void CopyResume()
         {
-            CopyFileCommand.Resume();
+            this.copyManager.Resume();
         }
 
         /// <summary>
@@ -220,7 +240,7 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void CopySuspend()
         {
-            CopyFileCommand.Pause();
+            this.copyManager.Pause();
         }
 
         #endregion
@@ -230,34 +250,35 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// Gets control on the copy thread.
         /// </summary>
-        /// <param name="obj"> Expected two strings the source path and destination path. </param>
-        private void SetupCopyFiles(object obj)
+        /// <param name="path"> Expected two strings the source path and destination path. </param>
+        private void SetupCopyFiles(object path)
         {
-            this.invoker.Execute(
-                path =>
-                {
-                    this.SkippedFile = new ObservableCollection<CopyInfoModel>();
-                    this.CopyReport = new ObservableCollection<CopyInfoModel>();
+            //this.SkippedFile = new ObservableCollection<CopyInfoModel>();
+            //this.CopyReport = new ObservableCollection<CopyInfoModel>();
 
-                    if (path is string[] address)
-                    {
-                        var source = new DirectoryInfo(address[0]);
-                        var destination = new DirectoryInfo(address[1]);
+            if (path is string[] address)
+            {
+                var source = new DirectoryInfo(address[0]);
+                var destination = new DirectoryInfo(address[1]);
 
-                        if (File.Exists(source.FullName))
-                        {
-                            CopyFileCommand.CopyFile(source.FullName, destination.FullName);
-                        }
-                        else
-                        {
-                            CopyFileCommand.Copy(source.FullName, destination.FullName);
-                        }
+                this.copyManager.CopyFileReport += this.CopyFileReport;
+                this.copyManager.Copy(source.FullName, destination.FullName);
+                //if (File.Exists(source.FullName))
+                //{
+                //    CopyManager.CopyFile(source.FullName, destination.FullName);
+                //}
+                //else
+                //{
+                //    CopyManager.Copy(source.FullName, destination.FullName);
+                //}
 
-                        CopyFileCommand.CopyFileReport += this.CopyFileReport;
-                        CopyFileCommand.CopyFileResult += this.CopyFileResult;
-                    }
-                },
-            obj);
+                //CopyManager.CopyFileResult += this.CopyFileResult;
+            }
+
+            if (messenger.Contains(this.SetupCopyFiles))
+            {
+                messenger.Unsubscribe(this.SetupCopyFiles);
+            }
         }
 
         /// <summary>
@@ -293,15 +314,16 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// The event handle for initialization report a copy progress.
         /// </summary>
-        /// <param name="progressInfo"> The copy progress information. </param>
-        private void CopyFileReport(CopyInfo progressInfo)
+        /// <param name="info"> The copy progress information. </param>
+        private void CopyFileReport(CopyInfo info)
         {
-            //var currentTotalPercent = (int)progressInfo.TotalPercentage;
-            this.CurrentPercent = (int)progressInfo.TotalPercentage;
-            this.AverageSpeed = Math.Round(ConverterBytes.AutoConvertBytes((decimal)progressInfo.AverageSpeed), 2) + " Mb/s";
-            this.Remainder = $"Done {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)progressInfo.TotalBytes)}";        
-            //this.TimeLeft = progressInfo.TimeLeft.ToString();
-            this.TotalTimeLeft = progressInfo.TotalTimeLeft.ToString();
+            this.Remainder =
+                $"{ConverterBytes.AutoConvertFormatBytes((decimal)info.TotalByteDone)} of {ConverterBytes.AutoConvertFormatBytes((decimal)info.TotalBytes)}";
+            this.CurrentPercent = (int)Math.Round(info.TotalPercentage);
+            this.ExactPercent = info.TotalPercentage;
+            this.AverageSpeed = ConverterBytes.AutoConvertFormatBytes((decimal)info.AverageSpeed);
+            this.TotalTimeLeft = info.TotalTimeLeft;
+            //this.CurrentName = info.Name;
         }
 
         /// <summary>

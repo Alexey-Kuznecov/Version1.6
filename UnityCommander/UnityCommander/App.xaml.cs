@@ -1,5 +1,6 @@
 ﻿
 using UnityCommander.Core.Mvvm;
+using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
 {

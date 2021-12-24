@@ -1,8 +1,8 @@
 ﻿
+using System;
+
 namespace UnityCommander.Core.IO.Operations
 {
-    using System;
-
     /// <summary>
     /// The copy report event handler.
     /// </summary>

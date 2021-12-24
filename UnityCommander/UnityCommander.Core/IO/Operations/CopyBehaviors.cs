@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UnityCommander.Core.IO.Operations
+﻿namespace UnityCommander.Core.IO.Operations
 {
     /// <summary>
     /// The flags external control of the copy behavior.

@@ -1,16 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#define Nlog
+
+using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using NLog;
+using UnityCommander.Core.Helper;
 
 namespace UnityCommander.Core.IO.Operations
 {
     public class CopyManager : ManagerBase
-    { /// <summary>
-      /// The file copier.
-      /// </summary>
-        private CopyFiles fileCopier;
+    {
+#if (Nlog)
+        /// <summary>
+        /// The reference the current log event manager.
+        /// </summary>
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+#endif
+
+        /// <summary>
+        /// The file copier.
+        /// </summary>
+        private CopyFiles copyFile;
 
         /// <summary>
         /// The source path to the directory.
@@ -21,6 +31,10 @@ namespace UnityCommander.Core.IO.Operations
         /// The target path to the directory.
         /// </summary>
         private string target;
+
+        public CopyManager()
+        {
+        }
 
         /// <summary>
         /// Gets or sets copy progress report..
@@ -49,12 +63,12 @@ namespace UnityCommander.Core.IO.Operations
                 this.source = sourcePath;
                 this.target = targetPath;
 
-                using (this.fileCopier = new CopyFiles())
+                using (this.copyFile = new CopyFiles())
                 {
-                    this.fileCopier.CopyReportEvent += this.FileCopier_CopyReportEvent;
-                    this.fileCopier.Copy(this.source, this.target);
+                    this.copyFile.CopyReportEvent += this.FileCopier_CopyReportEvent;
+                    this.copyFile.Copy(this.source, this.target);
 
-                    this.fileCopier.CopyReportEvent -= this.FileCopier_CopyReportEvent;
+                    this.copyFile.CopyReportEvent -= this.FileCopier_CopyReportEvent;
                 }
 
                 //this.CopyFileFinish?.Invoke(this.fileCopier.GetParameters);
@@ -74,12 +88,12 @@ namespace UnityCommander.Core.IO.Operations
         {
             Task.Factory.StartNew(() =>
             {
-                using (this.fileCopier = new CopyFiles())
+                using (this.copyFile = new CopyFiles())
                 {
                     this.source = sourcePath;
                     this.target = targetPath;
-                    this.fileCopier.CopyReportEvent += this.FileCopier_CopyReportEvent;
-                    this.fileCopier.Copy(this.source, this.target);
+                    this.copyFile.CopyReportEvent += this.FileCopier_CopyReportEvent;
+                    this.copyFile.Copy(this.source, this.target);
                 }
             });
         }
@@ -88,6 +102,14 @@ namespace UnityCommander.Core.IO.Operations
         {
             var copyArgs = (CopyReportEventArg)e;
             this.CopyFileReport?.Invoke(copyArgs.Info);
+#if (Nlog)
+            Logger.Info(string.Format("{0} | {1} | {2} | {3} | {4}",
+                copyArgs.Info.Name,
+                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.CurrentFileSize),
+                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.AverageSpeed),
+                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.CurrentBytesTransferred),
+                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.TotalBytesTransferred)));
+#endif
         }
 
         /// <summary>
@@ -95,7 +117,7 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         public void Pause()
         {
-            this.fileCopier.ChangeCopyStatus(CopyBehaviors.Pause);
+            this.copyFile.ChangeCopyStatus(CopyBehaviors.Pause);
         }
 
         /// <summary>
@@ -103,7 +125,7 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         public void Resume()
         {
-            this.fileCopier.ChangeCopyStatus(CopyBehaviors.Resume);
+            this.copyFile.ChangeCopyStatus(CopyBehaviors.Resume);
         }
 
         /// <summary>
@@ -111,7 +133,7 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         public void Cancel()
         {
-            this.fileCopier.ChangeCopyStatus(CopyBehaviors.Cancel);
+            this.copyFile.ChangeCopyStatus(CopyBehaviors.Cancel);
             Directory.Delete(this.target, true);
         }
     }

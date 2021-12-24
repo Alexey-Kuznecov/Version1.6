@@ -1,10 +1,8 @@
 ﻿
+using System;
+
 namespace UnityCommander.Core.IO.Operations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     /// <summary>
     /// The copy info.
     /// </summary>
@@ -65,10 +63,13 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         public double TotalBytes { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value that indicates how many bytes have been copied.
+        /// </summary>
         public double TotalByteDone { get; set; }
 
         /// <summary>
-        /// Gets or sets the value indicating file size.
+        /// Gets or sets the value that indicates the current file size.
         /// </summary>
         public double CurrentFileSize { get; set; }
 
@@ -81,5 +82,15 @@ namespace UnityCommander.Core.IO.Operations
         /// Gets or sets a value indicating whether there are copy errors.
         /// </summary>
         public bool Skipped { get; set; }
+
+#region Log Properties
+
+        public long CurrentBytesTransferred { get; set; }
+
+        public long TotalBytesTransferred { get; set; }
+
+#endregion
+
+
     }
 }

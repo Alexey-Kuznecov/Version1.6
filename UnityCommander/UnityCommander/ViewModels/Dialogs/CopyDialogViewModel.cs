@@ -1,17 +1,19 @@
 ﻿
-namespace UnityCommander.ViewModels
-{
-    using System;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using Prism.Commands;
-    using Prism.Events;
-    using Prism.Mvvm;
-    using Prism.Services.Dialogs;
-    using UnityCommander.Core;
-    using UnityCommander.Core.Mvvm;
-    using UnityCommander.Views.Dialogs;
+using System;
+using System.IO;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Prism.Commands;
+using Prism.Events;
+using Prism.Mvvm;
+using Prism.Services.Dialogs;
+using UnityCommander.Core;
+using UnityCommander.Core.Mvvm;
+using UnityCommander.Views.CopyDialogs;
+using UnityCommander.Views.Dialogs;
 
+namespace UnityCommander.ViewModels.Dialogs
+{
     /// <summary>
     /// The dialog view model.
     /// </summary>
@@ -57,7 +59,6 @@ namespace UnityCommander.ViewModels
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
         public CopyDialogViewModel(IEventAggregator viewModelMessage)
         {
-            this.CopyCommand = new DelegateCommand(this.CopyExecute);
             this.viewModelMessage = viewModelMessage;
         }
 
@@ -110,9 +111,13 @@ namespace UnityCommander.ViewModels
         }
 
         /// <summary>
-        /// Gets the command to copy files.
+        /// Gets the command to copy files or folders from one panel to another.
         /// </summary>
-        public ICommand CopyCommand { get; }
+        public ICommand CopyCommand => new DelegateCommand(() =>
+        {
+            this.CopyStateView = new CopyProcessView();
+            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new[] { this.Source, this.Target });
+        });
 
         /// <summary>
         /// Gets the title.
@@ -135,6 +140,11 @@ namespace UnityCommander.ViewModels
         /// </summary>
         public void OnDialogClosed()
         {
+            if (Directory.Exists(Target))
+            {
+                Directory.Delete(Target, true);
+                Directory.CreateDirectory(Target);
+            }
         }
 
         /// <summary>
@@ -145,6 +155,7 @@ namespace UnityCommander.ViewModels
         /// </param>
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            this.CopyStateView = new CopyDialogControl();
             var param = parameters as OverrideDialogParameters;
 
             if (param?.Package is CopyParameters copyParameters)
@@ -152,8 +163,6 @@ namespace UnityCommander.ViewModels
                 this.Source = copyParameters.Source;
                 this.Target = copyParameters.Target;
             }
-
-            this.CopyStateView = new CopyDialogControl();
         }
 
         /// <summary>
@@ -162,15 +171,6 @@ namespace UnityCommander.ViewModels
         private void ExecuteCloseDialogCommand()
         {
             this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
-        }
-
-        /// <summary>
-        /// Copies files or folders from one panel to another.
-        /// </summary>
-        public void CopyExecute()
-        {
-            this.CopyStateView = new CopyProcessView();
-            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new[] { this.Source, this.Target });
         }
     }
 }

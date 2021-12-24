@@ -1,8 +1,8 @@
 ﻿
-namespace UnityCommander.Views.Dialogs
-{
-    using System.Windows.Controls;
+using System.Windows.Controls;
 
+namespace UnityCommander.Views.CopyDialogs
+{
     /// <summary>
     /// Interaction logic for CopyDialogControl.xaml
     /// </summary>

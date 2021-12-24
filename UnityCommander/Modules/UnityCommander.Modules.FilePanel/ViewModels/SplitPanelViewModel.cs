@@ -431,7 +431,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
 
             // targetItem.Add(sourceItem);
-            var copyParameters = new CopyParameters()
+            var copyParameters = new CopyParameters
             {
                 Source = (dropInfo.Data as BaseDirectory)?.Path,
                 Target = (dropInfo.TargetItem as BaseDirectory)?.Path

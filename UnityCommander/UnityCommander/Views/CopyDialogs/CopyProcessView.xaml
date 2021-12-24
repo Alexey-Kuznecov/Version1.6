@@ -32,10 +32,10 @@
                     Margin="10"
                     Maximum="100"
                     Minimum="0"
-                    Value="{Binding CurrentPercent}" />
+                    Value="{Binding ExactPercent}" />
                 <WrapPanel Grid.Row="2">
-                    <TextBlock Margin="10" Text="{Binding TimeLeft}" />
-                    <TextBlock Margin="10" Text="{Binding AverageSpeed, StringFormat={}AverageSpeed: {0}}" />
+                    <!--<TextBlock Margin="10" Text="{Binding TimeLeft}" />-->
+                    <TextBlock Margin="10" Text="{Binding AverageSpeed, StringFormat={}Speed: {0}}" />
                     <TextBlock Margin="10" Text="{Binding TotalTimeLeft}" />
                 </WrapPanel>
             </Grid>
