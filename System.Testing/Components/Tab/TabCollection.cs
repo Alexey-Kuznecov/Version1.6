@@ -1,13 +1,11 @@
 ﻿
-namespace UnityCommander.Controls.Taber
-{
-    using System;
-    using System.Collections;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Controls;
+using System;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Controls;
 
+namespace Components.Tab
+{
     /// <summary>
     /// The tab collection.
     /// </summary>
@@ -184,7 +182,7 @@ namespace UnityCommander.Controls.Taber
         {
             if (this.CollectionChanged != null)
             {
-                this.CollectionChanged.Invoke(this, new CollectionChangedEventArg((TabCollection)this.List));
+                this.CollectionChanged.Invoke(this, new Components.Tab.CollectionChangedEventArg((TabCollection)this.List));
             }
         }
     }

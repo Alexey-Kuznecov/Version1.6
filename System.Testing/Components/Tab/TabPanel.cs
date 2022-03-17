@@ -1,14 +1,11 @@
-﻿
-using System.Windows.Controls.Primitives;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace UnityCommander.Controls.Taber
+namespace Components.Tab
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Windows;
-    using System.Windows.Controls;
-
     using Point = System.Windows.Point;
     using Size = System.Windows.Size;
 
@@ -105,6 +102,7 @@ namespace UnityCommander.Controls.Taber
 
         private void ControlOnMouseEnter(object sender, MouseEventArgs e)
         {
+            //dragDataSource = sender as TabControl;
         }
 
         private void ControlOnPreviewMouseMove(object sender, MouseEventArgs e)
@@ -170,12 +168,10 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         private void OnCollectionChanged(object sender, EventArgs e)
         {
-            // Если коллекция Children больше чем коллекция пользователя, то элемент был удален и наборот.
-            bool typeChanged = this.Children.Count > (sender as TabCollection).Count;
-
             if (sender is TabCollection collection)
             {
                 Control addControl = default(Control);
+
                 this.Children.Clear();
 
                 foreach (Control control in collection)
@@ -187,15 +183,14 @@ namespace UnityCommander.Controls.Taber
                     }
 
                     if (control.Equals(collection.Active))
+                    {
                         control.IsEnabled = false;
+                    }
 
                     this.Children.Add(control);
                 }
 
-                // Подписаться на события если был добавлен новый элемент.
-                if (!typeChanged)
-                    this.RegisterEvent(this.Children[this.Children.Count - 1] as TabControl, this);
-                
+                this.RegisterEvent(this.Children[this.Children.Count - 1] as TabControl, this);
                 this.Children.Add(addControl ?? throw new InvalidOperationException());
             }
         }

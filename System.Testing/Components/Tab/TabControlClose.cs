@@ -1,12 +1,10 @@
-﻿
-namespace UnityCommander.Controls.Taber
-{
-    using System.Diagnostics.CodeAnalysis;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
+namespace Components.Tab
+{
     /// <summary>
     /// The tab control close.
     /// </summary>
@@ -105,7 +103,7 @@ namespace UnityCommander.Controls.Taber
             {
                 paramerter = ((Control)sender).TemplatedParent;
             }
-
+            
             this.CloseCommand.Execute(paramerter);
         }
 

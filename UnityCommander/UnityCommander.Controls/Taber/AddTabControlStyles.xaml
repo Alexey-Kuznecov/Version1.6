@@ -55,7 +55,7 @@
                                 <VisualState Name="Negative">
                                     <Storyboard>
                                         <ColorAnimation
-                                            Storyboard.TargetName="ControlTab"
+                                            Storyboard.TargetName="TabControl"
                                             Storyboard.TargetProperty="(Foreground).(Color)"
                                             To="Red" />
                                     </Storyboard>

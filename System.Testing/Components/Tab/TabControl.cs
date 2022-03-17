@@ -1,12 +1,10 @@
-﻿
-namespace UnityCommander.Controls.Taber
-{
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
+namespace Components.Tab
+{
     /// <summary>
     /// The taber control.
     /// </summary>
@@ -45,7 +43,7 @@ namespace UnityCommander.Controls.Taber
         /// The value changed event.
         /// </summary>
         public static readonly RoutedEvent ContentChangedEvent = 
-            EventManager.RegisterRoutedEvent("ContentChanged", RoutingStrategy.Direct, typeof(ContentChangedEventHandler), typeof(TabControl));
+            EventManager.RegisterRoutedEvent("ContentChanged", RoutingStrategy.Direct, typeof(Components.Tab.ContentChangedEventHandler), typeof(TabControl));
 
         /// <summary>
         /// The click tab event.
@@ -70,7 +68,7 @@ namespace UnityCommander.Controls.Taber
         /// <summary>
         /// The value changed.
         /// </summary>
-        public event ContentChangedEventHandler ContentChanged
+        public event Components.Tab.ContentChangedEventHandler ContentChanged
         {
             add => this.AddHandler(ContentChangedEvent, value);
             remove => this.RemoveHandler(ContentChangedEvent, value);
@@ -154,7 +152,7 @@ namespace UnityCommander.Controls.Taber
         {
             this.Control = GetTemplateChild("TabControl") as RepeatButton;
             this.CloseControl = GetTemplateChild("CloseTabControl") as RepeatButton;
-            this.UpdateStates(false);
+            //this.UpdateStates(false);
         }
 
         /// <summary>
@@ -163,7 +161,7 @@ namespace UnityCommander.Controls.Taber
         /// <param name="e">
         /// The e.
         /// </param>
-        protected virtual void OnContentChanged(ContentChangedEventArgs e)
+        protected virtual void OnContentChanged(Components.Tab.ContentChangedEventArgs e)
         {
             // Raise the ContentChanged event so applications can be alerted
             // when Command changes.
@@ -312,7 +310,7 @@ namespace UnityCommander.Controls.Taber
             TabControl ctl = (TabControl)d;
 
             // Call OnContentChanged to raise the ContentChanged event.
-            ctl.OnContentChanged(new ContentChangedEventArgs(TabControl.ContentChangedEvent, args.NewValue));
+            ctl.OnContentChanged(new Components.Tab.ContentChangedEventArgs(TabControl.ContentChangedEvent, args.NewValue));
         }
         
         #endregion
