@@ -140,11 +140,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void OnDialogClosed()
         {
-            if (Directory.Exists(Target))
-            {
-                Directory.Delete(Target, true);
-                Directory.CreateDirectory(Target);
-            }
+            //if (Directory.Exists(Target))
+            //{
+            //    Directory.Delete(Target, true);
+            //    Directory.CreateDirectory(Target);
+            //}
         }
 
         /// <summary>

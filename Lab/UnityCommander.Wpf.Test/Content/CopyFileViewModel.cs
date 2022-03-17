@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
-using UnityCommander.Test.Classes.IO;
-using UnityCommander.Helper;
-using UnityCommander.Helper.Mvvm.Base;
-using UnityCommander.Helper.Converters;
 using System.IO;
+using AlexeyKuznecov.Library.Converters;
+using AlexeyKuznecov.Library.Mvvm.Base;
+using Components.IO;
 
 namespace UnityCommander.Wpf.Test.Content
 {

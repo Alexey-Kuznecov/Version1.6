@@ -3,8 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:be="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:dd="urn:gong-wpf-dragdrop"
-    xmlns:dragdrop="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors.DragDrop"
+    xmlns:core="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <!--
@@ -51,9 +50,9 @@
         <Grid>
             <ListView
                 be:MultiSelectionMouseBehavior.IsEnableSelection="False"
-                dd:DragDrop.DropHandler="{Binding Mode=Default}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
+                core:DragDrop.DropHandler="{Binding Mode=Default}"
+                core:DragDrop.IsDragSource="True"
+                core:DragDrop.IsDropTarget="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding DirectoryList, Mode=OneWay}"
                 View="{Binding FolderPanelContainer}">

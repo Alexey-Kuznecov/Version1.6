@@ -66,35 +66,20 @@ namespace UnityCommander.Core.IO.Operations
                 using (this.copyFile = new CopyFiles())
                 {
                     this.copyFile.CopyReportEvent += this.FileCopier_CopyReportEvent;
-                    this.copyFile.Copy(this.source, this.target);
+                    
+                    if (File.Exists(sourcePath))
+                    {
+                        this.copyFile.Copy(this.source, this.target);
+                    }
+                    else
+                    {
+                        this.copyFile.DeepCopy(this.source, this.target);
+                    }
 
                     this.copyFile.CopyReportEvent -= this.FileCopier_CopyReportEvent;
                 }
 
                 //this.CopyFileFinish?.Invoke(this.fileCopier.GetParameters);
-            });
-        }
-
-        /// <summary>
-        /// The copy file.
-        /// </summary>
-        /// <param name="sourcePath">
-        /// The source path.
-        /// </param>
-        /// <param name="targetPath">
-        /// The target path.
-        /// </param>
-        public void CopyFile(string sourcePath, string targetPath)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                using (this.copyFile = new CopyFiles())
-                {
-                    this.source = sourcePath;
-                    this.target = targetPath;
-                    this.copyFile.CopyReportEvent += this.FileCopier_CopyReportEvent;
-                    this.copyFile.Copy(this.source, this.target);
-                }
             });
         }
 

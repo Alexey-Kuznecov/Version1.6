@@ -312,10 +312,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             new DelegateCommand<object[]>(
                 view  =>
                     {
-                        var currentPanel = this.GetCurrentRegion().Name;
-                        var region = this.regionManager.Regions[currentPanel];
-                        this.TabCollection.Remove((TabControl)view[0]);
-                        region.Remove(view[2]);
+                        if (this.TabCollection.Count > 2)
+                        {
+                            var currentPanel = this.GetCurrentRegion().Name;
+                            var region = this.regionManager.Regions[currentPanel];
+                            this.TabCollection.Remove((TabControl)view[0]);
+                            region.Remove(view[2]);
+                        }
                     });
 
         #endregion

@@ -157,6 +157,18 @@ namespace UnityCommander.Core.IO.Operations
 
         public void Copy(string source, string target)
         {
+            FileInfo info = new FileInfo(source);
+            totalFileSize = info.Length;
+            copyInfo.TotalBytes += info.Length;
+
+            SpeedTimer.Start();
+            ElapsedTimer.Start();
+            
+            this.CopyFile(source, target);
+        }
+
+        public void DeepCopy(string source, string target)
+        {
             this.CalculateTotalFilesSize(source);
             SpeedTimer.Start();
             ElapsedTimer.Start();
@@ -166,12 +178,19 @@ namespace UnityCommander.Core.IO.Operations
                 var newDir = oldDir.Replace(source, target);
 
                 Directory.CreateDirectory(newDir);
-                this.CopyFile(oldDir, newDir);
+
+                foreach (var oldFile in Directory.GetFiles(oldDir))
+                {
+                    this.CopyFile(oldFile, newDir);
+                }
             }
 
             if (Directory.GetFiles(source).Length != 0)
             {
-                this.CopyFile(source, target);
+                foreach (var oldFile in Directory.GetFiles(source))
+                {
+                    this.CopyFile(source, target);
+                }
             }
         }
 
@@ -186,21 +205,18 @@ namespace UnityCommander.Core.IO.Operations
         /// </param>
         public void CopyFile(string oldDir, string newDir)
         {
-            foreach (var oldFile in Directory.GetFiles(oldDir))
+            FileInfo info = new FileInfo(oldDir);
+            string newFile = Path.Combine(newDir, new DirectoryInfo(oldDir).Name);
+
+            fileSize = info.Length;
+            copyInfo.Name = info.Name;
+            copyInfo.Length = info.Length;
+            copyInfo.Source = info.FullName;
+            copyInfo.Destination = newFile;
+
+            if (!File.Exists(newFile))
             {
-                FileInfo info = new FileInfo(oldFile);
-                string newFile = Path.Combine(newDir, new DirectoryInfo(oldFile).Name);
-
-                fileSize = info.Length;
-                copyInfo.Name = info.Name;
-                copyInfo.Length = info.Length;
-                copyInfo.Source = info.FullName;
-                copyInfo.Destination = newFile;
-
-                if (!File.Exists(newFile))
-                {
-                    fileOperation.XCopy(oldFile, newFile, CopyProgressHandle);
-                }
+                fileOperation.XCopy(oldDir, newFile, CopyProgressHandle);
             }
         }
 

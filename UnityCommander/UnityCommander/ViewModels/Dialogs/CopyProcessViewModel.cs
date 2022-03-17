@@ -263,15 +263,6 @@ namespace UnityCommander.ViewModels.Dialogs
 
                 this.copyManager.CopyFileReport += this.CopyFileReport;
                 this.copyManager.Copy(source.FullName, destination.FullName);
-                //if (File.Exists(source.FullName))
-                //{
-                //    CopyManager.CopyFile(source.FullName, destination.FullName);
-                //}
-                //else
-                //{
-                //    CopyManager.Copy(source.FullName, destination.FullName);
-                //}
-
                 //CopyManager.CopyFileResult += this.CopyFileResult;
             }
 

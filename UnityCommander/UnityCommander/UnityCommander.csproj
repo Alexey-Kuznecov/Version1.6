@@ -35,11 +35,6 @@
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="GongSolutions.WPF.DragDrop">
-      <HintPath>..\Library\GongSolutions.WPF.DragDrop.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <ApplicationDefinition Update="App.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ApplicationDefinition>

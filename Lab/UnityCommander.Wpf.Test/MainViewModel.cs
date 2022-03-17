@@ -1,8 +1,7 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Controls;
-using UnityCommander.Helper.Mvvm.Base;
+using AlexeyKuznecov.Library.Mvvm.Base;
 
 namespace UnityCommander.Wpf.Test
 {
@@ -20,7 +19,8 @@ namespace UnityCommander.Wpf.Test
             this.CollectionTests = new List<UserControl>
             {
                 copyFile,
-                new DragDropControl()
+                new DragDropControl(),
+                new TabPanelControl()
             };
 
             this.TestContent = copyFile;

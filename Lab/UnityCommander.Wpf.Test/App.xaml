@@ -2,7 +2,25 @@
     x:Class="UnityCommander.Wpf.Test.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:UnityCommander.Wpf.Test"
+    xmlns:local="clr-namespace:UnityCommander.Wpf.Test.Content"
     StartupUri="MainView.xaml">
-    <Application.Resources />
+
+
+    <Application.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="/Components;component/Tab/General.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="ColumnExtensionDataTemplate" DataType="{x:Type local:DirectoryModel}">
+                <Grid>
+                    <TextBlock Text="{Binding Name}" />
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

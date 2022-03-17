@@ -3,11 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converter="clr-namespace:UnityCommander.Common.Styling.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:imodels="clr-namespace:UnityCommander.Integration.Columns;assembly=UnityCommander.Integration"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
     mc:Ignorable="d">
 
     <converter:IconConverter x:Key="IconConverter" />
+    <converter:MultiParameterConverter x:Key="MultiConverter" />
+    <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
 
     <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
@@ -24,25 +27,32 @@
         </Grid>
     </DataTemplate>
 
-    <!--<DataTemplate x:Key="ColumnNameDataTemplate2" DataType="{x:Type DataGridCell}">
+    <DataTemplate x:Key="ColumnTextDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <TextBlock
-                Grid.Column="1"
-                VerticalAlignment="Center"
-                Text="{Binding Name, Mode=OneWay}" />
-            <materialDesigh:PackIcon
-                Grid.Column="0"
-                Width="25"
-                Height="25"
-                VerticalAlignment="Center"
-                Foreground="Orange"
-                Kind="Folder" />
+            <TextBlock Foreground="BlueViolet" x:Name="Cell" VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <converter:BindableParameter
+                                Binding="{Binding Additional.Values}"
+                                Converter="{StaticResource ColumnValueConverter}"
+                                ConverterParameter="{Binding RelativeSource={RelativeSource Mode=Self}}" />
+                </TextBlock.Text>
+            </TextBlock>
+            <!--<Grid.ContextMenu>
+                <ContextMenu ItemsSource="{Binding AddColumn.ContextItems}">
+                    <DataTemplate>
+                        <MenuItem Command="{Binding Command}" Header="{Binding Name}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource MultiConverter}">
+                                    <Binding ElementName="Cell" Path="Text" />
+                                    <Binding ElementName="Cell" Path="Height" />
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                    </DataTemplate>
+                </ContextMenu>
+            </Grid.ContextMenu>-->
         </Grid>
-    </DataTemplate>-->
+    </DataTemplate>
 
     <DataTemplate x:Key="ColumnNameDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>

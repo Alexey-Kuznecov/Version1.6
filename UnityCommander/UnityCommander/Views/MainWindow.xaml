@@ -19,7 +19,7 @@
     AllowsTransparency="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
-    Icon="D:\Works\WPF\UnityCommander\Version2.7.1\UnityCommander\UnityCommander\icon.ico"
+    Icon="C:\Users\Alexey\Desktop\Version2.9.4\UnityCommander\UnityCommander\icon.ico"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     WindowStyle="None"

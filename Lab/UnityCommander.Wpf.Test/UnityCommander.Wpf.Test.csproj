@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Helper\UnityCommander.Helper.csproj" />
-    <ProjectReference Include="..\UnityCommander.Test.System\UnityCommander.Test.Classes.csproj" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\System.Testing\Components\Components.csproj" />
+    <ProjectReference Include="..\..\UnityCommander\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
+    <ProjectReference Include="..\..\UnityCommander\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 
 </Project>

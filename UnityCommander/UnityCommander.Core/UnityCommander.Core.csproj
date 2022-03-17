@@ -8,6 +8,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Behaviors\DragDrop\Drag.cs" />
+    <Compile Remove="Behaviors\DragDrop\Drop.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="C:\Users\lexa1\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config" />
     <None Remove="C:\Users\lexa1\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd" />
     <None Remove="Commands\ReceiverBase.cs~RF10164661.TMP" />
@@ -26,12 +30,6 @@
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Controls\UnityCommander.Controls.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="GongSolutions.WPF.DragDrop">
-      <HintPath>..\Library\GongSolutions.WPF.DragDrop.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">

@@ -13,7 +13,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -21,8 +20,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
     using Core.Helper;
     using Core.Mvvm;
-
-    using GongSolutions.Wpf.DragDrop;
+    
     using NLog;
     using Prism.Commands;
     using Prism.Regions;
@@ -35,6 +33,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Modules;
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Core.DragDrop;
+    using System.Linq;
 
     /// <summary>
     /// The left panel view model.
@@ -399,22 +399,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             bool isSingleSelect = dropInfo.Data is BaseDirectory
                                   & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
 
+            var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
+
+            if (adorner == null)
+            {
+                this.CreateAdornerLayer(dropInfo.VisualTarget);
+            }
+
 
             if (isMultiSelect || isSingleSelect)
             {
-                var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
-
-                if (adorner == null)
-                {
-                    this.CreateAdornerLayer(dropInfo.VisualTarget);
-                }
-
                 // var list = dropInfo.VisualTarget as ListView;
                 // var template = Application.Current.FindResource("DragAdorner");
                 // list?.SetValue(DragDrop.DragAdornerTemplateProperty, template);
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
-                dropInfo.Effects = DragDropEffects.Copy;
+                
             }
+
+            if (dropInfo.Data is BaseDirectory & dropInfo.VisualTarget is ListBox & dropInfo.TargetItem == null)
+            {
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+            }
+
+            dropInfo.Effects = DragDropEffects.Copy;
         }
 
 
@@ -429,12 +436,30 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
             BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
+            string targetPath = null;
+
+            if (targetItem is null)
+            {
+                var firstItem = (dropInfo.VisualTarget as ListBox).SelectedItem as BaseDirectory;
+
+                if (firstItem != null)
+                {
+                    var path = firstItem.Path.Split('\\');
+                    targetPath = Path.Combine(path.Take(path.Length - 1).ToArray());
+                }
+                else
+                {
+                    targetPath = this.CurrentDirectory;
+                }
+            }
+
+            targetPath = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath;
 
             // targetItem.Add(sourceItem);
-            var copyParameters = new CopyParameters
+            var copyParameters = new CopyParameters()
             {
                 Source = (dropInfo.Data as BaseDirectory)?.Path,
-                Target = (dropInfo.TargetItem as BaseDirectory)?.Path
+                Target = targetPath
             };
 
             this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
@@ -448,7 +473,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         private void CreateAdornerLayer(UIElement element)
         {
-            var listBox = element as ListView;
+            var listBox = element as ListBox;
             var ad = new AdornerDecorator();
 
             if (listBox?.Parent is Grid parent)
@@ -532,7 +557,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
                     column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
 
-                    if (this.InitialFolderColumnValues(column) || this.pluginValuesIsCached)
+                    if (this.InitialFolderColumnValues(column))
                     {
                         var columnNew = new GridViewColumn
                         {
@@ -544,13 +569,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         this.FolderPanelContainer.Columns.Add(columnNew);
                     }
 
-                    if (this.InitialFileColumnValues(column) || this.pluginValuesIsCached)
+                    if (this.InitialFileColumnValues(column))
                     {
                         var columnNew = new GridViewColumn
                         {
                             Header = column.Header ?? "Error",
                             Width = column.Width,
-                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
+                            //DisplayMemberBinding = new Binding($"Additional[{column.Header}]"),
+                            CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate"),
+                            
                         };
 
                         this.FilePanelContainer.Columns.Add(columnNew);
@@ -614,8 +641,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         /// <returns>
         /// True if the ColumnValueHandler method returned all non-NULL values.
+        /// <para> 
         /// The idea is to show the column where needed. In this way,
         /// you can independently implement the columns for folders and files.
+        /// </para>
         /// </returns>
         private bool InitialFolderColumnValues(IColumn column)
         {
