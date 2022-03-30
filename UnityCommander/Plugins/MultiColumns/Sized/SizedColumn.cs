@@ -68,7 +68,7 @@ namespace MultiColumns.Sized
         public void ColumnInitial(ColumnBuilder builder)
         {
             builder.Add("Sized", 60);
-            builder.AddContextItem("Install", this.InstallMod);
+            builder.AddContextItem("Size format", this.InstallMod);
         }
 
         /// <summary>

@@ -68,7 +68,7 @@ namespace MultiColumns.DateTime
         public void ColumnInitial(ColumnBuilder builder)
         {
             builder.Add("Creation Date", 80);
-            builder.AddContextItem("Install", this.InstallMod);
+            builder.AddContextItem("Date format", this.InstallMod);
         }
 
         /// <summary>

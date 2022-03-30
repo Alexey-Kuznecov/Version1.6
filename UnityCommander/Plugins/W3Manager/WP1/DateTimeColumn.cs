@@ -151,7 +151,7 @@ namespace W3Manager.WP1
 
         public void UpdateColumnValue(ColumnManager columnManager)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
     }
 }

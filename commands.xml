@@ -1,0 +1,17 @@
+<Commands>
+   <Command Id="C28" Name="RunMemu" 
+            Class="FileManager"
+            Namespace="UnityCommander.Core.IO.Operations"
+            Method="FileManager.Move">
+        <Shortcut>
+            <ModKey>LCtrl<ModKey>
+            <Key>D</Key>
+        </Shortcut>
+        <Descrition>Command to delete the selected file or folder.</Descrition>
+        <Application>
+            <Path>"D:\Program Files\Microvirt\MEmu\MEmu.exe"</Path>
+            <Arguments>\run -d</Arguments>
+            <Icon>"D:\Program Files\Microvirt\MEmu\MEmu.exe","1"</Icon>
+        <Application>
+   </Command> 
+</Commands>

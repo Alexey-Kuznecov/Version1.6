@@ -54,7 +54,7 @@ namespace MultiColumns.Image
         public void ColumnInitial(ColumnBuilder builder)
         {
             builder.Add("Dimension", 80);
-            builder.AddContextItem("Install", this.InstallMod);
+            builder.AddContextItem("Image format", this.InstallMod);
         }
 
         /// <summary>

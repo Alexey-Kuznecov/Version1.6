@@ -37,10 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Update="Images\Icons.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -73,6 +69,10 @@
 
   <ItemGroup>
     <Folder Include="Directories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 
 </Project>

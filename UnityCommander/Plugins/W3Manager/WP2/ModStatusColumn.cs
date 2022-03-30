@@ -14,7 +14,7 @@ namespace W3Manager.WP2
         {
             builder.Add("Mod Status", 50);
             builder.AddContextItem("Install", InstallMod);
-            builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), DisplayAsHandler, OptionRender.DropBox);
+            //builder.BindingOption(typeof(PluginSettings), nameof(PluginSettings.DisplayAs), DisplayAsHandler, OptionRender.DropBox);
         }
 
         private void DisplayAsHandler(object selected)
