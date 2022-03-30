@@ -1,9 +1,12 @@
 ﻿using System.IO;
+using UnityCommander.Common;
+using UnityCommander.Core.Commands;
 
 namespace UnityCommander.Core.IO.Operations
 {
     public class FileManager
     {
+        [UCCommand("FileSelMove")]
         public void Move(string source, string target)
         {
             if (File.Exists(source))
@@ -32,6 +35,7 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
+        [UCCommand("FileSelDel")]
         public void Delete(string source)
         {
             if (File.Exists(source))

@@ -36,6 +36,15 @@
                                 Converter="{StaticResource ColumnValueConverter}"
                                 ConverterParameter="{Binding RelativeSource={RelativeSource Mode=Self}}" />
                 </TextBlock.Text>
+                <!--<TextBlock.ContextMenu>
+                    <ContextMenu ItemsSource="{Binding ContextItems}">
+                        <ContextMenu.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </DataTemplate>
+                        </ContextMenu.ItemTemplate>
+                    </ContextMenu>
+                </TextBlock.ContextMenu>-->
             </TextBlock>
             <!--<Grid.ContextMenu>
                 <ContextMenu ItemsSource="{Binding AddColumn.ContextItems}">
@@ -60,7 +69,17 @@
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
+            <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}">
+                <!--<TextBlock.ContextMenu>
+                    <ContextMenu ItemsSource="{Binding ContextItems}">
+                        <ContextMenu.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </DataTemplate>
+                        </ContextMenu.ItemTemplate>
+                    </ContextMenu>
+                </TextBlock.ContextMenu>-->
+            </TextBlock>
             <ContentPresenter Grid.Column="0">
                 <ContentPresenter.Content>
                     <converter:BindableParameter

@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
-    xmlns:core="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
+    xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
+    xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
@@ -25,6 +26,7 @@
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" MinHeight="200" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <!--
@@ -52,12 +54,30 @@
         <Grid Grid.Row="2">
             <ListView
                 commands:GridViewSort.AutoSort="True"
-                core:DragDrop.DropHandler="{Binding Mode=Default}"
-                core:DragDrop.IsDragSource="True"
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
                 SelectionMode="Single"
-                View="{Binding FilePanelContainer}" />
+                SelectedValue="{Binding CurrentFile}"
+                View="{Binding FilePanelContainer}">
+                <!--<ListView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListViewItem}">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="Add to Playlist"></MenuItem>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>-->
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel ContextMenu="{Binding ContextMenu}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
         </Grid>
         <ContentControl Grid.Row="3">
             <control:NavigationPanel
@@ -65,5 +85,15 @@
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
         </ContentControl>
+        <Grid Grid.Row="4">
+            <Button Width="50" Command="{Binding TestCommand}" core:XParam.IsEnclude="True">
+                <Button.Content>
+                    <core:XArray Type="False" Content="Start">
+                        <core:XValue Param="{Binding CurrentDirectory}"/>
+                        <core:XValue Param="{Binding CurrentDirectory}"/>
+                    </core:XArray>
+                </Button.Content>
+            </Button>
+        </Grid>
     </Grid>
 </UserControl>

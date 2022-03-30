@@ -12,6 +12,7 @@ namespace UnityCommander.ViewModels
 {
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
     using System.Windows.Shapes;
     using MaterialDesignThemes.Wpf;
     using Prism.Commands;
@@ -21,6 +22,7 @@ namespace UnityCommander.ViewModels
 
     using UnityCommander.Common.Models;
     using UnityCommander.Core;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
 
     using WindowCustomizer;
@@ -47,15 +49,22 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private UserControl sidebarContent;
 
+        private InputBindingCollection inputCommands;
+
         #region DEPENDENCY INJECTION PROPERTIES
 
         /// <summary>
         /// The application commands.
         /// </summary>
-        private IGlobalCommandService stateCommands;
+        private IMultiCommandService stateCommands;
+
+        /// <summary>
+        /// The application commands.
+        /// </summary>
+        private IGlobalCommandService uCCommands;
 
         #endregion
-        
+
         /// <summary>
         /// The import view model of the custom window.
         /// </summary>
@@ -110,9 +119,11 @@ namespace UnityCommander.ViewModels
             IEventAggregator exchange, 
             ISettingsProviderService settingsProviderService,
             IIconProviderService iconProviderService,
-            IGlobalCommandService command)
+            IMultiCommandService command,
+            IGlobalCommandService globalCommand)
         {
             this.StateCommand = command;
+            this.uCCommands = globalCommand;
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
 
             exchange.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
@@ -124,6 +135,15 @@ namespace UnityCommander.ViewModels
             this.TabContainerSize = 80;
             
             this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+        }
+
+        /// <summary>
+        /// Gets or sets the current directory.
+        /// </summary>
+        public InputBindingCollection UCCommands
+        {
+            get => this.inputCommands;
+            set => this.SetProperty(ref this.inputCommands, value);
         }
 
         /// <summary>
@@ -154,7 +174,7 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// Gets or sets the application commands.
         /// </summary>
-        public IGlobalCommandService StateCommand
+        public IMultiCommandService StateCommand
         {
             get => this.stateCommands;
             set => this.SetProperty(ref this.stateCommands, value);

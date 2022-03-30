@@ -1,16 +1,14 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows.Input;
+using UnityCommander.Common.Models;
+
 namespace UnityCommander.Services.Interfaces
 {
-    using Prism.Commands;
-
-    /// <summary>
-    /// The common status service.
-    /// </summary>
     public interface IGlobalCommandService
     {
-        /// <summary>
-        /// Gets the save command.
-        /// </summary>
-        CompositeCommand SaveCommand { get; }
+        public void SetCommand<T>();
+        UCCommand GetCommand<T>(string commandName);
     }
 }

@@ -14,12 +14,13 @@
     Height="800"
     custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
     custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
+    xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
-    Icon="C:\Users\Alexey\Desktop\Version2.9.4\UnityCommander\UnityCommander\icon.ico"
+    Icon="C:\Users\Alexey\Desktop\Version2.9.7\UnityCommander\UnityCommander\icon.ico"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     WindowStyle="None"
@@ -32,7 +33,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid inputBinding:SortcutBinding.IsDragSource="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" MinWidth="60" />
             <ColumnDefinition Width="Auto" MaxWidth="250" />
@@ -128,13 +129,17 @@
             Grid.Column="0"
             Grid.ColumnSpan="5"
             Background="#F0F0F0">
-            <Button
+
+            <WrapPanel Grid.Row="4">
+                <Button
                 Width="50"
                 Height="25"
                 Command="{Binding MinimizeToolbarCommand}"
                 Content="+"
                 Cursor="Hand" />
+            </WrapPanel>
         </Grid>
+
     </Grid>
 
     <WindowChrome.WindowChrome>

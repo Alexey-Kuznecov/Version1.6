@@ -6,6 +6,7 @@ namespace UnityCommander.Common.Models.Directory
     using NSwag.Collections;
 
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The directory base.
@@ -47,5 +48,10 @@ namespace UnityCommander.Common.Models.Directory
         /// Gets or sets the directory item's type.
         /// </summary>
         public TargetPanel TargetPanel { get; set; }
+
+        /// <summary>
+        /// Gets or sets context menu item for a column.
+        /// </summary>
+        public List<ContextItem> ContextItems { get; set; }
     }
 }

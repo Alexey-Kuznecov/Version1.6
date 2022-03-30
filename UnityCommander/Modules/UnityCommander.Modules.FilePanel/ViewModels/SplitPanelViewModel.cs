@@ -35,6 +35,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Integration.Columns;
     using UnityCommander.Core.DragDrop;
     using System.Linq;
+    using UnityCommander.Services;
+    using UnityCommander.Core.IO.Operations;
+    using System.Windows.Input;
+    using CommandManager = Core.Commands.CommandManager;
+    using UnityCommander.Common.Models;
 
     /// <summary>
     /// The left panel view model.
@@ -64,6 +69,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The common state service.
         /// </summary>
+        private readonly IMultiCommandService multiCommandService;
+
+        /// <summary>
+        /// The common state service.
+        /// </summary>
         private readonly IGlobalCommandService globalCommandService;
 
         /// <summary>
@@ -74,7 +84,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The command manager.
         /// </summary>
-        private readonly CommandManager commandManager;
+        private readonly Core.Commands.CommandManager commandManager;
 
         /// <summary>
         /// The logger.
@@ -86,7 +96,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// from the cache table the next time the program starts.
         /// </summary>
         private bool pluginValuesIsCached;
-        
+
+        private GlobalCommand inputCommand;
+
+        private BaseDirectory selectedBaseDirectory;
+
         #endregion
 
         #region Collections
@@ -142,7 +156,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dataService">
         /// The service that provides the info of the file system items.
         /// </param>
-        /// <param name="commandService">
+        /// <param name="multiCommandService">
         /// The service that respond for composite commands.
         /// </param>
         /// <param name="pluginService">
@@ -159,7 +173,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IRegionManager regionManager,
             ISettingsProviderService settingsService,
             IDataProviderService dataService,
-            IGlobalCommandService commandService,
+            IMultiCommandService multiCommandService,
+            IGlobalCommandService globalCommandService,
             IPluginLoaderService pluginService,
             CommandManager manager,
             ModuleLogger logger)
@@ -172,14 +187,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
 
+            this.globalCommandService = globalCommandService;
+            this.globalCommandService.SetCommand<FileManager>();
+            this.TestCommand = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileMove).Command;
+            
             // Composite command
-            this.globalCommandService = commandService;
-            this.globalCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            this.multiCommandService = multiCommandService;
+            this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
         }
 
         #endregion
 
         #region Commands
+
+        /// <summary>
+        /// Goes to the selected directory.
+        /// </summary>
+        public ICommand TestCommand { get; set; }
 
         /// <summary>
         /// Goes to the selected directory.
@@ -252,6 +276,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
+        /// Gets or sets the current directory.
+        /// </summary>
+        public GlobalCommand InputCommand
+        {
+            get => this.inputCommand;
+            set => this.SetProperty(ref this.inputCommand, value);
+        }
+
+        /// <summary>
+        /// Gets or sets grid view for file panel.
+        /// </summary>
+        public ContextMenu ContextMenu { get; set; } = new();
+
+        /// <summary>
         /// Gets or sets grid view for file panel.
         /// </summary>
         public GridView FilePanelContainer { get; set; } = new ();
@@ -321,6 +359,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
+        /// Sets the selected directory.
+        /// </summary>
+        public BaseDirectory CurrentFile
+        {
+            get => this.selectedBaseDirectory;
+            set => this.selectedBaseDirectory = value;
+        }
+
+        /// <summary>
         /// Gets or sets the selected directory.
         /// </summary>
         public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
@@ -381,7 +428,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             base.Destroy();
 
             // Detaching a command to avoid memory leaks.
-            this.globalCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
         }
 
         #region Drag And Drop Handlers
@@ -423,7 +470,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             dropInfo.Effects = DragDropEffects.Copy;
         }
-
 
         /// <summary>
         /// The drop.
@@ -550,6 +596,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddPluginColumns()
         {
+            this.ContextMenu = new ContextMenu();
+            this.ContextMenu.Items.Add(new MenuItem() { Header = "Open" });
+            this.ContextMenu.Items.Add(new MenuItem() { Header = "Create" });
+            this.ContextMenu.Items.Add(new MenuItem() { 
+                Header = "Delete",
+                Command = new DelegateCommand(this.FileDelete)
+            });
+
             foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
@@ -575,15 +629,39 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         {
                             Header = column.Header ?? "Error",
                             Width = column.Width,
-                            //DisplayMemberBinding = new Binding($"Additional[{column.Header}]"),
-                            CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate"),
-                            
+                            CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate")
                         };
 
                         this.FilePanelContainer.Columns.Add(columnNew);
+                        
+                    }
+
+                    MenuItem menu = null;
+                    using var xParam = new XParam(menu);
+                    ICommand command = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileDel).Command;
+
+                    foreach (var item in column.ContextItems)
+                    {
+                        menu = new MenuItem()
+                        {
+                            Header = item.Name,
+                            Command = command
+                        };
+
+                        xParam.AddParam(item.Name, menu, this, "CurrentDirectory");
+                        xParam.AddParam(item.Name, menu, this, "SelectedBaseDirectory");
+                        xParam.AddParam(item.Name, menu, this, "CurrentFile");
+                        xParam.AddParam(item.Name, menu, this, "Token");
+                        xParam.ParamFinal(menu);
+                        this.ContextMenu.Items.Add(menu);
                     }
                 }
             }
+        }
+
+        private void FileDelete()
+        {
+            MessageBox.Show(this.CurrentFile.Path);
         }
 
         /// <summary>
@@ -659,6 +737,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     if (!folder.Additional.ContainsKey(column.Header))
                     {
                         folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(folder.Path));
+                        folder.ContextItems = column.ContextItems;
                         isAllEqNull = true;
                     }
                 }

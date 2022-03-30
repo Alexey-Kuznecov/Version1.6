@@ -67,6 +67,7 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
+            containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
             containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();

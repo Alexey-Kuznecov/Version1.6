@@ -2,11 +2,13 @@
 namespace UnityCommander.Common.Models.Columns
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The columns default.
@@ -67,6 +69,19 @@ namespace UnityCommander.Common.Models.Columns
                         Header = "Name",
                         Width = 200,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
+                    },
+                    ContextItems = new List<ContextItem>
+                    {
+                        new ContextItem
+                        {
+                            Name = "dddd",
+                            Command = null
+                        },
+                        new ContextItem
+                        {
+                            Name = "dddd 2",
+                            Command = null
+                        },
                     }
                 },
                  new BaseColumn

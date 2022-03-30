@@ -115,8 +115,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         public ViewAViewModel(
             IRegionManager regionManager, 
-            IIconProviderService iconProvider, 
-            IGlobalCommandService commandService, 
+            IIconProviderService iconProvider,
+            IMultiCommandService commandService, 
             IAppConfigService configService, 
             CommandManager manager)
             : base(regionManager)
