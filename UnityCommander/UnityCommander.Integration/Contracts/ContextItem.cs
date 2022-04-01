@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Windows.Input;
+using UnityCommander.Integration.Enums;
 
 namespace UnityCommander.Integration.Contracts
 {
@@ -16,6 +18,16 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets or sets the command.
         /// </summary>
-        public Action Command { get; set; }
+        public ICommand Command { get; set; }
+
+        /// <summary>
+        /// Gets or sets the command.
+        /// </summary>
+        public string PropertyName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the command.
+        /// </summary>
+        public string CommandName { get; set; }
     }
 }

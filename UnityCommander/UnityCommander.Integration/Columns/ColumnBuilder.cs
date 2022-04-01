@@ -5,6 +5,8 @@ namespace UnityCommander.Integration.Columns
     using System.Collections.Generic;
 
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
+    using UnityCommander.Integration.Mvvm;
 
     /// <summary>
     /// The column builder.
@@ -61,13 +63,13 @@ namespace UnityCommander.Integration.Columns
         /// <param name="action">
         /// The action.
         /// </param>
-        public void AddContextItem(string header, Action action)
+        public void AddContextItem(string header, Action<string> action)
         {
             this.column.ContextItems.Add(new ContextItem
             {
                 Name = header,
-                Command = action
-            });
+                Command = new PluginCommand(action)
+            });;
         }
 
         /// <summary>

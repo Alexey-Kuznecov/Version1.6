@@ -10,6 +10,7 @@
 
 namespace UnityCommander.ViewModels
 {
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -26,6 +27,7 @@ namespace UnityCommander.ViewModels
     using UnityCommander.Services.Interfaces;
 
     using WindowCustomizer;
+    using Path = System.Windows.Shapes.Path;
 
     /// <summary>
     /// The main window view model.
@@ -75,6 +77,11 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private Path iconHideSidebar;
 
+        /// <summary>
+        /// The icon hide sidebar.
+        /// </summary>
+        private string icon;
+
         #region MINIMIZE TOOLBAR FIELDS
 
         /// <summary>
@@ -116,7 +123,7 @@ namespace UnityCommander.ViewModels
         /// </param>
         public MainWindowViewModel(
             IDialogService dialogService,
-            IEventAggregator exchange, 
+            IEventAggregator exchange,
             ISettingsProviderService settingsProviderService,
             IIconProviderService iconProviderService,
             IMultiCommandService command,
@@ -127,14 +134,16 @@ namespace UnityCommander.ViewModels
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
 
             exchange.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
-            
+
             var settings = settingsProviderService.GetAppConfig();
             this.SidebarContentWidth = settings.SidebarDisplayContent ? 250 : 0;
-            
+
             this.RibbonContainerSize = 50;
             this.TabContainerSize = 80;
-            
+
             this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+
+            this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
         }
 
         /// <summary>
@@ -154,6 +163,16 @@ namespace UnityCommander.ViewModels
             get => this.iconHideSidebar;
             set => this.SetProperty(ref this.iconHideSidebar, value);
         }
+
+        /// <summary>
+        /// Gets or sets the icon hide sidebar.
+        /// </summary>
+        public string Icon
+        {
+            get => this.icon;
+            set => this.SetProperty(ref this.icon, value);
+        }
+
 
         /// <summary>
         /// Gets or sets the view model. View model, used to control custom window buttons.

@@ -20,7 +20,7 @@
     AllowsTransparency="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
-    Icon="C:\Users\Alexey\Desktop\Version2.9.7\UnityCommander\UnityCommander\icon.ico"
+    Icon="{Binding Icon}"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     WindowStyle="None"

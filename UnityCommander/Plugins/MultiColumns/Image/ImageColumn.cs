@@ -1,9 +1,10 @@
 ﻿
 namespace MultiColumns.Image
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
-
+    using System.Windows;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
@@ -138,9 +139,9 @@ namespace MultiColumns.Image
         /// <summary>
         /// The install mod.
         /// </summary>
-        private void InstallMod()
+        private void InstallMod(string path)
         {
-            throw new System.NotImplementedException();
+            MessageBox.Show("Image Columns: " + path);
         }
     }
 }

@@ -6,13 +6,11 @@ using System.Windows.Input;
 
 namespace UnityCommander.Services.Interfaces
 {
-    public class UComandExecute<T> : ICommand
+    public class UCommandExecute<T> : ICommand
     {
-        private Type type;
-
         private Delegate command;
 
-        public UComandExecute(Delegate cmd)
+        public UCommandExecute(Delegate cmd)
         {
             this.command = cmd;
         }
@@ -30,6 +28,11 @@ namespace UnityCommander.Services.Interfaces
             ConstructorInfo magicConstructor = type.GetConstructor(Type.EmptyTypes);
             object magicClassObject = magicConstructor.Invoke(new object[] { });
             //command.Method.Invoke(magicClassObject, parameter as object[]);
+        }
+
+        public Delegate GetCommand()
+        {
+            return command;
         }
     }
 }

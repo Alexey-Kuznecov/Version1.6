@@ -51,7 +51,7 @@ namespace UnityCommander.Services
         public ObservableCollection<FolderModel> GetDirectories(string path)
         {
             ObservableCollection<FolderModel> models = new ObservableCollection<FolderModel>();
-            DirectoryInfo dir = new DirectoryInfo(path);
+            DirectoryInfo dir = new DirectoryInfo(path + "\\");
 
             foreach (var item in dir.GetDirectories())
             {

@@ -5,7 +5,7 @@
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
-    xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
+    xmlns:core="clr-namespace:UnityCommander.Common;assembly=UnityCommander.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
@@ -26,7 +26,6 @@
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" MinHeight="200" />
-            <RowDefinition Height="50" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <!--
@@ -85,7 +84,7 @@
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
         </ContentControl>
-        <Grid Grid.Row="4">
+        <!--<Grid Grid.Row="4">
             <Button Width="50" Command="{Binding TestCommand}" core:XParam.IsEnclude="True">
                 <Button.Content>
                     <core:XArray Type="False" Content="Start">
@@ -94,6 +93,6 @@
                     </core:XArray>
                 </Button.Content>
             </Button>
-        </Grid>
+        </Grid>-->
     </Grid>
 </UserControl>

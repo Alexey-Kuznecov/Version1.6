@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.Common;
 using UnityCommander.Common.Models;
@@ -29,6 +31,36 @@ namespace UnityCommander.Services
             globalCommands = new List<UCCommand>();
         }
 
+        public void SetCommand(GlobalCommand global)
+        {
+            using var xParam = new XParam(global.ControlItem);
+
+            if (global.ControlItem is MenuItem menuItem)
+            {
+                menuItem.Command = global.Command;
+                var header = menuItem.Header;
+                    xParam.AddParam((string)header, menuItem, global.XParamModel);
+                xParam.ParamFinal(menuItem);
+            }
+        }
+
+        public void SetCommand<T>(string commandName, GlobalCommand global)
+        {
+            var command = this.globalCommands.Single(c => c.Name == commandName);
+            var uCommandExecute = (UCommandExecute<T>)command.Command;
+            var paramInfo = uCommandExecute.GetCommand().Method.GetParameters();
+            using var xParam = new XParam(global.ControlItem);
+
+            if (global.ControlItem is MenuItem menuItem)
+            {
+                menuItem.Command = command.Command;
+                var header = menuItem.Header;
+                for (int i = 0; i < paramInfo.Length; i++)
+                    xParam.AddParam((string)header, menuItem, global.XParamModelList[i]);
+                xParam.ParamFinal(menuItem);
+            }       
+        }
+
         public void SetCommand<T>()
         {
             if (this.globalCommands.Count != 0) return;
@@ -38,8 +70,6 @@ namespace UnityCommander.Services
             if (instance is T)
             {
                 Type type = instance.GetType();
-                //ConstructorInfo magicConstructor = type.GetConstructor(Type.EmptyTypes);
-                //object magicClassObject = magicConstructor.Invoke(new object[] { });
                 MemberInfo[] methods = type.GetMethods();
 
                 for (int i = 0; i < methods.Length; i++)
@@ -50,7 +80,7 @@ namespace UnityCommander.Services
                     {
                         var m = methods[i] as MethodInfo;
                         var action = Delegate.CreateDelegate(delegateTypeFactory.CreateDelegateType(m), instance, m);
-                        var cmd = new UCCommand(((UCCommandAttribute)att).Name, new UComandExecute<T>(action), new KeyGesture(Key.D, ModifierKeys.Control));
+                        var cmd = new UCCommand(((UCCommandAttribute)att).Name, new UCommandExecute<T>(action), new KeyGesture(Key.D, ModifierKeys.Control));
                         var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
                         var inputBindingCollection = new InputBindingCollection();
                         inputBindingCollection.Add(input);
@@ -62,11 +92,8 @@ namespace UnityCommander.Services
 
         public UCCommand GetCommand<T>(string commandName)
         {
-            return this.globalCommands.Single(c => c.Name == commandName);
-        }
-
-        public void Command1()
-        {
+            var cmd = this.globalCommands.Single(c => c.Name == commandName);
+            return cmd;
         }
     }
 
@@ -76,10 +103,7 @@ namespace UnityCommander.Services
 
         public DelegateTypeFactory(Assembly assembly)
         {
-            // To generate a persistable assembly, specify AssemblyBuilderAccess.RunAndSave.
             var asmBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("DelegateTypeFactory"), AssemblyBuilderAccess.Run);
-
-            // Generate a persistable single-module assembly.
             m_module = asmBuilder.DefineDynamicModule(asmBuilder.GetName().Name);
         }
 

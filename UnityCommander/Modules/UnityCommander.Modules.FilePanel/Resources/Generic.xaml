@@ -64,6 +64,11 @@
                 <i:Interaction.Behaviors>
                     <be:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
                 </i:Interaction.Behaviors>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel ContextMenu="{Binding ContextMenu}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
             </ListView>
         </Grid>
     </ControlTemplate>

@@ -9,6 +9,7 @@ namespace UnityCommander.Common.Models.Columns
 
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
 
     /// <summary>
     /// The columns default.
@@ -74,13 +75,22 @@ namespace UnityCommander.Common.Models.Columns
                     {
                         new ContextItem
                         {
-                            Name = "dddd",
-                            Command = null
+                            Name = "Open",
+                            Command = null,
+                            CommandName = CommandNames.FileMove
+
                         },
                         new ContextItem
                         {
-                            Name = "dddd 2",
-                            Command = null
+                            Name = "Create",
+                            Command = null,
+                            CommandName = CommandNames.FileDel
+                        },
+                        new ContextItem
+                        {
+                            Name = "Delete",
+                            Command = null,
+                            CommandName = CommandNames.FileDel
                         },
                     }
                 },

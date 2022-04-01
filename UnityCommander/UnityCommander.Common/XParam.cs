@@ -1,15 +1,15 @@
-﻿using Prism.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using UnityCommander.Common.Models;
 
-namespace UnityCommander.Core
+namespace UnityCommander.Common
 {
+    using Models;
+
     public class XParam : IDisposable
     {
         #region IsSortcutEnabledProperty
@@ -134,10 +134,10 @@ namespace UnityCommander.Core
         /// <param name="viewModelPropName">
         /// The view model property name.
         /// </param>
-        public void AddParam(string contentControl, object control, object viewModel, string viewModelPropName)
+        public void AddParam(string contentControl, object control, XParamModel paramModel)
         {
             var xValue = new XValue();
-            Binding bind = new Binding(viewModelPropName) { Mode = BindingMode.Default, Source = viewModel };
+            Binding bind = new Binding(paramModel.PropertyName) { Mode = BindingMode.Default, Source = paramModel.Instance };
             BindingOperations.SetBinding(xValue, XValue.ParamProperty, bind);
             this.xArray.SetValue(XArray.ContentProperty, contentControl);
             this.xArray.Children.Add(xValue);

@@ -1,14 +1,14 @@
-﻿using Prism.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UnityCommander.Common.Models;
 
-namespace UnityCommander.Core
+namespace UnityCommander.Common
 {
+    using Models;
+
     public class XArray : Panel
     {
         #region IsSortcutEnabledProperty

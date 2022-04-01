@@ -33,13 +33,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Modules;
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Core.DragDrop;
     using System.Linq;
     using UnityCommander.Services;
     using UnityCommander.Core.IO.Operations;
     using System.Windows.Input;
     using CommandManager = Core.Commands.CommandManager;
-    using UnityCommander.Common.Models;
+    using UnityCommander.Common;
 
     /// <summary>
     /// The left panel view model.
@@ -97,8 +98,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private bool pluginValuesIsCached;
 
-        private GlobalCommand inputCommand;
-
+        /// <summary>
+        /// Select base directory.
+        /// </summary>
         private BaseDirectory selectedBaseDirectory;
 
         #endregion
@@ -276,18 +278,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the current directory.
-        /// </summary>
-        public GlobalCommand InputCommand
-        {
-            get => this.inputCommand;
-            set => this.SetProperty(ref this.inputCommand, value);
-        }
-
-        /// <summary>
         /// Gets or sets grid view for file panel.
         /// </summary>
-        public ContextMenu ContextMenu { get; set; } = new();
+        public ContextMenu ContextMenu { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets grid view for file panel.
@@ -420,6 +413,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
+        #region Other
+        
         /// <summary>
         /// Finalization of objects when unloading a module.
         /// </summary>
@@ -430,6 +425,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             // Detaching a command to avoid memory leaks.
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
         }
+
+        #endregion
 
         #region Drag And Drop Handlers
 
@@ -556,6 +553,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     foreach (var column in items)
                     {
                         this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                        this.ContextMenuBuild(column);
                     }
                 });
         }
@@ -570,6 +568,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 foreach (var column in items)
                 {
                     this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    //this.ContextMenuBuild(column);
                 }
             });
         }
@@ -596,14 +595,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddPluginColumns()
         {
-            this.ContextMenu = new ContextMenu();
-            this.ContextMenu.Items.Add(new MenuItem() { Header = "Open" });
-            this.ContextMenu.Items.Add(new MenuItem() { Header = "Create" });
-            this.ContextMenu.Items.Add(new MenuItem() { 
-                Header = "Delete",
-                Command = new DelegateCommand(this.FileDelete)
-            });
-
             foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
@@ -633,35 +624,60 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         };
 
                         this.FilePanelContainer.Columns.Add(columnNew);
-                        
                     }
 
-                    MenuItem menu = null;
-                    using var xParam = new XParam(menu);
-                    ICommand command = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileDel).Command;
-
-                    foreach (var item in column.ContextItems)
-                    {
-                        menu = new MenuItem()
-                        {
-                            Header = item.Name,
-                            Command = command
-                        };
-
-                        xParam.AddParam(item.Name, menu, this, "CurrentDirectory");
-                        xParam.AddParam(item.Name, menu, this, "SelectedBaseDirectory");
-                        xParam.AddParam(item.Name, menu, this, "CurrentFile");
-                        xParam.AddParam(item.Name, menu, this, "Token");
-                        xParam.ParamFinal(menu);
-                        this.ContextMenu.Items.Add(menu);
-                    }
+                    this.PluginContextMenuBuild(column);
                 }
             }
         }
 
-        private void FileDelete()
+        /// <summary>
+        /// PluginContextMenuBuild
+        /// </summary>
+        private void PluginContextMenuBuild(IColumn column)
         {
-            MessageBox.Show(this.CurrentFile.Path);
+            if (column.ContextItems == null) return;
+
+            foreach (var item in column.ContextItems)
+            {
+                var menu = new MenuItem();
+                menu.Header = item.Name;
+
+                this.globalCommandService.SetCommand(new ()
+                {
+                    Command = item.Command,
+                    ControlItem = menu,
+                    XParamModel = new XParamModel(this, "CurrentDirectory")
+                });
+
+                this.ContextMenu.Items.Add(menu);
+            }
+        }
+
+        /// <summary>
+        /// ContextMenuBuild
+        /// </summary>
+        private void ContextMenuBuild(IColumn column)
+        {
+            if (column.ContextItems == null) return;
+
+            foreach (var item in column.ContextItems)
+            {
+                var menu = new MenuItem();
+                menu.Header = item.Name;
+
+                this.globalCommandService.SetCommand<FileManager>(item.CommandName, new ()
+                {
+                    ControlItem = menu,
+                    XParamModelList = new List<XParamModel>()
+                    {
+                        new XParamModel(this, "CurrentDirectory"),
+                        new XParamModel(this, "CurrentDirectory")
+                    }
+                });
+
+                this.ContextMenu.Items.Add(menu);
+            }
         }
 
         /// <summary>
@@ -673,6 +689,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
+                    //this.AddPluginColumns();
                     this.InitialFolderColumnValues(column);
                     this.InitialFileColumnValues(column);
                 }
@@ -726,20 +743,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         private bool InitialFolderColumnValues(IColumn column)
         {
-            var isAllEqNull = false;
+            var isAllEqNull = true;
 
             foreach (var folder in this.DirectoryList)
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
 
-                if (columnValue != null)
+                if (!folder.Additional.ContainsKey(column.Header))
                 {
-                    if (!folder.Additional.ContainsKey(column.Header))
-                    {
-                        folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(folder.Path));
-                        folder.ContextItems = column.ContextItems;
-                        isAllEqNull = true;
-                    }
+                    folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(folder.Path));
+                    //folder.ContextItems = column.ContextItems;                   
                 }
             }
 
@@ -759,19 +772,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         private bool InitialFileColumnValues(IColumn column)
         {
-            var isAllEqNull = false;
+            var isAllEqNull = true;
 
             foreach (var file in this.FileList)
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
 
-                if (columnValue != null)
+                if (!file.Additional.ContainsKey(column.Header))
                 {
-                    if (!file.Additional.ContainsKey(column.Header))
-                    {
-                        file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(file.Path));
-                        isAllEqNull = true;
-                    }
+                    file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(file.Path));
                 }
             }
 

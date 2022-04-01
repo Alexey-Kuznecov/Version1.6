@@ -4,7 +4,7 @@ namespace MultiColumns.DateTime
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-
+    using System.Windows;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
@@ -67,8 +67,9 @@ namespace MultiColumns.DateTime
         /// </param>
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("Creation Date", 80);
-            builder.AddContextItem("Date format", this.InstallMod);
+            builder.Add("Creation Date", 100);
+            builder.AddContextItem("Select date format", this.InstallMod);
+            builder.AddContextItem("Edit date fornmat", this.InstallMod);
         }
 
         /// <summary>
@@ -150,6 +151,12 @@ namespace MultiColumns.DateTime
             optionBuilder.Add("Shown date and time:", this.includeTime, this.IncludeTimeHandler, OptionRender.Checkbox);
         }
 
+        /// <summary>
+        /// The display as handler.
+        /// </summary>
+        /// <param name="value">
+        /// The selected.
+        /// </param>
         private void IncludeTimeHandler(bool value)
         {
             this.includeTime = value;
@@ -171,9 +178,9 @@ namespace MultiColumns.DateTime
         /// <summary>
         /// The install mod.
         /// </summary>
-        private void InstallMod()
+        private void InstallMod(string path)
         {
-            throw new System.NotImplementedException();
+            MessageBox.Show("Date Columns: " + path);
         }
     }
 }
