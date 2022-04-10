@@ -154,72 +154,58 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// </returns>
         private RibbonBuilder RibbonFileSectionBuilder()
         {
-            var sectionFile = new RibbonBuilder("File");
-            var editGroup = new RibbonControlGroupBuilder();
-            var copyGroup = new RibbonControlGroupBuilder();
-            editGroup.AddGroup("File Operation", this.AddFileOperationGroup);
-            copyGroup.AddGroup("View Group", this.AddViewGroup);
-            sectionFile.SetSection(editGroup);
-            sectionFile.SetSection(copyGroup);
-            return sectionFile;
-        }
-
-        /// <summary>
-        /// The add view group.
-        /// </summary>
-        /// <param name="builder">
-        /// The builder.
-        /// </param>
-        private void AddViewGroup(RibbonControlGroupBuilder builder)
-        {
-            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            builder.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-        }
-
-        /// <summary>
-        /// The callback.
-        /// </summary>
-        /// <param name="builder">
-        /// The builder.
-        /// </param>
-        private void AddFileOperationGroup(RibbonControlGroupBuilder builder)
-        {
-            builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
-            builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
-            builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
-            builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
-            builder.AddControlList(this.ControlSortDesigner);
-            builder.AddControlList(this.ControlFilterDesigner);
-        }
-
-        /// <summary>
-        /// The add item.
-        /// </summary>
-        /// <param name="item">
-        /// The item.
-        /// </param>
-        private void ControlSortDesigner(RibbonControlList item)
-        {
-            item.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
-            item.AddItem(new RibbonListBoxItem("Boxing", this.iconProvider.GetIcon(PackIconKind.Box), this.ShowDialogCommand));
-            item.AddItem(new RibbonComboBoxItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand));
-            item.AddItem(new RibbonComboBoxItem("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), this.ShowDialogCommand));
-            item.AddItem(new RibbonComboBoxItem("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), this.ShowDialogCommand));
-            item.Build();
-        }
-
-        /// <summary>
-        /// The add item 2.
-        /// </summary>
-        /// <param name="item">
-        /// The item.
-        /// </param>
-        private void ControlFilterDesigner(RibbonControlList item)
-        {
-            item.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
-            item.AddItem(new RibbonListBoxItem("Power settings", this.iconProvider.GetIcon(PackIconKind.PowerSettings), this.ShowDialogCommand));
-            item.AddItem(new RibbonListBoxItem("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null));
-            item.Build();
+            return RibbonBuilderExtension.Initial("File").SetGroup(
+                "File Operation",
+                builder =>
+                    {
+                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
+                        builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
+                        builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
+                        builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
+                        builder.AddControlList(
+                            list =>
+                                {
+                                    list.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
+                                    list.AddComboBoxItem(
+                                        box =>
+                                            {
+                                                box.AddItem("Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), null);
+                                                box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
+                                                box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
+                                                box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
+                                                box.AddItem("Bug", this.iconProvider.GetIcon(PackIconKind.Bug), null);
+                                            });
+                                    list.AddComboBoxItem(
+                                        box =>
+                                            {
+                                                box.AddItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand);
+                                                box.AddItem("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), null);
+                                                box.AddItem("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), null);
+                                                box.AddItem("About Circle", this.iconProvider.GetIcon(PackIconKind.AboutCircle), null);
+                                            });
+                                });
+                        builder.AddControlList(
+                            list =>
+                                {
+                                    list.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
+                                    list.AddComboBoxItem(
+                                        box =>
+                                            {
+                                                box.AddItem("Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), this.ShowDialogCommand);
+                                                box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
+                                                box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
+                                                box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
+                                                box.AddItem("Bug", this.iconProvider.GetIcon(PackIconKind.Bug), null);
+                                            });
+                                    list.AddItem(new RibbonListBoxItem("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null));
+                                });
+                    }).SetGroup(
+                "View Group",
+                builder =>
+                    {
+                        builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+                        builder.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+                    }).Build();
         }
 
         #endregion

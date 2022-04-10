@@ -92,7 +92,7 @@ namespace UnityCommander.Controls.Ribbon
         /// <remarks> Each control is added from top to bottom. </remarks>
         public void AddControlList(Action<RibbonControlList> callback)
         {
-            RibbonControlList ribbonControlList = new RibbonControlList();
+            using var ribbonControlList = new RibbonControlList();
             ribbonControlList.AddItem(callback);
             this.group.Children.Add(ribbonControlList);
         }

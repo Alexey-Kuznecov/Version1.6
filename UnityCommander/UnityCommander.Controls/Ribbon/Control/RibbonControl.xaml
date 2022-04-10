@@ -12,7 +12,8 @@
         <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
         <Setter Property="Width" Value="100" />
         <Setter Property="Height" Value="32" />
-        <Setter Property="Margin" Value="0" />
+        <Setter Property="Margin" Value="0,0,5,5" />
+        <Setter Property="Padding" Value="0,0,0,5" />
         <!--<Setter Property="Padding" Value="0" />-->
         <!--<Setter Property="ItemContainerStyle">
             <Setter.Value>
@@ -56,7 +57,7 @@
     </DataTemplate>
 
     <ControlTemplate x:Key="RibbonComboBoxItemTemplate" TargetType="ComboBoxItem">
-        <Grid Height="25">
+        <Grid Height="25" Width="200">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="25" />
                 <ColumnDefinition Width="*" />

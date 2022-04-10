@@ -35,7 +35,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="dataTemplate">
         /// Name of the data template for the control.
         /// </param>
-        public RibbonControl(
+        internal RibbonControl(
             [NotNull] string controlName,
             [NotNull] IIcon controlIcon,
             [NotNull] ICommand controlCommand,
@@ -54,7 +54,7 @@ namespace UnityCommander.Controls.Ribbon.Control
             this.Style = (Style)Application.Current.FindResource(styleName);
             this.DataTemplate = (DataTemplate)Application.Current.TryFindResource(dataTemplate);
         }
-
+        
         /// <summary>
         /// Gets or sets the template of a control such as Button.
         /// </summary>

@@ -3,6 +3,8 @@ namespace UnityCommander.Controls.Ribbon
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -11,7 +13,8 @@ namespace UnityCommander.Controls.Ribbon
     /// <summary>
     /// Adds a list of controls below each other..
     /// </summary>
-    public class RibbonControlList : StackPanel
+    [SuppressMessage("ReSharper", "ConvertToUsingDeclaration")]
+    public class RibbonControlList : StackPanel, IDisposable
     {
         /// <summary>
         /// The item collection.
@@ -26,7 +29,7 @@ namespace UnityCommander.Controls.Ribbon
         /// <summary>
         /// The combo box.
         /// </summary>
-        private readonly ComboBox comboBox = new ();
+        private readonly List<RibbonComboBox> comboBoxes = new ();
 
         /// <summary>
         /// The add item.
@@ -44,42 +47,42 @@ namespace UnityCommander.Controls.Ribbon
         /// </param>
         public void AddItem(IRibbonControl control)
         {
-            switch (control)
+            ListBoxItem listBoxItem = new ()
             {
-                case RibbonListBoxItem:
-                    {
-                        ListBoxItem listBoxItem = new ()
-                        {
-                            DataContext = control.DataBinding,
-                            Template = control.Template,
-                            Style = control.Style
-                        };
+                DataContext = control.DataBinding,
+                Template = control.Template,
+                Style = control.Style
+            };
+            
+            this.itemCollection.Add(listBoxItem);         
+        }
 
-                        this.itemCollection.Add(listBoxItem);
-                        break;
-                    }
+        /// <summary>
+        /// The add combo box item.
+        /// </summary>
+        /// <param name="callback">
+        /// The callback.
+        /// </param>
+        public void AddComboBoxItem(Action<RibbonComboBox> callback)
+        {
+            using (var comboBox = new RibbonComboBox())
+            {
+                callback(comboBox);
+                comboBox.Build();
 
-                case RibbonComboBoxItem:
-                    this.dataBindingControls.Add(control.DataBinding);
-                    break;
+                if (comboBox.Items.Count > 0)
+                {
+                    this.itemCollection.Add(comboBox);
+                }
             }
         }
 
         /// <summary>
-        /// The build.
+        /// The dispose.
         /// </summary>
-        public void Build()
+        public void Dispose()
         {
-            if (this.dataBindingControls.Count > 0)
-            {
-                this.comboBox.ItemTemplate = (DataTemplate)Application.Current.FindResource("RibbonComboBoxItemDataTemplate");
-                this.comboBox.Style = (Style)Application.Current.FindResource("RibbonComboBoxStyle");
-                this.comboBox.ItemsSource = this.dataBindingControls;
-                this.comboBox.SelectedIndex = 0;
-                this.comboBox.SelectionChanged += ComboBox_SelectionChanged;
-                this.itemCollection.Add(this.comboBox);
-            }
-
+            this.comboBoxes.Clear();
             this.Margin = new Thickness(10, 5, 0, 0);
             foreach (var item in this.itemCollection)
             {
