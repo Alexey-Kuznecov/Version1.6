@@ -9,9 +9,9 @@ namespace UnityCommander.Controls.Ribbon
     using UnityCommander.Controls.Ribbon.Control;
 
     /// <summary>
-    /// The ribbon item group.
+    /// Adds a list of controls below each other..
     /// </summary>
-    public class RibbonItemGroup : StackPanel
+    public class RibbonControlList : StackPanel
     {
         /// <summary>
         /// The item collection.
@@ -21,7 +21,7 @@ namespace UnityCommander.Controls.Ribbon
         /// <summary>
         /// The ribbon control models.
         /// </summary>
-        private readonly List<RibbonControlModel> ribbonControlModels = new ();
+        private readonly List<DataBindingControl> dataBindingControls = new ();
 
         /// <summary>
         /// The combo box.
@@ -34,33 +34,33 @@ namespace UnityCommander.Controls.Ribbon
         /// <param name="item">
         /// The item.
         /// </param>
-        public void AddItem(Action<RibbonItemGroup> item) => item(this);
+        public void AddItem(Action<RibbonControlList> item) => item(this);
 
         /// <summary>
         /// The add item.
         /// </summary>
-        /// <param name="item">
+        /// <param name="control">
         /// The item.
         /// </param>
-        public void AddItem(IRibbonControl item)
+        public void AddItem(IRibbonControl control)
         {
-            switch (item)
+            switch (control)
             {
-                case RibbonListBox:
+                case RibbonListBoxItem:
                     {
                         ListBoxItem listBoxItem = new ()
                         {
-                            DataContext = item.DataContext,
-                            Template = item.Template,
-                            Style = item.Style
+                            DataContext = control.DataBinding,
+                            Template = control.Template,
+                            Style = control.Style
                         };
 
                         this.itemCollection.Add(listBoxItem);
                         break;
                     }
 
-                case RibbonComboBox:
-                    this.ribbonControlModels.Add(item.DataContext);
+                case RibbonComboBoxItem:
+                    this.dataBindingControls.Add(control.DataBinding);
                     break;
             }
         }
@@ -70,11 +70,11 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         public void Build()
         {
-            if (this.ribbonControlModels.Count > 0)
+            if (this.dataBindingControls.Count > 0)
             {
                 this.comboBox.ItemTemplate = (DataTemplate)Application.Current.FindResource("RibbonComboBoxItemDataTemplate");
                 this.comboBox.Style = (Style)Application.Current.FindResource("RibbonComboBoxStyle");
-                this.comboBox.ItemsSource = this.ribbonControlModels;
+                this.comboBox.ItemsSource = this.dataBindingControls;
                 this.comboBox.SelectedIndex = 0;
                 this.comboBox.SelectionChanged += ComboBox_SelectionChanged;
                 this.itemCollection.Add(this.comboBox);
@@ -98,7 +98,7 @@ namespace UnityCommander.Controls.Ribbon
         /// </param>
         private static void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = e.AddedItems[0] as RibbonControlModel;
+            var selected = e.AddedItems[0] as DataBindingControl;
 
             selected?.Command?.Execute(null);
         }

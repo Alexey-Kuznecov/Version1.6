@@ -166,15 +166,15 @@ namespace UnityCommander.Controls.Ribbon
         /// <summary>
         /// The add section.
         /// </summary>
-        /// <param name="groupBuilder">
+        /// <param name="controlGroupBuilder">
         /// The section Builder.
         /// </param>
         /// <returns>
         /// The <see cref="RibbonBuilder"/>.
         /// </returns>
-        public RibbonBuilder SetSection(RibbonGroupBuilder groupBuilder)
+        public RibbonBuilder SetSection(RibbonControlGroupBuilder controlGroupBuilder)
         {
-            GroupsAdorner.Add(groupBuilder.GetAdorner());
+            GroupsAdorner.Add(controlGroupBuilder.GetAdorner());
             FirstAdorner ??= this.GroupsAdorner;
             return this;
         }

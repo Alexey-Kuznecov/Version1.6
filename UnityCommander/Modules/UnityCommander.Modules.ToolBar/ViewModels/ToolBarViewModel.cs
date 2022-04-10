@@ -91,12 +91,14 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             this.Message = "This Toolbar View";
             this.UserControls = new MainTabControl();
             this.Icon = iconProvider.GetIcon("Tag").GetIconPath();
-            
-            this.ribbonSectionBuilder = this.RibbonFileBuild();
-            this.ribbonSectionBuilder = this.RibbonViewBuild();
-            this.ribbonSectionBuilder = this.RibbonViewBuild2();
-            this.Ribbon = this.ribbonSectionBuilder.Build();
+
+            this.Ribbon = RibbonBuilderExtension.SetSection(this.RibbonFileSectionBuilder())
+                            .SetSection(this.RibbonViewSectionBuilder())
+                                .SetSection(this.RibbonLaunchSectionBuilder())
+                                    .Build();
         }
+
+        #region Properties
 
         /// <summary>
         /// Gets or sets the icon.
@@ -115,13 +117,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             get => this.ribbon;
             set => this.SetProperty(ref this.ribbon, value);
         }
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
-        public DelegateCommand ShowDialogCommand =>
-            this.showDialogCommand ?? new DelegateCommand(this.ExecuteShowDialogCommand);
-
+        
         /// <summary>
         /// Gets or sets the user controls.
         /// </summary>
@@ -141,53 +137,94 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         }
 
         /// <summary>
+        /// The show dialog command.
+        /// </summary>
+        public DelegateCommand ShowDialogCommand =>
+            this.showDialogCommand ?? new DelegateCommand(this.ExecuteShowDialogCommand);
+
+        #endregion
+
+        #region Ribbon File Section
+
+        /// <summary>
         /// The ribbon build.
         /// </summary>
         /// <returns>
         /// The <see cref="RibbonBuilder"/>.
         /// </returns>
-        private RibbonBuilder RibbonFileBuild()
+        private RibbonBuilder RibbonFileSectionBuilder()
         {
-            var editGroup = new RibbonGroupBuilder();
-            editGroup.AddGroup("File Operation");
-            editGroup.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
-            //editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.DesktopWindows), this.ShowDialogCommand);
-            editGroup.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
-            editGroup.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
-            editGroup.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
-            editGroup.AddItemGroup(AddItem);
-            editGroup.AddItemGroup(AddItem2);
-
-            var copyGroup = new RibbonGroupBuilder();
-            copyGroup.AddGroup("View Group");
-            copyGroup.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            copyGroup.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-
             var sectionFile = new RibbonBuilder("File");
+            var editGroup = new RibbonControlGroupBuilder();
+            var copyGroup = new RibbonControlGroupBuilder();
+            editGroup.AddGroup("File Operation", this.AddFileOperationGroup);
+            copyGroup.AddGroup("View Group", this.AddViewGroup);
             sectionFile.SetSection(editGroup);
             sectionFile.SetSection(copyGroup);
-
             return sectionFile;
         }
 
-        private void AddItem(RibbonItemGroup item)
+        /// <summary>
+        /// The add view group.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder.
+        /// </param>
+        private void AddViewGroup(RibbonControlGroupBuilder builder)
         {
-            item.AddItem(new RibbonListBox("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
-            item.AddItem(new RibbonListBox("Boxing", this.iconProvider.GetIcon(PackIconKind.Box), this.ShowDialogCommand));
-            //item.AddItem(new RibbonListBox("Books plus", this.iconProvider.GetIcon(PackIconKind.BooksPlus), null));
-            item.AddItem(new RibbonComboBox("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand));
-            item.AddItem(new RibbonComboBox("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), this.ShowDialogCommand));
-            item.AddItem(new RibbonComboBox("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), this.ShowDialogCommand));
+            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            builder.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+        }
+
+        /// <summary>
+        /// The callback.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder.
+        /// </param>
+        private void AddFileOperationGroup(RibbonControlGroupBuilder builder)
+        {
+            builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
+            builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
+            builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
+            builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
+            builder.AddControlList(this.ControlSortDesigner);
+            builder.AddControlList(this.ControlFilterDesigner);
+        }
+
+        /// <summary>
+        /// The add item.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        private void ControlSortDesigner(RibbonControlList item)
+        {
+            item.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
+            item.AddItem(new RibbonListBoxItem("Boxing", this.iconProvider.GetIcon(PackIconKind.Box), this.ShowDialogCommand));
+            item.AddItem(new RibbonComboBoxItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand));
+            item.AddItem(new RibbonComboBoxItem("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), this.ShowDialogCommand));
+            item.AddItem(new RibbonComboBoxItem("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), this.ShowDialogCommand));
             item.Build();
         }
 
-        private void AddItem2(RibbonItemGroup item)
+        /// <summary>
+        /// The add item 2.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        private void ControlFilterDesigner(RibbonControlList item)
         {
-            item.AddItem(new RibbonListBox("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
-            item.AddItem(new RibbonListBox("Power settings", this.iconProvider.GetIcon(PackIconKind.PowerSettings), this.ShowDialogCommand));
-            item.AddItem(new RibbonListBox("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null));
+            item.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
+            item.AddItem(new RibbonListBoxItem("Power settings", this.iconProvider.GetIcon(PackIconKind.PowerSettings), this.ShowDialogCommand));
+            item.AddItem(new RibbonListBoxItem("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null));
             item.Build();
         }
+
+        #endregion
+
+        #region Ribbon View Section
 
         /// <summary>
         /// The ribbon view build.
@@ -195,18 +232,21 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <returns>
         /// The <see cref="RibbonBuilder"/>.
         /// </returns>
-        private RibbonBuilder RibbonViewBuild()
+        private RibbonBuilder RibbonLaunchSectionBuilder()
         {
-            var viewGroup = new RibbonGroupBuilder();
-            viewGroup.AddGroup("Group Name");
-            viewGroup.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            viewGroup.AddButton("Settings", this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-            viewGroup.AddButton("File tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-
-            var sectionView = new RibbonBuilder("View");
-            sectionView.SetSection(viewGroup);
-            return sectionView;
+            return RibbonBuilderExtension.Initial("Launch").SetGroup(
+                    "Game Launch",
+                    builder =>
+                        {
+                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+                            builder.AddButton("Settings", this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
+                            builder.AddButton("File tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+                        }).Build();
         }
+
+        #endregion
+
+        #region Ribbon View Section
 
         /// <summary>
         /// The ribbon view build.
@@ -214,27 +254,27 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <returns>
         /// The <see cref="RibbonBuilder"/>.
         /// </returns>
-        private RibbonBuilder RibbonViewBuild2()
+        private RibbonBuilder RibbonViewSectionBuilder()
         {
-            var viewGroup = new RibbonGroupBuilder();
-            viewGroup.AddGroup("View Group");
-            viewGroup.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            viewGroup.AddButton("File Tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-            viewGroup.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-            viewGroup.AddButton("FileTree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-
-
-            var copyGroup = new RibbonGroupBuilder();
-            copyGroup.AddGroup("View Group");
-            copyGroup.AddButton("Plugin", this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
-            copyGroup.AddButton("Table column", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-            copyGroup.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-
-            var sectionView = new RibbonBuilder("Launcher");
-            sectionView.SetSection(viewGroup);
-            sectionView.SetSection(copyGroup);
-            return sectionView;
+            return RibbonBuilderExtension.Initial("View").SetGroup(
+                    "View Group",
+                builder =>
+                        {
+                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+                            builder.AddButton("File Tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+                            builder.AddButton("FileTree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+                        }).SetGroup(
+                    "Shared Group",
+                    builder =>
+                        {
+                            builder.AddButton("Plugin", this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
+                            builder.AddButton("Table column", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+                        }).Build();
         }
+
+        #endregion
 
         /// <summary>
         /// The execute show dialog command.
