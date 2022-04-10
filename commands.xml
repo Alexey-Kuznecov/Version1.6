@@ -1,8 +1,8 @@
-<Commands>
+<Commands Handler="Command.Parser">
    <Command Id="C28" Name="RunMemu" 
             Class="FileManager"
-            Namespace="UnityCommander.Core.IO.Operations"
-            Method="FileManager.Move">
+            Namespace="IO.Operations"
+            Method="Move">
         <Shortcut>
             <ModKey>LCtrl<ModKey>
             <Key>D</Key>

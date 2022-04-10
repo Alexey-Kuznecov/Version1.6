@@ -1,5 +1,139 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Style x:Key="RibbonComboBoxItemStyles" TargetType="ComboBoxItem">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="#5077BE" />
+    </Style>
+
+    <Style
+        x:Key="RibbonComboBoxStyle"
+        BasedOn="{StaticResource MaterialDesignComboBox}"
+        TargetType="{x:Type ComboBox}">
+        <Setter Property="UIElement.SnapsToDevicePixels" Value="True" />
+        <Setter Property="Width" Value="100" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Margin" Value="0" />
+        <!--<Setter Property="Padding" Value="0" />-->
+        <!--<Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="ComboBoxItem">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Gray" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>-->
+    </Style>
+
+    <DataTemplate x:Key="RibbonComboBoxItemDataTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Path
+                Grid.Column="0"
+                Width="16"
+                Height="16"
+                Margin="2,5,4,0"
+                Data="{Binding Icon.Data}"
+                Fill="#5077BE"
+                Stretch="Uniform" />
+            <TextBlock
+                Grid.Column="1"
+                Margin="4,5,0,0"
+                Foreground="#5077BE"
+                Text="{Binding Content}" />
+            <!--<Grid.InputBindings>
+                <MouseBinding
+                    Command="{Binding Command}"
+                    Gesture="LeftClick"
+                    MouseAction="LeftClick" />
+            </Grid.InputBindings>-->
+        </Grid>
+    </DataTemplate>
+
+    <ControlTemplate x:Key="RibbonComboBoxItemTemplate" TargetType="ComboBoxItem">
+        <Grid Height="25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Path
+                Grid.Column="0"
+                Width="16"
+                Height="16"
+                Margin="2"
+                Data="{Binding Icon.Data}"
+                Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}"
+                Stretch="Uniform" />
+            <TextBlock
+                Grid.Column="1"
+                Margin="5,4,0,0"
+                Text="{Binding Content}" />
+            <!--<Grid.InputBindings>
+                <MouseBinding
+                    Command="{Binding Command}"
+                    Gesture="LeftClick"
+                    MouseAction="LeftClick" />
+            </Grid.InputBindings>-->
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#EDEDED" />
+                        </Trigger>
+                    </Style.Triggers>
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+            </Grid.Style>
+        </Grid>
+    </ControlTemplate>
+
+    <!--
+        RIBBON LISTBOX STYLES
+    -->
+
+    <Style
+        x:Key="RibbonListBoxItemStyles"
+        BasedOn="{StaticResource MaterialDesignListBoxItem}"
+        TargetType="ListBoxItem">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="#5077BE" />
+        <Setter Property="Margin" Value="1" />
+    </Style>
+
+    <ControlTemplate x:Key="RibbonListBoxItemTemplate" TargetType="ListBoxItem">
+        <ListBoxItem Height="25" Padding="0">
+            <Grid Margin="0,0,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Path
+                    Grid.Column="0"
+                    Width="16"
+                    Height="16"
+                    Margin="2,3,5,0"
+                    Data="{Binding Icon.Data}"
+                    Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}"
+                    Stretch="Uniform" />
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="5,4,0,0"
+                    Text="{Binding Content}" />
+            </Grid>
+            <ListBoxItem.InputBindings>
+                <MouseBinding
+                    Command="{Binding Command}"
+                    Gesture="LeftClick"
+                    MouseAction="LeftClick" />
+            </ListBoxItem.InputBindings>
+        </ListBoxItem>
+    </ControlTemplate>
+
     <!--
         RIBBON BUTTON STYLES
         DATA CONTEXT: RibbonControlModel
@@ -12,8 +146,13 @@
 
     <ControlTemplate x:Key="RibbonButtonTemplate" TargetType="ContentControl">
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="16" />
+            </Grid.RowDefinitions>
             <Path
                 x:Name="rect"
+                Grid.Row="0"
                 Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background}"
                 Stretch="Uniform"
                 StrokeThickness="0">
@@ -23,8 +162,9 @@
             </Path>
             <Path
                 x:Name="shape"
-                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}"
-                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}"
+                Grid.Row="0"
+                Width="36"
+                Height="36"
                 Margin="5"
                 Data="{Binding Icon.Data}"
                 Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}"
@@ -36,6 +176,10 @@
                         MouseAction="LeftClick" />
                 </Path.InputBindings>
             </Path>
+            <TextBlock
+                Grid.Row="1"
+                Text="{Binding Content}"
+                TextAlignment="Center" />
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}" />
@@ -57,4 +201,5 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+
 </ResourceDictionary>

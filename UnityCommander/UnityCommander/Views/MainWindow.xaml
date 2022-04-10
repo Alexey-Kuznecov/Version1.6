@@ -5,6 +5,7 @@
     xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
     xmlns:custom="clr-namespace:WindowCustomizer;assembly=WindowCustomizer"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
@@ -14,7 +15,6 @@
     Height="800"
     custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
     custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
-    xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
@@ -42,22 +42,40 @@
             <ColumnDefinition Width="571*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding RibbonContainerSize, FallbackValue=50}" />
-            <RowDefinition Height="{Binding TabContainerSize, FallbackValue=80}" />
+            <RowDefinition Height="{Binding RibbonContainerSize}" />
+            <RowDefinition Height="{Binding TabContainerSize}" />
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <!--
             Toolbar region.
         -->
-        <ContentControl
+
+        <Grid
+            x:Name="RibbonExpandButtonHere"
             Grid.Row="0"
             Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="5"
-            Margin="0,0,0,347"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}"
-            Visibility="{Binding ToolBarVisibility}" />
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+
+            <ContentControl
+                x:Name="collapseHere"
+                Grid.Row="0"
+                prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}"
+                Visibility="{Binding ToolBarVisibility, Mode=TwoWay}" />
+
+            <Button
+                Grid.Row="1"
+                Width="50"
+                Height="25"
+                Command="{Binding MinimizeToolbarCommand}"
+                Content="+"
+                Cursor="Hand" />
+        </Grid>
+
         <!--
             Grid splitter.
         -->
@@ -132,11 +150,11 @@
 
             <WrapPanel Grid.Row="4">
                 <Button
-                Width="50"
-                Height="25"
-                Command="{Binding MinimizeToolbarCommand}"
-                Content="+"
-                Cursor="Hand" />
+                    Width="50"
+                    Height="25"
+                    Command="{Binding MinimizeToolbarCommand}"
+                    Content="+"
+                    Cursor="Hand" />
             </WrapPanel>
         </Grid>
 

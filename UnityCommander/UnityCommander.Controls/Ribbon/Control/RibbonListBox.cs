@@ -1,16 +1,14 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using UnityCommander.Common.Models.Icons;
+
 namespace UnityCommander.Controls.Ribbon.Control
 {
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using System.Windows.Shapes;
-    using UnityCommander.Common.Models.Icons;
-
-    /// <summary>
-    /// The ribbon item model.
-    /// </summary>
-    public class RibbonButton : IRibbonControl
+    public class RibbonListBox : IRibbonControl
     {
         /// <summary>
         /// The button template.
@@ -37,7 +35,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="newButtonStyle">
         /// The button style.
         /// </param>
-        public RibbonButton(object content, IIcon buttonIcon, ICommand buttonCommand, ControlTemplate newButtonTemplate, Style newButtonStyle)
+        public RibbonListBox(object content, IIcon buttonIcon, ICommand buttonCommand, ControlTemplate newButtonTemplate, Style newButtonStyle)
             : this(content, buttonIcon, buttonCommand)
         {
             this.buttonTemplate = newButtonTemplate;
@@ -53,11 +51,11 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="buttonCommand">
         /// The button command.
         /// </param>
-        public RibbonButton(object content, IIcon buttonIcon, ICommand buttonCommand)
+        public RibbonListBox(object content, IIcon buttonIcon, ICommand buttonCommand)
         {
             this.DataContext = new RibbonControlModel { Content = content, Command = buttonCommand, Icon = buttonIcon.GetIconPath() };
-            this.Template = this.buttonTemplate ?? (ControlTemplate)Application.Current.FindResource("RibbonButtonTemplate");
-            this.Style = this.buttonStyle ?? (Style)Application.Current.FindResource("RibbonButtonStyles");
+            this.Template = this.buttonTemplate ?? (ControlTemplate)Application.Current.FindResource("RibbonListBoxItemTemplate");
+            this.Style = this.buttonStyle ?? (Style)Application.Current.FindResource("RibbonListBoxItemStyles");
         }
 
         /// <summary>
@@ -74,6 +72,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// Gets or sets the type.
         /// </summary>
         public RibbonControlModel DataContext { get; set; }
+
         public DataTemplate DataTemplate { get; set; }
     }
 }

@@ -3,6 +3,8 @@ namespace UnityCommander.Controls.Ribbon
 {
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
+    using UnityCommander.Integration.Mvvm.Base;
 
     /// <summary>
     /// The ribbon.
@@ -13,6 +15,24 @@ namespace UnityCommander.Controls.Ribbon
         /// The ribbon width.
         /// </summary>
         private static double ribbonWidth;
+
+        /// <summary>
+        /// Gets or sets the tab command.
+        /// </summary>
+        public ICommand MinimizeCommand => new RelayCommand(obj =>
+        {
+            var parent = this.Parent as FrameworkElement;
+
+            while (parent?.Name != "RibbonExpandButtonHere")
+            {
+                parent = parent?.Parent as FrameworkElement;
+
+                if (parent?.Name == "collapseHere")
+                {
+                    parent.Visibility = parent.IsVisible ? Visibility.Hidden : Visibility.Visible;
+                }
+            }
+        });
 
         #region Override methods
 
@@ -74,7 +94,7 @@ namespace UnityCommander.Controls.Ribbon
         {
             FrameworkElement parent = this.Parent as FrameworkElement;
 
-            while (!(parent is Window))
+            while (parent is not Window)
             {
                 parent = parent?.Parent as FrameworkElement;
 

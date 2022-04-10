@@ -25,7 +25,7 @@ namespace UnityCommander.Controls.Ribbon
         {
             SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(247, 246, 245));
             Pen myPen = new Pen(new SolidColorBrush(Color.FromArgb(255, 229, 228, 229)), 1);
-            Rect myRect = new Rect(0, 1, 1920, 104);
+            Rect myRect = new Rect(0, 1, 1920, 115);
             dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
 

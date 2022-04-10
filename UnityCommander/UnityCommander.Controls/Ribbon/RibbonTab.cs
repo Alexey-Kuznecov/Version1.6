@@ -72,12 +72,12 @@ namespace UnityCommander.Controls.Ribbon
                             item.Arrange(new Rect(new Point(margin, 0), item.DesiredSize));
                             button.Style = (Style)Application.Current.FindResource("RibbonTabStyle");
                         }
-                        if (item.GetType() == typeof(ContentControl))
-                        {
-                            var minimizeButton = (ContentControl)item;
-                            minimizeButton.InputBindings.Add(new MouseBinding(this.MinimizeCommand, new MouseGesture(MouseAction.LeftClick)));
-                            item.Arrange(new Rect(new Point(x: 1560, 1), item.DesiredSize));
-                        }
+
+                        //if (item is ContentControl minimizeButton)
+                        //{
+                        //    minimizeButton.InputBindings.Add(new MouseBinding(this.MinimizeCommand, new MouseGesture(MouseAction.LeftClick)));
+                        //    item.Arrange(new Rect(new Point(x: 500, 1), item.DesiredSize));
+                        //}
 
                         margin += item.DesiredSize.Width + 2;
                     }

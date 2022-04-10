@@ -45,7 +45,7 @@ namespace UnityCommander.Controls.Ribbon
             this.ribbonSection = new RibbonSection();
             this.ribbonTab = new RibbonTab();
 
-            Button button = new ();
+            Button button = new Button();
             {
                 button.Command = this.TabCommand;
                 button.Width = 100;
@@ -62,7 +62,7 @@ namespace UnityCommander.Controls.Ribbon
         /// <summary>
         /// Gets or sets the tabs.
         /// </summary>
-        public static HashSet<Button> Tabs { get; set; } = new ();
+        public static HashSet<ContentControl> Tabs { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the tab.
@@ -85,12 +85,33 @@ namespace UnityCommander.Controls.Ribbon
         public static HashSet<RibbonGroupAdorner> FirstAdorner { get; set; }
 
         /// <summary>
+        /// Gets or sets the tab command.
+        /// </summary>
+        public ICommand MinimizeCommand => new RelayCommand(obj =>
+        {
+            //this.ribbonTab.Height = 0;
+            //this.ribbon.Height = 0;
+            //this.ribbonSection.Visibility = this.ribbonSection.IsVisible ? Visibility.Hidden : Visibility.Visible; ;
+            FrameworkElement parent = this.ribbonSection.Parent as FrameworkElement;
+
+            while (parent != null && parent.Name != "collapseHere")
+            {
+                parent = parent?.Parent as FrameworkElement;
+
+                if (parent?.Name == "collapseHere")
+                {
+                    parent.Visibility = this.ribbonSection.IsVisible ? Visibility.Hidden : Visibility.Visible;
+                }
+            }
+        });
+
+        /// <summary>
         /// Gets or sets a command that set a section and makes the current button unavailable.
         /// </summary>
-        public ICommand TabCommand => new RelayCommand((obj) =>
-        {
-            if (obj is RibbonBuilder section)
+        public ICommand TabCommand => new RelayCommand((obj) => 
             {
+                if (obj is not RibbonBuilder section) return;
+                
                 foreach (var tab in Tabs)
                 {
                     tab.IsEnabled = tab.GetHashCode() != section.CurrentTab.GetHashCode();
@@ -104,9 +125,9 @@ namespace UnityCommander.Controls.Ribbon
 
                 foreach (var group in section.GroupsAdorner)
                 {
-                    if (!this.ribbonSection.Children.Contains(group))
+                    if (!this.ribbonSection.Children.Contains(@group))
                     {
-                        this.ribbonSection.Children.Add(group);
+                        this.ribbonSection.Children.Add(@group);
                     }
 
                     if (!sectionContainer.Children.Contains(this.ribbonSection))
@@ -115,8 +136,7 @@ namespace UnityCommander.Controls.Ribbon
                         Grid.SetRow(this.ribbonSection, 1);
                     }
                 }
-            }
-        });
+            });
 
         /// <summary>
         /// The get section.
@@ -154,9 +174,8 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         public RibbonBuilder SetSection(RibbonGroupBuilder groupBuilder)
         {
-            var adorner = groupBuilder.GetAdorner();
-            GroupsAdorner.Add(adorner);
-            FirstAdorner ??= GroupsAdorner;
+            GroupsAdorner.Add(groupBuilder.GetAdorner());
+            FirstAdorner ??= this.GroupsAdorner;
             return this;
         }
 
@@ -166,8 +185,8 @@ namespace UnityCommander.Controls.Ribbon
         private void TabBuild()
         {
             Grid grid = new Grid();
-            ColumnDefinition columnDefinition = new ColumnDefinition() { Width = new GridLength(800) };
-            ColumnDefinition columnDefinition1 = new ColumnDefinition() { Width = new GridLength(100) };
+            ColumnDefinition columnDefinition = new ColumnDefinition { Width = new GridLength(800) };
+            ColumnDefinition columnDefinition1 = new ColumnDefinition { Width = new GridLength(100) };
             grid.ColumnDefinitions.Add(columnDefinition);
             grid.ColumnDefinitions.Add(columnDefinition1);
 
@@ -178,17 +197,19 @@ namespace UnityCommander.Controls.Ribbon
                 Grid.SetColumn(button, 0);
             }
 
-            // ContentControl collapseButton = new ContentControl
-            // {
-            //     Content = "adsd",
-            //     Width = 15,
-            //     Height = 15,
-            //     Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
-            //     Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
-            // };
-               
-            // grid.Children.Add(collapseButton);
-            // Grid.SetColumn(collapseButton, 1);
+            ContentControl collapseButton = new ContentControl
+            {
+                Content = "Collapse",
+                Width = 15,
+                Height = 15,
+                Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
+                Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
+            };
+
+            collapseButton.InputBindings.Add(new MouseBinding(this.MinimizeCommand, new MouseGesture(MouseAction.LeftClick)));
+
+            grid.Children.Add(collapseButton);
+            Grid.SetColumn(collapseButton, 1);
             this.ribbonTab.Children.Add(grid);
         }
 
@@ -197,7 +218,7 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         private void GridBuild()
         {
-            Grid dynamicGrid = new ();
+            Grid dynamicGrid = new Grid();
             RowDefinition tabRow = new () { Height = new GridLength(25) };
             RowDefinition sectionRow = new () { Height = new GridLength(1, GridUnitType.Star) };
             dynamicGrid.RowDefinitions.Add(tabRow);

@@ -26,11 +26,13 @@ namespace UnityCommander.Controls.Ribbon
             {
                 TextAlignment = TextAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Text = groupName
+                Text = groupName,
+                Foreground = new SolidColorBrush(Color.FromArgb(130, 130, 130, 130)),
+                Margin = new Thickness(3, 18, 0, 0)
             };
-           
-            this.Children.Add(ribbonGroup);
-            this.Children.Add(groupNameContainer);
+
+            this.InternalChildren.Add(ribbonGroup);
+            this.InternalChildren.Add(groupNameContainer);
             return this;
         }
 
@@ -47,15 +49,8 @@ namespace UnityCommander.Controls.Ribbon
         {
             double margin = 0;
             
-            foreach (UIElement child in this.Children)
-            {
-                if (child is TextBlock groupName)
-                {
-                    groupName.Width = arrangeSize.Width - 2;
-                }
-               
+            foreach (UIElement child in this.InternalChildren)
                 child.Arrange(new Rect(new Point(margin + 2, child is TextBlock ? 80 : 0), child.DesiredSize));
-            }
 
             return arrangeSize;
         }
@@ -90,8 +85,11 @@ namespace UnityCommander.Controls.Ribbon
             double height = 0;
 
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
-            foreach (UIElement child in this.Children)
+            foreach (UIElement child in this.InternalChildren)
             {
+                if (child is TextBlock groupName)
+                    groupName.Width = width - 2;
+
                 child.Measure(size);
 
                 if (child is RibbonGroup)

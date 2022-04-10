@@ -138,7 +138,7 @@ namespace UnityCommander.ViewModels
             var settings = settingsProviderService.GetAppConfig();
             this.SidebarContentWidth = settings.SidebarDisplayContent ? 250 : 0;
 
-            this.RibbonContainerSize = 50;
+            this.RibbonContainerSize = 60;
             this.TabContainerSize = 80;
 
             this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
@@ -234,7 +234,21 @@ namespace UnityCommander.ViewModels
         public Visibility ToolBarVisibility
         {
             get => this.toolBarVisibility;
-            set => this.SetProperty(ref this.toolBarVisibility, value);
+            set 
+            {
+                this.SetProperty(ref this.toolBarVisibility, value);
+
+                if (this.toolBarVisibility == Visibility.Hidden)
+                {
+                    this.RibbonContainerSize = 0;
+                    this.TabContainerSize = 0;
+                }
+                else
+                {
+                    this.RibbonContainerSize = 60;
+                    this.TabContainerSize = 80;
+                }
+            }
         }
 
         /// <summary>
@@ -250,7 +264,7 @@ namespace UnityCommander.ViewModels
             }
             else
             {
-                this.RibbonContainerSize = 50;
+                this.RibbonContainerSize = 60;
                 this.TabContainerSize = 80;
                 this.ToolBarVisibility = Visibility.Visible;
             }

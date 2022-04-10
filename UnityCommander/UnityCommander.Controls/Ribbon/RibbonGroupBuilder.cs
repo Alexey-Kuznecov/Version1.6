@@ -1,9 +1,11 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
+    using System;
     using System.Windows.Input;
 
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Controls.Ribbon.Control;
 
     /// <summary>
     /// TODO The ribbon group builder.
@@ -15,7 +17,9 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         private RibbonGroup group;
 
-
+        /// <summary>
+        /// The group adorner.
+        /// </summary>
         private RibbonGroupAdorner groupAdorner;
 
         /// <summary>
@@ -29,14 +33,18 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         public RibbonGroupBuilder AddGroup(string groupName)
         {
+            var ab = new RibbonGroupAdorner();
             this.group = new RibbonGroup();
-            this.groupAdorner = new RibbonGroupAdorner().SetAdorner(groupName, this.group);
+            this.groupAdorner = ab.SetAdorner(groupName, this.group);
             return this;
         }
 
         /// <summary>
         /// The add button.
         /// </summary>
+        /// <param name="content">
+        /// The content.
+        /// </param>
         /// <param name="icon">
         /// The icon.
         /// </param>
@@ -44,13 +52,39 @@ namespace UnityCommander.Controls.Ribbon
         /// The command.
         /// </param>
         /// <returns>
-        /// The <see cref="RibbonGroup"/>.
+        /// The <see cref="RibbonGroupBuilder"/>.
         /// </returns>
-        public RibbonGroupBuilder AddButton(IIcon icon, ICommand command)
+        public RibbonGroupBuilder AddButton(object content, IIcon icon, ICommand command)
         {
-            RibbonItem item = new RibbonItem(new (icon, command));
+            RibbonItem item = new RibbonItem(new RibbonButton(content, icon, command));
             this.group.Children.Add(item);
             return this;
+        }
+
+        /// <summary>
+        /// The add item group.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        public void AddItemGroup(Action<RibbonItemGroup> item)
+        {
+            RibbonItemGroup ribbonItemGroup = new RibbonItemGroup();
+            ribbonItemGroup.AddItem(item);
+            this.group.Children.Add(ribbonItemGroup);
+        }
+
+        /// <summary>
+        /// The add combo box.
+        /// </summary>
+        /// <param name="item">
+        /// The item.
+        /// </param>
+        public void AddComboBox(Action<RibbonItemGroup> item)
+        {
+            RibbonItemGroup ribbonItemGroup = new RibbonItemGroup();
+            ribbonItemGroup.AddItem(item);
+            this.group.Children.Add(ribbonItemGroup);
         }
 
         /// <summary>

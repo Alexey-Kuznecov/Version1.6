@@ -12,6 +12,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Services.Dialogs;
 
     using UnityCommander.Controls.Ribbon;
+    using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Modules.ToolBar.Views;
     using UnityCommander.Services.Interfaces;
@@ -149,22 +150,43 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         {
             var editGroup = new RibbonGroupBuilder();
             editGroup.AddGroup("File Operation");
-            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.DesktopWindows), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.FileCloud), this.ShowDialogCommand);
-            editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
+            editGroup.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
+            //editGroup.AddButton(this.iconProvider.GetIcon(PackIconKind.DesktopWindows), this.ShowDialogCommand);
+            editGroup.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
+            editGroup.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
+            editGroup.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
+            editGroup.AddItemGroup(AddItem);
+            editGroup.AddItemGroup(AddItem2);
 
             var copyGroup = new RibbonGroupBuilder();
             copyGroup.AddGroup("View Group");
-            copyGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            copyGroup.AddButton(this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+            copyGroup.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            copyGroup.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
 
             var sectionFile = new RibbonBuilder("File");
             sectionFile.SetSection(editGroup);
             sectionFile.SetSection(copyGroup);
 
             return sectionFile;
+        }
+
+        private void AddItem(RibbonItemGroup item)
+        {
+            item.AddItem(new RibbonListBox("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
+            item.AddItem(new RibbonListBox("Boxing", this.iconProvider.GetIcon(PackIconKind.Box), this.ShowDialogCommand));
+            //item.AddItem(new RibbonListBox("Books plus", this.iconProvider.GetIcon(PackIconKind.BooksPlus), null));
+            item.AddItem(new RibbonComboBox("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand));
+            item.AddItem(new RibbonComboBox("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), this.ShowDialogCommand));
+            item.AddItem(new RibbonComboBox("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), this.ShowDialogCommand));
+            item.Build();
+        }
+
+        private void AddItem2(RibbonItemGroup item)
+        {
+            item.AddItem(new RibbonListBox("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
+            item.AddItem(new RibbonListBox("Power settings", this.iconProvider.GetIcon(PackIconKind.PowerSettings), this.ShowDialogCommand));
+            item.AddItem(new RibbonListBox("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null));
+            item.Build();
         }
 
         /// <summary>
@@ -177,9 +199,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         {
             var viewGroup = new RibbonGroupBuilder();
             viewGroup.AddGroup("Group Name");
-            viewGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            viewGroup.AddButton(this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-            viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+            viewGroup.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            viewGroup.AddButton("Settings", this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
+            viewGroup.AddButton("File tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
 
             var sectionView = new RibbonBuilder("View");
             sectionView.SetSection(viewGroup);
@@ -196,17 +218,17 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         {
             var viewGroup = new RibbonGroupBuilder();
             viewGroup.AddGroup("View Group");
-            viewGroup.AddButton(this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-            viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-            viewGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-            viewGroup.AddButton(this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+            viewGroup.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
+            viewGroup.AddButton("File Tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+            viewGroup.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+            viewGroup.AddButton("FileTree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
 
 
             var copyGroup = new RibbonGroupBuilder();
             copyGroup.AddGroup("View Group");
-            copyGroup.AddButton(this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
-            copyGroup.AddButton(this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-            copyGroup.AddButton(this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+            copyGroup.AddButton("Plugin", this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
+            copyGroup.AddButton("Table column", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+            copyGroup.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
 
             var sectionView = new RibbonBuilder("Launcher");
             sectionView.SetSection(viewGroup);

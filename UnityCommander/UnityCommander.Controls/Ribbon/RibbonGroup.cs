@@ -25,7 +25,7 @@ namespace UnityCommander.Controls.Ribbon
         {
             SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(243, 243, 243));
             Pen myPen = new Pen(new SolidColorBrush(Color.FromArgb(255, 229, 228, 229)), 2);
-            Rect myRect = new Rect(0, 1, this.containerGroupWidth.Width, 104);
+            Rect myRect = new Rect(0, 1, this.containerGroupWidth.Width, 115);
             dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
 
@@ -67,7 +67,7 @@ namespace UnityCommander.Controls.Ribbon
             double width = 0;
             double height = 0;
 
-            Size size = new Size(50, 50);
+            Size size = new Size(170, 125);
             foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
