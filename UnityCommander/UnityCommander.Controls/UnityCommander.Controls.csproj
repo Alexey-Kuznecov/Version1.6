@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Window\Styles\**" />
+    <EmbeddedResource Remove="Window\Styles\**" />
+    <None Remove="Window\Styles\**" />
+    <Page Remove="Window\Styles\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lab\AlexLibWpf\AlexLibWpf.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 

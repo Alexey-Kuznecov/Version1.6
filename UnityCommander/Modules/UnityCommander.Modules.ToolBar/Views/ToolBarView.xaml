@@ -11,6 +11,7 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <StackPanel>
-        <ContentControl Content="{Binding Ribbon}" />
+        <!--<ContentControl Content="{Binding Ribbon}" />-->
+        <control:Ribbon RibbonManager="{Binding}"></control:Ribbon>
     </StackPanel>
 </UserControl>

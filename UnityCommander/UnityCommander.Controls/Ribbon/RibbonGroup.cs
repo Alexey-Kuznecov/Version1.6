@@ -11,6 +11,11 @@ namespace UnityCommander.Controls.Ribbon
     public class RibbonGroup : Panel
     {
         /// <summary>
+        /// The margin.
+        /// </summary>
+        private static double margin;
+
+        /// <summary>
         /// The container group width.
         /// </summary>
         private Size containerGroupWidth;
@@ -28,9 +33,7 @@ namespace UnityCommander.Controls.Ribbon
             Rect myRect = new Rect(0, 1, this.containerGroupWidth.Width, 115);
             dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
-
-        private static double margin;
-
+        
         /// <summary>
         /// The arrange override.
         /// </summary>

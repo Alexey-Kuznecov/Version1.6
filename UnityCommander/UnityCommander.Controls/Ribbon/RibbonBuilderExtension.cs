@@ -4,6 +4,7 @@ namespace UnityCommander.Controls.Ribbon
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Windows.Controls;
 
     /// <summary>
     /// The ribbon builder extension.
@@ -73,6 +74,20 @@ namespace UnityCommander.Controls.Ribbon
         public static Ribbon Build(this RibbonBuilder controlGroupBuilder)
         {
             return ribbonBuilders.Build();
+        }
+
+        /// <summary>
+        /// The build.
+        /// </summary>
+        /// <param name="controlGroupBuilder">
+        /// The control group builder.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Ribbon"/>.
+        /// </returns>
+        public static Grid BuildGrid(this RibbonBuilder controlGroupBuilder)
+        {
+            return ribbonBuilders.BuildGrid();
         }
 
         #endregion

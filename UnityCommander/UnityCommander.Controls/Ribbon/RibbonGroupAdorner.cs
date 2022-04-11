@@ -48,13 +48,27 @@ namespace UnityCommander.Controls.Ribbon
         protected override Size ArrangeOverride(Size arrangeSize)
         {
             double margin = 0;
-            
+
             foreach (UIElement child in this.InternalChildren)
+            {
                 child.Arrange(new Rect(new Point(margin + 2, child is TextBlock ? 80 : 0), child.DesiredSize));
+            }
 
             return arrangeSize;
         }
 
+        /// <summary>
+        /// The measure text.
+        /// </summary>
+        /// <param name="label">
+        /// The label.
+        /// </param>
+        /// <param name="width">
+        /// The width.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Size"/>.
+        /// </returns>
         private Size MeasureText(Label label, double width)
         {
             var formattedText = new FormattedText(

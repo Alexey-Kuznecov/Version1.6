@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
     xmlns:custom="clr-namespace:WindowCustomizer;assembly=WindowCustomizer"
+    xmlns:controls="clr-namespace:UnityCommander.Controls.Window;assembly=UnityCommander.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,8 +14,8 @@
     Title="Unity Commander"
     Width="1350"
     Height="800"
-    custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
-    custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
+    controls:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
+    controls:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
@@ -62,7 +63,7 @@
             </Grid.RowDefinitions>
 
             <ContentControl
-                x:Name="collapseHere"
+                x:Name="CollapseHere"
                 Grid.Row="0"
                 prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}"
                 Visibility="{Binding ToolBarVisibility, Mode=TwoWay}" />
@@ -142,22 +143,6 @@
         <!--
             Context line region.
         -->
-        <Grid
-            Grid.Row="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="5"
-            Background="#F0F0F0">
-
-            <WrapPanel Grid.Row="4">
-                <Button
-                    Width="50"
-                    Height="25"
-                    Command="{Binding MinimizeToolbarCommand}"
-                    Content="+"
-                    Cursor="Hand" />
-            </WrapPanel>
-        </Grid>
-
     </Grid>
 
     <WindowChrome.WindowChrome>

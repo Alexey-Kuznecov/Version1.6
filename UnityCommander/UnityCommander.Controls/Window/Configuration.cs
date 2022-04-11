@@ -1,17 +1,14 @@
 ﻿
-namespace WindowCustomizer
+namespace UnityCommander.Controls.Window
 {
-    using System.ComponentModel;
     using System.Windows;
     using System.Windows.Input;
-
-    using Prism.Commands;
-    using Prism.Mvvm;
+    using UnityCommander.Integration.Mvvm.Base;
 
     /// <summary>
     /// The View Model for the custom flat window
     /// </summary>
-    public class CustomViewModel : BindableBase
+    public class CustomViewModel : PropertiesChanged
     {
         #region Private Member
 
@@ -56,7 +53,15 @@ namespace WindowCustomizer
                 this.WindowResized();
             };
 
-            this.CloseCommand = new DelegateCommand(() => { this.Window.Close(); });
+            this.CloseCommand = new RelayCommand(obj => { this.Window.Close(); });
+            
+            this.CollapseRibbonCommand = new RelayCommand(
+                obj =>
+                    {
+                        this.GridRowShadow = this.GridRowShadow == 0 ? 10 : 0;
+                        this.CollapseContent = this.CollapseContent == "Max" ? "Mix" : "Max";
+                        UnityCommander.Controls.Ribbon.Ribbon.MinimizeCommand.Execute(null);
+                    });
 
             // Fix window resize issue
             var resizer = new WindowResizer(this.Window);
@@ -96,12 +101,11 @@ namespace WindowCustomizer
         /// </summary>
         public Thickness ResizeBorderThickness
         {
-            get => this.resizeBorderThickness; set
+            get => this.resizeBorderThickness; 
+            set
             {
-                this.resizeBorderThickness = value;
-                this.SetProperty(
-                    ref this.resizeBorderThickness,
-                    new Thickness(this.ResizeBorder + this.OuterMarginSize + 100));
+                this.resizeBorderThickness = new Thickness(this.ResizeBorder + this.OuterMarginSize + 100);
+                this.OnPropertyChanged("ResizeBorderThickness");
             }
         }
 
@@ -164,17 +168,58 @@ namespace WindowCustomizer
 
         #endregion
 
+        #region Collapse Mode
+
+        /// <summary>
+        /// The grid row shadow.
+        /// </summary>
+        public double gridRowShadow = 10;
+
+        /// <summary>
+        /// Gets or sets the margin around the window to allow for a drop shadow
+        /// </summary>
+        public double GridRowShadow
+        {
+            get => this.gridRowShadow;
+            set
+            {
+                this.gridRowShadow = value;
+                this.OnPropertyChanged("GridRowShadow");
+            } 
+        }
+
+        /// <summary>
+        /// The grid row shadow.
+        /// </summary>
+        public object collapseContent = "Max";
+
+        /// <summary>
+        /// Gets or sets the margin around the window to allow for a drop shadow
+        /// </summary>
+        public object CollapseContent
+        {
+            get => this.collapseContent;
+            set
+            {
+                this.collapseContent = value;
+                this.OnPropertyChanged("CollapseContent");
+            }
+        }
+
+        #endregion
+
+
         #region Commands
 
         /// <summary>
         /// Gets or sets the command to minimize the window
         /// </summary>
-        public ICommand MinimizeCommand => new DelegateCommand(() => this.Window.WindowState = WindowState.Minimized);
+        public ICommand MinimizeCommand => new RelayCommand(obj => this.Window.WindowState = WindowState.Minimized);
 
         /// <summary>
         /// Gets or sets the command to maximize the window
         /// </summary>
-        public ICommand MaximizeCommand => new DelegateCommand(() => this.Window.WindowState ^= WindowState.Maximized);
+        public ICommand MaximizeCommand => new RelayCommand(obj => this.Window.WindowState ^= WindowState.Maximized);
 
         /// <summary>
         /// Gets or sets the command to close the window
@@ -189,7 +234,7 @@ namespace WindowCustomizer
         /// <summary>
         /// Gets or sets the command to show the system menu of the window
         /// </summary>
-        public ICommand MenuCommand => new DelegateCommand(() => SystemCommands.ShowSystemMenu(this.Window, this.GetMousePosition()));
+        public ICommand MenuCommand => new RelayCommand(() => SystemCommands.ShowSystemMenu(this.Window, this.GetMousePosition()));
 
         #endregion
 
@@ -215,12 +260,12 @@ namespace WindowCustomizer
         private void WindowResized()
         {
             // Fire off events for all properties that are affected by a resize
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Borderless)));
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ResizeBorderThickness)));
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.OuterMarginSize)));
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.OuterMarginSizeThickness)));
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WindowRadius)));
-            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WindowCornerRadius)));
+            this.OnPropertyChanged(nameof(this.Borderless));
+            this.OnPropertyChanged(nameof(this.ResizeBorderThickness));
+            this.OnPropertyChanged(nameof(this.OuterMarginSize));
+            this.OnPropertyChanged(nameof(this.OuterMarginSizeThickness));
+            this.OnPropertyChanged(nameof(this.WindowRadius));
+            this.OnPropertyChanged(nameof(this.WindowCornerRadius));
         }
 
         #endregion

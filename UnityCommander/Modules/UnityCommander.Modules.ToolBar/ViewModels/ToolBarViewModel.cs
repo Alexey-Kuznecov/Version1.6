@@ -2,15 +2,19 @@
 
 namespace UnityCommander.Modules.ToolBar.ViewModels
 {
+    using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
     using System.Windows.Shapes;
+
+    using AlexeyKuznecov.Library.Mvvm.Base;
 
     using MaterialDesignThemes.Wpf;
 
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-
+    
     using UnityCommander.Controls.Ribbon;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Core.Mvvm;
@@ -20,7 +24,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     /// <summary>
     /// The view a view model.
     /// </summary>
-    public class ToolBarViewModel : BindableBase
+    public class ToolBarViewModel : BindableBase, IRibbonManager
     {
         #region Dependency Injection Fields
 
@@ -42,9 +46,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         #endregion
 
         /// <summary>
-        /// The ribbon section builder.
+        /// Gets or sets the minimize command.
         /// </summary>
-        private readonly RibbonBuilder ribbonSectionBuilder;
+        private ICommand minimizeCommand;
 
         /// <summary>
         /// The icon.
@@ -55,11 +59,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// The user controls.
         /// </summary>
         private UserControl userControls;
-
-        /// <summary>
-        /// The file operation tools.
-        /// </summary>
-        private Ribbon ribbon;
 
         /// <summary>
         /// The show dialog command.
@@ -91,11 +90,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             this.Message = "This Toolbar View";
             this.UserControls = new MainTabControl();
             this.Icon = iconProvider.GetIcon("Tag").GetIconPath();
-
-            this.Ribbon = RibbonBuilderExtension.SetSection(this.RibbonFileSectionBuilder())
-                            .SetSection(this.RibbonViewSectionBuilder())
-                                .SetSection(this.RibbonLaunchSectionBuilder())
-                                    .Build();
         }
 
         #region Properties
@@ -109,15 +103,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             set => this.SetProperty(ref this.icon, value);
         }
 
-        /// <summary>
-        /// Gets or sets the file operation tools.
-        /// </summary>
-        public Ribbon Ribbon
-        {
-            get => this.ribbon;
-            set => this.SetProperty(ref this.ribbon, value);
-        }
-        
         /// <summary>
         /// Gets or sets the user controls.
         /// </summary>
@@ -143,6 +128,41 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             this.showDialogCommand ?? new DelegateCommand(this.ExecuteShowDialogCommand);
 
         #endregion
+        
+        /// <summary>
+        /// Gets or sets the minimize command.
+        /// </summary>
+        public ICommand MinimizeCommand =>
+            new RelayCommand(
+                obj =>
+                    {
+                        this.minimizeCommand.Execute(null);
+                    });
+
+        /// <summary>
+        /// The maximize.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        void IRibbonManager.Collapse(ICommand command)
+        {
+            this.minimizeCommand = command;
+        }
+
+        /// <summary>
+        /// The initial.
+        /// </summary>
+        /// <param name="ribbon">
+        /// The ribbon.
+        /// </param>
+        void IRibbonManager.Initial(Ribbon ribbon)
+        {
+            ribbon.Children.Add(RibbonBuilderExtension.SetSection(this.RibbonFileSectionBuilder())
+                .SetSection(this.RibbonViewSectionBuilder())
+                .SetSection(this.RibbonLaunchSectionBuilder())
+                .BuildGrid());
+        }
 
         #region Ribbon File Section
 

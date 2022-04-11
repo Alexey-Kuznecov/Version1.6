@@ -14,19 +14,19 @@ namespace UnityCommander.ViewModels
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using System.Windows.Shapes;
+
     using MaterialDesignThemes.Wpf;
+
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
     using UnityCommander.Common.Models;
+    using UnityCommander.Controls.Window;
     using UnityCommander.Core;
-    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
 
-    using WindowCustomizer;
     using Path = System.Windows.Shapes.Path;
 
     /// <summary>
@@ -250,25 +250,6 @@ namespace UnityCommander.ViewModels
                 }
             }
         }
-
-        /// <summary>
-        /// The command to minimize and maximize the toolbar.
-        /// </summary>
-        public DelegateCommand MinimizeToolbarCommand => new DelegateCommand(() =>
-        {
-            if (this.RibbonContainerSize > 0)
-            {
-                this.RibbonContainerSize = 0;
-                this.TabContainerSize = 0;
-                this.ToolBarVisibility = Visibility.Hidden;
-            }
-            else
-            {
-                this.RibbonContainerSize = 60;
-                this.TabContainerSize = 80;
-                this.ToolBarVisibility = Visibility.Visible;
-            }
-        });
 
         #endregion
 

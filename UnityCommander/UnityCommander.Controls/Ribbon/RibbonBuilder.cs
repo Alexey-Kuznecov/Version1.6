@@ -6,8 +6,7 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-
-    using AlexLibWpf.Mvvm.Base;
+    using UnityCommander.Integration.Mvvm.Base;
 
     /// <summary>
     /// The ribbon group builder.
@@ -85,27 +84,6 @@ namespace UnityCommander.Controls.Ribbon
         public static HashSet<RibbonGroupAdorner> FirstAdorner { get; set; }
 
         /// <summary>
-        /// Gets or sets the tab command.
-        /// </summary>
-        public ICommand MinimizeCommand => new RelayCommand(obj =>
-        {
-            //this.ribbonTab.Height = 0;
-            //this.ribbon.Height = 0;
-            //this.ribbonSection.Visibility = this.ribbonSection.IsVisible ? Visibility.Hidden : Visibility.Visible; ;
-            FrameworkElement parent = this.ribbonSection.Parent as FrameworkElement;
-
-            while (parent != null && parent.Name != "collapseHere")
-            {
-                parent = parent?.Parent as FrameworkElement;
-
-                if (parent?.Name == "collapseHere")
-                {
-                    parent.Visibility = this.ribbonSection.IsVisible ? Visibility.Hidden : Visibility.Visible;
-                }
-            }
-        });
-
-        /// <summary>
         /// Gets or sets a command that set a section and makes the current button unavailable.
         /// </summary>
         public ICommand TabCommand => new RelayCommand((obj) => 
@@ -164,6 +142,29 @@ namespace UnityCommander.Controls.Ribbon
         }
 
         /// <summary>
+        /// The get section.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Ribbon"/>.
+        /// </returns>
+        public Grid BuildGrid()
+        {
+            this.GridBuild();
+            this.TabBuild();
+
+            foreach (var group in FirstAdorner)
+            {
+                this.ribbonSection.Children.Add(group);
+            }
+
+            sectionContainer.Children.Add(this.ribbonTab);
+            sectionContainer.Children.Add(this.ribbonSection);
+            Grid.SetRow(this.ribbonTab, 0);
+            Grid.SetRow(this.ribbonSection, 1);
+            return sectionContainer;
+        }
+
+        /// <summary>
         /// The add section.
         /// </summary>
         /// <param name="controlGroupBuilder">
@@ -197,19 +198,6 @@ namespace UnityCommander.Controls.Ribbon
                 Grid.SetColumn(button, 0);
             }
 
-            ContentControl collapseButton = new ContentControl
-            {
-                Content = "Collapse",
-                Width = 15,
-                Height = 15,
-                Style = (Style)Application.Current.FindResource("RibbonCollapseButtonStyle"),
-                Template = (ControlTemplate)Application.Current.FindResource("RibbonCollapseButtonTemplate")
-            };
-
-            collapseButton.InputBindings.Add(new MouseBinding(this.MinimizeCommand, new MouseGesture(MouseAction.LeftClick)));
-
-            grid.Children.Add(collapseButton);
-            Grid.SetColumn(collapseButton, 1);
             this.ribbonTab.Children.Add(grid);
         }
 

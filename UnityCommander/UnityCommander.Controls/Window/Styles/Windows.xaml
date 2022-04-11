@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
     <ResourceDictionary.MergedDictionaries>
         <!--  Order is important  -->
@@ -12,35 +11,47 @@
         <ResourceDictionary Source="Texts.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+
     <ControlTemplate x:Key="ControlTemplate" TargetType="{x:Type Window}">
-        <!--  Outer border with the drop shadow margin  -->
-        <Border Padding="{Binding ImportCustomWindow.OuterMarginSizeThickness, FallbackValue=10}">
+        <!--  Outer border with the dropshadow margin  -->
+        <Border Padding="{Binding OuterMarginSizeThickness, FallbackValue=10}">
             <!--  Main window outline  -->
             <Grid>
+
                 <!--  Opacity mask for corners on grid  -->
                 <Border
                     x:Name="Container"
                     Background="{StaticResource BackgroundLightBrush}"
-                    CornerRadius="{Binding ImportCustomWindow.WindowCornerRadius, FallbackValue=10}" />
-                <!--  Window border and drop shadow  -->
-                <Border Background="{Binding ForegroundLightBrush, FallbackValue=White}" CornerRadius="{Binding ImportCustomWindow.WindowCornerRadius, FallbackValue=10}">
+                    CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}" />
+
+                <!--  Window border and dropshadown  -->
+                <Border Background="{Binding ForegroundLightBrush, FallbackValue=White}" CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}">
                     <Border.Effect>
                         <DropShadowEffect Opacity="0.2" ShadowDepth="0" />
                     </Border.Effect>
                 </Border>
+
                 <!--  The main window content  -->
                 <Grid>
+
                     <!--  Corner clipping  -->
+                    <Grid.OpacityMask>
+                        <VisualBrush Visual="{Binding ElementName=Container}" />
+                    </Grid.OpacityMask>
+
                     <Grid.RowDefinitions>
+
                         <!--  Title Bar  -->
-                        <RowDefinition Height="45" />
+                        <RowDefinition Height="{Binding TitleHeightGridLength, FallbackValue=42}" />
                         <!--  Drop shadow  -->
-                        <RowDefinition Height="{Binding ImportCustomWindow.GridRowShadow, FallbackValue=10}" />
+                        <RowDefinition Height="{Binding ImportCustomWindow.GridRowShadow, Mode=TwoWay}" />
                         <!--  Window Content  -->
                         <RowDefinition Height="*" />
+
                     </Grid.RowDefinitions>
+
                     <!--  Title Bar  -->
-                    <Grid>
+                    <Grid Grid.Column="0" Panel.ZIndex="1">
                         <Grid.ColumnDefinitions>
                             <!--  Icon  -->
                             <ColumnDefinition Width="Auto" />
@@ -49,60 +60,40 @@
                             <!--  Windows Button  -->
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--  Menu  -->
-                        <Menu
-                            Grid.Row="0"
-                            VerticalAlignment="Top"
-                            VerticalContentAlignment="Stretch"
-                            FontSize="16"
-                            FontWeight="Regular"
-                            IsMainMenu="True"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
-                            <MenuItem
-                                Background="#FF1368"
-                                Foreground="White"
-                                Header="FILE">
-                                <MenuItem Header="Open">
-                                    <MenuItem Header="Open" />
-                                    <MenuItem Header="Save As" />
-                                </MenuItem>
-                                <MenuItem
-                                    Command="{Binding StateCommand.SaveCommand}"
-                                    CommandParameter="{Binding ElementName=Window}"
-                                    Header="Close" />
-                            </MenuItem>
-                        </Menu>
+
+                        <!--  Icon  -->
+                        <Button
+                            Grid.Column="0"
+                            Command="{Binding MenuCommand}"
+                            Style="{StaticResource SystemIconButton}">
+                            <Image Source="../Images/Logo/logo-small.png" />
+                        </Button>
+
                         <!--  Title  -->
-                        <Viewbox Grid.Column="1">
-                            <TextBlock
-                                FontSize="10"
-                                Style="{StaticResource HeaderText}"
-                                Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue='Welcome, friend!'}" />
+                        <Viewbox Grid.Column="1" Margin="90,0,0,0">
+                            <TextBlock Style="{StaticResource HeaderText}" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue='Welcome, friend!'}" />
                         </Viewbox>
+
                         <!--  Window Buttons  -->
                         <StackPanel Grid.Column="2" Orientation="Horizontal">
                             <Button
-                                Command="{Binding ImportCustomWindow.CollapseRibbonCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}"
-                                Content="{Binding ImportCustomWindow.CollapseContent}"
-                                Style="{StaticResource WindowCollapseControlButton}" />
-                            <Button
-                                Command="{Binding ImportCustomWindow.MinimizeCommand}"
+                                Command="{Binding MinimizeCommand}"
                                 Content="_"
                                 Style="{StaticResource WindowControlButton}" />
                             <Button
-                                Command="{Binding ImportCustomWindow.MaximizeCommand}"
+                                Command="{Binding MaximizeCommand}"
                                 Content="[ ]"
                                 Style="{StaticResource WindowControlButton}" />
                             <Button
-                                Command="{Binding ImportCustomWindow.CloseCommand}"
-                                CommandParameter="{Binding ImportCustomWindow.Window}"
+                                Command="{Binding CloseCommand}"
                                 Content="X"
                                 Style="{StaticResource WindowCloseButton}" />
                         </StackPanel>
+
                     </Grid>
+
                     <!--  Drop shadow  -->
-                    <Border Visibility="Visible"
+                    <Border
                         Grid.Row="1"
                         Height="6"
                         BorderThickness="0,0.2,0,0">
@@ -114,6 +105,7 @@
                                 <GradientStop Offset="1.0" Color="{StaticResource ForegroundLight}" />
                             </LinearGradientBrush>
                         </Border.BorderBrush>
+
                         <!--  Drop shadow  -->
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0, 1">
@@ -121,12 +113,16 @@
                                 <GradientStop Offset="1.0" Color="{StaticResource ForegroundLight}" />
                             </LinearGradientBrush>
                         </Border.Background>
+
                     </Border>
+
                     <!--  Page Content  -->
                     <Border Grid.Row="2" Padding="{Binding InnerContentPadding}">
                         <ContentPresenter Content="{TemplateBinding Content}" />
                     </Border>
+
                 </Grid>
+
             </Grid>
         </Border>
     </ControlTemplate>
