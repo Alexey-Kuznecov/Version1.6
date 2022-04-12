@@ -182,7 +182,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                         builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
                         builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
                         builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
-                        builder.AddControlList(
+                        builder.AddList(
                             list =>
                                 {
                                     list.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
@@ -204,7 +204,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                                                 box.AddItem("About Circle", this.iconProvider.GetIcon(PackIconKind.AboutCircle), null);
                                             });
                                 });
-                        builder.AddControlList(
+                        builder.AddList(
                             list =>
                                 {
                                     list.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));

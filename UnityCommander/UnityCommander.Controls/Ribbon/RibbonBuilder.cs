@@ -9,7 +9,7 @@ namespace UnityCommander.Controls.Ribbon
     using UnityCommander.Integration.Mvvm.Base;
 
     /// <summary>
-    /// The ribbon group builder.
+    /// This class is responsible for creating a ribbon of tools and tabs.
     /// </summary>
     public class RibbonBuilder
     {
@@ -64,24 +64,25 @@ namespace UnityCommander.Controls.Ribbon
         public static HashSet<ContentControl> Tabs { get; set; } = new ();
 
         /// <summary>
-        /// Gets or sets the tab.
+        /// Gets or sets the current tab.
         /// </summary>
         public Button CurrentTab { get; set; }
 
         /// <summary>
-        /// Gets or sets the tab.
+        /// Gets or sets the first tab.
         /// </summary>
         public static Button FirstTab { get; set; }
 
         /// <summary>
         /// Gets or sets the groups.
         /// </summary>
-        public HashSet<RibbonGroupAdorner> GroupsAdorner { get; set; } = new ();
+        public HashSet<RibbonGroupAdorner> AdornerGroups { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the tab.
+        /// Todo: Why was the collection named first?
         /// </summary>
-        public static HashSet<RibbonGroupAdorner> FirstAdorner { get; set; }
+        public static HashSet<RibbonGroupAdorner> FirstAdornerGroup { get; set; }
 
         /// <summary>
         /// Gets or sets a command that set a section and makes the current button unavailable.
@@ -101,10 +102,11 @@ namespace UnityCommander.Controls.Ribbon
                     this.ribbonSection.Children.Clear();
                 }
 
-                foreach (var group in section.GroupsAdorner)
+                foreach (var group in section.AdornerGroups)
                 {
                     if (!this.ribbonSection.Children.Contains(@group))
                     {
+                        // Todo: Resolve the error associated with going to the first tab.
                         this.ribbonSection.Children.Add(@group);
                     }
 
@@ -127,7 +129,7 @@ namespace UnityCommander.Controls.Ribbon
             this.GridBuild();
             this.TabBuild();
             
-            foreach (var group in FirstAdorner)
+            foreach (var group in FirstAdornerGroup)
             {
                 this.ribbonSection.Children.Add(group);
             }
@@ -151,8 +153,8 @@ namespace UnityCommander.Controls.Ribbon
         {
             this.GridBuild();
             this.TabBuild();
-
-            foreach (var group in FirstAdorner)
+            
+            foreach (var group in FirstAdornerGroup)
             {
                 this.ribbonSection.Children.Add(group);
             }
@@ -175,8 +177,8 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         public RibbonBuilder SetSection(RibbonControlGroupBuilder controlGroupBuilder)
         {
-            GroupsAdorner.Add(controlGroupBuilder.GetAdorner());
-            FirstAdorner ??= this.GroupsAdorner;
+            this.AdornerGroups.Add(controlGroupBuilder.GetAdorner);
+            FirstAdornerGroup ??= this.AdornerGroups;
             return this;
         }
 

@@ -9,12 +9,13 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows.Controls;
 
     using UnityCommander.Controls.Ribbon.Control;
+    using UnityCommander.Controls.Ribbon.Subgroup;
 
     /// <summary>
     /// Adds a list of controls below each other..
     /// </summary>
     [SuppressMessage("ReSharper", "ConvertToUsingDeclaration")]
-    public class RibbonControlList : StackPanel, IDisposable
+    public class RibbonControlListBuilder : IDisposable
     {
         /// <summary>
         /// The item collection.
@@ -31,13 +32,15 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         private readonly List<RibbonComboBox> comboBoxes = new ();
 
+        public ControlsStackGroup ControlsStackGroup { get; } = new ();
+
         /// <summary>
         /// The add item.
         /// </summary>
         /// <param name="item">
         /// The item.
         /// </param>
-        public void AddItem(Action<RibbonControlList> item) => item(this);
+        public void AddItem(Action<RibbonControlListBuilder> item) => item(this);
 
         /// <summary>
         /// The add item.
@@ -83,27 +86,23 @@ namespace UnityCommander.Controls.Ribbon
         public void Dispose()
         {
             this.comboBoxes.Clear();
-            this.Margin = new Thickness(10, 5, 0, 0);
+            //this.ControlsStackGroup.DragEnter += ControlsStackGroup_DragEnter;
+            //this.ControlsStackGroup.PreviewDragEnter += ControlsStackGroup_DragEnter;
+            //this.ControlsStackGroup.PreviewMouseDown += ControlsStackGroup_PreviewMouseDown;
+            //this.ControlsStackGroup.MouseDown += ControlsStackGroup_PreviewMouseDown;
+
             foreach (var item in this.itemCollection)
             {
-                this.Children.Add(item);
+                this.ControlsStackGroup.Children.Add(item);
             }
         }
 
-        /// <summary>
-        /// The combo box_ selection changed.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        private static void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ControlsStackGroup_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var selected = e.AddedItems[0] as DataBindingControl;
+        }
 
-            selected?.Command?.Execute(null);
+        private void ControlsStackGroup_DragEnter(object sender, DragEventArgs e)
+        {
         }
     }
 }

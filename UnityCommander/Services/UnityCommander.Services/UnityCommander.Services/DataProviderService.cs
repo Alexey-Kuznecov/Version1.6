@@ -22,7 +22,7 @@ namespace UnityCommander.Services
         public ObservableCollection<FileModel> GetFiles(string path)
         {
             ObservableCollection<FileModel> models = new ObservableCollection<FileModel>();
-            DirectoryInfo dir = new DirectoryInfo(path);
+            DirectoryInfo dir = new DirectoryInfo(path + "\\");
 
             foreach (var file in dir.GetFiles())
             {

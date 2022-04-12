@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
-    xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:core="clr-namespace:UnityCommander.Common;assembly=UnityCommander.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
@@ -57,8 +57,8 @@
                 dd:DragDrop.IsDragSource="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
-                SelectionMode="Single"
                 SelectedValue="{Binding CurrentFile}"
+                SelectionMode="Single"
                 View="{Binding FilePanelContainer}">
                 <!--<ListView.ItemContainerStyle>
                     <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListViewItem}">
@@ -73,7 +73,7 @@
                 </ListView.ItemContainerStyle>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel ContextMenu="{Binding ContextMenu}"/>
+                        <StackPanel ContextMenu="{Binding ContextMenu}" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>

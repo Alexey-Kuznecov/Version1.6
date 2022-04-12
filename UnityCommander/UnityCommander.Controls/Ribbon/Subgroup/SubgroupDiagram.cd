@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="UnityCommander.Controls.Ribbon.BaseSubgroup" Collapsed="true">
+    <Position X="5.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Ribbon\Subgroup\BaseSubgroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityCommander.Controls.Ribbon.Subgroup.ButtonsWrapGroup" Collapsed="true">
+    <Position X="3.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Ribbon\Subgroup\ButtonsWrapGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityCommander.Controls.Ribbon.Subgroup.ControlsStackGroup" Collapsed="true">
+    <Position X="6.75" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Ribbon\Subgroup\ControlsStackGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Windows.Controls.Panel" Collapsed="true">
+    <Position X="5.25" Y="1" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

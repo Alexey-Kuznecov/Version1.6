@@ -6,59 +6,27 @@ namespace UnityCommander.Controls.Ribbon
 
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
+    using UnityCommander.Controls.Ribbon.Subgroup;
 
     /// <summary>
-    /// TODO The ribbon group builder.
+    /// This class is responsible for building a group of controls for the Tool Ribbon.
     /// </summary>
     public class RibbonControlGroupBuilder
     {
         /// <summary>
-        /// The group.
+        /// An instance of a subgroup object in a group on the tool ribbon.
+        /// </summary>
+        private BaseSubgroup baseSubgroup;
+
+        /// <summary>
+        /// The object instance for a group of controls.
         /// </summary>
         private RibbonGroup group;
 
         /// <summary>
-        /// The group adorner.
+        /// Wrapper object for a group of controls
         /// </summary>
         private RibbonGroupAdorner groupAdorner;
-
-        /// <summary>
-        /// The add group.
-        /// </summary>
-        /// <param name="groupName">
-        /// The group name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RibbonGroup"/>.
-        /// </returns>
-        public RibbonControlGroupBuilder AddGroup(string groupName)
-        {
-            var ab = new RibbonGroupAdorner();
-            this.group = new RibbonGroup();
-            this.groupAdorner = ab.SetAdorner(groupName, this.group);
-            return this;
-        }
-
-        /// <summary>
-        /// The add group.
-        /// </summary>
-        /// <param name="groupName">
-        /// The group name.
-        /// </param>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RibbonControlGroupBuilder"/>.
-        /// </returns>
-        public RibbonControlGroupBuilder AddGroup(string groupName, Action<RibbonControlGroupBuilder> callback)
-        {
-            var ab = new RibbonGroupAdorner();
-            this.group = new RibbonGroup();
-            this.groupAdorner = ab.SetAdorner(groupName, this.group);
-            callback(this);
-            return this;
-        }
 
         /// <summary>
         /// Adds a new tool ribbon button.
@@ -89,28 +57,45 @@ namespace UnityCommander.Controls.Ribbon
         /// <param name="callback">
         /// Callback function to add a control to the Tool Ribbon.
         /// </param>
-        /// <remarks> Each control is added from top to bottom. </remarks>
-        public void AddControlList(Action<RibbonControlList> callback)
+        /// <remarks> Each control will be located one above the other. </remarks>
+        public void AddList(Action<RibbonControlListBuilder> callback)
         {
-            using var ribbonControlList = new RibbonControlList();
+            using var ribbonControlList = new RibbonControlListBuilder();
             ribbonControlList.AddItem(callback);
-            this.group.Children.Add(ribbonControlList);
+            this.group.Children.Add(ribbonControlList.ControlsStackGroup);
         }
 
         /// <summary>
-        /// The get group.
+        /// Creates a group of controls for the Tool Ribbon.. 
         /// </summary>
+        /// <remarks>
+        /// The <see cref="RibbonGroupAdorner.SetAdorner(string, RibbonGroup)"/> method separates group names from controls.
+        /// </remarks>
+        /// <param name="groupName">
+        /// The name for the group of controls.
+        /// </param>
+        /// <param name="callback">
+        /// The callback function passes the control group build object as a parameter.
+        /// </param>
         /// <returns>
-        /// The <see cref="RibbonGroup"/>.
+        /// Returns the <see cref="RibbonControlGroupBuilder"/> object to continue building a group of controls.
         /// </returns>
-        internal RibbonGroup GetGroup() => this.group;
+        internal RibbonControlGroupBuilder AddGroup(string groupName, Action<RibbonControlGroupBuilder> callback)
+        {
+            var rga = new RibbonGroupAdorner();
+            this.group = new RibbonGroup();
+            this.groupAdorner = rga.SetAdorner(groupName, this.group);
+            callback(this);
+            return this;
+        }
 
         /// <summary>
-        /// The get group.
+        /// Gets the wrapper object for the group of controls.
         /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonGroupAdorner"/>.
-        /// </returns>
-        internal RibbonGroupAdorner GetAdorner() => this.groupAdorner;
+        /// <remarks>
+        /// Note, that this <see cref="RibbonGroupAdorner"/> object, pre-wraps the <see cref="RibbonGroup"/> object.
+        /// </remarks>
+        [NJsonSchema.Annotations.NotNull]
+        internal RibbonGroupAdorner GetAdorner => this.groupAdorner;
     }
 }
