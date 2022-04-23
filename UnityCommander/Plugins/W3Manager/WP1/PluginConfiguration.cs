@@ -29,20 +29,8 @@ namespace W3Manager.WP1
         {
             this.dateTimeColumn = new DateTimeColumn();
 
-            services.AddSingleton<IColumnBuilder>(this.DateTimeFactory);
             services.AddSingleton<IOptionBuilder>(this.DateTimeFactory);
             services.AddSingleton<IPluginDescriptor>(this.DateTimeFactory);
-        }
-        
-        /// <summary>
-        /// The render register.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        public object RenderRegister()
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>

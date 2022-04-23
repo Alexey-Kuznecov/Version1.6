@@ -13,22 +13,17 @@ namespace AIconBrowser.Models
     /// <summary>
     /// The icons data reader.
     /// </summary>
-    public class IconsDataReader : IDisposable
+    public class IconsDataReader : IconParser, IDisposable
     {
-        /// <summary>
-        /// The document name.
-        /// </summary>
-        private const string DocumentName = @"d:\Resources\IconsData.xml";
-
         /// <summary>
         /// The _element icons.
         /// </summary>
-        private static IEnumerable<XElement> _elementIcons; // Gets all element named Icon
+        private static IEnumerable<XElement> elementIcons; // Gets all element named Icon
 
         /// <summary>
         /// The _element collection.
         /// </summary>
-        private static IEnumerable<XElement> _elementCollection; // Gets all collection element
+        private static IEnumerable<XElement> elementCollection; // Gets all collection element
 
         /// <summary>
         /// The initial fields.
@@ -36,8 +31,8 @@ namespace AIconBrowser.Models
         private static void InitialFields()
         {
             XElement root = XElement.Load(DocumentName);
-            _elementCollection    = from element in root.Elements() select element;
-            _elementIcons         = from icon in _elementCollection.Elements() select icon;
+            elementCollection    = from element in root.Elements() select element;
+            elementIcons         = from icon in elementCollection.Elements() select icon;
         }
 
         /// <summary>
@@ -47,11 +42,11 @@ namespace AIconBrowser.Models
         public List<string> GetCollection()
         {
             // It's a field not initialized. Do it.
-            if (_elementIcons == null)
+            if (elementIcons == null)
                 InitialFields();
 
-            List<string> collection = new List<string>();
-            foreach (var cat in _elementCollection)
+            var collection = new List<string>();
+            foreach (var cat in elementCollection)
                 collection.Add(cat.FirstAttribute.Value);
             return collection;
         }
@@ -67,10 +62,10 @@ namespace AIconBrowser.Models
             string str = " ";
 
             // It's a field not initialized. Do it.
-            if (_elementIcons == null)
+            if (elementIcons == null)
                 InitialFields();
 
-            var queryPath = from icon in _elementIcons
+            var queryPath = from icon in elementIcons
                 where icon.Attribute("Name")?.Value == name
                 select icon;
             // Concatenate paths to string.
@@ -186,8 +181,8 @@ namespace AIconBrowser.Models
         /// </summary>
         public void Dispose()
         {
-            _elementIcons = null;
-            _elementCollection = null;
+            elementIcons = null;
+            elementCollection = null;
         }
     }
 }

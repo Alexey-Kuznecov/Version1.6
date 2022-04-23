@@ -16,13 +16,8 @@ namespace AIconBrowser.Models
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed. Suppression is OK here.")]
     [SuppressMessage("ReSharper", "StyleCop.SA1503")]
-    class IconsDataWriter : IDisposable
+    class IconsDataWriter : IconParser, IDisposable
     {
-        /// <summary>
-        /// The document name.
-        /// </summary>
-        private const string DocumentName = @"d:\Resources\IconsData.xml";
-
         /// <summary>
         /// The id.
         /// </summary>
