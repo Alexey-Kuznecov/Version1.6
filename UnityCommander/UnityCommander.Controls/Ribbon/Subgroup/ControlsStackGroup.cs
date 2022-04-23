@@ -1,32 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using UnityCommander.Common.Models.Directory;
-using UnityCommander.Controls.Ribbon.Control;
-
+﻿
 namespace UnityCommander.Controls.Ribbon.Subgroup
 {
-    public class ControlsStackGroup : StackPanel
-    {
-        private bool _isDown;
-        private bool _isDragging;
-        private Point _startPoint;
-        private UIElement _realDragSource;
-        private UIElement _dummyDragSource = new UIElement();
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
 
+    /// <summary>
+    /// The controls stack group.
+    /// </summary>
+    public class ControlsStackGroup : Panel
+    {
+        #region Fields
+
+        /// <summary>
+        /// The dummy drag source.
+        /// </summary>
+        private readonly UIElement dummyDragSource = new ();
+
+        /// <summary>
+        /// The is down.
+        /// </summary>
+        private bool isDown;
+
+        /// <summary>
+        /// The is dragging.
+        /// </summary>
+        private bool isDragging;
+
+        /// <summary>
+        /// The start point.
+        /// </summary>
+        private Point startPoint;
+
+        /// <summary>
+        /// The real drag source.
+        /// </summary>
+        private UIElement realDragSource;
+
+        /// <summary>
+        /// The margin.
+        /// </summary>
+        private double margin;
+
+        /// <summary>
+        /// The container group width.
+        /// </summary>
+        private Size containerGroupWidth;
+
+        /// <summary>
+        /// The container group width.
+        /// </summary>
+        private int nextColumn = 5;
+
+        /// <summary>
+        /// The container group width.
+        /// </summary>
+        private int itemNumber;
+
+        /// <summary>
+        /// The container group width.
+        /// </summary>
+        private double verticalAl;
+
+        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ControlsStackGroup"/> class.
+        /// </summary>
         public ControlsStackGroup()
         {
-            this.Margin = new Thickness(10, 5, 0, 0);
+            this.Margin = new Thickness(0, 5, 0, 0);
             this.AllowDrop = true;
-            this.Drop += sb_OnPreviewDrop;
-            this.DragEnter += sb_OnPreviewDragEnter;
+            this.Drop += ItemPanel_OnPreviewDrop;
+            this.DragEnter += this.ItemPanel_OnPreviewDragEnter;
         }
 
         #region Override Members
 
+        /// <summary>
+        /// The on apply template.
+        /// </summary>
         public override void OnApplyTemplate()
         {
             this.Margin = new Thickness(10, 5, 0, 0);
@@ -42,15 +96,26 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         /// <returns>
         /// The <see cref="Size"/>.
         /// </returns>
-        //protected override Size ArrangeOverride(Size arrangeBounds)
-        //{
-        //    foreach (UIElement child in this.Children)
-        //    {
-        //        child.Arrange(new Rect(new Point(0, 0), child.DesiredSize));
-        //    }
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            this.verticalAl = 0f;
 
-        //    return arrangeBounds;
-        //}
+            foreach (UIElement child in this.Children)
+            {
+                child.Arrange(new Rect(new Point(this.margin, this.verticalAl), child.DesiredSize));
+
+                if (this.itemNumber >= this.nextColumn)
+                {
+                    this.verticalAl = 0f;
+                    this.margin += child.DesiredSize.Width + 5f;
+                }
+
+                this.verticalAl += child.DesiredSize.Height;
+                this.itemNumber++;
+            }
+
+            return arrangeBounds;
+        }
 
         /// <summary>
         /// The measure override.
@@ -61,105 +126,156 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         /// <returns>
         /// The <see cref="Size"/>.
         /// </returns>
-        //protected override Size MeasureOverride(Size availableSize)
-        //{
-        //    Size size = new Size(170, 125);
-        //    foreach (UIElement child in this.Children)
-        //    {
-        //        child.Measure(size);
-        //    }
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            double width = 0;
+            double height = 0;
 
-        //    return new Size(0, 0);
-        //}
+            Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            foreach (UIElement child in this.Children)
+            {
+                child.Measure(size);
+                height += child.DesiredSize.Height;
+                width = child.DesiredSize.Width;
+            }
+
+            this.containerGroupWidth = new Size(width, height);
+            return this.containerGroupWidth;
+        }
 
         #endregion
 
+        #region Drag and Drop
+
+        /// <summary>
+        /// The on preview mouse left button down.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            if (e.Source == this)
+            if (Equals(e.Source, this))
             {
             }
             else
             {
-                _isDown = true;
-                _startPoint = e.GetPosition(this);
+                this.isDown = true;
+                this.startPoint = e.GetPosition(this);
             }
-
-            //base.OnPreviewMouseLeftButtonDown(e);
         }
 
+        /// <summary>
+        /// The on preview mouse left button up.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            _isDown = false;
-            _isDragging = false;
-            _realDragSource.ReleaseMouseCapture();
-            //base.OnPreviewMouseLeftButtonUp(e);
+            this.isDown = false;
+            this.isDragging = false;
+            this.realDragSource?.ReleaseMouseCapture();
         }
 
+        /// <summary>
+        /// The on preview mouse move.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
-            if (_isDown)
+            if (this.isDown)
             {
-                if ((_isDragging == false) && ((Math.Abs(e.GetPosition(this).X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance) ||
-                    (Math.Abs(e.GetPosition(this).Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)))
+                if (this.isDragging
+                    || !(Math.Abs(e.GetPosition(this).X - this.startPoint.X)
+                         > SystemParameters.MinimumHorizontalDragDistance)
+                    && !(Math.Abs(e.GetPosition(this).Y - this.startPoint.Y)
+                         > SystemParameters.MinimumVerticalDragDistance))
                 {
-                    _isDragging = true;
-                    _realDragSource = e.Source as UIElement;
-                    _realDragSource.CaptureMouse();
-                    DragDrop.DoDragDrop(_dummyDragSource, new DataObject("UIElement", e.Source, true), DragDropEffects.Move);
+                    return;
                 }
+
+                this.isDragging = true;
+                this.realDragSource = e.Source as UIElement;
+                this.realDragSource?.CaptureMouse();
+                DragDrop.DoDragDrop(this.dummyDragSource, new DataObject("UIElement", e.Source, true), DragDropEffects.Copy);
             }
-            //base.OnPreviewMouseMove(e);
         }
 
-        protected void sb_OnPreviewDragEnter(object sender, DragEventArgs e)
+        /// <summary>
+        /// The Item Panel on preview drag enter.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        protected void ItemPanel_OnPreviewDragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent("UIElement"))
             {
                 e.Effects = DragDropEffects.Move;
             }
-
-            //object data;
-            ////var dataObj = e.Data as DataObject;
-            ////var dragged = dataObj.GetData(typeof(UnityCommander.Common.Models.Directory.FolderModel));
-            //foreach (string format in e.Data.GetFormats(true))
-            //{
-            //    data = e.Data.GetData(format); //Returns null
-            //}
-
-            //e.Effects = DragDropEffects.Copy;
-            base.OnPreviewDragEnter(e);
         }
 
-        protected void sb_OnPreviewDrop(object sender, DragEventArgs e)
+        /// <summary>
+        /// The Item Panel on preview drop.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        protected void ItemPanel_OnPreviewDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent("UIElement"))
             {
-                UIElement droptarget = e.Source as UIElement;
-                int droptargetIndex = -1, i = 0;
+                var dataTarget = e.Source as FrameworkElement;
+                int dropTargetIndex = -1, i = 0;
+                var dataSource = default(FrameworkElement); // (FrameworkElement)e.Data.GetFormats(true).Select(d => e.Data.GetData(d));
+                var sourcePanel = default(Panel);
+
+                foreach (string format in e.Data.GetFormats(true))
+                {
+                    dataSource = (FrameworkElement)e.Data.GetData(format);
+                    sourcePanel = dataSource?.Parent as Panel;
+                }
+
+                // Get element index
                 foreach (UIElement element in this.Children)
                 {
-                    if (element.Equals(droptarget))
+                    if (element.Equals(dataTarget))
                     {
-                        droptargetIndex = i;
+                        dropTargetIndex = i;
                         break;
                     }
                     i++;
                 }
-                if (droptargetIndex != -1)
+
+                if (dropTargetIndex != -1)
                 {
-                    this.Children.Remove(_realDragSource);
-                    
-                    if (_realDragSource != null)
-                        this.Children.Insert(droptargetIndex, _realDragSource);
+                    if (sourcePanel != null && sourcePanel.Equals(this))
+                    {
+                        this.Children.Remove(this.realDragSource);
+                        this.Children.Insert(dropTargetIndex, this.realDragSource);
+                    }
+                    else
+                    {
+                        sourcePanel?.Children.Remove(dataSource);
+                        this.Children.Insert(dropTargetIndex, dataSource ?? throw new InvalidOperationException());
+                    }
                 }
 
-                _isDown = false;
-                _isDragging = false;
-                _realDragSource.ReleaseMouseCapture();
+                this.isDown = false;
+                this.isDragging = false;
+                this.realDragSource?.ReleaseMouseCapture();
             }
-
-            base.OnPreviewDrop(e);
         }
+
+        #endregion
     }
 }

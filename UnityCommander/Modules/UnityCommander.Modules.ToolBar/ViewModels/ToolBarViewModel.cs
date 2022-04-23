@@ -189,7 +189,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                                     list.AddComboBoxItem(
                                         box =>
                                             {
-                                                box.AddItem("Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), null);
+                                                box.AddItem("1 Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), null);
                                                 box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
                                                 box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
                                                 box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
@@ -211,7 +211,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                                     list.AddComboBoxItem(
                                         box =>
                                             {
-                                                box.AddItem("Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), this.ShowDialogCommand);
+                                                box.AddItem("2 Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), this.ShowDialogCommand);
                                                 box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
                                                 box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
                                                 box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);

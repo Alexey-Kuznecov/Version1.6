@@ -79,8 +79,11 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// </param>
         private static void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = e.AddedItems[0] as DataBindingControl;
-            selected?.Command?.Execute(null);
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                var selected = e.AddedItems[0] as DataBindingControl;
+                selected?.Command?.Execute(null);
+            }
         }
     }
 }
