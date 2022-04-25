@@ -1,5 +1,8 @@
 ﻿
 using UnityCommander.Core.Mvvm;
+using UnityCommander.Modules.Tabs;
+using UnityCommander.Modules.Tabs.ViewModels;
+using UnityCommander.Modules.Tabs.Views;
 using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
@@ -75,7 +78,7 @@ namespace UnityCommander
 
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
-
+            //containerRegistry.RegisterSingleton<TabsManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
 
             // containerRegistry.RegisterForNavigation<ViewA>("ViewA");
@@ -89,6 +92,7 @@ namespace UnityCommander
             base.ConfigureViewModelLocator();
             ViewModelLocationProvider.Register(typeof(ViewB).ToString(), () => Container.Resolve<ViewAViewModel>());
             ViewModelLocationProvider.Register(typeof(ViewA).ToString(), () => Container.Resolve<ViewAViewModel>());
+            //ViewModelLocationProvider.Register(typeof(TabPanelView).ToString(), () => Container.Resolve<TabPanelViewModel>());
         }
 
         /// <summary>
@@ -102,6 +106,7 @@ namespace UnityCommander
             moduleCatalog.AddModule<FilePanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
+            moduleCatalog.AddModule<TabsModule>();
         }
     }
 }
