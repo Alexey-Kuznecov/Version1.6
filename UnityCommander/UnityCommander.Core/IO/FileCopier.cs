@@ -185,6 +185,24 @@ namespace UnityCommander.Core.IO
         }
 
         /// <summary>
+        /// The copy files.
+        /// </summary>
+        /// <param name="filePath"> The path to the old directory. </param>
+        /// <param name="dirPath"> The path to the new directory. </param>
+        public void CopyFile(string filePath, string dirPath)
+        {
+            FileInfo info = new FileInfo(filePath);
+            string newFile = Path.Combine(dirPath, new DirectoryInfo(filePath).Name);
+            this.totalBytesLeft += info.Length;
+            this.fileSize = info.Length;
+            this.parameters.Name = info.Name;
+            this.parameters.Length = info.Length;
+            this.parameters.Source = info.FullName;
+            this.parameters.Destination = newFile;
+            this.operations.XCopy(filePath, newFile, this.CopyProgressHandle);
+        }
+
+        /// <summary>
         /// Calculates the total size of files on another thread.
         /// </summary>
         /// <param name="source">
@@ -192,19 +210,29 @@ namespace UnityCommander.Core.IO
         /// </param>
         public void CalculateTotalFilesSize(string source)
         {
-            Task.Factory.StartNew(
-            () =>
+            //Task.Factory.StartNew(() =>
+            //{
+            //    this.totalFileSize = 0;
+
+            //    foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+            //    {
+            //        FileInfo info = new FileInfo(path);
+            //        Interlocked.Add(ref this.totalFileSize, info.Length);
+            //    }
+
+            //    this.percentTotalSize = this.totalFileSize > 0 ? this.totalFileSize / 100 : throw new DivideByZeroException();
+            //});
+
+            this.totalFileSize = 0;
+
+            foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
             {
-                this.totalFileSize = 0;
+                FileInfo info = new FileInfo(path);
+                // Interlocked.Add(ref this.totalFileSize, info.Length);
+                this.totalFileSize = info.Length;
+            }
 
-                foreach (var path in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
-                {
-                    FileInfo info = new FileInfo(path);
-                    Interlocked.Add(ref this.totalFileSize, info.Length);
-                }
-
-                this.percentTotalSize = this.totalFileSize > 0 ? this.totalFileSize / 100 : throw new DivideByZeroException();
-            });
+            this.percentTotalSize = this.totalFileSize > 0 ? this.totalFileSize / 100 : throw new DivideByZeroException();
         }
 
         /// <summary>
@@ -323,6 +351,9 @@ namespace UnityCommander.Core.IO
 
         #region Timer Handlers
 
+        /// <summary>
+        /// The bytes transferred.
+        /// </summary>
         private long bytesTransferred;
 
         /// <summary>

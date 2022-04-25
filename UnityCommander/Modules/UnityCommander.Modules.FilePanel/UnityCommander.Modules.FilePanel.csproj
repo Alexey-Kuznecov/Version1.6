@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
 	  <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DefineConstants>Nlog;DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\**" />
@@ -33,9 +34,6 @@
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="GongSolutions.WPF.DragDrop">
-      <HintPath>..\..\..\Source\Gong-Wpf-DragAnDrop\netcoreapp3.1\GongSolutions.WPF.DragDrop.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\..\..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -44,13 +42,13 @@
 	<Choose>
 		<When Condition="'$(TargetFramework)' == 'net472'">
 			<ItemGroup>
-				<PackageReference  Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
+				<PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
 				</PackageReference>
 			</ItemGroup>
 		</When>
 		<When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
 			<ItemGroup>
-				<Reference Include="System.Windows.Interactivity" Version="4.0.0.0"  />
+				<Reference Include="System.Windows.Interactivity" Version="4.0.0.0" />
 			</ItemGroup>
 		</When>
 	</Choose>

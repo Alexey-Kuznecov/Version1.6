@@ -33,6 +33,46 @@
 
     </Style>
 
+    <Style
+        x:Key="WindowCollapseControlButton"
+        BasedOn="{StaticResource BaseStyle}"
+        TargetType="{x:Type Button}">
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Margin" Value="8, 0" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundMainBrush}" />
+
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1.5" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{TemplateBinding Content}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource BackgroundLightBrush}" />
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
+
+
     <!--  Window Control Button  -->
     <Style
         x:Key="WindowControlButton"

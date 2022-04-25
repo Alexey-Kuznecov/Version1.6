@@ -10,26 +10,16 @@
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Reflection;
-#if NETCOREAPP3_1
-    using System.Runtime.Loader;
-#endif
-    using System.Windows;
     using System.Windows.Controls;
-
     using Prism.Events;
     using Prism.Mvvm;
-
+    using Prism.Services.Dialogs;
     using UnityCommander.Common.Models;
+    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Core;
-    using UnityCommander.Integration.Models;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
@@ -38,16 +28,21 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     /// The view a view model.
     /// </summary>
     public class SidebarViewModel : BindableBase
-    {        
+    {
         /// <summary>
         /// The view model message.
         /// </summary>
-        private readonly IEventAggregator viewModelMessage;
+        private readonly IEventAggregator mainViewModelExchange;
 
         /// <summary>
-        /// Gets or sets the type.
+        /// The pack icon.
         /// </summary>
-        private Dictionary<string, UserControl> sidebarContentControl = new Dictionary<string, UserControl>()
+        private readonly ObservableCollection<IIcon> packIcon;
+
+        /// <summary>
+        /// The content control register.
+        /// </summary>
+        private readonly Dictionary<string, UserControl> contentControlRegister = new Dictionary<string, UserControl>
         {
             { "TableColumn",  new ColumnsOptionControl() },
             { "FileTree", new FolderTreeOverviewControl() },
@@ -57,100 +52,105 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         };
 
         /// <summary>
-        /// The message.
+        /// The data context register.
         /// </summary>
-        private SidebarItem selectItem;
+        private readonly Dictionary<string, object> dataContextRegister = new Dictionary<string, object>()
+        {
+            { "TableColumn", null },
+            { "FileTree", null },
+            { "Comment", null },
+            { "Tag", null }
+        };
 
         /// <summary>
-        /// The message.
+        /// The current element of the sidebar.
         /// </summary>
-        private byte selectIndex;
+        private SidebarItem currentSidebarItem;
 
         /// <summary>
-        /// The pack icon.
+        /// The current index of the sidebar element.
         /// </summary>
-        private ObservableCollection<IconModel> packIcon;
+        private byte currentSideBarItemIndex;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SidebarViewModel"/> class.
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
-        /// <param name="viewModelMessage">
-        /// Communication parameter of the view models. 
+        /// <param name="dialogService">
+        /// The service to show window dialogs from the view model.
+        /// </param>
+        /// <param name="mainViewModelExchange">
+        /// Parameter to link to the main view model. 
         /// </param>
         /// <param name="iconProvider">
-        /// The icon Provider.
+        /// The service provides icons for the view model.
         /// </param>
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        public SidebarViewModel(IEventAggregator viewModelMessage, IIconProviderService iconProvider, IPluginLoaderService pluginCofiguration)
+        /// <param name="pluginLoader">
+        /// The service to load all detected plugin interfaces.
+        /// </param>
+        public SidebarViewModel(
+            IDialogService dialogService,
+            IEventAggregator mainViewModelExchange,
+            IIconProviderService iconProvider,
+            IPluginLoaderService pluginLoader)
         {
-            var manager = pluginCofiguration.GetPluginManager();
-            var records = manager.GetPluginRecords();
-            var asmb = AppDomain.CurrentDomain.GetAssemblies();
-
-            //var typeConverterAssembly = typeof(TypeConverter).Assembly;
-            //var reflectTypeDescriptionProviderType = typeConverterAssembly.GetType("System.ComponentModel.ReflectTypeDescriptionProvider");
-
-            //var reflectTypeDescriptorProviderTable = reflectTypeDescriptionProviderType.GetField("s_attributeCache", BindingFlags.Static | BindingFlags.NonPublic);
-            //var attributeCacheTable = (Hashtable)reflectTypeDescriptorProviderTable.GetValue(null);
-            //attributeCacheTable.Clear();
-
-            //var pluginRecords = records as IPluginRecord[] ?? records.ToArray();
-            //pluginCofiguration.UnloadInterface(pluginRecords.ToList()[3].AssemblyName);
-            //manager.UnloadPlugin(pluginRecords.ToList()[3]);
-            
-            asmb = AppDomain.CurrentDomain.GetAssemblies();
-            this.viewModelMessage = viewModelMessage;
+            this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader));
+            this.mainViewModelExchange = mainViewModelExchange;
             this.packIcon = iconProvider.GetIcons();
-            SidebarItems = new ObservableCollection<SidebarItem>();
-            this.SidebarContentRender();
+            this.CreateSidebarElement();
         }
 
         /// <summary>
-        /// Gets or sets the sidebar items.
+        /// Gets or sets the sidebar element.
         /// </summary>
-        public ObservableCollection<SidebarItem> SidebarItems { get; set; }
+        public ObservableCollection<SidebarItem> SidebarItem { get; set; } = new ObservableCollection<SidebarItem>();
 
         /// <summary>
         /// Gets or sets the sidebar content.
         /// </summary>
-        public SidebarItem SelectItem
+        public SidebarItem CurrentSidebarItem
         {
-            get => this.selectItem;
+            get => this.currentSidebarItem;
             set
             {
-                this.selectItem = value;
-                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(value);
+                this.currentSidebarItem = value;
+                this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the index of the sidebar item is selected.
+        /// The current index of the sidebar element that will be passed to the main view model
+        /// to indicate which content should be displayed.
         /// </summary>
-        public byte SelectIndex
+        public byte CurrentSideBarItemIndex
         {
-            get => this.selectIndex;
+            get => this.currentSideBarItemIndex;
             set
             {
-                this.selectIndex = value;
-                this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(this.SelectIndex);
+                this.currentSideBarItemIndex = value;
+                this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(this.CurrentSideBarItemIndex);
             }
         }
 
         /// <summary>
-        /// The sidebar content render.
+        /// Create sidebar element on based .
         /// </summary>
-        private void SidebarContentRender()
+        private void CreateSidebarElement()
         {
-            foreach (var icon in this.packIcon)
+            foreach (var content in this.contentControlRegister)
             {
-                var sbItem = new SidebarItem
+                var icon = this.packIcon.Single(i => ((Icon)i).Category == content.Key);
+                var userControl = content.Value;
+                userControl.DataContext = this.dataContextRegister[content.Key];
+
+                var sidebarItem = new SidebarItem
                 {
-                    Content = this.sidebarContentControl[icon.Category],
+                    Content = userControl,
                     Icon = icon
                 };
 
-                SidebarItems.Add(sbItem);
+                this.SidebarItem.Add(sidebarItem);
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace UnityCommander.Modules.LeftSideBars
 {
     using Prism.Ioc;

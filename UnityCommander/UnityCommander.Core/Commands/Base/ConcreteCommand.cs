@@ -34,17 +34,6 @@ namespace UnityCommander.Core.Commands.Base
         public ReceiverBase Receiver { get; }
 
         /// <summary>
-        /// Cancels the changes that were made by <see cref="Execute"/> command. For example,
-        /// the command that can restore object or UI components previous state
-        /// </summary>
-        /// <param name="action"> Determines the method of the caller. </param>
-        /// <param name="arg"> Determines the method invoker argument. </param>
-        public override void UnExecute(Action<object> action, object arg)
-        {
-            this.Receiver.UnExecute(action, arg);
-        }
-
-        /// <summary>
         /// Determines can whether the command be executed.
         /// </summary>
         /// <returns> True if the command can be executed. </returns>
@@ -68,14 +57,6 @@ namespace UnityCommander.Core.Commands.Base
         }
 
         /// <summary>
-        /// Execute new command no arguments.
-        /// </summary>
-        public override void Execute()
-        {
-            this.Receiver.Execute();
-        }
-
-        /// <summary>
         /// Delegates execution command to invoker with the string parameter.
         /// </summary>
         /// <param name="action"> Determines the method of the caller. </param>
@@ -83,6 +64,39 @@ namespace UnityCommander.Core.Commands.Base
         public override void Execute(Action<object> action, object arg)
         {
             this.Receiver.Execute(action, arg);
+        }
+
+
+        /// <summary>
+        /// Cancels the changes that were made by <see cref="Execute"/> command. For example,
+        /// the command that can restore object or UI components previous state
+        /// </summary>
+        /// <param name="action"> Determines the method of the caller. </param>
+        /// <param name="arg"> Determines the method invoker argument. </param>
+        public override void UnExecute(Action<object> action, object arg)
+        {
+            this.Receiver.UnExecute(action, arg);
+        }
+
+        /// <summary>
+        /// Execute new command no arguments.
+        /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        public override void Execute(Action action)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        /// <summary>
+        /// Cancels the changes that were made by <see cref="Execute(Action action)"/> command.
+        /// </summary>
+        /// <param name="action"> Determines the method of the caller. </param>
+        public override void UnExecute(Action action)
+        {
+            this.Receiver.UnExecute(action);
         }
     }
 }

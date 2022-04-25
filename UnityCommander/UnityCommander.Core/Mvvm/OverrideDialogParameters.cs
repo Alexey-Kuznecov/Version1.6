@@ -42,5 +42,17 @@ namespace UnityCommander.Core.Mvvm
         {
             this.Package = obj;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OverrideDialogParameters"/> class.
+        /// </summary>
+        /// <param name="obj">
+        /// The query.
+        /// </param>
+        public OverrideDialogParameters(CopyParameters parameters)
+            : base()
+        {
+            this.Package = parameters;
+        }
     }
 }

@@ -1,0 +1,100 @@
+﻿<UserControl
+    x:Class="UnityCommander.Wpf.Test.Content.CopyFileControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:UnityCommander.Wpf.Test.Content"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Tag="Copy functions testing"
+    mc:Ignorable="d">
+    <UserControl.DataContext>
+        <local:CopyFileViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
+            <Style.Setters>
+                <Setter Property="Width" Value="100" />
+                <Setter Property="Height" Value="25" />
+                <Setter Property="Margin" Value="5" />
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="250" />
+            <RowDefinition Height="10" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="10">
+            <Label Height="25" Content="Source" />
+            <TextBox
+                Height="25"
+                FontStyle="Italic"
+                Foreground="#686868"
+                Text="{Binding Source}" />
+            <Label Height="25" Content="Destination" />
+            <TextBox
+                Height="25"
+                FontStyle="Italic"
+                Foreground="#686868"
+                Text="{Binding Destination}" />
+        </StackPanel>
+
+        <Separator
+            Grid.Row="1"
+            Height="2"
+            Background="DarkGray" />
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="10">
+                <TextBlock Text="{Binding CurrentName, StringFormat={}Name: {0}, FallbackValue=unkown}" />
+                <TextBlock Text="{Binding Remainder, StringFormat={}Done: {0}, FallbackValue=unkown}" />
+                <TextBlock Text="{Binding VisiblePercent, StringFormat={}Copying: {0}%, FallbackValue=2}" />
+                <TextBlock Text="{Binding CurrentSpeed, StringFormat={}Speed: {0}/s, FallbackValue=2}" />
+                <TextBlock Text="{Binding CurrentTimeLeft, StringFormat={}Time: {0}}" />
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <ProgressBar
+                    Width="540"
+                    Height="25"
+                    Margin="10"
+                    HorizontalAlignment="Left"
+                    Maximum="100"
+                    Minimum="0"
+                    Value="{Binding DoublePercent}" />
+            </Grid>
+
+            <WrapPanel Grid.Row="2" Margin="5">
+                <Button
+                    Command="{Binding StartCommand}"
+                    Content="Start"
+                    Style="{StaticResource ButtonStyle}" />
+                <Button
+                    Command="{Binding RestartCommand}"
+                    Content="Restart"
+                    Style="{StaticResource ButtonStyle}" />
+                <Button
+                    Command="{Binding PauseCommand}"
+                    Content="Pause"
+                    Style="{StaticResource ButtonStyle}" />
+                <Button
+                    Command="{Binding ResumeCommand}"
+                    Content="Resume"
+                    Style="{StaticResource ButtonStyle}" />
+                <Button
+                    Command="{Binding CancelCommand}"
+                    Content="Stop"
+                    Style="{StaticResource ButtonStyle}" />
+            </WrapPanel>
+        </Grid>
+    </Grid>
+</UserControl>

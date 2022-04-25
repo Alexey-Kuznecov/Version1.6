@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander.Modules.LeftSideBars</AssemblyName>
   </PropertyGroup>
@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 </Project>

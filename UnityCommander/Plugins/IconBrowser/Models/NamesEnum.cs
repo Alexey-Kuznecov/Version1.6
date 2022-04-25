@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-
-namespace IconBrowser.Models
+﻿
+namespace AIconBrowser.Models
 {
     /// <summary>
     /// Names of icon collection.
@@ -15,7 +14,6 @@ namespace IconBrowser.Models
         /// <summary>
         /// Returns the Russian version of the name of the collection menu.
         /// </summary>
-        [DebuggerStepThrough]
         public static string GetName(this NamesEnum code)
         {
             switch (code)

@@ -182,6 +182,11 @@ namespace WindowCustomizer
         public ICommand CloseCommand { get; set; }
 
         /// <summary>
+        /// Gets or sets the command to close the window
+        /// </summary>
+        public ICommand CollapseRibbonCommand { get; set; }
+
+        /// <summary>
         /// Gets or sets the command to show the system menu of the window
         /// </summary>
         public ICommand MenuCommand => new DelegateCommand(() => SystemCommands.ShowSystemMenu(this.Window, this.GetMousePosition()));

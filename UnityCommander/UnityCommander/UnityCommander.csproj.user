@@ -10,11 +10,29 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Update="Views\CopyDialogs\CopyDialogView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\DialogPluginConfigView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\DialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Views\CopyDialogs\CopyDialogControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CopyDialogs\CopyDialogView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CopyDialogs\CopyProcessView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\DialogPluginConfigView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\DialogView.xaml">
       <SubType>Designer</SubType>
     </Page>

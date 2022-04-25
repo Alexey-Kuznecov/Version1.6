@@ -8,7 +8,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
     using System.Windows.Interactivity;
     using System.Windows.Media;
 
-    using UnityCommander.Integration.Models.Base;
+    using UnityCommander.Common.Models.Directory;
 
     /// <summary>
     /// The multi selection directory items behavior.

@@ -1,0 +1,17 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.ToolBar.Views.ToolBarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="clr-namespace:UnityCommander.Controls.Ribbon;assembly=UnityCommander.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:vm="clr-namespace:UnityCommander.Modules.ToolBar.ViewModels"
+    d:DataContext="{d:DesignInstance vm:ToolBarViewModel}"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <StackPanel>
+        <!--<ContentControl Content="{Binding Ribbon}" />-->
+        <control:Ribbon RibbonManager="{Binding}"></control:Ribbon>
+    </StackPanel>
+</UserControl>

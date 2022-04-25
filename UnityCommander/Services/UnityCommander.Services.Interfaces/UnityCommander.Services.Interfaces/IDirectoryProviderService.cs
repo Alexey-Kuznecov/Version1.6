@@ -8,7 +8,7 @@ namespace UnityCommander.Services.Interfaces
     /// <summary>
     /// The FilesProvider interface.
     /// </summary>
-    public interface IDirectoryProviderService
+    public interface IDataProviderService
     {
         /// <summary>
         /// Gets list files to the specific path.
@@ -23,5 +23,11 @@ namespace UnityCommander.Services.Interfaces
         /// <param name="path"> The path to the directories location. </param>
         /// <returns> The collection <see cref="FolderModel"/> objects. </returns>
         ObservableCollection<FolderModel> GetDirectories(string path);
+
+        /// <summary>
+        /// Gets list disks and devices.
+        /// </summary>
+        /// <returns> The collection <see cref="DriveModel"/> objects. </returns>
+        ObservableCollection<DriveModel> GetDrives();
     }
 }

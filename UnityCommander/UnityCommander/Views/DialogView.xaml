@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:prism="http://prismlibrary.com/"
-    prism:ViewModelLocator.AutoWireViewModel="True" MinWidth="800" MinHeight="600">
+    prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <ContentControl Content="{Binding UserControl}" />
         <!--<Button Command="{Binding CloseDialogCommand}">Close this, Dialog!</Button>-->

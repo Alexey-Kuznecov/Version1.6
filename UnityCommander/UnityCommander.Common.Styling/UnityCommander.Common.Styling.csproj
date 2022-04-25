@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Settings\**" />
+    <EmbeddedResource Remove="Settings\**" />
+    <None Remove="Settings\**" />
+    <Page Remove="Settings\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Styles\UnityWindow.cs" />
@@ -26,15 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Settings\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,10 +41,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\DirectoryBarStyles.xaml">
+    <Page Update="Styles\DirectoryPanelStyles.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\NaviBarStyles.xaml">
+    <Page Update="Styles\NavigationBarStyles.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\ScrollBarStyles.xaml">
@@ -66,6 +65,14 @@
     <Page Update="Styles\Window\Windows.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Directories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 
 </Project>

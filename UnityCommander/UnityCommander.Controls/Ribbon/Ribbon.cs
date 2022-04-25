@@ -1,146 +1,90 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics.CodeAnalysis;
+
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using System.Windows.Media;
-
-    using AlexLibWpf.Mvvm.Base;
+    using UnityCommander.Integration.Mvvm.Base;
 
     /// <summary>
     /// The ribbon.
     /// </summary>
-    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class Ribbon : Panel
     {
-        #region Dependency fields
+        /// <summary>
+        /// The ribbon initial items.
+        /// </summary>
+        public static readonly DependencyProperty RibbonManagerProperty =
+            DependencyProperty.Register(
+                "RibbonManager",
+                typeof(IRibbonManager), 
+                typeof(Ribbon), 
+                new PropertyMetadata(OnRibbonManagerChangedCallback));
 
         /// <summary>
-        /// Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// The ribbon width.
         /// </summary>
-        public static readonly DependencyProperty BubbleSourceProperty = DependencyProperty.Register(
-            "BubbleSource",
-            typeof(UserControl),
-            typeof(Ribbon),
-            new PropertyMetadata(null, OnBubbleSourceChanged, CoerceBubbleSource));
+        private static double ribbonWidth;
 
         /// <summary>
-        /// Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        /// The ribbon.
         /// </summary>
-        public static readonly DependencyProperty SetCommandProperty = DependencyProperty.Register(
-            "SetCommand",
-            typeof(ICommand),
-            typeof(Ribbon),
-            new PropertyMetadata(new RelayCommand(() => { })));
-
-        #endregion
-
-        /// <summary>
-        /// The tab controls.
-        /// </summary>
-        private UIElementCollection tabControls;
-
-        /// <summary>
-        /// The tab controls.
-        /// </summary>
-        private UIElementCollection ribbonContainer;
-
-        /// <summary>
-        /// The window width.
-        /// </summary>
-        private Size windowSize;
-
-        /// <summary>
-        /// Gets or sets the set command.
-        /// </summary>
-        public ICommand SetCommand
-        {
-            get => (ICommand)this.GetValue(SetCommandProperty);
-            set => this.SetValue(SetCommandProperty, value);
-        }
+        private static Ribbon ribbon;
 
         /// <summary>
         /// Gets or sets the tab command.
         /// </summary>
-        public ICommand TabCommand => new RelayCommand(obj =>
-        {
-            foreach (var tab in this.tabControls)
-            {
-                if (!(tab is Button child)) continue;
-                if (obj is Button bt)
+        public static ICommand MinimizeCommand = new RelayCommand(
+            obj =>
                 {
-                    child.IsEnabled = child.GetHashCode() != bt.GetHashCode();
+                    var parent = ribbon.Parent as FrameworkElement;
 
-                    if (!child.IsEnabled)
+                    while (parent?.Name != "RibbonExpandButtonHere")
                     {
-                        SetCommand.Execute(bt);
+                        parent = parent?.Parent as FrameworkElement;
+
+                        if (parent?.Name == "CollapseHere")
+                        {
+                            parent.Visibility = parent.IsVisible ? Visibility.Hidden : Visibility.Visible;
+                        }
                     }
-                }
-            }
-        });
-
-        #region Setters/Getters Method
+                });
 
         /// <summary>
-        /// The set bubble source.
+        /// Initializes a new instance of the <see cref="Ribbon"/> class.
         /// </summary>
-        /// <param name="element">
-        /// The element.
-        /// </param>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        public static void SetBubbleSource(UIElement element, UserControl value)
+        public Ribbon()
         {
-            element.SetValue(BubbleSourceProperty, value);
         }
 
         /// <summary>
-        /// The get bubble source.
+        /// Gets or sets the ribbon initial items property.
         /// </summary>
-        /// <param name="element">
-        /// The element.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public static UserControl GetBubbleSource(UIElement element)
+        public IRibbonManager RibbonManager
         {
-            return (UserControl)element.GetValue(BubbleSourceProperty);
+            get => (IRibbonManager)this.GetValue(RibbonManagerProperty);
+            set => this.SetValue(RibbonManagerProperty, value);
         }
 
-        #endregion
+        /// <summary>
+        /// The on ribbon manager changed callback.
+        /// </summary>
+        /// <param name="d">
+        /// The d.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private static void OnRibbonManagerChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var manager = e.NewValue as IRibbonManager;
+            ribbon = (Ribbon)d;
+            manager?.Collapse(MinimizeCommand);
+            manager?.Initial(ribbon);
+        }
 
         #region Override methods
-
-        /// <summary>
-        /// The on render.
-        /// </summary>
-        /// <param name="dc">
-        /// The dc.
-        /// </param>
-        protected override void OnRender(DrawingContext dc)
-        {
-            FrameworkElement parent = this.Parent as FrameworkElement;
-
-            while (!(parent is Window))
-            {
-                parent = parent?.Parent as FrameworkElement;
-
-                if (parent is Window w)
-                {
-                    this.windowSize = new Size(w.Width, w.Height);
-                    SolidColorBrush mySolidColorBrush = new SolidColorBrush(Color.FromRgb(222, 222, 222));
-                    Pen myPen = new Pen(new SolidColorBrush(Color.FromRgb(200, 22, 33)), 1);
-                    Rect myRect = new Rect(0, 0, double.PositiveInfinity, 120);
-                    dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
-                }
-            }
-        }
 
         /// <summary>
         /// The arrange override.
@@ -155,23 +99,10 @@ namespace UnityCommander.Controls.Ribbon
         {
             double margin = 0;
 
-            foreach (UIElement child in this.InternalChildren)
+            foreach (UIElement child in this.Children)
             {
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
                 margin += child.DesiredSize.Width;
-                this.tabControls = ((RibbonTaber)((Grid)child).Children[0])?.Children;
-                this.ribbonContainer = ((RibbonContainer)((Grid)child).Children[1])?.Children;
-
-                if (this.tabControls == null) continue;
-
-                foreach (var tab in this.tabControls)
-                {
-                    if (tab is Button bt)
-                    {
-                        bt.Command = this.TabCommand;
-                        bt.CommandParameter = bt;
-                    }
-                }
             }
 
             return finalSize;
@@ -188,58 +119,42 @@ namespace UnityCommander.Controls.Ribbon
         /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
+            double height = 0;
+
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
-            foreach (UIElement child in this.InternalChildren)
+            foreach (UIElement child in this.Children)
             {
                 child.Measure(size);
+                ribbonWidth += child.DesiredSize.Width;
+                height = child.DesiredSize.Height;
             }
 
-            return new Size();
+            return new Size(ribbonWidth, height);
         }
 
         #endregion
 
         /// <summary>
-        /// The on bubble source changed.
+        /// The get window.
         /// </summary>
-        /// <param name="d">
-        /// The d.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        private static void OnBubbleSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is Ribbon ribbon)
-            {
-                if (ribbon.ribbonContainer == null) return;
-                ribbon.ribbonContainer.Clear();
-                ribbon.ribbonContainer.Add(
-                    new ContentControl
-                        {
-                            Content = GetBubbleSource(ribbon),
-                            Width = ribbon.windowSize.Width,
-                            Height = 100
-                        });
-            }
-        }
-
-        /// <summary>
-        /// The coerce directory path.
-        /// </summary>
-        /// <param name="d">
-        /// The d.
-        /// </param>
-        /// <param name="baseValue">
-        /// The base value.
-        /// </param>
         /// <returns>
-        /// The <see cref="object"/>.
+        /// The <see cref="Window"/>.
         /// </returns>
-        private static object CoerceBubbleSource(DependencyObject d, object baseValue)
+        private Window GetWindow()
         {
-            var panel = d;
-            return baseValue;
+            FrameworkElement parent = this.Parent as FrameworkElement;
+
+            while (parent is not Window)
+            {
+                parent = parent?.Parent as FrameworkElement;
+
+                if (parent is Window window)
+                {
+                    return window;
+                }
+            }
+
+            return null;
         }
     }
 }

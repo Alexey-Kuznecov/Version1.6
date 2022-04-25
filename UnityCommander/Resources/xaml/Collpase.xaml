@@ -1,0 +1,16 @@
+<!-- Created with Ai->XAML Export Plug-In Version 0.2 (PC/64) -->
+<!-- By Mike Swanson (http://blog.mikeswanson.com/)           -->
+
+<Viewbox Width="435.122" Height="262.420"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Canvas Width="435.122" Height="262.420">
+
+  <Canvas>
+
+  <!-- Слой 1/<Контур> -->
+  <Path StrokeThickness="1.0" Stroke="#ff000000" StrokeMiterLimit="1.0" Fill="#ff414141" Data="F1 M 0.739,215.190 L 73.799,261.750 L 217.716,70.833 L 361.716,261.750 L 434.383,216.833 L 264.049,0.500 L 173.049,0.500 L 0.739,215.190 Z"/>
+
+  </Canvas>
+</Canvas>
+</Viewbox>

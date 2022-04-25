@@ -4,7 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
     xmlns:custom="clr-namespace:WindowCustomizer;assembly=WindowCustomizer"
+    xmlns:controls="clr-namespace:UnityCommander.Controls.Window;assembly=UnityCommander.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
@@ -12,27 +14,18 @@
     Title="Unity Commander"
     Width="1350"
     Height="800"
-    custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
-    custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
+    controls:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
+    controls:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
-    Icon="D:\Works\WPF\UnityCommander\Version2.7.1\UnityCommander\UnityCommander\icon.ico"
+    Icon="{Binding Icon}"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     WindowStyle="None"
     mc:Ignorable="d">
-
-    <!--
-        THE LINE TO INCLUDING A CUSTOM WINDOW
-        AllowsTransparency="True"
-        custom:WindowControl.ViewModel="{Binding ImportCustomWindow, Mode=OneWayToSource}"
-        custom:WindowControl.WindowInstance="{Binding ElementName=Window, Mode=OneWay}"
-        WindowState="Normal"
-        WindowStyle="None"
-    -->
 
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
@@ -41,50 +34,96 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid inputBinding:SortcutBinding.IsDragSource="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" MinWidth="60" />
             <ColumnDefinition Width="Auto" MaxWidth="250" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="3*" MinWidth="800" />
+            <ColumnDefinition Width="0" />
+            <ColumnDefinition Width="69*" MinWidth="800" />
+            <ColumnDefinition Width="571*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-            <RowDefinition Height="80" />
+            <RowDefinition Height="{Binding RibbonContainerSize}" />
+            <RowDefinition Height="{Binding TabContainerSize}" />
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <!--
             Toolbar region.
         -->
-        <ContentControl
+
+        <Grid
+            x:Name="RibbonExpandButtonHere"
             Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="4"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}" />
+            Grid.RowSpan="3"
+            Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+
+            <ContentControl
+                x:Name="CollapseHere"
+                Grid.Row="0"
+                prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}"
+                Visibility="{Binding ToolBarVisibility, Mode=TwoWay}" />
+
+            <Button
+                Grid.Row="1"
+                Width="50"
+                Height="25"
+                Command="{Binding MinimizeToolbarCommand}"
+                Content="+"
+                Cursor="Hand" />
+        </Grid>
+
         <!--
             Grid splitter.
         -->
-        <GridSplitter
+        <!--<GridSplitter
             Grid.Row="2"
             Grid.Column="2"
             Width="10"
             HorizontalAlignment="Center"
-            VerticalAlignment="Stretch"
             DragIncrement="1"
             ResizeDirection="Columns"
-            ShowsPreview="False" />
+            ShowsPreview="False" />-->
         <!--
             The content display region of ​​the left sidebar.
         -->
-        <Border
+        <Grid
             Grid.Row="2"
             Grid.Column="1"
+            Grid.ColumnSpan="2"
             Width="{Binding SidebarContentWidth, Mode=TwoWay}"
-            Background="#FFF3F2F2">
-            <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
-        </Border>
+            Background="#F3F2F2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <ContentControl
+                Grid.Row="0"
+                Height="25"
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="{Binding IconHideSidebar.Data}"
+                Foreground="Gray"
+                Style="{DynamicResource CustomButtonStyles}"
+                Template="{DynamicResource CustomButtonTemplate}">
+                <ContentControl.InputBindings>
+                    <MouseBinding Command="{Binding HideSidebarCommand}" Gesture="LeftClick" />
+                </ContentControl.InputBindings>
+                <ContentControl.ToolTip>
+                    <ToolTip Content="Collapse sidebar" />
+                </ContentControl.ToolTip>
+            </ContentControl>
+            <Border Grid.Row="1" Background="#FFF3F2F2">
+                <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
+            </Border>
+        </Grid>
+
+
         <!--
             Functional selection region on the left side panel.
         -->
@@ -98,16 +137,12 @@
         <ContentControl
             Grid.Row="2"
             Grid.Column="3"
+            Grid.ColumnSpan="2"
             MinWidth="200"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
         <!--
             Context line region.
         -->
-        <Grid
-            Grid.Row="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="4"
-            Background="#F0F0F0" />
     </Grid>
 
     <WindowChrome.WindowChrome>

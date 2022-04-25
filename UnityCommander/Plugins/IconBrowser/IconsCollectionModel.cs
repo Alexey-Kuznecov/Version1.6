@@ -1,16 +1,15 @@
 ﻿
-namespace IconBrowser
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using AIconBrowser.Components.InputBox;
+using AIconBrowser.Models;
+using AIconBrowser.Mvvm.Base;
+
+namespace AIconBrowser
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using AkuzIcons.Mvvm.Base;
-    using AlexLibWpf.Components.InputBox;
-
-    using IconBrowser.Models;
-
     /// <summary>
     /// Class of model that responsible to way display icons collection.
     /// </summary>
@@ -33,13 +32,13 @@ namespace IconBrowser
         /// <summary>
         /// Command to add new icons.
         /// </summary>
-        public static ICommand AddNewCollection => new RelayCommand(name =>
+        public static ICommand AddNewCollection => new Mvvm.Base.RelayCommand(name =>
         {
             using (IconsDataWriter dataWriter = new IconsDataWriter())
             {
                 dataWriter.AddNewCollection((string) name);
                 OnCollectionChanged?.Invoke(0, null);
-                InputBox.Close();
+                Components.InputBox.InputBox.Close();
             }
         });
 
@@ -52,7 +51,7 @@ namespace IconBrowser
             {
                 dataWriter.RenameCollection(this.CollectionName, (string) oldName);
                 OnCollectionChanged?.Invoke(0, null);
-                InputBox.Close();
+                Components.InputBox.InputBox.Close();
             }
         });
 
@@ -63,14 +62,14 @@ namespace IconBrowser
         /// <param name="e">Expected the ContentControl object.</param>
         private static void MoveIcon(object sender, DragEventArgs e)
         {
-            TextBlock collcetion = sender as TextBlock;
+            TextBlock textBlock = sender as TextBlock;
             ContentControl button = (ContentControl)e.Data.GetData(typeof(ContentControl));
 
-            string targetName = collcetion?.Text;
+            string targetName = textBlock?.Text;
             string sourceName = button?.Uid;
             if (button?.Tag != null)
             {
-                ushort id = ushort.Parse(button.Tag.ToString());
+                ushort id = ushort.Parse(button.Tag.ToString() ?? string.Empty);
                 IconsDataWriter.IconReplace(id, sourceName, targetName);
 
                 OnCollectionChanged?.Invoke(id, sourceName);
@@ -86,11 +85,9 @@ namespace IconBrowser
         /// </summary>
         private void RemoveCollection(object obj)
         {
-            using (IconsDataWriter dataWriter = new IconsDataWriter())
-            {
-                dataWriter.RemoveCollection(this.CollectionName);
-                OnCollectionChanged?.Invoke(0, null);
-            }
+            using IconsDataWriter dataWriter = new IconsDataWriter();
+            dataWriter.RemoveCollection(this.CollectionName);
+            OnCollectionChanged?.Invoke(0, null);
         }
 
         /// <summary>
@@ -100,9 +97,9 @@ namespace IconBrowser
         {
             this.CollectionContextMenu = new ContextMenu();
             this.ContextMenu = new ContextMenu();
-            this.ContextMenu.Items.Add(new MenuItem { Header = "Добавить категорию", Command = new RelayCommand(obj => InputBox.Show(AddNewCollection, Actions.Add))});
-            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Переименовать", Command = new RelayCommand(obj => InputBox.Show(this.RenameCollection, Actions.Change, this.CollectionName))});
-            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Удалить", Command = new RelayCommand(RemoveCollection) });
+            this.ContextMenu.Items.Add(new MenuItem { Header = "Add category", Command = new Mvvm.Base.RelayCommand(obj => InputBox.Show(AddNewCollection, Actions.Add))});
+            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Rename", Command = new Mvvm.Base.RelayCommand(obj => InputBox.Show(this.RenameCollection, Components.InputBox.Actions.Change, this.CollectionName))});
+            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Remove", Command = new Mvvm.Base.RelayCommand(RemoveCollection) });
         }
     }
 
@@ -111,27 +108,26 @@ namespace IconBrowser
         /// <summary>
         /// Adds headers of icons collection.
         /// </summary>
-        /// <returns>Retruns collection objects which contain 
+        /// <returns> The collection objects which contain 
         /// icon collection names and it context menu.</returns>
         public static ObservableCollection<IconsCollectionModel> GetCollection()
         {
             var cat = new ObservableCollection<IconsCollectionModel>();
-            using (IconsDataReader dataReader = new IconsDataReader())
+            using IconsDataReader dataReader = new IconsDataReader();
+            foreach (var name in dataReader.GetCollection())
             {
-                foreach (var name in dataReader.GetCollection())
+                if (name == NamesEnum.Unsigned.GetName())
                 {
-                    if (name == NamesEnum.Unsigned.GetName())
-                    {
-                        if (!IconsDataReader.ContainsIcons(NamesEnum.Unsigned.GetName()))
-                            continue;
-                        cat.Add(new IconsCollectionModel { CollectionName = name, CollectionContextMenu = new ContextMenu() });
-                    }
-                    else
-                    {
-                        cat.Add(new IconsCollectionModel { CollectionName = name });
-                    }
+                    if (!IconsDataReader.ContainsIcons(NamesEnum.Unsigned.GetName()))
+                        continue;
+                    cat.Add(new IconsCollectionModel { CollectionName = name, CollectionContextMenu = new ContextMenu() });
+                }
+                else
+                {
+                    cat.Add(new IconsCollectionModel { CollectionName = name });
                 }
             }
+
             return cat;
         }
     }

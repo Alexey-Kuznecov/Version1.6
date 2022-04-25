@@ -1,5 +1,5 @@
 ﻿
-namespace IconBrowser.Models
+namespace AIconBrowser.Models
 {
     using System;
     using System.Collections.Generic;
@@ -8,21 +8,33 @@ namespace IconBrowser.Models
     using System.Windows.Shapes;
     using System.Xml.Linq;
 
-    using AlexLibWpf.Models;
-    using AlexLibWpf.Help;
+    using AIconBrowser.Help;
 
-    class IconsDataReader : IDisposable
+    /// <summary>
+    /// The icons data reader.
+    /// </summary>
+    public class IconsDataReader : IconParser, IDisposable
     {
-        private const string DocumentName = @"d:\Resources\IconsData.xml";
-        private static IEnumerable<XElement> _elementIcons; // Gets all element named Icon
-        private static IEnumerable<XElement> _elementCollection; // Gets all collection element
+        /// <summary>
+        /// The _element icons.
+        /// </summary>
+        private static IEnumerable<XElement> elementIcons; // Gets all element named Icon
 
+        /// <summary>
+        /// The _element collection.
+        /// </summary>
+        private static IEnumerable<XElement> elementCollection; // Gets all collection element
+
+        /// <summary>
+        /// The initial fields.
+        /// </summary>
         private static void InitialFields()
         {
             XElement root = XElement.Load(DocumentName);
-            _elementCollection    = from element in root.Elements() select element;
-            _elementIcons         = from icon in _elementCollection.Elements() select icon;
+            elementCollection    = from element in root.Elements() select element;
+            elementIcons         = from icon in elementCollection.Elements() select icon;
         }
+
         /// <summary>
         /// Loads xml document and get icon categories from xml file.
         /// </summary>
@@ -30,14 +42,15 @@ namespace IconBrowser.Models
         public List<string> GetCollection()
         {
             // It's a field not initialized. Do it.
-            if (_elementIcons == null)
+            if (elementIcons == null)
                 InitialFields();
 
-            List<string> collection = new List<string>();
-            foreach (var cat in _elementCollection)
+            var collection = new List<string>();
+            foreach (var cat in elementCollection)
                 collection.Add(cat.FirstAttribute.Value);
             return collection;
         }
+
         /// <summary>
         /// Searches a icon in document that been specified value argument passing.
         /// </summary>
@@ -49,10 +62,10 @@ namespace IconBrowser.Models
             string str = " ";
 
             // It's a field not initialized. Do it.
-            if (_elementIcons == null)
+            if (elementIcons == null)
                 InitialFields();
 
-            var queryPath = from icon in _elementIcons
+            var queryPath = from icon in elementIcons
                 where icon.Attribute("Name")?.Value == name
                 select icon;
             // Concatenate paths to string.
@@ -62,6 +75,7 @@ namespace IconBrowser.Models
             paths.Data = Geometry.Parse(str);
             return paths;
         }
+
         /// <summary>
         /// Extract icon attribute values from an xml file.
         /// Icon attribute repacking from xml markup to icon type.
@@ -167,8 +181,8 @@ namespace IconBrowser.Models
         /// </summary>
         public void Dispose()
         {
-            _elementIcons = null;
-            _elementCollection = null;
+            elementIcons = null;
+            elementCollection = null;
         }
     }
 }

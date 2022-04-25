@@ -10,104 +10,172 @@
 
 namespace UnityCommander.ViewModels
 {
-    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
+
+    using MaterialDesignThemes.Wpf;
+
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
     using UnityCommander.Common.Models;
+    using UnityCommander.Controls.Window;
     using UnityCommander.Core;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Views;
 
-    using WindowCustomizer;
+    using Path = System.Windows.Shapes.Path;
 
     /// <summary>
     /// The main window view model.
     /// </summary>
     public class MainWindowViewModel : BindableBase
     {
+        #region DECLARATION FIELDS
+
         /// <summary>
-        /// The index of the sidebar item that used  .
+        /// The index of the sidebar item.
         /// </summary>
         private static byte sidebarItemIndex;
 
         /// <summary>
-        /// The view model message.
-        /// </summary>
-        private readonly IEventAggregator viewModelMessage;
-
-        /// <summary>
-        /// The application commands.
-        /// </summary>
-        private IGlobalCommandService stateCommands;
-
-        /// <summary>
-        /// The application settings.
-        /// </summary>
-        private ISettings settingsService;
-
-        /// <summary>
-        /// The drag increment.
-        /// </summary>
-        private UserControl sidebarContent;
-
-        /// <summary>
-        /// The import custom window.
-        /// </summary>
-        private CustomViewModel importCustomWindow;
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
-        private DelegateCommand showDialogCommand;
-
-        /// <summary>
-        /// The import custom window.
-        /// </summary>
-        private IDialogService dialogService;
-
-        /// <summary>
-        /// The sidebar content width.
+        /// The width of the sidebar content.
         /// </summary>
         private int sidebarContentWidth;
 
         /// <summary>
-        /// The title.
+        /// The sidebar content.
         /// </summary>
-        private string title = "Prism Application";
+        private UserControl sidebarContent;
+
+        private InputBindingCollection inputCommands;
+
+        #region DEPENDENCY INJECTION PROPERTIES
+
+        /// <summary>
+        /// The application commands.
+        /// </summary>
+        private IMultiCommandService stateCommands;
+
+        /// <summary>
+        /// The application commands.
+        /// </summary>
+        private IGlobalCommandService uCCommands;
+
+        #endregion
+
+        /// <summary>
+        /// The import view model of the custom window.
+        /// </summary>
+        private CustomViewModel importCustomWindow;
+
+        /// <summary>
+        /// The icon hide sidebar.
+        /// </summary>
+        private Path iconHideSidebar;
+
+        /// <summary>
+        /// The icon hide sidebar.
+        /// </summary>
+        private string icon;
+
+        #region MINIMIZE TOOLBAR FIELDS
+
+        /// <summary>
+        /// Size of the tab container .
+        /// </summary>
+        private double tabContainerSize;
+
+        /// <summary>
+        /// Size of the ribbon container.
+        /// </summary>
+        private double ribbonContainerSize;
+
+        /// <summary>
+        /// Visibility of the toolbar.
+        /// </summary>
+        private Visibility toolBarVisibility;
+
+        #endregion
+
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
         /// <param name="dialogService">
-        /// The dialog Service.
+        /// The service to manage a dialog window.
         /// </param>
-        /// <param name="message">
-        /// Gets interface to exchange of information between view models.
+        /// <param name="exchange">
+        /// The service to exchange of information between view models.
         /// </param>
-        /// <param name="settings">
-        /// Gets interface to configure of application.
+        /// <param name="settingsProviderService">
+        /// The service to configure of application.
+        /// </param>
+        /// <param name="iconProviderService">
+        /// The service to provide icons.
         /// </param>
         /// <param name="command">
-        /// Gets interface to execute commands each view model at the time.
+        /// The service to execute commands from each view model if the command is registered globally.
         /// </param>
-        public MainWindowViewModel(IDialogService dialogService, IEventAggregator message, ISettingsProviderService settings, IGlobalCommandService command)
+        public MainWindowViewModel(
+            IDialogService dialogService,
+            IEventAggregator exchange,
+            ISettingsProviderService settingsProviderService,
+            IIconProviderService iconProviderService,
+            IMultiCommandService command,
+            IGlobalCommandService globalCommand)
         {
-            this.dialogService = dialogService;
-            this.viewModelMessage = message;
             this.StateCommand = command;
-            this.settingsService = settings.GetAppConfig();
+            this.uCCommands = globalCommand;
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
-            this.viewModelMessage.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
-            this.SidebarContentWidth = this.settingsService.SidebarDisplayContent ? 250 : 0;
+
+            exchange.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
+
+            var settings = settingsProviderService.GetAppConfig();
+            this.SidebarContentWidth = settings.SidebarDisplayContent ? 250 : 0;
+
+            this.RibbonContainerSize = 60;
+            this.TabContainerSize = 80;
+
+            this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+
+            this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
         }
 
         /// <summary>
-        /// Gets or sets the custom window.
+        /// Gets or sets the current directory.
+        /// </summary>
+        public InputBindingCollection UCCommands
+        {
+            get => this.inputCommands;
+            set => this.SetProperty(ref this.inputCommands, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the icon hide sidebar.
+        /// </summary>
+        public Path IconHideSidebar
+        {
+            get => this.iconHideSidebar;
+            set => this.SetProperty(ref this.iconHideSidebar, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the icon hide sidebar.
+        /// </summary>
+        public string Icon
+        {
+            get => this.icon;
+            set => this.SetProperty(ref this.icon, value);
+        }
+
+
+        /// <summary>
+        /// Gets or sets the view model. View model, used to control custom window buttons.
         /// </summary>
         public CustomViewModel ImportCustomWindow
         {
@@ -125,32 +193,70 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// Gets or sets the application commands.
         /// </summary>
-        public IGlobalCommandService StateCommand
+        public IMultiCommandService StateCommand
         {
             get => this.stateCommands;
             set => this.SetProperty(ref this.stateCommands, value);
         }
 
         /// <summary>
-        /// Gets or sets the sidebar content width.
+        /// The command to close window.
         /// </summary>
-        public int SidebarContentWidth
+        public DelegateCommand<Window> CloseWindowCommand => new DelegateCommand<Window>(
+            window =>
+            {
+                Application.Current.Shutdown();
+            });
+
+        #region MINIMIZE TOOLBAR PROPERTIES
+
+        /// <summary>
+        /// Gets or sets the size of element that contains toolbar tabs.
+        /// </summary>
+        public double TabContainerSize
         {
-            get => this.sidebarContentWidth;
-            set => this.SetProperty(ref this.sidebarContentWidth, value);
+            get => this.tabContainerSize;
+            set => this.SetProperty(ref this.tabContainerSize, value);
         }
 
         /// <summary>
-        /// Gets or sets the title.
+        /// Gets or sets the size of element that contains the tool ribbon.
         /// </summary>
-        public string Title
+        public double RibbonContainerSize
         {
-            get => this.title;
-            set => this.SetProperty(ref this.title, value);
+            get => this.ribbonContainerSize;
+            set => this.SetProperty(ref this.ribbonContainerSize, value);
         }
 
         /// <summary>
-        /// Gets or sets the drag increment.
+        /// Gets or sets a value that indicates the visibility of the toolbar.
+        /// </summary>
+        public Visibility ToolBarVisibility
+        {
+            get => this.toolBarVisibility;
+            set 
+            {
+                this.SetProperty(ref this.toolBarVisibility, value);
+
+                if (this.toolBarVisibility == Visibility.Hidden)
+                {
+                    this.RibbonContainerSize = 0;
+                    this.TabContainerSize = 0;
+                }
+                else
+                {
+                    this.RibbonContainerSize = 60;
+                    this.TabContainerSize = 80;
+                }
+            }
+        }
+
+        #endregion
+
+        #region SIDEBAR MEMBER
+
+        /// <summary>
+        /// Gets or sets the content of sidebar.
         /// </summary>
         public UserControl SidebarContent
         {
@@ -159,26 +265,22 @@ namespace UnityCommander.ViewModels
         }
 
         /// <summary>
-        /// The close window command.
+        /// Gets or sets the width of sidebar content.
         /// </summary>
-        public DelegateCommand<Window> CloseWindowCommand => new DelegateCommand<Window>(window =>
+        public int SidebarContentWidth
         {
-            Application.Current.Shutdown();
-        });
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
-        public DelegateCommand ShowDialogCommand => 
-            this.showDialogCommand ?? (this.showDialogCommand = new DelegateCommand(this.ExecuteShowDialogCommand));
-
-        /// <summary>
-        /// The execute show dialog command.
-        /// </summary>
-        private void ExecuteShowDialogCommand()
-        {
-            this.dialogService.ShowDialog("DialogView", null, r => { });
+            get => this.sidebarContentWidth;
+            set => this.SetProperty(ref this.sidebarContentWidth, value);
         }
+
+        /// <summary>
+        /// The command to hide the content of the sidebar.
+        /// </summary>
+        public DelegateCommand HideSidebarCommand => new DelegateCommand(
+            () =>
+                {
+                    this.SidebarContentWidth = 0;
+                });
 
         /// <summary>
         /// The set sidebar view model.
@@ -197,5 +299,7 @@ namespace UnityCommander.ViewModels
                 sidebarItemIndex = index;
             }
         }
+
+        #endregion
     }
 }

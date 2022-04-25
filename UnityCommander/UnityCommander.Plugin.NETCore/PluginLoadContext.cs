@@ -39,7 +39,7 @@ namespace UnityCommander.Plugin.NETCore
             if (assemblyName.Name == null)
             {
                 return null;
-            }
+            } 
 
             if (this.defaultAssemblies.Contains(assemblyName.Name) && !this.privateAssemblies.Contains(assemblyName.Name))
             {

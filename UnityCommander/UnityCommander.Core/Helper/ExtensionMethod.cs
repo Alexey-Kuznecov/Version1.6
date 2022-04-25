@@ -3,10 +3,10 @@ namespace UnityCommander.Core.Helper
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Reflection.Emit;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Models;
+
+    using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Common.Models.Icons;
 
     /// <summary>
     /// The extension method.
@@ -68,7 +68,6 @@ namespace UnityCommander.Core.Helper
             return typeBuilder;
         }
 
-
         /// <summary>
         /// This method will create a new <see langword="object"/> based on two objects.
         /// Note, that this method copies only the properties of objects.  
@@ -79,6 +78,7 @@ namespace UnityCommander.Core.Helper
         /// <typeparam name="T"> The type that needs to be made basic for the object. </typeparam>
         /// <returns> Returns an object of type. </returns>
         /// [DebuggerStepperBoundary]
+        [Obsolete]
         public static T MergeObjectProperties<T>(this object mergeObjectL, object mergeObjectR, Type[] implInterface = null)
         {
             typeBuilder = MergeObjectProperties(mergeObjectL, mergeObjectR);
@@ -109,6 +109,7 @@ namespace UnityCommander.Core.Helper
         /// <returns>
         /// The <see cref="TypeBuilder"/>.
         /// </returns>
+        [Obsolete]
         private static T RestoreData<T>(TypeBuilder builder)
         {
             var instance = (T)Activator.CreateInstance(typeBuilder);
@@ -120,9 +121,9 @@ namespace UnityCommander.Core.Helper
                     property.SetValue(instance, (string)stored[property.Name]);
                 }
 
-                if (stored[property.Name] is IconModel)
+                if (stored[property.Name] is Icon)
                 {
-                    property.SetValue(instance, (IconModel)stored[property.Name]);
+                    property.SetValue(instance, (Icon)stored[property.Name]);
                 }
 
                 if (stored[property.Name] is DateTime)

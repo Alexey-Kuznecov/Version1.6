@@ -1,5 +1,5 @@
 ﻿
-namespace IconBrowser.Models
+namespace AIconBrowser.Models
 {
     using System;
     using System.Linq;
@@ -8,13 +8,8 @@ namespace IconBrowser.Models
     /// <summary>
     /// The icons data modifier.
     /// </summary>
-    public class IconsDataModifier
+    public class IconsDataModifier : IconParser
     {
-        /// <summary>
-        /// The document name.
-        /// </summary>
-        private const string DocumentName = @"d:\Resources\IconsData.xml";
-
         /// <summary>
         /// The load document.
         /// </summary>

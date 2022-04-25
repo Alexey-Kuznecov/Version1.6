@@ -1,0 +1,147 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:be="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
+    xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
+    xmlns:core="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+
+    <!--
+        Back button style in file panel.
+    -->
+    <Style
+        x:Key="BackButtonStyle"
+        BasedOn="{StaticResource MaterialDesignRaisedButton}"
+        TargetType="{x:Type Button}">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
+        <Setter Property="Content" Value="Goback" />
+        <Setter Property="Foreground" Value="#E8E8EC" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <!--
+        Style for back button in file panel
+    -->
+
+    <DataTemplate x:Key="DragAdorner">
+        <Border
+            Background="Silver"
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="2"
+            SnapsToDevicePixels="True">
+            <StackPanel Margin="4" Orientation="Horizontal">
+                <!--<iconPacks:PackIconMaterial VerticalAlignment="Center" Kind="MoveResizeVariant" />-->
+                <TextBlock
+                    Margin="6,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="ddd" />
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+    <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
+        <Grid>
+            <ListView
+                be:MultiSelectionMouseBehavior.IsEnableSelection="False"
+                core:DragDrop.DropHandler="{Binding Mode=Default}"
+                core:DragDrop.IsDragSource="True"
+                core:DragDrop.IsDropTarget="True"
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding DirectoryList, Mode=OneWay}"
+                View="{Binding FolderPanelContainer}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding NavigateDirectoryCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <i:Interaction.Behaviors>
+                    <be:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel ContextMenu="{Binding ContextMenu}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </Grid>
+    </ControlTemplate>
+    <!--
+        Style for back button in file panel
+    -->
+    <ControlTemplate x:Key="DriveListViewTemplate" TargetType="ContentControl">
+        <Grid>
+            <ListView
+                commands:GridViewSort.AutoSort="True"
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding DriveList, Mode=OneWay}"
+                View="{Binding DrivePanelContainer}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                        <i:InvokeCommandAction
+                            Command="{Binding GotoDiskCommand, Mode=OneWay}"
+                            CommandName="NavigateDirCommand"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListView>
+        </Grid>
+    </ControlTemplate>
+    <!--
+        Style for back button in file panel
+    -->
+    <ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Style="{DynamicResource DirectoryPanelHeaderStyle}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="25" />
+                </Grid.ColumnDefinitions>
+                <ContentControl
+                    Grid.Column="0"
+                    Height="25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="{Binding BackButtonIcon.Path.Data}"
+                    Foreground="#E8E8EC"
+                    IsEnabled="{Binding BackButtonIsEnabled}"
+                    Style="{DynamicResource CustomButtonStyles}"
+                    Template="{DynamicResource CustomButtonTemplate}">
+                    <ContentControl.InputBindings>
+                        <MouseBinding Command="{Binding GoBackDirectoryPanelCommand}" Gesture="LeftClick" />
+                    </ContentControl.InputBindings>
+                    <ContentControl.ToolTip>
+                        <ToolTip Content="Go back to previous directory." />
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl
+                    Grid.Column="1"
+                    Height="25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="{Binding ThisComputerIcon.Path.Data}"
+                    Foreground="#E8E8EC"
+                    IsEnabled="{Binding ThisComputerIconIsEnabled}"
+                    Style="{DynamicResource CustomButtonStyles}"
+                    Template="{DynamicResource CustomButtonTemplate}">
+                    <ContentControl.InputBindings>
+                        <MouseBinding Command="{Binding GoDrivePanelCommand}" Gesture="LeftClick" />
+                    </ContentControl.InputBindings>
+                    <ContentControl.ToolTip>
+                        <ToolTip Content="Go to this computer" />
+                    </ContentControl.ToolTip>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

@@ -2,18 +2,19 @@
 namespace UnityCommander.Common.Models.Columns
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
 
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Models.Base;
 
     /// <summary>
     /// The columns default.
     /// </summary>
-    public abstract class DefaultColumns : IColumnProService
+    public abstract class DefaultColumns 
     {
         /// <summary>
         /// The collection columns of the file panel.
@@ -32,20 +33,6 @@ namespace UnityCommander.Common.Models.Columns
         /// Gets or sets the column's name that display in settings.
         /// </summary>
         public string DisplayName { get; set; } = "Default";
-
-        /// <summary>
-        /// The set column value.
-        /// </summary>
-        /// <param name="yourModel">
-        /// The your model.
-        /// </param>
-        /// <param name="currentPath">
-        /// The current path.
-        /// </param>
-        public void SetColumnValue(Action<object, TargetPanel> yourModel, string currentPath)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Provides collection columns, only columns for which the IsDisplayed property is true.
@@ -78,12 +65,33 @@ namespace UnityCommander.Common.Models.Columns
                 new BaseColumn
                 {
                     Header = "Name",
-                    IsDisplayed = true,
                     Template = new GridViewColumn
                     {
                         Header = "Name",
-                        Width = 250,
+                        Width = 200,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
+                    },
+                    ContextItems = new List<ContextItem>
+                    {
+                        new ContextItem
+                        {
+                            Name = "Open",
+                            Command = null,
+                            CommandName = CommandNames.FileMove
+
+                        },
+                        new ContextItem
+                        {
+                            Name = "Create",
+                            Command = null,
+                            CommandName = CommandNames.FileDel
+                        },
+                        new ContextItem
+                        {
+                            Name = "Delete",
+                            Command = null,
+                            CommandName = CommandNames.FileDel
+                        },
                     }
                 },
                  new BaseColumn
@@ -92,7 +100,7 @@ namespace UnityCommander.Common.Models.Columns
                     Template = new GridViewColumn
                     {
                         Header = "CreationTime",
-                        Width = 150,
+                        Width = 100,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnCreationDateDataTemplate")
                     }
                 },
@@ -102,7 +110,7 @@ namespace UnityCommander.Common.Models.Columns
                     Template = new GridViewColumn
                     {
                         Header = "LastAccessTime",
-                        Width = 150,
+                        Width = 100,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnLastAccessDateDataTemplate")
                     },
                 }

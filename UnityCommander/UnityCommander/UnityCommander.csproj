@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -25,11 +25,13 @@
   <ItemGroup>
     <PackageReference Include="Config.Net" Version="4.15.0" />
     <PackageReference Include="Prism.DryIoc" Version="8.0.0.1909" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\WindowCustomizer\WindowCustomizer.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.Tabs\UnityCommander.Modules.Tabs.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
@@ -37,5 +39,23 @@
     <ApplicationDefinition Update="App.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\CopyDialogs\CopyDialogControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\CopyDialogs\CopyProcessView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\CopyDialogs\CopyDialogControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CopyDialogs\CopyProcessView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

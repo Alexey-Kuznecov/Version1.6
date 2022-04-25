@@ -1,15 +1,13 @@
 ﻿
-namespace IconBrowser
-{
-    using System.Diagnostics;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
+namespace AIconBrowser
+{
     /// <summary>
     /// The drag drop.
     /// </summary>
-    [DebuggerStepThrough]
     public class DragDropHandler
     {
         /// <summary>

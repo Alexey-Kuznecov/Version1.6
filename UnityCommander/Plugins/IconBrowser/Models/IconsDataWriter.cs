@@ -1,5 +1,5 @@
 ﻿
-namespace IconBrowser.Models
+namespace AIconBrowser.Models
 {
     using System;
     using System.Collections;
@@ -9,20 +9,15 @@ namespace IconBrowser.Models
     using System.Linq;
     using System.Xml.Linq;
 
-    using AlexLibWpf.Help;
-    using AlexLibWpf.Models;
+    using AIconBrowser.Help;
 
     /// <summary>
     /// The icons data writer.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed. Suppression is OK here.")]
-    class IconsDataWriter : IDisposable
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
+    class IconsDataWriter : IconParser, IDisposable
     {
-        /// <summary>
-        /// The document name.
-        /// </summary>
-        private const string DocumentName = @"d:\Resources\IconsData.xml";
-
         /// <summary>
         /// The id.
         /// </summary>
@@ -182,6 +177,7 @@ namespace IconBrowser.Models
             var queryTarget = from collect in root.Elements()
                               where collect.FirstAttribute.Value == NamesEnum.Unsigned.GetName()
                               select collect;
+            
             // Find source collection.
             var querySource = from collect in root.Elements()
                               where collect.FirstAttribute.Value == source
@@ -244,7 +240,10 @@ namespace IconBrowser.Models
             id = idList.MaxValue() + 1;
             return id;
         }
-   
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             idList = new ArrayList();

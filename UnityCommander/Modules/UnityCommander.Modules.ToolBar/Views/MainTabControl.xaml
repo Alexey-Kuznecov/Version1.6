@@ -19,7 +19,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Button
-                    Width="25"
+                    Width="200"
                     Height="25"
                     Command="{Binding ShowDialogCommand}"
                     Content="Show"

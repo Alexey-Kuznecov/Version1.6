@@ -6,15 +6,19 @@ namespace UnityCommander.Core.Helper
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
 
+    using NSwag.Collections;
+
     /// <summary>
     /// The helper functions.
     /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public static class HelperFunctions
     {
         /// <summary>
@@ -198,6 +202,48 @@ namespace UnityCommander.Core.Helper
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The select each.
+        /// </summary>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public static Dictionary<TKey, TValue> ConvertToDictionary<TKey,TValue>(this IDictionary<TKey, TValue> oldPairs)
+        {
+            Dictionary<TKey, TValue> newPairs = new ();
+
+            foreach (var item in oldPairs)
+            {
+                newPairs.Add(item.Key, item.Value);
+            }
+
+            return newPairs;
+        }
+
+        /// <summary>
+        /// The select each.
+        /// </summary>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public static ObservableDictionary<TKey, TValue> ConvertToObservableDictionary<TKey, TValue>(this IDictionary<TKey, TValue> oldPairs)
+        {
+            ObservableDictionary<TKey, TValue> newPairs = new();
+
+            foreach (var item in oldPairs)
+            {
+                newPairs.Add(item.Key, item.Value);
+            }
+
+            return newPairs;
         }
     }
 }

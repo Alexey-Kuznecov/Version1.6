@@ -32,11 +32,11 @@
         </Grid.RowDefinitions>
         <ListView
             Grid.Row="0"
-            ItemsSource="{Binding SidebarItems}"
+            ItemsSource="{Binding SidebarItem}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            SelectedIndex="{Binding SelectIndex, Mode=Default}"
-            SelectedValue="{Binding SelectItem, Mode=Default}">
+            SelectedIndex="{Binding CurrentSideBarItemIndex, Mode=Default}"
+            SelectedValue="{Binding CurrentSidebarItem, Mode=Default}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Viewbox

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 	<UseWPF>true</UseWPF>
 	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
@@ -13,24 +13,11 @@
     <PackageReference Include="Config.Net" Version="4.15.0" />
     <PackageReference Include="MaterialDesign.Icons" Version="1.1.0" />
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
-    <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Core" Version="8.1.97" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
-  </ItemGroup>
-	<Choose>
-		<When Condition="'$(TargetFramework)'=='netcoreapp3.1'">
-			<ItemGroup>
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin.NETCore\UnityCommander.Plugin.NETCore.csproj" />
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin.Core\UnityCommander.Plugin.Core.csproj" />
-			</ItemGroup>
-		</When>
-		<When Condition="'$(TargetFramework)'=='net472'">
-			<ItemGroup>
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin.NET48\UnityCommander.Plugin.NET48.csproj" />
-				<ProjectReference Include="..\..\..\UnityCommander.Plugin48.Core\UnityCommander.Plugin48.Core.csproj" />
-			</ItemGroup>
-		</When>
-	</Choose>
+	</ItemGroup>
+
 </Project>

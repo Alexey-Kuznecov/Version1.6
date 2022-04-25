@@ -35,7 +35,7 @@
                         <!--  Title Bar  -->
                         <RowDefinition Height="45" />
                         <!--  Drop shadow  -->
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="{Binding ImportCustomWindow.GridRowShadow, FallbackValue=10}" />
                         <!--  Window Content  -->
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
@@ -82,6 +82,11 @@
                         <!--  Window Buttons  -->
                         <StackPanel Grid.Column="2" Orientation="Horizontal">
                             <Button
+                                Command="{Binding ImportCustomWindow.CollapseRibbonCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}"
+                                Content="{Binding ImportCustomWindow.CollapseContent}"
+                                Style="{StaticResource WindowCollapseControlButton}" />
+                            <Button
                                 Command="{Binding ImportCustomWindow.MinimizeCommand}"
                                 Content="_"
                                 Style="{StaticResource WindowControlButton}" />
@@ -97,7 +102,7 @@
                         </StackPanel>
                     </Grid>
                     <!--  Drop shadow  -->
-                    <Border
+                    <Border Visibility="Visible"
                         Grid.Row="1"
                         Height="6"
                         BorderThickness="0,0.2,0,0">

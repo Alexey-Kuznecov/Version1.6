@@ -10,15 +10,11 @@ namespace UnityCommander.Plugin.NETCore
     public class PluginLoader
     {
         private readonly PluginConfig config;
-        private AssemblyLoadContextBuilder contextBuilder;
-        private PluginLoadContext context;
+        private readonly AssemblyLoadContextBuilder contextBuilder;
+        private readonly PluginLoadContext context;
 
-#if NETCOREAPP3_1
         public AssemblyLoadContext LoadContext { get; set; }
-#elif NET472
-        public object LoadContext { get; set; }
-#endif
-        
+
         public PluginLoader(PluginConfig config)
         {
             this.config = config;
@@ -59,8 +55,7 @@ namespace UnityCommander.Plugin.NETCore
             configure(config);
             return new PluginLoader(config);
         }
-
-
+        
         public Assembly LoadDefaultAssembly()
         {
             return this.context.LoadAssemblyFromFilePath(this.config.MainAssemblyPath);

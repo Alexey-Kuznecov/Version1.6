@@ -1,117 +1,59 @@
-﻿#define Unity
-
+﻿
 namespace UnityCommander.Services.Plugins
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Microsoft.Extensions.DependencyInjection;
+
     using Integration.Contracts;
     using Integration.Dialog;
+
     using Interfaces;
-
-    using System.ComponentModel.Composition;
-    using System.ComponentModel.Composition.Hosting;
-
-#if NETCOREAPP3_1
-    using System.Runtime.Loader;
-
-#if MsMaster
-    using Plugin.Core;
-#endif
-#if Unity
-    using Plugin.NETCore;
-#endif
-#else
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
-    using UnityCommander.Plugin48.Core;
-#endif
 
     /// <summary>
     /// The plugin provider service.
     /// </summary>
     public class PluginLoaderService : IPluginLoaderService
     {
-        public PluginManager PluginManager { get; } = new PluginManager();
-#if NETCOREAPP3_1
-        public PluginLoadContext pluginContext { get; private set; }
-        public HashSet<WeakReference> pluginContextList { get; private set; } = new HashSet<WeakReference>();
-#endif
+        /// <summary>
+        /// The plugin loaders.
+        /// </summary>
+        private static readonly IReadOnlyList<IPluginLoader> PluginLoaders = new List<IPluginLoader>();
+
+        /// <summary>
+        /// The plugin load contexts.
+        /// </summary>
+        private readonly List<IPluginContext> pluginContexts = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
         /// </summary>
         public PluginLoaderService()
         {
-#if NETCOREAPP3_1
-            var service = new ServiceCollection();
-            var pluginLoaders = this.GetPluginLoaders();
-            ConfigureServices(service, pluginLoaders);
-            using var serviceProvider = service.BuildServiceProvider();
-            this.ImportPluginImplements = serviceProvider.GetServices<IPluginImplement>().ToList();
-            this.ImportPluginSettings = serviceProvider.GetServices<IPluginConfigure>().ToList();
-            this.ImportDialogService = serviceProvider.GetServices<IDialogService>().ToList();
-            this.ImportPluginMeta = serviceProvider.GetServices<IPluginDescriptor>().ToList();
-#endif
+            string mainPath = GetMainPath() + "\\UnityCommander\\bin\\Debug\\netcoreapp3.1\\";
+            var pluginsDir = Path.Combine(mainPath, "plugins");
+            foreach (var dir in Directory.GetDirectories(pluginsDir))
+            {
+                var dirName = Path.GetFileName(dir);
+                var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
+
+                if (File.Exists(pluginDll))
+                {
+                    var pluginLoader = new PluginLoader();
+                    pluginLoader.ExecuteAndUnload(pluginDll);
+                    Console.WriteLine($"{dirName} is loaded.");
+                    ((List<IPluginLoader>)PluginLoaders).Add(pluginLoader);
+                }
+            }
+
+            this.CreatePluginContext();
         }
-
-        #region Imports Plugins Interfaces
-
-        /// <summary>
-        /// Gets the imported plugin settings.
-        /// </summary>
-        public IEnumerable<IPluginConfigure> ImportPluginSettings { get; private set; }
-
-        /// <summary>
-        /// Gets  the imported plugin implementations.
-        /// </summary>
-        public IEnumerable<IPluginImplement> ImportPluginImplements { get; private set; }
-
-        /// <summary>
-        /// Gets the import dialog service.
-        /// </summary>
-        public IEnumerable<IDialogService> ImportDialogService { get; private set; }
-
-
-        /// <summary>
-        /// Gets the imported the name and description for plugin.
-        /// </summary>
-        public IEnumerable<IPluginDescriptor> ImportPluginMeta { get; private set; }
-
-        #endregion
 
         #region Implementations Methods
-
-        /// <summary>
-        /// Obtain an instance of the class that implements the plugin interface.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Required plugin interface.
-        /// </typeparam>
-        /// <returns>
-        /// List class instances.
-        /// </returns>
-        public IEnumerable<object> GetPluginInstances<T>()
-        {
-            foreach (var instance in this.GetPluginContract<T>())
-            {
-                yield return instance;
-            }
-        }
-
-        /// <summary>
-        /// Obtain interfaces to implement plugin functionality.
-        /// </summary>
-        /// <returns>
-        /// List of plugin implementations.
-        /// </returns>
-        public IEnumerable<IPluginImplement> GetPluginImplements()
-        {
-            return this.ImportPluginImplements;
-        }
 
         /// <summary>
         /// Obtain interfaces to implement plugin functionality.
@@ -121,7 +63,13 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IDialogService> GetDialogService()
         {
-            return this.ImportDialogService;
+            foreach (var loader in PluginLoaders)
+            {
+                foreach (var dialog in loader.GetDialogs())
+                {
+                    yield return dialog;
+                }
+            }
         }
 
         /// <summary>
@@ -130,171 +78,119 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
         /// </returns>
-        public IEnumerable<IPluginConfigure> GetPluginSettings()
+        public IEnumerable<IPluginDescriptor> GetPluginDescriptors()
         {
-            return this.ImportPluginSettings;
-        }
-
-        /// <summary>
-        /// Gets a list of the specified plugin interfaces.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Specify the interface <see cref="IPluginImplement"/> or <see cref="IPluginConfigure"/>,
-        /// otherwise an exception will be thrown.  
-        /// </typeparam>
-        /// <returns>
-        /// Returns a plugin implementation or plugin settings, otherwise an exception.
-        /// </returns>
-        public IEnumerable<T> GetPluginContract<T>()
-        {
-            var implement = typeof(T) == typeof(IPluginImplement)
-                ? (IEnumerable<T>)this.ImportPluginImplements
-                : (IEnumerable<T>)this.ImportPluginSettings;
-
-            if (implement == null)
+            foreach (var loader in PluginLoaders)
             {
-                throw new Exception("The specified interface is not a plugin interface.");
+                foreach (var descriptor in loader.GetDescriptors())
+                {
+                    yield return descriptor;
+                }
             }
-
-            return implement;
         }
 
         #endregion
 
-        public void UnloadInterface(AssemblyName assemblyName)
-        {
-            ((List<IPluginConfigure>)ImportPluginSettings).RemoveAll(p 
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-            ((List<IPluginImplement>)ImportPluginImplements).RemoveAll(p
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-            ((List<IDialogService>)ImportDialogService).RemoveAll(p
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-            ((List<IPluginDescriptor>)ImportPluginMeta).RemoveAll(p
-                => p.GetType().Assembly.GetName().FullName == assemblyName.FullName);
-        }
-
         /// <summary>
-        /// Gets interfaces to configure plugins.
+        /// The get plugin loaders.
         /// </summary>
         /// <returns>
-        /// The list interfaces to configure plugins.
+        /// The interface plugin loaders
         /// </returns>
-        public IPluginManager GetPluginManager()
-        {
-            foreach (var plugin in this.ImportPluginMeta)
-            {
-                if (plugin is not null)
-                {
-                    var assembly = Assembly.GetAssembly(plugin.GetType());
-
-                    var record = PluginManager.ALCRecords.Single(r => r.AssemblyName.FullName == assembly?.FullName);
-
-                    PluginManager.PluginRecords.Add(new PluginRecord
-                    {
-                        Name = plugin.DisplayName,
-                        Description = plugin.Description,
-                        AssemblyName = record.AssemblyName,
-                        Token = record.Token
-                    });
-                }
-            }
-
-            return PluginManager;
-        }
-
-#if NETCOREAPP3_1
+        public List<IPluginLoader> GetPluginLoaders() => (List<IPluginLoader>)PluginLoaders;
 
         /// <summary>
-        /// Scans for a plugins folder in its base directory and attempts to load any plugins it finds.
+        /// The get plugin context.
         /// </summary>
-        /// <returns> List of loaded plugins. </returns>
-        private List<PluginLoader> GetPluginLoaders()
+        /// <returns>
+        /// List of interfaces <see cref="IPluginContext"/>.
+        /// </returns>
+        public IEnumerable<IPluginContext> GetPluginContext() => this.pluginContexts;
+
+        /// <summary>
+        /// The create plugin context.
+        /// </summary>
+        public void CreatePluginContext()
         {
-            var loaders = new List<PluginLoader>();
-            // Create plugin loaders
-            var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
-            foreach (var dir in Directory.GetDirectories(pluginsDir))
+            foreach (var loader in PluginLoaders)
             {
-                var dirName = Path.GetFileName(dir);
-                var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
+                var pluginContext = new PluginContext();
 
-                var alcRecords = new ALCRecords
+                var columnBuilders = loader.GetColumnBuilders().ToList();
+                var optionBuilders = loader.GetOptionBuilders().ToList();
+
+                foreach (var columnBuilder in columnBuilders)
                 {
-                    Alc = new AssemblyLoadContext(dirName, true),
-                    AssemblyName = AssemblyName.GetAssemblyName(pluginDll)
-                };
-
-                pluginContext = new PluginLoadContext(pluginDll);
-                var alcWeakRef = new WeakReference(pluginContext);
-                pluginContextList.Add(alcWeakRef);
-
-                PluginManager.ALCRecords.Add(alcRecords);
-
-                if (File.Exists(pluginDll))
-                {
-                    var loader = PluginLoader.CreateFromAssemblyFile(
-                        pluginDll,
-                        sharedTypes: new[] { typeof(IPluginFactory), typeof(IServiceCollection) },
-                        (config) =>
-                        {
-                            // config.IsLazyLoaded = true;
-                            config.DefaultContext = alcRecords.Alc;
-                        });
-                    loaders.Add(loader);
+                    pluginContext.AddColumn(columnBuilder);
                 }
-            }
+                
+                foreach (var optionBuilder in optionBuilders)
+                {
+                    pluginContext.AddOption(optionBuilder);
+                }
 
-            return loaders;
+                this.pluginContexts.Add(pluginContext);
+            }
         }
 
         /// <summary>
-        /// Configure plugins in a dependency injection collection.
+        /// The unload plugins.
         /// </summary>
-        /// <param name="services"> Service collection. </param>
-        /// <param name="loaders"> List of plugins loaded. </param>
-        private void ConfigureServices(ServiceCollection services, List<PluginLoader> loaders)
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool UnloadPlugins()
         {
-            // Create an instance of plugin types
-            foreach (var loader in loaders)
-            {
-                foreach (var pluginType in loader
-                    .LoadDefaultAssembly()
-                    .GetTypes()
-                    .Where(t => typeof(IPluginFactory).IsAssignableFrom(t) && !t.IsAbstract))
-                {
-                    // This assumes the implementation of IPluginFactory has a parameter less constructor
-                    var plugin = Activator.CreateInstance(pluginType) as IPluginFactory;
+            this.ClearHashTable();
 
-                    plugin?.Configure(services);
-                    ResourceManager.GetResourceDictionary(pluginType.Assembly);
+            bool isLoaded = default(bool);
+            
+            Research:
+            foreach (var plugin in PluginLoaders)
+            {
+                if (plugin.UnloadPlugin())
+                {
+                    isLoaded = true;
+                }
+
+                ((List<IPluginLoader>)PluginLoaders).Remove(plugin);
+                goto Research;
+            }
+            
+            return isLoaded;
+        }
+
+        /// <summary>
+        /// The get main path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string GetMainPath()
+            => Path.GetFullPath(Path.Combine(
+                Path.GetDirectoryName(
+                    Path.GetDirectoryName(
+                        Path.GetDirectoryName(
+                            Path.GetDirectoryName(
+                                Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory))))) ?? string.Empty));
+
+        /// <summary>
+        /// The clear hash table.
+        /// </summary>
+        private void ClearHashTable()
+        {
+            var typeConverterAssembly = typeof(TypeConverter).Assembly;
+            var reflectTypeDescriptionProviderType = typeConverterAssembly.GetType("System.ComponentModel.ReflectTypeDescriptionProvider");
+
+            if (reflectTypeDescriptionProviderType != null)
+            {
+                var reflectTypeDescriptorProviderTable = reflectTypeDescriptionProviderType.GetField("s_attributeCache", BindingFlags.Static | BindingFlags.NonPublic);
+                if (reflectTypeDescriptorProviderTable != null)
+                {
+                    var attributeCacheTable = (Hashtable)reflectTypeDescriptorProviderTable.GetValue(null);
+                    if (attributeCacheTable != null) attributeCacheTable.Clear();
                 }
             }
         }
-#endif
-
-#if NET472
-        /// <summary>
-        /// Configures the import of plugins.
-        /// </summary>
-        private void SetImport()
-        {
-            // An aggregate catalog that combines multiple catalogs
-            var catalog = new AggregateCatalog();
-
-            // Add all the parts found in all assemblies in
-            // the same directory as the executing program
-            foreach (var item in Directory.GetDirectories(Directory.GetCurrentDirectory() + "\\plugins"))
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), item);
-                catalog.Catalogs.Add(new DirectoryCatalog(path + @"\net472"));
-            }
-
-            // Create the CompositionContainer with the parts in the catalog.
-            var container = new CompositionContainer(catalog);
-
-            // Fill the imports of this object
-            container.ComposeParts(this);
-        }
-#endif
     }
 }

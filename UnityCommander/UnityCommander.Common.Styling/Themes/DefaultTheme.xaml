@@ -3,13 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:UnityCommander.Common.Styling">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Colors/DefaultColors.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/ScrollBarStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/RibbonStyles.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/DirectoryBarStyles.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/NaviBarStyles.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Colors/DefaultColors.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/DirectoryPanelStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/NavigationBarStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/IconStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/DirectoryPanel.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Images/Icons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Controls/RadioButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Images/Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

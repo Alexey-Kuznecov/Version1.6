@@ -9,21 +9,22 @@ namespace UnityCommander.Core
         /// <summary>
         /// The file panel region.
         /// </summary>
-        public const string FilePanelRegion = "FilePanelRegion";
+        public const string FilePanelRegion = nameof(FilePanelRegion);
 
         /// <summary>
         /// The left side bar region.
         /// </summary>
-        public const string LeftSideBarRegion = "LeftSideBarRegion";
+        public const string LeftSideBarRegion = nameof(LeftSideBarRegion);
 
         /// <summary>
         /// The left side bar region.
         /// </summary>
-        public const string ToolBarRegion = "ToolBarRegion";
+        public const string ToolBarRegion = nameof(ToolBarRegion);
+
 
         /// <summary>
         /// The left side bar region.
         /// </summary>
-        public const string ChildWindowRegion = "ChildWindowRegion";
+        public const string TabPanelRegion = nameof(TabPanelRegion);
     }
 }

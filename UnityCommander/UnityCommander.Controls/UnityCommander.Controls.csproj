@@ -1,13 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-	  <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <UseWPF>true</UseWPF>
 	  <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lab\AlexLibWpf\AlexLibWpf.csproj" />
+    <Compile Remove="Window\Styles\**" />
+    <EmbeddedResource Remove="Window\Styles\**" />
+    <None Remove="Window\Styles\**" />
+    <Page Remove="Window\Styles\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Taber\AddTabControlStyles.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Taber\TabControlStylesExample.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

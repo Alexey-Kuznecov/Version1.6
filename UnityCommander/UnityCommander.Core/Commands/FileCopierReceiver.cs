@@ -37,14 +37,6 @@ namespace UnityCommander.Core.Commands
         }
 
         /// <summary>
-        /// Execute new command no arguments.
-        /// </summary>
-        public override void Execute()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Update file panel when to a navigate directory.
         /// </summary>
         /// <param name="action"> The method for update file panel. </param>
@@ -52,6 +44,17 @@ namespace UnityCommander.Core.Commands
         public override void Execute(Action<object> action, object path)
         {
             action(path);
+        }
+
+        /// <summary>
+        /// Execute new command no arguments.
+        /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        public override void Execute(Action action)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -63,6 +66,17 @@ namespace UnityCommander.Core.Commands
         public override void UnExecute(Action<object> action, object arg)
         {
             action(arg);
+        }
+
+        /// <summary>
+        /// The un execute.
+        /// </summary>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        public override void UnExecute(Action action)
+        {
+            throw new NotImplementedException();
         }
     }
 }
