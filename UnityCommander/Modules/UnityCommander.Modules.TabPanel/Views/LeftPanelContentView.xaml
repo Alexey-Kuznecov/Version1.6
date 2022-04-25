@@ -1,10 +1,10 @@
 ﻿<UserControl
-    x:Class="UnityCommander.Modules.FilePanel.Views.ViewA"
+    x:Class="UnityCommander.Modules.TabPanel.Views.LeftPanelContentView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:UnityCommander.Controls.Taber;assembly=UnityCommander.Controls"
-    xmlns:module="clr-namespace:UnityCommander.Modules.FilePanel"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:module="clr-namespace:UnityCommander.Modules.TabPanel"
     prism:ViewModelLocator.AutoWireViewModel="True">
 
     <Grid>

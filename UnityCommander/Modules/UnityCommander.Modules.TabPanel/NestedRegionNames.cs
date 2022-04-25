@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Modules.FilePanel
+namespace UnityCommander.Modules.TabPanel
 {
     /// <summary>
     /// The nested region names.

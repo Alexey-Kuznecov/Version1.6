@@ -7,41 +7,37 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using NLog;
+using Prism.Commands;
+using Prism.Regions;
+using Prism.Services.Dialogs;
+using UnityCommander.Common;
+using UnityCommander.Common.Models.Columns;
+using UnityCommander.Common.Models.Directory;
+using UnityCommander.Core;
+using UnityCommander.Core.Commands;
+using UnityCommander.Core.DragDrop;
+using UnityCommander.Core.Helper;
+using UnityCommander.Core.IO.Operations;
+using UnityCommander.Core.Modules;
+using UnityCommander.Core.Mvvm;
+using UnityCommander.Integration.Columns;
+using UnityCommander.Integration.Enums;
+using UnityCommander.Services.Interfaces;
+using CommandManager = UnityCommander.Core.Commands.CommandManager;
+
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-
-    using Core.Helper;
-    using Core.Mvvm;
-    
-    using NLog;
-    using Prism.Commands;
-    using Prism.Regions;
-    using Prism.Services.Dialogs;
-    using Services.Interfaces;
-
-    using UnityCommander.Common.Models.Columns;
-    using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Core;
-    using UnityCommander.Core.Commands;
-    using UnityCommander.Core.Modules;
-    using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Core.DragDrop;
-    using System.Linq;
-    using UnityCommander.Services;
-    using UnityCommander.Core.IO.Operations;
-    using System.Windows.Input;
-    using CommandManager = Core.Commands.CommandManager;
-    using UnityCommander.Common;
-
     /// <summary>
     /// The left panel view model.
     /// </summary>
@@ -85,7 +81,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The command manager.
         /// </summary>
-        private readonly Core.Commands.CommandManager commandManager;
+        private readonly CommandManager commandManager;
 
         /// <summary>
         /// The logger.
@@ -153,7 +149,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The region manager is Prism implementation.
         /// </param>
         /// <param name="settingsService">
-        /// Gets interface to configure of application.
+        /// The service that provides interface to configure of application.
         /// </param>
         /// <param name="dataService">
         /// The service that provides the info of the file system items.
@@ -162,7 +158,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The service that respond for composite commands.
         /// </param>
         /// <param name="pluginService">
-        /// Service for loading all detected plugin interfaces.
+        /// The service for loading all detected plugin interfaces.
         /// </param>
         /// <param name="manager">
         /// Command manager
@@ -183,19 +179,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             : base(regionManager)
         {
             this.dialogService = dialogService;
-            this.commandManager = manager;
+            commandManager = manager;
             this.logger = logger.GetLogger();
-            this.pluginLoaderService = pluginService;
+            pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
 
             this.globalCommandService = globalCommandService;
             this.globalCommandService.SetCommand<FileManager>();
-            this.TestCommand = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileMove).Command;
+            TestCommand = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileMove).Command;
             
             // Composite command
             this.multiCommandService = multiCommandService;
-            this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            this.multiCommandService.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
 
         #endregion
@@ -216,9 +212,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Info("File Panel: '{0}'", dir.Path);
+                    logger.Info("File Panel: '{0}'", dir.Path);
 #endif
-                    this.navigationCommand.Execute(this.UpdateFilePanel, dir.Path);
+                    navigationCommand.Execute(UpdateFilePanel, dir.Path);
                 }
             });
 
@@ -231,9 +227,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Info("Driv Panel: '{0}'", dir.Letter);
+                    logger.Info("Driv Panel: '{0}'", dir.Letter);
 #endif
-                    this.navigationCommand.Execute(this.UpdateFilePanel, dir.Letter);
+                    navigationCommand.Execute(UpdateFilePanel, dir.Letter);
                 }
             });
 
@@ -246,9 +242,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Info("Navi Panel: '{0}'", dir);
+                    logger.Info("Navi Panel: '{0}'", dir);
 #endif
-                    this.navigationCommand.Execute(this.UpdateFilePanel, dir);
+                    navigationCommand.Execute(UpdateFilePanel, dir);
                 }
             });
 
@@ -273,8 +269,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public string CurrentDirectory
         {
-            get => this.currentDirectory;
-            set => this.SetProperty(ref this.currentDirectory, value);
+            get => currentDirectory;
+            set => SetProperty(ref currentDirectory, value);
         }
 
         /// <summary>
@@ -304,8 +300,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ObservableCollection<FolderModel> DirectoryList
         {
-            get => this.directoryList;
-            set => this.SetProperty(ref this.directoryList, value);
+            get => directoryList;
+            set => SetProperty(ref directoryList, value);
         }
 
         /// <summary>
@@ -313,8 +309,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ObservableCollection<FileModel> FileList
         {
-            get => this.fileList;
-            set => this.SetProperty(ref this.fileList, value);
+            get => fileList;
+            set => SetProperty(ref fileList, value);
         }
 
         /// <summary>
@@ -322,8 +318,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ObservableCollection<DriveModel> DriveList
         {
-            get => this.driveList;
-            set => this.SetProperty(ref this.driveList, value);
+            get => driveList;
+            set => SetProperty(ref driveList, value);
         }
 
         #endregion
@@ -333,8 +329,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ControlTemplate DirectoryPanelTemplate
         {
-            get => this.directoryPanelTemplate;
-            set => this.SetProperty(ref this.directoryPanelTemplate, value);
+            get => directoryPanelTemplate;
+            set => SetProperty(ref directoryPanelTemplate, value);
         }
 
         /// <summary>
@@ -346,7 +342,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (value != null)
                 {
-                    this.SelectedDirectories.Add(value);
+                    SelectedDirectories.Add(value);
                 }
             }
         }
@@ -356,8 +352,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public BaseDirectory CurrentFile
         {
-            get => this.selectedBaseDirectory;
-            set => this.selectedBaseDirectory = value;
+            get => selectedBaseDirectory;
+            set => selectedBaseDirectory = value;
         }
 
         /// <summary>
@@ -385,13 +381,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public IDirectoryPanel InitializedViewModel(Guid token, string path)
         {
 #if (Nlog)
-            this.logger.Info("Token: {0} Path: {1}", token, path);
+            logger.Info("Token: {0} Path: {1}", token, path);
 #endif
-            this.CurrentDirectory = path;
-            this.Token = token;
-            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
-            this.SetLastPanelState();
-            this.SetCommands(path);
+            CurrentDirectory = path;
+            Token = token;
+            navigationCommand = (NavigationInvoker)commandManager.CommandRegister(token, new NavigationInvoker());
+            SetLastPanelState();
+            SetCommands(path);
             return this;
         }
 
@@ -401,7 +397,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Guid"/>.
         /// </returns>
-        public Guid GetPanelToken() => this.Token;
+        public Guid GetPanelToken() => Token;
 
         /// <summary>
         /// The get panel token.
@@ -409,7 +405,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Guid"/>.
         /// </returns>
-        public string GetCurrentPath() => this.CurrentDirectory;
+        public string GetCurrentPath() => CurrentDirectory;
 
         #endregion
 
@@ -423,7 +419,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             base.Destroy();
 
             // Detaching a command to avoid memory leaks.
-            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+            multiCommandService.SaveCommand.UnregisterCommand(SavePanelStateCommand);
         }
 
         #endregion
@@ -447,7 +443,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             if (adorner == null)
             {
-                this.CreateAdornerLayer(dropInfo.VisualTarget);
+                CreateAdornerLayer(dropInfo.VisualTarget);
             }
 
 
@@ -492,20 +488,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
                 else
                 {
-                    targetPath = this.CurrentDirectory;
+                    targetPath = CurrentDirectory;
                 }
             }
 
             targetPath = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath;
 
             // targetItem.Add(sourceItem);
-            var copyParameters = new CopyParameters()
+            var copyParameters = new CopyParameters
             {
                 Source = (dropInfo.Data as BaseDirectory)?.Path,
                 Target = targetPath
             };
 
-            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
+            dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
         }
 
         /// <summary>
@@ -536,10 +532,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void InitializeColumns()
         {
-            this.AddFileColumns();
-            this.AddFolderColumns();
-            this.AddDriveColumns();
-            this.AddPluginColumns();
+            AddFileColumns();
+            AddFolderColumns();
+            AddDriveColumns();
+            AddPluginColumns();
         }
 
         /// <summary>
@@ -552,8 +548,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     foreach (var column in items)
                     {
-                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                        this.ContextMenuBuild(column);
+                        FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
+                        ContextMenuBuild(column);
                     }
                 });
         }
@@ -567,7 +563,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 foreach (var column in items)
                 {
-                    this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
                     //this.ContextMenuBuild(column);
                 }
             });
@@ -583,7 +579,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     foreach (var column in columns)
                     {
-                        this.DrivePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                        DrivePanelContainer.Columns.Add((GridViewColumn)column.Template);
                     }
                 });
         }
@@ -595,14 +591,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddPluginColumns()
         {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
-                    column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
+                    column.ColumnManager.SetUpdateCommand(UpdateColumnsCommand);
                     column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
 
-                    if (this.InitialFolderColumnValues(column))
+                    if (InitialFolderColumnValues(column))
                     {
                         var columnNew = new GridViewColumn
                         {
@@ -611,10 +607,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
                         };
 
-                        this.FolderPanelContainer.Columns.Add(columnNew);
+                        FolderPanelContainer.Columns.Add(columnNew);
                     }
 
-                    if (this.InitialFileColumnValues(column))
+                    if (InitialFileColumnValues(column))
                     {
                         var columnNew = new GridViewColumn
                         {
@@ -623,10 +619,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate")
                         };
 
-                        this.FilePanelContainer.Columns.Add(columnNew);
+                        FilePanelContainer.Columns.Add(columnNew);
                     }
 
-                    this.PluginContextMenuBuild(column);
+                    PluginContextMenuBuild(column);
                 }
             }
         }
@@ -643,14 +639,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 var menu = new MenuItem();
                 menu.Header = item.Name;
 
-                this.globalCommandService.SetCommand(new ()
+                globalCommandService.SetCommand(new ()
                 {
                     Command = item.Command,
                     ControlItem = menu,
                     XParamModel = new XParamModel(this, "CurrentDirectory")
                 });
 
-                this.ContextMenu.Items.Add(menu);
+                ContextMenu.Items.Add(menu);
             }
         }
 
@@ -666,17 +662,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 var menu = new MenuItem();
                 menu.Header = item.Name;
 
-                this.globalCommandService.SetCommand<FileManager>(item.CommandName, new ()
+                globalCommandService.SetCommand<FileManager>(item.CommandName, new ()
                 {
                     ControlItem = menu,
-                    XParamModelList = new List<XParamModel>()
+                    XParamModelList = new List<XParamModel>
                     {
                         new XParamModel(this, "CurrentDirectory"),
                         new XParamModel(this, "CurrentDirectory")
                     }
                 });
 
-                this.ContextMenu.Items.Add(menu);
+                ContextMenu.Items.Add(menu);
             }
         }
 
@@ -685,13 +681,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void UpdatePluginColumns()
         {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
                     //this.AddPluginColumns();
-                    this.InitialFolderColumnValues(column);
-                    this.InitialFileColumnValues(column);
+                    InitialFolderColumnValues(column);
+                    InitialFileColumnValues(column);
                 }
             }
         }
@@ -701,11 +697,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void UpdateColumnsCommand()
         {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
-                    foreach (var folder in this.DirectoryList)
+                    foreach (var folder in DirectoryList)
                     {
                         var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
 
@@ -715,7 +711,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         }
                     }
 
-                    foreach (var file in this.FileList)
+                    foreach (var file in FileList)
                     {
                         var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
 
@@ -745,7 +741,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var isAllEqNull = true;
 
-            foreach (var folder in this.DirectoryList)
+            foreach (var folder in DirectoryList)
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
 
@@ -774,7 +770,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var isAllEqNull = true;
 
-            foreach (var file in this.FileList)
+            foreach (var file in FileList)
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
 
@@ -800,10 +796,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void SetLastPanelState()
         {
-            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-            this.FileList = this.dataService.GetFiles(this.CurrentDirectory);
-            this.DirectoryList = this.dataService.GetDirectories(this.CurrentDirectory);
-            this.InitializeColumns();
+            DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+            FileList = dataService.GetFiles(CurrentDirectory);
+            DirectoryList = dataService.GetDirectories(CurrentDirectory);
+            InitializeColumns();
         }
 
         /// <summary>
@@ -814,16 +810,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
-            if (!this.DirectoryPanelTemplate.Equals(template))
+            if (!DirectoryPanelTemplate.Equals(template))
             {
-                this.DirectoryPanelTemplate = template;
+                DirectoryPanelTemplate = template;
             }
 
-            var path = Directory.Exists(dirPath.ToString()) ? (string)dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
-            this.DirectoryList = this.dataService.GetDirectories(path);
-            this.FileList = this.dataService.GetFiles(path);
-            this.CurrentDirectory = path;
-            this.UpdatePluginColumns();
+            var path = Directory.Exists(dirPath.ToString()) ? dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
+            DirectoryList = dataService.GetDirectories(path);
+            FileList = dataService.GetFiles(path);
+            CurrentDirectory = path;
+            UpdatePluginColumns();
         }
 
         /// <summary>
@@ -834,9 +830,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         private void GoDrivePanel(object root)
         {
-            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
-            this.DriveList = this.dataService.GetDrives();
-            this.CurrentDirectory = (string)root;
+            DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
+            DriveList = dataService.GetDrives();
+            CurrentDirectory = (string)root;
         }
 
         /// <summary>
@@ -847,11 +843,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             string[] paths = HelperFunctions.ParsePath(dirPath);
 
-            this.navigationCommand.AddCommand(this.GoDrivePanel, "Root:C:\\");
+            navigationCommand.AddCommand(GoDrivePanel, "Root:C:\\");
 
             foreach (var path in paths)
             {
-                this.navigationCommand.AddCommand(this.UpdateFilePanel, path);
+                navigationCommand.AddCommand(UpdateFilePanel, path);
             }
         }
 

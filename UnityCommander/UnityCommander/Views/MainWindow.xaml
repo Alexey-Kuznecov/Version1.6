@@ -139,7 +139,7 @@
             Grid.Column="3"
             Grid.ColumnSpan="2"
             MinWidth="200"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.FilePanelRegion}" />
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.TabPanelRegion}" />
         <!--
             Context line region.
         -->

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,20 +9,17 @@ using Prism.Mvvm;
 using Prism.Regions;
 using UnityCommander.Common.Models.Icons;
 using UnityCommander.Controls.Taber;
-using UnityCommander.Core;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.Commands.Base;
 using UnityCommander.Core.Modules;
-using UnityCommander.Modules.FilePanel;
-using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Database.Queries.Xml;
 using TabControl = UnityCommander.Controls.Taber.TabControl;
 
-namespace UnityCommander.Modules.Tabs.ViewModels
+namespace UnityCommander.Modules.TabPanel.ViewModels
 {
-    public class TabPanelViewModel : BindableBase
+    public class TabPanelViewModel : BindableBase, IPanelContainer
     {
         #region Private Fields
 
@@ -90,7 +86,7 @@ namespace UnityCommander.Modules.Tabs.ViewModels
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FilePanelViewModel"/> class.
+        /// Initializes a new instance of the <see cref="TabPanelViewModel"/> class.
         /// </summary>
         /// <param name="regionManager">
         /// The region commandManager.
@@ -114,16 +110,16 @@ namespace UnityCommander.Modules.Tabs.ViewModels
             IAppConfigService configService,
             CommandManager manager)
         {
-            //this.regionManager = regionManager;
-            //this.commandManager = manager;
-            //this.appConfigService = configService;
-            //this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
-            //this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
-            //this.ThisComputerIconIsEnabled = true;
-            //this.BackButtonIsEnabled = true;
+            this.regionManager = regionManager;
+            this.commandManager = manager;
+            this.appConfigService = configService;
+            this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
+            this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
+            this.ThisComputerIconIsEnabled = true;
+            this.BackButtonIsEnabled = true;
 
-            //// Composite command
-            //commandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            // Composite command
+            commandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
         }
 
         #region Public Properties
@@ -184,6 +180,7 @@ namespace UnityCommander.Modules.Tabs.ViewModels
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
             {
+                if (this.currentRegionName == null) return;
                 var appConfig = this.appConfigService.GetSession();
                 var tabs = appConfig.Find("Tabs").ToList();
                 var currentPanel = this.GetCurrentRegion().Name;
@@ -257,7 +254,7 @@ namespace UnityCommander.Modules.Tabs.ViewModels
             new DelegateCommand<object>(
                 obj =>
                 {
-                    if (obj is TabPanel tabPanel)
+                    if (obj is UnityCommander.Controls.Taber.TabPanel tabPanel)
                     {
                         var token = Guid.NewGuid();
                         var path = tabPanel.Collection.GetActive().Tag;

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityCommander.Core.Commands.Base;
 
-namespace UnityCommander.Modules.FilePanel.ViewModels
+namespace UnityCommander.Modules.TabPanel
 {
     /// <summary>
     /// The panel config record.
     /// </summary>
-    public record TabRecord
+    public record TabPanelRecord
     {
         public string Path { get; set; }
         public Guid Token { get; set; }

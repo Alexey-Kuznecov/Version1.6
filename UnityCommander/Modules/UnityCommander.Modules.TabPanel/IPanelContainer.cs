@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Modules.FilePanel.Views
+namespace UnityCommander.Modules.TabPanel
 {
     /// <summary>
     /// The PanelContainer interface.

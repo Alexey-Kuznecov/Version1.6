@@ -1,16 +1,14 @@
-﻿
-namespace UnityCommander.Modules.FilePanel.ViewModels
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityCommander.Services.Interfaces.Database.Queries.Xml;
+
+namespace UnityCommander.Modules.TabPanel
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-
-    using UnityCommander.Services.Interfaces.Database.Queries.Xml;
-
     /// <summary>
     /// The state panel serializer.
     /// </summary>
-    public static class StatePanelExtension
+    public static class TabPanelExtension
     {
         /// <summary>
         /// The tabs info.
@@ -37,52 +35,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="document">
         /// The document.
         /// </param>
-        /// <returns>
-        /// The collection of <see cref="XElementInfo"/>.
-        /// </returns>
-        public static List<XElementInfo> GetTabConfigs(this XDocument document)
-        {
-            // tabsInfos = document.Find("Tab");
-            return tabsInfos;
-        }
-
-        /// <summary>
-        /// The set tab config.
-        /// </summary>
-        /// <param name="elementInfos">
-        /// The document.
-        /// </param>
-        /// <param name="tabRecord">
-        /// The record.
-        /// </param>
-        /// <param name="panel">
-        /// The panel.
-        /// </param>
-        /// <returns>
-        /// The collection of <see cref="XElementInfo"/>.
-        /// </returns>
-        public static List<XElementInfo> SetTabConfigs(this List<XElementInfo> elementInfos, TabRecord tabRecord, string panel)
-        {
-            foreach (var info in elementInfos)
-            {
-            }
-
-            return elementInfos;
-        }
-
-        /// <summary>
-        /// The get tab config.
-        /// </summary>
-        /// <param name="document">
-        /// The document.
-        /// </param>
         /// <param name="filter">
         /// The filter.
         /// </param>
         /// <returns>
-        /// The collection of <see cref="TabRecord"/>.
+        /// The collection of <see cref="TabPanelRecord"/>.
         /// </returns>
-        public static IEnumerable<TabRecord> GetTabConfigs(this XDocument document, string filter)
+        public static IEnumerable<TabPanelRecord> GetTabConfigs(this XDocument document, string filter)
         {
             foreach (var element in document.Find("Tab"))
             {
@@ -92,7 +51,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     if (Directory.Exists(element.GetAttributeValueByName("Path")))
                     {
-                        var record = new TabRecord
+                        var record = new TabPanelRecord
                          {
                              Path = element.GetAttributeValueByName("Path"),
                              Token = Guid.Parse(element.GetAttributeValueByName("Id")),

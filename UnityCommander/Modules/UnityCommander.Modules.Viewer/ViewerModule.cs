@@ -9,12 +9,10 @@ namespace UnityCommander.Modules.Viewer
     {
         public void OnInitialized(IContainerProvider containerProvider)
         {
-
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
         }
     }
 }

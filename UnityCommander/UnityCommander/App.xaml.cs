@@ -1,14 +1,9 @@
 ﻿
-using UnityCommander.Core.Mvvm;
-using UnityCommander.Modules.Tabs;
-using UnityCommander.Modules.Tabs.ViewModels;
-using UnityCommander.Modules.Tabs.Views;
+using UnityCommander.Modules.TabPanel.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
 {
-    using System;
-    using System.Reflection;
     using System.Windows;
 
     using Prism.Ioc;
@@ -18,10 +13,9 @@ namespace UnityCommander
 
     using UnityCommander.Core;
     using UnityCommander.Core.Commands;
-    using UnityCommander.Modules.FilePanel;
-    using UnityCommander.Modules.FilePanel.ViewModels;
-    using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Modules.LeftSideBars;
+    using UnityCommander.Modules.TabPanel;
+    using UnityCommander.Modules.TabPanel.Views;
     using UnityCommander.Modules.ToolBar;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
@@ -78,7 +72,6 @@ namespace UnityCommander
 
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
-            //containerRegistry.RegisterSingleton<TabsManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
 
             // containerRegistry.RegisterForNavigation<ViewA>("ViewA");
@@ -90,9 +83,9 @@ namespace UnityCommander
         protected override void ConfigureViewModelLocator()
         {
             base.ConfigureViewModelLocator();
-            ViewModelLocationProvider.Register(typeof(ViewB).ToString(), () => Container.Resolve<ViewAViewModel>());
-            ViewModelLocationProvider.Register(typeof(ViewA).ToString(), () => Container.Resolve<ViewAViewModel>());
-            //ViewModelLocationProvider.Register(typeof(TabPanelView).ToString(), () => Container.Resolve<TabPanelViewModel>());
+            
+            ViewModelLocationProvider.Register(typeof(LeftPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
+            ViewModelLocationProvider.Register(typeof(RightPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
         }
 
         /// <summary>
@@ -103,10 +96,9 @@ namespace UnityCommander
         /// </param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            moduleCatalog.AddModule<FilePanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
-            moduleCatalog.AddModule<TabsModule>();
+            moduleCatalog.AddModule<TabPanelModule>();
         }
     }
 }
