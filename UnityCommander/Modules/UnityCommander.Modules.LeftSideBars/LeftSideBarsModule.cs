@@ -35,7 +35,6 @@ namespace UnityCommander.Modules.LeftSideBars
         public void OnInitialized(IContainerProvider containerProvider)
         {
             this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, "Sidebar");
-            var asm = AppDomain.CurrentDomain.GetAssemblies();
         }
 
         /// <summary>

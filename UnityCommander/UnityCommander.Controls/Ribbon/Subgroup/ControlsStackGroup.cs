@@ -93,6 +93,9 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         /// <param name="arrangeBounds">
         /// The arrange bounds.
         /// </param>
+        /// <remarks>
+        /// Todo: Resolve a problem with incorrect panel rendering because all controls move to the right after navigating the tool ribbon.
+        /// </remarks>
         /// <returns>
         /// The <see cref="Size"/>.
         /// </returns>
@@ -107,7 +110,7 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
                 if (this.itemNumber >= this.nextColumn)
                 {
                     this.verticalAl = 0f;
-                    this.margin += child.DesiredSize.Width + 5f;
+                    this.margin = child.DesiredSize.Width + 5f;
                 }
 
                 this.verticalAl += child.DesiredSize.Height;

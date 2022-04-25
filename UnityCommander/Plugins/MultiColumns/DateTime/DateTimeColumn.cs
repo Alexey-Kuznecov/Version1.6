@@ -101,16 +101,21 @@ namespace MultiColumns.DateTime
             var nt = directoryInfo.CreationTime.ToLongTimeString();
             var nd = default(string);
 
-            if (this.dateTimeFormat == "15/3/2008")
+            switch (this.dateTimeFormat)
             {
-                var d = directoryInfo.CreationTime.Date;
-                CultureInfo culture = new CultureInfo("pt-BR");
-                nd = d.ToString("d", culture);
-            }
-            else if (this.dateTimeFormat == "15.3.2008")
-            {
-                var d = directoryInfo.CreationTime.Date;
-                nd = d.ToString("d");
+                case "15/3/2008":
+                {
+                    var d = directoryInfo.CreationTime.Date;
+                    CultureInfo culture = new CultureInfo("pt-BR");
+                    nd = d.ToString("d", culture);
+                    break;
+                }
+                case "15.3.2008":
+                {
+                    var d = directoryInfo.CreationTime.Date;
+                    nd = d.ToString("d");
+                    break;
+                }
             }
 
             return this.includeTime ? nd + " " + nt : nd;

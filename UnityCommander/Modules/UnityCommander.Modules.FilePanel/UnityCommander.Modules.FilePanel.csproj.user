@@ -27,9 +27,6 @@
     <Page Update="Views\ImageViewerView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\SplitPanelView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\NTFSSecurityView.xaml">
       <SubType>Designer</SubType>
     </Page>
