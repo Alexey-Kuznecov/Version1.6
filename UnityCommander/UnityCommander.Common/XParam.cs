@@ -17,29 +17,29 @@ namespace UnityCommander.Common
         /// <summary>
         /// Gets or Sets whether the control can be used as drag source.
         /// </summary>
-        public static readonly DependencyProperty IsEncludeProperty
-            = DependencyProperty.RegisterAttached("IsEnclude",
+        public static readonly DependencyProperty IsIncludeProperty
+            = DependencyProperty.RegisterAttached("IsInclude",
                                                   typeof(bool),
                                                   typeof(XParam),
-                                                  new UIPropertyMetadata(false, IsEncludeChanged));
+                                                  new UIPropertyMetadata(false, IsIncludeChanged));
 
         /// <summary>
         /// Gets whether the control can be used as drag source.
         /// </summary>
-        public static bool GetIsEnclude(UIElement target)
+        public static bool GetIsInclude(UIElement target)
         {
-            return (bool)target.GetValue(IsEncludeProperty);
+            return (bool)target.GetValue(IsIncludeProperty);
         }
 
         /// <summary>
         /// Sets whether the control can be used as drag source.
         /// </summary>
-        public static void SetIsEnclude(UIElement target, bool value)
+        public static void SetIsInclude(UIElement target, bool value)
         {
-            target.SetValue(IsEncludeProperty, value);
+            target.SetValue(IsIncludeProperty, value);
         }
 
-        private static void IsEncludeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void IsIncludeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is Button bt)
             {
@@ -120,7 +120,7 @@ namespace UnityCommander.Common
         }
 
         /// <summary>
-        /// Add paramerters.
+        /// Add parameters.
         /// </summary>
         /// <param name="contentControl">
         /// The content control.
@@ -128,10 +128,7 @@ namespace UnityCommander.Common
         /// <param name="control">
         /// The control.
         /// </param>
-        /// <param name="viewModel">
-        /// The view model.
-        /// </param>
-        /// <param name="viewModelPropName">
+        /// <param name="paramModel">
         /// The view model property name.
         /// </param>
         public void AddParam(string contentControl, object control, XParamModel paramModel)
@@ -148,10 +145,11 @@ namespace UnityCommander.Common
                     mi.Header = xArray;
             }
         }
+
         public void ParamFinal(object control)
         {
             if (control is MenuItem mi)
-                XParam.SetIsEnclude(mi, true);
+                XParam.SetIsInclude(mi, true);
         }
         public void Dispose()
         {

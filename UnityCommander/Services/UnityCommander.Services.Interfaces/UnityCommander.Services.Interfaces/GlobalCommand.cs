@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
 using UnityCommander.Common;
 
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Interfaces
 {
     public class GlobalCommand
     {
