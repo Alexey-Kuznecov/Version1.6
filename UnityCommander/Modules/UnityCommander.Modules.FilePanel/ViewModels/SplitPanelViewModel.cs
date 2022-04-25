@@ -186,8 +186,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.settingsService = settingsService.GetAppConfig();
 
             this.globalCommandService = globalCommandService;
-            this.globalCommandService.SetCommand<FileManager>();
-            TestCommand = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileMove).Command;
+
+            var fileManger = this.globalCommandService.GetCommandManager<FileManager>();
+            this.TestCommand = fileManger.GetCommand(CommandNames.FileMove);
             
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -636,14 +637,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var item in column.ContextItems)
             {
-                var menu = new MenuItem();
-                menu.Header = item.Name;
+                var menu = new MenuItem
+                {
+                    Header = item.Name
+                };
 
                 globalCommandService.SetCommand(new ()
                 {
                     Command = item.Command,
                     ControlItem = menu,
-                    XParamModel = new XParamModel(this, "CurrentDirectory")
+                    XParamViewModel = new XParamViewModel(this, "CurrentDirectory")
                 });
 
                 ContextMenu.Items.Add(menu);
@@ -659,20 +662,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var item in column.ContextItems)
             {
-                var menu = new MenuItem();
-                menu.Header = item.Name;
-
-                globalCommandService.SetCommand<FileManager>(item.CommandName, new ()
-                {
-                    ControlItem = menu,
-                    XParamModelList = new List<XParamModel>
-                    {
-                        new XParamModel(this, "CurrentDirectory"),
-                        new XParamModel(this, "CurrentDirectory")
-                    }
-                });
-
-                ContextMenu.Items.Add(menu);
+                ContextMenu.Items.Add(new MenuItem().SetParam(item.Name, item.CommandName, 
+                    paramManager =>
+                        {
+                            paramManager.AddParam(this, "CurrentDirectory");
+                            paramManager.AddParam(this, "CurrentDirectory");
+                        }));
             }
         }
 

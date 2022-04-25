@@ -4,13 +4,13 @@ using UnityCommander.Common;
 
 namespace UnityCommander.Services.Interfaces
 {
-    public class GlobalCommand
+    public class UGlobalCommand
     {
         public object ControlItem { get; set; }
 
-        public XParamModel XParamModel { get; set; }
+        public XParamViewModel XParamViewModel { get; set; }
         
-        public List<XParamModel> XParamModelList { get; set; }
+        public List<XParamViewModel> XParamModelList { get; set; }
 
         public ICommand Command { get; set; }
 

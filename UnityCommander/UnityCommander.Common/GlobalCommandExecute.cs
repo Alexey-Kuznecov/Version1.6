@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Windows.Input;
 
-namespace UnityCommander.Services.Interfaces
+namespace UnityCommander.Common
 {
-    public class UCommandExecute<T> : ICommand
+    public class GlobalCommandExecute<T> : ICommand
     {
-        private Delegate command;
+        private readonly Delegate command;
 
-        public UCommandExecute(Delegate cmd)
+        public GlobalCommandExecute(Delegate cmd)
         {
             this.command = cmd;
         }
@@ -26,8 +24,8 @@ namespace UnityCommander.Services.Interfaces
         {
             Type type = typeof(T);
             ConstructorInfo magicConstructor = type.GetConstructor(Type.EmptyTypes);
-            object magicClassObject = magicConstructor.Invoke(new object[] { });
-            //command.Method.Invoke(magicClassObject, parameter as object[]);
+            object magicClassObject = magicConstructor?.Invoke(new object[] { });
+            command.Method.Invoke(magicClassObject, parameter as object[]);
         }
 
         public Delegate GetCommand()

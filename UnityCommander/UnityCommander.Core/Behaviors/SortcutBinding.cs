@@ -54,7 +54,7 @@ namespace UnityCommander.Core.Behaviors
         ///// </summary>
         //public static readonly DependencyProperty SortcutProperty
         //    = DependencyProperty.RegisterAttached("Sortcut",
-        //                                          typeof(UCCommand),
+        //                                          typeof(GlobalCommand),
         //                                          typeof(SortcutBinding),
         //                                          new UIPropertyMetadata(false, SortcutChanged));
 

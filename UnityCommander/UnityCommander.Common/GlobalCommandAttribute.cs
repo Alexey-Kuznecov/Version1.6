@@ -4,15 +4,15 @@ using System.Text;
 
 namespace UnityCommander.Common
 {
-    public class UCCommandAttribute : Attribute
+    public class GlobalCommandAttribute : Attribute
     {
         public string Name { get; set; }
 
-        public UCCommandAttribute()
+        public GlobalCommandAttribute()
         {
         }
 
-        public UCCommandAttribute(string name)
+        public GlobalCommandAttribute(string name)
         {
             this.Name = name;
         }

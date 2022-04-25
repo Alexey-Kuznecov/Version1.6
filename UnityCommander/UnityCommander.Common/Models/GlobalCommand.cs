@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace UnityCommander.Common.Models
 {
-    public class UCCommand
+    public class GlobalCommand
     {
         public string Name { get; set; }
 
@@ -13,11 +13,17 @@ namespace UnityCommander.Common.Models
 
         public InputGesture ShortcutKey { get; set; }
 
-        public UCCommand(string name, ICommand command, InputGesture gesture)
+        public Type Source { get; set; }
+
+        public Delegate Delegate { get; set; }
+
+        public GlobalCommand(string name, ICommand command, InputGesture gesture, Delegate @delegate, Type source)
         {
             this.Command = command;
             this.ShortcutKey = gesture;
             this.Name = name;
+            this.Source = source;
+            this.Delegate = @delegate;
         }
     }
 }

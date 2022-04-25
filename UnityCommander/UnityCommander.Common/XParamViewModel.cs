@@ -4,13 +4,13 @@ using System.Text;
 
 namespace UnityCommander.Common
 {
-    public class XParamModel
+    public class XParamViewModel
     {
         public object Instance { get; set; }
         
         public string PropertyName { get; set; }
 
-        public XParamModel(object instance, string propertyName)
+        public XParamViewModel(object instance, string propertyName)
         {
             this.Instance = instance;
             this.PropertyName = propertyName;

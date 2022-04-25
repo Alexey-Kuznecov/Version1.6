@@ -6,7 +6,7 @@ namespace UnityCommander.Core.IO.Operations
 {
     public class FileManager
     {
-        [UCCommand("FileSelMove")]
+        [GlobalCommand("FileSelMove")]
         public void Move(string source, string target)
         {
             if (File.Exists(source))
@@ -35,7 +35,7 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        [UCCommand("FileSelDel")]
+        [GlobalCommand("FileSelDel")]
         public void Delete(string source)
         {
             if (File.Exists(source))

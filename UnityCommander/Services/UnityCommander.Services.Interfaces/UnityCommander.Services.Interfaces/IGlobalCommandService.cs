@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
+using UnityCommander.Common;
 using UnityCommander.Common.Models;
 
 namespace UnityCommander.Services.Interfaces
@@ -10,12 +11,14 @@ namespace UnityCommander.Services.Interfaces
 
     public interface IGlobalCommandService
     {
-        void SetCommand<T>();
+        void SetCommand<T>(string commandName, UGlobalCommand uGlobal);
 
-        void SetCommand<T>(string commandName, GlobalCommand global);
+        void SetCommand(UGlobalCommand uGlobal);
 
-        void SetCommand(GlobalCommand global);
+        GlobalCommand GetCommand<T>(string commandName);
+        
+        GlobalCommand GetCommand(string commandName);
 
-        UCCommand GetCommand<T>(string commandName);
+        IGlobalCommandManager GetCommandManager<T>();
     }
 }
