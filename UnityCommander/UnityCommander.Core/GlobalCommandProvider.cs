@@ -20,7 +20,6 @@ namespace UnityCommander.Core
 
         public IGlobalCommandManager GetCommandManager() => GlobalCommandManager;
 
-        internal static GlobalCommand FindCommand(string commandName) 
-            => GlobalCommands.Single(c => c.CommandName == commandName);
+        internal static GlobalCommand FindCommand(string commandName) => GlobalCommandManager.GetCommand(commandName);
     }
 }

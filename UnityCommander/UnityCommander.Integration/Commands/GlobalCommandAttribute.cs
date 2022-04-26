@@ -6,12 +6,9 @@ namespace UnityCommander.Integration.Commands
     public class GlobalCommandAttribute : Attribute
     {
         public string Name { get; set; }
+        public CommandSource Source { get; set; }
 
-        public GlobalCommandAttribute()
-        {
-        }
-
-        public GlobalCommandAttribute(string name)
+        public GlobalCommandAttribute(string name, CommandSource source = CommandSource.Plugin)
         {
             if (name == "FileCopy3")
             {
@@ -19,6 +16,7 @@ namespace UnityCommander.Integration.Commands
             }
 
             this.Name = name;
+            this.Source = source;
         }
     }
 }

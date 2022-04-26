@@ -7,7 +7,7 @@ namespace UnityCommander.Common
 
     public interface IGlobalCommandManager
     {
-        ICommand GetCommand(string commandName);
+        GlobalCommand GetCommand(string commandName);
 
         void CreateCommand(BaseCommand command);
     }

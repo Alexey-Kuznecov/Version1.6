@@ -25,8 +25,9 @@ namespace UnityCommander.Services
             this.globalCommandProvider = Assembly.Load("UnityCommander.Core").CreateInstance("UnityCommander.Core.GlobalCommandProvider");
             this.InitialCommands();
         }
+        public IGlobalCommandManager GetCommandManager<T>() => this.globalCommandManager;
 
-        public void InitialCommands() 
+        internal void InitialCommands() 
         {
             if (this.globalCommandProvider is IGlobalCommandProvider commandProvider)
             {
@@ -43,22 +44,6 @@ namespace UnityCommander.Services
                 }
 
                 this.globalCommandManager = commandProvider.GetCommandManager();
-            }
-        }
-
-        public IGlobalCommandManager GetCommandManager<T>() => this.globalCommandManager;
-        
-        [Obsolete]
-        public void SetCommand(UGlobalCommand uGlobal)
-        {
-            using var xParam = new MultiCommandParameter(uGlobal.ControlItem);
-
-            if (uGlobal.ControlItem is MenuItem menuItem)
-            {
-                menuItem.Command = uGlobal.Command;
-                var header = menuItem.Header;
-                    xParam.AddParam((string)header, menuItem, uGlobal.XParamViewModel);
-                xParam.ParamFinal(menuItem);
             }
         }
     }

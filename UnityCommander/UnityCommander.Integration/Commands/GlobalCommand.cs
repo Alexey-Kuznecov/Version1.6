@@ -11,6 +11,8 @@ namespace UnityCommander.Integration.Commands
         
         public string Description { get; set; }
 
+        public CommandSource CommandSource { get; set; }
+
         public ICommand Command { get; set; }
 
         public InputGesture ShortcutKey { get; set; }

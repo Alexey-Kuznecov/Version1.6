@@ -10,15 +10,20 @@ namespace UnityCommander.Core
 {
     public static class GlobalCommandExtension
     {
-        public static ItemsControl SetParam(this ItemsControl control, GlobalCommand command, Action<CommandParametersManager> callback)
+        public static Control SetParam(this Control control, GlobalCommand command, Action<CommandParametersManager> callback)
         {
             var parametersManager = new CommandParametersManager();
             
-            if (control is MenuItem menuItem)
+            switch (control)
             {
-                menuItem.Header = command.DisplayName;
+                case MenuItem menuItem:
+                    menuItem.Header = command.DisplayName;
+                    break;
+                case Button button:
+                    button.Content = command.DisplayName;
+                    break;
             }
-            
+
             callback(parametersManager);
             
             ParamBuilder(command, control, parametersManager.Params);
@@ -26,25 +31,28 @@ namespace UnityCommander.Core
             return control;
         }
 
-        public static ItemsControl SetParam(this ItemsControl control, string header, ICommand command, Action<CommandParametersManager> callback)
-        {
-            return null;
-        }
-
-        public static void ParamBuilder(GlobalCommand globalCommand, object itemTarget, List<XParamViewModel> vmSource)
+        public static void ParamBuilder(GlobalCommand globalCommand, Control controlTarget, List<XParamViewModel> vmSource)
         {
             var command = globalCommand.Command is null ? GlobalCommandProvider.FindCommand(globalCommand.CommandName) : globalCommand;
             var paramInfo = command.Delegate.Method.GetParameters();
-            using var multiCommandParameter = new MultiCommandParameter(itemTarget);
+            using var multiCommandParameter = new MultiCommandParameter(controlTarget);
+            var header = default(string);
 
-            if (itemTarget is MenuItem menuItem)
+            switch (controlTarget)
             {
-                menuItem.Command = command.Command;
-                var header = menuItem.Header;
-                for (var i = 0; i < paramInfo.Length; i++)
-                    multiCommandParameter.AddParam((string)header, menuItem, vmSource[i]);
-                multiCommandParameter.ParamFinal(menuItem);
+                case MenuItem menuItem:
+                    header = (string)menuItem.Header;
+                    menuItem.Command = command.Command;
+                    break;
+                case Button button:
+                    header = (string)button.Content;
+                    button.Command = command.Command;
+                    break;
             }
+
+            for (var i = 0; i < paramInfo.Length; i++)
+                multiCommandParameter.AddParam(header, controlTarget, vmSource[i]);
+            multiCommandParameter.ParamFinal(controlTarget);
         }
     }
 }

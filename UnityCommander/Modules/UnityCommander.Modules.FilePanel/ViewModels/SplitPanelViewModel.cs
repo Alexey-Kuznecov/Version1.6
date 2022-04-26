@@ -7,38 +7,38 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using NLog;
-using Prism.Commands;
-using Prism.Regions;
-using Prism.Services.Dialogs;
-using UnityCommander.Common;
-using UnityCommander.Common.Models.Directory;
-using UnityCommander.Core;
-using UnityCommander.Core.Commands;
-using UnityCommander.Core.DragDrop;
-using UnityCommander.Core.Helper;
-using UnityCommander.Core.Modules;
-using UnityCommander.Core.Mvvm;
-using UnityCommander.Integration.Columns;
-using UnityCommander.Integration.Commands;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Integration.Enums;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.Modules.FilePanel.Columns;
-using CommandManager = UnityCommander.Core.Commands.CommandManager;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Documents;
+    using System.Windows.Input;
+    using NLog;
+    using Prism.Commands;
+    using Prism.Regions;
+    using Prism.Services.Dialogs;
+    using UnityCommander.Common;
+    using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Core;
+    using UnityCommander.Core.Commands;
+    using UnityCommander.Core.DragDrop;
+    using UnityCommander.Core.Helper;
+    using UnityCommander.Core.Modules;
+    using UnityCommander.Core.Mvvm;
+    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Enums;
+    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Modules.FilePanel.Columns;
+    using CommandManager = UnityCommander.Core.Commands.CommandManager;
+
     /// <summary>
     /// The left panel view model.
     /// </summary>
@@ -190,7 +190,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
             var fileManger = this.globalCommandService.GetCommandManager<IOCommands>();
-            this.TestCommand = fileManger.GetCommand("FileMove");
+            this.TestCommand = fileManger.GetCommand("FileMove").Command;
 
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -539,7 +539,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             AddFolderColumns();
             AddDriveColumns();
             AddPluginColumns();
-            ContextMenuBuild();
+            CreateContextMenu();
         }
 
         /// <summary>
@@ -568,7 +568,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 foreach (var column in items)
                 {
                     FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    //this.ContextMenuBuild(column);
+                    //this.CreateContextMenu(column);
                 }
             });
         }
@@ -626,15 +626,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         FilePanelContainer.Columns.Add(columnNew);
                     }
 
-                    PluginContextMenuBuild(column);
+                    CreatePluginContextMenu(column);
                 }
             }
         }
 
         /// <summary>
-        /// PluginContextMenuBuild
+        /// CreatePluginContextMenu
         /// </summary>
-        private void PluginContextMenuBuild(IColumn column)
+        private void CreatePluginContextMenu(IColumn column)
         {
             if (column.ContextItems == null) return;
 
@@ -649,9 +649,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// ContextMenuBuild
+        /// CreateContextMenu
         /// </summary>
-        private void ContextMenuBuild()
+        private void CreateContextMenu()
         {
             List<GlobalCommand> globalCommands = new List<GlobalCommand>
             {
@@ -663,7 +663,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 new ()
                 {
                     DisplayName = "Create",
-                    CommandName = CommandNames.FileDel
+                    CommandName = "FileMove"
                 },
                 new ()
                 {

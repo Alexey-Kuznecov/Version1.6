@@ -34,7 +34,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid inputBinding:SortcutBinding.IsDragSource="True">
+    <Grid inputBinding:KeyboardBinding.IsDragSource="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" MinWidth="60" />
             <ColumnDefinition Width="Auto" MaxWidth="250" />

@@ -32,33 +32,35 @@ namespace UnityCommander.Core
             {
                 if (method.GetBaseDefinition().DeclaringType != method.DeclaringType)
                 {
-                    var att = Attribute.GetCustomAttribute(method, typeof(GlobalCommandAttribute));
-                    
-                    if (att != null)
+                    var att = Attribute.GetCustomAttribute(method, typeof(GlobalCommandAttribute)) as GlobalCommandAttribute;
+
+                    if (att == null) continue;
+
+                    var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
+                    var command = new GlobalCommandExecute(action, type);
+
+                    var cmd = new GlobalCommand
                     {
-                        var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
-                        var command = new GlobalCommandExecute(action, type);
+                        CommandName = att.Name,
+                        CommandSource = att.Source,
+                        Command = command,
+                        ShortcutKey = new KeyGesture(Key.D, ModifierKeys.Control),
+                        Delegate = action,
+                        Source = type
+                       
+                    };
 
-                        var cmd = new GlobalCommand
-                                {
-                                    CommandName = ((GlobalCommandAttribute)att).Name,
-                                    Command = command,
-                                    ShortcutKey = new KeyGesture(Key.D, ModifierKeys.Control),
-                                    Delegate = action,
-                                    Source = type
-                                };
-
-                        var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
-                        var inputBindingCollection = new InputBindingCollection();
-                        inputBindingCollection.Add(input);
-                        globalCommands.Add(cmd);
-                    }
+                    //var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
+                    //var inputBindingCollection = new InputBindingCollection();
+                    //inputBindingCollection.Add(input);
+                    globalCommands.Add(cmd);
                 }
             }
         }
 
-        public ICommand GetCommand(string commandName) 
-            => this.globalCommands.Single(c => c.CommandName == commandName).Command;
-        
+        public GlobalCommand GetCommand(string commandName)
+            => this.globalCommands.SingleOrDefault(
+                   cmd=> cmd.CommandSource == CommandSource.Plugin && cmd.CommandName == commandName) 
+                        ?? this.globalCommands.Single(cmd => cmd.CommandName == commandName);
     }
 }

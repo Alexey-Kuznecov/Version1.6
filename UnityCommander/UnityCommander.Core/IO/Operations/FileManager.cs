@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using UnityCommander.Common;
 using UnityCommander.Integration.Commands;
+using UnityCommander.Integration.Enums;
 
 namespace UnityCommander.Core.IO.Operations
 {
     public class FileManager : IOCommands
     {
-        [GlobalCommand("FileSelMove")]
+        [GlobalCommand(CommandNames.FileMove, CommandSource.Native)]
         public override void Move(string source, string target)
         {
             return;
@@ -37,7 +38,7 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        [GlobalCommand("FileSelDel")]
+        [GlobalCommand(CommandNames.FileDel, CommandSource.Native)]
         public override void Delete(string source)
         {
             return;
