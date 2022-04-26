@@ -161,6 +161,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="pluginService">
         /// The service for loading all detected plugin interfaces.
         /// </param>
+        /// <param name="globalCommandService">
+        /// The service for loading all detected plugin interfaces.
+        /// </param>
         /// <param name="manager">
         /// Command manager
         /// </param>
@@ -187,7 +190,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
             var fileManger = this.globalCommandService.GetCommandManager<IOCommands>();
-            this.TestCommand = fileManger.GetCommand("FileCopy2");
+            this.TestCommand = fileManger.GetCommand("FileMove");
 
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -676,7 +679,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     Name = "Delete",
                     Command = null,
-                    CommandName = CommandNames.FileDel
+                    CommandName = "FileMove"
                 },
             };
             

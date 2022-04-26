@@ -18,7 +18,7 @@ namespace UnityCommander.Core
             this.globalCommands = commands;
         }
 
-        public void CreateCommand(BaseCommand command, string commandName)
+        public void CreateCommand(BaseCommand command)
         {
             this.SetCommand(command);
         }

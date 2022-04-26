@@ -19,21 +19,10 @@ namespace UnityCommander.Core
 
         public GlobalCommandProvider()
         {
-            this.File = new FileManager();
+            GlobalCommandManager.CreateCommand(new FileManager());
         }
 
-        public FileManager File { get; set; }
-
-        public IGlobalCommandManager GetCommandManager<T>()
-        {
-            if (File is T file)
-            {
-                this.SetCommand<T>(file);
-                return GlobalCommandManager;
-            }
-
-            return null;
-        }
+        public IGlobalCommandManager GetCommandManager() => GlobalCommandManager;
 
         private void SetCommand<T>(object instance)
         {

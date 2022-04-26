@@ -38,17 +38,17 @@ namespace UnityCommander.Services
             {
                 var pluginContexts = pluginService.GetPluginContext();
 
-                var manager = commandProvider.GetCommandManager<T>();
+                var manager = commandProvider.GetCommandManager();
 
                 foreach (var pluginContext in pluginContexts)
                 {
                     foreach (var command in pluginContext.GetCommands())
                     {
-                        manager.CreateCommand(command, "");
+                        manager.CreateCommand(command);
                     }
                 }
 
-                this.globalCommandManager = commandProvider.GetCommandManager<T>();
+                this.globalCommandManager = commandProvider.GetCommandManager();
             }
         }
 

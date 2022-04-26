@@ -7,6 +7,6 @@ namespace UnityCommander.Common
 {
     public interface IGlobalCommandProvider
     {
-        IGlobalCommandManager GetCommandManager<T>();
+        IGlobalCommandManager GetCommandManager();
     }
 }

@@ -38,7 +38,7 @@ namespace UnityCommander.Core.IO.Operations
         }
 
         [GlobalCommand("FileSelDel")]
-        public void Delete(string source)
+        public override void Delete(string source)
         {
             return;
 

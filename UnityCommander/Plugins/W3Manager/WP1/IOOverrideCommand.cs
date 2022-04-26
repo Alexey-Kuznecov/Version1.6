@@ -13,5 +13,11 @@ namespace W3Manager.WP1
         {
             base.FileCopy(source, destination);
         }
+
+        [GlobalCommand("FileMove")]
+        public override void Move(string source, string destination)
+        {
+            base.Move(source, destination);
+        }
     }
 }

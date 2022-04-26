@@ -9,6 +9,6 @@ namespace UnityCommander.Common
     {
         ICommand GetCommand(string commandName);
 
-        void CreateCommand(BaseCommand command, string commandName);
+        void CreateCommand(BaseCommand command);
     }
 }
