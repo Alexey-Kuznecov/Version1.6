@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Integration.Columns
 {
     using System;
@@ -65,10 +67,18 @@ namespace UnityCommander.Integration.Columns
         /// </param>
         public void AddContextItem(string header, Action<string> action)
         {
+            var type = action.Method.DeclaringType;
+
             this.column.ContextItems.Add(new ContextItem
             {
                 Name = header,
-                Command = new PluginCommand(action)
+                Command = new GlobalCommand
+                {
+                    DisplayName = header,
+                    Command = new GlobalCommandExecute(action, type),
+                    Delegate = action,
+                    Source = type
+                }
             });
         }
 

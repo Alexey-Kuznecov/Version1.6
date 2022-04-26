@@ -5,7 +5,11 @@ namespace UnityCommander.Integration.Commands
 {
     public class GlobalCommand
     {
-        public string Name { get; set; }
+        public string CommandName { get; set; }
+
+        public string DisplayName { get; set; }
+        
+        public string Description { get; set; }
 
         public ICommand Command { get; set; }
 
@@ -15,15 +19,13 @@ namespace UnityCommander.Integration.Commands
 
         public Delegate Delegate { get; set; }
 
-        public BaseCommand BaseCommand { get; set; }
-
-        public GlobalCommand(string name, ICommand command, InputGesture gesture, Delegate @delegate, Type source)
+        public GlobalCommand(string commandName)
         {
-            this.Command = command;
-            this.ShortcutKey = gesture;
-            this.Name = name;
-            this.Source = source;
-            this.Delegate = @delegate;
+            this.CommandName = commandName;
+        }
+
+        public GlobalCommand()
+        {
         }
     }
 }

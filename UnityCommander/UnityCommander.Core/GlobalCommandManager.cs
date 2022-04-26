@@ -39,12 +39,14 @@ namespace UnityCommander.Core
                         var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
                         var command = new GlobalCommandExecute(action, type);
 
-                        var cmd = new GlobalCommand(
-                            ((GlobalCommandAttribute)att).Name,
-                            command,
-                            new KeyGesture(Key.D, ModifierKeys.Control),
-                            action,
-                            source: type);
+                        var cmd = new GlobalCommand
+                                {
+                                    CommandName = ((GlobalCommandAttribute)att).Name,
+                                    Command = command,
+                                    ShortcutKey = new KeyGesture(Key.D, ModifierKeys.Control),
+                                    Delegate = action,
+                                    Source = type
+                                };
 
                         var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
                         var inputBindingCollection = new InputBindingCollection();
@@ -56,7 +58,7 @@ namespace UnityCommander.Core
         }
 
         public ICommand GetCommand(string commandName) 
-            => this.globalCommands.Single(c => c.Name == commandName).Command;
+            => this.globalCommands.Single(c => c.CommandName == commandName).Command;
         
     }
 }

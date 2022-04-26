@@ -640,19 +640,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var item in column.ContextItems)
             {
-                var menu = new MenuItem
-                {
-                    Header = item.Name
-                };
-
-                globalCommandService.SetCommand(new ()
-                {
-                    Command = item.Command,
-                    ControlItem = menu,
-                    XParamViewModel = new XParamViewModel(this, "CurrentDirectory")
-                });
-
-                ContextMenu.Items.Add(menu);
+                ContextMenu.Items.Add(new MenuItem().SetParam(item.Command,
+                    paramManager =>
+                    {
+                        paramManager.AddParam(this, "CurrentDirectory");
+                    }));
             }
         }
 
@@ -661,31 +653,28 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void ContextMenuBuild()
         {
-            List<ContextItem> contextMenu = new List<ContextItem>
+            List<GlobalCommand> globalCommands = new List<GlobalCommand>
             {
                 new ()
                 {
-                    Name = "Open",
-                    Command = null,
+                    DisplayName = "Open",
                     CommandName = CommandNames.FileMove
                 },
                 new ()
                 {
-                    Name = "Create",
-                    Command = null,
+                    DisplayName = "Create",
                     CommandName = CommandNames.FileDel
                 },
                 new ()
                 {
-                    Name = "Delete",
-                    Command = null,
-                    CommandName = "FileMove"
+                    DisplayName = "Delete",
+                    CommandName = CommandNames.FileDel
                 },
             };
             
-            foreach (var item in contextMenu)
+            foreach (var command in globalCommands)
             {
-                ContextMenu.Items.Add(new MenuItem().SetParam(item.Name, item.CommandName, 
+                ContextMenu.Items.Add(new MenuItem().SetParam(command, 
                     paramManager =>
                         {
                             paramManager.AddParam(this, "CurrentDirectory");
