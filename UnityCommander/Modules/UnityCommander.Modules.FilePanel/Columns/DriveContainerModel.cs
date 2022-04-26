@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Common.Models.Columns
+namespace UnityCommander.Modules.FilePanel.Columns
 {
     /// <summary>
     /// The drive container model.

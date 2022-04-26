@@ -1,12 +1,12 @@
 ﻿
-namespace UnityCommander.Common.Models.Columns
-{
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
+namespace UnityCommander.Modules.FilePanel.Columns
+{
     /// <summary>
     /// The default container.
     /// </summary>
@@ -53,7 +53,7 @@ namespace UnityCommander.Common.Models.Columns
             freeSpaceTemplate  .SetBinding(TextBlock.TextProperty, new Binding { Path = new ("FreeSpace") });
             totalAmauntTemplate.SetBinding(TextBlock.TextProperty, new Binding { Path = new ("TotalAmount") }); 
 
-            this.containers = new ObservableCollection<BaseContainer>()
+            this.containers = new ObservableCollection<BaseContainer>
             {
                 new ()
                 {

@@ -1,16 +1,15 @@
 ﻿
-namespace UnityCommander.Common.Models.Columns
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using UnityCommander.Integration.Columns;
+using UnityCommander.Integration.Contracts;
+using UnityCommander.Integration.Enums;
+
+namespace UnityCommander.Modules.FilePanel.Columns
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Windows;
-    using System.Windows.Controls;
-
-    using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
-
     /// <summary>
     /// The columns default.
     /// </summary>
@@ -62,7 +61,7 @@ namespace UnityCommander.Common.Models.Columns
         {
             this.columns = new ObservableCollection<IColumn>
             {
-                new BaseColumn
+                new CommonColumn
                 {
                     Header = "Name",
                     Template = new GridViewColumn
@@ -70,31 +69,9 @@ namespace UnityCommander.Common.Models.Columns
                         Header = "Name",
                         Width = 200,
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
-                    },
-                    ContextItems = new List<ContextItem>
-                    {
-                        new ContextItem
-                        {
-                            Name = "Open",
-                            Command = null,
-                            CommandName = CommandNames.FileMove
-
-                        },
-                        new ContextItem
-                        {
-                            Name = "Create",
-                            Command = null,
-                            CommandName = CommandNames.FileDel
-                        },
-                        new ContextItem
-                        {
-                            Name = "Delete",
-                            Command = null,
-                            CommandName = CommandNames.FileDel
-                        },
                     }
                 },
-                 new BaseColumn
+                 new CommonColumn
                 {
                     Header = "CreationTime",
                     Template = new GridViewColumn
@@ -104,7 +81,7 @@ namespace UnityCommander.Common.Models.Columns
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnCreationDateDataTemplate")
                     }
                 },
-                new BaseColumn
+                new CommonColumn
                 {
                     Header = "Last Access Time",
                     Template = new GridViewColumn

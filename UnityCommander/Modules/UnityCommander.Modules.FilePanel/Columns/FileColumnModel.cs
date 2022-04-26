@@ -1,9 +1,9 @@
 ﻿
-namespace UnityCommander.Common.Models.Columns
-{
-    using System.Windows;
-    using System.Windows.Controls;
+using System.Windows;
+using System.Windows.Controls;
 
+namespace UnityCommander.Modules.FilePanel.Columns
+{
     /// <summary>
     /// The file column model.
     /// </summary>
@@ -16,7 +16,7 @@ namespace UnityCommander.Common.Models.Columns
         {
             this.InitialData();
 
-            this.AddColumn(new BaseColumn
+            this.AddColumn(new CommonColumn
             {
                 Header = "Extension",
                 Template = new GridViewColumn
