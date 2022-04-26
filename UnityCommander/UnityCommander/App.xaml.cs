@@ -1,14 +1,14 @@
 ﻿
-using UnityCommander.Core.Mvvm;
-using UnityCommander.Modules.Tabs;
-using UnityCommander.Modules.Tabs.ViewModels;
-using UnityCommander.Modules.Tabs.Views;
+using System;
+using System.Windows.Navigation;
+using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
+using Prism.DryIoc;
+using UnityCommander.Modules.TabPanel.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
 {
-    using System;
-    using System.Reflection;
     using System.Windows;
 
     using Prism.Ioc;
@@ -16,19 +16,18 @@ namespace UnityCommander
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
-    using UnityCommander.Core;
-    using UnityCommander.Core.Commands;
-    using UnityCommander.Modules.FilePanel;
-    using UnityCommander.Modules.FilePanel.ViewModels;
-    using UnityCommander.Modules.FilePanel.Views;
-    using UnityCommander.Modules.LeftSideBars;
-    using UnityCommander.Modules.ToolBar;
-    using UnityCommander.Services;
-    using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
-    using UnityCommander.ViewModels;
-    using UnityCommander.Views;
-    using UnityCommander.Views.CopyDialogs;
+    using Core;
+    using Core.Commands;
+    using Modules.LeftSideBars;
+    using Modules.TabPanel;
+    using Modules.TabPanel.Views;
+    using Modules.ToolBar;
+    using Services;
+    using Services.Interfaces;
+    using Services.Plugins;
+    using ViewModels;
+    using Views;
+    using Views.CopyDialogs;
 
     /// <summary>
     /// The application.
@@ -67,21 +66,48 @@ namespace UnityCommander
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
             containerRegistry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
             containerRegistry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig");
-            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
-            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
 
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
-            //containerRegistry.RegisterSingleton<TabsManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
+        }
 
-            // containerRegistry.RegisterForNavigation<ViewA>("ViewA");
+        protected override Rules CreateContainerRules()
+        {
+            ContainerLocator.Container.Resolve(typeof(PluginLoaderService));
+
+            return base.CreateContainerRules();
+        }
+
+        //private IContainerExtension CreateContainerExtension() => new DryIocContainerExtension();
+
+        //public override IServiceProvider CreateServiceProvider(IServiceCollection services)
+        //{
+        //    ContainerLocator.SetContainerExtension(CreateContainerExtension);
+        //    var container = ContainerLocator.Container;
+        //    container.RegisterServices(services);
+        //    RegisterTypes(container);
+        //    return container.GetContainer();
+        //}
+
+
+        protected override void OnLoadCompleted(NavigationEventArgs e)
+        {
+            base.OnLoadCompleted(e);
+        }
+
+        protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
+            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
+
+            base.RegisterRequiredTypes(containerRegistry);
         }
 
         /// <summary>
@@ -90,9 +116,9 @@ namespace UnityCommander
         protected override void ConfigureViewModelLocator()
         {
             base.ConfigureViewModelLocator();
-            ViewModelLocationProvider.Register(typeof(ViewB).ToString(), () => Container.Resolve<ViewAViewModel>());
-            ViewModelLocationProvider.Register(typeof(ViewA).ToString(), () => Container.Resolve<ViewAViewModel>());
-            //ViewModelLocationProvider.Register(typeof(TabPanelView).ToString(), () => Container.Resolve<TabPanelViewModel>());
+            
+            ViewModelLocationProvider.Register(typeof(LeftPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
+            ViewModelLocationProvider.Register(typeof(RightPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
         }
 
         /// <summary>
@@ -103,10 +129,9 @@ namespace UnityCommander
         /// </param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            moduleCatalog.AddModule<FilePanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
-            moduleCatalog.AddModule<TabsModule>();
+            moduleCatalog.AddModule<TabPanelModule>();
         }
     }
 }

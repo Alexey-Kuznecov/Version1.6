@@ -34,7 +34,7 @@ namespace UnityCommander.Modules.LeftSideBars
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, "Sidebar");
+            this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, nameof(Sidebar));
         }
 
         /// <summary>

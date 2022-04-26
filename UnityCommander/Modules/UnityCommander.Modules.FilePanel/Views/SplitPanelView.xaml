@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
-    xmlns:core="clr-namespace:UnityCommander.Common;assembly=UnityCommander.Common"
+    xmlns:common="clr-namespace:UnityCommander.Common;assembly=UnityCommander.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -26,6 +26,7 @@
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" MinHeight="200" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <!--
@@ -84,15 +85,15 @@
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
         </ContentControl>
-        <!--<Grid Grid.Row="4">
-            <Button Width="50" Command="{Binding TestCommand}" core:XParam.IsEnclude="True">
+        <Grid Grid.Row="4">
+            <Button Width="50" Command="{Binding TestCommand}" common:MultiCommandParameter.IsInclude="True">
                 <Button.Content>
-                    <core:XArray Type="False" Content="Start">
-                        <core:XValue Param="{Binding CurrentDirectory}"/>
-                        <core:XValue Param="{Binding CurrentDirectory}"/>
-                    </core:XArray>
+                    <common:XArray Type="False" Content="Start">
+                        <common:XParam Value="{Binding CurrentDirectory}"/>
+                        <common:XParam Value="{Binding CurrentDirectory}"/>
+                    </common:XArray>
                 </Button.Content>
             </Button>
-        </Grid>-->
+        </Grid>
     </Grid>
 </UserControl>

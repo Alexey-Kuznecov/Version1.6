@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Integration.Contracts
 {
     using System.Collections.Generic;
@@ -27,5 +29,7 @@ namespace UnityCommander.Integration.Contracts
         /// List of the <see cref="OptionBuilder"/>.
         /// </returns>
         IEnumerable<IOption> GetOptions();
+
+        public IEnumerable<BaseCommand> GetCommands();
     }
 }

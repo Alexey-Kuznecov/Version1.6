@@ -1,11 +1,13 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
-    using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
-    using UnityCommander.Integration.Options;
+    using Integration.Columns;
+    using Integration.Contracts;
+    using Integration.Dialog;
+    using Integration.Options;
 
     /// <summary>
     /// The PluginLoader interface.
@@ -59,5 +61,13 @@ namespace UnityCommander.Services.Interfaces
         ///  The interface option builders.
         /// </returns>
         public IEnumerable<IOptionBuilder> GetOptionBuilders();
+
+        /// <summary>
+        /// The get option builders.
+        /// </summary>
+        /// <returns>
+        ///  The interface option builders.
+        /// </returns>
+        public IEnumerable<BaseCommand> GetPluginCommands();
     }
 }

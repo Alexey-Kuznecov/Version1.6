@@ -1,10 +1,9 @@
 <Commands Handler="Command.Parser">
-   <Command Id="C28" Name="RunMemu" 
+   <Command Id="C28" Name="RunMenu" 
             Class="FileManager"
-            Namespace="IO.Operations"
             Method="Move">
         <Shortcut>
-            <ModKey>LCtrl<ModKey>
+            <ModKey>LCtrl</ModKey>
             <Key>D</Key>
         </Shortcut>
         <Descrition>Command to delete the selected file or folder.</Descrition>
@@ -12,6 +11,6 @@
             <Path>"D:\Program Files\Microvirt\MEmu\MEmu.exe"</Path>
             <Arguments>\run -d</Arguments>
             <Icon>"D:\Program Files\Microvirt\MEmu\MEmu.exe","1"</Icon>
-        <Application>
+        </Application>
    </Command> 
 </Commands>

@@ -1,14 +1,16 @@
 ﻿using System.IO;
 using UnityCommander.Common;
-using UnityCommander.Core.Commands;
+using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Core.IO.Operations
 {
-    public class FileManager
+    public class FileManager : IOCommands
     {
-        [UCCommand("FileSelMove")]
-        public void Move(string source, string target)
+        [GlobalCommand("FileSelMove")]
+        public override void Move(string source, string target)
         {
+            return;
+    
             if (File.Exists(source))
             {
                 FileInfo fileInfo = new FileInfo(source);
@@ -35,9 +37,11 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        [UCCommand("FileSelDel")]
+        [GlobalCommand("FileSelDel")]
         public void Delete(string source)
         {
+            return;
+
             if (File.Exists(source))
             {
                 File.Delete(source);

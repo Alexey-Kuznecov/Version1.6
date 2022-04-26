@@ -4,10 +4,10 @@
 namespace UnityCommander.Services.Plugins
 {
     using System.Collections.Generic;
-
-    using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Options;
+    using Integration.Commands;
+    using Integration.Columns;
+    using Integration.Contracts;
+    using Integration.Options;
 
     /// <summary>
     /// The plugin context.
@@ -23,6 +23,11 @@ namespace UnityCommander.Services.Plugins
         /// Gets or sets the option.
         /// </summary>
         public IReadOnlyList<IOption> Option { get; set; } = new List<IOption>();
+
+        /// <summary>
+        /// Gets or sets the option.
+        /// </summary>
+        public static List<BaseCommand> Commands { get; set; } = new ();
 
         /// <summary>
         /// The get columns.
@@ -49,6 +54,20 @@ namespace UnityCommander.Services.Plugins
             foreach (var option in this.Option)
             {
                 yield return option;
+            }
+        }
+
+        /// <summary>
+        /// The get options.
+        /// </summary>
+        /// <returns>
+        ///  The option builders.
+        /// </returns>
+        public IEnumerable<BaseCommand> GetCommands()
+        {
+            foreach (var command in Commands)
+            {
+                yield return command;
             }
         }
 
@@ -87,6 +106,20 @@ namespace UnityCommander.Services.Plugins
             {
                 option.OptionBuilders = builder;
                 ((List<IOption>)this.Option).Add(option);
+            }
+        }
+
+        /// <summary>
+        /// The add column.
+        /// </summary>
+        /// <param name="commands">
+        /// The builder.
+        /// </param>
+        public void AddCommand(List<BaseCommand> commands)
+        {
+            foreach (var command in commands)
+            {
+                Commands.Add(command);
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Core
 {
     using System;
@@ -17,7 +19,7 @@ namespace UnityCommander.Core
         /// <summary>
         /// The commands.
         /// </summary>
-        private List<UCCommand> commands;
+        private List<GlobalCommand> commands;
 
         /// <summary>
         /// The register command.
@@ -31,14 +33,14 @@ namespace UnityCommander.Core
 
             for (int i = 0; i < methods?.Length; i++)
             {
-                var att = Attribute.GetCustomAttribute(methods[i], typeof(UCCommandAttribute));
+                var att = Attribute.GetCustomAttribute(methods[i], typeof(GlobalCommandAttribute));
                 var m = methods[i] as MethodInfo;
                 m.Invoke(magicClassObject, new object[] { "C:\\", "D:\\" });
             }
 
             //InputGesture inputGesture = new KeyGesture(Key.D, ModifierKeys.Control);
             //this.commands.Add(
-            //    new UCCommand("DelSelFile",
+            //    new GlobalCommand("DelSelFile",
             //        new DelegateCommand<string>(FileManager.Delete), inputGesture));
         }
     }

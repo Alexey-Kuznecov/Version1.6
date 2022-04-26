@@ -69,7 +69,7 @@ namespace UnityCommander.Integration.Columns
             {
                 Name = header,
                 Command = new PluginCommand(action)
-            });;
+            });
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Services.Plugins
 {
     using System;
@@ -48,6 +50,12 @@ namespace UnityCommander.Services.Plugins
         /// The option builders
         /// </summary>
         private IEnumerable<IOptionBuilder> optionBuilders;
+
+
+        /// <summary>
+        /// The option builders
+        /// </summary>
+        private IEnumerable<BaseCommand> commandsBuilder = new List<BaseCommand>();
 
         #endregion
 
@@ -107,7 +115,16 @@ namespace UnityCommander.Services.Plugins
         ///  The interface option builders.
         /// </returns>
         public IEnumerable<IOptionBuilder> GetOptionBuilders() => this.optionBuilders;
-        
+
+
+        /// <summary>
+        /// The get option builders.
+        /// </summary>
+        /// <returns>
+        ///  The interface option builders.
+        /// </returns>
+        public IEnumerable<BaseCommand> GetPluginCommands() => this.commandsBuilder;
+
         #endregion
 
         /// <summary>
@@ -125,19 +142,29 @@ namespace UnityCommander.Services.Plugins
             Assembly assembly = this.alc.LoadFromAssemblyPath(assemblyPath);
             this.GetPluginResources(assembly);
 
-            foreach (var type in assembly.GetTypes()
-                .Where(t => typeof(IPluginFactory)
-                                .IsAssignableFrom(t) && !t.IsAbstract))
+            foreach (var type in assembly.GetTypes())
             {
-                var plugin = Activator.CreateInstance(type) as IPluginFactory;
-                plugin?.Configure(services);
+                if (typeof(IPluginFactory).IsAssignableFrom(type) && !type.IsAbstract)
+                {
+                    var plugin = Activator.CreateInstance(type) as IPluginFactory;
+                    
+                    plugin?.Configure(services);
 
-                var serviceProvider = services.BuildServiceProvider();
-                this.pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
-                this.pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
-                this.dialogService = serviceProvider.GetServices<IDialogService>();
-                this.columnBuilders = serviceProvider.GetServices<IColumnBuilder>();
-                this.optionBuilders = serviceProvider.GetServices<IOptionBuilder>();
+                    var serviceProvider = services.BuildServiceProvider();
+                    this.pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
+                    this.pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
+                    this.dialogService = serviceProvider.GetServices<IDialogService>();
+                    this.columnBuilders = serviceProvider.GetServices<IColumnBuilder>();
+                    this.optionBuilders = serviceProvider.GetServices<IOptionBuilder>();
+                    
+                    if (typeof(ICommandFactory).IsAssignableFrom(type) && !type.IsAbstract)
+                    {
+                        var commandBuilder = new CommandBuilder();
+                        var command = (ICommandFactory)plugin;
+                        command?.CommandFactory(commandBuilder);
+                        this.commandsBuilder = commandBuilder.GetCommands();
+                    }
+                }
             }
         }
 
