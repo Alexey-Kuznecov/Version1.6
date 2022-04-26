@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,8 @@ namespace UnityCommander.Services
         private readonly Assembly assembly;
         
         private readonly object globalCommandProvider;
+        
+        private IGlobalCommandManager globalCommandManager;
 
         private List<GlobalCommand> globalCommands;
 
@@ -23,19 +26,32 @@ namespace UnityCommander.Services
             this.assembly = Assembly.Load("UnityCommander.Core");
             this.globalCommandProvider = assembly.CreateInstance("UnityCommander.Core.GlobalCommandProvider");
             this.globalCommands = new List<GlobalCommand>();
+            this.InitialCommands<BaseCommand>();
         }
 
-        public IGlobalCommandManager GetCommandManager<T>()
+        public void InitialCommands<T>() 
         {
             if (this.globalCommandProvider is IGlobalCommandProvider commandProvider)
             {
                 var pluginContexts = PluginLoaderService.GetPluginContexts();
-                return commandProvider.GetCommandManager<T>();
-            }
 
-            return null;
+                var manager = commandProvider.GetCommandManager<T>();
+
+                foreach (var pluginContext in pluginContexts)
+                {
+                    foreach (var command in pluginContext.GetCommands())
+                    {
+                        manager.CreateCommand(command, "");
+                    }
+                }
+
+                this.globalCommandManager = commandProvider.GetCommandManager<T>();
+            }
         }
 
+        public IGlobalCommandManager GetCommandManager<T>() => this.globalCommandManager;
+        
+        [Obsolete]
         public void SetCommand(UGlobalCommand uGlobal)
         {
             using var xParam = new MultiCommandParameter(uGlobal.ControlItem);
@@ -48,7 +64,7 @@ namespace UnityCommander.Services
                 xParam.ParamFinal(menuItem);
             }
         }
-
+        [Obsolete]
         public void SetCommand<T>(string commandName, UGlobalCommand uGlobal)
         {
             var command = this.globalCommands.Single(c => c.Name == commandName);
@@ -65,13 +81,13 @@ namespace UnityCommander.Services
                 multiCommandParameter.ParamFinal(menuItem);
             }       
         }
-
+        [Obsolete]
         public GlobalCommand GetCommand<T>(string commandName)
         {
             var cmd = this.globalCommands.Single(c => c.Name == commandName);
             return cmd;
         }
-
+        [Obsolete]
         public GlobalCommand GetCommand(string commandName)
         {
             var cmd = this.globalCommands.Single(c => c.Name == commandName);

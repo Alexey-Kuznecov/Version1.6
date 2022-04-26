@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace UnityCommander.Common
+namespace UnityCommander.Integration.Commands
 {
     public class GlobalCommandAttribute : Attribute
     {

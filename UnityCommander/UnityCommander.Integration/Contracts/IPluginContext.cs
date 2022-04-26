@@ -30,6 +30,6 @@ namespace UnityCommander.Integration.Contracts
         /// </returns>
         IEnumerable<IOption> GetOptions();
 
-        public IEnumerable<CommandBase> GetCommands();
+        public IEnumerable<BaseCommand> GetCommands();
     }
 }

@@ -68,6 +68,6 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         ///  The interface option builders.
         /// </returns>
-        public IEnumerable<CommandBase> GetPluginCommands();
+        public IEnumerable<BaseCommand> GetPluginCommands();
     }
 }

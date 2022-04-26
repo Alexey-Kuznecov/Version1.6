@@ -5,18 +5,13 @@ namespace UnityCommander.Integration.Commands
 {
     public class CommandBuilder
     {
-        private readonly List<CommandBase> globalCommands;
-
-        public CommandBuilder()
-        {
-            this.globalCommands = new List<CommandBase>();
-        }
-
+        private readonly List<BaseCommand> globalCommands = new ();
+        
         public void Register<TOv, TOr>() where TOv : TOr, new()
         {
-            this.globalCommands.Add(new TOv() as CommandBase);
+            globalCommands.Add(new TOv() as BaseCommand);
         }
 
-        public IEnumerable<CommandBase> GetCommands() => globalCommands;
+        public IEnumerable<BaseCommand> GetCommands() => globalCommands;
     }
 }

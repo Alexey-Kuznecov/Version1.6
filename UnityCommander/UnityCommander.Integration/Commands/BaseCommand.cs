@@ -4,8 +4,10 @@ using System.Text;
 
 namespace UnityCommander.Integration.Commands
 {
-    public class CommandBase
+    public class BaseCommand
     {
-        public string Provider { get; set; }
+        internal Type Source { get; set; }
+        
+        internal object Priority { get; set; }
     }
 }

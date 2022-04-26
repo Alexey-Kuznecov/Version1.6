@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Common
 {
     using System.Windows.Input;
@@ -6,5 +8,7 @@ namespace UnityCommander.Common
     public interface IGlobalCommandManager
     {
         ICommand GetCommand(string commandName);
+
+        void CreateCommand(BaseCommand command, string commandName);
     }
 }

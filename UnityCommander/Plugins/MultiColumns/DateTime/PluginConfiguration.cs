@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace MultiColumns.DateTime
 {
     using System;
@@ -12,7 +14,7 @@ namespace MultiColumns.DateTime
     /// <summary>
     /// The plugin configuration.
     /// </summary>
-    public class PluginConfiguration : IPluginFactory
+    public class PluginConfiguration : IPluginFactory, ICommandFactory
     {
         /// <summary>
         /// The category column.
@@ -57,6 +59,11 @@ namespace MultiColumns.DateTime
         private DateTimeColumn DateTimeFactory(IServiceProvider service)
         {
             return this.dateTimeColumn;
+        }
+
+        public void CommandFactory(CommandBuilder command)
+        {
+            command.Register<IoOverrideCommand, IOCommands>();
         }
     }
 }

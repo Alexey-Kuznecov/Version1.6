@@ -1,4 +1,9 @@
 ﻿
+using System;
+using System.Windows.Navigation;
+using DryIoc;
+using Microsoft.Extensions.DependencyInjection;
+using Prism.DryIoc;
 using UnityCommander.Modules.TabPanel.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 
@@ -61,11 +66,9 @@ namespace UnityCommander
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
             containerRegistry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
             containerRegistry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig");
-            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
-            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
@@ -73,8 +76,38 @@ namespace UnityCommander
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
+        }
 
-            // containerRegistry.RegisterForNavigation<ViewA>("ViewA");
+        protected override Rules CreateContainerRules()
+        {
+            ContainerLocator.Container.Resolve(typeof(PluginLoaderService));
+
+            return base.CreateContainerRules();
+        }
+
+        //private IContainerExtension CreateContainerExtension() => new DryIocContainerExtension();
+
+        //public override IServiceProvider CreateServiceProvider(IServiceCollection services)
+        //{
+        //    ContainerLocator.SetContainerExtension(CreateContainerExtension);
+        //    var container = ContainerLocator.Container;
+        //    container.RegisterServices(services);
+        //    RegisterTypes(container);
+        //    return container.GetContainer();
+        //}
+
+
+        protected override void OnLoadCompleted(NavigationEventArgs e)
+        {
+            base.OnLoadCompleted(e);
+        }
+
+        protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
+            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
+
+            base.RegisterRequiredTypes(containerRegistry);
         }
 
         /// <summary>

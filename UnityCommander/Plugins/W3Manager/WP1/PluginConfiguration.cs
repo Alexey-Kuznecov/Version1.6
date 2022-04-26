@@ -20,9 +20,9 @@ namespace W3Manager.WP1
 
         public void CommandFactory(CommandBuilder command)
         {
-            command.Register<IOOverrideCommand, IOCommands>();
-            command.Register<IOOverrideCommand, IOCommands>();
-            command.Register<IOOverrideCommand, IOCommands>();
+            command.Register<IoOverrideCommand, IOCommands>();
+            command.Register<IoOverrideCommand, IOCommands>();
+            command.Register<IoOverrideCommand, IOCommands>();
         }
 
         /// <summary>

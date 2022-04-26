@@ -4,10 +4,10 @@ using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Core.IO.Operations
 {
-    public class FileManager : CommandBase
+    public class FileManager : IOCommands
     {
         [GlobalCommand("FileSelMove")]
-        public void Move(string source, string target)
+        public override void Move(string source, string target)
         {
             return;
     

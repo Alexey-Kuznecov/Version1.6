@@ -27,7 +27,7 @@ namespace UnityCommander.Services.Plugins
         /// <summary>
         /// Gets or sets the option.
         /// </summary>
-        public IReadOnlyList<CommandBase> Commands { get; set; } = new List<CommandBase>();
+        public static List<BaseCommand> Commands { get; set; } = new ();
 
         /// <summary>
         /// The get columns.
@@ -63,9 +63,9 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         ///  The option builders.
         /// </returns>
-        public IEnumerable<CommandBase> GetCommands()
+        public IEnumerable<BaseCommand> GetCommands()
         {
-            foreach (var command in this.Commands)
+            foreach (var command in Commands)
             {
                 yield return command;
             }
@@ -115,9 +115,12 @@ namespace UnityCommander.Services.Plugins
         /// <param name="commands">
         /// The builder.
         /// </param>
-        public void AddCommand(List<CommandBase> commands)
+        public void AddCommand(List<BaseCommand> commands)
         {
-            Commands = commands;
+            foreach (var command in commands)
+            {
+                Commands.Add(command);
+            }
         }
     }
 }

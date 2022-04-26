@@ -55,7 +55,7 @@ namespace UnityCommander.Services.Plugins
         /// <summary>
         /// The option builders
         /// </summary>
-        private IEnumerable<CommandBase> commandsBuilder = new List<CommandBase>();
+        private IEnumerable<BaseCommand> commandsBuilder = new List<BaseCommand>();
 
         #endregion
 
@@ -123,7 +123,7 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         ///  The interface option builders.
         /// </returns>
-        public IEnumerable<CommandBase> GetPluginCommands() => this.commandsBuilder;
+        public IEnumerable<BaseCommand> GetPluginCommands() => this.commandsBuilder;
 
         #endregion
 

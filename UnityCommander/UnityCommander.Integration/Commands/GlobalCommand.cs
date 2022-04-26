@@ -15,6 +15,8 @@ namespace UnityCommander.Integration.Commands
 
         public Delegate Delegate { get; set; }
 
+        public BaseCommand BaseCommand { get; set; }
+
         public GlobalCommand(string name, ICommand command, InputGesture gesture, Delegate @delegate, Type source)
         {
             this.Command = command;

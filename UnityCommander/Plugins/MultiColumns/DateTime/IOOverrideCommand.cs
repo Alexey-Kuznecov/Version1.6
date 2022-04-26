@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityCommander.Integration.Commands;
+﻿using UnityCommander.Integration.Commands;
 
-namespace W3Manager.WP1
+namespace MultiColumns.DateTime
 {
     // ReSharper disable once InconsistentNaming
     public class IoOverrideCommand : IOCommands
