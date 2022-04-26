@@ -174,7 +174,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IDataProviderService dataService,
             IMultiCommandService multiCommandService,
             IPluginLoaderService pluginService,
-            Func<IGlobalCommandService> globalCommandService,
+            IGlobalCommandService globalCommandService,
             CommandManager manager,
             ModuleLogger logger)
             : base(regionManager)
@@ -185,11 +185,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
-            
-            this.globalCommandService = globalCommandService.Invoke();
-
-            //var fileManger = this.globalCommandService.GetCommandManager<IOCommands>();
-            //this.TestCommand = fileManger.GetCommand("FileCopy");
+            this.globalCommandService = globalCommandService;
+            var fileManger = this.globalCommandService.GetCommandManager<IOCommands>();
+            this.TestCommand = fileManger.GetCommand("FileCopy2");
 
             // Composite command
             this.multiCommandService = multiCommandService;

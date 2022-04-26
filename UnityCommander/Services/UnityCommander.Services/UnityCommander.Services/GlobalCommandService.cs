@@ -17,12 +17,15 @@ namespace UnityCommander.Services
         
         private readonly object globalCommandProvider;
         
+        private readonly PluginLoaderService pluginService;
+
         private IGlobalCommandManager globalCommandManager;
 
         private List<GlobalCommand> globalCommands;
 
-        public GlobalCommandService()
+        public GlobalCommandService(PluginLoaderService loaderService)
         {
+            this.pluginService = loaderService;
             this.assembly = Assembly.Load("UnityCommander.Core");
             this.globalCommandProvider = assembly.CreateInstance("UnityCommander.Core.GlobalCommandProvider");
             this.globalCommands = new List<GlobalCommand>();
@@ -33,7 +36,7 @@ namespace UnityCommander.Services
         {
             if (this.globalCommandProvider is IGlobalCommandProvider commandProvider)
             {
-                var pluginContexts = PluginLoaderService.GetPluginContexts();
+                var pluginContexts = pluginService.GetPluginContext();
 
                 var manager = commandProvider.GetCommandManager<T>();
 

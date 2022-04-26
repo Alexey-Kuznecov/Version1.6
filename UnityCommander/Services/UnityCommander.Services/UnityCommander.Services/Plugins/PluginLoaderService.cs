@@ -28,8 +28,6 @@ namespace UnityCommander.Services.Plugins
         /// The plugin load contexts.
         /// </summary>
         private readonly List<IPluginContext> pluginContexts = new ();
-        
-        private static readonly List<IPluginContext> StaticPluginContexts = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
@@ -101,9 +99,6 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IPluginContext> GetPluginContext() => this.pluginContexts;
 
-
-        public static IEnumerable<IPluginContext> GetPluginContexts() => StaticPluginContexts;
-
         /// <summary>
         /// The create plugin context.
         /// </summary>
@@ -130,7 +125,6 @@ namespace UnityCommander.Services.Plugins
                 pluginContext.AddCommand(commands);
 
                 this.pluginContexts.Add(pluginContext);
-                StaticPluginContexts.Add(pluginContext);
             }
         }
 

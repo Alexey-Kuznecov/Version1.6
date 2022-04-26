@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Windows.Navigation;
 using DryIoc;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,52 +64,74 @@ namespace UnityCommander
         /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            var pluginLoaderService = new PluginLoaderService();
+            var globalCommandService = new GlobalCommandService(pluginLoaderService);
+
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
             containerRegistry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
             containerRegistry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig");
+            containerRegistry.RegisterInstance(typeof(IPluginLoaderService), pluginLoaderService);
+            containerRegistry.RegisterInstance(typeof(IGlobalCommandService), globalCommandService);
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
-
+            
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
+
+            //Container.UseInstance(typeof(IPluginLoaderService),
+            //    new PluginLoaderService(),
+            //    IfAlreadyRegistered.Replace, false, true, 1);
         }
 
         protected override Rules CreateContainerRules()
         {
-            ContainerLocator.Container.Resolve(typeof(PluginLoaderService));
-
-            return base.CreateContainerRules();
+            return Rules.Default
+                .WithAutoConcreteTypeResolution(Condition)
+                .With(Made.Of(FactoryMethod.ConstructorWithResolvableArguments))
+                .WithoutThrowOnRegisteringDisposableTransient()
+                .WithFuncAndLazyWithoutRegistration()
+                .WithDefaultIfAlreadyRegistered(IfAlreadyRegistered.Replace);
         }
 
-        //private IContainerExtension CreateContainerExtension() => new DryIocContainerExtension();
+        private bool Condition(Request arg)
+        {
+            return true;
+        }
 
-        //public override IServiceProvider CreateServiceProvider(IServiceCollection services)
+        #region Research
+
+        //private bool Condition(Request arg)
         //{
-        //    ContainerLocator.SetContainerExtension(CreateContainerExtension);
-        //    var container = ContainerLocator.Container;
-        //    container.RegisterServices(services);
-        //    RegisterTypes(container);
-        //    return container.GetContainer();
+        //    arg.Container.Use(typeof(IPluginLoaderService), Instance);
+        //    return true;
         //}
 
+        //private object Instance(IResolverContext r)
+        //{
+        //    return null;
+        //}
 
-        protected override void OnLoadCompleted(NavigationEventArgs e)
-        {
-            base.OnLoadCompleted(e);
-        }
+        //private Factory Rule(Request request, KeyValuePair<object, Factory>[] factories)
+        //{
+        //    var f = default(Factory);
 
-        protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
-        {
-            containerRegistry.RegisterSingleton<IPluginLoaderService, PluginLoaderService>();
-            containerRegistry.RegisterSingleton<IGlobalCommandService, GlobalCommandService>();
+        //    foreach (var factory in factories)
+        //    {
+        //        var ddd = factory.Value.GetDelegateOrDefault(request);
+        //        var dd2d = factory.Value.GetExpressionOrDefault(request);
+        //        request.WithResolvedFactory(factory.Value);
+        //        var dd = Factory.GetNextID();
+        //    }
 
-            base.RegisterRequiredTypes(containerRegistry);
-        }
+        //    return null;
+        //}
+
+        #endregion
 
         /// <summary>
         /// The configure view model locator.

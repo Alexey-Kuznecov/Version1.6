@@ -27,7 +27,7 @@ namespace UnityCommander.Services.Plugins
         /// <summary>
         /// Gets or sets the option.
         /// </summary>
-        public static List<BaseCommand> Commands { get; set; } = new ();
+        public List<BaseCommand> Commands { get; set; } = new ();
 
         /// <summary>
         /// The get columns.

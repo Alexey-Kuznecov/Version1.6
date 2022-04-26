@@ -8,7 +8,7 @@ namespace W3Manager.WP1
     // ReSharper disable once InconsistentNaming
     public class IoOverrideCommand : IOCommands
     {
-        [GlobalCommand("FileCopy")]
+        [GlobalCommand("FileCopy2")]
         public override void FileCopy(string source, string destination)
         {
             base.FileCopy(source, destination);
