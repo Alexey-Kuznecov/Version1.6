@@ -4,20 +4,26 @@ namespace W3Manager.WP1
     using System;
 
     using Microsoft.Extensions.DependencyInjection;
-
-    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The plugin configuration.
     /// </summary>
-    public class PluginConfiguration : IPluginFactory
+    public class PluginConfiguration : IPluginFactory, ICommandFactory
     {
         /// <summary>
         /// The category column.
         /// </summary>
         private DateTimeColumn dateTimeColumn;
+
+        public void CommandFactory(CommandBuilder command)
+        {
+            command.Register<IOOverrideCommand, IOCommands>();
+            command.Register<IOOverrideCommand, IOCommands>();
+            command.Register<IOOverrideCommand, IOCommands>();
+        }
 
         /// <summary>
         /// The configure.

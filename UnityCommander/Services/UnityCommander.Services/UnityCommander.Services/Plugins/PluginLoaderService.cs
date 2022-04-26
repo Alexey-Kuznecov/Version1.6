@@ -28,6 +28,8 @@ namespace UnityCommander.Services.Plugins
         /// The plugin load contexts.
         /// </summary>
         private readonly List<IPluginContext> pluginContexts = new ();
+        
+        private static readonly List<IPluginContext> StaticPluginContexts = new ();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginLoaderService"/> class.
@@ -92,20 +94,15 @@ namespace UnityCommander.Services.Plugins
         #endregion
 
         /// <summary>
-        /// The get plugin loaders.
-        /// </summary>
-        /// <returns>
-        /// The interface plugin loaders
-        /// </returns>
-        public List<IPluginLoader> GetPluginLoaders() => (List<IPluginLoader>)PluginLoaders;
-
-        /// <summary>
         /// The get plugin context.
         /// </summary>
         /// <returns>
         /// List of interfaces <see cref="IPluginContext"/>.
         /// </returns>
         public IEnumerable<IPluginContext> GetPluginContext() => this.pluginContexts;
+
+
+        public static IEnumerable<IPluginContext> GetPluginContexts() => StaticPluginContexts;
 
         /// <summary>
         /// The create plugin context.
@@ -118,6 +115,7 @@ namespace UnityCommander.Services.Plugins
 
                 var columnBuilders = loader.GetColumnBuilders().ToList();
                 var optionBuilders = loader.GetOptionBuilders().ToList();
+                var commands = loader.GetPluginCommands().ToList();
 
                 foreach (var columnBuilder in columnBuilders)
                 {
@@ -129,7 +127,10 @@ namespace UnityCommander.Services.Plugins
                     pluginContext.AddOption(optionBuilder);
                 }
 
+                pluginContext.AddCommand(commands);
+
                 this.pluginContexts.Add(pluginContext);
+                StaticPluginContexts.Add(pluginContext);
             }
         }
 

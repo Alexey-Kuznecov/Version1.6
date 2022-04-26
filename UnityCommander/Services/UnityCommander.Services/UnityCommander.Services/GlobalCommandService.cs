@@ -1,25 +1,18 @@
-﻿using AlexeyKuznecov.Library.Mvvm.Base;
-using Prism.Commands;
-using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using UnityCommander.Common;
-using UnityCommander.Common.Models;
+using UnityCommander.Integration.Commands;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Plugins;
 
 namespace UnityCommander.Services
 {
     public class GlobalCommandService : IGlobalCommandService
     {
         private readonly Assembly assembly;
-        
         
         private readonly object globalCommandProvider;
 
@@ -36,6 +29,7 @@ namespace UnityCommander.Services
         {
             if (this.globalCommandProvider is IGlobalCommandProvider commandProvider)
             {
+                var pluginContexts = PluginLoaderService.GetPluginContexts();
                 return commandProvider.GetCommandManager<T>();
             }
 
