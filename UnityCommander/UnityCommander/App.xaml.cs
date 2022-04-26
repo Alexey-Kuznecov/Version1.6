@@ -11,18 +11,18 @@ namespace UnityCommander
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
-    using UnityCommander.Core;
-    using UnityCommander.Core.Commands;
-    using UnityCommander.Modules.LeftSideBars;
-    using UnityCommander.Modules.TabPanel;
-    using UnityCommander.Modules.TabPanel.Views;
-    using UnityCommander.Modules.ToolBar;
-    using UnityCommander.Services;
-    using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
-    using UnityCommander.ViewModels;
-    using UnityCommander.Views;
-    using UnityCommander.Views.CopyDialogs;
+    using Core;
+    using Core.Commands;
+    using Modules.LeftSideBars;
+    using Modules.TabPanel;
+    using Modules.TabPanel.Views;
+    using Modules.ToolBar;
+    using Services;
+    using Services.Interfaces;
+    using Services.Plugins;
+    using ViewModels;
+    using Views;
+    using Views.CopyDialogs;
 
     /// <summary>
     /// The application.

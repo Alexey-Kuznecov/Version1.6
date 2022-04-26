@@ -22,18 +22,19 @@ using Prism.Commands;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using UnityCommander.Common;
-using UnityCommander.Common.Models.Columns;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
-using UnityCommander.Core.IO.Operations;
 using UnityCommander.Core.Modules;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Integration.Columns;
+using UnityCommander.Integration.Commands;
+using UnityCommander.Integration.Contracts;
 using UnityCommander.Integration.Enums;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Modules.FilePanel.Columns;
 using CommandManager = UnityCommander.Core.Commands.CommandManager;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
@@ -187,7 +188,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             this.globalCommandService = globalCommandService;
 
-            var fileManger = this.globalCommandService.GetCommandManager<FileManager>();
+            var fileManger = this.globalCommandService.GetCommandManager<CommandBase>();
             this.TestCommand = fileManger.GetCommand(CommandNames.FileMove);
             
             // Composite command
@@ -537,6 +538,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             AddFolderColumns();
             AddDriveColumns();
             AddPluginColumns();
+            ContextMenuBuild();
         }
 
         /// <summary>
@@ -550,7 +552,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     foreach (var column in items)
                     {
                         FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                        ContextMenuBuild(column);
+                        
                     }
                 });
         }
@@ -656,11 +658,31 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// ContextMenuBuild
         /// </summary>
-        private void ContextMenuBuild(IColumn column)
+        private void ContextMenuBuild()
         {
-            if (column.ContextItems == null) return;
-
-            foreach (var item in column.ContextItems)
+            List<ContextItem> contextMenu = new List<ContextItem>
+            {
+                new ()
+                {
+                    Name = "Open",
+                    Command = null,
+                    CommandName = CommandNames.FileMove
+                },
+                new ()
+                {
+                    Name = "Create",
+                    Command = null,
+                    CommandName = CommandNames.FileDel
+                },
+                new ()
+                {
+                    Name = "Delete",
+                    Command = null,
+                    CommandName = CommandNames.FileDel
+                },
+            };
+            
+            foreach (var item in contextMenu)
             {
                 ContextMenu.Items.Add(new MenuItem().SetParam(item.Name, item.CommandName, 
                     paramManager =>

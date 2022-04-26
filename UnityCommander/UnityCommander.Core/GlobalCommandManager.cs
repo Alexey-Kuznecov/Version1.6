@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Input;
 using UnityCommander.Common;
 using UnityCommander.Common.Models;
+using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
 
 namespace UnityCommander.Core

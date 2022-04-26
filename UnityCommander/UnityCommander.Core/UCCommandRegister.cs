@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.Core
 {
     using System;

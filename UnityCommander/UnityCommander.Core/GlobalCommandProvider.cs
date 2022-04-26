@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
+using Prism.Mvvm;
 using UnityCommander.Common;
-using UnityCommander.Common.Models;
 using UnityCommander.Core.Generators;
 using UnityCommander.Core.IO.Operations;
+using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Core
 {
@@ -22,7 +23,7 @@ namespace UnityCommander.Core
         }
 
         public FileManager File { get; set; }
-        
+
         public IGlobalCommandManager GetCommandManager<T>()
         {
             if (File is T file)
@@ -67,9 +68,5 @@ namespace UnityCommander.Core
 
         internal static GlobalCommand FindCommand(string commandName) 
             => GlobalCommands.Single(c => c.Name == commandName);
-
-        internal static Type FindSourceCommand(string commandName)
-            => GlobalCommands.Where(c => c.Name == commandName).Select(globalCommand => globalCommand.Source).FirstOrDefault();
-        
     }
 }

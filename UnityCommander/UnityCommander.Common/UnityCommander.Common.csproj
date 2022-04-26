@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Columns\**" />
+    <EmbeddedResource Remove="Models\Columns\**" />
+    <None Remove="Models\Columns\**" />
+    <Page Remove="Models\Columns\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="ExtensionMethod.cs" />
     <Compile Remove="HelperMethods.cs" />
     <Compile Remove="Models\DirectoryPathModel.cs" />

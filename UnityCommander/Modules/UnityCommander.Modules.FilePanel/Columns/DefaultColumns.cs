@@ -71,7 +71,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnNameDataTemplate")
                     }
                 },
-                 new CommonColumn
+                new CommonColumn
                 {
                     Header = "CreationTime",
                     Template = new GridViewColumn
