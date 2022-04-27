@@ -43,7 +43,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// The left panel view model.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
+    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, ITabPanelContent
     {
         #region Declaration fields
 
@@ -189,8 +189,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
-            var fileManger = this.globalCommandService.GetCommandManager<IOCommands>();
-            this.TestCommand = fileManger.GetCommand("FileMove").Command;
+            this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("FileMove").Command;
 
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -379,9 +378,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The path.
         /// </param>
         /// <returns>
-        /// The <see cref="IDirectoryPanel"/>.
+        /// The <see cref="ITabPanelContent"/>.
         /// </returns>
-        public IDirectoryPanel InitializedViewModel(Guid token, string path)
+        public ITabPanelContent InitializedViewModel(Guid token, string path)
         {
 #if (Nlog)
             logger.Info("Token: {0} Path: {1}", token, path);

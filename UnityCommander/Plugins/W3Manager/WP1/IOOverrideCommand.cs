@@ -9,6 +9,12 @@ namespace W3Manager.WP1
     // ReSharper disable once InconsistentNaming
     public class IoOverrideCommand : IOCommands
     {
+        [GlobalCommand("Test1", CommandKeys.CtrlZ)]
+        public override void Test(string source, string destination, bool IsShadowCopy, BaseCommand baseCommand)
+        {
+            base.Test(source, destination, IsShadowCopy, baseCommand);
+        }
+
         [GlobalCommand("FileCopy2", CommandKeys.CtrlB)]
         public override void FileCopy(string source, string destination)
         {

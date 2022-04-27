@@ -29,27 +29,16 @@ namespace UnityCommander.Integration.Commands
             ConstructorInfo magicConstructor = type.GetConstructor(Type.EmptyTypes);
             object magicClassObject = magicConstructor?.Invoke(new object[] { });
 
-            if (parameter == null)
+            if (parameter != null)
             {
-                object[] parameterInfos = command.Method.GetParameters();
-                var parameters = new object[] { };
-
-                foreach (var parameterInfo in parameterInfos.ToArray())
-                {
-                    parameters = parameterInfos;
-                }
-
-                //command.Method.Invoke(magicClassObject, parameters);
+                command.Method.Invoke(magicClassObject, parameter as object[]);
+                return;
             }
-            else
-            {
-                //command.Method.Invoke(magicClassObject, parameter as object[]);
-            }
-        }
 
-        public Delegate GetCommand()
-        {
-            return command;
+            ParameterInfo[] parameterInfos = command.Method.GetParameters();
+            object[] parameters = new object[parameterInfos.Length]; 
+            parameters[0] = parameterInfos[0].ParameterType.TypeInitializer;
+            command.Method.Invoke(magicClassObject, parameters);
         }
     }
 }
