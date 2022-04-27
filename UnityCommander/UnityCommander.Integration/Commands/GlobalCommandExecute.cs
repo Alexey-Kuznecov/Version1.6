@@ -8,12 +8,19 @@ namespace UnityCommander.Integration.Commands
     public class GlobalCommandExecute : ICommand
     {
         private readonly Delegate command;
-        private readonly Type commandSource;
+        private readonly Type DeclaringType;
+        private readonly object ViewModelInstance;
 
-        public GlobalCommandExecute(Delegate cmd, Type source)
+        public GlobalCommandExecute(Delegate cmd, Type declaringType)
         {
             this.command = cmd;
-            this.commandSource = source;
+            this.DeclaringType = declaringType;
+        }
+
+        public GlobalCommandExecute(Delegate cmd, object viewModelInsatance)
+        {
+            this.command = cmd;
+            this.ViewModelInstance = viewModelInsatance;
         }
 
         public event EventHandler CanExecuteChanged;
@@ -25,20 +32,40 @@ namespace UnityCommander.Integration.Commands
 
         public void Execute(object parameter)
         {
-            Type type = commandSource;
-            ConstructorInfo magicConstructor = type.GetConstructor(Type.EmptyTypes);
-            object magicClassObject = magicConstructor?.Invoke(new object[] { });
+            Type type = this.DeclaringType;
+            object[] parameters = GetDefaultParameterValues();
 
-            if (parameter != null)
+            if (type == null)
             {
-                command.Method.Invoke(magicClassObject, parameter as object[]);
+                command.Method.Invoke(this.ViewModelInstance, parameters);
                 return;
             }
 
+            ConstructorInfo contructor = type.GetConstructor(Type.EmptyTypes);
+            object instance = contructor?.Invoke(new object[] { });
+
+            if (parameter != null)
+            {
+                command.Method.Invoke(instance, parameter as object[]);
+                return;
+            }
+
+            command.Method.Invoke(instance, parameters);
+        }
+
+        /// <summary>
+        /// Используется как временная затычка, чтобы небыло ошибки. 
+        /// Нужно подумать как можно передавать реальные данные в методы
+        /// которые не используют <see cref="MultiCommandParameter"/>. 
+        /// </summary>
+        /// <returns></returns>
+        public object[] GetDefaultParameterValues()
+        {
             ParameterInfo[] parameterInfos = command.Method.GetParameters();
-            object[] parameters = new object[parameterInfos.Length]; 
+            object[] parameters = new object[parameterInfos.Length];
             parameters[0] = parameterInfos[0].ParameterType.TypeInitializer;
-            command.Method.Invoke(magicClassObject, parameters);
+
+            return parameters;
         }
     }
 }

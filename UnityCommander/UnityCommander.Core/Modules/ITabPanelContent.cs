@@ -6,7 +6,7 @@ namespace UnityCommander.Core.Modules
     /// <summary>
     /// The DirectoryPanel interface.
     /// </summary>
-    public interface IDirectoryPanel
+    public interface ITabPanelContent
     {
         /// <summary>
         /// Gets or sets the token.
@@ -23,9 +23,9 @@ namespace UnityCommander.Core.Modules
         /// The path.
         /// </param>
         /// <returns>
-        /// The <see cref="IDirectoryPanel"/>.
+        /// The <see cref="ITabPanelContent"/>.
         /// </returns>
-        public IDirectoryPanel InitializedViewModel(Guid token, string path);
+        public ITabPanelContent InitializedViewModel(Guid token, string path);
         
         /// <summary>
         /// Gets or sets the initial command.

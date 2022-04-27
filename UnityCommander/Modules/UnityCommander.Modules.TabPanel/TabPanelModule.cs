@@ -51,9 +51,9 @@ namespace UnityCommander.Modules.TabPanel
             {
                 if (view is FrameworkElement vm)
                 {
-                    if (vm.DataContext is IPanelContainer container)
+                    if (vm.DataContext is ITabPanel container)
                     {
-                        container.InitialDirectoryPanel(region.Name);
+                        container.InitialTabPanelContent(region.Name);
                     }
                 }
             }

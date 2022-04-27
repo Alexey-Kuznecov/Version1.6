@@ -5,6 +5,6 @@ namespace UnityCommander.Services.Interfaces
 
     public interface IGlobalCommandService
     {
-        IGlobalCommandManager GetCommandManager<T>();
+        IGlobalCommandManager GetCommandManager();
     }
 }

@@ -21,10 +21,14 @@ namespace UnityCommander.Core
         /// </summary>
         public const string ToolBarRegion = nameof(ToolBarRegion);
 
-
         /// <summary>
         /// The left side bar region.
         /// </summary>
         public const string TabPanelRegion = nameof(TabPanelRegion);
+
+        /// <summary>
+        /// The left side bar region.
+        /// </summary>
+        public const string ViewerRegion = nameof(ViewerRegion);
     }
 }

@@ -18,9 +18,9 @@ namespace UnityCommander.Modules.Viewer.Views
     /// <summary>
     /// Interaction logic for ViewA.xaml
     /// </summary>
-    public partial class ViewA : UserControl
+    public partial class ViewerView : UserControl
     {
-        public ViewA()
+        public ViewerView()
         {
             InitializeComponent();
         }

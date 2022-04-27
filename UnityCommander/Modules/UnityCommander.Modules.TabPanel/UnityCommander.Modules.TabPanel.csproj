@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
+    <ProjectReference Include="..\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\RightPanelContentView.xaml.cs">

@@ -136,7 +136,7 @@ namespace UnityCommander.ViewModels
             IGlobalCommandService globalCommand)
         {
             this.StateCommand = command;
-            this.globalCommandManager = globalCommand.GetCommandManager<BaseCommand>();
+            this.globalCommandManager = globalCommand.GetCommandManager();
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
 
             exchange.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);

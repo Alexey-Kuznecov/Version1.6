@@ -29,6 +29,9 @@ namespace UnityCommander
     using ViewModels;
     using Views;
     using Views.CopyDialogs;
+    using UnityCommander.Modules.Viewer;
+    using UnityCommander.Modules.Viewer.ViewModels;
+    using UnityCommander.Modules.Viewer.Views;
 
     /// <summary>
     /// The application.
@@ -142,6 +145,7 @@ namespace UnityCommander
             
             ViewModelLocationProvider.Register(typeof(LeftPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
             ViewModelLocationProvider.Register(typeof(RightPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
+            ViewModelLocationProvider.Register(typeof(ViewerView).ToString(), () => Container.Resolve<ViewerViewModel>());
         }
 
         /// <summary>
@@ -152,9 +156,10 @@ namespace UnityCommander
         /// </param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
+            moduleCatalog.AddModule<TabPanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
-            moduleCatalog.AddModule<TabPanelModule>();
+            moduleCatalog.AddModule<ViewerModule>();
         }
     }
 }

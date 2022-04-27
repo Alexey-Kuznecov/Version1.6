@@ -13,14 +13,17 @@ using UnityCommander.Controls.Taber;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.Commands.Base;
 using UnityCommander.Core.Modules;
+using UnityCommander.Integration.Commands;
 using UnityCommander.Modules.FilePanel.Views;
+using UnityCommander.Modules.Viewer.ViewModels;
+using UnityCommander.Modules.Viewer.Views;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Database.Queries.Xml;
 using TabControl = UnityCommander.Controls.Taber.TabControl;
 
 namespace UnityCommander.Modules.TabPanel.ViewModels
 {
-    public class TabPanelViewModel : BindableBase, IPanelContainer
+    public class TabPanelViewModel : BindableBase, ITabPanel
     {
         #region Private Fields
 
@@ -104,13 +107,20 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <param name="manager">
         /// The commandManager.
         /// </param>
+        /// <remarks>
+        /// TODO: Optimization task, the constructor of this class is called 3 times, although it must be called 2 times. Since the module has only 2 panels.  
+        /// </remarks>
         public TabPanelViewModel(
             IRegionManager regionManager,
             IIconProviderService iconProvider,
             IMultiCommandService commandService,
             IAppConfigService configService,
+            IGlobalCommandService globalCommandService,
             CommandManager manager)
         {
+            var fileManger = globalCommandService.GetCommandManager();
+            fileManger.CreateCommand("DisplayContent", this, DisplayContent);
+
             this.regionManager = regionManager;
             this.commandManager = manager;
             this.appConfigService = configService;
@@ -193,7 +203,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 {
                     if (view is FrameworkElement element)
                     {
-                        var directoryPanel = (IDirectoryPanel)element.DataContext;
+                        var directoryPanel = (ITabPanelContent)element.DataContext;
 
                         tabsResult.Add(
                             elementRecord =>
@@ -208,7 +218,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
                 appConfig.Save();
             });
-
 
         /// <summary>
         ///  Goes back to the previous directory.
@@ -314,13 +323,28 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
         #endregion
 
+        public void DisplayContent(object vm)
+        {
+            var token = Guid.NewGuid();
+            var directoryPanel = new ViewerView();
+
+            this.currentTab = this.CreateTabControl(token, null, directoryPanel);
+            this.TabCollection.Add(this.currentTab);
+
+            this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, null);
+            this.regionManager.AddToRegion(this.GetCurrentRegion().Name, directoryPanel);
+            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
+            this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
+            this.ActivateFilePanel(token);
+        }
+
         /// <summary>
         /// The initial panel.
         /// </summary>
         /// <param name="name">
         /// The name.
         /// </param>
-        public void InitialDirectoryPanel(string name)
+        public void InitialTabPanelContent(string name)
         {
             this.currentRegionName = name;
             var collection = new TabCollection();
@@ -335,7 +359,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 var view = new SplitPanelView();
                 var token = config.Token;
 
-                if (view.DataContext is IDirectoryPanel directoryPanel)
+                if (view.DataContext is ITabPanelContent directoryPanel)
                 {
                     directoryPanel.InitializedViewModel(token, config.Path);
                     this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
@@ -377,7 +401,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         {
             TabControl button = new TabControl
             {
-                Content = this.TabContentFormat(content),
+                Content = content != null ? this.TabContentFormat(content) : "Viewer",
                 Margin = new Thickness(0, 0, 1, 0),
                 Background = new SolidColorBrush(Color.FromRgb(224, 229, 241)),
                 Foreground = new SolidColorBrush(Color.FromRgb(47, 78, 79)),
@@ -532,7 +556,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <returns>
         /// The <see cref="Guid"/>.
         /// </returns>
-        private IDirectoryPanel FindDirectoryPanel(FrameworkElement element) =>
-            element.DataContext is IDirectoryPanel directoryPanel ? directoryPanel : null;
+        private ITabPanelContent FindDirectoryPanel(FrameworkElement element) =>
+            element.DataContext is ITabPanelContent directoryPanel ? directoryPanel : null;
     }
 }

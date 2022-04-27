@@ -4,7 +4,7 @@ namespace UnityCommander.Modules.TabPanel
     /// <summary>
     /// The PanelContainer interface.
     /// </summary>
-    public interface IPanelContainer
+    public interface ITabPanel
     {
         /// <summary>
         /// Initial directory panel.
@@ -12,6 +12,6 @@ namespace UnityCommander.Modules.TabPanel
         /// <param name="regionName">
         /// The region name.
         /// </param>
-        public void InitialDirectoryPanel(string regionName);
+        public void InitialTabPanelContent(string regionName);
     } 
 }

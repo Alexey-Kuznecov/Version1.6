@@ -14,7 +14,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-    
+    using UnityCommander.Common;
     using UnityCommander.Controls.Ribbon;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Core.Mvvm;
@@ -42,6 +42,8 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// The plugin loader service.
         /// </summary>
         private readonly IIconProviderService iconProvider;
+
+        private readonly IGlobalCommandManager globalCommandManager;
 
         #endregion
 
@@ -82,8 +84,13 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <param name="pluginLoaderService">
         /// The plugin Loader Service.
         /// </param>
-        public ToolBarViewModel(IDialogService dialogService, IIconProviderService iconProvider, IPluginLoaderService pluginLoaderService)
-        {
+        public ToolBarViewModel(
+            IDialogService dialogService,
+            IIconProviderService iconProvider,
+            IPluginLoaderService pluginLoaderService,
+            IGlobalCommandService globalCommandService)
+         {
+            this.globalCommandManager = globalCommandService.GetCommandManager();
             this.pluginLoader = pluginLoaderService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
@@ -178,7 +185,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 "File Operation",
                 builder =>
                     {
-                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
+                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent").Command);
                         builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
                         builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
                         builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);

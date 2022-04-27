@@ -23,6 +23,31 @@ namespace UnityCommander.Core
             this.SetCommand(command);
         }
 
+        public void CreateCommand(string commandName, object instance, Action<object> action)
+        {
+            // TODO: Optimize this piece of code.
+            var c = globalCommands.SingleOrDefault(cmd => cmd.CommandName == commandName);
+
+            if (c != null) return;
+
+            var type = action.Method.DeclaringType;
+            var @delegate = Delegate.CreateDelegate(DelegateTypeFactory.Create(action.Method), instance, action.Method);
+            var command = new GlobalCommandExecute(action, instance);
+
+            var cmd = new GlobalCommand
+            {
+                CommandName = commandName,
+                CommandSource = CommandSource.Native,
+                Command = command,
+                CommandParameter = instance,
+                ShortcutKey = null,
+                Delegate = @delegate,
+                Source = type
+            };
+
+            globalCommands.Add(cmd);
+        }
+
         private void SetCommand(object instance)
         {
             Type type = instance.GetType();
