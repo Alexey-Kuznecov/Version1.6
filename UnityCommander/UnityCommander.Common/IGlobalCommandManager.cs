@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Common
@@ -8,6 +9,8 @@ namespace UnityCommander.Common
     public interface IGlobalCommandManager
     {
         GlobalCommand GetCommand(string commandName);
+
+        List<GlobalCommand> GetCommands();
 
         void CreateCommand(BaseCommand command);
     }

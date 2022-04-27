@@ -13,35 +13,33 @@ namespace UnityCommander.Core.Behaviors
         /// <summary>
         /// Gets or Sets whether the control can be used as drag source.
         /// </summary>
-        public static readonly DependencyProperty IsDragSourceProperty
-            = DependencyProperty.RegisterAttached("IsDragSource",
+        public static readonly DependencyProperty IsEnableProperty
+            = DependencyProperty.RegisterAttached("IsEnable",
                                                   typeof(bool),
                                                   typeof(KeyboardBinding),
-                                                  new UIPropertyMetadata(false, IsDragSourceChanged));
+                                                  new UIPropertyMetadata(IsEnableChanged));
 
         /// <summary>
         /// Gets whether the control can be used as drag source.
         /// </summary>
-        public static bool GetIsDragSource(UIElement target)
+        public static bool GetIsEnable(UIElement target)
         {
-            return (bool)target.GetValue(IsDragSourceProperty);
+            return (bool)target.GetValue(IsEnableProperty);
         }
 
         /// <summary>
         /// Sets whether the control can be used as drag source.
         /// </summary>
-        public static void SetIsDragSource(UIElement target, bool value)
+        public static void SetIsEnable(UIElement target, bool value)
         {
-            target.SetValue(IsDragSourceProperty, value);
+            target.SetValue(IsEnableProperty, value);
         }
 
-        private static void IsDragSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void IsEnableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             Grid grid = d as Grid;
-            InputGesture inputGesture = new KeyGesture(Key.R, ModifierKeys.Control);
-            KeyBinding binding = new KeyBinding();
-            InputBinding input = new InputBinding(new DelegateCommand(Command1), inputGesture);
-            grid.InputBindings.Add(input);
+            var vm = grid?.DataContext as IKeyBinding;
+            vm?.SetBinding(d, new KeyboardManager());
         }
 
         #endregion
@@ -53,20 +51,20 @@ namespace UnityCommander.Core.Behaviors
             = DependencyProperty.RegisterAttached("Key",
                                                   typeof(GlobalCommand),
                                                   typeof(KeyboardBinding),
-                                                  new UIPropertyMetadata(false, KeyChanged));
+                                                  new UIPropertyMetadata(null, KeyChanged));
 
         /// <summary>
         /// Gets whether the control can be used as drag source.
         /// </summary>
-        public static bool GetKey(UIElement target)
+        public static GlobalCommand GetKey(UIElement target)
         {
-            return (bool)target.GetValue(KeyProperty);
+            return (GlobalCommand)target.GetValue(KeyProperty);
         }
 
         /// <summary>
         /// Sets whether the control can be used as drag source.
         /// </summary>
-        public static void SetKey(UIElement target, bool value)
+        public static void SetKey(UIElement target, GlobalCommand value)
         {
             target.SetValue(KeyProperty, value);
         }
@@ -77,7 +75,7 @@ namespace UnityCommander.Core.Behaviors
             InputGesture inputGesture = new KeyGesture(Key.R, ModifierKeys.Control);
             KeyBinding binding = new KeyBinding();
             InputBinding input = new InputBinding(new DelegateCommand(Command1), inputGesture);
-            grid.InputBindings.Add(input);
+            grid?.InputBindings.Add(input);
         }
 
         public static void Command1()

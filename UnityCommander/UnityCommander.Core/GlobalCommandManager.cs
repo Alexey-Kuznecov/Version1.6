@@ -44,7 +44,7 @@ namespace UnityCommander.Core
                         CommandName = att.Name,
                         CommandSource = att.Source,
                         Command = command,
-                        ShortcutKey = new KeyGesture(Key.D, ModifierKeys.Control),
+                        ShortcutKey = att.Hotkey,
                         Delegate = action,
                         Source = type
                        
@@ -62,5 +62,7 @@ namespace UnityCommander.Core
             => this.globalCommands.SingleOrDefault(
                    cmd=> cmd.CommandSource == CommandSource.Plugin && cmd.CommandName == commandName) 
                         ?? this.globalCommands.Single(cmd => cmd.CommandName == commandName);
+
+        public List<GlobalCommand> GetCommands() => this.globalCommands;
     }
 }

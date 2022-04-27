@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -326,6 +327,11 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
             foreach (var config in this.appConfigService.GetSession().GetTabConfigs(this.currentRegionName))
             {
+                if (!Directory.Exists(config.Path))
+                {
+                    config.Path = "C:\\";
+                }
+
                 var view = new SplitPanelView();
                 var token = config.Token;
 

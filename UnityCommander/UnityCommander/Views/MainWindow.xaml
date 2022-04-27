@@ -19,22 +19,29 @@
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
-    Background="{DynamicResource MaterialDesignPaper}"
-    FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="{Binding Icon}"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     WindowStyle="None"
     mc:Ignorable="d">
 
+    <Window.FontFamily>
+        <DynamicResource ResourceKey="MaterialDesignFont" />
+    </Window.FontFamily>
+    <Window.Background>
+        <DynamicResource ResourceKey="MaterialDesignPaper" />
+    </Window.Background>
     <Window.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+        <Style TargetType="MenuItem">
+            <Style.BasedOn>
+                <StaticResource ResourceKey="MaterialDesignMenuItem" />
+            </Style.BasedOn>
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Height" Value="50" />
         </Style>
     </Window.Resources>
 
-    <Grid inputBinding:KeyboardBinding.IsDragSource="True">
+    <Grid inputBinding:KeyboardBinding.IsEnable="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" MinWidth="60" />
             <ColumnDefinition Width="Auto" MaxWidth="250" />
@@ -72,9 +79,12 @@
                 Grid.Row="1"
                 Width="50"
                 Height="25"
-                Command="{Binding MinimizeToolbarCommand}"
                 Content="+"
-                Cursor="Hand" />
+                Cursor="Hand">
+                <Button.Command>
+                    <Binding Path="MinimizeToolbarCommand" />
+                </Button.Command>
+            </Button>
         </Grid>
 
         <!--
@@ -108,9 +118,13 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Content="{Binding IconHideSidebar.Data}"
-                Foreground="Gray"
-                Style="{DynamicResource CustomButtonStyles}"
-                Template="{DynamicResource CustomButtonTemplate}">
+                Foreground="Gray">
+                <ContentControl.Template>
+                    <DynamicResource ResourceKey="CustomButtonTemplate" />
+                </ContentControl.Template>
+                <ContentControl.Style>
+                    <DynamicResource ResourceKey="CustomButtonStyles" />
+                </ContentControl.Style>
                 <ContentControl.InputBindings>
                     <MouseBinding Command="{Binding HideSidebarCommand}" Gesture="LeftClick" />
                 </ContentControl.InputBindings>

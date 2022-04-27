@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Windows.Input;
 using UnityCommander.Common;
 using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
@@ -7,7 +9,7 @@ namespace UnityCommander.Core.IO.Operations
 {
     public class FileManager : IOCommands
     {
-        [GlobalCommand(CommandNames.FileMove, CommandSource.Native)]
+        [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlA, CommandSource.Native)]
         public override void Move(string source, string target)
         {
             return;
@@ -38,7 +40,7 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        [GlobalCommand(CommandNames.FileDel, CommandSource.Native)]
+        [GlobalCommand(CommandNames.FileDel,CommandKeys.CtrlF, CommandSource.Native)]
         public override void Delete(string source)
         {
             return;

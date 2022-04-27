@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows.Input;
+using UnityCommander.Integration.Enums;
 
 namespace UnityCommander.Integration.Commands
 {
@@ -7,8 +10,10 @@ namespace UnityCommander.Integration.Commands
     {
         public string Name { get; set; }
         public CommandSource Source { get; set; }
+        
+        public KeyGesture Hotkey { get; set; }
 
-        public GlobalCommandAttribute(string name, CommandSource source = CommandSource.Plugin)
+        public GlobalCommandAttribute(string name, string hotkey, CommandSource source = CommandSource.Plugin)
         {
             if (name == "FileCopy3")
             {
@@ -17,6 +22,7 @@ namespace UnityCommander.Integration.Commands
 
             this.Name = name;
             this.Source = source;
+            this.Hotkey = (KeyGesture)new KeyGestureConverter().ConvertFromString(hotkey);
         }
     }
 }

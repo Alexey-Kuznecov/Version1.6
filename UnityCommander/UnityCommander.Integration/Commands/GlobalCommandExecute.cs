@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -27,7 +28,23 @@ namespace UnityCommander.Integration.Commands
             Type type = commandSource;
             ConstructorInfo magicConstructor = type.GetConstructor(Type.EmptyTypes);
             object magicClassObject = magicConstructor?.Invoke(new object[] { });
-            command.Method.Invoke(magicClassObject, parameter as object[]);
+
+            if (parameter == null)
+            {
+                object[] parameterInfos = command.Method.GetParameters();
+                var parameters = new object[] { };
+
+                foreach (var parameterInfo in parameterInfos.ToArray())
+                {
+                    parameters = parameterInfos;
+                }
+
+                //command.Method.Invoke(magicClassObject, parameters);
+            }
+            else
+            {
+                //command.Method.Invoke(magicClassObject, parameter as object[]);
+            }
         }
 
         public Delegate GetCommand()

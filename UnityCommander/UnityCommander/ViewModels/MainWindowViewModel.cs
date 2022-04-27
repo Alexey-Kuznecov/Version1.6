@@ -8,6 +8,11 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+using UnityCommander.Common;
+using UnityCommander.Core.Behaviors;
+using UnityCommander.Integration.Commands;
+
 namespace UnityCommander.ViewModels
 {
     using System.IO;
@@ -32,7 +37,7 @@ namespace UnityCommander.ViewModels
     /// <summary>
     /// The main window view model.
     /// </summary>
-    public class MainWindowViewModel : BindableBase
+    public class MainWindowViewModel : BindableBase, IKeyBinding
     {
         #region DECLARATION FIELDS
 
@@ -51,8 +56,6 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private UserControl sidebarContent;
 
-        private InputBindingCollection inputCommands;
-
         #region DEPENDENCY INJECTION PROPERTIES
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// The application commands.
         /// </summary>
-        private IGlobalCommandService uCCommands;
+        private readonly IGlobalCommandManager globalCommandManager;
 
         #endregion
 
@@ -121,6 +124,9 @@ namespace UnityCommander.ViewModels
         /// <param name="command">
         /// The service to execute commands from each view model if the command is registered globally.
         /// </param>
+        /// <param name="globalCommand">
+        /// 
+        /// </param>
         public MainWindowViewModel(
             IDialogService dialogService,
             IEventAggregator exchange,
@@ -130,30 +136,20 @@ namespace UnityCommander.ViewModels
             IGlobalCommandService globalCommand)
         {
             this.StateCommand = command;
-            this.uCCommands = globalCommand;
+            this.globalCommandManager = globalCommand.GetCommandManager<BaseCommand>();
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
 
             exchange.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
 
             var settings = settingsProviderService.GetAppConfig();
             this.SidebarContentWidth = settings.SidebarDisplayContent ? 250 : 0;
-
             this.RibbonContainerSize = 60;
             this.TabContainerSize = 80;
-
             this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
-
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
         }
 
-        /// <summary>
-        /// Gets or sets the current directory.
-        /// </summary>
-        public InputBindingCollection UCCommands
-        {
-            get => this.inputCommands;
-            set => this.SetProperty(ref this.inputCommands, value);
-        }
+        #region Properties
 
         /// <summary>
         /// Gets or sets the icon hide sidebar.
@@ -172,8 +168,7 @@ namespace UnityCommander.ViewModels
             get => this.icon;
             set => this.SetProperty(ref this.icon, value);
         }
-
-
+        
         /// <summary>
         /// Gets or sets the view model. View model, used to control custom window buttons.
         /// </summary>
@@ -198,6 +193,8 @@ namespace UnityCommander.ViewModels
             get => this.stateCommands;
             set => this.SetProperty(ref this.stateCommands, value);
         }
+
+        #endregion
 
         /// <summary>
         /// The command to close window.
@@ -252,6 +249,16 @@ namespace UnityCommander.ViewModels
         }
 
         #endregion
+
+        public void SetBinding(object dependencyObject, KeyboardManager manager)
+        {
+            Grid grid = dependencyObject as Grid;
+
+            foreach (var globalCommand in this.globalCommandManager.GetCommands())
+            {
+                grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
+            }
+        }
 
         #region SIDEBAR MEMBER
 
