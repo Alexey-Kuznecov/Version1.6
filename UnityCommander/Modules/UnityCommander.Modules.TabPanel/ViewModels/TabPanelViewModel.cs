@@ -87,6 +87,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </summary>
         private TabCollection tabCollection;
 
+        private static int instanceCount;
+
         #endregion
 
         /// <summary>
@@ -119,7 +121,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             CommandManager manager)
         {
             var fileManger = globalCommandService.GetCommandManager();
-            fileManger.CreateCommand("DisplayContent", this, DisplayContent);
+            fileManger.CreateCommand("DisplayContent " + instanceCount++, this, DisplayContent);
 
             this.regionManager = regionManager;
             this.commandManager = manager;
@@ -323,19 +325,25 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
         #endregion
 
-        public void DisplayContent(object vm)
+        public void DisplayContent(object obj)
         {
-            var token = Guid.NewGuid();
-            var directoryPanel = new ViewerView();
+            if (obj is TabPanelViewModel vm)
+            {
+                if (vm.GetHashCode() == this.GetHashCode())
+                {
+                    var token = Guid.NewGuid();
+                    var directoryPanel = new ViewerView();
 
-            this.currentTab = this.CreateTabControl(token, null, directoryPanel);
-            this.TabCollection.Add(this.currentTab);
+                    this.currentTab = this.CreateTabControl(token, null, directoryPanel);
+                    this.TabCollection.Add(this.currentTab);
 
-            this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, null);
-            this.regionManager.AddToRegion(this.GetCurrentRegion().Name, directoryPanel);
-            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-            this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
-            this.ActivateFilePanel(token);
+                    this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, null);
+                    this.regionManager.AddToRegion(this.GetCurrentRegion().Name, directoryPanel);
+                    this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
+                    this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
+                    this.ActivateFilePanel(token);
+                }
+            }
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows.Input;
 
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The ribbon combo box.
@@ -23,7 +24,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="buttonCommand">
         /// The button command.
         /// </param>
-        public RibbonComboBoxItem(string content, IIcon buttonIcon, ICommand buttonCommand)
+        public RibbonComboBoxItem(string content, IIcon buttonIcon, GlobalCommand buttonCommand)
             : base(
                 content, 
                 buttonIcon, 

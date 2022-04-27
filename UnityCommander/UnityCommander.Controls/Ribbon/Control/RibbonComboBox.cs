@@ -9,6 +9,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows.Input;
 
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The ribbon combo box item.
@@ -46,7 +47,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="command">
         /// The command.
         /// </param>
-        public void AddItem(string text, IIcon icon, ICommand command)
+        public void AddItem(string text, IIcon icon, GlobalCommand command)
         {
             this.comboBoxItem.Add(new RibbonComboBoxItem(text, icon, command));
         }
@@ -82,7 +83,7 @@ namespace UnityCommander.Controls.Ribbon.Control
             if (!Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 var selected = e.AddedItems[0] as DataBindingControl;
-                selected?.Command?.Execute(null);
+                selected?.GlobalCommand?.Command.Execute(null);
             }
         }
     }

@@ -91,6 +91,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             IGlobalCommandService globalCommandService)
          {
             this.globalCommandManager = globalCommandService.GetCommandManager();
+            //this.globalCommandManager.CreateCommand("ShowDialog", this, this.ShowDialogCommand)
             this.pluginLoader = pluginLoaderService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
@@ -185,14 +186,14 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 "File Operation",
                 builder =>
                     {
-                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent").Command);
-                        builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
-                        builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
-                        builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
+                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent 1"));
+                        builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), null);
+                        builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null);
+                        builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), null);
                         builder.AddList(
                             list =>
                                 {
-                                    list.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
+                                    list.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), null));
                                     list.AddComboBoxItem(
                                         box =>
                                             {
@@ -205,7 +206,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                                     list.AddComboBoxItem(
                                         box =>
                                             {
-                                                box.AddItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand);
+                                                box.AddItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), null);
                                                 box.AddItem("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), null);
                                                 box.AddItem("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), null);
                                                 box.AddItem("About Circle", this.iconProvider.GetIcon(PackIconKind.AboutCircle), null);
@@ -214,11 +215,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                         builder.AddList(
                             list =>
                                 {
-                                    list.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
+                                    list.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), null));
                                     list.AddComboBoxItem(
                                         box =>
                                             {
-                                                box.AddItem("2 Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), this.ShowDialogCommand);
+                                                box.AddItem("2 Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), null);
                                                 box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
                                                 box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
                                                 box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
@@ -230,8 +231,8 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 "View Group",
                 builder =>
                     {
-                        builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-                        builder.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
+                        builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), null);
+                        builder.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), null);
                     }).Build();
         }
 
@@ -251,9 +252,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                     "Game Launch",
                     builder =>
                         {
-                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-                            builder.AddButton("Settings", this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-                            builder.AddButton("File tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), null);
+                            builder.AddButton("Settings", this.iconProvider.GetIcon("Settings"), null);
+                            builder.AddButton("File tree", this.iconProvider.GetIcon("FileTree"), null);
                         }).Build();
         }
 
@@ -273,17 +274,17 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                     "View Group",
                 builder =>
                         {
-                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-                            builder.AddButton("File Tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-                            builder.AddButton("FileTree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
+                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), null);
+                            builder.AddButton("File Tree", this.iconProvider.GetIcon("FileTree"), null);
+                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), null);
+                            builder.AddButton("FileTree", this.iconProvider.GetIcon("FileTree"), null);
                         }).SetGroup(
                     "Shared Group",
                     builder =>
                         {
-                            builder.AddButton("Plugin", this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
-                            builder.AddButton("Table column", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
+                            builder.AddButton("Plugin", this.iconProvider.GetIcon("Plugin"), null);
+                            builder.AddButton("Table column", this.iconProvider.GetIcon("TableColumn"), null);
+                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), null);
                         }).Build();
         }
 

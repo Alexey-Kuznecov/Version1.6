@@ -4,6 +4,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows.Input;
 
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The data model to bind to the control.
@@ -22,7 +23,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="listBoxItemCommand">
         /// The list box item command.
         /// </param>
-        public RibbonListBoxItem(string listBoxItemName, IIcon listBoxItemIcon, ICommand listBoxItemCommand)
+        public RibbonListBoxItem(string listBoxItemName, IIcon listBoxItemIcon, GlobalCommand listBoxItemCommand)
             : base(
                 listBoxItemName,
                 listBoxItemIcon,

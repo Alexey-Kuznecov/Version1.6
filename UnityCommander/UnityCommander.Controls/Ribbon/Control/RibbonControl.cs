@@ -8,6 +8,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using NJsonSchema.Annotations;
 
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// All controls inherit the necessary functionality from this type.
@@ -38,7 +39,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         internal RibbonControl(
             [NotNull] string controlName,
             [NotNull] IIcon controlIcon,
-            [NotNull] ICommand controlCommand,
+            [NotNull] GlobalCommand controlCommand,
             [NotNull] string styleName,
             [NotNull] string templateName,
             [CanBeNull] string dataTemplate)
@@ -46,7 +47,7 @@ namespace UnityCommander.Controls.Ribbon.Control
             this.DataBinding = new DataBindingControl 
             {
                 Content = controlName,
-                Command = controlCommand,
+                GlobalCommand = controlCommand,
                 Icon = controlIcon.GetIconPath()
             };
 

@@ -14,6 +14,8 @@
         <TextBlock
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Text="{Binding Message}" />
+            FontSize="40"
+            FontWeight="Bold"
+            Text="Viewer" />
     </Grid>
 </UserControl>

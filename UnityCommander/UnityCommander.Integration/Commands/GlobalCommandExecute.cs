@@ -33,7 +33,7 @@ namespace UnityCommander.Integration.Commands
         public void Execute(object parameter)
         {
             Type type = this.DeclaringType;
-            object[] parameters = GetDefaultParameterValues();
+            object[] parameters = GetDefaultParameterValues(parameter);
 
             if (type == null)
             {
@@ -59,12 +59,12 @@ namespace UnityCommander.Integration.Commands
         /// которые не используют <see cref="MultiCommandParameter"/>. 
         /// </summary>
         /// <returns></returns>
-        public object[] GetDefaultParameterValues()
+        public object[] GetDefaultParameterValues(object parameter)
         {
             ParameterInfo[] parameterInfos = command.Method.GetParameters();
             object[] parameters = new object[parameterInfos.Length];
             parameters[0] = parameterInfos[0].ParameterType.TypeInitializer;
-
+            parameters[0] = parameter;
             return parameters;
         }
     }
