@@ -9,6 +9,8 @@ using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Core
 {
+    using UnityCommander.Common.Commands;
+
     public class GlobalCommandManager : IGlobalCommandManager
     {
         private readonly List<GlobalCommand> globalCommands;

@@ -11,6 +11,8 @@ using UnityCommander.Services.Plugins;
 
 namespace UnityCommander.Services
 {
+    using UnityCommander.Common.Commands;
+
     public class GlobalCommandService : IGlobalCommandService
     {
         private readonly object globalCommandProvider;

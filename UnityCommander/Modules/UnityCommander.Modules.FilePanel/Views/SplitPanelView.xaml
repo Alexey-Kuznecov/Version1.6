@@ -3,8 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
+    xmlns:commands1="clr-namespace:UnityCommander.Common.Commands;assembly=UnityCommander.Common"
     xmlns:common="clr-namespace:UnityCommander.Common;assembly=UnityCommander.Common"
+    xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -86,11 +87,14 @@
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
         </ContentControl>
         <Grid Grid.Row="4">
-            <Button Width="50" Command="{Binding TestCommand}" common:MultiCommandParameter.IsInclude="True">
+            <Button
+                Width="50"
+                commands1:MultiCommandParameter.IsInclude="True"
+                Command="{Binding TestCommand}">
                 <Button.Content>
-                    <common:XArray Type="False" Content="Start">
-                        <common:XParam Value="{Binding CurrentDirectory}"/>
-                        <common:XParam Value="{Binding CurrentDirectory}"/>
+                    <common:XArray Content="Start" Type="False">
+                        <common:XParam Value="{Binding CurrentDirectory}" />
+                        <common:XParam Value="{Binding CurrentDirectory}" />
                     </common:XArray>
                 </Button.Content>
             </Button>

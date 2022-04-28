@@ -1,28 +1,27 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
-using Prism.Commands;
-using Prism.Mvvm;
-using Prism.Regions;
-using UnityCommander.Common.Models.Icons;
-using UnityCommander.Controls.Taber;
-using UnityCommander.Core.Commands;
-using UnityCommander.Core.Commands.Base;
-using UnityCommander.Core.Modules;
-using UnityCommander.Integration.Commands;
-using UnityCommander.Modules.FilePanel.Views;
-using UnityCommander.Modules.Viewer.ViewModels;
-using UnityCommander.Modules.Viewer.Views;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Interfaces.Database.Queries.Xml;
-using TabControl = UnityCommander.Controls.Taber.TabControl;
-
+﻿
 namespace UnityCommander.Modules.TabPanel.ViewModels
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Media;
+    using Prism.Commands;
+    using Prism.Mvvm;
+    using Prism.Regions;
+    using Common.Models.Icons;
+    using Controls.Taber;
+    using Core.Commands;
+    using Core.Commands.Base;
+    using Core.Modules;
+    using Modules.FilePanel.Views;
+    using Modules.Viewer.Views;
+    using Services.Interfaces;
+    using Services.Interfaces.Database.Queries.Xml;
+    using TabControl = UnityCommander.Controls.Taber.TabControl;
+
     public class TabPanelViewModel : BindableBase, ITabPanel
     {
         #region Private Fields

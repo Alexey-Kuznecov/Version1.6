@@ -4,6 +4,7 @@ namespace UnityCommander.Core
     using System.Collections.Generic;
     using System.Linq;
     using UnityCommander.Common;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Core.IO.Operations;
     using UnityCommander.Integration.Commands;
 

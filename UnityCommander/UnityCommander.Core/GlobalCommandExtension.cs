@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Controls;
-using System.Windows.Input;
+
 using UnityCommander.Common;
 using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Core
 {
+    using UnityCommander.Common.Commands;
+
     public static class GlobalCommandExtension
     {
         public static Control SetParam(this Control control, GlobalCommand command, Action<CommandParametersManager> callback)
@@ -25,9 +26,7 @@ namespace UnityCommander.Core
             }
 
             callback(parametersManager);
-            
             ParamBuilder(command, control, parametersManager.Params);
-
             return control;
         }
 

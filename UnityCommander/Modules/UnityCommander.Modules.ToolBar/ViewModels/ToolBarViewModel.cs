@@ -15,6 +15,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
     using UnityCommander.Common;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Ribbon;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Core.Mvvm;

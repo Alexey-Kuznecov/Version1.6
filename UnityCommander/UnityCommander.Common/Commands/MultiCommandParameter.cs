@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-
-namespace UnityCommander.Common
+﻿namespace UnityCommander.Common.Commands
 {
-    using Models;
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
 
     public class MultiCommandParameter : IDisposable
     {
@@ -150,8 +145,8 @@ namespace UnityCommander.Common
 
             if (control is MenuItem mi)
             {
-                if (!mi.Header.Equals(xArray)) 
-                    mi.Header = xArray;
+                if (!mi.Header.Equals(this.xArray)) 
+                    mi.Header = this.xArray;
             }
         }
 

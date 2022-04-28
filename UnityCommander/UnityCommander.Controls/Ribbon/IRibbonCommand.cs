@@ -8,6 +8,8 @@ using UnityCommander.Common.Models.Icons;
 
 namespace UnityCommander.Controls.Ribbon
 {
+    using UnityCommander.Common.Commands;
+
     public class IRibbonCommand : IGlobalCommand
     {
         public ICommand Command { get; set; }

@@ -8,13 +8,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using UnityCommander.Common;
-using UnityCommander.Core.Behaviors;
-using UnityCommander.Integration.Commands;
-
 namespace UnityCommander.ViewModels
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
@@ -27,9 +23,13 @@ namespace UnityCommander.ViewModels
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
 
+    using UnityCommander.Common;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models;
     using UnityCommander.Controls.Window;
     using UnityCommander.Core;
+    using UnityCommander.Core.Behaviors;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Services.Interfaces;
 
     using Path = System.Windows.Shapes.Path;
@@ -250,6 +250,15 @@ namespace UnityCommander.ViewModels
 
         #endregion
 
+        /// <summary>
+        /// The set binding.
+        /// </summary>
+        /// <param name="dependencyObject">
+        /// The dependency object.
+        /// </param>
+        /// <param name="manager">
+        /// The manager.
+        /// </param>
         public void SetBinding(object dependencyObject, KeyboardManager manager)
         {
             Grid grid = dependencyObject as Grid;
