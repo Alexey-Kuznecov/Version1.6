@@ -6,6 +6,6 @@ namespace AIconBrowser.Models
 {
     public class IconParser
     {
-        protected static readonly string DocumentName = Directory.GetCurrentDirectory() + @"\Resources\IconsData.xml";
+        protected static readonly string DocumentName = Directory.GetCurrentDirectory() + @"\plugins\AIconBrowser\netcoreapp3.1\IconsData.xml";
     }
 }
