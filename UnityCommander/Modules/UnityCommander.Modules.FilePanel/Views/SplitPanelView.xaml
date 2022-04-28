@@ -92,10 +92,10 @@
                 commands1:MultiCommandParameter.IsInclude="True"
                 Command="{Binding TestCommand}">
                 <Button.Content>
-                    <common:XArray Content="Start" Type="False">
-                        <common:XParam Value="{Binding CurrentDirectory}" />
-                        <common:XParam Value="{Binding CurrentDirectory}" />
-                    </common:XArray>
+                    <commands1:XArray Content="Start" Type="False">
+                        <commands1:XParam Value="{Binding CurrentDirectory}" />
+                        <commands1:XParam Value="{Binding CurrentDirectory}" />
+                    </commands1:XArray>
                 </Button.Content>
             </Button>
         </Grid>

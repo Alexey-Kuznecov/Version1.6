@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-
-namespace UnityCommander.Common
+﻿namespace UnityCommander.Common.Commands
 {
-    using Models;
+    using System.Windows;
+    using System.Windows.Controls;
 
     public class XArray : Panel
     {

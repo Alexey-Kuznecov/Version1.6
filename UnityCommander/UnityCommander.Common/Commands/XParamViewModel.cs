@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UnityCommander.Common
+﻿
+namespace UnityCommander.Common.Commands
 {
     public class XParamViewModel
     {
