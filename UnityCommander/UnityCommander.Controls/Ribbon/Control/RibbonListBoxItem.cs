@@ -23,7 +23,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="listBoxItemCommand">
         /// The list box item command.
         /// </param>
-        public RibbonListBoxItem(string listBoxItemName, IIcon listBoxItemIcon, GlobalCommand listBoxItemCommand)
+        public RibbonListBoxItem(string listBoxItemName, IIcon listBoxItemIcon, RibbonCommand listBoxItemCommand)
             : base(
                 listBoxItemName,
                 listBoxItemIcon,

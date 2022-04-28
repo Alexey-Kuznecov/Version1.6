@@ -187,7 +187,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 "File Operation",
                 builder =>
                     {
-                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent 1"));
+                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), /*this.globalCommandManager.GetCommand("DisplayContent 1")*/ null);
                         builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), null);
                         builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null);
                         builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), null);

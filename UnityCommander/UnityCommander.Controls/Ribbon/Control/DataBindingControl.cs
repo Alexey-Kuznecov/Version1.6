@@ -23,6 +23,6 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <summary>
         /// Gets or sets the command for the control.
         /// </summary>
-        public GlobalCommand GlobalCommand { get; set; }
+        public RibbonCommand GlobalCommand { get; set; }
     }
 }
