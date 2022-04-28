@@ -1,8 +1,10 @@
 ﻿
-using System.Collections.Generic;
-
 namespace UnityCommander.Integration.Commands
 {
+    using System.Collections.Generic;
+
+    using UnityCommander.Common.Commands;
+
     public class CommandBuilder
     {
         private readonly List<BaseCommand> globalCommands = new ();

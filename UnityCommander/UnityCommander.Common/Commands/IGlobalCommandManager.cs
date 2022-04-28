@@ -4,8 +4,6 @@ namespace UnityCommander.Common.Commands
     using System;
     using System.Collections.Generic;
 
-    using UnityCommander.Integration.Commands;
-
     /// <summary>
     /// The GlobalCommandManager interface.
     /// </summary>
@@ -20,7 +18,7 @@ namespace UnityCommander.Common.Commands
         /// <returns>
         /// The <see cref="GlobalCommand"/>.
         /// </returns>
-        GlobalCommand GetCommand(string commandName);
+        IGlobalCommand GetCommand(string commandName);
 
         /// <summary>
         /// The get commands.
@@ -28,7 +26,7 @@ namespace UnityCommander.Common.Commands
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
-        List<GlobalCommand> GetCommands();
+        List<IGlobalCommand> GetCommands();
 
         /// <summary>
         /// The create command.

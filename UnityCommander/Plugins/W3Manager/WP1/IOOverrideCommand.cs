@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityCommander.Integration.Commands;
-using UnityCommander.Integration.Enums;
-
+﻿
 namespace W3Manager.WP1
 {
+    using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Enums;
+
     // ReSharper disable once InconsistentNaming
     public class IoOverrideCommand : IOCommands
     {

@@ -1,12 +1,13 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using UnityCommander.Integration.Columns;
-using UnityCommander.Integration.Contracts;
-using UnityCommander.Integration.Options;
-
 namespace UnityCommander.Modules.FilePanel.Columns
 {
+    using System;
+    using System.Collections.Generic;
+
+    using UnityCommander.Common;
+    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The basic properties that are required for
     /// correct interaction between the model and the view model.

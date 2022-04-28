@@ -3,7 +3,6 @@ namespace UnityCommander.Controls.Ribbon.Control
 {
     using System.Windows.Input;
     using System.Windows.Shapes;
-    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The type of data model to bind data to the tool ribbon control.

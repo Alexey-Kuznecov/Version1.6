@@ -5,7 +5,8 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
-    using UnityCommander.Integration.Mvvm.Base;
+
+    using AlexeyKuznecov.Library.Mvvm.Base;
 
     /// <summary>
     /// The ribbon tab.

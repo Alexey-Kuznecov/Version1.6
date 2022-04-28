@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 

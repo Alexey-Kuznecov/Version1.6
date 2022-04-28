@@ -24,5 +24,10 @@ namespace UnityCommander.Controls.Ribbon
         /// Gets or sets the command parameter.
         /// </summary>
         public object CommandParameter { get; set; }
+
+        /// <summary>
+        /// TODO: Gets or sets the shortcut key.
+        /// </summary>
+        public InputGesture ShortcutKey { get; set; }
     }
 }

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
 	</ItemGroup>
 
 </Project>

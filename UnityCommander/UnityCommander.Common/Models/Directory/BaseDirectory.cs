@@ -6,7 +6,6 @@ namespace UnityCommander.Common.Models.Directory
     using NSwag.Collections;
 
     using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The directory base.

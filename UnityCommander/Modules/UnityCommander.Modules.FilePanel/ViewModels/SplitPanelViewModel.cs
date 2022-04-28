@@ -189,8 +189,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
-            this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("FileMove").Command;
-
+            // TODO: this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("FileMove").Command;
             // Composite command
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(SavePanelStateCommand);
@@ -657,17 +656,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 new ()
                 {
                     DisplayName = "Open",
-                    CommandName = CommandNames.FileMove
+                    Name = CommandNames.FileMove
                 },
                 new ()
                 {
                     DisplayName = "Create",
-                    CommandName = "FileMove"
+                    Name = "FileMove"
                 },
                 new ()
                 {
                     DisplayName = "Delete",
-                    CommandName = CommandNames.FileDel
+                    Name = CommandNames.FileDel
                 },
             };
             

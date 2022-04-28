@@ -1,11 +1,8 @@
 ﻿
-using System;
-using System.Windows.Input;
-using UnityCommander.Integration.Commands;
-using UnityCommander.Integration.Enums;
-
-namespace UnityCommander.Integration.Contracts
+namespace UnityCommander.Common
 {
+    using UnityCommander.Common.Commands;
+
     /// <summary>
     /// The context menu.
     /// </summary>
@@ -19,7 +16,7 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets or sets the command.
         /// </summary>
-        public GlobalCommand Command { get; set; }
+        public IGlobalCommand Command { get; set; }
 
         /// <summary>
         /// Gets or sets the command.

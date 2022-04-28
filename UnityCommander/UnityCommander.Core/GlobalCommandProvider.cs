@@ -6,11 +6,10 @@ namespace UnityCommander.Core
     using UnityCommander.Common;
     using UnityCommander.Common.Commands;
     using UnityCommander.Core.IO.Operations;
-    using UnityCommander.Integration.Commands;
 
     public class GlobalCommandProvider : IGlobalCommandProvider
     {
-        private static readonly List<GlobalCommand> GlobalCommands = new ();
+        private static readonly List<IGlobalCommand> GlobalCommands = new ();
         
         private static readonly GlobalCommandManager GlobalCommandManager = new (GlobalCommands);
 
@@ -21,6 +20,6 @@ namespace UnityCommander.Core
 
         public IGlobalCommandManager GetCommandManager() => GlobalCommandManager;
 
-        internal static GlobalCommand FindCommand(string commandName) => GlobalCommandManager.GetCommand(commandName);
+        internal static IGlobalCommand FindCommand(string commandName) => GlobalCommandManager.GetCommand(commandName);
     }
 }

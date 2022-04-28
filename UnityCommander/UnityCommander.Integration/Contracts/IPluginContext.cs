@@ -1,12 +1,11 @@
 ﻿
-using UnityCommander.Integration.Commands;
-
 namespace UnityCommander.Integration.Contracts
 {
     using System.Collections.Generic;
 
     using Columns;
 
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -30,6 +29,12 @@ namespace UnityCommander.Integration.Contracts
         /// </returns>
         IEnumerable<IOption> GetOptions();
 
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         public IEnumerable<BaseCommand> GetCommands();
     }
 }

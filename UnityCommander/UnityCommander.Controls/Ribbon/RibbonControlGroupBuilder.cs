@@ -7,7 +7,6 @@ namespace UnityCommander.Controls.Ribbon
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Controls.Ribbon.Subgroup;
-    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// This class is responsible for building a group of controls for the Tool Ribbon.
@@ -96,7 +95,6 @@ namespace UnityCommander.Controls.Ribbon
         /// <remarks>
         /// Note, that this <see cref="RibbonGroupAdorner"/> object, pre-wraps the <see cref="RibbonGroup"/> object.
         /// </remarks>
-        [NJsonSchema.Annotations.NotNull]
         internal RibbonGroupAdorner GetAdorner => this.groupAdorner;
     }
 }

@@ -4,10 +4,11 @@
 namespace UnityCommander.Services.Plugins
 {
     using System.Collections.Generic;
-    using Integration.Commands;
-    using Integration.Columns;
-    using Integration.Contracts;
-    using Integration.Options;
+
+    using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The plugin context.

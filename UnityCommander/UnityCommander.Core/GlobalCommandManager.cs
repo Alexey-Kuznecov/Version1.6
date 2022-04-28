@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Input;
-using UnityCommander.Common;
-using UnityCommander.Core.Generators;
-using UnityCommander.Integration.Commands;
-
+﻿
 namespace UnityCommander.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
     using UnityCommander.Common.Commands;
+    using UnityCommander.Core.Generators;
 
     public class GlobalCommandManager : IGlobalCommandManager
     {
-        private readonly List<GlobalCommand> globalCommands;
+        private readonly List<IGlobalCommand> globalCommands;
 
-        public GlobalCommandManager(List<GlobalCommand> commands)
+        public GlobalCommandManager(List<IGlobalCommand> commands)
         {
             this.globalCommands = commands;
         }
@@ -28,7 +26,7 @@ namespace UnityCommander.Core
         public void CreateCommand(string commandName, object instance, Action<object> action)
         {
             // TODO: Optimize this piece of code.
-            var c = globalCommands.SingleOrDefault(cmd => cmd.CommandName == commandName);
+            var c = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
 
             if (c != null) return;
 
@@ -38,8 +36,7 @@ namespace UnityCommander.Core
 
             var cmd = new GlobalCommand
             {
-                CommandName = commandName,
-                CommandSource = CommandSource.Native,
+                Name = commandName,
                 Command = command,
                 CommandParameter = instance,
                 ShortcutKey = null,
@@ -50,8 +47,26 @@ namespace UnityCommander.Core
             globalCommands.Add(cmd);
         }
 
+        /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IGlobalCommand"/>.
+        /// </returns>
+        public IGlobalCommand GetCommand(string commandName)
+            => this.globalCommands.SingleOrDefault(
+                   cmd => cmd is IPluginCommand && cmd.Name == commandName)
+               ?? this.globalCommands.Single(cmd => cmd.Name == commandName);
+
+        public List<IGlobalCommand> GetCommands() => this.globalCommands;
+
         private void SetCommand(object instance)
         {
+            return;
+
             Type type = instance.GetType();
             MethodInfo[] methods = type.GetMethods();
             
@@ -68,8 +83,7 @@ namespace UnityCommander.Core
 
                     var cmd = new GlobalCommand
                     {
-                        CommandName = att.Name,
-                        CommandSource = att.Source,
+                        Name = att.Name,
                         Command = command,
                         ShortcutKey = att.Hotkey,
                         Delegate = action,
@@ -77,19 +91,12 @@ namespace UnityCommander.Core
                        
                     };
 
-                    //var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
-                    //var inputBindingCollection = new InputBindingCollection();
-                    //inputBindingCollection.Add(input);
-                    globalCommands.Add(cmd);
+                    // var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
+                    // var inputBindingCollection = new InputBindingCollection();
+                    // inputBindingCollection.Add(input);
+                    this.globalCommands.Add(cmd);
                 }
             }
         }
-
-        public GlobalCommand GetCommand(string commandName)
-            => this.globalCommands.SingleOrDefault(
-                   cmd=> cmd.CommandSource == CommandSource.Plugin && cmd.CommandName == commandName) 
-                        ?? this.globalCommands.Single(cmd => cmd.CommandName == commandName);
-
-        public List<GlobalCommand> GetCommands() => this.globalCommands;
     }
 }

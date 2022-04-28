@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UnityCommander.Integration.Commands
+﻿
+namespace UnityCommander.Common.Commands
 {
+    using System;
+
     public class BaseCommand
     {
         internal Type Source { get; set; }

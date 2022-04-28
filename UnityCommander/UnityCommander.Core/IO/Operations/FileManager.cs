@@ -1,19 +1,26 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Windows.Input;
-using UnityCommander.Common;
-using UnityCommander.Integration.Commands;
-using UnityCommander.Integration.Enums;
-
+﻿
 namespace UnityCommander.Core.IO.Operations
 {
-    public class FileManager : IOCommands
+    using System.IO;
+
+    using UnityCommander.Common.Commands;
+
+    /// <summary>
+    /// The file manager.
+    /// </summary>
+    public class FileManager : BaseCommand
     {
-        [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlA, CommandSource.Native)]
-        public override void Move(string source, string target)
+        /// <summary>
+        /// The move.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="target">
+        /// The target.
+        /// </param>
+        public virtual void Move(string source, string target)
         {
-            return;
-    
             if (File.Exists(source))
             {
                 FileInfo fileInfo = new FileInfo(source);
@@ -26,7 +33,16 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        public void MoveEach(string source, string target)
+        /// <summary>
+        /// The move each.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="target">
+        /// The target.
+        /// </param>
+        public virtual void MoveEach(string source, string target)
         {
             foreach (var dir in Directory.GetDirectories(source))
             {
@@ -40,11 +56,14 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        [GlobalCommand(CommandNames.FileDel,CommandKeys.CtrlF, CommandSource.Native)]
-        public override void Delete(string source)
+        /// <summary>
+        /// The delete.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        public virtual void Delete(string source)
         {
-            return;
-
             if (File.Exists(source))
             {
                 File.Delete(source);
@@ -55,17 +74,38 @@ namespace UnityCommander.Core.IO.Operations
             }
         }
 
-        public void Create(string dirPath)
+        /// <summary>
+        /// The create.
+        /// </summary>
+        /// <param name="dirPath">
+        /// The dir path.
+        /// </param>
+        public virtual void Create(string dirPath)
         {
             Directory.CreateDirectory(dirPath);
         }
 
-        public void Create(string filePath, string extension)
+        /// <summary>
+        /// The create.
+        /// </summary>
+        /// <param name="filePath">
+        /// The file path.
+        /// </param>
+        /// <param name="extension">
+        /// The extension.
+        /// </param>
+        public virtual void Create(string filePath, string extension)
         {
             File.Create(filePath);
         }
 
-        public void GetProperties(string source)
+        /// <summary>
+        /// The get properties.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        public virtual void GetProperties(string source)
         {
         }
     }

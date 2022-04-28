@@ -1,17 +1,11 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Controls;
-using UnityCommander.Common;
-using UnityCommander.Integration.Commands;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Plugins;
-
 namespace UnityCommander.Services
 {
+    using System.Reflection;
+
     using UnityCommander.Common.Commands;
+    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Plugins;
 
     public class GlobalCommandService : IGlobalCommandService
     {
