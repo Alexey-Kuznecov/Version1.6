@@ -26,7 +26,7 @@ namespace UnityCommander.Common.Commands
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
-        List<IGlobalCommand> GetCommands();
+        Queue<IGlobalCommand> GetCommands();
 
         /// <summary>
         /// The create command.

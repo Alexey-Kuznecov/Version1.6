@@ -12,16 +12,14 @@ namespace UnityCommander.Integration.Commands
         {
         }
 
-        public virtual void Move(string source, string destination)
+        public override void Move(string source, string destination)
         {
-        }
-
-        public virtual void FileCopy(string source, string destination)
-        {
+            base.Move(source, destination);
         }
 
         public virtual void Delete(string source)
         {
+            base.Delete(source);
         }
     }
 }

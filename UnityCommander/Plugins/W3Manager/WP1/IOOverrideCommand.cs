@@ -13,12 +13,6 @@ namespace W3Manager.WP1
             base.Test(source, destination, IsShadowCopy, baseCommand);
         }
 
-        [GlobalCommand("FileCopy2", CommandKeys.CtrlC)]
-        public override void FileCopy(string source, string destination)
-        {
-            base.FileCopy(source, destination);
-        }
-
         [GlobalCommand("FileCopy2", CommandKeys.CtrlD)]
         public override void Move(string source, string destination)
         {

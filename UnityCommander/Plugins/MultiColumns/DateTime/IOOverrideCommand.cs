@@ -19,9 +19,9 @@ namespace MultiColumns.DateTime
         /// The destination.
         /// </param>
         [GlobalCommand("FileCopy2", CommandKeys.CtrlF)]
-        public override void FileCopy(string source, string destination)
+        public override void Move(string source, string destination)
         {
-            base.FileCopy(source, destination);
+            base.Move(source, destination);
         }
     }
 }

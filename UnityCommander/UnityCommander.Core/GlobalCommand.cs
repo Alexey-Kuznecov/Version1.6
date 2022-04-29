@@ -2,6 +2,7 @@
 namespace UnityCommander.Core
 {
     using System;
+    using System.Reflection;
     using System.Windows.Input;
 
     using UnityCommander.Common.Commands;
@@ -26,5 +27,7 @@ namespace UnityCommander.Core
         public Type Source { get; set; }
 
         public Delegate Delegate { get; set; }
+        
+        public MethodInfo DeclareType { get; set; }
     }
 }

@@ -82,6 +82,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="dirPath">
         /// The dir path.
         /// </param>
+        [GlobalCommand(CommandNames.FileCreate, CommandKeys.CtrlI)]
         public virtual void Create(string dirPath)
         {
             Directory.CreateDirectory(dirPath);
