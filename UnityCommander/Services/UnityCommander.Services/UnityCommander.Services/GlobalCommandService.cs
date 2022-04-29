@@ -30,6 +30,9 @@ namespace UnityCommander.Services
         /// </returns>
         public IGlobalCommandManager GetCommandManager() => this.globalCommandManager;
 
+        /// <summary>
+        /// The initial commands.
+        /// </summary>
         internal void InitialCommands() 
         {
             if (this.globalCommandProvider is IGlobalCommandProvider commandProvider)

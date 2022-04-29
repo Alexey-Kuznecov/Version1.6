@@ -8,11 +8,7 @@ namespace UnityCommander.Integration.Commands
     // ReSharper disable once InconsistentNaming
     public abstract class IOCommands : FileManager
     {
-        public virtual void Test(string source, string destination, bool IsShadowCopy, BaseCommand baseCommand)
-        {
-        }
-
-        public override void Move(string source, string destination)
+        public virtual void Move(string source, string destination)
         {
             base.Move(source, destination);
         }

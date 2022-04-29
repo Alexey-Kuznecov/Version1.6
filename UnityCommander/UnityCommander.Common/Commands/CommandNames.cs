@@ -3,8 +3,8 @@ namespace UnityCommander.Common.Commands
 {
     public struct CommandNames
     {
-        public const string FileMove = "Command to move files";
-        public const string FileDel = "Command to delete files";
-        public const string FileCreate = "Command to create files";
+        public const string FileMove = "Default Move";
+        public const string FileDel = "Default Delete";
+        public const string FileCreate = "Default Create";
     }
 }

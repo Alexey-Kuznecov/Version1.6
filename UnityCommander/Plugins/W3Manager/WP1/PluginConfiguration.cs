@@ -18,9 +18,15 @@ namespace W3Manager.WP1
         /// </summary>
         private DateTimeColumn dateTimeColumn;
 
+        /// <summary>
+        /// The command factory.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
         public void CommandFactory(CommandBuilder command)
         {
-            command.Register<IoOverrideCommand, IOCommands>();
+            command.Register<IOOverrideCommand, IOCommands>();
         }
 
         /// <summary>

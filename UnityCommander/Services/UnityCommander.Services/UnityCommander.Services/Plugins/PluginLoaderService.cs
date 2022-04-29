@@ -61,16 +61,8 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// List of plugin implementations.
         /// </returns>
-        public IEnumerable<IDialogService> GetDialogService()
-        {
-            foreach (var loader in PluginLoaders)
-            {
-                foreach (var dialog in loader.GetDialogs())
-                {
-                    yield return dialog;
-                }
-            }
-        }
+        public IEnumerable<IDialogService> GetDialogService() 
+            => PluginLoaders.SelectMany(loader => loader.GetDialogs());
 
         /// <summary>
         /// Gets interfaces to configure plugins.
@@ -78,16 +70,8 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// The list <see cref="IPluginConfigure"/> interfaces to configure plugins.
         /// </returns>
-        public IEnumerable<IPluginDescriptor> GetPluginDescriptors()
-        {
-            foreach (var loader in PluginLoaders)
-            {
-                foreach (var descriptor in loader.GetDescriptors())
-                {
-                    yield return descriptor;
-                }
-            }
-        }
+        public IEnumerable<IPluginDescriptor> GetPluginDescriptors() 
+            => PluginLoaders.SelectMany(loader => loader.GetDescriptors());
 
         #endregion
 

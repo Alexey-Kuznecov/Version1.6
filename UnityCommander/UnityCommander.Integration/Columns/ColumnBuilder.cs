@@ -77,8 +77,7 @@ namespace UnityCommander.Integration.Columns
                 {
                     DisplayName = header,
                     Command = new GlobalCommandExecute(action, type),
-                    Delegate = action,
-                    Source = type
+                    Delegate = action
                 }
             });
         }

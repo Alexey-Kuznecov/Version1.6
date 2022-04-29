@@ -7,7 +7,8 @@ namespace MultiColumns.DateTime
     /// <summary>
     /// The io override command.
     /// </summary>
-    public class IoOverrideCommand : IOCommands
+    /// ReSharper disable once InconsistentNaming
+    public class IOOverrideCommand2 : IOCommands
     {
         /// <summary>
         /// The file copy.
@@ -18,7 +19,7 @@ namespace MultiColumns.DateTime
         /// <param name="destination">
         /// The destination.
         /// </param>
-        [GlobalCommand("FileCopy2", CommandKeys.CtrlF)]
+        [GlobalCommand("MultiColumns File Moving", CommandKeys.CtrlF)]
         public override void Move(string source, string destination)
         {
             base.Move(source, destination);

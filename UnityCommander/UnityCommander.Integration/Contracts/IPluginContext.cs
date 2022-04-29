@@ -14,6 +14,11 @@ namespace UnityCommander.Integration.Contracts
     public interface IPluginContext
     {
         /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// The get columns.
         /// </summary>
         /// <returns>

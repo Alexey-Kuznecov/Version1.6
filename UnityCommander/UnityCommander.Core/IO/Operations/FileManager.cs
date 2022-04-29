@@ -22,14 +22,16 @@ namespace UnityCommander.Core.IO.Operations
         [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlG)]
         public virtual void Move(string source, string target)
         {
+            if (source == null || target == null) return;
+            
             if (File.Exists(source))
             {
-                FileInfo fileInfo = new FileInfo(source);
+                var fileInfo = new FileInfo(source);
                 File.Move(source, Path.Combine(target, fileInfo.Name));
             }
             else
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(source);
+                var directoryInfo = new DirectoryInfo(source);
                 Directory.Move(source, Path.Combine(target, directoryInfo.Name));
             }
         }
@@ -66,6 +68,8 @@ namespace UnityCommander.Core.IO.Operations
         [GlobalCommand(CommandNames.FileDel, CommandKeys.CtrlH)]
         public virtual void Delete(string source)
         {
+            if (source == null) return;
+
             if (File.Exists(source))
             {
                 File.Delete(source);
@@ -79,13 +83,14 @@ namespace UnityCommander.Core.IO.Operations
         /// <summary>
         /// The create.
         /// </summary>
-        /// <param name="dirPath">
+        /// <param name="dirName">
         /// The dir path.
         /// </param>
         [GlobalCommand(CommandNames.FileCreate, CommandKeys.CtrlI)]
-        public virtual void Create(string dirPath)
+        public virtual void Create(string dirName)
         {
-            Directory.CreateDirectory(dirPath);
+            if (dirName != null)
+                Directory.CreateDirectory(dirName);
         }
 
         /// <summary>

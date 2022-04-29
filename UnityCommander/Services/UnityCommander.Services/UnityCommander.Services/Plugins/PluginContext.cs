@@ -16,6 +16,11 @@ namespace UnityCommander.Services.Plugins
     public class PluginContext : IPluginContext
     {
         /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string? Name { get; set; }
+
+        /// <summary>
         /// Gets or sets the columns.
         /// </summary>
         public IReadOnlyList<IColumn> Columns { get; set; } = new List<IColumn>();
@@ -36,13 +41,7 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         /// The columns.
         /// </returns>
-        public IEnumerable<IColumn> GetColumns()
-        {
-            foreach (var column in this.Columns)
-            {
-                yield return column;
-            }
-        }
+        public IEnumerable<IColumn> GetColumns() => this.Columns;
 
         /// <summary>
         /// The get options.
@@ -50,13 +49,7 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         ///  The option builders.
         /// </returns>
-        public IEnumerable<IOption> GetOptions()
-        {
-            foreach (var option in this.Option)
-            {
-                yield return option;
-            }
-        }
+        public IEnumerable<IOption> GetOptions() => this.Option;
 
         /// <summary>
         /// The get options.
@@ -64,13 +57,7 @@ namespace UnityCommander.Services.Plugins
         /// <returns>
         ///  The option builders.
         /// </returns>
-        public IEnumerable<BaseCommand> GetCommands()
-        {
-            foreach (var command in Commands)
-            {
-                yield return command;
-            }
-        }
+        public IEnumerable<BaseCommand> GetCommands() => this.Commands;
 
         /// <summary>
         /// The add column.
@@ -120,7 +107,7 @@ namespace UnityCommander.Services.Plugins
         {
             foreach (var command in commands)
             {
-                Commands.Add(command);
+                this.Commands.Add(command);
             }
         }
     }

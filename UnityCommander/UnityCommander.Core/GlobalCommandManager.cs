@@ -12,12 +12,8 @@ namespace UnityCommander.Core
     public class GlobalCommandManager : IGlobalCommandManager
     {
         private readonly Queue<IGlobalCommand> globalCommands;
-        
-        private readonly Queue<IGlobalCommand> virtualGlobalCommands = new ();
 
-        private readonly Queue<IGlobalCommand> globalCommandsConflicts;
-
-        private readonly Queue<MethodInfo> methodInfos = new ();
+        private readonly string commandSelector = "Default";
 
         public GlobalCommandManager(Queue<IGlobalCommand> commands)
         {
@@ -46,8 +42,7 @@ namespace UnityCommander.Core
                 Command = command,
                 CommandParameter = instance,
                 ShortcutKey = null,
-                Delegate = @delegate,
-                Source = type
+                Delegate = @delegate
             };
 
             this.globalCommands.Enqueue(cmd);
@@ -63,9 +58,24 @@ namespace UnityCommander.Core
         /// The <see cref="IGlobalCommand"/>.
         /// </returns>
         public IGlobalCommand GetCommand(string commandName)
-            => this.globalCommands.SingleOrDefault(
-                   cmd => cmd is IPluginCommand && cmd.Name == commandName)
-               ?? this.globalCommands.Single(cmd => cmd.Name == commandName);
+        {
+            var commandSelected = default(GlobalCommand);
+
+            foreach (var globalCommand in this.globalCommands.Where(
+                         p=> ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName)))
+            {
+                if (globalCommand is not GlobalCommand command) continue;
+                if (!globalCommand.Name.Contains(this.commandSelector))
+                {
+                    commandSelected = command;
+                    continue;
+                }
+
+                return globalCommand;
+            }
+
+            return commandSelected;
+        } 
 
         public Queue<IGlobalCommand> GetCommands() => this.globalCommands;
 
@@ -81,88 +91,23 @@ namespace UnityCommander.Core
 
                 var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
                 var command = new GlobalCommandExecute(action, type);
-                methodInfos.Enqueue(method);
-                
-                if (method.IsVirtual && declaringType != method.DeclaringType)
-                {
-                    this.globalCommands.Enqueue(
-                        new GlobalCommand
-                        {
-                            Name = att.Name,
-                            Command = command,
-                            Delegate = action,
-                            Source = type,
-                            DeclareType = method.GetBaseDefinition(),
-                            ShortcutKey = att.Hotkey
-                        });
-                    return;
-                }
-                
-                //if (method.IsVirtual && declaringType == method.DeclaringType)
-                //{
-                //    this.virtualGlobalCommands.Enqueue(
-                //        new GlobalCommand
-                //        {
-                //            Name = att.Name,
-                //            //Command = command,
-                //            //Delegate = action,
-                //            Source = type,
-                //            ShortcutKey = att.Hotkey
-                //        });
-                //    return;
-                //}
-
-                foreach (var virtualGlobalCommand in this.virtualGlobalCommands)
-                {
-                    //var baseMethod = ((GlobalCommand)virtualGlobalCommand).Delegate.Method;
-                    //var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
-                    //var m = method.DeclaringType.GetMethods(flags).FirstOrDefault(i => baseMethod.IsBaseMethodOf(i));
-                    //var dd = this.globalCommands.FirstOrDefault(globalCommand => ((GlobalCommandExecute)globalCommand.Command).Command.Method
-                    //         != baseMethod);
-
-                    //if (dd != null)
-                    //{
-                    //    var ddd = ((GlobalCommandExecute)dd.Command).Command.Method.GetBaseDefinition().DeclaringType;
-
-                    //    if (ddd == method.GetBaseDefinition().DeclaringType)
-                    //    {
-                    //        return;
-                    //    }
-                    //}
-                    
-                    //if (method.DeclaringType.HasOverridingMethod(baseMethod))
-                    //{
-                    //    this.globalCommands.Enqueue(
-                    //        new PluginCommand
-                    //            {
-                    //                Name = virtualGlobalCommand.Name,
-                    //                //Command = command,
-                    //                ShortcutKey = att.Hotkey
-                    //            });
-                    //}
-                    //else
-                    //{
-                    //    this.globalCommands.Enqueue(virtualGlobalCommand);
-                    //}
-                }
+                this.globalCommands.Enqueue(
+                    new GlobalCommand
+                    {
+                        Name = att.Name,
+                        Command = command,
+                        Delegate = action,
+                        ShortcutKey = att.Hotkey,
+                        OverrideCommand = GetOverriddenMethodInfo(method)
+                    });
             }
         }
-    }
 
-    public static class Methods 
-    {
-        public static bool HasOverridingMethod(this Type type, MethodInfo baseMethod)
+        private static MethodInfo GetOverriddenMethodInfo(MethodInfo methodOverride)
         {
-            return type.GetOverridingMethod(baseMethod) != null;
-        }
-        public static MethodInfo GetOverridingMethod(this Type type, MethodInfo baseMethod)
-        {
-            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
-            return type.GetMethods(flags).FirstOrDefault(i => baseMethod.IsBaseMethodOf(i));
-        }
-        public static bool IsBaseMethodOf(this MethodInfo baseMethod, MethodInfo method)
-        {
-            return baseMethod.DeclaringType != method.DeclaringType && baseMethod == method.GetBaseDefinition();
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
+            var baseType = methodOverride.GetBaseDefinition().DeclaringType;
+            return baseType?.GetMethods(Flags).FirstOrDefault(methodVirtual => methodVirtual.Name == methodOverride.Name);
         }
     }
 }

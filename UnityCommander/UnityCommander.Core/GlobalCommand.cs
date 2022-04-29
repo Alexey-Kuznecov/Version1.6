@@ -24,10 +24,10 @@ namespace UnityCommander.Core
 
         public InputGesture ShortcutKey { get; set; }
 
-        public Type Source { get; set; }
-
         public Delegate Delegate { get; set; }
-        
+
+        public MethodInfo OverrideCommand { get; set; }
+
         public MethodInfo DeclareType { get; set; }
     }
 }
