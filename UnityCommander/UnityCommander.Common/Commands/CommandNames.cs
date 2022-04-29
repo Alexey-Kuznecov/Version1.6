@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UnityCommander.Integration.Enums
+﻿
+namespace UnityCommander.Common.Commands
 {
     public struct CommandNames
     {

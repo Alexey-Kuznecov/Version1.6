@@ -3,6 +3,7 @@ namespace UnityCommander.Integration.Commands
 {
     using UnityCommander.Common.Commands;
     using UnityCommander.Core.IO.Operations;
+    using UnityCommander.Integration.Enums;
 
     // ReSharper disable once InconsistentNaming
     public abstract class IOCommands : FileManager

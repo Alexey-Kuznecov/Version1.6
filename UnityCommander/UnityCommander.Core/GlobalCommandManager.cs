@@ -11,9 +11,9 @@ namespace UnityCommander.Core
 
     public class GlobalCommandManager : IGlobalCommandManager
     {
-        private readonly List<IGlobalCommand> globalCommands;
+        private readonly Queue<IGlobalCommand> globalCommands;
 
-        public GlobalCommandManager(List<IGlobalCommand> commands)
+        public GlobalCommandManager(Queue<IGlobalCommand> commands)
         {
             this.globalCommands = commands;
         }
@@ -44,7 +44,7 @@ namespace UnityCommander.Core
                 Source = type
             };
 
-            globalCommands.Add(cmd);
+            this.globalCommands.Add(cmd);
         }
 
         /// <summary>
@@ -65,37 +65,42 @@ namespace UnityCommander.Core
 
         private void SetCommand(object instance)
         {
-            return;
-
             Type type = instance.GetType();
             MethodInfo[] methods = type.GetMethods();
             
             foreach (var method in methods)
             {
-                if (method.GetBaseDefinition().DeclaringType != method.DeclaringType)
+                var declaringType = method.GetBaseDefinition().DeclaringType;
+                if (Attribute.GetCustomAttribute(method, typeof(GlobalCommandAttribute)) is not GlobalCommandAttribute att) continue;
+                var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
+                var command = new GlobalCommandExecute(action, type);
+                var cmd = default(IGlobalCommand);
+
+                if (declaringType != method.DeclaringType)
                 {
-                    var att = Attribute.GetCustomAttribute(method, typeof(GlobalCommandAttribute)) as GlobalCommandAttribute;
-
-                    if (att == null) continue;
-
-                    var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
-                    var command = new GlobalCommandExecute(action, type);
-
-                    var cmd = new GlobalCommand
+                    cmd = new PluginCommand
                     {
                         Name = att.Name,
                         Command = command,
-                        ShortcutKey = att.Hotkey,
-                        Delegate = action,
-                        Source = type
-                       
+                        ShortcutKey = att.Hotkey
                     };
-
-                    // var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
-                    // var inputBindingCollection = new InputBindingCollection();
-                    // inputBindingCollection.Add(input);
-                    this.globalCommands.Add(cmd);
                 }
+                else
+                {
+                    cmd = new GlobalCommand
+                    {
+                        Name = att.Name,
+                        Command = command,
+                        Delegate = action,
+                        Source = type,
+                        ShortcutKey = att.Hotkey
+                    };
+                }
+
+                // var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
+                // var inputBindingCollection = new InputBindingCollection();
+                // inputBindingCollection.Add(input);
+                this.globalCommands.Add(cmd);
             }
         }
     }

@@ -9,7 +9,7 @@ namespace UnityCommander.Core
 
     public class GlobalCommandProvider : IGlobalCommandProvider
     {
-        private static readonly List<IGlobalCommand> GlobalCommands = new ();
+        private static readonly Queue<IGlobalCommand> GlobalCommands = new ();
         
         private static readonly GlobalCommandManager GlobalCommandManager = new (GlobalCommands);
 

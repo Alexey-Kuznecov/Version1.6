@@ -21,6 +21,13 @@ namespace UnityCommander.Services
             this.globalCommandProvider = Assembly.Load("UnityCommander.Core").CreateInstance("UnityCommander.Core.GlobalCommandProvider");
             this.InitialCommands();
         }
+
+        /// <summary>
+        /// The get command manager.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IGlobalCommandManager"/>.
+        /// </returns>
         public IGlobalCommandManager GetCommandManager() => this.globalCommandManager;
 
         internal void InitialCommands() 

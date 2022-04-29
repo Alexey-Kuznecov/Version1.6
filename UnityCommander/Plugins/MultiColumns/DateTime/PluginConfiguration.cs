@@ -1,6 +1,4 @@
 ﻿
-using UnityCommander.Integration.Commands;
-
 namespace MultiColumns.DateTime
 {
     using System;
@@ -8,6 +6,7 @@ namespace MultiColumns.DateTime
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
 

@@ -1,14 +1,24 @@
-﻿using UnityCommander.Integration.Commands;
-using UnityCommander.Integration.Enums;
-
+﻿
 namespace MultiColumns.DateTime
 {
     using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Commands;
 
-    // ReSharper disable once InconsistentNaming
+    /// <summary>
+    /// The io override command.
+    /// </summary>
     public class IoOverrideCommand : IOCommands
     {
-        [GlobalCommand("FileCopy", CommandKeys.CtrlG)]
+        /// <summary>
+        /// The file copy.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="destination">
+        /// The destination.
+        /// </param>
+        [GlobalCommand("FileCopy2", CommandKeys.CtrlF)]
         public override void FileCopy(string source, string destination)
         {
             base.FileCopy(source, destination);

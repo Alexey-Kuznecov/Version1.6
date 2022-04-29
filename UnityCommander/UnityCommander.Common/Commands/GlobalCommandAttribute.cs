@@ -4,13 +4,20 @@ namespace UnityCommander.Common.Commands
     using System;
     using System.Windows.Input;
 
-    [AttributeUsage(AttributeTargets.Method)]
+    /// <summary>
+    /// The global command attribute.
+    /// </summary>
     public class GlobalCommandAttribute : Attribute
     {
-        public string Name { get; set; }
-        
-        public KeyGesture Hotkey { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GlobalCommandAttribute"/> class.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="hotkey">
+        /// The hotkey.
+        /// </param>
         public GlobalCommandAttribute(string name, string hotkey)
         {
             if (name == "FileCopy3")
@@ -21,5 +28,15 @@ namespace UnityCommander.Common.Commands
             this.Name = name;
             this.Hotkey = (KeyGesture)new KeyGestureConverter().ConvertFromString(hotkey);
         }
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the hotkey.
+        /// </summary>
+        public KeyGesture Hotkey { get; set; }
     }
 }

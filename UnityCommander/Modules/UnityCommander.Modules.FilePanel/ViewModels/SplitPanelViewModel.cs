@@ -25,6 +25,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Regions;
     using Prism.Services.Dialogs;
     using UnityCommander.Common;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Core;
     using UnityCommander.Core.Commands;
@@ -189,7 +190,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
-            // TODO: this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("FileMove").Command;
+            this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("Test1").Command;
+
             // Composite command
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(SavePanelStateCommand);
@@ -672,7 +674,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             
             foreach (var command in globalCommands)
             {
-                ContextMenu.Items.Add(new MenuItem().SetParam(command, 
+                ContextMenu.Items.Add(new MenuItem().SetParam(command,
                     paramManager =>
                         {
                             paramManager.AddParam(this, "CurrentDirectory");

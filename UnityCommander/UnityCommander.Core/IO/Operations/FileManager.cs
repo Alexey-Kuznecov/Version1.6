@@ -19,6 +19,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="target">
         /// The target.
         /// </param>
+        [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlG)]
         public virtual void Move(string source, string target)
         {
             if (File.Exists(source))
@@ -62,6 +63,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="source">
         /// The source.
         /// </param>
+        [GlobalCommand(CommandNames.FileDel, CommandKeys.CtrlH)]
         public virtual void Delete(string source)
         {
             if (File.Exists(source))

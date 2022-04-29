@@ -23,7 +23,7 @@ namespace UnityCommander.Core
             }
 
             callback(parametersManager);
-            // TODO: ParamBuilder(command, control, parametersManager.Params);
+            ParamBuilder(command, control, parametersManager.Params);
             return control;
         }
 
