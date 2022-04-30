@@ -21,6 +21,17 @@ namespace UnityCommander.Common.Commands
         IGlobalCommand GetCommand(string commandName);
 
         /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="GlobalCommand"/>.
+        /// </returns>
+        IEnumerable<IGlobalCommand> GetCommands(string commandName);
+
+        /// <summary>
         /// The get commands.
         /// </summary>
         /// <returns>
@@ -49,5 +60,22 @@ namespace UnityCommander.Common.Commands
         /// The action.
         /// </param>
         void CreateCommand(string commandName, object instance, Action<object> action);
+
+        /// <summary>
+        /// The create command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        void CreateSingletonCommand(string commandName, object instance, Action<object> action);
+
+
+        void UpdateCommand(string commandName);
     }
 }

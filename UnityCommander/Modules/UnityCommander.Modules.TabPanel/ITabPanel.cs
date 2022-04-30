@@ -13,5 +13,8 @@ namespace UnityCommander.Modules.TabPanel
         /// The region name.
         /// </param>
         public void InitialTabPanelContent(string regionName);
+
+
+        public void SetCurrentTab(string regionName);
     } 
 }

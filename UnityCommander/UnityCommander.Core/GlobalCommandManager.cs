@@ -72,7 +72,10 @@ namespace UnityCommander.Core
             }
 
             return commandSelected;
-        } 
+        }
+
+        public IEnumerable<IGlobalCommand> GetCommands(string commandName) 
+            => this.globalCommands.Where(p => ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName));
 
         public Queue<IGlobalCommand> GetCommands() => this.globalCommands;
 
@@ -102,6 +105,35 @@ namespace UnityCommander.Core
 
                 this.globalCommands.Enqueue(globalCommand);
             }
+        }
+
+        public void UpdateCommand(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateSingletonCommand(string commandName, object args, Action<object> action)
+        {
+            // TODO: Optimize this piece of code.
+            IGlobalCommand globalCommand = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
+
+            if (globalCommand != null)
+            {
+                globalCommand.CommandParameter = args;
+                return;
+            }
+
+            var command = new GlobalCommandExecute(action, args);
+            
+            globalCommand = new GlobalCommand
+            {
+                Name = commandName,
+                Command = command,
+                CommandParameter = args,
+                ShortcutKey = null,
+            };
+            
+            this.globalCommands.Enqueue(globalCommand);
         }
 
         private static MethodInfo GetOverriddenMethodInfo(MethodInfo methodOverride)

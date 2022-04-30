@@ -92,12 +92,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             IGlobalCommandService globalCommandService)
          {
             this.globalCommandManager = globalCommandService.GetCommandManager();
-            //this.globalCommandManager.CreateCommand("ShowDialog", this, this.ShowDialogCommand)
+            //this.globalCommandManager.CreateCommand("ShowDialog", this, this.ShowDialogCommand);
             this.pluginLoader = pluginLoaderService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
             this.Message = "This Toolbar View";
-            this.UserControls = new MainTabControl();
             this.Icon = iconProvider.GetIcon("Tag").GetIconPath();
         }
 

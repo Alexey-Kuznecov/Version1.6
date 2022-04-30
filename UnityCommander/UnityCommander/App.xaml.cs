@@ -91,15 +91,15 @@ namespace UnityCommander
             //    IfAlreadyRegistered.Replace, false, true, 1);
         }
 
-        protected override Rules CreateContainerRules()
-        {
-            return Rules.Default
-                .WithAutoConcreteTypeResolution(Condition)
-                .With(Made.Of(FactoryMethod.ConstructorWithResolvableArguments))
-                .WithoutThrowOnRegisteringDisposableTransient()
-                .WithFuncAndLazyWithoutRegistration()
-                .WithDefaultIfAlreadyRegistered(IfAlreadyRegistered.Replace);
-        }
+        //protected override Rules CreateContainerRules()
+        //{
+        //    return Rules.Default
+        //        .WithAutoConcreteTypeResolution(Condition)
+        //        .With(Made.Of(FactoryMethod.ConstructorWithResolvableArguments))
+        //        .WithoutThrowOnRegisteringDisposableTransient()
+        //        .WithFuncAndLazyWithoutRegistration()
+        //        .WithDefaultIfAlreadyRegistered(IfAlreadyRegistered.Replace);
+        //}
 
         private bool Condition(Request arg)
         {
@@ -144,8 +144,8 @@ namespace UnityCommander
             base.ConfigureViewModelLocator();
             
             ViewModelLocationProvider.Register(typeof(LeftPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
-            ViewModelLocationProvider.Register(typeof(RightPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
-            ViewModelLocationProvider.Register(typeof(ViewerView).ToString(), () => Container.Resolve<ViewerViewModel>());
+            //ViewModelLocationProvider.Register(typeof(RightPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
+            //ViewModelLocationProvider.Register(typeof(ViewerView).ToString(), () => Container.Resolve<ViewerViewModel>());
         }
 
         /// <summary>
