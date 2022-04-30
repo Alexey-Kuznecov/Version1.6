@@ -4,9 +4,9 @@
 namespace UnityCommander.Services.Plugins
 {
     using System.Collections.Generic;
-
-    using UnityCommander.Common.Commands;
+    
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
 

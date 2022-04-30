@@ -6,7 +6,7 @@ namespace UnityCommander.Services.Interfaces
     using Integration.Contracts;
     using Integration.Dialog;
     using Integration.Options;
-    using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The PluginLoader interface.

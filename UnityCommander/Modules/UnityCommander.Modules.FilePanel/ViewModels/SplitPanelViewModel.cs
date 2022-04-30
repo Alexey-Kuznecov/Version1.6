@@ -184,9 +184,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             : base(regionManager)
         {
             this.dialogService = dialogService;
-            commandManager = manager;
+            this.commandManager = manager;
             this.logger = logger.GetLogger();
-            pluginLoaderService = pluginService;
+            this.pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
@@ -194,7 +194,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             // Composite command
             this.multiCommandService = multiCommandService;
-            this.multiCommandService.SaveCommand.RegisterCommand(SavePanelStateCommand);
+            this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
         }
 
         #endregion
@@ -535,11 +535,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void InitializeColumns()
         {
-            AddFileColumns();
-            AddFolderColumns();
-            AddDriveColumns();
-            AddPluginColumns();
-            CreateContextMenu();
+            this.AddFileColumns();
+            this.AddFolderColumns();
+            this.AddDriveColumns();
+            this.AddPluginColumns();
+            this.CreateContextMenu();
         }
 
         /// <summary>
@@ -567,8 +567,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 foreach (var column in items)
                 {
-                    FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    //this.CreateContextMenu(column);
+                    this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                    // this.CreateContextMenu(column);
                 }
             });
         }
@@ -583,7 +583,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     foreach (var column in columns)
                     {
-                        DrivePanelContainer.Columns.Add((GridViewColumn)column.Template);
+                        this.DrivePanelContainer.Columns.Add((GridViewColumn)column.Template);
                     }
                 });
         }
@@ -595,14 +595,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void AddPluginColumns()
         {
-            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
-                    column.ColumnManager.SetUpdateCommand(UpdateColumnsCommand);
+                    column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
                     column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
 
-                    if (InitialFolderColumnValues(column))
+                    if (this.InitialFolderColumnValues(column))
                     {
                         var columnNew = new GridViewColumn
                         {
@@ -611,10 +611,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
                         };
 
-                        FolderPanelContainer.Columns.Add(columnNew);
+                        this.FolderPanelContainer.Columns.Add(columnNew);
                     }
 
-                    if (InitialFileColumnValues(column))
+                    if (this.InitialFileColumnValues(column))
                     {
                         var columnNew = new GridViewColumn
                         {
@@ -623,10 +623,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate")
                         };
 
-                        FilePanelContainer.Columns.Add(columnNew);
+                        this.FilePanelContainer.Columns.Add(columnNew);
                     }
 
-                    CreatePluginContextMenu(column);
+                    this.CreatePluginContextMenu(column);
                 }
             }
         }
@@ -640,7 +640,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var item in column.ContextItems)
             {
-                ContextMenu.Items.Add(new MenuItem().SetParam(item.Command,
+                this.ContextMenu.Items.Add(
+                    new MenuItem().SetParam(
+                            item.Command,
                     paramManager =>
                     {
                         paramManager.AddParam(this, "CurrentDirectory");
@@ -674,7 +676,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             
             foreach (var command in globalCommands)
             {
-                ContextMenu.Items.Add(new MenuItem().SetParam(command,
+                this.ContextMenu.Items.Add(new MenuItem().SetParam(
+                    command,
                     paramManager =>
                         {
                             paramManager.AddParam(this, "CurrentDirectory");

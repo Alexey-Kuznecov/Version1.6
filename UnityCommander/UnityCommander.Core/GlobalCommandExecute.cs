@@ -41,8 +41,8 @@ namespace UnityCommander.Core
                 return;
             }
 
-            ConstructorInfo contructor = type.GetConstructor(Type.EmptyTypes);
-            object instance = contructor?.Invoke(new object[] { });
+            var constructor = type.GetConstructor(Type.EmptyTypes);
+            var instance = constructor?.Invoke(new object[] { });
 
             if (parameter != null)
             {

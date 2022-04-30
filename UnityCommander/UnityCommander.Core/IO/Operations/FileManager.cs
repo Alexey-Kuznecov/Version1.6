@@ -3,12 +3,10 @@ namespace UnityCommander.Core.IO.Operations
 {
     using System.IO;
 
-    using UnityCommander.Common.Commands;
-
     /// <summary>
     /// The file manager.
     /// </summary>
-    public class FileManager : BaseCommand
+    public class FileManager
     {
         /// <summary>
         /// The move.
@@ -19,8 +17,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="target">
         /// The target.
         /// </param>
-        [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlG)]
-        public virtual void Move(string source, string target)
+        public static void Move(string source, string target)
         {
             if (source == null || target == null) return;
             
@@ -65,8 +62,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="source">
         /// The source.
         /// </param>
-        [GlobalCommand(CommandNames.FileDel, CommandKeys.CtrlH)]
-        public virtual void Delete(string source)
+        public static void Delete(string source)
         {
             if (source == null) return;
 
@@ -86,8 +82,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="dirName">
         /// The dir path.
         /// </param>
-        [GlobalCommand(CommandNames.FileCreate, CommandKeys.CtrlI)]
-        public virtual void Create(string dirName)
+        public static void Create(string dirName)
         {
             if (dirName != null)
                 Directory.CreateDirectory(dirName);

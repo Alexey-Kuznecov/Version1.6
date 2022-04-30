@@ -34,7 +34,7 @@ namespace UnityCommander.Common.Commands
         /// <param name="command">
         /// The command.
         /// </param>
-        void CreateCommand(BaseCommand command);
+        void CreateCommand(object command);
 
         /// <summary>
         /// The create command.

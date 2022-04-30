@@ -13,9 +13,15 @@ namespace UnityCommander.Core
         
         private static readonly GlobalCommandManager GlobalCommandManager = new (GlobalCommands);
 
-        public GlobalCommandProvider()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GlobalCommandProvider"/> class.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        public GlobalCommandProvider(object command)
         {
-            GlobalCommandManager.CreateCommand(new FileManager());
+            GlobalCommandManager.CreateCommand(command);
         }
 
         public IGlobalCommandManager GetCommandManager() => GlobalCommandManager;

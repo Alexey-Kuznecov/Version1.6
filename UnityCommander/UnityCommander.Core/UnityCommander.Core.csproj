@@ -32,11 +32,6 @@
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
       <Private>false</Private>
     </ProjectReference>
-    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
-      <Private>false</Private>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
     <ProjectReference Include="..\UnityCommander.Controls\UnityCommander.Controls.csproj">
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
       <Private>false</Private>

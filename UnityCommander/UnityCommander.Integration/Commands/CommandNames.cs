@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Common.Commands
+namespace UnityCommander.Integration.Commands
 {
     public struct CommandNames
     {

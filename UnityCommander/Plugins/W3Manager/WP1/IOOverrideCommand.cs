@@ -1,7 +1,6 @@
 ﻿
 namespace W3Manager.WP1
 {
-    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
 
     /// <summary>
@@ -10,27 +9,6 @@ namespace W3Manager.WP1
     /// ReSharper disable once InconsistentNaming
     public class IOOverrideCommand : IOCommands
     {
-        /// <summary>
-        /// The test.
-        /// </summary>
-        /// <param name="source">
-        /// The source.
-        /// </param>
-        /// <param name="destination">
-        /// The destination.
-        /// </param>
-        /// <param name="isShadowCopy">
-        /// The is shadow copy.
-        /// </param>
-        /// <param name="baseCommand">
-        /// The base command.
-        /// </param>
-        [GlobalCommand("W3Manager Test", CommandKeys.CtrlB)]
-        public override void Test(string source, string destination, bool isShadowCopy, BaseCommand baseCommand)
-        {
-            base.Test(source, destination, isShadowCopy, baseCommand);
-        }
-
         /// <summary>
         /// The move.
         /// </summary>

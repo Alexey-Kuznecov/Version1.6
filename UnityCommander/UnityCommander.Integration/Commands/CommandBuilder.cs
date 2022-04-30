@@ -9,7 +9,7 @@ namespace UnityCommander.Integration.Commands
     {
         private readonly List<BaseCommand> globalCommands = new ();
         
-        public void Register<TOv, TOr>() where TOv : TOr, new()
+        public void Register<TOv, TOr>() where TOv : TOr, new ()
         {
             globalCommands.Add(new TOv() as BaseCommand);
         }

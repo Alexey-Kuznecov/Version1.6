@@ -4,8 +4,7 @@ namespace UnityCommander.Integration.Contracts
     using System.Collections.Generic;
 
     using Columns;
-
-    using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Options;
 
     /// <summary>

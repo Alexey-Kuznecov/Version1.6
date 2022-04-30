@@ -1,7 +1,6 @@
 ﻿
 namespace MultiColumns.DateTime
 {
-    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
 
     /// <summary>
@@ -19,7 +18,7 @@ namespace MultiColumns.DateTime
         /// <param name="destination">
         /// The destination.
         /// </param>
-        [GlobalCommand("MultiColumns File Moving", CommandKeys.CtrlF)]
+        [GlobalCommand("MultiColumns File Moving", CommandKeys.CtrlB)]
         public override void Move(string source, string destination)
         {
             base.Move(source, destination);

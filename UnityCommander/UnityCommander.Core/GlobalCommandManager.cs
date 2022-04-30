@@ -5,7 +5,7 @@ namespace UnityCommander.Core
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
+    using System.Windows.Input;
     using UnityCommander.Common.Commands;
     using UnityCommander.Core.Generators;
 
@@ -20,7 +20,7 @@ namespace UnityCommander.Core
             this.globalCommands = commands;
         }
 
-        public void CreateCommand(BaseCommand command)
+        public void CreateCommand(object command)
         {
             this.SetCommand(command);
         }
@@ -86,20 +86,26 @@ namespace UnityCommander.Core
             
             foreach (var method in methods)
             {
-                var declaringType = method.GetBaseDefinition().DeclaringType;
-                if (Attribute.GetCustomAttribute(method, typeof(GlobalCommandAttribute)) is not GlobalCommandAttribute att) continue;
-
+                if (!method.CustomAttributes.Any(p => p.AttributeType.Name == "GlobalCommandAttribute")) continue;
+             
                 var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
                 var command = new GlobalCommandExecute(action, type);
-                this.globalCommands.Enqueue(
-                    new GlobalCommand
-                    {
-                        Name = att.Name,
-                        Command = command,
-                        Delegate = action,
-                        ShortcutKey = att.Hotkey,
-                        OverrideCommand = GetOverriddenMethodInfo(method)
-                    });
+
+                var globalCommand = new GlobalCommand
+                {
+                    Command = command,
+                    Delegate = action,
+                    OverrideCommand = GetOverriddenMethodInfo(method)
+                };
+
+                foreach (var attribute in method.GetCustomAttributes())
+                {
+                     var properties = attribute.GetType().GetProperties();
+                     globalCommand.Name = (string)attribute.GetType().GetProperty("Name").GetValue(attribute);
+                     globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey").GetValue(attribute);
+                }
+
+                this.globalCommands.Enqueue(globalCommand);
             }
         }
 

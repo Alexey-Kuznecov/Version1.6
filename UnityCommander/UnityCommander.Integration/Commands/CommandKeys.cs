@@ -1,6 +1,9 @@
 ﻿
-namespace UnityCommander.Common.Commands
+namespace UnityCommander.Integration.Commands
 {
+    /// <summary>
+    /// The command keys.
+    /// </summary>
     public struct CommandKeys
     {
         public const string CtrlA = "Control+A";

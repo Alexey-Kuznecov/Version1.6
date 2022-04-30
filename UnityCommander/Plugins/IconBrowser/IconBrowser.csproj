@@ -22,14 +22,6 @@
 	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
 	    <Private>false</Private>
 	  </Reference>
-	  <Reference Include="UnityCommander.Common">
-	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Common.dll</HintPath>
-	    <Private>false</Private>
-	  </Reference>
-	  <Reference Include="UnityCommander.Core">
-	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Core.dll</HintPath>
-	    <Private>false</Private>
-	  </Reference>
 	  <Reference Include="UnityCommander.Integration">
 	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
 	    <Private>false</Private>

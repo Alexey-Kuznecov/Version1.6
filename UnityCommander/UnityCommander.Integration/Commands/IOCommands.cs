@@ -1,21 +1,49 @@
 ﻿
 namespace UnityCommander.Integration.Commands
 {
-    using UnityCommander.Common.Commands;
-    using UnityCommander.Core.IO.Operations;
-    using UnityCommander.Integration.Enums;
-
-    // ReSharper disable once InconsistentNaming
-    public abstract class IOCommands : FileManager
+    /// <summary>
+    /// The io commands.
+    /// </summary>
+    /// ReSharper disable once InconsistentNaming
+    public class IOCommands : BaseCommand
     {
+        /// <summary>
+        /// The move.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="destination">
+        /// The destination.
+        /// </param>
+        [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlG)]
         public virtual void Move(string source, string destination)
         {
-            base.Move(source, destination);
+            Core.IO.Operations.FileManager.Move(source, destination);
         }
 
+        /// <summary>
+        /// The delete.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        [GlobalCommand(CommandNames.FileDel, CommandKeys.CtrlH)]
         public virtual void Delete(string source)
         {
-            base.Delete(source);
+            Core.IO.Operations.FileManager.Delete(source);
+        }
+
+        /// <summary>
+        /// The create.
+        /// </summary>
+        /// <param name="dirName">
+        /// The dir name.
+        /// </param>
+        [GlobalCommand(CommandNames.FileCreate, CommandKeys.CtrlI)]
+        public virtual void Create(string dirName)
+        {
+            Core.IO.Operations.FileManager.Create(dirName);
         }
     }
 }
