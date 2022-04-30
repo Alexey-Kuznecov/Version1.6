@@ -3,7 +3,7 @@ namespace UnityCommander.Controls.Ribbon.Control
 {
     using System;
     using System.Windows.Input;
-
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
 
     /// <summary>
@@ -23,7 +23,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="buttonCommand">
         /// The button command.
         /// </param>
-        public RibbonComboBoxItem(string content, IIcon buttonIcon, RibbonCommand buttonCommand)
+        public RibbonComboBoxItem(string content, IIcon buttonIcon, IGlobalCommand buttonCommand)
             : base(
                 content, 
                 buttonIcon, 

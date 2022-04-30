@@ -4,6 +4,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
 
     /// <summary>
@@ -35,7 +36,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         internal RibbonControl(
             [NotNull] string controlName,
             [NotNull] IIcon controlIcon,
-            [NotNull] RibbonCommand controlCommand,
+            [NotNull] IGlobalCommand controlCommand,
             [NotNull] string styleName,
             [NotNull] string templateName,
             string dataTemplate)

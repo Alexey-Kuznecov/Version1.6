@@ -23,11 +23,5 @@ namespace UnityCommander.Core
         public object CommandParameter { get; set; }
 
         public InputGesture ShortcutKey { get; set; }
-
-        public Delegate Delegate { get; set; }
-
-        public MethodInfo OverrideCommand { get; set; }
-
-        public MethodInfo DeclareType { get; set; }
     }
 }

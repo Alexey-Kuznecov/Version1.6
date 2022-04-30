@@ -9,7 +9,6 @@ namespace UnityCommander.Integration.Columns
     using UnityCommander.Core;
     using UnityCommander.Integration.Commands;
 
-    using GlobalCommandExecute = UnityCommander.Integration.Commands.GlobalCommandExecute;
 
     /// <summary>
     /// The column builder.
@@ -76,8 +75,7 @@ namespace UnityCommander.Integration.Columns
                 Command = new GlobalCommand
                 {
                     DisplayName = header,
-                    Command = new GlobalCommandExecute(action, type),
-                    Delegate = action
+                    Command = new UnityCommander.Core.GlobalCommandExecute(action, type)
                 }
             });
         }

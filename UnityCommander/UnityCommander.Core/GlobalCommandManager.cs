@@ -28,12 +28,10 @@ namespace UnityCommander.Core
         public void CreateCommand(string commandName, object instance, Action<object> action)
         {
             // TODO: Optimize this piece of code.
-            var c = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
+            //var c = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
 
-            if (c != null) return;
+            //if (c != null) return;
 
-            var type = action.Method.DeclaringType;
-            var @delegate = Delegate.CreateDelegate(DelegateTypeFactory.Create(action.Method), instance, action.Method);
             var command = new GlobalCommandExecute(action, instance);
 
             var cmd = new GlobalCommand
@@ -42,7 +40,6 @@ namespace UnityCommander.Core
                 Command = command,
                 CommandParameter = instance,
                 ShortcutKey = null,
-                Delegate = @delegate
             };
 
             this.globalCommands.Enqueue(cmd);
@@ -93,9 +90,7 @@ namespace UnityCommander.Core
 
                 var globalCommand = new GlobalCommand
                 {
-                    Command = command,
-                    Delegate = action,
-                    OverrideCommand = GetOverriddenMethodInfo(method)
+                    Command = command
                 };
 
                 foreach (var attribute in method.GetCustomAttributes())

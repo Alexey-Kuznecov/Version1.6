@@ -15,7 +15,7 @@ namespace UnityCommander.Core
             switch (control)
             {
                 case MenuItem menuItem:
-                    menuItem.Header = command.Name;
+                    menuItem.Header = command.Name ?? ((GlobalCommand)command).DisplayName;
                     break;
                 case Button button:
                     button.Content = command.Name;
@@ -31,7 +31,7 @@ namespace UnityCommander.Core
         {
             var command = globalCommand.Command is null ? GlobalCommandProvider.FindCommand(globalCommand.Name) : globalCommand;
             // TODO: Выпилить Delegate из GlobalCommand
-            //var paramInfo = command.Delegate.Method.GetParameters();
+            var paramInfo = ((GlobalCommandExecute)command.Command).Command.Method.GetParameters();
             using var multiCommandParameter = new MultiCommandParameter(controlTarget);
             var header = default(string);
 
@@ -47,9 +47,9 @@ namespace UnityCommander.Core
                     break;
             }
 
-            //for (var i = 0; i < paramInfo.Length; i++)
-            //    multiCommandParameter.AddParam(header, controlTarget, vmSource[i]);
-            //multiCommandParameter.ParamFinal(controlTarget);
+            for (var i = 0; i < paramInfo.Length; i++)
+                multiCommandParameter.AddParam(header, controlTarget, vmSource[i]);
+            multiCommandParameter.ParamFinal(controlTarget);
         }
     }
 }

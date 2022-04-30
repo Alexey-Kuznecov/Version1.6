@@ -120,7 +120,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             CommandManager manager)
         {
             var fileManger = globalCommandService.GetCommandManager();
-            fileManger.CreateCommand("DisplayContent " + instanceCount++, this, DisplayContent);
+            fileManger.CreateCommand(nameof(this.DisplayContent), this, this.DisplayContent);
 
             this.regionManager = regionManager;
             this.commandManager = manager;

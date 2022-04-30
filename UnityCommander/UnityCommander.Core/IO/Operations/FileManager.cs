@@ -21,16 +21,16 @@ namespace UnityCommander.Core.IO.Operations
         {
             if (source == null || target == null) return;
             
-            if (File.Exists(source))
-            {
-                var fileInfo = new FileInfo(source);
-                File.Move(source, Path.Combine(target, fileInfo.Name));
-            }
-            else
-            {
-                var directoryInfo = new DirectoryInfo(source);
-                Directory.Move(source, Path.Combine(target, directoryInfo.Name));
-            }
+            //if (File.Exists(source))
+            //{
+            //    var fileInfo = new FileInfo(source);
+            //    File.Move(source, Path.Combine(target, fileInfo.Name));
+            //}
+            //else
+            //{
+            //    var directoryInfo = new DirectoryInfo(source);
+            //    Directory.Move(source, Path.Combine(target, directoryInfo.Name));
+            //}
         }
 
         /// <summary>
@@ -64,16 +64,16 @@ namespace UnityCommander.Core.IO.Operations
         /// </param>
         public static void Delete(string source)
         {
-            if (source == null) return;
+            //if (source == null) return;
 
-            if (File.Exists(source))
-            {
-                File.Delete(source);
-            }
-            else
-            {
-                Directory.Delete(source, true);
-            }
+            //if (File.Exists(source))
+            //{
+            //    File.Delete(source);
+            //}
+            //else
+            //{
+            //    Directory.Delete(source, true);
+            //}
         }
 
         /// <summary>
@@ -84,8 +84,8 @@ namespace UnityCommander.Core.IO.Operations
         /// </param>
         public static void Create(string dirName)
         {
-            if (dirName != null)
-                Directory.CreateDirectory(dirName);
+            //if (dirName != null)
+            //    Directory.CreateDirectory(dirName);
         }
 
         /// <summary>

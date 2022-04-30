@@ -3,7 +3,7 @@ namespace UnityCommander.Controls.Ribbon
 {
     using System;
     using System.Windows.Input;
-
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Controls.Ribbon.Subgroup;
@@ -44,7 +44,7 @@ namespace UnityCommander.Controls.Ribbon
         /// The <see cref="RibbonControlGroupBuilder"/>. Returns the control group designer for further tool ribbon construction . 
         /// </returns>
         /// <remarks> Controls will be added in the order in which this function is called. </remarks>
-        public RibbonControlGroupBuilder AddButton(string name, IIcon icon, RibbonCommand command)
+        public RibbonControlGroupBuilder AddButton(string name, IIcon icon, IGlobalCommand command)
         {
             RibbonElement element = new RibbonElement(new RibbonButton(name, icon, command));
             this.group.Children.Add(element);
