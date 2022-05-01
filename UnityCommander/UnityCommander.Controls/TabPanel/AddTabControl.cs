@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Controls.Taber
+namespace UnityCommander.Controls.TabPanel
 {
     using System.Windows;
     using System.Windows.Controls;
@@ -97,7 +97,7 @@ namespace UnityCommander.Controls.Taber
         /// </summary>
         public override void OnApplyTemplate()
         {
-            this.AddControl = GetTemplateChild("AddTabControl") as RepeatButton;
+            this.AddControl = this.GetTemplateChild("AddTabControl") as RepeatButton;
             this.UpdateStates(false);
         }
 

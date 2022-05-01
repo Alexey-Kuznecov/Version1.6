@@ -1,14 +1,13 @@
 ﻿
-namespace UnityCommander.Controls.Taber
+namespace UnityCommander.Controls.TabPanel
 {
-    using System;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Input;
 
     /// <summary>
-    /// The taber control.
+    /// The tab control.
     /// </summary>
     [TemplatePart(Name = "Control", Type = typeof(RepeatButton))]
     [TemplateVisualState(Name = "Positive", GroupName = "ValueStates")]
@@ -152,8 +151,8 @@ namespace UnityCommander.Controls.Taber
         /// </summary>
         public override void OnApplyTemplate()
         {
-            this.Control = GetTemplateChild("TabControl") as RepeatButton;
-            this.CloseControl = GetTemplateChild("CloseTabControl") as RepeatButton;
+            this.Control = this.GetTemplateChild("TabControl") as RepeatButton;
+            this.CloseControl = this.GetTemplateChild("CloseTabControl") as RepeatButton;
             this.UpdateStates(false);
         }
 

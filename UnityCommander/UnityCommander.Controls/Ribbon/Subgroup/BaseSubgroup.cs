@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-
-namespace UnityCommander.Controls.Ribbon
+﻿
+namespace UnityCommander.Controls.Ribbon.Subgroup
 {
+    using System.Windows;
+    using System.Windows.Controls;
+
     public class BaseSubgroup : Panel
     {
         protected override void OnDragEnter(DragEventArgs e)

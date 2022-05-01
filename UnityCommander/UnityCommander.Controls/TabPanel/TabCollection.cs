@@ -1,11 +1,9 @@
 ﻿
-namespace UnityCommander.Controls.Taber
+namespace UnityCommander.Controls.TabPanel
 {
     using System;
     using System.Collections;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Windows;
     using System.Windows.Controls;
 
     /// <summary>
@@ -118,7 +116,7 @@ namespace UnityCommander.Controls.Taber
         /// </param>
         public void Insert(int index, Control control)
         {
-            if (index <= List.Count && control != null)
+            if (index <= this.List.Count && control != null)
             {
                 this.List.Insert(index, control);
                 this.RaiseEvent();

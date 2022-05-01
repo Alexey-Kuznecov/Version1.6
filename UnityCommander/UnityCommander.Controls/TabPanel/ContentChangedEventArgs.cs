@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Controls.Taber
+namespace UnityCommander.Controls.TabPanel
 {
     using System.Windows;
 

@@ -1,6 +1,5 @@
 ﻿
 using System;
-using UnityCommander.Controls.Taber;
 
 namespace Components.Tab
 {

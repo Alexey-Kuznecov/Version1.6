@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SplitPanelViewModel.cs" company="T">
-//   Copyright (p) Alexey Kuznecov. All right reserved.
+//   Copyright (p) Alexei Kuznecov. All right reserved.
 // </copyright>
 // <summary>
 //   The left panel view model.
@@ -39,7 +39,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Services.Interfaces;
 
     using CommandManager = UnityCommander.Core.Commands.CommandManager;
-    using ITabPanelContent = UnityCommander.Core.Modules.ITabPanelContent;
 
     /// <summary>
     /// The left panel view model.
@@ -273,8 +272,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public string CurrentDirectory
         {
-            get => currentDirectory;
-            set => SetProperty(ref currentDirectory, value);
+            get => this.currentDirectory;
+            set => this.SetProperty(ref this.currentDirectory, value);
         }
 
         /// <summary>
@@ -304,8 +303,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ObservableCollection<FolderModel> DirectoryList
         {
-            get => directoryList;
-            set => SetProperty(ref directoryList, value);
+            get => this.directoryList;
+            set => this.SetProperty(ref this.directoryList, value);
         }
 
         /// <summary>
@@ -313,8 +312,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ObservableCollection<FileModel> FileList
         {
-            get => fileList;
-            set => SetProperty(ref fileList, value);
+            get => this.fileList;
+            set => this.SetProperty(ref this.fileList, value);
         }
 
         /// <summary>
@@ -322,8 +321,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ObservableCollection<DriveModel> DriveList
         {
-            get => driveList;
-            set => SetProperty(ref driveList, value);
+            get => this.driveList;
+            set => this.SetProperty(ref this.driveList, value);
         }
 
         #endregion
@@ -333,8 +332,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ControlTemplate DirectoryPanelTemplate
         {
-            get => directoryPanelTemplate;
-            set => SetProperty(ref directoryPanelTemplate, value);
+            get => this.directoryPanelTemplate;
+            set => this.SetProperty(ref this.directoryPanelTemplate, value);
         }
 
         /// <summary>
@@ -346,7 +345,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (value != null)
                 {
-                    SelectedDirectories.Add(value);
+                    this.SelectedDirectories.Add(value);
                 }
             }
         }
@@ -356,8 +355,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public BaseDirectory CurrentFile
         {
-            get => selectedBaseDirectory;
-            set => selectedBaseDirectory = value;
+            get => this.selectedBaseDirectory;
+            set => this.selectedBaseDirectory = value;
         }
 
         /// <summary>
@@ -380,20 +379,28 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The path.
         /// </param>
         /// <returns>
-        /// The <see cref="Core.Modules.ITabPanelContent"/>.
+        /// The <see cref="ITabPanelContent"/>.
         /// </returns>
         public ITabPanelContent InitializedViewModel(Guid token, string path)
         {
 #if (Nlog)
-            logger.Info("Token: {0} Path: {1}", token, path);
+            this.logger.Info("Token: {0} Path: {1}", token, path);
 #endif
-            CurrentDirectory = path;
-            Token = token;
-            navigationCommand = (NavigationInvoker)commandManager.CommandRegister(token, new NavigationInvoker());
-            SetLastPanelState();
-            SetCommands(path);
+            this.CurrentDirectory = path;
+            this.Token = token;
+            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
+            this.SetLastPanelState();
+            this.SetCommands(path);
             return this;
         }
+        
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public Guid GetPanelToken() => this.Token;
 
         /// <summary>
         /// The get panel token.
@@ -401,15 +408,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>
         /// The <see cref="Guid"/>.
         /// </returns>
-        public Guid GetPanelToken() => Token;
-
-        /// <summary>
-        /// The get panel token.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public string GetCurrentPath() => CurrentDirectory;
+        public string GetCurrentPath() => this.CurrentDirectory;
 
         #endregion
 
@@ -423,7 +422,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             base.Destroy();
 
             // Detaching a command to avoid memory leaks.
-            multiCommandService.SaveCommand.UnregisterCommand(SavePanelStateCommand);
+            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
         }
 
         #endregion
@@ -439,31 +438,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
             bool isMultiSelect = dropInfo.Data is List<object>
-                                 & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
+                                 & dropInfo.TargetItem is ListBox or BaseDirectory;
             bool isSingleSelect = dropInfo.Data is BaseDirectory
-                                  & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
+                                  & dropInfo.TargetItem is ListBox or BaseDirectory;
 
             var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
 
             if (adorner == null)
-            {
-                CreateAdornerLayer(dropInfo.VisualTarget);
-            }
-
+                this.CreateAdornerLayer(dropInfo.VisualTarget);
 
             if (isMultiSelect || isSingleSelect)
-            {
-                // var list = dropInfo.VisualTarget as ListView;
-                // var template = Application.Current.FindResource("DragAdorner");
-                // list?.SetValue(DragDrop.DragAdornerTemplateProperty, template);
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
-                
-            }
 
             if (dropInfo.Data is BaseDirectory & dropInfo.VisualTarget is ListBox & dropInfo.TargetItem == null)
-            {
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-            }
 
             dropInfo.Effects = DragDropEffects.Copy;
         }
@@ -483,7 +471,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             if (targetItem is null)
             {
-                var firstItem = (dropInfo.VisualTarget as ListBox).SelectedItem as BaseDirectory;
+                var firstItem = (dropInfo.VisualTarget as ListBox)?.SelectedItem as BaseDirectory;
 
                 if (firstItem != null)
                 {
@@ -491,9 +479,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     targetPath = Path.Combine(path.Take(path.Length - 1).ToArray());
                 }
                 else
-                {
-                    targetPath = CurrentDirectory;
-                }
+                    targetPath = this.CurrentDirectory;
             }
 
             targetPath = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath;
@@ -505,7 +491,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 Target = targetPath
             };
 
-            dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
+            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
         }
 
         /// <summary>
@@ -519,12 +505,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             var listBox = element as ListBox;
             var ad = new AdornerDecorator();
 
-            if (listBox?.Parent is Grid parent)
-            {
-                parent.Children.Remove(listBox);
-                ad.Child = listBox;
-                parent.Children.Add(ad);
-            }
+            if (listBox?.Parent is not Grid parent) return;
+            parent.Children.Remove(listBox);
+            ad.Child = listBox;
+            parent.Children.Add(ad);
         }
 
         #endregion
@@ -553,8 +537,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     foreach (var column in items)
                     {
-                        FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                        
+                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
                     }
                 });
         }
@@ -569,7 +552,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 foreach (var column in items)
                 {
                     this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    // this.CreateContextMenu(column);
                 }
             });
         }
@@ -642,12 +624,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             foreach (var item in column.ContextItems)
             {
                 this.ContextMenu.Items.Add(
-                    new MenuItem().SetParam(
-                            item.Command,
-                    paramManager =>
-                    {
-                        paramManager.AddParam(this, "CurrentDirectory");
-                    }));
+                    new MenuItem().SetParam(item.Command,paramManager =>
+                           {
+                               paramManager.AddParam(this, "CurrentDirectory");
+                           }));
             }
         }
 
@@ -692,13 +672,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void UpdatePluginColumns()
         {
-            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
                     //this.AddPluginColumns();
-                    InitialFolderColumnValues(column);
-                    InitialFileColumnValues(column);
+                    this.InitialFolderColumnValues(column);
+                    this.InitialFileColumnValues(column);
                 }
             }
         }
@@ -708,11 +688,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void UpdateColumnsCommand()
         {
-            foreach (var pluginContext in pluginLoaderService.GetPluginContext())
+            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
             {
                 foreach (var column in pluginContext.GetColumns())
                 {
-                    foreach (var folder in DirectoryList)
+                    foreach (var folder in this.DirectoryList)
                     {
                         var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
 
@@ -722,7 +702,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         }
                     }
 
-                    foreach (var file in FileList)
+                    foreach (var file in this.FileList)
                     {
                         var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
 
@@ -752,7 +732,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var isAllEqNull = true;
 
-            foreach (var folder in DirectoryList)
+            foreach (var folder in this.DirectoryList)
             {
                 var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
 
@@ -779,19 +759,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </returns>
         private bool InitialFileColumnValues(IColumn column)
         {
-            var isAllEqNull = true;
-
-            foreach (var file in FileList)
+            foreach (var file in this.FileList)
             {
-                var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
-
                 if (!file.Additional.ContainsKey(column.Header))
-                {
                     file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(file.Path));
-                }
             }
 
-            return isAllEqNull;
+            return true;
         }
 
         #endregion
@@ -807,10 +781,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void SetLastPanelState()
         {
-            DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-            FileList = dataService.GetFiles(CurrentDirectory);
-            DirectoryList = dataService.GetDirectories(CurrentDirectory);
-            InitializeColumns();
+            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+            this.FileList = this.dataService.GetFiles(this.CurrentDirectory);
+            this.DirectoryList = this.dataService.GetDirectories(this.CurrentDirectory);
+            this.InitializeColumns();
         }
 
         /// <summary>
@@ -821,16 +795,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
-            if (!DirectoryPanelTemplate.Equals(template))
-            {
-                DirectoryPanelTemplate = template;
-            }
+            if (!this.DirectoryPanelTemplate.Equals(template))
+                this.DirectoryPanelTemplate = template;
 
             var path = Directory.Exists(dirPath.ToString()) ? dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
-            DirectoryList = dataService.GetDirectories(path);
-            FileList = dataService.GetFiles(path);
-            CurrentDirectory = path;
-            UpdatePluginColumns();
+            this.DirectoryList = this.dataService.GetDirectories(path);
+            this.FileList = this.dataService.GetFiles(path);
+            this.CurrentDirectory = path;
+            this.UpdatePluginColumns();
         }
 
         /// <summary>
@@ -841,9 +813,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </param>
         private void GoDrivePanel(object root)
         {
-            DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
-            DriveList = dataService.GetDrives();
-            CurrentDirectory = (string)root;
+            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
+            this.DriveList = this.dataService.GetDrives();
+            this.CurrentDirectory = (string)root;
         }
 
         /// <summary>
@@ -852,7 +824,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dirPath"> Expected the path to the directory. </param>
         private void SetCommands(string dirPath)
         {
-            string[] paths = HelperFunctions.ParsePath(dirPath);
+            var paths = HelperFunctions.ParsePath(dirPath);
 
             this.navigationCommand.AddCommand(this.GoDrivePanel, "Root:C:\\");
 
@@ -860,11 +832,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 this.navigationCommand.AddCommand(this.UpdateFilePanel, path);
             }
-        }
-
-        void InitializedViewModel(Guid token, string path)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

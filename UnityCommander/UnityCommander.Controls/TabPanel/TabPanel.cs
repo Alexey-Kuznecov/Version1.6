@@ -1,19 +1,17 @@
 ﻿
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-
-namespace UnityCommander.Controls.Taber
+namespace UnityCommander.Controls.TabPanel
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
 
     using Point = System.Windows.Point;
     using Size = System.Windows.Size;
 
     /// <summary>
-    /// The taber control.
+    /// The tab control.
     /// </summary>
     [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class TabPanel : Panel
@@ -111,15 +109,15 @@ namespace UnityCommander.Controls.Taber
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                dragDataSource ??= (TabControl) this.Collection.GetActive();
-                System.Windows.DragDrop.DoDragDrop(new Button(), dragDataSource, DragDropEffects.All);
+                this.dragDataSource ??= (TabControl) this.Collection.GetActive();
+                System.Windows.DragDrop.DoDragDrop(new Button(), this.dragDataSource, DragDropEffects.All);
                 e.Handled = true;
             }
         }
 
         private void ControlOnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            dragDataSource = sender as TabControl;
+            this.dragDataSource = sender as TabControl;
         }
 
         private void ControlOnDragLeave(object sender, DragEventArgs e)
@@ -134,11 +132,11 @@ namespace UnityCommander.Controls.Taber
         {
             var dropDataTarget = sender as TabControl;
 
-            if (dragDataSource != null)
+            if (this.dragDataSource != null)
             {
                 var targetIndex = this.Children.IndexOf(dropDataTarget);
-                this.Children.Remove(dragDataSource);
-                this.Children.Insert(targetIndex, dragDataSource);
+                this.Children.Remove(this.dragDataSource);
+                this.Children.Insert(targetIndex, this.dragDataSource);
             }
         }
 

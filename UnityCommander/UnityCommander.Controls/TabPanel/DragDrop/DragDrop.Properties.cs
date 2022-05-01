@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Input;
-
-namespace UnityCommander.Controls.Taber.DragDrop
+﻿
+namespace UnityCommander.Controls.TabPanel.DragDrop
 {
+    using System.Windows;
+    using System.Windows.Input;
+
     public static partial class DragDrop
     {
         #region IsDragSourceProperty

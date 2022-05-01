@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using UnityCommander.Core;
-using UnityCommander.Core.Modules;
-
+﻿
 namespace UnityCommander.Modules.TabPanel.Behaviors
 {
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+    using System.Windows.Media;
+
+    using UnityCommander.Common.Module;
+
     public class AttachedElementFocus
     {
         private static ICommand gotFocusCommand;
@@ -60,39 +58,52 @@ namespace UnityCommander.Modules.TabPanel.Behaviors
         {
             if ((bool)e.NewValue == false) return;
 
-            var element = sender as FrameworkElement;
-            element.GotFocus += Element_GotFocus;
-            element.LostFocus += Element_LostFocus;
+            if (sender is FrameworkElement element)
+            {
+                element.GotFocus += Element_GotFocus;
+                element.LostFocus += Element_LostFocus;
+            }
+
             //element.Focus();
         }
 
         private static void Element_GotFocus(object sender, RoutedEventArgs e)
         {
             var border = sender as Border;
+            if (border == null) return;
+
             border.BorderBrush = new SolidColorBrush(Color.FromRgb(125, 162, 230));
 
             if (border.DataContext is ITabPanel tabPanel)
             {
                 tabPanel.SetCurrentTabPanel(tabPanel);
 
-                if (tabPanel.CurrentRegionName == NestedRegionNames.LeftFilePanelRegion)
-                    border.BorderThickness = new System.Windows.Thickness(0, 0, 1, 1);
-                else
-                    border.BorderThickness = new System.Windows.Thickness(1, 0, 0, 1);
+                border.BorderThickness = tabPanel.CurrentRegionName == NestedRegionNames.LeftFilePanelRegion
+                                             ? new System.Windows.Thickness(0, 0, 1, 1)
+                                             : new System.Windows.Thickness(1, 0, 0, 1);
 
                 if (e.Source is UserControl userControl)
                 {
                     tabPanel.SetActiveTabPanelContent(userControl.DataContext as ITabPanelContent);
                 }
             }
-            
-            //gotFocusCommand?.Execute(new object[] { border.DataContext, e.Source });
         }
 
+        /// <summary>
+        /// The element_ lost focus.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         private static void Element_LostFocus(object sender, RoutedEventArgs e)
         {
-            var border = sender as Border;
-            border.BorderBrush = Brushes.White;
+            if (sender is Border border)
+            {
+                border.BorderBrush = Brushes.White;
+            }
         }
 
         #endregion

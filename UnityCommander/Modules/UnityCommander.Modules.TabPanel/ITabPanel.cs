@@ -1,7 +1,7 @@
 ﻿
 namespace UnityCommander.Modules.TabPanel
 {
-    using UnityCommander.Core.Modules;
+    using UnityCommander.Common.Module;
 
     /// <summary>
     /// The PanelContainer interface.

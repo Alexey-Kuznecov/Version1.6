@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:module="clr-namespace:UnityCommander.Modules.TabPanel"
     xmlns:regions="http://prismlibrary.com/"
-    xmlns:tab="clr-namespace:UnityCommander.Controls.Taber;assembly=UnityCommander.Controls"
+    xmlns:tabPanel="clr-namespace:UnityCommander.Controls.TabPanel;assembly=UnityCommander.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -22,7 +22,7 @@
                     <RowDefinition Height="25" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <tab:TabPanel Grid.Row="0" Collection="{Binding TabCollection, Mode=TwoWay}" />
+                <tabPanel:TabPanel Grid.Row="0" Collection="{Binding TabCollection, Mode=TwoWay}" />
                 <ContentControl Grid.Row="1" Template="{StaticResource ContentDirectoryPanelTemplate}" />
                 <ContentControl Grid.Row="2" regions:RegionManager.RegionName="{x:Static module:NestedRegionNames.RightPanelContentRegion}" />
             </Grid>

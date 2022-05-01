@@ -1,8 +1,7 @@
 ﻿
-namespace UnityCommander.Controls.Taber
+namespace UnityCommander.Controls.TabPanel
 {
     using System;
-    using System.Windows;
 
     /// <summary>
     /// The value changed event handler.
