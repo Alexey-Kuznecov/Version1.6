@@ -14,7 +14,7 @@
     <Grid>
         <Border
             be:AttachedElementFocus.FocussedElementName="True"
-            be:AttachedElementFocus.RaiseCommand="{Binding ActivePanelCommand}"
+            be:AttachedElementFocus.RaiseCommand="{Binding FocusPanelCommand}"
             BorderThickness="1,0,0,1">
             <Grid>
                 <Grid.RowDefinitions>

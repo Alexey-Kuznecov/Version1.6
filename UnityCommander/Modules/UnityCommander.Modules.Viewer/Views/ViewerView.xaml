@@ -10,12 +10,22 @@
     d:DesignWidth="300"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <Grid>
-        <TextBlock
+    <Grid Width="500" Height="500">
+        <ListBox>
+            <ListBoxItem Content="Item 1"></ListBoxItem>
+            <ListBoxItem Content="Item 2"></ListBoxItem>
+            <ListBoxItem Content="Item 3"></ListBoxItem>
+            <ListBoxItem Content="Item 4"></ListBoxItem>
+            <ListBoxItem Content="Item 5"></ListBoxItem>
+            <ListBoxItem Content="Item 6"></ListBoxItem>
+            <ListBoxItem Content="Item 7"></ListBoxItem>
+            <ListBoxItem Content="Item 8"></ListBoxItem>
+        </ListBox>
+        <!--<TextBlock
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             FontSize="40"
             FontWeight="Bold"
-            Text="Viewer" />
+            Text="Viewer" />-->
     </Grid>
 </UserControl>

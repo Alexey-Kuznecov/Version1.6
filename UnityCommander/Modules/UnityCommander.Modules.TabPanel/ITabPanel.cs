@@ -1,11 +1,18 @@
 ﻿
 namespace UnityCommander.Modules.TabPanel
 {
+    using UnityCommander.Core.Modules;
+
     /// <summary>
     /// The PanelContainer interface.
     /// </summary>
     public interface ITabPanel
     {
+        /// <summary>
+        /// Gets or sets the current region name.
+        /// </summary>
+        public string CurrentRegionName { get; set; }
+
         /// <summary>
         /// Initial directory panel.
         /// </summary>
@@ -14,7 +21,20 @@ namespace UnityCommander.Modules.TabPanel
         /// </param>
         public void InitialTabPanelContent(string regionName);
 
+        /// <summary>
+        /// The set current tab panel.
+        /// </summary>
+        /// <param name="tabPanel">
+        /// The tab panel.
+        /// </param>
+        public void SetCurrentTabPanel(object tabPanel);
 
-        public void SetCurrentTab(string regionName);
+        /// <summary>
+        /// The set active tab panel content.
+        /// </summary>
+        /// <param name="tabContent">
+        /// The tab content.
+        /// </param>
+        public void SetActiveTabPanelContent(ITabPanelContent tabContent);
     } 
 }

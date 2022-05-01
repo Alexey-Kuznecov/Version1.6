@@ -12,7 +12,10 @@ using UnityCommander.Services.Interfaces;
 namespace UnityCommander.Modules.Viewer.ViewModels
 {
     public class ViewerViewModel : BindableBase, ITabPanelContent
-    {        
+    {
+
+        private string path;
+
         /// <summary>
         /// The navigation command.   
         /// </summary>
@@ -29,6 +32,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 
         public ITabPanelContent InitializedViewModel(Guid token, string path)
         {
+            this.path = path;
             this.Token = token;
             this.navigationCommand = (NavigationInvoker)commandManager.CommandRegister(token, new NavigationInvoker());
             return this;
@@ -41,7 +45,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 
         public string GetCurrentPath()
         {
-            return null;
+            return path;
         }
     }
 }

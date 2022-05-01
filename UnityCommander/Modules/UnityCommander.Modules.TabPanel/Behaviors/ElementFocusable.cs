@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using UnityCommander.Core;
+using UnityCommander.Core.Modules;
 
 namespace UnityCommander.Modules.TabPanel.Behaviors
 {
@@ -68,8 +70,23 @@ namespace UnityCommander.Modules.TabPanel.Behaviors
         {
             var border = sender as Border;
             border.BorderBrush = new SolidColorBrush(Color.FromRgb(125, 162, 230));
-            border.BorderThickness = new System.Windows.Thickness(0, 0, 1, 1);
-            gotFocusCommand?.Execute(new object[] { border.DataContext, e.Source });
+
+            if (border.DataContext is ITabPanel tabPanel)
+            {
+                tabPanel.SetCurrentTabPanel(tabPanel);
+
+                if (tabPanel.CurrentRegionName == NestedRegionNames.LeftFilePanelRegion)
+                    border.BorderThickness = new System.Windows.Thickness(0, 0, 1, 1);
+                else
+                    border.BorderThickness = new System.Windows.Thickness(1, 0, 0, 1);
+
+                if (e.Source is UserControl userControl)
+                {
+                    tabPanel.SetActiveTabPanelContent(userControl.DataContext as ITabPanelContent);
+                }
+            }
+            
+            //gotFocusCommand?.Execute(new object[] { border.DataContext, e.Source });
         }
 
         private static void Element_LostFocus(object sender, RoutedEventArgs e)

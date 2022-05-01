@@ -20,31 +20,32 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows.Data;
     using System.Windows.Documents;
     using System.Windows.Input;
+
     using NLog;
+
     using Prism.Commands;
     using Prism.Regions;
     using Prism.Services.Dialogs;
-    using UnityCommander.Common;
-    using UnityCommander.Common.Commands;
+
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Common.Module;
     using UnityCommander.Core;
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.DragDrop;
     using UnityCommander.Core.Helper;
-    using UnityCommander.Core.Modules;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Commands;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Services.Interfaces;
     using UnityCommander.Modules.FilePanel.Columns;
+    using UnityCommander.Services.Interfaces;
+
     using CommandManager = UnityCommander.Core.Commands.CommandManager;
+    using ITabPanelContent = UnityCommander.Core.Modules.ITabPanelContent;
 
     /// <summary>
     /// The left panel view model.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, ITabPanelContent
+    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
     {
         #region Declaration fields
 
@@ -379,7 +380,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The path.
         /// </param>
         /// <returns>
-        /// The <see cref="ITabPanelContent"/>.
+        /// The <see cref="Core.Modules.ITabPanelContent"/>.
         /// </returns>
         public ITabPanelContent InitializedViewModel(Guid token, string path)
         {
@@ -853,12 +854,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             string[] paths = HelperFunctions.ParsePath(dirPath);
 
-            navigationCommand.AddCommand(GoDrivePanel, "Root:C:\\");
+            this.navigationCommand.AddCommand(this.GoDrivePanel, "Root:C:\\");
 
             foreach (var path in paths)
             {
-                navigationCommand.AddCommand(UpdateFilePanel, path);
+                this.navigationCommand.AddCommand(this.UpdateFilePanel, path);
             }
+        }
+
+        void InitializedViewModel(Guid token, string path)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

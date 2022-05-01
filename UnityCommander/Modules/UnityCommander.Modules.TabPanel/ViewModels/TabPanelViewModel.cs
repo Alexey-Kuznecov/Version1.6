@@ -51,7 +51,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The region manager.
         /// </summary>
-        private string currentRegionName;
+        //private string currentRegionName;
 
         /// <summary>
         /// The computer icon.
@@ -81,6 +81,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The token display.
         /// </summary>
+        private static TabPanelViewModel currentTabPanel;
+
+        /// <summary>
+        /// The token display.
+        /// </summary>
+        private ITabPanelContent currentTabPanelContent;
+
+        /// <summary>
+        /// The token display.
+        /// </summary>
         private TabControl currentTab;
 
         /// <summary>
@@ -106,6 +116,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </param>
         /// <param name="configService">
         /// The config Service.
+        /// </param>
+        /// <param name="globalCommandService">
+        /// Global command service
         /// </param>
         /// <param name="manager">
         /// The commandManager.
@@ -200,12 +213,12 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
             {
-                if (this.currentRegionName == null) return;
+                if (this.CurrentRegionName == null) return;
                 var appConfig = this.appConfigService.GetSession();
                 var tabs = appConfig.Find("Tabs").ToList();
                 var currentPanel = this.GetCurrentRegion().Name;
                 var region = regionManager.Regions.Single(r => r.Name.Contains(currentPanel));
-                var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.currentRegionName);
+                var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.CurrentRegionName);
                 tabsResult.RemoveAll();
 
                 foreach (var view in region.Views)
@@ -276,7 +289,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                     if (obj is UnityCommander.Controls.Taber.TabPanel tabPanel)
                     {
                         var token = Guid.NewGuid();
-                        var path = tabPanel.Collection.GetActive().Tag;
+                        var path = this.currentTabPanelContent.GetCurrentPath();
                         var directoryPanel = new SplitPanelView();
 
                         this.currentTab = this.CreateTabControl(token, (string)path, directoryPanel);
@@ -333,7 +346,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The close tab command.
         /// </summary>
-        public DelegateCommand<object[]> ActivePanelCommand =>
+        public DelegateCommand<object[]> FocusPanelCommand =>
             new DelegateCommand<object[]>(
                 view =>
                 {
@@ -350,27 +363,22 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                     }
                 });
 
+        public string CurrentRegionName { get; set; }
+
         #endregion
 
         public static void DisplayContent(object obj)
         {
-            if (obj is TabPanelManager vm)
-            {
-                //if (vm.GetHashCode() == this.GetHashCode())
-                //{
-                //    var token = Guid.NewGuid();
-                //    var directoryPanel = new ViewerView();
+            var token = Guid.NewGuid();
+            var directoryPanel = new ViewerView();
+            currentTabPanel.currentTab = currentTabPanel.CreateTabControl(token, currentTabPanel.currentPath, directoryPanel);
+            currentTabPanel.TabCollection.Add(currentTabPanel.currentTab);
 
-                //    this.currentTab = this.CreateTabControl(token, null, directoryPanel);
-                //    this.TabCollection.Add(this.currentTab);
-
-                //    this.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, null);
-                //    this.regionManager.AddToRegion(this.GetCurrentRegion().Name, directoryPanel);
-                //    this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-                //    this.navigationCommand.OnExecuteChanged += OnExecuteChanged;
-                //    this.ActivateFilePanel(token);
-                //}
-            }
+            currentTabPanel.FindDirectoryPanel(directoryPanel).InitializedViewModel(token, currentTabPanel.currentPath);
+            currentTabPanel.regionManager.AddToRegion(currentTabPanel.GetCurrentRegion().Name, directoryPanel);
+            currentTabPanel.navigationCommand = (NavigationInvoker)currentTabPanel.commandManager.GetCommand(token);
+            currentTabPanel.navigationCommand.OnExecuteChanged += currentTabPanel.OnExecuteChanged;
+            currentTabPanel.ActivateFilePanel(token);
         }
 
         /// <summary>
@@ -381,16 +389,11 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </param>
         public void InitialTabPanelContent(string name)
         {
-            this.currentRegionName = name;
+            this.CurrentRegionName = name;
             var collection = new TabCollection();
 
-            foreach (var config in this.appConfigService.GetSession().GetTabConfigs(this.currentRegionName))
+            foreach (var config in this.appConfigService.GetSession().GetTabConfigs(this.CurrentRegionName))
             {
-                if (!Directory.Exists(config.Path))
-                {
-                    config.Path = "C:\\";
-                }
-
                 var view = new SplitPanelView();
                 var token = config.Token;
 
@@ -578,7 +581,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// The <see cref="IRegion"/>.
         /// </returns>
         private IRegion GetCurrentRegion() =>
-            this.currentRegionName == NestedRegionNames.LeftFilePanelRegion
+            this.CurrentRegionName == NestedRegionNames.LeftFilePanelRegion
                 ? this.regionManager.Regions[NestedRegionNames.LeftPanelContentRegion]
                 : this.regionManager.Regions[NestedRegionNames.RightPanelContentRegion];
 
@@ -594,9 +597,14 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         private ITabPanelContent FindDirectoryPanel(FrameworkElement element) =>
             element.DataContext is ITabPanelContent directoryPanel ? directoryPanel : null;
 
-        public void SetCurrentTab(string regionName)
+        public void SetCurrentTabPanel(object tabPanel)
         {
-            //this.currentRegionName = regionName;
+            currentTabPanel = ((TabPanelViewModel)tabPanel);
+        }
+
+        public void SetActiveTabPanelContent(ITabPanelContent tabContent)
+        {
+            this.currentTabPanelContent = tabContent;
         }
     }
 }
