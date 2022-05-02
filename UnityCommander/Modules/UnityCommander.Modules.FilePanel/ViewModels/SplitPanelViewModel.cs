@@ -416,8 +416,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 new ()
                 {
-                    DisplayName = "Move",
-                    Name = "Move"
+                    DisplayName = "Open file in Viewer",
+                    Name = "DisplayContent"
                 },
                 new ()
                 {

@@ -15,7 +15,7 @@ namespace UnityCommander.Core
             switch (control)
             {
                 case MenuItem menuItem:
-                    menuItem.Header = command.Name ?? ((GlobalCommand)command).DisplayName;
+                    menuItem.Header = ((GlobalCommand)command).DisplayName ?? command.Name;
                     break;
                 case Button button:
                     button.Content = command.Name;

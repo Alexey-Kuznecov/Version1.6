@@ -309,10 +309,13 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 Popup popupBox = new Popup();
                 Point location = navItem.PointToScreen(new Point(0, 0));
                 popupBox.Child = popupControl;
-                popupBox.IsOpen = true;
-                popupBox.PlacementRectangle = new Rect(location.X + 440, location.Y - 5, 0, 0);
+                //popupBox.IsOpen = true;
+                popupBox.PlacementRectangle = new Rect(location.X, location.Y - 5, 0, 0);
                 popupBox.Placement = PlacementMode.Top;
                 popupBox.StaysOpen = false;
+
+                Binding bind = new Binding("PopupFocus") { Mode = BindingMode.TwoWay, Source = popupViewModel };
+                BindingOperations.SetBinding(popupBox, Popup.IsOpenProperty, bind);
             }
         }
 
@@ -410,6 +413,8 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// </summary>
             private bool popButtonIsEnabled;
 
+            private bool popButtonIsFocus;
+
             /// <summary>
             /// The list directories.
             /// </summary>
@@ -421,6 +426,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// <param name="parameters"> The external arguments for pop-up menu. </param>
             public PopupViewModel(PopupParameters parameters)
             {
+                this.PopupFocus = true;
                 this.currentPanel = parameters.Panel;
 
                 this.DirectoryList = new ObservableCollection<PopupParameters>();
@@ -453,13 +459,22 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// <summary>
             /// Sets the selected directory path.
             /// </summary>
-            public PopupParameters SelectItem
+            public bool PopupFocus
             {
+                get => this.popButtonIsFocus;
                 set
                 {
-                    this.currentPanel.NavigateCommand.Execute(value.SelectedPath);
-                    this.PopButtonIsEnabled = false;
-                }
+                    this.SetProperty(ref this.popButtonIsFocus, value);
+                    this.PopButtonIsEnabled = !this.popButtonIsFocus;
+                } 
+            }
+
+            /// <summary>
+            /// Sets the selected directory path.
+            /// </summary>
+            public PopupParameters SelectItem
+            {
+                set => this.currentPanel.NavigateCommand.Execute(value.SelectedPath);
             }
 
             /// <summary>

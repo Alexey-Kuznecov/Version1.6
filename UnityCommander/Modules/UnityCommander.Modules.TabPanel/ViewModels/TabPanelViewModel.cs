@@ -110,7 +110,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             CommandManager manager)
         {
             var fileManger = globalCommandService.GetCommandManager();
-            fileManger.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
+            fileManger.CreateSingletonCommand("Default" + nameof(DisplayContent), null, DisplayContent);
 
             this.regionManager = regionManager;
             this.commandManager = manager;
@@ -182,27 +182,26 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             new DelegateCommand<object>(
                 obj =>
                     {
-                        if (obj is TabPanel tabPanel)
+                        if (obj is not TabPanel tabPanel) return;
+                        commandStatus = "Add";
+
+                        var token = Guid.NewGuid();
+                        var panelView = new SplitPanelView();
+                        string path = null;
+
+                        if (this.activePanel is { DataContext: IDirectoryPanel panel })
+                            path = panel.GetCurrentPath();
+                            
+                        if (panelView.DataContext is IDirectoryPanel directoryPanel)
                         {
-                            commandStatus = "Add";
-
-                            var token = Guid.NewGuid();
-                            var panelView = new SplitPanelView();
-
-                            if (panelView.DataContext is IDirectoryPanel directoryPanel)
-                            {
-                                directoryPanel.InitializedViewModel(
-                                    ref token, 
-                                        (this.activePanel.DataContext as IDirectoryPanel)?.GetCurrentPath() 
-                                            ?? this.activeTabPanelContent.GetCurrentPath());
-                                this.currentTab = this.CreateTabControl(token, this.TabContentFormat(directoryPanel.GetCurrentPath()), panelView);
-                                tabPanel.Collection.Add(this.currentTab);
-                            }
-                            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-                            this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
-                            this.regionManager.AddToRegion(this.GetCurrentRegion().Name, panelView);
-                            this.ActivateFilePanel(token);
+                            directoryPanel.InitializedViewModel(ref token, path ?? this.activeTabPanelContent.GetCurrentPath());
+                            this.currentTab = this.CreateTabControl(token, this.TabContentFormat(directoryPanel.GetCurrentPath()), panelView);
+                            tabPanel.Collection.Add(this.currentTab);
                         }
+                        this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
+                        this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
+                        this.regionManager.AddToRegion(this.GetCurrentRegion().Name, panelView);
+                        this.ActivateFilePanel(token);
                     });
 
         /// <summary>
