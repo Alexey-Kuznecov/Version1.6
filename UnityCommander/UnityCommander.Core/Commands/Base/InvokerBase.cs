@@ -50,7 +50,7 @@ namespace UnityCommander.Core.Commands.Base
         /// <param name="argument">
         /// The argument.
         /// </param>
-        public delegate void ExecuteChanged(ConcreteCommand argument);
+        public delegate void ExecuteChanged(object argument);
 
         /// <summary>
         /// Gets or sets the can execute changed.
@@ -77,7 +77,7 @@ namespace UnityCommander.Core.Commands.Base
         /// <param name="argument">
         /// The argument.
         /// </param>
-        public void RaiseExecuteChanged(ConcreteCommand argument)
+        public void RaiseExecuteChanged(object argument)
         {
             this.OnExecuteChanged?.Invoke(argument);
         }

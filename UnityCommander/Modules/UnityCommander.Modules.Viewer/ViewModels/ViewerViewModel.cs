@@ -43,7 +43,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// <summary>
         /// Gets or sets the current file path.
         /// </summary>
-        public string CurrentFilePath { get; set; }
+        public string CurrentPath { get; set; }
 
         /// <summary>
         /// The initialized view model.
@@ -59,7 +59,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// </returns>
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
-            this.CurrentFilePath = path;
+            this.CurrentPath = path;
             this.Token = token;
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
             return this;
@@ -73,7 +73,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// </returns>
         public string GetCurrentPath()
         {
-            return this.CurrentFilePath;
+            return this.CurrentPath;
         }
 
         /// <summary>
@@ -85,6 +85,17 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         public Guid GetPanelToken()
         {
             return this.Token;
+        }
+
+        /// <summary>
+        /// The get current file path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetCurrentFilePath()
+        {
+            return this.CurrentPath;
         }
     }
 }

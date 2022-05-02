@@ -64,22 +64,20 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The token display.
         /// </summary>
-        private ITabPanelContent currentTabPanelContent;
-
-        /// <summary>
-        /// The token display.
-        /// </summary>
         private TabControl currentTab;
 
         /// <summary>
         /// The tab initial.
         /// </summary>
         private TabCollection tabCollection;
+
+        private UserControl activePanel;
+        
+        private ITabPanelContent activeTabPanelContent;
+
         private static string commandStatus;
 
         private static ElementFocusData elementFocusData;
-
-        private static readonly ObservableCollection<TabPanelManager> tabPanelManager = new ();
 
         #endregion
 
@@ -111,14 +109,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             IGlobalCommandService globalCommandService,
             CommandManager manager)
         {
-            tabPanelManager.Add(new TabPanelManager()
-            {
-                TabCollection = TabCollection,
-                TabPanel = this
-            });
-
             var fileManger = globalCommandService.GetCommandManager();
-            fileManger.CreateSingletonCommand(nameof(DisplayContent), tabPanelManager, DisplayContent);
+            fileManger.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
 
             this.regionManager = regionManager;
             this.commandManager = manager;
@@ -152,8 +144,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
             {
-                return;
-
                 if (this.RegionContentName == null) return;
                 var appConfig = this.appConfigService.GetSession();
                 var tabs = appConfig.Find("Tabs").ToList();
@@ -162,19 +152,19 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.RegionContentName);
                 tabsResult.RemoveAll();
 
-                foreach (var view in region.Views)
+                foreach (UserControl view in region.Views)
                 {
                     if (view is FrameworkElement element)
                     {
-                        var directoryPanel = (ITabPanelContent)element.DataContext;
-                        if (directoryPanel is IDirectoryPanel panelContent)
+                        if (element.DataContext is ITabPanelContent panelContent)
                         {
                             tabsResult.Add(
                             elementRecord =>
                             {
                                 elementRecord.Tag = "Tab";
-                                elementRecord.Attributes.Add("Id", "{" + directoryPanel.GetPanelToken() + "}");
+                                elementRecord.Attributes.Add("Id", "{" + panelContent.GetPanelToken() + "}");
                                 elementRecord.Attributes.Add("Path", panelContent.GetCurrentPath());
+                                elementRecord.Attributes.Add("ViewType", panelContent.GetType().Name);
                                 return elementRecord;
                             });
                         }
@@ -201,14 +191,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
                             if (panelView.DataContext is IDirectoryPanel directoryPanel)
                             {
-                                directoryPanel.InitializedViewModel(ref token, null);
+                                directoryPanel.InitializedViewModel(
+                                    ref token, 
+                                        (this.activePanel.DataContext as IDirectoryPanel)?.GetCurrentPath() 
+                                            ?? this.activeTabPanelContent.GetCurrentPath());
                                 this.currentTab = this.CreateTabControl(token, this.TabContentFormat(directoryPanel.GetCurrentPath()), panelView);
                                 tabPanel.Collection.Add(this.currentTab);
                             }
-
-                            this.regionManager.AddToRegion(this.GetCurrentRegion().Name, panelView);
                             this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
                             this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
+                            this.regionManager.AddToRegion(this.GetCurrentRegion().Name, panelView);
                             this.ActivateFilePanel(token);
                         }
                     });
@@ -232,7 +224,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 view =>
                 {
                     commandStatus = "Close";
-
                     var currentPanel = this.GetCurrentRegion().Name;
                     var region = this.regionManager.Regions[currentPanel];
                     this.TabCollection.Remove((TabControl)view[0]);
@@ -243,14 +234,19 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
         public static void DisplayContent(object obj)
         {
+            commandStatus = "Add";
             var token = Guid.NewGuid();
             var directoryPanel = new ViewerView();
-            currentTabPanel.currentTab = currentTabPanel.CreateTabControl(token, elementFocusData.TabContent.GetCurrentPath(), directoryPanel);
-            currentTabPanel.TabCollection.Add(currentTabPanel.currentTab);
-
-            FindDirectoryPanel(directoryPanel).InitializedViewModel(ref token, currentTabPanel.currentPath);
-            currentTabPanel.regionManager.AddToRegion(currentTabPanel.GetCurrentRegion().Name, directoryPanel);
-            currentTabPanel.ActivateFilePanel(token);
+            
+            if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
+            {
+                var panelContent = tabPanel.activeTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
+                FindDirectoryPanel(directoryPanel).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
+                tabPanel.currentTab = tabPanel.CreateTabControl(token, tabPanel.TabContentFormat(panelContent?.GetCurrentFilePath()), directoryPanel);
+                tabPanel.TabCollection.Add(tabPanel.currentTab);
+                tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, directoryPanel);
+                tabPanel.ActivateFilePanel(token);
+            }
         }
 
         /// <summary>
@@ -268,15 +264,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             {
                 var view = config.ViewType;
                 var token = config.Token;
+                this.activeTabPanelContent ??= view.DataContext as ITabPanelContent;
 
-                if (view.DataContext is ITabPanelContent directoryPanel)
+                if (view?.DataContext is ITabPanelContent directoryPanel)
                 {
                     directoryPanel.InitializedViewModel(ref token, config.Path);
                     this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
                 }
 
                 this.regionManager.AddToRegion(this.GetCurrentRegion().Name, view);
-                collection.Add(this.CreateTabControl(token, config.Path, view));
+                collection.Add(this.CreateTabControl(token, this.TabContentFormat(config.Path), view));
             }
 
             collection.Add(this.CreateAddTabControl());
@@ -317,8 +314,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 BorderBrush = null,
                 CloseCommand = this.CloseTabCommand,
                 Command = this.ActivateTabCommand,
-                CommandParameter = token,
-                //Tag = content,
+                CommandParameter = token
             };
 
             button.CloseCommandParameter = new object[] { button, token, element };
@@ -397,20 +393,24 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// Goes back to the previous directory.
         /// </summary>
-        /// <param name="command">
+        /// <param name="obj">
         /// The command.
         /// </param>
-        private void OnExecuteChanged(ConcreteCommand command)
+        private void OnExecuteChanged(object obj)
         {
-            if (command.Receiver is Navigator navigator)
+            if (obj is ConcreteCommand { Receiver: Navigator navigator })
             {
                 this.currentPath = navigator.Path;
 
                 if (this.currentTab != null)
                 {
-                    this.currentTab.Content = TabContentFormat(this.currentPath);
-                    this.currentTab.Tag = this.currentPath;
+                    this.currentTab.Content = this.TabContentFormat(this.currentPath);
                 }
+            }
+            
+            if (obj is ITabPanelContent panelContent)
+            {
+                this.activeTabPanelContent = panelContent;
             }
         }
 
@@ -437,8 +437,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         private void ActivateFilePanel(Guid token)
         {
             var regions = this.GetCurrentRegion();
-            regions.Activate(regions.Views.Single(
-                view => FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == token));
+            this.activePanel = (UserControl)regions.Views.Single(
+                view => FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == token);
+            regions.Activate(this.activePanel);
         }
 
         /// <summary>
@@ -468,7 +469,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         {
             elementFocusData = focusData;
             currentTabPanel = (TabPanelViewModel)focusData.TabPanel;
-            this.currentTabPanelContent = focusData.TabContent;
         }
     }
 }

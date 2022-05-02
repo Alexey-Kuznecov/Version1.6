@@ -1,12 +1,14 @@
 ﻿
-namespace UnityCommander.Modules.FilePanel.ViewModels
+namespace UnityCommander.Modules.TabPanel
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
 
     using UnityCommander.Common.Module;
+    using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.Modules.Viewer.Views;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
 
     /// <summary>
@@ -53,15 +55,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 
                 if (filter.Contains(parent.Element.FirstAttribute.Value))
                 {
-                    if (Directory.Exists(element.GetAttributeValueByName("Path")))
+                    if (Directory.Exists(element.GetAttributeValueByName("Path")) || File.Exists(element.GetAttributeValueByName("Path")))
                     {
                         var record = new TabPanelRecord
                          {
                              Path = element.GetAttributeValueByName("Path"),
                              Token = Guid.Parse(element.GetAttributeValueByName("Id")),
                              Panel = element.GetAttributeValueByName("Name"),
-                             ViewType = element.GetAttributeValueByName("ViewType") == nameof(SplitPanelView) 
-                                            ? new SplitPanelView() : null
+                             ViewType = element.GetAttributeValueByName("ViewType") == nameof(SplitPanelViewModel) 
+                                           ? new SplitPanelView() : new ViewerView()
                         };
                         
                         yield return record;

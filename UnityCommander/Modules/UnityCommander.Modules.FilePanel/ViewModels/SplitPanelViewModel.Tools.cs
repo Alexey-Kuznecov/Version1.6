@@ -36,6 +36,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private bool backButtonIsEnabled;
 
         /// <summary>
+        /// The computer icon.
+        /// </summary>
+        private bool openFolderUnderCursorIsEnabled = true;
+
+        /// <summary>
         /// Gets or sets a computer icon.
         /// </summary>
         public IIcon ThisComputerIcon
@@ -136,6 +141,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             return this.CurrentDirectory;
         }
 
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public string GetCurrentFilePath()
+        {
+            return this.CurrentFile.Path;
+        }
+
         #endregion
 
         /// <summary>
@@ -158,7 +174,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, invoker);
             this.SetLastPanelState();
 
-            if (path == null)
+            if (path == null && this.openFolderUnderCursorIsEnabled)
             {
                 var command = this.navigationCommand.GetCommand();
                 this.CurrentDirectory = command.GetPath();
@@ -175,12 +191,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Goes back to the previous directory.
         /// </summary>
-        /// <param name="command">
+        /// <param name="obj">
         /// The command.
         /// </param>
-        private void OnExecuteChanged(ConcreteCommand command)
+        private void OnExecuteChanged(object obj)
         {
-            if (command.Receiver is Navigator navigator)
+            if (obj is ConcreteCommand { Receiver: Navigator navigator })
             {
                 if (!navigator.Path.Contains("Root:"))
                 {

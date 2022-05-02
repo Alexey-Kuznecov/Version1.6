@@ -61,7 +61,7 @@
                 dd:DragDrop.IsDragSource="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
-                SelectedValue="{Binding CurrentFile}"
+                SelectedItem="{Binding CurrentFile}"
                 SelectionMode="Single"
                 View="{Binding FilePanelContainer}">
                 <ListView.ItemsPanel>

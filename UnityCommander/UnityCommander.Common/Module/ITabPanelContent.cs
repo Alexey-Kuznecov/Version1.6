@@ -38,5 +38,13 @@ namespace UnityCommander.Common.Module
         /// The <see cref="Guid"/>.
         /// </returns>
         public string GetCurrentPath();
+
+        /// <summary>
+        /// Gets or sets the initial command.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public string GetCurrentFilePath();
     }
 }

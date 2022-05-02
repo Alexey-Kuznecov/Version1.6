@@ -1,7 +1,6 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Windows.Controls;
@@ -11,7 +10,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Services.Dialogs;
 
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Common.Module;
     using UnityCommander.Core.Commands;
     using UnityCommander.Services.Interfaces;
 
@@ -116,6 +114,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private string currentDirectory;
 
+        /// <summary>
+        /// Indicates the current directory.
+        /// </summary>
+        private FileModel currentFile;
+
         #endregion
 
         /// <summary>
@@ -125,6 +128,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.currentDirectory;
             set => this.SetProperty(ref this.currentDirectory, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the current directory.
+        /// </summary>
+        public FileModel CurrentFile
+        {
+            get => this.currentFile;
+            set
+            {
+                this.SetProperty(ref this.currentFile, value);
+                this.navigationCommand.RaiseExecuteChanged(this);
+            } 
         }
 
         /// <summary>
