@@ -9,15 +9,11 @@
 
 namespace UnityCommander.Modules.FilePanel
 {
-    using System;
-    using System.Windows;
-
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Regions;
 
     using UnityCommander.Core;
-    using UnityCommander.Core.Modules;
     using UnityCommander.Modules.FilePanel.Views;
 
     /// <summary>

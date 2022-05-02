@@ -19,6 +19,11 @@ namespace UnityCommander.Core.Commands
         private static Command currentCommand;
 
         /// <summary>
+        /// The navigator.
+        /// </summary>
+        private Navigator navigator;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NavigationInvoker"/> class.
         /// </summary>
         public NavigationInvoker()
@@ -55,7 +60,7 @@ namespace UnityCommander.Core.Commands
         /// The current command.
         /// </summary>
         public Command FirstCommand => this.ModuleCommands.Count != 0 ? this.ModuleCommands[0] : default(Command);
-
+        
         /// <summary>
         /// The current index.
         /// </summary>
@@ -83,6 +88,17 @@ namespace UnityCommander.Core.Commands
         }
 
         /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Navigator"/>.
+        /// </returns>
+        public Command GetCommand()
+        {
+           return NavigationInvoker.currentCommand; 
+        }
+
+        /// <summary>
         /// Execute new command no arguments.
         /// </summary>
         /// <param name="action">
@@ -100,7 +116,8 @@ namespace UnityCommander.Core.Commands
         /// <param name="path"> Allows defining the command arguments. </param>
         public override void Execute(Action<object> action, object path)
         {
-            NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator());
+            navigator = new Navigator(action, path);
+            NavigationInvoker.currentCommand = new ConcreteCommand(navigator);
             this.ModuleCommands.Add(NavigationInvoker.currentCommand);
             this.ModuleCommands[this.CurrentIndex]?.Execute(action, path);
             this.RaiseExecuteChanged((ConcreteCommand)currentCommand);

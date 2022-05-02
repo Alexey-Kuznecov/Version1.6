@@ -3,7 +3,8 @@ namespace UnityCommander.Controls.Window
 {
     using System.Windows;
     using System.Windows.Input;
-    using UnityCommander.Integration.Mvvm.Base;
+
+    using AlexeyKuznecov.Library.Mvvm.Base;
 
     /// <summary>
     /// The View Model for the custom flat window

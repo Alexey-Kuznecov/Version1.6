@@ -18,15 +18,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Taber\AddTabControlStyles.xaml">
+    <Page Update="TabPanel\AddTabControlStyles.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Taber\TabControlStylesExample.xaml">
+    <Page Update="TabPanel\TabControlStylesExample.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

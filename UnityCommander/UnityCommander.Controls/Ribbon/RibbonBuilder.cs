@@ -6,7 +6,8 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using UnityCommander.Integration.Mvvm.Base;
+
+    using AlexeyKuznecov.Library.Mvvm.Base;
 
     /// <summary>
     /// This class is responsible for creating a ribbon of tools and tabs.

@@ -86,23 +86,11 @@ namespace UnityCommander.Controls.Ribbon
         public void Dispose()
         {
             this.comboBoxes.Clear();
-            //this.ControlsStackGroup.DragEnter += ControlsStackGroup_DragEnter;
-            //this.ControlsStackGroup.PreviewDragEnter += ControlsStackGroup_DragEnter;
-            //this.ControlsStackGroup.PreviewMouseDown += ControlsStackGroup_PreviewMouseDown;
-            //this.ControlsStackGroup.MouseDown += ControlsStackGroup_PreviewMouseDown;
 
             foreach (var item in this.itemCollection)
             {
                 this.ControlsStackGroup.Children.Add(item);
             }
-        }
-
-        private void ControlsStackGroup_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-        }
-
-        private void ControlsStackGroup_DragEnter(object sender, DragEventArgs e)
-        {
         }
     }
 }

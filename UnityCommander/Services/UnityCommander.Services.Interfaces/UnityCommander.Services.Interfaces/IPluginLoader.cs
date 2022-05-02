@@ -1,6 +1,4 @@
 ﻿
-using UnityCommander.Integration.Commands;
-
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
@@ -8,6 +6,7 @@ namespace UnityCommander.Services.Interfaces
     using Integration.Contracts;
     using Integration.Dialog;
     using Integration.Options;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The PluginLoader interface.

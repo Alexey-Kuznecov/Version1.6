@@ -1,14 +1,14 @@
 ﻿
-using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Integration.Columns
 {
     using System;
     using System.Collections.Generic;
 
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Integration.Mvvm;
+    using UnityCommander.Common;
+    using UnityCommander.Core;
+    using UnityCommander.Integration.Commands;
+
 
     /// <summary>
     /// The column builder.
@@ -75,10 +75,7 @@ namespace UnityCommander.Integration.Columns
                 Command = new GlobalCommand
                 {
                     DisplayName = header,
-                    Command = new GlobalCommandExecute(action, type),
-                    Delegate = action,
-                    Source = type,
-                    CommandSource = CommandSource.Plugin
+                    Command = new UnityCommander.Core.GlobalCommandExecute(action, type)
                 }
             });
         }

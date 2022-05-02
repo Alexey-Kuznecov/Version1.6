@@ -4,7 +4,7 @@ namespace UnityCommander.Integration.Columns
     using System;
     using System.Collections.Generic;
 
-    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Common;
     using UnityCommander.Integration.Options;
 
     /// <summary>

@@ -7,9 +7,8 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The ribbon combo box item.
@@ -47,7 +46,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="command">
         /// The command.
         /// </param>
-        public void AddItem(string text, IIcon icon, GlobalCommand command)
+        public void AddItem(string text, IIcon icon, IGlobalCommand command)
         {
             this.comboBoxItem.Add(new RibbonComboBoxItem(text, icon, command));
         }

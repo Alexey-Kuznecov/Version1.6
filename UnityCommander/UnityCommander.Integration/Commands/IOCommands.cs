@@ -1,23 +1,49 @@
 ﻿
 namespace UnityCommander.Integration.Commands
 {
-    // ReSharper disable once InconsistentNaming
-    public abstract class IOCommands : BaseCommand
+    /// <summary>
+    /// The io commands.
+    /// </summary>
+    /// ReSharper disable once InconsistentNaming
+    public class IOCommands : BaseCommand
     {
-        public virtual void Test(string source, string destination, bool IsShadowCopy, BaseCommand baseCommand)
-        {
-        }
-
+        /// <summary>
+        /// The move.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="destination">
+        /// The destination.
+        /// </param>
+        [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlG)]
         public virtual void Move(string source, string destination)
         {
+            Core.IO.Operations.FileManager.Move(source, destination);
         }
 
-        public virtual void FileCopy(string source, string destination)
-        {
-        }
-
+        /// <summary>
+        /// The delete.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        [GlobalCommand(CommandNames.FileDel, CommandKeys.CtrlH)]
         public virtual void Delete(string source)
         {
+            Core.IO.Operations.FileManager.Delete(source);
+        }
+
+        /// <summary>
+        /// The create.
+        /// </summary>
+        /// <param name="dirName">
+        /// The dir name.
+        /// </param>
+        [GlobalCommand(CommandNames.FileCreate, CommandKeys.CtrlI)]
+        public virtual void Create(string dirName)
+        {
+            Core.IO.Operations.FileManager.Create(dirName);
         }
     }
 }

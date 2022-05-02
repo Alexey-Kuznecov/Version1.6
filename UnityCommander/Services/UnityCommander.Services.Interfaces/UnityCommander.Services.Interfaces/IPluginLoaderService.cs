@@ -2,7 +2,6 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
-    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
 

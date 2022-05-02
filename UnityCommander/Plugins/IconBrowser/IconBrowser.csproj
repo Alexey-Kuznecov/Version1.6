@@ -13,12 +13,20 @@
 	<ItemGroup>
 	  <None Remove="Resources\IconsData.xml" />
 	</ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
-      <Private>false</Private>
-		<ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-  </ItemGroup>
+	<ItemGroup>
+	  <Reference Include="Microsoft.Extensions.DependencyInjection">
+	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+	    <Private>false</Private>
+	  </Reference>
+	  <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+	    <Private>false</Private>
+	  </Reference>
+	  <Reference Include="UnityCommander.Integration">
+	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
+	    <Private>false</Private>
+	  </Reference>
+	</ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\IconsData.xml" />
   </ItemGroup>

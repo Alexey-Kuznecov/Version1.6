@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Input;
-using UnityCommander.Common;
-using UnityCommander.Core.Generators;
-using UnityCommander.Integration.Commands;
-
+﻿
 namespace UnityCommander.Core
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Windows.Input;
+    using UnityCommander.Common.Commands;
+    using UnityCommander.Core.Generators;
+
     public class GlobalCommandManager : IGlobalCommandManager
     {
-        private readonly List<GlobalCommand> globalCommands;
+        private readonly Queue<IGlobalCommand> globalCommands;
 
-        public GlobalCommandManager(List<GlobalCommand> commands)
+        private readonly string commandSelector = "Default";
+
+        public GlobalCommandManager(Queue<IGlobalCommand> commands)
         {
             this.globalCommands = commands;
         }
 
-        public void CreateCommand(BaseCommand command)
+        public void CreateCommand(object command)
         {
             this.SetCommand(command);
         }
@@ -26,27 +28,56 @@ namespace UnityCommander.Core
         public void CreateCommand(string commandName, object instance, Action<object> action)
         {
             // TODO: Optimize this piece of code.
-            var c = globalCommands.SingleOrDefault(cmd => cmd.CommandName == commandName);
+            //var c = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
 
-            if (c != null) return;
+            //if (c != null) return;
 
-            var type = action.Method.DeclaringType;
-            var @delegate = Delegate.CreateDelegate(DelegateTypeFactory.Create(action.Method), instance, action.Method);
             var command = new GlobalCommandExecute(action, instance);
 
             var cmd = new GlobalCommand
             {
-                CommandName = commandName,
-                CommandSource = CommandSource.Native,
+                Name = commandName,
                 Command = command,
                 CommandParameter = instance,
                 ShortcutKey = null,
-                Delegate = @delegate,
-                Source = type
             };
 
-            globalCommands.Add(cmd);
+            this.globalCommands.Enqueue(cmd);
         }
+
+        /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IGlobalCommand"/>.
+        /// </returns>
+        public IGlobalCommand GetCommand(string commandName)
+        {
+            var commandSelected = default(GlobalCommand);
+
+            foreach (var globalCommand in this.globalCommands.Where(
+                         p=> ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName)))
+            {
+                if (globalCommand is not GlobalCommand command) continue;
+                if (!globalCommand.Name.Contains(this.commandSelector))
+                {
+                    commandSelected = command;
+                    continue;
+                }
+
+                return globalCommand;
+            }
+
+            return commandSelected;
+        }
+
+        public IEnumerable<IGlobalCommand> GetCommands(string commandName) 
+            => this.globalCommands.Where(p => ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName));
+
+        public Queue<IGlobalCommand> GetCommands() => this.globalCommands;
 
         private void SetCommand(object instance)
         {
@@ -55,39 +86,61 @@ namespace UnityCommander.Core
             
             foreach (var method in methods)
             {
-                if (method.GetBaseDefinition().DeclaringType != method.DeclaringType)
+                if (!method.CustomAttributes.Any(p => p.AttributeType.Name == "GlobalCommandAttribute")) continue;
+             
+                var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
+                var command = new GlobalCommandExecute(action, type);
+
+                var globalCommand = new GlobalCommand
                 {
-                    var att = Attribute.GetCustomAttribute(method, typeof(GlobalCommandAttribute)) as GlobalCommandAttribute;
+                    Command = command
+                };
 
-                    if (att == null) continue;
-
-                    var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
-                    var command = new GlobalCommandExecute(action, type);
-
-                    var cmd = new GlobalCommand
-                    {
-                        CommandName = att.Name,
-                        CommandSource = att.Source,
-                        Command = command,
-                        ShortcutKey = att.Hotkey,
-                        Delegate = action,
-                        Source = type
-                       
-                    };
-
-                    //var input = new InputBinding(cmd.Command, cmd.ShortcutKey);
-                    //var inputBindingCollection = new InputBindingCollection();
-                    //inputBindingCollection.Add(input);
-                    globalCommands.Add(cmd);
+                foreach (var attribute in method.GetCustomAttributes())
+                {
+                     var properties = attribute.GetType().GetProperties();
+                     globalCommand.Name = (string)attribute.GetType().GetProperty("Name").GetValue(attribute);
+                     globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey").GetValue(attribute);
                 }
+
+                this.globalCommands.Enqueue(globalCommand);
             }
         }
 
-        public GlobalCommand GetCommand(string commandName)
-            => this.globalCommands.SingleOrDefault(
-                   cmd=> cmd.CommandSource == CommandSource.Plugin && cmd.CommandName == commandName) 
-                        ?? this.globalCommands.Single(cmd => cmd.CommandName == commandName);
+        public void UpdateCommand(string commandName)
+        {
+            throw new NotImplementedException();
+        }
 
-        public List<GlobalCommand> GetCommands() => this.globalCommands;
+        public void CreateSingletonCommand(string commandName, object args, Action<object> action)
+        {
+            // TODO: Optimize this piece of code.
+            IGlobalCommand globalCommand = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
+
+            if (globalCommand != null)
+            {
+                globalCommand.CommandParameter = args;
+                return;
+            }
+
+            var command = new GlobalCommandExecute(action, args);
+            
+            globalCommand = new GlobalCommand
+            {
+                Name = commandName,
+                Command = command,
+                CommandParameter = args,
+                ShortcutKey = null,
+            };
+            
+            this.globalCommands.Enqueue(globalCommand);
+        }
+
+        private static MethodInfo GetOverriddenMethodInfo(MethodInfo methodOverride)
+        {
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
+            var baseType = methodOverride.GetBaseDefinition().DeclaringType;
+            return baseType?.GetMethods(Flags).FirstOrDefault(methodVirtual => methodVirtual.Name == methodOverride.Name);
+        }
     }
 }

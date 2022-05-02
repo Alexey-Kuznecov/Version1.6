@@ -21,5 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
+    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj">
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </ProjectReference>
   </ItemGroup>
 </Project>

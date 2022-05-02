@@ -144,7 +144,7 @@ namespace UnityCommander.Controls.Ribbon
         /// <returns>
         /// The <see cref="RibbonControlGroupBuilder"/>.
         /// </returns>
-        public static RibbonControlGroupBuilder Initial([NJsonSchema.Annotations.NotNull] string tabName)
+        public static RibbonControlGroupBuilder Initial(string tabName)
         {
             ribbonBuilderInstance = new RibbonBuilder(tabName);
             return new RibbonControlGroupBuilder();
@@ -159,7 +159,7 @@ namespace UnityCommander.Controls.Ribbon
         /// <returns>
         /// The <see cref="RibbonControlGroupBuilder"/>.
         /// </returns>
-        public static RibbonControlGroupBuilder Initial([NJsonSchema.Annotations.NotNull] this RibbonBuilder ribbonBuilder)
+        public static RibbonControlGroupBuilder Initial(this RibbonBuilder ribbonBuilder)
         {
             ribbonBuilderInstance = ribbonBuilder;
             return new RibbonControlGroupBuilder();
@@ -181,9 +181,9 @@ namespace UnityCommander.Controls.Ribbon
         /// The <see cref="RibbonControlGroupBuilder"/>.
         /// </returns>
         public static RibbonControlGroupBuilder SetGroup(
-            [NJsonSchema.Annotations.NotNull] this RibbonControlGroupBuilder controlGroupBuilder,
-            [NJsonSchema.Annotations.NotNull] string groupName,
-            [NJsonSchema.Annotations.NotNull] Action<RibbonControlGroupBuilder> callback)
+            this RibbonControlGroupBuilder controlGroupBuilder,
+            string groupName,
+            Action<RibbonControlGroupBuilder> callback)
         {
             var groupBuilder = controlGroupBuilder ?? new RibbonControlGroupBuilder();
             groupBuilder = groupBuilder.AddGroup(groupName, callback);

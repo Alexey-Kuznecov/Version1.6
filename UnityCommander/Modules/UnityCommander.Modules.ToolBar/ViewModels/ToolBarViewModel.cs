@@ -15,6 +15,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
     using UnityCommander.Common;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Ribbon;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Core.Mvvm;
@@ -91,12 +92,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             IGlobalCommandService globalCommandService)
          {
             this.globalCommandManager = globalCommandService.GetCommandManager();
-            //this.globalCommandManager.CreateCommand("ShowDialog", this, this.ShowDialogCommand)
+            //this.globalCommandManager.CreateCommand("ShowDialog", this, this.ShowDialogCommand);
             this.pluginLoader = pluginLoaderService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
             this.Message = "This Toolbar View";
-            this.UserControls = new MainTabControl();
             this.Icon = iconProvider.GetIcon("Tag").GetIconPath();
         }
 
@@ -186,7 +186,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 "File Operation",
                 builder =>
                     {
-                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent 1"));
+                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent"));
                         builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), null);
                         builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null);
                         builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), null);

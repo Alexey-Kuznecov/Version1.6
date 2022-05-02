@@ -1,19 +1,18 @@
 ﻿
-using UnityCommander.Integration.Commands;
-
 namespace UnityCommander.Services.Plugins
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Windows;
 
     using Microsoft.Extensions.DependencyInjection;
 
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
     using UnityCommander.Integration.Options;

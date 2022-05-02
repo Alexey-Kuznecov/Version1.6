@@ -1,40 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Controls;
-using System.Windows.Input;
-using UnityCommander.Common;
-using UnityCommander.Integration.Commands;
 
 namespace UnityCommander.Core
 {
+    using UnityCommander.Common.Commands;
+
     public static class GlobalCommandExtension
     {
-        public static Control SetParam(this Control control, GlobalCommand command, Action<CommandParametersManager> callback)
+        public static Control SetParam(this Control control, IGlobalCommand command, Action<CommandParametersManager> callback)
         {
             var parametersManager = new CommandParametersManager();
             
             switch (control)
             {
                 case MenuItem menuItem:
-                    menuItem.Header = command.DisplayName;
+                    menuItem.Header = ((GlobalCommand)command).DisplayName ?? command.Name;
                     break;
                 case Button button:
-                    button.Content = command.DisplayName;
+                    button.Content = command.Name;
                     break;
             }
 
             callback(parametersManager);
-            
             ParamBuilder(command, control, parametersManager.Params);
-
             return control;
         }
 
-        public static void ParamBuilder(GlobalCommand globalCommand, Control controlTarget, List<XParamViewModel> vmSource)
+        public static void ParamBuilder(IGlobalCommand globalCommand, Control controlTarget, List<XParamViewModel> vmSource)
         {
-            var command = globalCommand.Command is null ? GlobalCommandProvider.FindCommand(globalCommand.CommandName) : globalCommand;
-            var paramInfo = command.Delegate.Method.GetParameters();
+            var command = globalCommand.Command is null ? GlobalCommandProvider.FindCommand(globalCommand.Name) : globalCommand;
+            // TODO: Выпилить Delegate из GlobalCommand
+            var paramInfo = ((GlobalCommandExecute)command.Command).Command.Method.GetParameters();
             using var multiCommandParameter = new MultiCommandParameter(controlTarget);
             var header = default(string);
 

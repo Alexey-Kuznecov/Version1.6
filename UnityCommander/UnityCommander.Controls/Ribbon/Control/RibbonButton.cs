@@ -2,8 +2,8 @@
 namespace UnityCommander.Controls.Ribbon.Control
 {
     using System.Windows.Input;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The data model to bind to the control.
@@ -22,7 +22,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="buttonCommand">
         /// The command for the control.
         /// </param>
-        public RibbonButton(string buttonName, IIcon buttonIcon, GlobalCommand buttonCommand)
+        public RibbonButton(string buttonName, IIcon buttonIcon, IGlobalCommand buttonCommand)
             : base(
                 buttonName, 
                 buttonIcon, 

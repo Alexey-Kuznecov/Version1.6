@@ -1,14 +1,11 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon.Control
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Input;
-
-    using NJsonSchema.Annotations;
-
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// All controls inherit the necessary functionality from this type.
@@ -39,10 +36,10 @@ namespace UnityCommander.Controls.Ribbon.Control
         internal RibbonControl(
             [NotNull] string controlName,
             [NotNull] IIcon controlIcon,
-            [NotNull] GlobalCommand controlCommand,
+            [NotNull] IGlobalCommand controlCommand,
             [NotNull] string styleName,
             [NotNull] string templateName,
-            [CanBeNull] string dataTemplate)
+            string dataTemplate)
         {
             this.DataBinding = new DataBindingControl 
             {

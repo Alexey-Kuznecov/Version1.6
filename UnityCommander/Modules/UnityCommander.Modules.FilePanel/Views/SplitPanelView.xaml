@@ -3,8 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
+    xmlns:commands1="clr-namespace:UnityCommander.Common.Commands;assembly=UnityCommander.Common"
     xmlns:common="clr-namespace:UnityCommander.Common;assembly=UnityCommander.Common"
+    xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,23 +17,25 @@
 
     <UserControl.Resources>
         <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-            <!--<Setter Property="Padding" Value="8,10,0,10" />-->
             <Setter Property="Padding" Value="8,2,0,0" />
             <Setter Property="Height" Value="35" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="50" />
-            <RowDefinition Height="50" />
+            <!--<RowDefinition Height="50" />-->
         </Grid.RowDefinitions>
+
+        <ContentControl Grid.Row="0" Template="{DynamicResource ContentDirectoryPanelTemplate}" />
         <!--
             Directory view
         -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="1">
             <!--
                 This markup responds to display folder items.
                 Template path: Resource\Generic.xml Name: DirectoryListViewTemplate
@@ -40,7 +43,7 @@
             <ContentControl Template="{Binding DirectoryPanelTemplate}" />
         </Grid>
         <GridSplitter
-            Grid.Row="1"
+            Grid.Row="2"
             Height="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
@@ -51,27 +54,16 @@
             
             ItemContainerStyle="{StaticResource OverrideMaterialDesignGridViewItem}"
         -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <ListView
                 commands:GridViewSort.AutoSort="True"
                 dd:DragDrop.DropHandler="{Binding Mode=Default}"
                 dd:DragDrop.IsDragSource="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
-                SelectedValue="{Binding CurrentFile}"
+                SelectedItem="{Binding CurrentFile}"
                 SelectionMode="Single"
                 View="{Binding FilePanelContainer}">
-                <!--<ListView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListViewItem}">
-                        <Setter Property="ContextMenu">
-                            <Setter.Value>
-                                <ContextMenu>
-                                    <MenuItem Header="Add to Playlist"></MenuItem>
-                                </ContextMenu>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel ContextMenu="{Binding ContextMenu}" />
@@ -79,21 +71,24 @@
                 </ListView.ItemsPanel>
             </ListView>
         </Grid>
-        <ContentControl Grid.Row="3">
+        <ContentControl Grid.Row="4">
             <control:NavigationPanel
                 Margin="10"
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
         </ContentControl>
-        <Grid Grid.Row="4">
-            <Button Width="50" Command="{Binding TestCommand}" common:MultiCommandParameter.IsInclude="True">
+        <!--<Grid Grid.Row="4">
+            <Button
+                Width="50"
+                commands1:MultiCommandParameter.IsInclude="True"
+                Command="{Binding TestCommand}">
                 <Button.Content>
-                    <common:XArray Type="False" Content="Start">
-                        <common:XParam Value="{Binding CurrentDirectory}"/>
-                        <common:XParam Value="{Binding CurrentDirectory}"/>
-                    </common:XArray>
+                    <commands1:XArray Content="Start" Type="False">
+                        <commands1:XParam Value="{Binding CurrentDirectory}" />
+                        <commands1:XParam Value="{Binding CurrentDirectory}" />
+                    </commands1:XArray>
                 </Button.Content>
             </Button>
-        </Grid>
+        </Grid>-->
     </Grid>
 </UserControl>

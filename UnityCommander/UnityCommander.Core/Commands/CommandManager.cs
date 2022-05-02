@@ -51,6 +51,15 @@ namespace UnityCommander.Core.Commands
             => this.commandCollection.Single(cmd => cmd.Key.Equals(token)).Value;
 
         /// <summary>
+        /// The get previous command.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="InvokerBase"/>.
+        /// </returns>
+        //public NavigationInvoker GetPreviousCommand()
+        //    => this.navigationInvoker.Previous();
+
+        /// <summary>
         /// The set navigation command.
         /// </summary>
         /// <param name="token">

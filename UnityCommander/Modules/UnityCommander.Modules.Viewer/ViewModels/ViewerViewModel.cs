@@ -1,47 +1,101 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityCommander.Core.Commands;
-using UnityCommander.Core.Modules;
-using UnityCommander.Services.Interfaces;
-
+﻿
 namespace UnityCommander.Modules.Viewer.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using Prism.Mvvm;
+
+    using UnityCommander.Common.Module;
+    using UnityCommander.Core.Commands;
+    using UnityCommander.Services.Interfaces;
+
+    /// <summary>
+    /// The viewer view model.
+    /// </summary>
     public class ViewerViewModel : BindableBase, ITabPanelContent
-    {        
+    {
+        /// <summary>
+        /// The command manager.
+        /// </summary>
+        private readonly CommandManager commandManager;
+
         /// <summary>
         /// The navigation command.   
         /// </summary>
         private NavigationInvoker navigationCommand;
-        
-        private CommandManager commandManager;
 
-        public ViewerViewModel(IPluginLoaderService pluginLoaderService, IGlobalCommandService globalCommandService, CommandManager manager)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ViewerViewModel"/> class.
+        /// </summary>
+        /// <param name="manager">
+        /// The manager.
+        /// </param>
+        public ViewerViewModel(CommandManager manager)
         {
             this.commandManager = manager;
         }
 
+        /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
         public Guid Token { get; set; }
 
-        public ITabPanelContent InitializedViewModel(Guid token, string path)
+        /// <summary>
+        /// Gets or sets the current file path.
+        /// </summary>
+        public string CurrentPath { get; set; }
+
+        /// <summary>
+        /// The initialized view model.
+        /// </summary>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ITabPanelContent"/>.
+        /// </returns>
+        public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
+            this.CurrentPath = path;
             this.Token = token;
-            this.navigationCommand = (NavigationInvoker)commandManager.CommandRegister(token, new NavigationInvoker());
+            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
             return this;
         }
 
+        /// <summary>
+        /// The get current path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetCurrentPath()
+        {
+            return this.CurrentPath;
+        }
+
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
         public Guid GetPanelToken()
         {
             return this.Token;
         }
 
-        public string GetCurrentPath()
+        /// <summary>
+        /// The get current file path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetCurrentFilePath()
         {
-            return null;
+            return this.CurrentPath;
         }
     }
 }

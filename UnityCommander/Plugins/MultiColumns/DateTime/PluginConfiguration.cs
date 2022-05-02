@@ -1,6 +1,4 @@
 ﻿
-using UnityCommander.Integration.Commands;
-
 namespace MultiColumns.DateTime
 {
     using System;
@@ -8,6 +6,7 @@ namespace MultiColumns.DateTime
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
 
@@ -37,6 +36,17 @@ namespace MultiColumns.DateTime
         }
 
         /// <summary>
+        /// The command factory.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        public void CommandFactory(CommandBuilder command)
+        {
+            command.Register<IOOverrideCommand2, IOCommands>();
+        }
+
+        /// <summary>
         /// The render register.
         /// </summary>
         /// <returns>
@@ -59,11 +69,6 @@ namespace MultiColumns.DateTime
         private DateTimeColumn DateTimeFactory(IServiceProvider service)
         {
             return this.dateTimeColumn;
-        }
-
-        public void CommandFactory(CommandBuilder command)
-        {
-            command.Register<IoOverrideCommand, IOCommands>();
         }
     }
 }

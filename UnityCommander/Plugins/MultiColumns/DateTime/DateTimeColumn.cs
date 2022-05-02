@@ -130,7 +130,7 @@ namespace MultiColumns.DateTime
         public void UpdateColumnValue(ColumnManager columnManager)
         {
             this.updateColumnValue = columnManager.Update;
-        } 
+        }
 
         /// <summary>
         /// The column value render.
@@ -152,7 +152,13 @@ namespace MultiColumns.DateTime
         /// </param>
         public void OptionBuild(OptionBuilder optionBuilder)
         {
-            optionBuilder.Add("Select date format:", this.DateTimeFormat, dateTimeFormat, this.DateTimeFormatHandler, OptionRender.DropBox);
+            optionBuilder.Add(
+                "Select date format:", 
+                this.DateTimeFormat, 
+                dateTimeFormat, 
+                this.DateTimeFormatHandler,
+                OptionRender.DropBox);
+
             optionBuilder.Add("Shown date and time:", this.includeTime, this.IncludeTimeHandler, OptionRender.Checkbox);
         }
 

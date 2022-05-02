@@ -1,11 +1,11 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using UnityCommander.Integration.Mvvm.Base;
+
+    using AlexeyKuznecov.Library.Mvvm.Base;
 
     /// <summary>
     /// The ribbon.

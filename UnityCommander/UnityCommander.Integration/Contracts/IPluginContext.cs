@@ -1,12 +1,10 @@
 ﻿
-using UnityCommander.Integration.Commands;
-
 namespace UnityCommander.Integration.Contracts
 {
     using System.Collections.Generic;
 
     using Columns;
-
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -14,6 +12,11 @@ namespace UnityCommander.Integration.Contracts
     /// </summary>
     public interface IPluginContext
     {
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name { get; set; }
+
         /// <summary>
         /// The get columns.
         /// </summary>
@@ -30,6 +33,12 @@ namespace UnityCommander.Integration.Contracts
         /// </returns>
         IEnumerable<IOption> GetOptions();
 
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         public IEnumerable<BaseCommand> GetCommands();
     }
 }

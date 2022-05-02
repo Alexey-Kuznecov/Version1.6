@@ -1,12 +1,18 @@
-﻿using System.Windows;
-using Prism.Ioc;
-using Prism.Modularity;
-using Prism.Regions;
-using UnityCommander.Core;
-using UnityCommander.Modules.TabPanel.Views;
-
+﻿
 namespace UnityCommander.Modules.TabPanel
 {
+    using System.Windows;
+
+    using Prism.Ioc;
+    using Prism.Modularity;
+    using Prism.Regions;
+
+    using UnityCommander.Core;
+    using UnityCommander.Modules.TabPanel.Views;
+
+    /// <summary>
+    /// The tab panel module.
+    /// </summary>
     public class TabPanelModule : IModule
     {        
         /// <summary>
@@ -23,6 +29,12 @@ namespace UnityCommander.Modules.TabPanel
             this.regionManager = regionManager;
         }
 
+        /// <summary>
+        /// The on initialized.
+        /// </summary>
+        /// <param name="containerProvider">
+        /// The container provider.
+        /// </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
             this.regionManager.RequestNavigate(RegionNames.TabPanelRegion, nameof(TabPanelView));
@@ -30,6 +42,12 @@ namespace UnityCommander.Modules.TabPanel
             this.regionManager.RequestNavigate(NestedRegionNames.RightFilePanelRegion, nameof(RightPanelContentView), this.NavigationCallback);
         }
 
+        /// <summary>
+        /// The register types.
+        /// </summary>
+        /// <param name="containerRegistry">
+        /// The container registry.
+        /// </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<TabPanelView>();

@@ -1,19 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Input;
-using UnityCommander.Integration.Enums;
-
+﻿
 namespace UnityCommander.Integration.Commands
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    using System;
+    using System.Windows.Input;
+
+    /// <summary>
+    /// The global command attribute.
+    /// </summary>
     public class GlobalCommandAttribute : Attribute
     {
-        public string Name { get; set; }
-        public CommandSource Source { get; set; }
-        
-        public KeyGesture Hotkey { get; set; }
-
-        public GlobalCommandAttribute(string name, string hotkey, CommandSource source = CommandSource.Plugin)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GlobalCommandAttribute"/> class.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <param name="hotkey">
+        /// The hotkey.
+        /// </param>
+        public GlobalCommandAttribute(string name, string hotkey)
         {
             if (name == "FileCopy3")
             {
@@ -21,8 +26,17 @@ namespace UnityCommander.Integration.Commands
             }
 
             this.Name = name;
-            this.Source = source;
             this.Hotkey = (KeyGesture)new KeyGestureConverter().ConvertFromString(hotkey);
         }
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the hotkey.
+        /// </summary>
+        public KeyGesture Hotkey { get; set; }
     }
 }

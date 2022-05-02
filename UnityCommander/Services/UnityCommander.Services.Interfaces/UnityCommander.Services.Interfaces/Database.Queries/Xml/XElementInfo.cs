@@ -3,6 +3,7 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Xml.Linq;
 
     /// <summary>
@@ -28,18 +29,26 @@ namespace UnityCommander.Services.Interfaces.Database.Queries.Xml
             this.Element = element;
             this.Name = element.Name.LocalName;
 
-            if (element.FirstAttribute != null)
-            {
-                this.Attributes.Add(element.FirstAttribute);
-            }
+            if (element.LastAttribute == null) return;
 
-            if (element.LastAttribute != null)
-            {
-                if (!this.Attributes.Contains(element.LastAttribute))
-                {
-                    this.Attributes.Add(element.LastAttribute);
-                }
-            }
+            this.Attributes = element.Attributes().ToList();
+
+            //foreach (var attribute in element.Attributes())
+            //{
+            //    if (attribute.Name != null)
+            //    {
+            //        this.Attributes.Add(element.FirstAttribute);
+            //    }
+            //}
+                
+
+            //if (element.LastAttribute != null)
+            //{
+            //    if (!this.Attributes.Contains(element.LastAttribute))
+            //    {
+            //        this.Attributes.Add(element.LastAttribute);
+            //    }
+            //}
         }
 
         #region Properties
