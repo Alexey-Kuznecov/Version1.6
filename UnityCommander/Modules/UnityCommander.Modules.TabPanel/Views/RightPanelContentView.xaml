@@ -12,19 +12,14 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
-        <Border
-            be:AttachedElementFocus.FocussedElementName="True"
-            be:AttachedElementFocus.RaiseCommand="{Binding FocusPanelCommand}"
-            BorderThickness="1,0,0,1">
+        <Border be:AttachedElementFocus.FocusedElementName="True" BorderThickness="1,0,0,1">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
-                    <RowDefinition Height="25" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <tabPanel:TabPanel Grid.Row="0" Collection="{Binding TabCollection, Mode=TwoWay}" />
-                <ContentControl Grid.Row="1" Template="{StaticResource ContentDirectoryPanelTemplate}" />
-                <ContentControl Grid.Row="2" regions:RegionManager.RegionName="{x:Static module:NestedRegionNames.RightPanelContentRegion}" />
+                <tabPanel:TabPanel Grid.Row="0" Collection="{Binding TabCollection}" />
+                <ContentControl Grid.Row="1" regions:RegionManager.RegionName="{x:Static module:NestedRegionNames.RightPanelContentRegion}" />
             </Grid>
         </Border>
     </Grid>

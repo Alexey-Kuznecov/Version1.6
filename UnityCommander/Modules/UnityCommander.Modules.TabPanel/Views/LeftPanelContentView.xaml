@@ -8,24 +8,18 @@
     xmlns:module="clr-namespace:UnityCommander.Modules.TabPanel"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:tabPanel="clr-namespace:UnityCommander.Controls.TabPanel;assembly=UnityCommander.Controls"
-    d:DataContext="{d:DesignData Type=TabPenalViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
 
     <Grid>
-        <Border
-            be:AttachedElementFocus.FocussedElementName="True"
-            be:AttachedElementFocus.RaiseCommand="{Binding FocusPanelCommand}"
-            BorderThickness="0,0,1,1">
-            <Grid Grid.Column="0">
+        <Border be:AttachedElementFocus.FocusedElementName="True" BorderThickness="0,0,1,1">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
-                    <RowDefinition Height="25" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <tabPanel:TabPanel Grid.Row="0" Collection="{Binding TabCollection}" />
-                <ContentControl Grid.Row="1" Template="{DynamicResource ContentDirectoryPanelTemplate}" />
-                <ContentControl Grid.Row="2" prism:RegionManager.RegionName="{x:Static module:NestedRegionNames.LeftPanelContentRegion}" />
+                <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static module:NestedRegionNames.LeftPanelContentRegion}" />
             </Grid>
         </Border>
     </Grid>

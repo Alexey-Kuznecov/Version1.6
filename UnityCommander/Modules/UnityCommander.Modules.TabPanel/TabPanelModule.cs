@@ -1,12 +1,15 @@
-﻿using System.Windows;
-using Prism.Ioc;
-using Prism.Modularity;
-using Prism.Regions;
-using UnityCommander.Core;
-using UnityCommander.Modules.TabPanel.Views;
-
+﻿
 namespace UnityCommander.Modules.TabPanel
 {
+    using System.Windows;
+
+    using Prism.Ioc;
+    using Prism.Modularity;
+    using Prism.Regions;
+
+    using UnityCommander.Core;
+    using UnityCommander.Modules.TabPanel.Views;
+
     public class TabPanelModule : IModule
     {        
         /// <summary>

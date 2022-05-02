@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using UnityCommander.Services.Interfaces.Database.Queries.Xml;
-
-namespace UnityCommander.Modules.TabPanel
+﻿
+namespace UnityCommander.Modules.FilePanel.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+
+    using UnityCommander.Common.Module;
+    using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.Services.Interfaces.Database.Queries.Xml;
+
     /// <summary>
     /// The state panel serializer.
     /// </summary>
-    public static class TabPanelExtension
+    public static class DataPanelExtension
     {
         /// <summary>
         /// The tabs info.
@@ -55,9 +59,11 @@ namespace UnityCommander.Modules.TabPanel
                          {
                              Path = element.GetAttributeValueByName("Path"),
                              Token = Guid.Parse(element.GetAttributeValueByName("Id")),
-                             Panel = parent.GetAttributeValueByName("Name")
+                             Panel = element.GetAttributeValueByName("Name"),
+                             ViewType = element.GetAttributeValueByName("ViewType") == nameof(SplitPanelView) 
+                                            ? new SplitPanelView() : null
                         };
-
+                        
                         yield return record;
                     }
                 }

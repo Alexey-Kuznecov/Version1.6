@@ -2,7 +2,7 @@
 namespace UnityCommander.Modules.Viewer.ViewModels
 {
     using System;
-
+    using System.Collections.Generic;
     using Prism.Mvvm;
 
     using UnityCommander.Common.Module;
@@ -27,16 +27,10 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerViewModel"/> class.
         /// </summary>
-        /// <param name="pluginLoaderService">
-        /// The plugin loader service.
-        /// </param>
-        /// <param name="globalCommandService">
-        /// The global command service.
-        /// </param>
         /// <param name="manager">
         /// The manager.
         /// </param>
-        public ViewerViewModel(IPluginLoaderService pluginLoaderService, IGlobalCommandService globalCommandService, CommandManager manager)
+        public ViewerViewModel(CommandManager manager)
         {
             this.commandManager = manager;
         }
@@ -45,6 +39,11 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// Gets or sets the token.
         /// </summary>
         public Guid Token { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current file path.
+        /// </summary>
+        public string CurrentFilePath { get; set; }
 
         /// <summary>
         /// The initialized view model.
@@ -58,11 +57,23 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// <returns>
         /// The <see cref="ITabPanelContent"/>.
         /// </returns>
-        public ITabPanelContent InitializedViewModel(Guid token, string path)
+        public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
+            this.CurrentFilePath = path;
             this.Token = token;
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
             return this;
+        }
+
+        /// <summary>
+        /// The get current path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetCurrentPath()
+        {
+            return this.CurrentFilePath;
         }
 
         /// <summary>

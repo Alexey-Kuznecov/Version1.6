@@ -17,23 +17,25 @@
 
     <UserControl.Resources>
         <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="{x:Type GridViewColumnHeader}">
-            <!--<Setter Property="Padding" Value="8,10,0,10" />-->
             <Setter Property="Padding" Value="8,2,0,0" />
             <Setter Property="Height" Value="35" />
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="50" />
             <!--<RowDefinition Height="50" />-->
         </Grid.RowDefinitions>
+
+        <ContentControl Grid.Row="0" Template="{DynamicResource ContentDirectoryPanelTemplate}" />
         <!--
             Directory view
         -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="1">
             <!--
                 This markup responds to display folder items.
                 Template path: Resource\Generic.xml Name: DirectoryListViewTemplate
@@ -41,7 +43,7 @@
             <ContentControl Template="{Binding DirectoryPanelTemplate}" />
         </Grid>
         <GridSplitter
-            Grid.Row="1"
+            Grid.Row="2"
             Height="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
@@ -52,7 +54,7 @@
             
             ItemContainerStyle="{StaticResource OverrideMaterialDesignGridViewItem}"
         -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <ListView
                 commands:GridViewSort.AutoSort="True"
                 dd:DragDrop.DropHandler="{Binding Mode=Default}"
@@ -62,17 +64,6 @@
                 SelectedValue="{Binding CurrentFile}"
                 SelectionMode="Single"
                 View="{Binding FilePanelContainer}">
-                <!--<ListView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListViewItem}">
-                        <Setter Property="ContextMenu">
-                            <Setter.Value>
-                                <ContextMenu>
-                                    <MenuItem Header="Add to Playlist"></MenuItem>
-                                </ContextMenu>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel ContextMenu="{Binding ContextMenu}" />
@@ -80,7 +71,7 @@
                 </ListView.ItemsPanel>
             </ListView>
         </Grid>
-        <ContentControl Grid.Row="3">
+        <ContentControl Grid.Row="4">
             <control:NavigationPanel
                 Margin="10"
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"

@@ -2,17 +2,13 @@
 namespace UnityCommander.Common.Module
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// The TabPanelContent interface.
     /// </summary>
     public interface ITabPanelContent
     {
-        /// <summary>
-        /// Gets or sets the token.
-        /// </summary>
-        public Guid Token { get; set; }
-
         /// <summary>
         /// Gets or sets the initial command.
         /// </summary>
@@ -22,7 +18,7 @@ namespace UnityCommander.Common.Module
         public Guid GetPanelToken();
 
         /// <summary>
-        /// Gets or sets the   panel.
+        /// The initialized view model.
         /// </summary>
         /// <param name="token">
         /// The token.
@@ -33,6 +29,14 @@ namespace UnityCommander.Common.Module
         /// <returns>
         /// The <see cref="ITabPanelContent"/>.
         /// </returns>
-        public ITabPanelContent InitializedViewModel(Guid token, string path);
+        public ITabPanelContent InitializedViewModel(ref Guid token, string path);
+
+        /// <summary>
+        /// Gets or sets the initial command.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public string GetCurrentPath();
     }
 }

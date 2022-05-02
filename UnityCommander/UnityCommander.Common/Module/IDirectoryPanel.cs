@@ -8,12 +8,5 @@ namespace UnityCommander.Common.Module
     /// </summary>
     public interface IDirectoryPanel : ITabPanelContent
     {
-        /// <summary>
-        /// Gets or sets the initial command.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public string GetCurrentPath();
     }
 }

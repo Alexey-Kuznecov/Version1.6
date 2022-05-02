@@ -12,7 +12,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using System.Windows;
@@ -20,8 +19,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows.Data;
     using System.Windows.Documents;
     using System.Windows.Input;
-
-    using NLog;
 
     using Prism.Commands;
     using Prism.Regions;
@@ -44,101 +41,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// The left panel view model.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
+    public partial class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
     {
-        #region Declaration fields
-
-        #region Dependencies Injection
-
-        /// <summary>
-        /// The dialog service.
-        /// </summary>
-        private readonly IDialogService dialogService;
-
-        /// <summary>
-        /// The directory provider.
-        /// </summary>
-        private readonly IDataProviderService dataService;
-
-        /// <summary>
-        /// The application settings.
-        /// </summary>
-        private readonly ISettings settingsService;
-
-        /// <summary>
-        /// The common state service.
-        /// </summary>
-        private readonly IMultiCommandService multiCommandService;
-
-        /// <summary>
-        /// The common state service.
-        /// </summary>
-        private readonly IGlobalCommandService globalCommandService;
-
-        /// <summary>
-        /// The plugin loader service.
-        /// </summary>
-        private readonly IPluginLoaderService pluginLoaderService;
-        
-        /// <summary>
-        /// The command manager.
-        /// </summary>
-        private readonly CommandManager commandManager;
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly Logger logger;
-
-        /// <summary>
-        /// If true, the plugin was cached and the result will be restored
-        /// from the cache table the next time the program starts.
-        /// </summary>
-        private bool pluginValuesIsCached;
-
-        /// <summary>
-        /// Select base directory.
-        /// </summary>
-        private BaseDirectory selectedBaseDirectory;
-
-        #endregion
-
-        #region Collections
-
-        /// <summary>
-        /// The file list.
-        /// </summary>
-        private ObservableCollection<FileModel> fileList;
-
-        /// <summary>
-        /// The directory list.
-        /// </summary>
-        private ObservableCollection<FolderModel> directoryList;
-
-        /// <summary>
-        /// The drive list.
-        /// </summary>
-        private ObservableCollection<DriveModel> driveList;
-
-        #endregion
-
-        /// <summary>
-        /// The navigation command.
-        /// </summary>
-        private NavigationInvoker navigationCommand;
-        
-        /// <summary>
-        /// Control template for panel items.
-        /// </summary>
-        private ControlTemplate directoryPanelTemplate;
-        
-        /// <summary>
-        /// Indicates the current directory.
-        /// </summary>
-        private string currentDirectory;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -165,6 +69,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="globalCommandService">
         /// The service for loading all detected plugin interfaces.
         /// </param>
+        /// <param name="iconProvider">
+        ///
+        /// </param>
         /// <param name="manager">
         /// Command manager
         /// </param>
@@ -179,10 +86,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IMultiCommandService multiCommandService,
             IPluginLoaderService pluginService,
             IGlobalCommandService globalCommandService,
+            IIconProviderService iconProvider,
+            IAppConfigService configService,
             CommandManager manager,
             ModuleLogger logger)
             : base(regionManager)
         {
+            this.configService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
             this.logger = logger.GetLogger();
@@ -195,6 +105,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             // Composite command
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+
+            this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
+            this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
+            this.ThisComputerIconIsEnabled = true;
+            this.BackButtonIsEnabled = true;
         }
 
         #endregion
@@ -267,153 +182,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Delaration properties
 
-        /// <summary>
-        /// Gets or sets the current directory.
-        /// </summary>
-        public string CurrentDirectory
-        {
-            get => this.currentDirectory;
-            set => this.SetProperty(ref this.currentDirectory, value);
-        }
 
-        /// <summary>
-        /// Gets or sets grid view for file panel.
-        /// </summary>
-        public ContextMenu ContextMenu { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets grid view for file panel.
-        /// </summary>
-        public GridView FilePanelContainer { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets grid view for folder panel.
-        /// </summary>
-        public GridView FolderPanelContainer { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets grid view for folder panel.
-        /// </summary>
-        public GridView DrivePanelContainer { get; set; } = new ();
-
-        #region Collection Data
-
-        /// <summary>
-        /// Gets or sets the directory list.
-        /// </summary>
-        public ObservableCollection<FolderModel> DirectoryList
-        {
-            get => this.directoryList;
-            set => this.SetProperty(ref this.directoryList, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the file list.
-        /// </summary>
-        public ObservableCollection<FileModel> FileList
-        {
-            get => this.fileList;
-            set => this.SetProperty(ref this.fileList, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the file list.
-        /// </summary>
-        public ObservableCollection<DriveModel> DriveList
-        {
-            get => this.driveList;
-            set => this.SetProperty(ref this.driveList, value);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Gets or sets the template for panel items.
-        /// </summary>
-        public ControlTemplate DirectoryPanelTemplate
-        {
-            get => this.directoryPanelTemplate;
-            set => this.SetProperty(ref this.directoryPanelTemplate, value);
-        }
-
-        /// <summary>
-        /// Sets the selected directory.
-        /// </summary>
-        public BaseDirectory SelectedBaseDirectory
-        {
-            set
-            {
-                if (value != null)
-                {
-                    this.SelectedDirectories.Add(value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sets the selected directory.
-        /// </summary>
-        public BaseDirectory CurrentFile
-        {
-            get => this.selectedBaseDirectory;
-            set => this.selectedBaseDirectory = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the selected directory.
-        /// </summary>
-        public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets the token.
-        /// </summary>
-        public Guid Token { get; set; }
-
-        /// <summary>
-        /// The initial panel.
-        /// </summary>
-        /// <param name="token">
-        /// The token.
-        /// </param>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ITabPanelContent"/>.
-        /// </returns>
-        public ITabPanelContent InitializedViewModel(Guid token, string path)
-        {
-#if (Nlog)
-            this.logger.Info("Token: {0} Path: {1}", token, path);
-#endif
-            this.CurrentDirectory = path;
-            this.Token = token;
-            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
-            this.SetLastPanelState();
-            this.SetCommands(path);
-            return this;
-        }
         
-        /// <summary>
-        /// The get panel token.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public Guid GetPanelToken() => this.Token;
-
-        /// <summary>
-        /// The get panel token.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public string GetCurrentPath() => this.CurrentDirectory;
-
         #endregion
 
         #region Other
-        
+
         /// <summary>
         /// Finalization of objects when unloading a module.
         /// </summary>
@@ -525,6 +299,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddDriveColumns();
             this.AddPluginColumns();
             this.CreateContextMenu();
+            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(this.Token);
+            this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
         }
 
         /// <summary>
