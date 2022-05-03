@@ -11,11 +11,6 @@ namespace UnityCommander.Controls.Ribbon
     public class RibbonSection : Panel
     {
         /// <summary>
-        /// TODO The margin section.
-        /// </summary>
-        private static double marginGroup;
-
-        /// <summary>
         /// The on render.
         /// </summary>
         /// <param name="dc">
@@ -50,11 +45,6 @@ namespace UnityCommander.Controls.Ribbon
 
             return arrangeBounds;
         }
-
-        /// <summary>
-        /// The width adorner.
-        /// </summary>
-        private static double widthSection;
 
         /// <summary>
         /// The measure override.

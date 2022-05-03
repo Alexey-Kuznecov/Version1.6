@@ -314,7 +314,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 popupBox.Placement = PlacementMode.Top;
                 popupBox.StaysOpen = false;
 
-                Binding bind = new Binding("PopupFocus") { Mode = BindingMode.TwoWay, Source = popupViewModel };
+                Binding bind = new Binding("PopupIsOpen") { Mode = BindingMode.TwoWay, Source = popupViewModel };
                 BindingOperations.SetBinding(popupBox, Popup.IsOpenProperty, bind);
             }
         }
@@ -413,7 +413,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// </summary>
             private bool popButtonIsEnabled;
 
-            private bool popButtonIsFocus;
+            private bool popupIsOpen;
 
             /// <summary>
             /// The list directories.
@@ -426,7 +426,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// <param name="parameters"> The external arguments for pop-up menu. </param>
             public PopupViewModel(PopupParameters parameters)
             {
-                this.PopupFocus = true;
+                this.popupIsOpen = true;
                 this.currentPanel = parameters.Panel;
 
                 this.DirectoryList = new ObservableCollection<PopupParameters>();
@@ -459,13 +459,13 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// <summary>
             /// Sets the selected directory path.
             /// </summary>
-            public bool PopupFocus
+            public bool PopupIsOpen
             {
-                get => this.popButtonIsFocus;
+                get => this.popupIsOpen;
                 set
                 {
-                    this.SetProperty(ref this.popButtonIsFocus, value);
-                    this.PopButtonIsEnabled = !this.popButtonIsFocus;
+                    this.SetProperty(ref this.popupIsOpen, value);
+                    this.PopButtonIsEnabled = !this.popupIsOpen;
                 } 
             }
 

@@ -7,7 +7,7 @@ namespace UnityCommander.Controls.Ribbon
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-
+    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Controls.Ribbon.Subgroup;
 
@@ -32,6 +32,9 @@ namespace UnityCommander.Controls.Ribbon
         /// </summary>
         private readonly List<RibbonComboBox> comboBoxes = new ();
 
+        /// <summary>
+        /// Gets the controls stack group.
+        /// </summary>
         public ControlsStackGroup ControlsStackGroup { get; } = new ();
 
         /// <summary>
@@ -57,7 +60,20 @@ namespace UnityCommander.Controls.Ribbon
                 Style = control.Style
             };
             
-            this.itemCollection.Add(listBoxItem);         
+            this.itemCollection.Add(listBoxItem);
+        }
+
+        /// <summary>
+        /// The add combo box item.
+        /// </summary>
+        /// <param name="callback">
+        /// The callback.
+        /// </param>
+        public void AddDropItem(string content, IIcon icon, Action<RibbonDropList> callback)
+        {
+            var dropList = new RibbonDropList(content, icon);
+            callback(dropList);
+            this.itemCollection.Add(dropList.Build());
         }
 
         /// <summary>

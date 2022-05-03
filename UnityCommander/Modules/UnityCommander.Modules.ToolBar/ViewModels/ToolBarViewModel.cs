@@ -186,7 +186,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 "File Operation",
                 builder =>
                     {
-                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.globalCommandManager.GetCommand("DisplayContent"));
+                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), /*(RibbonCommand)this.globalCommandManager.GetCommand("DisplayContent")*/ null);
                         builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), null);
                         builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null);
                         builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), null);
@@ -203,10 +203,10 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                                                 box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
                                                 box.AddItem("Bug", this.iconProvider.GetIcon(PackIconKind.Bug), null);
                                             });
-                                    list.AddComboBoxItem(
+                                    list.AddDropItem("Выделить", this.iconProvider.GetIcon(PackIconKind.Selection),
                                         box =>
                                             {
-                                                box.AddItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), null);
+                                                box.AddItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), null /*this.globalCommandManager.GetCommand("DisplayContent")*/);
                                                 box.AddItem("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), null);
                                                 box.AddItem("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), null);
                                                 box.AddItem("About Circle", this.iconProvider.GetIcon(PackIconKind.AboutCircle), null);

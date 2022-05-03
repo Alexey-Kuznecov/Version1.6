@@ -36,7 +36,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         internal RibbonControl(
             [NotNull] string controlName,
             [NotNull] IIcon controlIcon,
-            [NotNull] IGlobalCommand controlCommand,
+            [NotNull] RibbonCommand controlCommand,
             [NotNull] string styleName,
             [NotNull] string templateName,
             string dataTemplate)

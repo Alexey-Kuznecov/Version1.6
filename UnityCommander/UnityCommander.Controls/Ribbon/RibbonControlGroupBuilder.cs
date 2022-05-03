@@ -2,7 +2,10 @@
 namespace UnityCommander.Controls.Ribbon
 {
     using System;
-    using System.Windows.Input;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
@@ -24,11 +27,6 @@ namespace UnityCommander.Controls.Ribbon
         private RibbonGroup group;
 
         /// <summary>
-        /// Wrapper object for a group of controls
-        /// </summary>
-        private RibbonGroupAdorner groupAdorner;
-
-        /// <summary>
         /// Adds a new tool ribbon button.
         /// </summary>
         /// <param name="name">
@@ -44,7 +42,7 @@ namespace UnityCommander.Controls.Ribbon
         /// The <see cref="RibbonControlGroupBuilder"/>. Returns the control group designer for further tool ribbon construction . 
         /// </returns>
         /// <remarks> Controls will be added in the order in which this function is called. </remarks>
-        public RibbonControlGroupBuilder AddButton(string name, IIcon icon, IGlobalCommand command)
+        public RibbonControlGroupBuilder AddButton(string name, IIcon icon, RibbonCommand command)
         {
             RibbonElement element = new RibbonElement(new RibbonButton(name, icon, command));
             this.group.Children.Add(element);
@@ -61,7 +59,9 @@ namespace UnityCommander.Controls.Ribbon
         public void AddList(Action<RibbonControlListBuilder> callback)
         {
             using var ribbonControlList = new RibbonControlListBuilder();
+            
             ribbonControlList.AddItem(callback);
+            //this.SetCanvas(ribbonControlList);
             this.group.Children.Add(ribbonControlList.ControlsStackGroup);
         }
 
@@ -84,9 +84,32 @@ namespace UnityCommander.Controls.Ribbon
         {
             var rga = new RibbonGroupAdorner();
             this.group = new RibbonGroup();
-            this.groupAdorner = rga.SetAdorner(groupName, this.group);
+            this.GetAdorner = rga.SetAdorner(groupName, this.group);
             callback(this);
             return this;
+        }
+
+        internal void SetCanvas(RibbonControlListBuilder builder)
+        {
+            Canvas canvas = new Canvas
+            {
+                Width = 200,
+                Height = 200,
+                Background = new SolidColorBrush(Color.FromRgb(190, 190, 190))
+            };
+            Grid grid = new Grid();
+            Button button = new Button { Content = "Clollapse" };
+
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(25) });
+
+            grid.Children.Add(builder.ControlsStackGroup);
+            grid.Children.Add(button);
+            Grid.SetRow(builder.ControlsStackGroup, 0);
+            Grid.SetRow(button, 1);
+            canvas.Children.Add(grid);
+            Canvas.SetZIndex(canvas, 100);
+            this.group.Children.Add(canvas);
         }
 
         /// <summary>
@@ -95,6 +118,6 @@ namespace UnityCommander.Controls.Ribbon
         /// <remarks>
         /// Note, that this <see cref="RibbonGroupAdorner"/> object, pre-wraps the <see cref="RibbonGroup"/> object.
         /// </remarks>
-        internal RibbonGroupAdorner GetAdorner => this.groupAdorner;
+        internal RibbonGroupAdorner GetAdorner { get; private set; }
     }
 }

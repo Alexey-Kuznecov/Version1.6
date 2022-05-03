@@ -51,7 +51,7 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         /// <summary>
         /// The container group width.
         /// </summary>
-        private int nextColumn = 5;
+        private int nextColumn = 4;
 
         /// <summary>
         /// The container group width.
@@ -70,9 +70,9 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         /// </summary>
         public ControlsStackGroup()
         {
-            this.Margin = new Thickness(0, 5, 0, 0);
+            this.Margin = new Thickness(0, 5, 5, 0);
             this.AllowDrop = true;
-            this.Drop += ItemPanel_OnPreviewDrop;
+            this.Drop += this.ItemPanel_OnPreviewDrop;
             this.DragEnter += this.ItemPanel_OnPreviewDragEnter;
         }
 
@@ -83,7 +83,7 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         /// </summary>
         public override void OnApplyTemplate()
         {
-            this.Margin = new Thickness(10, 5, 0, 0);
+            //this.Margin = new Thickness(0, 5, 0, 0);
             base.OnApplyTemplate();
         }
 
@@ -102,6 +102,7 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             this.verticalAl = 0f;
+            this.itemNumber = 0;
 
             foreach (UIElement child in this.Children)
             {
@@ -110,7 +111,7 @@ namespace UnityCommander.Controls.Ribbon.Subgroup
                 if (this.itemNumber >= this.nextColumn)
                 {
                     this.verticalAl = 0f;
-                    this.margin = child.DesiredSize.Width + 5f;
+                    this.margin = child.DesiredSize.Width;
                 }
 
                 this.verticalAl += child.DesiredSize.Height;

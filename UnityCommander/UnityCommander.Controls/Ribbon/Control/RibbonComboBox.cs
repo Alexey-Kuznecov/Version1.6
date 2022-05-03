@@ -46,7 +46,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="command">
         /// The command.
         /// </param>
-        public void AddItem(string text, IIcon icon, IGlobalCommand command)
+        public void AddItem(string text, IIcon icon, RibbonCommand command)
         {
             this.comboBoxItem.Add(new RibbonComboBoxItem(text, icon, command));
         }

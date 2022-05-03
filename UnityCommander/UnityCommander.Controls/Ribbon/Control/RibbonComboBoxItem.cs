@@ -23,7 +23,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="buttonCommand">
         /// The button command.
         /// </param>
-        public RibbonComboBoxItem(string content, IIcon buttonIcon, IGlobalCommand buttonCommand)
+        public RibbonComboBoxItem(string content, IIcon buttonIcon, RibbonCommand buttonCommand)
             : base(
                 content, 
                 buttonIcon, 

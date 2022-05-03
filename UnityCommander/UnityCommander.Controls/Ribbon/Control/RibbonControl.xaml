@@ -92,6 +92,8 @@
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Foreground" Value="#5077BE" />
         <Setter Property="Margin" Value="1" />
+        <Setter Property="Width" Value="100" />
+        <Setter Property="Height" Value="28" />
     </Style>
 
     <ControlTemplate x:Key="RibbonListBoxItemTemplate" TargetType="ListBoxItem">
@@ -117,6 +119,7 @@
             <ListBoxItem.InputBindings>
                 <MouseBinding
                     Command="{Binding GlobalCommand.Command}"
+                    CommandParameter="{Binding GlobalCommand.CommandParameter}"
                     Gesture="LeftClick"
                     MouseAction="LeftClick" />
             </ListBoxItem.InputBindings>

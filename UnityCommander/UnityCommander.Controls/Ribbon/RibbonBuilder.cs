@@ -119,6 +119,8 @@ namespace UnityCommander.Controls.Ribbon
                 }
             });
 
+        private int ZIndex;
+
         /// <summary>
         /// The get section.
         /// </summary>
@@ -139,7 +141,7 @@ namespace UnityCommander.Controls.Ribbon
             sectionContainer.Children.Add(this.ribbonSection);
             Grid.SetRow(this.ribbonTab, 0);
             Grid.SetRow(this.ribbonSection, 1);
-
+            
             this.ribbon.Children.Add(sectionContainer);
             return this.ribbon;
         }
