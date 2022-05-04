@@ -18,7 +18,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     /// <summary>
     /// The ribbon combo box item.
     /// </summary>
-    public class RibbonDropList
+    public class RibbonDropListBuilder
     {
         /// <summary>
         /// The combo box item.
@@ -29,12 +29,31 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// The combo box.
         /// </summary>
         private readonly ComboBox comboBox = new ();
+        
+        public ListBoxItem DropListItem { get; set; }
 
-        public RibbonDropList(string text, IIcon icon)
+        public RibbonDropListBuilder(string content, IIcon icon)
         {
+            var popButton = new ListBoxItem()
+            {
+                Template = (ControlTemplate)Application.Current.FindResource("RibbonListBoxItemTemplate"),
+                Style = (Style)Application.Current.FindResource("RibbonListBoxItemStyles"), 
+            };
 
+            popButton.DataContext = new DataBindingControl
+            {
+                Content = content,
+                Icon = icon.GetIconPath(),
+                GlobalCommand = new RibbonCommand
+                {
+                    Command = new RelayCommand(this.SetPopupNavigation),
+                    CommandParameter = popButton
+                }
+            };
+
+            this.DropListItem = popButton;
         }
-
+        
         /// <summary>
         /// The add item.
         /// </summary>
@@ -47,7 +66,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="command">
         /// The command.
         /// </param>
-        public void AddItem(string text, IIcon icon, RibbonCommand command)
+        public void AddItem(string text, IIcon icon, IGlobalCommand command)
         {
             var listBoxItem = new DropListPopupModel 
             { 
@@ -56,32 +75,7 @@ namespace UnityCommander.Controls.Ribbon.Control
                 Icon = icon.GetIconPath()
             };
 
-            //if (command != null)
-            //{
-            //    InputBinding inputBinding = new InputBinding(command.Command, new MouseGesture(MouseAction.LeftClick));
-            //    listBoxItem.InputBindings.Add(inputBinding);
-            //}
-          
             this.dropListPopupModel.Add(listBoxItem);
-        }
-
-
-        /// <summary>   
-        /// This method is created.
-        /// </summary>
-        public ListBoxItem Build()
-        {
-            var popButton = new ListBoxItem
-            {
-                Content = "DropList",
-                Width = 100,
-                Style = (Style)Application.Current.FindResource("RibbonListBoxItemStyles")
-            };
-
-            InputBinding inputBinding = new InputBinding(new RelayCommand(this.SetPopupNavigation), new MouseGesture(MouseAction.LeftClick));
-            inputBinding.CommandParameter = popButton;
-            popButton.InputBindings.Add(inputBinding);
-            return popButton;
         }
 
         /// <summary>

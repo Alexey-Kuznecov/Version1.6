@@ -69,11 +69,11 @@ namespace UnityCommander.Controls.Ribbon
         /// <param name="callback">
         /// The callback.
         /// </param>
-        public void AddDropItem(string content, IIcon icon, Action<RibbonDropList> callback)
+        public void AddDropItem(string content, IIcon icon, Action<RibbonDropListBuilder> callback)
         {
-            var dropList = new RibbonDropList(content, icon);
+            var dropList = new RibbonDropListBuilder(content, icon);
             callback(dropList);
-            this.itemCollection.Add(dropList.Build());
+            this.itemCollection.Add(dropList.DropListItem);
         }
 
         /// <summary>

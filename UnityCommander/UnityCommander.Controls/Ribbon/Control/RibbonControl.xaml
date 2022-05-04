@@ -25,6 +25,9 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{StaticResource ControlBackgroundHighlightBrush}" />
             </Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True">
+                <Setter Property="Background" Value="White" />
+            </Trigger>
         </Style.Triggers>
     </Style>
 
