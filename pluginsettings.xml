@@ -1,0 +1,24 @@
+<PluginSettings>
+    <Options Tag="FilePanel">
+        <Description>
+            Display files as:
+        </Description>
+        <OptionList>
+            <Option Default="True">Palit</Option>
+            <Option Explanation="">Tree</Option>
+            <Option Explanation="">List</Option>
+            <Option Explanation="">Card</Option>
+        </OptionList>
+    </Options>
+    <Options>
+         <Description>
+            Display files as:
+        </Description>
+        <OptionList>
+            <Option Default="True">Palit</Option>
+            <Option Explanation="">Tree</Option>
+            <Option Explanation="">List</Option>
+            <Option Explanation="">Card</Option>
+        </OptionList>
+    </Options>
+</PluginSettings>

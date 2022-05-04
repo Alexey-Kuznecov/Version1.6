@@ -1,19 +1,19 @@
 ﻿
-using System;
-
 namespace UnityCommander.Integration.Attributes
 {
+    using System;
+
     /// <summary>
     /// Describes the plugin settings parameter.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class OptionDescriptionAttribute : Attribute
+    public class OptionAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="OptionDescriptionAttribute"/> class.
+        /// Initializes a new instance of the <see cref="OptionAttribute"/> class.
         /// </summary>
         /// <param name="description"> Description of the settings parameter.. </param>
-        public OptionDescriptionAttribute(string description)
+        public OptionAttribute(string description)
         {
             this.Description = description;
         }

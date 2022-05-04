@@ -4,6 +4,7 @@ namespace W3Manager.WP1
     using System;
 
     using Microsoft.Extensions.DependencyInjection;
+    using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
@@ -16,7 +17,7 @@ namespace W3Manager.WP1
         /// <summary>
         /// The category column.
         /// </summary>
-        private DateTimeColumn dateTimeColumn;
+        private ModStatusColumn modStatusColumn;
 
         /// <summary>
         /// The command factory.
@@ -37,10 +38,11 @@ namespace W3Manager.WP1
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            this.dateTimeColumn = new DateTimeColumn();
+            this.modStatusColumn = new ModStatusColumn();
 
-            services.AddSingleton<IOptionBuilder>(this.DateTimeFactory);
-            services.AddSingleton<IPluginDescriptor>(this.DateTimeFactory);
+            services.AddSingleton<IPluginDescriptor>(this.ModStatusFactory);
+            services.AddSingleton<IColumnBuilder>(this.ModStatusFactory);
+            services.AddSingleton<IPluginSettings>(this.ModStatusFactory);
         }
 
         /// <summary>
@@ -50,11 +52,11 @@ namespace W3Manager.WP1
         /// The service.
         /// </param>
         /// <returns>
-        /// The <see cref="DateTimeColumn"/>.
+        /// The <see cref="ModStatusColumn"/>.
         /// </returns>
-        private DateTimeColumn DateTimeFactory(IServiceProvider service)
+        private ModStatusColumn ModStatusFactory(IServiceProvider service)
         {
-            return this.dateTimeColumn;
+            return this.modStatusColumn;
         }
     }
 }

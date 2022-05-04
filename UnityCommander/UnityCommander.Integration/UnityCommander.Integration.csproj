@@ -9,6 +9,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>\\DESKTOP-UHQ6R7U\UnityCommander\Version3.8.0\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Contracts\INavigator.cs~RF2ba06c3.TMP" />
   </ItemGroup>
