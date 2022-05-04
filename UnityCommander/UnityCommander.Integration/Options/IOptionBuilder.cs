@@ -1,12 +1,12 @@
 ﻿
 namespace UnityCommander.Integration.Options
 {
-    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Contracts;
 
     /// <summary>
     /// The OptionBuilder interface.
     /// </summary>
-    public interface IOptionBuilder
+    public interface IOptionBuilder : IPluginService
     {
         /// <summary>
         /// The option build.

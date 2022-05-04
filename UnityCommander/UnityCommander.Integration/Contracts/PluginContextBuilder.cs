@@ -1,63 +1,32 @@
 ﻿
-#nullable enable
-
-namespace UnityCommander.Services.Plugins
+namespace UnityCommander.Integration.Contracts
 {
     using System.Collections.Generic;
-    
+
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
-    using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
 
     /// <summary>
-    /// The plugin context.
+    /// The plugin context builder.
     /// </summary>
-    public class PluginContext : IPluginContext
+    public class PluginContextBuilder
     {
         /// <summary>
-        /// Gets or sets the name.
+        /// The commands.
         /// </summary>
-        public string? Name { get; set; }
+        private readonly PluginContext pluginContext;
 
         /// <summary>
-        /// Gets or sets the columns.
+        /// Initializes a new instance of the <see cref="PluginContextBuilder"/> class.
         /// </summary>
-        public IReadOnlyList<IColumn> Columns { get; set; } = new List<IColumn>();
-
-        /// <summary>
-        /// Gets or sets the option.
-        /// </summary>
-        public IReadOnlyList<IOption> Option { get; set; } = new List<IOption>();
-
-        /// <summary>
-        /// Gets or sets the option.
-        /// </summary>
-        public List<BaseCommand> Commands { get; set; } = new ();
-
-        /// <summary>
-        /// The get columns.
-        /// </summary>
-        /// <returns>
-        /// The columns.
-        /// </returns>
-        public IEnumerable<IColumn> GetColumns() => this.Columns;
-
-        /// <summary>
-        /// The get options.
-        /// </summary>
-        /// <returns>
-        ///  The option builders.
-        /// </returns>
-        public IEnumerable<IOption> GetOptions() => this.Option;
-
-        /// <summary>
-        /// The get options.
-        /// </summary>
-        /// <returns>
-        ///  The option builders.
-        /// </returns>
-        public IEnumerable<BaseCommand> GetCommands() => this.Commands;
+        /// <param name="pluginContext">
+        /// The plugin context.
+        /// </param>
+        public PluginContextBuilder(PluginContext pluginContext)
+        {
+            this.pluginContext = pluginContext;
+        }
 
         /// <summary>
         /// The add column.
@@ -75,7 +44,10 @@ namespace UnityCommander.Services.Plugins
             {
                 column.ColumnBuilder = builder;
                 column.ColumnManager = columnManager;
-                ((List<IColumn>)this.Columns).Add(column);
+                if (this.pluginContext != null)
+                {
+                    ((List<IColumn>)this.pluginContext.Columns).Add(column);
+                }
             }
         }
 
@@ -87,13 +59,31 @@ namespace UnityCommander.Services.Plugins
         /// </param>
         public void AddOption(IOptionBuilder builder)
         {
-            OptionBuilder instance = new ();
+            OptionBuilder instance = new();
             builder.OptionBuild(instance);
 
             foreach (var option in instance.GetOptions())
             {
                 option.OptionBuilders = builder;
-                ((List<IOption>)this.Option).Add(option);
+                ((List<IOption>)this.pluginContext.Option).Add(option);
+            }
+        }
+
+        /// <summary>
+        /// The add column.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder.
+        /// </param>
+        public void AddOption(IPluginSettings builder)
+        {
+            OptionBuilder instance = new();
+            builder.OptionBuild(instance);
+
+            foreach (var option in instance.GetOptions())
+            {
+                option.OptionBuilders = builder;
+                ((List<IOption>)this.pluginContext.Option).Add(option);
             }
         }
 
@@ -107,7 +97,7 @@ namespace UnityCommander.Services.Plugins
         {
             foreach (var command in commands)
             {
-                this.Commands.Add(command);
+                this.pluginContext.Commands.Add(command);
             }
         }
     }

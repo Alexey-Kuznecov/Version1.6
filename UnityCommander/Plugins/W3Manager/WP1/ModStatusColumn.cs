@@ -58,9 +58,9 @@ namespace W3Manager.WP1
         /// </returns>
         public object ColumnValueHandler(string path)
         {
-            if (this.settings.GamePath == path)
-                return true;
-            else
+            //if (this.settings?.GamePath == path)
+            //    return true;
+            //else
                 return false;
         }
 

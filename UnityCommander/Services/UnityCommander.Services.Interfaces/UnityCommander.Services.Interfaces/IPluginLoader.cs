@@ -22,12 +22,15 @@ namespace UnityCommander.Services.Interfaces
         public bool UnloadPlugin();
 
         /// <summary>
-        /// The get configurations.
+        /// Получает коллекцию загружаемых служб, которые были найдены в подключаемых модулях.
         /// </summary>
+        /// <typeparam name="T">
+        /// Тип службы которую нужна получить.
+        /// </typeparam>
         /// <returns>
-        /// The interface plugin configure.
+        /// Возвращает коллекцию загружаемых служб.
         /// </returns>
-        public IEnumerable<IPluginConfigure> GetConfigurations();
+        public IEnumerable<T> GetServices<T>() where T : IPluginService;
 
         /// <summary>
         /// The get descriptors.
@@ -44,22 +47,6 @@ namespace UnityCommander.Services.Interfaces
         /// The interface dialog service.
         /// </returns>
         public IEnumerable<IDialogService> GetDialogs();
-
-        /// <summary>
-        /// The get column builders.
-        /// </summary>
-        /// <returns>
-        /// The interface column builder.
-        /// </returns>
-        public IEnumerable<IColumnBuilder> GetColumnBuilders();
-
-        /// <summary>
-        /// The get option builders.
-        /// </summary>
-        /// <returns>
-        ///  The interface option builders.
-        /// </returns>
-        public IEnumerable<IOptionBuilder> GetOptionBuilders();
 
         /// <summary>
         /// The get option builders.

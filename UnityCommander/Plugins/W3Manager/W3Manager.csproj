@@ -9,15 +9,15 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Reference Include="Microsoft.Extensions.DependencyInjection">
-	    <HintPath>F:\UnityCommander\Version3.8.0\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
 	    <Private>false</Private>
 	  </Reference>
 	  <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-	    <HintPath>F:\UnityCommander\Version3.8.0\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
 	    <Private>false</Private>
 	  </Reference>
 	  <Reference Include="UnityCommander.Integration">
-	    <HintPath>F:\UnityCommander\Version3.8.0\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
+	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
 	    <Private>false</Private>
 	  </Reference>
 	</ItemGroup>

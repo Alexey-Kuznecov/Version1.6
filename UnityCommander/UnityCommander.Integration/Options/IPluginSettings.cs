@@ -1,10 +1,12 @@
 ﻿
 namespace UnityCommander.Integration.Options
 {
+    using UnityCommander.Integration.Contracts;
+
     /// <summary>
     /// The Settings interface.
     /// </summary>
-    public interface IPluginSettings
+    public interface IPluginSettings : IPluginService
     {
         /// <summary>
         /// The on settings changed.

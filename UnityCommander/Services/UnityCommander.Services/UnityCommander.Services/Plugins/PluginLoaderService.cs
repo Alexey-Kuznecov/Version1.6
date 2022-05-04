@@ -14,6 +14,9 @@ namespace UnityCommander.Services.Plugins
 
     using Interfaces;
 
+    using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Options;
+
     /// <summary>
     /// The plugin provider service.
     /// </summary>
@@ -91,23 +94,26 @@ namespace UnityCommander.Services.Plugins
             foreach (var loader in PluginLoaders)
             {
                 var pluginContext = new PluginContext();
+                var pluginContextBuilder = new PluginContextBuilder(pluginContext);
 
-                var columnBuilders = loader.GetColumnBuilders().ToList();
-                var optionBuilders = loader.GetOptionBuilders().ToList();
+                foreach (var columnBuilder in loader.GetServices<IColumnBuilder>())
+                {
+                    pluginContextBuilder.AddColumn(columnBuilder);
+                }
+
+                foreach (var optionBuilder in loader.GetServices<IOptionBuilder>())
+                {
+                    pluginContextBuilder.AddOption(optionBuilder);
+                }
+
+                foreach (var optionBuilder in loader.GetServices<IPluginSettings>())
+                {
+                    pluginContextBuilder.AddOption(optionBuilder);
+                }
+
                 var commands = loader.GetPluginCommands().ToList();
 
-                foreach (var columnBuilder in columnBuilders)
-                {
-                    pluginContext.AddColumn(columnBuilder);
-                }
-                
-                foreach (var optionBuilder in optionBuilders)
-                {
-                    pluginContext.AddOption(optionBuilder);
-                }
-
-                pluginContext.AddCommand(commands);
-
+                pluginContextBuilder.AddCommand(commands);
                 this.pluginContexts.Add(pluginContext);
             }
         }

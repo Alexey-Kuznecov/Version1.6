@@ -16,5 +16,7 @@ namespace UnityCommander.Integration.Contracts
         /// The services.
         /// </param>
         void Configure(IServiceCollection services);
+
+        void RegisterType();
     }
 }

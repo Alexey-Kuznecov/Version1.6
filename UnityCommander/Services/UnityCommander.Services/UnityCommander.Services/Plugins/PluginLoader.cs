@@ -4,6 +4,7 @@ namespace UnityCommander.Services.Plugins
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Windows;
@@ -11,6 +12,7 @@ namespace UnityCommander.Services.Plugins
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Common.Commands;
+    using UnityCommander.Common.Plugins;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
@@ -21,14 +23,14 @@ namespace UnityCommander.Services.Plugins
     /// <summary>
     /// The plugin loader.
     /// </summary>
-    public class PluginLoader : IPluginLoader
+    public class PluginLoader : IPluginLoader, IPluginServicesRegister
     {
-        #region Loaded contracts
-
         /// <summary>
-        /// The plugin settings.
+        /// The plugin registered.
         /// </summary>
-        private IEnumerable<IPluginConfigure> pluginSettings;
+        private readonly IReadOnlyList<IEnumerable<IPluginService>> pluginsRegistered = new List<IEnumerable<IPluginService>>();
+
+        #region Loaded contracts
 
         /// <summary>
         /// The dialog service.
@@ -39,16 +41,6 @@ namespace UnityCommander.Services.Plugins
         /// The plugin meta.
         /// </summary>
         private IEnumerable<IPluginDescriptor> pluginMeta;
-
-        /// <summary>
-        /// The column builders.
-        /// </summary>
-        private IEnumerable<IColumnBuilder> columnBuilders;
-
-        /// <summary>
-        /// The option builders
-        /// </summary>
-        private IEnumerable<IOptionBuilder> optionBuilders;
 
 
         /// <summary>
@@ -76,14 +68,6 @@ namespace UnityCommander.Services.Plugins
         #region Getter methods
 
         /// <summary>
-        /// The get configurations.
-        /// </summary>
-        /// <returns>
-        /// The interface plugin configure.
-        /// </returns>
-        public IEnumerable<IPluginConfigure> GetConfigurations() => this.pluginSettings;
-
-        /// <summary>
         /// The get descriptors.
         /// </summary>
         /// <returns>
@@ -99,23 +83,7 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
 
-        /// <summary>
-        /// The get column builders.
-        /// </summary>
-        /// <returns>
-        /// The interface column builder.
-        /// </returns>
-        public IEnumerable<IColumnBuilder> GetColumnBuilders() => this.columnBuilders;
-
-        /// <summary>
-        /// The get option builders.
-        /// </summary>
-        /// <returns>
-        ///  The interface option builders.
-        /// </returns>
-        public IEnumerable<IOptionBuilder> GetOptionBuilders() => this.optionBuilders;
-
-
+        
         /// <summary>
         /// The get option builders.
         /// </summary>
@@ -149,13 +117,6 @@ namespace UnityCommander.Services.Plugins
                     
                     plugin?.Configure(services);
 
-                    var serviceProvider = services.BuildServiceProvider();
-                    this.pluginSettings = serviceProvider.GetServices<IPluginConfigure>();
-                    this.pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
-                    this.dialogService = serviceProvider.GetServices<IDialogService>();
-                    this.columnBuilders = serviceProvider.GetServices<IColumnBuilder>();
-                    this.optionBuilders = serviceProvider.GetServices<IOptionBuilder>();
-                    
                     if (typeof(ICommandFactory).IsAssignableFrom(type) && !type.IsAbstract)
                     {
                         var commandBuilder = new CommandBuilder();
@@ -164,6 +125,56 @@ namespace UnityCommander.Services.Plugins
                         this.commandsBuilder = commandBuilder.GetCommands();
                     }
                 }
+            }
+
+            var serviceProvider = services.BuildServiceProvider();
+            this.dialogService = serviceProvider.GetServices<IDialogService>();
+            this.pluginMeta = serviceProvider.GetServices<IPluginDescriptor>();
+
+            this.Register<IDialogService, IPluginService>(this.dialogService);
+            this.Register<IPluginDescriptor, IPluginService>(this.pluginMeta);
+            this.Register<IPluginSettings, IPluginService>(serviceProvider.GetServices<IPluginSettings>());
+            this.Register<IColumnBuilder, IPluginService>(serviceProvider.GetServices<IColumnBuilder>());
+            this.Register<IOptionBuilder, IPluginService>(serviceProvider.GetServices<IOptionBuilder>());
+        }
+
+        /// <summary>
+        /// Получает коллекцию загружаемых служб, которые были найдены в подключаемых модулях.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Тип службы которую нужна получить.
+        /// </typeparam>
+        /// <returns>
+        /// Возвращает коллекцию загружаемых служб.
+        /// </returns>
+        public IEnumerable<T> GetServices<T>() where T : IPluginService
+        {
+            return this.pluginsRegistered.Where(enumerable => enumerable is IEnumerable<T>)
+                .SelectMany(registered => registered)
+                .Cast<T>();
+        }
+
+
+        /// <summary>
+        /// Регистрирует службы подключаемых модулей для управления настройками,
+        /// получения описания и внедрения реализации расширяющий функционал программы. 
+        /// </summary>
+        /// <param name="instance">
+        /// Экземпляр класса подключаемого модуля который реализует контракт, например <see cref="IDialogService"/>.
+        /// </param>
+        /// <typeparam name="TI">
+        /// Тип службы наследует общий для всех служб <see cref="IPluginService"/> контракт.
+        /// </typeparam>
+        /// <typeparam name="TS">
+        /// Общий контракт служб, на данный момент нужен лишь для того чтобы регистрировать службы в одной категории.
+        /// А так же избежать ошибок связанных приведением к типу.
+        /// </typeparam>
+        public void Register<TI, TS>(IEnumerable<TS> instance)
+            where TI : TS
+        {
+            if (instance is IEnumerable<IPluginService> registered)
+            {
+                ((List<IEnumerable<IPluginService>>)this.pluginsRegistered).Add(registered);
             }
         }
 
@@ -176,11 +187,8 @@ namespace UnityCommander.Services.Plugins
         public bool UnloadPlugin()
         {
             this.alc.Unload();
-            this.pluginSettings = null;
             this.pluginMeta = null;
             this.dialogService = null;
-            this.columnBuilders = null;
-            this.optionBuilders = null;
             this.alc = null;
 
             if (this.pluginResources?.Count > 0 && this.pluginResources != null)

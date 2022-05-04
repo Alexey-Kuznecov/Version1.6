@@ -7,7 +7,7 @@ namespace UnityCommander.Integration.Columns
     /// <summary>
     /// The ColumnBuilder interface.
     /// </summary>
-    public interface IColumnBuilder
+    public interface IColumnBuilder : IPluginService
     {
         /// <summary>
         /// The column initial.
