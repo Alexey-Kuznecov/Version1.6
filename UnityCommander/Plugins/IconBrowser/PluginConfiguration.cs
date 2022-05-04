@@ -8,6 +8,7 @@ namespace AIconBrowser
 
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
+    using UnityCommander.Integration.Factories;
 
     /// <summary>
     /// The plugin configuration.
@@ -43,6 +44,16 @@ namespace AIconBrowser
         {
             services.AddSingleton<IDialogService, IconBrowserControl>();
             services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
+        }
+
+        /// <summary>
+        /// The set associated types.
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types register.
+        /// </param>
+        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
+        {
         }
 
         /// <summary>

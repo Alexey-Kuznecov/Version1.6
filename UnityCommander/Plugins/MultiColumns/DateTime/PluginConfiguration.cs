@@ -8,6 +8,7 @@ namespace MultiColumns.DateTime
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -46,15 +47,15 @@ namespace MultiColumns.DateTime
             command.Register<IOOverrideCommand2, IOCommands>();
         }
 
+
         /// <summary>
-        /// The render register.
+        /// The set associated types.
         /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        public object RenderRegister()
+        /// <param name="typesRegister">
+        /// The types register.
+        /// </param>
+        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>

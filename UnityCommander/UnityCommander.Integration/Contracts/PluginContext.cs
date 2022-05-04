@@ -5,8 +5,10 @@ namespace UnityCommander.Integration.Contracts
 {
     using System.Collections.Generic;
 
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -14,6 +16,17 @@ namespace UnityCommander.Integration.Contracts
     /// </summary>
     public class PluginContext : IPluginContext
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginContext"/> class.
+        /// </summary>
+        /// <param name="associatedTypes">
+        /// The associated types.
+        /// </param>
+        public PluginContext(AssociatedTypes associatedTypes)
+        {
+            this.AssociatedTypes = associatedTypes;
+        }
+
         /// <summary>
         /// Gets the columns.
         /// </summary>
@@ -27,7 +40,17 @@ namespace UnityCommander.Integration.Contracts
         /// <summary>
         /// Gets the option.
         /// </summary>
-        public List<BaseCommand> Commands { get; } = new ();
+        public IReadOnlyList<BaseCommand> Commands { get; } = new List<BaseCommand>();
+
+        /// <summary>
+        /// Gets the option.
+        /// </summary>
+        public IReadOnlyList<ICommandBase> PluginCommands { get; } = new List<ICommandBase>();
+
+        /// <summary>
+        /// Gets or sets the associated types.
+        /// </summary>
+        public AssociatedTypes AssociatedTypes { get; }
 
         /// <summary>
         /// The get columns.
@@ -52,5 +75,14 @@ namespace UnityCommander.Integration.Contracts
         ///  The option builders.
         /// </returns>
         public IEnumerable<BaseCommand> GetCommands() => this.Commands;
+
+        
+        /// <summary>
+        /// The get options.
+        /// </summary>
+        /// <returns>
+        ///  The option builders.
+        /// </returns>
+        public IEnumerable<ICommandBase> GetPluginCommands() => this.PluginCommands;
     }
 }

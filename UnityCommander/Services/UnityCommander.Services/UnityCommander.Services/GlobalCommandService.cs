@@ -73,6 +73,11 @@ namespace UnityCommander.Services
                     {
                         manager.CreateCommand(command);
                     }
+
+                    foreach (var command in pluginContext.GetPluginCommands())
+                    {
+                        manager.CreateCommand(command);
+                    }
                 }
 
                 this.globalCommandManager = commandProvider.GetCommandManager();

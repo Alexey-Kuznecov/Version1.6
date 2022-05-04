@@ -7,12 +7,12 @@ namespace W3Manager.WP1
     /// <summary>
     /// The settings.
     /// </summary>
-    public class Settings : SettingsBase
+    public class ModSettings : SettingsBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Settings"/> class.
+        /// Initializes a new instance of the <see cref="ModSettings"/> class.
         /// </summary>
-        public Settings()
+        public ModSettings()
         {
             this.GamePath = "C:\\Games\\The Witcher 3 Wild Hunt";
         }

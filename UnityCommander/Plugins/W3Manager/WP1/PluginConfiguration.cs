@@ -7,6 +7,7 @@ namespace W3Manager.WP1
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -17,17 +18,26 @@ namespace W3Manager.WP1
         /// <summary>
         /// The category column.
         /// </summary>
-        private ModStatusColumn modStatusColumn;
+        private readonly ModStatusColumn modStatusColumn;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginConfiguration"/> class.
+        /// </summary>
+        public PluginConfiguration()
+        {
+            this.modStatusColumn = new ModStatusColumn();
+        }
 
         /// <summary>
         /// The command factory.
         /// </summary>
-        /// <param name="command">
+        /// <param name="commandBuilder">
         /// The command.
         /// </param>
-        public void CommandFactory(CommandBuilder command)
+        public void CommandFactory(CommandBuilder commandBuilder)
         {
-            command.Register<IOOverrideCommand, IOCommands>();
+            commandBuilder.Register<IOOverrideCommand, IOCommands>();
+            commandBuilder.RegisterWithArgument<IPluginSettings, ModStatusColumn>(this.modStatusColumn, new ModSettings());
         }
 
         /// <summary>
@@ -38,11 +48,20 @@ namespace W3Manager.WP1
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            this.modStatusColumn = new ModStatusColumn();
-
             services.AddSingleton<IPluginDescriptor>(this.ModStatusFactory);
             services.AddSingleton<IColumnBuilder>(this.ModStatusFactory);
             services.AddSingleton<IPluginSettings>(this.ModStatusFactory);
+        }
+
+        /// <summary>
+        /// The set associated types.
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types register.
+        /// </param>
+        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
+        {
+            typesRegister.RegisterSettings<ModSettings>(this.modStatusColumn);
         }
 
         /// <summary>

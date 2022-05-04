@@ -17,6 +17,7 @@ namespace UnityCommander.Services.Plugins
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
     using UnityCommander.Services.Interfaces;
 
@@ -30,6 +31,11 @@ namespace UnityCommander.Services.Plugins
         /// </summary>
         private readonly IReadOnlyList<IEnumerable<IPluginService>> pluginsRegistered = new List<IEnumerable<IPluginService>>();
 
+        /// <summary>
+        /// The plugin meta.
+        /// </summary>
+        private readonly AssociatedTypes associatedTypes = new ();
+
         #region Loaded contracts
 
         /// <summary>
@@ -42,11 +48,20 @@ namespace UnityCommander.Services.Plugins
         /// </summary>
         private IEnumerable<IPluginDescriptor> pluginMeta;
 
+        /// <summary>
+        /// The plugin meta.
+        /// </summary>
+        private IEnumerable<IPluginSettings> pluginSettings;
 
         /// <summary>
         /// The option builders
         /// </summary>
         private IEnumerable<BaseCommand> commandsBuilder = new List<BaseCommand>();
+
+        /// <summary>
+        /// The plugin commands builder.
+        /// </summary>
+        private IEnumerable<ICommandBase> pluginCommandsBuilder = new List<ICommandBase>();
 
         #endregion
 
@@ -83,14 +98,21 @@ namespace UnityCommander.Services.Plugins
         /// </returns>
         public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
 
-        
+        /// <summary>
+        /// The get global commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<ICommandBase> GetPluginCommands() => this.pluginCommandsBuilder;
+
         /// <summary>
         /// The get option builders.
         /// </summary>
         /// <returns>
         ///  The interface option builders.
         /// </returns>
-        public IEnumerable<BaseCommand> GetPluginCommands() => this.commandsBuilder;
+        public IEnumerable<BaseCommand> GetCommands() => this.commandsBuilder;
 
         #endregion
 
@@ -109,13 +131,16 @@ namespace UnityCommander.Services.Plugins
             Assembly assembly = this.alc.LoadFromAssemblyPath(assemblyPath);
             this.GetPluginResources(assembly);
 
+            var typesRegister = new AssociatedTypesRegister(this.associatedTypes);
+
             foreach (var type in assembly.GetTypes())
             {
                 if (typeof(IPluginFactory).IsAssignableFrom(type) && !type.IsAbstract)
                 {
                     var plugin = Activator.CreateInstance(type) as IPluginFactory;
-                    
                     plugin?.Configure(services);
+                    plugin?.SetAssociatedTypes(typesRegister);
+
 
                     if (typeof(ICommandFactory).IsAssignableFrom(type) && !type.IsAbstract)
                     {
@@ -123,6 +148,7 @@ namespace UnityCommander.Services.Plugins
                         var command = (ICommandFactory)plugin;
                         command?.CommandFactory(commandBuilder);
                         this.commandsBuilder = commandBuilder.GetCommands();
+                        this.pluginCommandsBuilder = commandBuilder.GetPluginCommands();
                     }
                 }
             }
@@ -153,8 +179,7 @@ namespace UnityCommander.Services.Plugins
                 .SelectMany(registered => registered)
                 .Cast<T>();
         }
-
-
+        
         /// <summary>
         /// Регистрирует службы подключаемых модулей для управления настройками,
         /// получения описания и внедрения реализации расширяющий функционал программы. 
@@ -177,6 +202,14 @@ namespace UnityCommander.Services.Plugins
                 ((List<IEnumerable<IPluginService>>)this.pluginsRegistered).Add(registered);
             }
         }
+
+        /// <summary>
+        /// The get associated types.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="AssociatedTypes"/>.
+        /// </returns>
+        public AssociatedTypes GetAssociatedTypes() => this.associatedTypes;
 
         /// <summary>
         /// The unload plugin.

@@ -265,7 +265,10 @@ namespace UnityCommander.ViewModels
 
             foreach (var globalCommand in this.globalCommandManager.GetCommands())
             {
-                grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
+                if (globalCommand?.ShortcutKey != null)
+                {
+                    grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
+                }
             }
         }
 

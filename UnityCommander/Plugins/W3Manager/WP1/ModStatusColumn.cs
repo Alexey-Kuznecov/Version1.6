@@ -13,7 +13,7 @@ namespace W3Manager.WP1
         /// <summary>
         /// The settings.
         /// </summary>
-        private Settings settings;
+        private ModSettings settings;
 
         /// <summary>
         /// Gets or sets the display name.
@@ -72,7 +72,7 @@ namespace W3Manager.WP1
         /// </param>
         public void OnSettingsChanged(SettingsBase newSettings)
         {
-            if (newSettings is Settings myBase)
+            if (newSettings is ModSettings myBase)
             {
                 this.settings = myBase;
             }

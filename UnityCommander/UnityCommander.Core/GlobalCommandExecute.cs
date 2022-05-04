@@ -7,6 +7,7 @@ namespace UnityCommander.Core
 
     public class GlobalCommandExecute : ICommand
     {
+        private Action<object> action;
         public Delegate Command { get; }
         public Type DeclaringType { get; }
         public object ViewModelInstance { get; }
@@ -15,6 +16,11 @@ namespace UnityCommander.Core
         {
             this.Command = cmd;
             this.DeclaringType = declaringType;
+        }
+
+        public GlobalCommandExecute(Action<object> action)
+        {
+            this.action = action;
         }
 
         public GlobalCommandExecute(Delegate cmd, object viewModelInsatance)
@@ -32,25 +38,33 @@ namespace UnityCommander.Core
 
         public void Execute(object parameter)
         {
-            Type type = this.DeclaringType;
-            object[] parameters = this.GetDefaultParameterValues(parameter);
-
-            if (type == null)
+            if (this.action == null)
             {
-                this.Command.Method.Invoke(this.ViewModelInstance, parameters);
-                return;
+                Type type = this.DeclaringType;
+                object[] parameters = this.GetDefaultParameterValues(parameter);
+
+                if (type == null)
+                {
+                    this.Command.Method.Invoke(this.ViewModelInstance, parameters);
+                    return;
+                }
+
+                var constructor = type.GetConstructor(Type.EmptyTypes);
+                var instance = constructor?.Invoke(new object[] { });
+
+                if (parameter != null)
+                {
+                    this.Command.Method.Invoke(instance, parameter as object[]);
+                    return;
+                }
+
+                this.Command.Method.Invoke(instance, parameters);
             }
 
-            var constructor = type.GetConstructor(Type.EmptyTypes);
-            var instance = constructor?.Invoke(new object[] { });
-
-            if (parameter != null)
+            if (this.action != null)
             {
-                this.Command.Method.Invoke(instance, parameter as object[]);
-                return;
+                this.action.Method.Invoke(this.action.Target, new object[] { null });
             }
-
-            this.Command.Method.Invoke(instance, parameters);
         }
 
         /// <summary>

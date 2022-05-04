@@ -6,6 +6,7 @@ namespace MultiColumns.Sized
     using Microsoft.Extensions.DependencyInjection;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -33,15 +34,15 @@ namespace MultiColumns.Sized
             services.AddSingleton<IPluginDescriptor>(this.SizedFactory);
         }
 
+
         /// <summary>
-        /// The render register.
+        /// The set associated types.
         /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        public object RenderRegister()
+        /// <param name="typesRegister">
+        /// The types register.
+        /// </param>
+        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>

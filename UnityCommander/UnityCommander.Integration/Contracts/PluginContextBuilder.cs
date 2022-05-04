@@ -3,8 +3,10 @@ namespace UnityCommander.Integration.Contracts
 {
     using System.Collections.Generic;
 
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -59,25 +61,7 @@ namespace UnityCommander.Integration.Contracts
         /// </param>
         public void AddOption(IOptionBuilder builder)
         {
-            OptionBuilder instance = new();
-            builder.OptionBuild(instance);
-
-            foreach (var option in instance.GetOptions())
-            {
-                option.OptionBuilders = builder;
-                ((List<IOption>)this.pluginContext.Option).Add(option);
-            }
-        }
-
-        /// <summary>
-        /// The add column.
-        /// </summary>
-        /// <param name="builder">
-        /// The builder.
-        /// </param>
-        public void AddOption(IPluginSettings builder)
-        {
-            OptionBuilder instance = new();
+            OptionBuilder instance = new ();
             builder.OptionBuild(instance);
 
             foreach (var option in instance.GetOptions())
@@ -97,7 +81,21 @@ namespace UnityCommander.Integration.Contracts
         {
             foreach (var command in commands)
             {
-                this.pluginContext.Commands.Add(command);
+                ((List<BaseCommand>)this.pluginContext.Commands).Add(command);
+            }
+        }
+
+        /// <summary>
+        /// The add column.
+        /// </summary>
+        /// <param name="commands">
+        /// The builder.
+        /// </param>
+        public void AddPluginCommand(List<ICommandBase> commands)
+        {
+            foreach (var command in commands)
+            {
+                ((List<ICommandBase>)this.pluginContext.PluginCommands).Add(command);
             }
         }
     }

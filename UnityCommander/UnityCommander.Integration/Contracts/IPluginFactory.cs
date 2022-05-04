@@ -3,6 +3,8 @@ namespace UnityCommander.Integration.Contracts
 {
     using Microsoft.Extensions.DependencyInjection;
 
+    using UnityCommander.Integration.Factories;
+
     /// <summary>
     /// The PluginFactory interface.
     /// </summary>
@@ -17,6 +19,12 @@ namespace UnityCommander.Integration.Contracts
         /// </param>
         void Configure(IServiceCollection services);
 
-        void RegisterType();
+        /// <summary>
+        /// The set associated types.
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types Register.
+        /// </param>
+        void SetAssociatedTypes(AssociatedTypesRegister typesRegister);
     }
 }

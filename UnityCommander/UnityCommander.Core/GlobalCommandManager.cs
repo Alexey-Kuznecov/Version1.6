@@ -3,35 +3,70 @@ namespace UnityCommander.Core
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using System.Windows.Input;
     using UnityCommander.Common.Commands;
     using UnityCommander.Core.Generators;
 
+    /// <summary>
+    /// The global command manager.
+    /// </summary>
+    [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class GlobalCommandManager : IGlobalCommandManager
     {
+        /// <summary>
+        /// The global commands.
+        /// </summary>
         private readonly Queue<IGlobalCommand> globalCommands;
 
+        /// <summary>
+        /// The command selector.
+        /// </summary>
         private readonly string commandSelector = "Default";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GlobalCommandManager"/> class.
+        /// </summary>
+        /// <param name="commands">
+        /// The commands.
+        /// </param>
         public GlobalCommandManager(Queue<IGlobalCommand> commands)
         {
             this.globalCommands = commands;
         }
 
+        /// <summary>
+        /// The create command.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
         public void CreateCommand(object command)
         {
+            if (command is IGlobalCommand { Command: { } } globalCommand)
+            {
+                this.globalCommands.Enqueue(globalCommand);
+            }
+
             this.SetCommand(command);
         }
 
+        /// <summary>
+        /// The create command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         public void CreateCommand(string commandName, object instance, Action<object> action)
         {
-            // TODO: Optimize this piece of code.
-            //var c = globalCommands.SingleOrDefault(cmd => cmd.Name == commandName);
-
-            //if (c != null) return;
-
             var command = new GlobalCommandExecute(action, instance);
 
             var cmd = new GlobalCommand
@@ -61,7 +96,8 @@ namespace UnityCommander.Core
             foreach (var globalCommand in this.globalCommands.Where(
                          p=> ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName)))
             {
-                if (globalCommand is not GlobalCommand command) continue;
+                if (!(globalCommand is GlobalCommand command)) continue;
+
                 if (!globalCommand.Name.Contains(this.commandSelector))
                 {
                     commandSelected = command;
@@ -74,11 +110,32 @@ namespace UnityCommander.Core
             return commandSelected;
         }
 
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
         public IEnumerable<IGlobalCommand> GetCommands(string commandName) 
             => this.globalCommands.Where(p => ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName));
 
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Queue"/>.
+        /// </returns>
         public Queue<IGlobalCommand> GetCommands() => this.globalCommands;
 
+        /// <summary>
+        /// The set command.
+        /// </summary>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
         private void SetCommand(object instance)
         {
             Type type = instance.GetType();
@@ -99,19 +156,39 @@ namespace UnityCommander.Core
                 foreach (var attribute in method.GetCustomAttributes())
                 {
                      var properties = attribute.GetType().GetProperties();
-                     globalCommand.Name = (string)attribute.GetType().GetProperty("Name").GetValue(attribute);
-                     globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey").GetValue(attribute);
+                     globalCommand.Name = (string)attribute.GetType().GetProperty("Name")?.GetValue(attribute);
+                     globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey")?.GetValue(attribute);
                 }
 
                 this.globalCommands.Enqueue(globalCommand);
             }
         }
 
+        /// <summary>
+        /// The update command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
         public void UpdateCommand(string commandName)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// The create singleton command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
         public void CreateSingletonCommand(string commandName, object args, Action<object> action)
         {
             // TODO: Optimize this piece of code.

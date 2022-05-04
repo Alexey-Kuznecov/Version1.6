@@ -4,6 +4,8 @@ namespace UnityCommander.Integration.Contracts
     using System.Collections.Generic;
 
     using Columns;
+
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Options;
 
@@ -35,5 +37,13 @@ namespace UnityCommander.Integration.Contracts
         /// The <see cref="IEnumerable"/>.
         /// </returns>
         public IEnumerable<BaseCommand> GetCommands();
+
+        /// <summary>
+        /// The get plugin commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<ICommandBase> GetPluginCommands();
     }
 }

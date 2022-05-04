@@ -2,11 +2,11 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
-    using Integration.Columns;
     using Integration.Contracts;
     using Integration.Dialog;
-    using Integration.Options;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Factories;
 
     /// <summary>
     /// The PluginLoader interface.
@@ -54,6 +54,22 @@ namespace UnityCommander.Services.Interfaces
         /// <returns>
         ///  The interface option builders.
         /// </returns>
-        public IEnumerable<BaseCommand> GetPluginCommands();
+        public IEnumerable<ICommandBase> GetPluginCommands();
+
+        /// <summary>
+        /// The get option builders.
+        /// </summary>
+        /// <returns>
+        ///  The interface option builders.
+        /// </returns>
+        public IEnumerable<BaseCommand> GetCommands();
+
+        /// <summary>
+        /// The get associated types.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="AssociatedTypes"/>.
+        /// </returns>
+        public AssociatedTypes GetAssociatedTypes();
     }
 }

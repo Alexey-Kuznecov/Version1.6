@@ -9,6 +9,7 @@ namespace MultiColumns.Image
 
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -36,15 +37,15 @@ namespace MultiColumns.Image
             services.AddSingleton<IPluginDescriptor>(this.ImageFactory);
         }
 
+
         /// <summary>
-        /// The render register.
+        /// The set associated types.
         /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        public object RenderRegister()
+        /// <param name="typesRegister">
+        /// The types register.
+        /// </param>
+        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>
