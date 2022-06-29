@@ -2,12 +2,14 @@
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
     using System.Windows.Shapes;
 
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-    
+    using UnityCommander.Common.Models;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
     using UnityCommander.Services.Interfaces;
@@ -37,7 +39,12 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The selected descriptor.
         /// </summary>
         private IPluginDescriptor selectedDescriptor;
-        
+
+        /// <summary>
+        /// The common state service.
+        /// </summary>
+        private readonly IGlobalCommandService globalCommandService;
+
         /// <summary>
         /// The icon.
         /// </summary>
@@ -75,8 +82,12 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         public PluginPanelViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
-            IPluginLoaderService pluginLoaders)
+            IPluginLoaderService pluginLoaders,
+            IGlobalCommandService globalCommandService)
         {
+            this.globalCommandService = globalCommandService;
+
+
             this.PluginDescriptors = pluginLoaders.GetPluginDescriptors();
             this.pluginLoaders = pluginLoaders;
             this.dialogService = dialogService;
@@ -93,9 +104,14 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             set
             {
                 this.SetProperty(ref this.selectedDescriptor, value);
-                this.OptionRender = this.pluginLoaders.GetPluginContext().GetOption(value);
-            } 
+                //this.OptionRender = this.pluginLoaders.GetPluginContext().GetOption(value);
+                var command = this.globalCommandService.GetCommandManager().GetCommand("DisplayViewerContent").Command;
+
+                command.Execute(SelectedDescriptor);
+            }
         }
+
+
 
         /// <summary>
         /// Gets or sets details for plugins provided by the plugin developer.

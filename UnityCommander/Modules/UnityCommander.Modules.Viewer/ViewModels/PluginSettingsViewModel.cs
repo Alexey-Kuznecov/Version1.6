@@ -1,18 +1,33 @@
 ﻿using AlexeyKuznecov.Library.Mvvm.Base;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using UnityCommander.Common.Commands;
+using UnityCommander.Common.Models;
 using UnityCommander.Common.Module;
 using UnityCommander.Core.Commands;
+using UnityCommander.Integration.Attributes;
+using UnityCommander.Integration.Options;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.Viewer.ViewModels
 {
-    public class PluginSettingsViewModel : PropertiesChanged, ITabPanelContent
+    public class PluginSettingsViewModel : PropertiesChanged, ITabPanelContent, IPluginSettingsViewer
     {
         /// <summary>
         /// The command manager.
         /// </summary>
         private readonly CommandManager commandManager;
+
+        private readonly IPluginLoaderService pluginLoaders;
+
+        private readonly IGlobalCommandManager globalCommandManager;
+        
+        private IPluginSettings pluginSettings;
+        
+        private PluginSettingsModel selectOption;
 
         /// <summary>
         /// The navigation command.   
@@ -21,38 +36,11 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 
         private List<PluginSettingsModel> pluginSettingsModels;
 
-        public PluginSettingsViewModel(CommandManager manager)
+        public PluginSettingsViewModel(CommandManager manager, IPluginLoaderService pluginService, IGlobalCommandService globalCommandService)
         {
+            this.globalCommandManager = globalCommandService.GetCommandManager();
             this.commandManager = manager;
-
-            this.PluginSettingsModels = new List<PluginSettingsModel>
-            {
-                new PluginSettingsModel
-                {
-                    Category = "Files",
-                    Tags = new string[] { "Files", "Folders" },
-                    Description = "Попробуйте новую кроссплатформенную оболочку PowerShell (https://aka.ms/pscore6)",
-                    Options = new object[]
-                    {
-                        "Palit",
-                        "Tree",
-                        "List",
-                        "Cards"
-                    }
-                },
-                new PluginSettingsModel
-                {
-                    Category = "Accessibility Support",
-                    Tags = new string[] { "Files", "Folders" },
-                    Description = "Controls whether the editor should run in a mode where it is optimized for screen readers. Setting to on will disable word wrapping.",
-                    Options = new object[]
-                    {
-                        "Auto",
-                        "On",
-                        "Off"
-                    }
-                }
-            };
+            this.pluginLoaders = pluginService;
         }
 
         /// <summary>
@@ -64,6 +52,17 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// Gets or sets the current file path.
         /// </summary>
         public string CurrentPath { get; set; }
+
+        public PluginSettingsModel SelectOption
+        {
+            get => this.selectOption;
+            set
+            {
+                this.selectOption = value;
+                this.OnPropertyChanged("SelectOption");
+                this.pluginSettings.OnSettingsChanged(null);
+            }
+        }
 
         public List<PluginSettingsModel> PluginSettingsModels 
         {
@@ -88,6 +87,53 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         public Guid GetPanelToken()
         {
             return this.Token;
+        }
+
+        public void SetPluginSettingsContent(object pluginObj)
+        {
+            if (pluginObj is not IPluginSettings)
+                return;
+
+            this.PluginSettingsModels = new List<PluginSettingsModel>();
+
+            foreach (var pluginContext in pluginLoaders.GetPluginContext())
+            {
+                var ass = pluginContext.GetAssociatedTypes();
+
+                foreach (var keyValuePair in ass.Types)
+                {
+                    if (keyValuePair.Key is IPluginSettings settings)
+                    {
+                        if (pluginObj != settings)
+                            continue;
+
+                        this.pluginSettings = settings;
+                        var settingsModel = keyValuePair.Value;
+
+                        PropertyInfo[] propertiesInfo = settingsModel.GetType().GetProperties();
+
+                        foreach (var property in propertiesInfo)
+                        {
+                            if (!property.CustomAttributes.Any(p => p.AttributeType.Name == "OptionAttribute")) continue;
+
+                            string description = null;
+
+                            foreach (var attribute in property.GetCustomAttributes())
+                            {
+                                description = (string)attribute.GetType().GetProperty("Description")?.GetValue(attribute);
+                            }
+
+                            this.PluginSettingsModels.Add(new PluginSettingsModel
+                            {
+                                Category = "Files",
+                                Tags = new string[] { "Files", "Folders" },
+                                Description = description,
+                                Options = property.GetValue(settingsModel)
+                            });
+                        }
+                    }
+                }
+            }
         }
 
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)

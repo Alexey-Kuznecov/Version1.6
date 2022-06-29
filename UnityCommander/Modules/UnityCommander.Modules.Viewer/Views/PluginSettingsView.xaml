@@ -2,6 +2,7 @@
     x:Class="UnityCommander.Modules.Viewer.Views.PluginSettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:UnityCommander.Modules.Viewer.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UnityCommander.Modules.Viewer.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,18 +15,26 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <converter:OptionRenderConverter x:Key="OptionRenderConverter" />
+
         <DataTemplate x:Key="ComboBoxSettings">
             <StackPanel Margin="10">
                 <TextBlock
                     Margin="0,0,0,10"
                     FontWeight="Bold"
                     Text="{Binding Category, StringFormat={}{0}:}" />
-                <TextBlock
+                <!--<TextBlock
                     Margin="0,0,0,10"
                     FontStyle="Italic"
-                    Text="{Binding Tags}" />
+                    Text="{Binding Tags}" />-->
                 <TextBlock Margin="0,0,0,10" Text="{Binding Description}" />
-                <ComboBox
+
+                <ContentControl
+                    Width="250"
+                    HorizontalAlignment="Left"
+                    Content="{Binding Options, Converter={converter:OptionRenderConverter}}" />
+
+                <!--<ComboBox
                     Width="250"
                     HorizontalAlignment="Left"
                     ItemsSource="{Binding Options}"
@@ -35,9 +44,18 @@
                             <TextBlock Text="{Binding}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
-                </ComboBox>
+                </ComboBox>-->
             </StackPanel>
         </DataTemplate>
+
+        <Style x:Key="ListSettingsStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="AntiqueWhite" />
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="AntiqueWhite" />
+        </Style>
+
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -48,6 +66,8 @@
         <ListBox
             Grid.Row="1"
             ItemTemplate="{StaticResource ComboBoxSettings}"
-            ItemsSource="{Binding PluginSettingsModels}" />
+            ItemsSource="{Binding PluginSettingsModels}"
+            SelectedItem="{Binding SelectOption}"
+            Style="{StaticResource ListSettingsStyle}" />
     </Grid>
 </UserControl>

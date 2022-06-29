@@ -161,6 +161,24 @@ namespace UnityCommander.Controls.TabPanel
             return this.List.Contains(control);
         }
 
+        /// <summary>
+        /// The contains.
+        /// </summary>
+        /// <param name="control">
+        /// The control.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool ContainsOf<T>()
+        {
+            foreach (var item in this.List)
+                if (item is T)
+                    return true;
+
+            return false;
+        }
+
         #endregion
 
         /// <summary>

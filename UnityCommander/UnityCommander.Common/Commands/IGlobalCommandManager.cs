@@ -59,20 +59,6 @@ namespace UnityCommander.Common.Commands
         /// <param name="action">
         /// The action.
         /// </param>
-        void CreateCommand(string commandName, object instance, Action<object> action);
-
-        /// <summary>
-        /// The create command.
-        /// </summary>
-        /// <param name="commandName">
-        /// The command name.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
         void CreateSingletonCommand(string commandName, object instance, Action<object> action);
 
 

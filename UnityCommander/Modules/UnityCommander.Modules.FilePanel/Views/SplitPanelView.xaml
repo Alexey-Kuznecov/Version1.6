@@ -90,5 +90,12 @@
                 </Button.Content>
             </Button>
         </Grid>-->
+        <!--<Grid Grid.Row="4">
+            <Button Width="50" Command="{Binding TestCommand}">
+                <Button.Content>
+                    Test
+                </Button.Content>
+            </Button>
+        </Grid>-->
     </Grid>
 </UserControl>

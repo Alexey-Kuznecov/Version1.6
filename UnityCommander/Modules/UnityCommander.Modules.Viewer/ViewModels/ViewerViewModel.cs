@@ -3,6 +3,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 {
     using System;
     using System.Collections.Generic;
+    using System.Windows.Controls;
     using Prism.Mvvm;
 
     using UnityCommander.Common.Module;
@@ -12,7 +13,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
     /// <summary>
     /// The viewer view model.
     /// </summary>
-    public class ViewerViewModel : BindableBase, ITabPanelContent
+    public class ViewerViewModel : BindableBase, ITabPanelContent, IViewerPanel
     {
         /// <summary>
         /// The command manager.
@@ -44,6 +45,29 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// Gets or sets the current file path.
         /// </summary>
         public string CurrentPath { get; set; }
+
+
+        public object viewerContent;
+
+        /// <summary>
+        /// Gets or sets the current directory.
+        /// </summary>
+        public object ViewerContent
+        {
+            get => this.viewerContent;
+            set => this.SetProperty(ref this.viewerContent, value);
+        }
+
+        public void SetViewerContent(object content)
+        {
+            if (content != null)
+            {
+                var pluginSettingsView = new Views.PluginSettingsView();
+                var context = pluginSettingsView.DataContext as IPluginSettingsViewer;
+                context.SetPluginSettingsContent(content);
+                this.ViewerContent = pluginSettingsView;
+            }
+        }
 
         /// <summary>
         /// The initialized view model.

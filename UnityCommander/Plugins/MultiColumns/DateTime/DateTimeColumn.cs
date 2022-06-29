@@ -12,7 +12,7 @@ namespace MultiColumns.DateTime
     /// <summary>
     /// The game category column.
     /// </summary>
-    public class DateTimeColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
+    public class DateTimeColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor, IPluginSettings
     {
         /// <summary>
         /// The date and time format.
@@ -192,6 +192,10 @@ namespace MultiColumns.DateTime
         private void InstallMod(string path)
         {
             MessageBox.Show("Date Columns: " + path);
+        }
+
+        public void OnSettingsChanged(SettingsBase settings)
+        {
         }
     }
 }

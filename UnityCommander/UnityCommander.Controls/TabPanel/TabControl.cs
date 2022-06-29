@@ -19,6 +19,12 @@ namespace UnityCommander.Controls.TabPanel
         /// <summary>
         /// The value property.
         /// </summary>
+        public static readonly DependencyProperty TabTypeProperty =
+            DependencyProperty.Register("TabType", typeof(TabTypes), typeof(TabControl), new PropertyMetadata(TabTypeChangedCallback));
+
+        /// <summary>
+        /// The value property.
+        /// </summary>
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register("Command", typeof(ICommand), typeof(TabControl), new PropertyMetadata(CommandChangedCallback));
 
@@ -83,8 +89,17 @@ namespace UnityCommander.Controls.TabPanel
             add => this.AddHandler(TabClickEvent, value);
             remove => this.RemoveHandler(TabClickEvent, value);
         }
-        
+
         #region Setters and Getters Properties
+
+        /// <summary>
+        /// Gets or sets the tab type.
+        /// </summary>
+        public TabTypes TabType
+        {
+            get => (TabTypes)this.GetValue(TabTypeProperty);
+            set => this.SetValue(TabTypeProperty, value);
+        }
 
         /// <summary>
         /// Gets or sets the command.
@@ -253,6 +268,20 @@ namespace UnityCommander.Controls.TabPanel
         #endregion
 
         #region Callback functions
+
+        /// <summary>
+        /// The value changed callback.
+        /// </summary>
+        /// <param name="d">
+        /// The dependency object.
+        /// </param>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        private static void TabTypeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            TabControl control = (TabControl)d;
+        }
 
         /// <summary>
         /// The value changed callback.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnityCommander.Modules.Viewer.ViewModels
+namespace UnityCommander.Common.Models
 {
     public class PluginSettingsModel
     {

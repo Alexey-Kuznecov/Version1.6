@@ -84,5 +84,13 @@ namespace UnityCommander.Integration.Contracts
         ///  The option builders.
         /// </returns>
         public IEnumerable<ICommandBase> GetPluginCommands() => this.PluginCommands;
+
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public AssociatedTypes GetAssociatedTypes() => this.AssociatedTypes;
     }
 }

@@ -92,9 +92,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IDialogService dialogService,
             IEventAggregator mainViewModelExchange,
             IIconProviderService iconProvider,
-            IPluginLoaderService pluginLoader)
+            IPluginLoaderService pluginLoader,
+            IGlobalCommandService globalCommandService)
         {
-            this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader));
+            this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader, globalCommandService));
             this.mainViewModelExchange = mainViewModelExchange;
             this.packIcon = iconProvider.GetIcons();
             this.CreateSidebarElement();

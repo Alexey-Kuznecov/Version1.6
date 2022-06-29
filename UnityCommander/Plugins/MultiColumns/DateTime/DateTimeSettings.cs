@@ -1,5 +1,5 @@
 ﻿
-namespace W3Manager.WP1
+namespace MultiColumns.DateTime
 {
     using UnityCommander.Integration.Attributes;
     using UnityCommander.Integration.Options;
@@ -7,12 +7,12 @@ namespace W3Manager.WP1
     /// <summary>
     /// The settings.
     /// </summary>
-    public class ModSettings : SettingsBase
+    public class DateTimeSettings : SettingsBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModSettings"/> class.
+        /// Initializes a new instance of the <see cref="DateTimeSettings"/> class.
         /// </summary>
-        public ModSettings()
+        public DateTimeSettings()
         {
             this.GamePath = "C:\\Games\\The Witcher 3 Wild Hunt";
             this.GamePaths = new string[]
@@ -21,13 +21,6 @@ namespace W3Manager.WP1
                 "Tree",
                 "List",
                 "Cards"
-            };
-
-            this.GamePaths2 = new string[]
-            {
-                "Auto",
-                "On",
-                "Off"
             };
         }
 
@@ -42,11 +35,5 @@ namespace W3Manager.WP1
         /// </summary>
         [Option("Controls whether the editor should run in a mode where it is optimized for screen readers. Setting to on will disable word wrapping.")]
         public string[] GamePaths { get; set; }
-
-        /// <summary>
-        /// Gets or sets the path with game the Witcher 3.
-        /// </summary>
-        [Option("Controls whether the search string in the Find Widget is seeded from the editor selection.")]
-        public string[] GamePaths2 { get; set; }
     }
 }

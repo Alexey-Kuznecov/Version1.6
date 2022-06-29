@@ -7,6 +7,7 @@ namespace UnityCommander.Integration.Contracts
 
     using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -45,5 +46,13 @@ namespace UnityCommander.Integration.Contracts
         /// The <see cref="IEnumerable"/>.
         /// </returns>
         public IEnumerable<ICommandBase> GetPluginCommands();
+
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public AssociatedTypes GetAssociatedTypes();
     }
 }

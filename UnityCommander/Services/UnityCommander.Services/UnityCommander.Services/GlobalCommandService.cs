@@ -2,6 +2,7 @@
 namespace UnityCommander.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
@@ -15,6 +16,11 @@ namespace UnityCommander.Services
     /// </summary>
     public class GlobalCommandService : IGlobalCommandService
     {
+        /// <summary>
+        /// The base commands.
+        /// </summary>
+        private List<BaseCommand> BaseCommands = new ();
+
         /// <summary>
         /// The global command provider.
         /// </summary>
@@ -38,13 +44,13 @@ namespace UnityCommander.Services
         /// </param>
         public GlobalCommandService(PluginLoaderService loaderService)
         {
+            this.BaseCommands.Add(new IOCommands());
             this.pluginService = loaderService;
             var assembly = Assembly.Load("UnityCommander.Core");
-            var command = new IOCommands();
-            var arg = new Type[] { command.GetType() };
-            var constructor = assembly.GetTypes().Single(t => t.FullName == "UnityCommander.Core.GlobalCommandProvider").GetConstructor(arg);
+
+            var constructor = assembly.GetTypes().Single(t => t.FullName == "UnityCommander.Core.GlobalCommandProvider").GetConstructor(Type.EmptyTypes);
             // ReSharper disable once CoVariantArrayConversion
-            this.globalCommandProvider = constructor?.Invoke(arg);
+            this.globalCommandProvider = constructor?.Invoke(null);
             this.InitialCommands();
         }
 
@@ -69,15 +75,20 @@ namespace UnityCommander.Services
 
                 foreach (var pluginContext in pluginContexts)
                 {
-                    foreach (var command in pluginContext.GetCommands())
-                    {
-                        manager.CreateCommand(command);
-                    }
+                    //foreach (var command in pluginContext.GetCommands())
+                    //{
+                    //    manager.CreateCommand(command);
+                    //}
 
                     foreach (var command in pluginContext.GetPluginCommands())
                     {
                         manager.CreateCommand(command);
                     }
+                }
+
+                foreach (var command in this.BaseCommands)
+                {
+                    manager.CreateCommand(command);
                 }
 
                 this.globalCommandManager = commandProvider.GetCommandManager();

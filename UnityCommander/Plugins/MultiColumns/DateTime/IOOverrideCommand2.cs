@@ -15,13 +15,10 @@ namespace MultiColumns.DateTime
         /// <param name="source">
         /// The source.
         /// </param>
-        /// <param name="destination">
-        /// The destination.
-        /// </param>
         [GlobalCommand("MultiColumns File Moving", CommandKeys.CtrlB)]
-        public override void Move(string source, string destination)
+        public override void Delete(string source)
         {
-            base.Move(source, destination);
+            base.Delete(source);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace UnityCommander.Core
     using System.Linq;
     using System.Reflection;
     using System.Windows.Input;
+    
     using UnityCommander.Common.Commands;
     using UnityCommander.Core.Generators;
 
@@ -48,36 +49,10 @@ namespace UnityCommander.Core
             if (command is IGlobalCommand { Command: { } } globalCommand)
             {
                 this.globalCommands.Enqueue(globalCommand);
+                return;
             }
 
             this.SetCommand(command);
-        }
-
-        /// <summary>
-        /// The create command.
-        /// </summary>
-        /// <param name="commandName">
-        /// The command name.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        public void CreateCommand(string commandName, object instance, Action<object> action)
-        {
-            var command = new GlobalCommandExecute(action, instance);
-
-            var cmd = new GlobalCommand
-            {
-                Name = commandName,
-                Command = command,
-                CommandParameter = instance,
-                ShortcutKey = null,
-            };
-
-            this.globalCommands.Enqueue(cmd);
         }
 
         /// <summary>
@@ -91,23 +66,36 @@ namespace UnityCommander.Core
         /// </returns>
         public IGlobalCommand GetCommand(string commandName)
         {
-            var commandSelected = default(GlobalCommand);
+            GlobalCommand select = null;
 
-            foreach (var globalCommand in this.globalCommands.Where(
-                         p=> ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName)))
+            foreach (var globalCommand in this.globalCommands.Where(c => ((GlobalCommand)c).Name.Contains(commandName)))
             {
-                if (!(globalCommand is GlobalCommand command)) continue;
-
-                if (!globalCommand.Name.Contains(this.commandSelector))
+                if (globalCommand is GlobalCommand command)
                 {
-                    commandSelected = command;
-                    continue;
-                }
+                    if (command.Delegate != null)
+                    {
+                        var baseType = command.Delegate.Method.GetBaseDefinition().DeclaringType;
+                        var baseMethod = baseType?.GetMethod(command.SourceMethod.Name);
+                        var type = command.SourceMethod.DeclaringType;
 
-                return globalCommand;
+                        if (baseType == type)
+                        {
+                            select = command;
+                            continue;
+                        }
+                    }
+
+                    //if (baseMethod?.GetBaseDefinition() == GetOverriddenMethodInfo(command.SourceMethod))
+                    //{
+                    //    select = command;
+                    //    continue;
+                    //}
+
+                    return command;
+                }
             }
 
-            return commandSelected;
+            return select;
         }
 
         /// <summary>
@@ -138,8 +126,9 @@ namespace UnityCommander.Core
         /// </param>
         private void SetCommand(object instance)
         {
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
             Type type = instance.GetType();
-            MethodInfo[] methods = type.GetMethods();
+            MethodInfo[] methods = type.GetMethods(Flags);
             
             foreach (var method in methods)
             {
@@ -150,7 +139,10 @@ namespace UnityCommander.Core
 
                 var globalCommand = new GlobalCommand
                 {
-                    Command = command
+                    Command = command,
+                    SourceFullName = instance.GetType().FullName,
+                    SourceType = instance.GetType(),
+                    SourceMethod = method
                 };
 
                 foreach (var attribute in method.GetCustomAttributes())
@@ -204,7 +196,11 @@ namespace UnityCommander.Core
             
             globalCommand = new GlobalCommand
             {
-                Name = commandName,
+                BaseType = action.Method.DeclaringType,
+                SourceFullName = action.Method.DeclaringType?.FullName,
+                SourceMethod = action.Method,
+                SourceType = action.Method.DeclaringType,
+                Name = action.Method.Name,
                 Command = command,
                 CommandParameter = args,
                 ShortcutKey = null,

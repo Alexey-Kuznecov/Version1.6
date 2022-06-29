@@ -110,7 +110,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             CommandManager manager)
         {
             var fileManger = globalCommandService.GetCommandManager();
-            fileManger.CreateSingletonCommand("Default" + nameof(DisplayContent), null, DisplayContent);
+            fileManger.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
+            fileManger.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
 
             this.regionManager = regionManager;
             this.commandManager = manager;
@@ -228,8 +229,55 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                     this.TabCollection.Remove((TabControl)view[0]);
                     region.Remove(view[2]);
                 });
-        
+
         #endregion
+
+        private static bool viewIsRead;
+        
+        private static UserControl viewerView;
+
+        public static void DisplayViewerContent(object obj)
+        {
+            commandStatus = "Add";
+            var token = Guid.NewGuid();
+
+            if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
+            {
+                if (viewIsRead)
+                {
+                    if (viewerView != null)
+                    {
+                        tabPanel.TabCollection.Remove(tabPanel.currentTab);
+                        var currentPanel = tabPanel.GetCurrentRegion().Name;
+                        var region = tabPanel.regionManager.Regions[currentPanel];           
+                        region.Remove(viewerView);
+                    }
+                }
+
+                viewerView = new ViewerView();
+                var panelContent = viewerView.DataContext as ITabPanelContent;
+                var vpanelContent = viewerView.DataContext as IViewerPanel;
+                vpanelContent.SetViewerContent(obj);
+                FindDirectoryPanel(viewerView).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
+
+                if (!viewIsRead)
+                {
+                    tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
+                    tabPanel.TabCollection.Add(tabPanel.currentTab);
+                    tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
+                    tabPanel.ActivateFilePanel(token);
+                }
+                else
+                {
+                    tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
+                    tabPanel.TabCollection.Add(tabPanel.currentTab);
+                    tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
+                    tabPanel.ActivateFilePanel(token);
+                }
+
+                viewIsRead = true;
+            }
+        }
 
         public static void DisplayContent(object obj)
         {
@@ -240,6 +288,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
             {
                 var panelContent = tabPanel.activeTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
+                var vpanelContent = tabPanel.activePanel.DataContext as IViewerPanel;
+                vpanelContent.SetViewerContent(obj);
+
                 FindDirectoryPanel(directoryPanel).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
                 tabPanel.currentTab = tabPanel.CreateTabControl(token, tabPanel.TabContentFormat(panelContent?.GetCurrentFilePath()), directoryPanel);
                 tabPanel.TabCollection.Add(tabPanel.currentTab);
@@ -302,7 +353,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <returns>
         /// The <see cref="System.Windows.Controls.Button"/>.
         /// </returns>
-        private TabControl CreateTabControl(Guid token, object content, FrameworkElement element)
+        private TabControl CreateTabControl(Guid token, object content, FrameworkElement element, TabTypes tabType = TabTypes.Explorer)
         {
             TabControl button = new TabControl
             {
@@ -313,7 +364,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 BorderBrush = null,
                 CloseCommand = this.CloseTabCommand,
                 Command = this.ActivateTabCommand,
-                CommandParameter = token
+                CommandParameter = token, 
+                TabType = tabType
             };
 
             button.CloseCommandParameter = new object[] { button, token, element };

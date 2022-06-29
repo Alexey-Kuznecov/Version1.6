@@ -45,6 +45,7 @@ namespace MultiColumns.DateTime
         public void CommandFactory(CommandBuilder command)
         {
             command.Register<IOOverrideCommand2, IOCommands>();
+            command.RegisterWithArgument<IPluginSettings, DateTimeColumn>(this.dateTimeColumn, new DateTimeSettings());
         }
 
 
@@ -56,6 +57,7 @@ namespace MultiColumns.DateTime
         /// </param>
         public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
         {
+            typesRegister.RegisterSettings<DateTimeSettings>(this.dateTimeColumn);
         }
 
         /// <summary>

@@ -10,17 +10,6 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <ContentControl Grid.Row="0" Template="{DynamicResource ContentDirectoryPanelTemplate}" />
-        <TextBlock
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            FontSize="40"
-            FontWeight="Bold"
-            Text="Viewer" />
+        <ContentControl Grid.Row="1" Content="{Binding ViewerContent}"></ContentControl>
     </Grid>
 </UserControl>

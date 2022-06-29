@@ -3,14 +3,16 @@ namespace UnityCommander.Integration.Commands
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Reflection;
+    using System.Windows.Input;
+
+    using AlexeyKuznecov.Library.Mvvm.Base;
 
     using UnityCommander.Common.Commands;
     using UnityCommander.Core;
+    using UnityCommander.Core.Generators;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Mvvm.Base;
 
     /// <summary>
     /// Построитель команд подключаемых модулей.
@@ -39,7 +41,49 @@ namespace UnityCommander.Integration.Commands
         /// </typeparam>
         public void Register<TO, TV>() where TO : TV, new ()
         {
-            this.globalCommands.Add(new TO() as BaseCommand);
+            var instance = new TO() as BaseCommand;
+            var baseInstance = Activator.CreateInstance<TV>() as BaseCommand;
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
+            
+                foreach (var method in instance?.GetType().GetMethods(Flags)!)
+                {
+
+                    if (!method.CustomAttributes.Any(p => p.AttributeType.Name == "GlobalCommandAttribute")) continue;
+
+                    var action = default(Delegate); // Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
+                    var command = default(GlobalCommandExecute); // new GlobalCommandExecute(action, instance ?? instance2);
+
+                    if (typeof(TO).GetMethod(method.Name)?.DeclaringType == typeof(TO))
+                    {
+                        action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
+                        command = new GlobalCommandExecute(action, instance);
+                    }
+                    else
+                    {
+                        action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), baseInstance, method);
+                        command = new GlobalCommandExecute(action, baseInstance);
+                    }
+
+
+                    var globalCommand = new GlobalCommand
+                                        {
+                                            BaseType = typeof(TV),
+                                            Name = method.Name,
+                                            Command = command,
+                                            SourceFullName = instance?.GetType().FullName,
+                                            SourceType = instance?.GetType(),
+                                            SourceMethod = method,
+                                            Delegate = action
+                                        };
+
+                    foreach (var attribute in method.GetCustomAttributes())
+                    {
+                        // globalCommand.Name = (string)attribute.GetType().GetProperty("Name")?.GetValue(attribute);
+                        globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey")?.GetValue(attribute);
+                    }
+
+                    this.pluginCommands.Add(globalCommand);
+                }
         }
 
         /// <summary>
@@ -59,31 +103,51 @@ namespace UnityCommander.Integration.Commands
         /// </typeparam>
         public void RegisterWithArgument<TInt, TImpl>(TImpl implementation, object parameters) where TImpl : IPluginService
         {
-            //var command = new GlobalCommand
-            //{
-            //    Name = implementation.GetType().FullName,
-            //    Command = new GlobalCommandExecute(
-            //        (parameter) =>
-            //            {
-            //                var map = implementation.GetType().GetInterfaceMap(typeof(TInt));
+            var commandName = default(string);
+            var commandMethod = default(MethodInfo);
+            var map = implementation.GetType().GetInterfaceMap(typeof(TInt));
+            
+            // Todo: Оптимизировать этот участок кода.
+            foreach (var mapTargetMethod in map.TargetMethods)
+            {
+                foreach (var parameterInfo in mapTargetMethod.GetParameters())
+                {
+                    if (parameters.GetType().BaseType != parameterInfo.ParameterType) continue;
+                    commandName = mapTargetMethod.Name;
+                    commandMethod = mapTargetMethod;
+                }
+            }
 
-            //                foreach (var mapTargetMethod in map.TargetMethods)
-            //                {
-            //                    foreach (var parameterInfo in mapTargetMethod.GetParameters())
-            //                    {
-            //                        var intType = parameterInfo.ParameterType;
-            //                        var implType = parameters.GetType();
+            var command = new GlobalCommand
+            {
+                BaseType = typeof(TInt),
+                SourceMethod = commandMethod,
+                SourceType = implementation?.GetType(),
+                SourceFullName = implementation.GetType().FullName,
+                CommandParameter = parameters,
+                Command = new RelayCommand(
+                    (parameter) =>
+                        {
+                            var map = implementation.GetType().GetInterfaceMap(typeof(TInt));
 
-            //                        if (implType.BaseType != intType) continue;
-            //                        var method = implementation.GetType().GetMethod(mapTargetMethod.Name);
-            //                        method?.Invoke(implementation, new[] { parameters });
-            //                    }
-            //                }
-            //            }),
-            //    CommandParameter = parameters,
-            //};
+                            foreach (var mapTargetMethod in map.TargetMethods)
+                            {
+                                foreach (var parameterInfo in mapTargetMethod.GetParameters())
+                                {
+                                    var intType = parameterInfo.ParameterType;
+                                    var implType = parameters.GetType();
 
-            //this.pluginCommands.Add(command);
+                                    if (implType.BaseType != intType) continue;
+                                    commandName = mapTargetMethod.Name;
+                                    var method = implementation.GetType().GetMethod(mapTargetMethod.Name);
+                                    method?.Invoke(implementation, new[] { parameters });
+                                }
+                            }
+                        }),
+                Name = commandName
+            };
+
+            this.pluginCommands.Add(command);
         }
 
         /// <summary>
@@ -95,11 +159,18 @@ namespace UnityCommander.Integration.Commands
         public IEnumerable<BaseCommand> GetCommands() => this.globalCommands;
 
         /// <summary>
-        /// The get plugin commands.
+        /// Получает зарегистрированные команды которые реализуются плагином.
         /// </summary>
         /// <returns>
         /// Команды подключаемых модулей.
         /// </returns>
         public IEnumerable<ICommandBase> GetPluginCommands() => this.pluginCommands;
+
+        private static MethodInfo GetOverriddenMethodInfo(MethodInfo methodOverride)
+        {
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
+            var baseType = methodOverride.GetBaseDefinition().DeclaringType;
+            return baseType?.GetMethods(Flags).FirstOrDefault(methodVirtual => methodVirtual.Name == methodOverride.Name);
+        }
     }
 }

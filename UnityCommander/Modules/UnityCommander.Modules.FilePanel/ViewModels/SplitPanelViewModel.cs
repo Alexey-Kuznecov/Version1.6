@@ -100,7 +100,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
-            this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("Move").Command;
+            this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("OnSettingsChanged").Command;
 
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -400,10 +400,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             foreach (var item in column.ContextItems)
             {
                 this.ContextMenu.Items.Add(
-                    new MenuItem().SetParam(item.Command,paramManager =>
-                           {
-                               paramManager.AddParam(this, "CurrentDirectory");
-                           }));
+                    new MenuItem().SetParam(item.Command, paramManager =>
+                            {
+                                paramManager.AddParam(this, "CurrentDirectory");
+                            }));
             }
         }
 
@@ -428,6 +428,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     DisplayName = "Delete",
                     Name = "Delete"
+                },
+                //new ()
+                //    {
+                //        DisplayName = "ModStatusColumn",
+                //        Name = "W3Manager.WP1.ModStatusColumn"
+                //    },
+                new ()
+                {
+                    DisplayName = "Move",
+                    Name = "Move"
                 },
             };
             
