@@ -16,6 +16,11 @@ namespace W3Manager.WP1
         private ModSettings settings;
 
         /// <summary>
+        /// The settings.
+        /// </summary>
+        private ColumnManager manager;
+
+        /// <summary>
         /// Gets or sets the display name.
         /// </summary>
         public string DisplayName { get; set; } = "W3 Manager Mod";
@@ -24,6 +29,11 @@ namespace W3Manager.WP1
         /// Gets or sets the description.
         /// </summary>
         public string Description { get; set; } = "Plug-in for your W3 Manager Mod.";
+
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        public SettingsBase Settings { get; set; } = new ModSettings();
 
         /// <summary>
         /// The column initial.
@@ -44,6 +54,7 @@ namespace W3Manager.WP1
         /// </param>
         public void UpdateColumnValue(ColumnManager columnManager)
         {
+            this.manager = columnManager;
             // throw new  System.NotImplementedException();
         }
 
@@ -58,10 +69,15 @@ namespace W3Manager.WP1
         /// </returns>
         public object ColumnValueHandler(string path)
         {
-            //if (this.settings?.GamePath == path)
-            //    return true;
-            //else
-                return false;
+            if (this.settings != null)
+            {
+                if (this.settings.GetShowModStatus() == "On")
+                    return "Install";
+                else
+                    return "Uninstall";
+            }
+
+            return "Unknown";
         }
 
         /// <summary>
@@ -75,6 +91,7 @@ namespace W3Manager.WP1
             if (newSettings is ModSettings myBase)
             {
                 this.settings = myBase;
+                this.manager.Update();
             }
         }
 

@@ -12,4 +12,9 @@
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

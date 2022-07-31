@@ -245,13 +245,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             {
                 if (viewIsRead)
                 {
-                    if (viewerView != null)
-                    {
-                        tabPanel.TabCollection.Remove(tabPanel.currentTab);
-                        var currentPanel = tabPanel.GetCurrentRegion().Name;
-                        var region = tabPanel.regionManager.Regions[currentPanel];           
-                        region.Remove(viewerView);
-                    }
+                    tabPanel.TabCollection.Remove(tabPanel.currentTab);
+                    var currentPanel = tabPanel.GetCurrentRegion().Name;
+                    var region = tabPanel.regionManager.Regions[currentPanel];           
+                    region.Remove(viewerView);
                 }
 
                 viewerView = new ViewerView();
@@ -260,20 +257,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 vpanelContent.SetViewerContent(obj);
                 FindDirectoryPanel(viewerView).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
 
-                if (!viewIsRead)
-                {
-                    tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
-                    tabPanel.TabCollection.Add(tabPanel.currentTab);
-                    tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
-                    tabPanel.ActivateFilePanel(token);
-                }
-                else
-                {
-                    tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
-                    tabPanel.TabCollection.Add(tabPanel.currentTab);
-                    tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
-                    tabPanel.ActivateFilePanel(token);
-                }
+                tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
+                tabPanel.TabCollection.Add(tabPanel.currentTab);
+                tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
+                tabPanel.ActivateFilePanel(token);
 
                 viewIsRead = true;
             }

@@ -27,7 +27,12 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         
         private IPluginSettings pluginSettings;
         
+        private SettingsBase pluginSettingsModel;
+
         private PluginSettingsModel selectOption;
+        private object selectedOption;
+        private object listOptions;
+        private int selectIndexOption;
 
         /// <summary>
         /// The navigation command.   
@@ -61,6 +66,48 @@ namespace UnityCommander.Modules.Viewer.ViewModels
                 this.selectOption = value;
                 this.OnPropertyChanged("SelectOption");
                 this.pluginSettings.OnSettingsChanged(null);
+            }
+        }
+
+        public object ListOptions
+        {
+            get => this.listOptions;
+            set
+            {
+                this.listOptions = value;
+                this.OnPropertyChanged("ListOptions");
+            }
+        }
+
+        public int SelectIndexOption
+        {
+            get => this.selectIndexOption;
+            set
+            {
+                this.selectIndexOption = value;
+                this.OnPropertyChanged("SelectIndexOption");
+            }
+        }
+
+        public object SelectedOption
+        {
+            get => this.selectedOption;
+            set
+            {
+                this.selectedOption = value;
+
+                this.OnPropertyChanged("SelectedOption");
+
+                if (this.selectedOption != null)
+                {
+                    //SelectOption.SelectedOption = (string)this.selectedOption;
+                    
+                    if (this.SelectOption != null)
+                    {
+                        this.SelectOption.SetValue(this.selectedOption);
+                        this.pluginSettings.OnSettingsChanged(this.pluginSettingsModel);
+                    }
+                }
             }
         }
 
@@ -99,7 +146,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
             foreach (var pluginContext in pluginLoaders.GetPluginContext())
             {
                 var ass = pluginContext.GetAssociatedTypes();
-
+           
                 foreach (var keyValuePair in ass.Types)
                 {
                     if (keyValuePair.Key is IPluginSettings settings)
@@ -108,9 +155,9 @@ namespace UnityCommander.Modules.Viewer.ViewModels
                             continue;
 
                         this.pluginSettings = settings;
-                        var settingsModel = keyValuePair.Value;
+                        this.pluginSettingsModel = keyValuePair.Value as SettingsBase;
 
-                        PropertyInfo[] propertiesInfo = settingsModel.GetType().GetProperties();
+                        PropertyInfo[] propertiesInfo = this.pluginSettingsModel.GetType().GetProperties();
 
                         foreach (var property in propertiesInfo)
                         {
@@ -128,7 +175,9 @@ namespace UnityCommander.Modules.Viewer.ViewModels
                                 Category = "Files",
                                 Tags = new string[] { "Files", "Folders" },
                                 Description = description,
-                                Options = property.GetValue(settingsModel)
+                                Options = property.GetValue(this.pluginSettingsModel),
+                                Source = this.pluginSettingsModel,
+                                OptionName = property.Name
                             });
                         }
                     }

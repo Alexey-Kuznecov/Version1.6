@@ -6,5 +6,6 @@ namespace UnityCommander.Integration.Options
     /// </summary>
     public abstract class SettingsBase
     {
+
     }
 }
