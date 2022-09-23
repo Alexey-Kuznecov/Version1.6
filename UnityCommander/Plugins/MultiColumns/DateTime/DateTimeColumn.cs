@@ -7,6 +7,7 @@ namespace MultiColumns.DateTime
     using System.Windows;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -95,7 +96,7 @@ namespace MultiColumns.DateTime
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public object ColumnValueHandler(string path)
+        public object ColumnValueHandler(string columnName, string path, DirectoryItemType directoryItem)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
             var nt = directoryInfo.CreationTime.ToLongTimeString();

@@ -8,6 +8,7 @@ namespace MultiColumns.Sized
     using System.Windows;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -105,7 +106,7 @@ namespace MultiColumns.Sized
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public object ColumnValueHandler(string path)
+        public object ColumnValueHandler(string columnName, string path, DirectoryItemType directoryItem)
         {
             if (File.Exists(path))
             {

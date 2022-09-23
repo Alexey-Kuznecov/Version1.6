@@ -11,28 +11,22 @@ namespace W3Manager.WP1
     {
         private string showModStatus;
 
+        private string showModStatus2;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ModSettings"/> class.
         /// </summary>
         public ModSettings()
         {
             this.GamePath = "C:\\Games\\The Witcher 3 Wild Hunt";
-            //this.GamePaths = new string[]
-            //{
-            //    "Palit",
-            //    "Tree",
-            //    "List",
-            //    "Cards"
-            //};
-
-            //this.GamePaths2 = new string[]
-            //{
-            //    "Auto",
-            //    "On",
-            //    "Off"
-            //};
 
             this.ShowModStatus = new string[]
+            {
+                "On",
+                "Off"
+            };
+
+            this.ShowModStatus2 = new string[]
             {
                 "On",
                 "Off"
@@ -65,6 +59,23 @@ namespace W3Manager.WP1
         public string GetShowModStatus()
         {
             return this.showModStatus;
+        }
+
+        /// <summary>
+        /// Gets or sets the path with game the Witcher 3.
+        /// </summary>
+        [Option("Controls whether the editor should run in a mode where it is optimized for screen readers.")]
+        public string[] ShowModStatus2 { get; set; }
+
+        public void SetShowModStatus2(object val)
+        {
+            if (val != null)
+                this.showModStatus2 = (string)val;
+        }
+
+        public string GetShowModStatus2()
+        {
+            return this.showModStatus2;
         }
 
         /// <summary>

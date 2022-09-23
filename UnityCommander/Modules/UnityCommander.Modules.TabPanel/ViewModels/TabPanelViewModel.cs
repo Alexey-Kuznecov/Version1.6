@@ -240,15 +240,31 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         {
             commandStatus = "Add";
             var token = Guid.NewGuid();
+            var tabConfig = default(TabControl);
 
             if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
             {
                 if (viewIsRead)
                 {
-                    tabPanel.TabCollection.Remove(tabPanel.currentTab);
+                    foreach (var tab in tabPanel.TabCollection)
+                    {
+                        if (tab is TabControl control)
+                        {
+                            if (control.TabType == TabTypes.SettingsViewer)
+                            {
+                                tabConfig = control;
+                            }
+                        }
+                    }
+
+                    tabPanel.TabCollection.Remove(tabConfig);
                     var currentPanel = tabPanel.GetCurrentRegion().Name;
-                    var region = tabPanel.regionManager.Regions[currentPanel];           
-                    region.Remove(viewerView);
+                    var region = tabPanel.regionManager.Regions[currentPanel];
+
+                    if (region?.GetView(currentPanel) != null)
+                    {
+                        region.Remove(viewerView);
+                    }
                 }
 
                 viewerView = new ViewerView();

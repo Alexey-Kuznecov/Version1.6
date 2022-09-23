@@ -86,8 +86,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IGlobalCommandService globalCommandService)
         {
             this.globalCommandService = globalCommandService;
-
-
             this.PluginDescriptors = pluginLoaders.GetPluginDescriptors();
             this.pluginLoaders = pluginLoaders;
             this.dialogService = dialogService;

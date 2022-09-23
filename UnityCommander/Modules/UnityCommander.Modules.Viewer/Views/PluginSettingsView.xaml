@@ -11,7 +11,7 @@
     xmlns:vm="clr-namespace:UnityCommander.Modules.Viewer.ViewModels"
     d:DataContext="{d:DesignInstance vm:PluginSettingsViewModel}"
     d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignWidth="880"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
 
@@ -32,10 +32,10 @@
         </DataTemplate>
 
         <Style x:Key="ListSettingsStyle" TargetType="ListBox">
-            <Setter Property="Background" Value="AntiqueWhite" />
+            <Setter Property="Background" Value="#E7E7E7" />
         </Style>
         <Style TargetType="ListBoxItem">
-            <Setter Property="Background" Value="AntiqueWhite" />
+            <Setter Property="Background" Value="#E7E7E7" />
         </Style>
     </UserControl.Resources>
     <Grid>

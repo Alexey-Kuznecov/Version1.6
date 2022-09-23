@@ -70,14 +70,7 @@ namespace UnityCommander.Modules.TabPanel.Behaviors
             {
                 element.GotFocus += Element_GotFocus;
                 element.LostFocus += Element_LostFocus;
-
-                Task.Delay(100).ContinueWith(_ =>
-                    {
-                        Application.Current.Dispatcher.Invoke(new Action(() =>
-                            {
-                                element.Focus();
-                            }));
-                    });
+                SetFocusOnActiveTabPanel(element);
             }
         }
 
@@ -94,16 +87,19 @@ namespace UnityCommander.Modules.TabPanel.Behaviors
         {
             var border = sender as Border;
             border.BorderBrush = new SolidColorBrush(Color.FromRgb(125, 162, 230));
+            SetFocusOnActiveTabPanel(border);
+        }
 
-            if (border.DataContext is IElementFocusable tabPanel)
+        public static void SetFocusOnActiveTabPanel(FrameworkElement element)
+        {
+            if (element.DataContext is IElementFocusable tabPanel)
             {
                 tabPanel.FocusElementDataProvider(new ElementFocusData
-                                                      {
-                                                          ElementFocusable = border, 
-                                                          TabPanel = (ITabPanel)tabPanel, 
-                                                          TabContent = (e.Source as UserControl)?.DataContext as ITabPanelContent
-                                                      });
-                border.BorderThickness = ((ITabPanel)tabPanel).RegionContentName == NestedRegionNames.LeftFilePanelRegion
+                {
+                    ElementFocusable = element,
+                    TabPanel = (ITabPanel)tabPanel
+                });
+                ((Border)element).BorderThickness = ((ITabPanel)tabPanel).RegionContentName == NestedRegionNames.LeftFilePanelRegion
                                              ? new System.Windows.Thickness(0, 0, 1, 1)
                                              : new System.Windows.Thickness(1, 0, 0, 1);
             }

@@ -3,6 +3,7 @@ namespace W3Manager.WP1
 {
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -43,7 +44,8 @@ namespace W3Manager.WP1
         /// </param>
         public void ColumnInitial(ColumnBuilder builder)
         {
-            builder.Add("Mod Status", 100);
+            builder.Add("Mod Status", 80);
+            builder.Add("Mod Status 2", 80);
         }
 
         /// <summary>
@@ -67,14 +69,23 @@ namespace W3Manager.WP1
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public object ColumnValueHandler(string path)
+        public object ColumnValueHandler(string columnName, string path, DirectoryItemType directoryItem)
         {
-            if (this.settings != null)
+            if (directoryItem.Equals(DirectoryItemType.File))
             {
-                if (this.settings.GetShowModStatus() == "On")
-                    return "Install";
-                else
-                    return "Uninstall";
+                if (columnName == "Mod Status")
+                    return "File";
+
+                if (columnName == "Mod Status 2")
+                    return "File 2";
+            }
+            else if (directoryItem.Equals(DirectoryItemType.Folder))
+            {
+                if (columnName == "Mod Status")
+                    return "Folder";
+
+                if (columnName == "Mod Status 2")
+                    return "Folder 2";
             }
 
             return "Unknown";
@@ -91,6 +102,23 @@ namespace W3Manager.WP1
             if (newSettings is ModSettings myBase)
             {
                 this.settings = myBase;
+
+                if (this.settings.GetShowModStatus() != null)
+                {
+                    if (this.settings.GetShowModStatus() == "On")
+                        this.manager.Add("Mod Status");
+                    else
+                        this.manager.Hide("Mod Status");
+                }
+                
+                if (this.settings.GetShowModStatus2() != null)
+                {
+                    if (this.settings.GetShowModStatus2() == "On")
+                        this.manager.Add("Mod Status 2");
+                    else
+                        this.manager.Hide("Mod Status 2");
+                }
+               
                 this.manager.Update();
             }
         }

@@ -42,12 +42,12 @@ namespace UnityCommander.Modules.Viewer.Converters
             if (value is object[] list)
             {
                 Binding b = new Binding("DataContext.SelectedOption");
-                b.Mode = BindingMode.TwoWay;
+                b.Mode = BindingMode.OneWayToSource;
                 b.RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ListBox), 1);
                 var combo = new ComboBox();
                 combo.ItemsSource = list;
                 BindingOperations.SetBinding(combo, ComboBox.SelectedItemProperty, b);
-                combo.SelectedIndex = 1;
+                combo.SelectedIndex = 0;
                 combo.SelectionChanged += Combo_SelectionChanged;
                 combo.PreviewMouseDown += PreviewMouseDown;
                 combo.Tag = _itemIndex++;

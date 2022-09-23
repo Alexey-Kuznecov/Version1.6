@@ -32,6 +32,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Modules.FilePanel.Columns;
     using UnityCommander.Services.Interfaces;
 
@@ -359,6 +360,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 foreach (var column in pluginContext.GetColumns())
                 {
                     column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
+                    
                     column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
 
                     if (this.InitialFolderColumnValues(column))
@@ -370,6 +372,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
                         };
 
+                        column.ColumnManager.SetHideCommand(this.HideColumnCommand, this.AddColumnCommand, columnNew);
                         this.FolderPanelContainer.Columns.Add(columnNew);
                     }
 
@@ -469,6 +472,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         }
 
+        private void HideColumnCommand(DependencyObject column)
+        {
+            if (this.FolderPanelContainer.Columns.Contains(column))
+            {
+                this.FolderPanelContainer.Columns.Remove((GridViewColumn)column);
+            }
+        }
+
+        private void AddColumnCommand(DependencyObject column)
+        {
+            if (!this.FolderPanelContainer.Columns.Contains(column))
+            {
+                this.FolderPanelContainer.Columns.Add((GridViewColumn)column);
+            }
+        }
+
         /// <summary>
         /// Plugins uses this method to update columns.
         /// </summary>
@@ -480,21 +499,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     foreach (var folder in this.DirectoryList)
                     {
-                        var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                        var columnValue = column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder);
 
                         if (columnValue != null)
                         {
-                            folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                            folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder);
                         }
                     }
 
                     foreach (var file in this.FileList)
                     {
-                        var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
+                        var columnValue = column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File);
 
                         if (columnValue != null)
                         {
-                            file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(file.Path);
+                            file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File);
                         }
                     }
                 }
@@ -520,11 +539,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             foreach (var folder in this.DirectoryList)
             {
-                var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
+                //var columnValue = column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder);
 
                 if (!folder.Additional.ContainsKey(column.Header))
                 {
-                    folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(folder.Path));
+                    folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder));
                     //folder.ContextItems = column.ContextItems;                   
                 }
             }
@@ -548,7 +567,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             foreach (var file in this.FileList)
             {
                 if (!file.Additional.ContainsKey(column.Header))
-                    file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(file.Path));
+                    file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File));
             }
 
             return true;
