@@ -64,7 +64,7 @@ namespace UnityCommander.Core.IO.Operations
         /// </param>
         public static void Delete(string source)
         {
-            //if (source == null) return;
+            if (source == null) return;
 
             //if (File.Exists(source))
             //{

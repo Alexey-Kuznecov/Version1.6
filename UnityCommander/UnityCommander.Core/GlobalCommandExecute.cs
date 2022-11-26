@@ -87,35 +87,31 @@ namespace UnityCommander.Core
         /// </param>
         public void Execute(object parameter)
         {
-            if (this.action == null)
+            if (this.action != null || parameter == null) return;
+
+            if (parameter is object[] arr)
+                this.Command.Method.Invoke(this.Command.Target ?? this.Command.Method.DeclaringType, arr);
+            else
             {
-                if (parameter != null)
-                {
-                    var args = GetDefaultParameterValues(this.Args ?? parameter);
-                    this.Command.Method.Invoke(this.Command.Target ?? this.Command.Method.DeclaringType, args);
-                    return;
-                }
-
-                //Type type = this.DeclaringType;
-                //object[] parameters = this.GetDefaultParameterValues(parameter);
-
-                //if (type == null && parameter == null)
-                //{
-                //    this.Command.Method.Invoke(this.Args, parameters);
-                //    return;
-                //}
-
-                //var constructor = type.GetConstructor(Type.EmptyTypes);
-                //var instance = constructor?.Invoke(new object[] { });
-
-                //if (parameter != null)
-                //{
-                //    this.Command.Method.Invoke(instance, parameter as object[]);
-                //    return;
-                //}
-
-                //this.Command.Method.Invoke(instance, parameters);
+                var args = this.GetDefaultParameterValues(parameter);
+                this.Command.Method.Invoke(this.Command.Target ?? this.Command.Method.DeclaringType, args);
             }
+            
+            //Type type = this.DeclaringType;
+            //object[] parameters = this.GetDefaultParameterValues(parameter);
+            //if (type == null && parameter == null)
+            //{
+            //    this.Command.Method.Invoke(this.Args, parameters);
+            //    return;
+            //}
+            //var constructor = type.GetConstructor(Type.EmptyTypes);
+            //var instance = constructor?.Invoke(new object[] { });
+            //if (parameter != null)
+            //{
+            //    this.Command.Method.Invoke(instance, parameter as object[]);
+            //    return;
+            //}
+            //this.Command.Method.Invoke(instance, parameters);
 
             //if (this.action != null)
             //{

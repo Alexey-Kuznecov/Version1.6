@@ -29,5 +29,7 @@ namespace UnityCommander.Controls.Ribbon
         /// TODO: Gets or sets the shortcut key.
         /// </summary>
         public InputGesture ShortcutKey { get; set; }
+
+        public GlobalCommandSelection SelectionFlag { get; set; }
     }
 }

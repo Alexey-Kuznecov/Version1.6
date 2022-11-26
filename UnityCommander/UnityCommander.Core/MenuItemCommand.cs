@@ -10,6 +10,7 @@ namespace UnityCommander.Core
     {
         public string DisplayName { get; set; }
         public InputGesture ShortcutKey { get; set; }
+        public GlobalCommandSelection SelectionFlag { get; set; }
         public string Name { get; set; }
         public ICommand Command { get; set; }
         public object CommandParameter { get; set; }

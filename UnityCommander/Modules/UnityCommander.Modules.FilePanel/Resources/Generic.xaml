@@ -55,18 +55,19 @@
                 core:DragDrop.IsDropTarget="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding DirectoryList, Mode=OneWay}"
+                SelectedItem="{Binding SelectedDirectory}"
                 View="{Binding FolderPanelContainer}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding NavigateDirectoryCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <i:Interaction.Behaviors>
+                <!--<i:Interaction.Behaviors>
                     <be:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
-                </i:Interaction.Behaviors>
+                </i:Interaction.Behaviors>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel ContextMenu="{Binding ContextMenu}"/>
+                        <StackPanel ContextMenu="{Binding ContextMenu}" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>

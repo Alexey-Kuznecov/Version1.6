@@ -63,8 +63,7 @@ namespace UnityCommander.Integration.Commands
                         action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), baseInstance, method);
                         command = new GlobalCommandExecute(action, baseInstance);
                     }
-
-
+                    
                     var globalCommand = new GlobalCommand
                                         {
                                             BaseType = typeof(TV),

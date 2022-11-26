@@ -11,7 +11,7 @@ namespace W3Manager.WP1
     {
         private string showModStatus;
 
-        private string showModStatus2;
+        private string showModCategory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModSettings"/> class.
@@ -19,14 +19,12 @@ namespace W3Manager.WP1
         public ModSettings()
         {
             this.GamePath = "C:\\Games\\The Witcher 3 Wild Hunt";
-
             this.ShowModStatus = new string[]
             {
                 "On",
                 "Off"
             };
-
-            this.ShowModStatus2 = new string[]
+            this.ShowModCategory = new string[]
             {
                 "On",
                 "Off"
@@ -36,19 +34,37 @@ namespace W3Manager.WP1
         /// <summary>
         /// Gets or sets the path with game the Witcher 3.
         /// </summary>
-        [Option("Попробуйте новую кроссплатформенную оболочку PowerShell (https://aka.ms/pscore6)")]
+        [Option(
+            "Путь к игре:",
+            "Необходимо указать путь к игре для правильной работы плагина (https://aka.ms/pscore6).",
+            "Plugin")]
         public string GamePath { get; set; }
-
-        public void SetGamePath(object val)
-        {
-            this.GamePath = (string)val;
-        }
 
         /// <summary>
         /// Gets or sets the path with game the Witcher 3.
         /// </summary>
-        [Option("Controls whether the editor should run in a mode where it is optimized for screen readers. Setting to on will disable word wrapping.")]
+        [Option(
+            "Показывать колонку состояние мода",
+            "Показывать колонку которая показывает установлен ли мод.", 
+            "Plugin")]
         public string[] ShowModStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets the path with game the Witcher 3.
+        /// </summary>
+        [Option(
+            "Показывать колонку категории мода",
+            "Например моды могут быть графическими, геймлейными итд.",           
+            "Plugin")]
+        public string[] ShowModCategory { get; set; }
+
+        public void SetGamePath(object val) => this.GamePath = (string)val;
+
+        public void SetShowModCategory(object val)
+        {
+            if (val != null)
+                this.showModCategory = (string)val;
+        }
 
         public void SetShowModStatus(object val)
         {
@@ -56,32 +72,8 @@ namespace W3Manager.WP1
                 this.showModStatus = (string)val;
         }
 
-        public string GetShowModStatus()
-        {
-            return this.showModStatus;
-        }
+        public string GetShowModStatus() => this.showModStatus;
 
-        /// <summary>
-        /// Gets or sets the path with game the Witcher 3.
-        /// </summary>
-        [Option("Controls whether the editor should run in a mode where it is optimized for screen readers.")]
-        public string[] ShowModStatus2 { get; set; }
-
-        public void SetShowModStatus2(object val)
-        {
-            if (val != null)
-                this.showModStatus2 = (string)val;
-        }
-
-        public string GetShowModStatus2()
-        {
-            return this.showModStatus2;
-        }
-
-        /// <summary>
-        /// Gets or sets the path with game the Witcher 3.
-        /// </summary>
-        //[Option("Controls whether the search string in the Find Widget is seeded from the editor selection.")]
-        //public string[] GamePaths2 { get; set; }
+        public string GetShowModCategory() => this.showModCategory;
     }
 }

@@ -250,16 +250,24 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// Gets control on the copy thread.
         /// </summary>
-        /// <param name="path"> Expected two strings the source path and destination path. </param>
-        private void SetupCopyFiles(object path)
+        /// <param name="copyInfo"> Expected two strings the source path and destination path. </param>
+        private void SetupCopyFiles(object copyInfo)
         {
             //this.SkippedFile = new ObservableCollection<CopyInfoModel>();
             //this.CopyReport = new ObservableCollection<CopyInfoModel>();
 
-            if (path is string[] address)
+            if (copyInfo is object[] address)
             {
-                var source = new DirectoryInfo(address[0]);
-                var destination = new DirectoryInfo(address[1]);
+                var source = new DirectoryInfo((string)address[0]);
+                var destination = new DirectoryInfo((string)address[1]);
+
+                if (!(bool)address[2])
+                {
+                    var fname = new DirectoryInfo(source.FullName).Name;
+                    var dirC = destination.FullName + "\\" + fname;
+                    Directory.CreateDirectory(dirC);
+                    destination = new DirectoryInfo(dirC);
+                }
 
                 this.copyManager.CopyFileReport += this.CopyFileReport;
                 this.copyManager.Copy(source.FullName, destination.FullName);

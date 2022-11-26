@@ -157,22 +157,26 @@ namespace UnityCommander.Modules.Viewer.ViewModels
                         this.pluginSettings = settings;
                         this.pluginSettingsModel = keyValuePair.Value as SettingsBase;
 
-                        PropertyInfo[] propertiesInfo = this.pluginSettingsModel.GetType().GetProperties();
+                        PropertyInfo[] propertiesInfo = this.pluginSettingsModel?.GetType().GetProperties();
 
                         foreach (var property in propertiesInfo)
                         {
-                            if (!property.CustomAttributes.Any(p => p.AttributeType.Name == "OptionAttribute")) continue;
+                            if (property.CustomAttributes.All(p => p.AttributeType.Name != "OptionAttribute")) continue;
 
                             string description = null;
+                            string title = null;
+                            string category = null;
 
                             foreach (var attribute in property.GetCustomAttributes())
                             {
                                 description = (string)attribute.GetType().GetProperty("Description")?.GetValue(attribute);
+                                title = (string)attribute.GetType().GetProperty("Title")?.GetValue(attribute);
+                                category = (string)attribute.GetType().GetProperty("Category")?.GetValue(attribute);
                             }
 
                             this.PluginSettingsModels.Add(new PluginSettingsModel
                             {
-                                Category = "Files",
+                                Category = title,
                                 Tags = new string[] { "Files", "Folders" },
                                 Description = description,
                                 Options = property.GetValue(this.pluginSettingsModel),

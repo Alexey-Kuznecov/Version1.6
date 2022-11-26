@@ -51,5 +51,7 @@ namespace UnityCommander.Core
         public object CommandParameter { get; set; }
 
         public InputGesture ShortcutKey { get; set; }
+
+        public GlobalCommandSelection SelectionFlag { get; set; }
     }
 }

@@ -50,6 +50,14 @@ namespace UnityCommander.Common.Commands
         /// <summary>
         /// The create command.
         /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        void CreateCommand(object command, GlobalCommandSelection selector);
+
+        /// <summary>
+        /// The create command.
+        /// </summary>
         /// <param name="commandName">
         /// The command name.
         /// </param>

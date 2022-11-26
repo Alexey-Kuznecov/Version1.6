@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace MultiColumns.DateTime
 {
     using UnityCommander.Integration.Attributes;
@@ -9,31 +11,35 @@ namespace MultiColumns.DateTime
     /// </summary>
     public class DateTimeSettings : SettingsBase
     {
+        private string dateTimeFormat;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DateTimeSettings"/> class.
         /// </summary>
         public DateTimeSettings()
         {
-            this.GamePath = "C:\\Games\\The Witcher 3 Wild Hunt";
-            this.GamePaths = new string[]
+            this.DateTimeFormat = new string[]
             {
-                "Palit",
-                "Tree",
-                "List",
-                "Cards"
+                "15.3.2008",
+                "15/3/2008"
             };
         }
 
         /// <summary>
         /// Gets or sets the path with game the Witcher 3.
         /// </summary>
-        [Option("Попробуйте новую кроссплатформенную оболочку PowerShell (https://aka.ms/pscore6)")]
-        public string GamePath { get; set; }
+        [Option(
+            "Формат даты и времени", 
+            "В каком формате будет отображаться дата и время последнего изменения папки или файла",
+            "Plugin")]
+        public string[] DateTimeFormat { get; set; }
 
-        /// <summary>
-        /// Gets or sets the path with game the Witcher 3.
-        /// </summary>
-        [Option("Controls whether the editor should run in a mode where it is optimized for screen readers. Setting to on will disable word wrapping.")]
-        public string[] GamePaths { get; set; }
+        public string GetDateTimeFormat() => this.dateTimeFormat;
+
+        public void SetDateTimeFormat(object val)
+        {
+            if (val != null)
+                this.dateTimeFormat = (string)val;
+        }
     }
 }

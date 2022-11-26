@@ -43,6 +43,7 @@ namespace MultiColumns.Sized
         /// </param>
         public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
         {
+            typesRegister.RegisterSettings<SizeSettings>(this.sizedColumn);
         }
 
         /// <summary>

@@ -23,5 +23,17 @@ namespace W3Manager.WP1
         {
             base.Move(source, destination);
         }
+
+        /// <summary>
+        /// The file copy.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        [GlobalCommand("W3Manager File Moving", CommandKeys.CtrlB)]
+        public override void Delete(string source)
+        {
+            base.Delete(source);
+        }
     }
 }

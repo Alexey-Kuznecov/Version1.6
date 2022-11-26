@@ -42,6 +42,11 @@ namespace UnityCommander.ViewModels.Dialogs
         private string target;
 
         /// <summary>
+        /// Описание смотри сдесь <see cref="CopyOnlyFolderContent"/>.
+        /// </summary>
+        private bool copyOnlyFolderContent;
+
+        /// <summary>
         /// Contains a view of the copy dialog box.
         /// </summary>
         private UserControl controlView;
@@ -52,6 +57,7 @@ namespace UnityCommander.ViewModels.Dialogs
         private DelegateCommand fieldName;
 
         #endregion
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="CopyDialogViewModel"/> class.
         /// This the signature of the constructor needed for communication with another a view models.
@@ -111,12 +117,28 @@ namespace UnityCommander.ViewModels.Dialogs
         }
 
         /// <summary>
+        /// Данная опция отвечает за копирования содержимого папки. 
+        /// Если опция равна истине то будет скопированно только содержимое 
+        /// папки иначе будет скопированна вся папка. 
+        /// </summary>
+        public bool CopyOnlyFolderContent
+        {
+            get => this.copyOnlyFolderContent;
+            set => this.SetProperty(ref this.copyOnlyFolderContent, value);
+        }
+
+        /// <summary>
         /// Gets the command to copy files or folders from one panel to another.
         /// </summary>
         public ICommand CopyCommand => new DelegateCommand(() =>
         {
             this.CopyStateView = new CopyProcessView();
-            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new[] { this.Source, this.Target });
+            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new object[] 
+            {
+                this.Source,
+                this.Target,
+                this.CopyOnlyFolderContent
+            });
         });
 
         /// <summary>

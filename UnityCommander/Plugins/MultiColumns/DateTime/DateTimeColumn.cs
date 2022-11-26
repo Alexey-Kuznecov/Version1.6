@@ -23,26 +23,23 @@ namespace MultiColumns.DateTime
         private bool includeTime;
 
         /// <summary>
+        /// The settings.
+        /// </summary>
+        private DateTimeSettings settings;
+
+        /// <summary>
+        /// The settings.
+        /// </summary>
+        private ColumnManager manager;
+
+        /// <summary>
         /// The option render.
         /// </summary>
         private OptionRender optionRender;
 
-        /// <summary>
-        /// The update column value.
-        /// </summary>
-        private ColumnManager.UpdateColumnValue updateColumnValue;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DateTimeColumn"/> class.
-        /// </summary>
         public DateTimeColumn()
         {
-            this.dateTimeFormat = "15.3.2008";
-            this.DateTimeFormat = new List<object>
-            {
-                "15.3.2008",
-                "15/3/2008"
-            };
+            this.dateTimeFormat = "15/3/2008";
         }
 
         /// <summary>
@@ -70,28 +67,20 @@ namespace MultiColumns.DateTime
         {
             builder.Add("Creation Date", 100);
             builder.AddContextItem("Select date format", this.InstallMod);
-            builder.AddContextItem("Edit date fornmat", this.InstallMod);
-        }
-
-        /// <summary>
-        /// The column value validate.
-        /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        public object ColumnValueValidate(IPluginContext context)
-        {
-            return context;
+            builder.AddContextItem("Edit date format", this.InstallMod);
         }
 
         /// <summary>
         /// The column value handler.
         /// </summary>
+        /// <param name="columnName">
+        /// 
+        /// </param>
         /// <param name="path">
         /// The path.
+        /// </param>
+        /// <param name="directoryItem">
+        ///
         /// </param>
         /// <returns>
         /// The <see cref="object"/>.
@@ -122,6 +111,20 @@ namespace MultiColumns.DateTime
             return this.includeTime ? nd + " " + nt : nd;
         }
 
+        public void OnSettingsChanged(SettingsBase settings)
+        {
+            if (!(settings is DateTimeSettings myBase)) return;
+            
+            this.settings = myBase;
+
+            if (this.settings.GetDateTimeFormat() != null)
+            {
+                this.dateTimeFormat = this.settings.GetDateTimeFormat() == "15/3/2008" ? "15/3/2008" : "15.3.2008";
+            }
+
+            this.manager.Update();
+        }
+
         /// <summary>
         /// The update column value.
         /// </summary>
@@ -130,7 +133,7 @@ namespace MultiColumns.DateTime
         /// </param>
         public void UpdateColumnValue(ColumnManager columnManager)
         {
-            this.updateColumnValue = columnManager.Update;
+            this.manager = columnManager;
         }
 
         /// <summary>
@@ -171,8 +174,7 @@ namespace MultiColumns.DateTime
         /// </param>
         private void IncludeTimeHandler(bool value)
         {
-            this.includeTime = value;
-            this.updateColumnValue();        
+            this.includeTime = value;      
         }
 
         /// <summary>
@@ -184,7 +186,6 @@ namespace MultiColumns.DateTime
         private void DateTimeFormatHandler(object selected)
         {
             dateTimeFormat = selected as string;
-            this.updateColumnValue();
         }
 
         /// <summary>
@@ -195,8 +196,18 @@ namespace MultiColumns.DateTime
             MessageBox.Show("Date Columns: " + path);
         }
 
-        public void OnSettingsChanged(SettingsBase settings)
+        /// <summary>
+        /// The column value validate.
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public object ColumnValueValidate(IPluginContext context)
         {
+            return context;
         }
     }
 }

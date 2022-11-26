@@ -25,7 +25,7 @@ namespace UnityCommander.Core
         /// <summary>
         /// The command selector.
         /// </summary>
-        private readonly string commandSelector = "Default";
+        private GlobalCommandSelection globalCommandSelection = GlobalCommandSelection.Default;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GlobalCommandManager"/> class.
@@ -55,6 +55,12 @@ namespace UnityCommander.Core
             this.SetCommand(command);
         }
 
+        public void CreateCommand(object command, GlobalCommandSelection selector)
+        {
+            this.globalCommandSelection = selector;
+            this.SetCommand(command);
+        }
+
         /// <summary>
         /// The get command.
         /// </summary>
@@ -68,33 +74,33 @@ namespace UnityCommander.Core
         {
             GlobalCommand select = null;
 
-            foreach (var globalCommand in this.globalCommands.Where(c => ((GlobalCommand)c).Name.Contains(commandName)))
+            var selectionGlobalCommands = this.globalCommands.Where(c => ((GlobalCommand)c).Name.Contains(commandName));
+
+            foreach (var globalCommand in selectionGlobalCommands)
             {
-                if (globalCommand is GlobalCommand command)
+                if (globalCommand is not GlobalCommand command) continue;
+                if (command.Delegate == null) return command;
+
+                var baseType = command.Delegate.Method.GetBaseDefinition().DeclaringType;
+                var type = command.SourceMethod.DeclaringType;
+
+                switch (globalCommand.SelectionFlag)
                 {
-                    if (command.Delegate != null)
-                    {
-                        var baseType = command.Delegate.Method.GetBaseDefinition().DeclaringType;
-                        var baseMethod = baseType?.GetMethod(command.SourceMethod.Name);
-                        var type = command.SourceMethod.DeclaringType;
+                    case GlobalCommandSelection.All:
 
-                        if (baseType == type)
-                        {
-                            select = command;
-                            continue;
-                        }
-                    }
+                        break;
+                    case GlobalCommandSelection.SingleFirst:
+                        if (baseType != type) return command;
+                        select = command;
+                        continue;
 
-                    //if (baseMethod?.GetBaseDefinition() == GetOverriddenMethodInfo(command.SourceMethod))
-                    //{
-                    //    select = command;
-                    //    continue;
-                    //}
-
-                    return command;
+                    case GlobalCommandSelection.SingleLast:
+                        if (baseType != type) return command;
+                        select = command;
+                        continue;
                 }
             }
-
+        
             return select;
         }
 
@@ -132,7 +138,7 @@ namespace UnityCommander.Core
             
             foreach (var method in methods)
             {
-                if (!method.CustomAttributes.Any(p => p.AttributeType.Name == "GlobalCommandAttribute")) continue;
+                if (method.CustomAttributes.All(p => p.AttributeType.Name != "GlobalCommandAttribute")) continue;
              
                 var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
                 var command = new GlobalCommandExecute(action, type);

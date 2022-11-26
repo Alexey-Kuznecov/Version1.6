@@ -28,7 +28,7 @@ namespace UnityCommander.Integration.Commands
         /// <param name="source">
         /// The source.
         /// </param>
-        [GlobalCommand(CommandNames.FileDel, CommandKeys.CtrlH)]
+        [GlobalCommand(CommandNames.FileDelete, CommandKeys.CtrlH)]
         public virtual void Delete(string source)
         {
             Core.IO.Operations.FileManager.Delete(source);

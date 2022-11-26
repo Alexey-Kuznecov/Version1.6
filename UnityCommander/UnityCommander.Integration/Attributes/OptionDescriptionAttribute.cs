@@ -13,14 +13,26 @@ namespace UnityCommander.Integration.Attributes
         /// Initializes a new instance of the <see cref="OptionAttribute"/> class.
         /// </summary>
         /// <param name="description"> Description of the settings parameter.. </param>
-        public OptionAttribute(string description)
+        public OptionAttribute(string title, string description, string category)
         {
+            this.Category = category;
             this.Description = description;
+            this.Title = title;
         }
+
+        /// <summary>
+        /// Категория и тег которая используется для классификации параметров.
+        /// </summary>
+        public string Category { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
         public string Description { get; set; }
+        
+        /// <summary>
+        /// Название параметра или краткое описания.
+        /// </summary>
+        public string Title { get; set; }
     }
 }

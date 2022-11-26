@@ -18,7 +18,7 @@ namespace UnityCommander.Common.Models
         public void SetValue(object val)
         {
             var method = this.Source.GetType().GetMethod($"Set{OptionName}");
-            method.Invoke(this.Source, new object[] { val });
+            method?.Invoke(this.Source, new object[] { val });
         }
     }
 }

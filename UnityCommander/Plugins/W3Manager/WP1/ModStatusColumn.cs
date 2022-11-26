@@ -45,7 +45,7 @@ namespace W3Manager.WP1
         public void ColumnInitial(ColumnBuilder builder)
         {
             builder.Add("Mod Status", 80);
-            builder.Add("Mod Status 2", 80);
+            builder.Add("Mod Category", 80);
         }
 
         /// <summary>
@@ -57,7 +57,6 @@ namespace W3Manager.WP1
         public void UpdateColumnValue(ColumnManager columnManager)
         {
             this.manager = columnManager;
-            // throw new  System.NotImplementedException();
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace W3Manager.WP1
                 if (columnName == "Mod Status")
                     return "File";
 
-                if (columnName == "Mod Status 2")
+                if (columnName == "Mod Category")
                     return "File 2";
             }
             else if (directoryItem.Equals(DirectoryItemType.Folder))
@@ -84,7 +83,7 @@ namespace W3Manager.WP1
                 if (columnName == "Mod Status")
                     return "Folder";
 
-                if (columnName == "Mod Status 2")
+                if (columnName == "Mod Category")
                     return "Folder 2";
             }
 
@@ -111,12 +110,12 @@ namespace W3Manager.WP1
                         this.manager.Hide("Mod Status");
                 }
                 
-                if (this.settings.GetShowModStatus2() != null)
+                if (this.settings.GetShowModCategory() != null)
                 {
-                    if (this.settings.GetShowModStatus2() == "On")
-                        this.manager.Add("Mod Status 2");
+                    if (this.settings.GetShowModCategory() == "On")
+                        this.manager.Add("Mod Category");
                     else
-                        this.manager.Hide("Mod Status 2");
+                        this.manager.Hide("Mod Category");
                 }
                
                 this.manager.Update();

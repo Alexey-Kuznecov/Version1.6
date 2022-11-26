@@ -117,6 +117,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Indicates the current directory.
         /// </summary>
+        private object selectedDirectory;
+
+        /// <summary>
+        /// Indicates the current directory.
+        /// </summary>
         private FileModel currentFile;
 
         #endregion
@@ -128,6 +133,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.currentDirectory;
             set => this.SetProperty(ref this.currentDirectory, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the current directory.
+        /// </summary>
+        public object SelectedDirectory
+        {
+            get => this.selectedDirectory;
+            set => this.SetProperty(ref this.selectedDirectory, value);
         }
 
         /// <summary>

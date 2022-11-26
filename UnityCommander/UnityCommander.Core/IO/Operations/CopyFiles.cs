@@ -189,7 +189,7 @@ namespace UnityCommander.Core.IO.Operations
             {
                 foreach (var oldFile in Directory.GetFiles(source))
                 {
-                    this.CopyFile(source, target);
+                    this.CopyFile(oldFile, target);
                 }
             }
         }
@@ -197,16 +197,16 @@ namespace UnityCommander.Core.IO.Operations
         /// <summary>
         /// The copy files.
         /// </summary>
-        /// <param name="oldDir">
+        /// <param name="oldFile">
         /// The path to the old directory.
         /// </param>
         /// <param name="newDir">
         /// The path to the new directory.
         /// </param>
-        public void CopyFile(string oldDir, string newDir)
+        public void CopyFile(string oldFile, string newDir)
         {
-            FileInfo info = new FileInfo(oldDir);
-            string newFile = Path.Combine(newDir, new DirectoryInfo(oldDir).Name);
+            FileInfo info = new FileInfo(oldFile);
+            string newFile = Path.Combine(newDir, new DirectoryInfo(oldFile).Name);
 
             fileSize = info.Length;
             copyInfo.Name = info.Name;
@@ -216,7 +216,7 @@ namespace UnityCommander.Core.IO.Operations
 
             if (!File.Exists(newFile))
             {
-                fileOperation.XCopy(oldDir, newFile, CopyProgressHandle);
+                fileOperation.XCopy(oldFile, newFile, CopyProgressHandle);
             }
         }
 

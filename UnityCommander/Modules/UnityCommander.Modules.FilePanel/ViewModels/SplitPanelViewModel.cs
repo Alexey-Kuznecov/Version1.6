@@ -8,6 +8,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
+using UnityCommander.Common.Commands;
+using UnityCommander.Integration.Commands;
+using CommandNames = UnityCommander.Integration.Commands.CommandNames;
+
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     using System;
@@ -101,7 +105,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
-            this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("OnSettingsChanged").Command;
+            //this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("OnSettingsChanged").Command;
+            var fileManger = globalCommandService.GetCommandManager();
+            //fileManger.CreateSingletonCommand(nameof(UpdateFilePanel), null, UpdateFilePanel);
+            fileManger.CreateCommand(this, GlobalCommandSelection.All);
 
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -183,8 +190,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Delaration properties
 
-
-        
         #endregion
 
         #region Other
@@ -415,33 +420,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private void CreateContextMenu()
         {
-            List<GlobalCommand> globalCommands = new List<GlobalCommand>
+            var globalCommands = new List<GlobalCommand>
             {
-                new ()
-                {
-                    DisplayName = "Open file in Viewer",
-                    Name = "DisplayContent"
-                },
-                new ()
-                {
-                    DisplayName = "Create",
-                    Name = "Create"
-                },
-                new ()
-                {
-                    DisplayName = "Delete",
-                    Name = "Delete"
-                },
-                //new ()
-                //    {
-                //        DisplayName = "ModStatusColumn",
-                //        Name = "W3Manager.WP1.ModStatusColumn"
-                //    },
-                new ()
-                {
-                    DisplayName = "Move",
-                    Name = "Move"
-                },
+                new () { DisplayName = CommandNames.ContentViewer, Name =  CommandNames.ContentViewer, SelectionFlag = GlobalCommandSelection.SingleFirst },
+                new () { DisplayName = "Create", Name = CommandNames.FileCreate, SelectionFlag = GlobalCommandSelection.SingleFirst },
+                new () { DisplayName = "Delete", Name = CommandNames.FileDelete, SelectionFlag = GlobalCommandSelection.SingleFirst },
+                new () { DisplayName = "Move", Name = CommandNames.FileMove, SelectionFlag = GlobalCommandSelection.SingleFirst},
+                new () { DisplayName = "DirectoryUpdate", Name = CommandNames.DirectoryUpdate, SelectionFlag = GlobalCommandSelection.All },
             };
             
             foreach (var command in globalCommands)
@@ -597,6 +582,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         /// <param name="dirPath"> Expected the path to the directory. </param>
         private void UpdateFilePanel(object dirPath)
+        {
+            var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+
+            if (!this.DirectoryPanelTemplate.Equals(template))
+                this.DirectoryPanelTemplate = template;
+
+            var path = Directory.Exists(dirPath.ToString()) ? dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
+            this.DirectoryList = this.dataService.GetDirectories(path);
+            this.FileList = this.dataService.GetFiles(path);
+            this.CurrentDirectory = path;
+            this.UpdatePluginColumns();
+        }
+
+        [GlobalCommand(CommandNames.DirectoryUpdate, CommandKeys.CtrlT)]
+        public void UpdateDirectoryPanel(object dirPath)
         {
             var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
