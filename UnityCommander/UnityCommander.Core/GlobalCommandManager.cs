@@ -22,6 +22,8 @@ namespace UnityCommander.Core
         /// </summary>
         private readonly Queue<IGlobalCommand> globalCommands;
 
+        private readonly HashSet<IGlobalCommand> allCommands = new HashSet<IGlobalCommand>();
+
         /// <summary>
         /// The command selector.
         /// </summary>
@@ -52,13 +54,43 @@ namespace UnityCommander.Core
                 return;
             }
 
-            this.SetCommand(command);
+            this.SetCommandByAttribute(command);
         }
 
         public void CreateCommand(object command, GlobalCommandSelection selector)
         {
             this.globalCommandSelection = selector;
-            this.SetCommand(command);
+            this.SetCommandByAttribute(command);
+        }
+
+        public void CreateCommandByAttribute(string name, ICommand command)
+        {
+            this.SetCommandByAttribute(command);
+        }
+
+        /// <summary>
+        /// Регистрирует команду кторую можно использовать в (моделе представлении). 
+        /// Получить комманду можно с помощью метода <see cref="GlobalCommandManager.GetGlobalCommand"/> по ее имени после регистрации.
+        /// </summary>
+        /// <param name="name"> Имя глобальной команды. </param>
+        /// <param name="command"> Ссылка на комнду. </param>
+        /// <remarks>
+        /// Имена каждой новой команды должны быть уникальными, иначе существующяя команда будет заменена новой командой. 
+        /// Это бывает полезно когда ваша команда, создается каждый раз, при инициальзации конструктара и вам нужно обновить команду для нового объекта.
+        /// </remarks>
+        public void RegisterCommand(string name, ICommand command)
+        {
+            var globalCommand = new GlobalCommand
+            {
+                Name = name,
+                Command = command,
+                SourceFullName = command.GetType().FullName,
+                SourceType = command.GetType()
+            };
+
+            if (this.allCommands.SingleOrDefault(c => c.Name == name) != null)
+                this.allCommands.RemoveWhere(c => c.Name == name);
+            this.allCommands.Add(globalCommand);
         }
 
         /// <summary>
@@ -105,6 +137,18 @@ namespace UnityCommander.Core
         }
 
         /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IGlobalCommand"/>.
+        /// </returns>
+        public IGlobalCommand GetGlobalCommand(string commandName) 
+            => (GlobalCommand)this.allCommands.Single(cmd => ((GlobalCommand)cmd).Name.Contains(commandName));
+
+        /// <summary>
         /// The get commands.
         /// </summary>
         /// <param name="commandName">
@@ -130,7 +174,7 @@ namespace UnityCommander.Core
         /// <param name="instance">
         /// The instance.
         /// </param>
-        private void SetCommand(object instance)
+        private void SetCommandByAttribute(object instance)
         {
             const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
             Type type = instance.GetType();

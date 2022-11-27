@@ -66,14 +66,10 @@ namespace UnityCommander.Core.IO.Operations
         {
             if (source == null) return;
 
-            //if (File.Exists(source))
-            //{
-            //    File.Delete(source);
-            //}
-            //else
-            //{
-            //    Directory.Delete(source, true);
-            //}
+            if (File.Exists(source))
+                File.Delete(source);
+            else
+                Directory.Delete(source, true);
         }
 
         /// <summary>

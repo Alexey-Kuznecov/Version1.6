@@ -17,11 +17,14 @@ namespace UnityCommander.ViewModels.Dialogs
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Core;
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
     using UnityCommander.Core.IO.Operations;
+    using UnityCommander.Integration.Commands;
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
@@ -34,6 +37,8 @@ namespace UnityCommander.ViewModels.Dialogs
         /// The manager.
         /// </summary>
         private readonly CopyManager copyManager = (CopyManager)Commander<CopyFiles>.GetManager();
+
+        private IGlobalCommandManager globalCommandManager;
 
         /// <summary>
         /// The invoker class instance.
@@ -101,13 +106,12 @@ namespace UnityCommander.ViewModels.Dialogs
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
-        public CopyProcessViewModel(IEventAggregator viewModelMessage)
+        public CopyProcessViewModel(IEventAggregator viewModelMessage, IGlobalCommandService globalCommandService)
         {
+            this.globalCommandManager = globalCommandService.GetCommandManager();
             this.invoker = new CopyFileInvoker();
-
             messenger = viewModelMessage.GetEvent<MessageSendEvent>();
             messenger.Subscribe(this.SetupCopyFiles);
-            
             this.StopCommand = new DelegateCommand(this.CopySuspend);
             this.CancelCommand = new DelegateCommand(this.CopyCancel);
             this.ResumeCommand = new DelegateCommand(this.CopyResume);
@@ -258,18 +262,11 @@ namespace UnityCommander.ViewModels.Dialogs
 
             if (copyInfo is object[] address)
             {
-                var source = new DirectoryInfo((string)address[0]);
-                var destination = new DirectoryInfo((string)address[1]);
-
-                if (!(bool)address[2])
-                {
-                    var fname = new DirectoryInfo(source.FullName).Name;
-                    var dirC = destination.FullName + "\\" + fname;
-                    Directory.CreateDirectory(dirC);
-                    destination = new DirectoryInfo(dirC);
-                }
+                var source = address[0] as DirectoryInfo;
+                var destination = address[1] as DirectoryInfo;
 
                 this.copyManager.CopyFileReport += this.CopyFileReport;
+                this.copyManager.CopyFileFinish += this.CopyFileFinish;
                 this.copyManager.Copy(source.FullName, destination.FullName);
                 //CopyManager.CopyFileResult += this.CopyFileResult;
             }
@@ -323,6 +320,15 @@ namespace UnityCommander.ViewModels.Dialogs
             this.AverageSpeed = ConverterBytes.AutoConvertFormatBytes((decimal)info.AverageSpeed);
             this.TotalTimeLeft = info.TotalTimeLeft;
             //this.CurrentName = info.Name;
+        }
+
+        /// <summary>
+        /// Обработчик события завершения копирования (файлов/папок).
+        /// </summary>
+        private void CopyFileFinish()
+        {
+            var cmd = this.globalCommandManager.GetGlobalCommand("CloseCopyFileDialogCommand");
+            cmd.Command?.Execute(null);
         }
 
         /// <summary>

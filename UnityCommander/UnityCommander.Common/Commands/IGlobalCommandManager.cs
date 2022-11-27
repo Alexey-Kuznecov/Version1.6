@@ -3,6 +3,7 @@ namespace UnityCommander.Common.Commands
 {
     using System;
     using System.Collections.Generic;
+    using System.Windows.Input;
 
     /// <summary>
     /// The GlobalCommandManager interface.
@@ -19,6 +20,17 @@ namespace UnityCommander.Common.Commands
         /// The <see cref="GlobalCommand"/>.
         /// </returns>
         IGlobalCommand GetCommand(string commandName);
+
+        /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="GlobalCommand"/>.
+        /// </returns>
+        IGlobalCommand GetGlobalCommand(string commandName);
 
         /// <summary>
         /// The get command.
@@ -56,6 +68,14 @@ namespace UnityCommander.Common.Commands
         void CreateCommand(object command, GlobalCommandSelection selector);
 
         /// <summary>
+        /// Регистрирует команду для ее использования в глобальном пространстве программы.
+        /// </summary>
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        void RegisterCommand(string name, ICommand command);
+
+        /// <summary>
         /// The create command.
         /// </summary>
         /// <param name="commandName">
@@ -68,7 +88,6 @@ namespace UnityCommander.Common.Commands
         /// The action.
         /// </param>
         void CreateSingletonCommand(string commandName, object instance, Action<object> action);
-
 
         void UpdateCommand(string commandName);
     }

@@ -107,6 +107,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="25" />
                     <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="25" />
                 </Grid.ColumnDefinitions>
                 <ContentControl
                     Grid.Column="0"
@@ -140,6 +141,23 @@
                     </ContentControl.InputBindings>
                     <ContentControl.ToolTip>
                         <ToolTip Content="Go to this computer" />
+                    </ContentControl.ToolTip>
+                </ContentControl>
+                <ContentControl
+                    Grid.Column="2"
+                    Height="25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="{Binding UpdateDirectoryIcon.Path.Data}"
+                    Foreground="#E8E8EC"
+                    IsEnabled="{Binding ThisComputerIconIsEnabled}"
+                    Style="{DynamicResource CustomButtonStyles}"
+                    Template="{DynamicResource CustomButtonTemplate}">
+                    <ContentControl.InputBindings>
+                        <MouseBinding Command="{Binding UpdateDirectoryPanelCommand}" Gesture="LeftClick" />
+                    </ContentControl.InputBindings>
+                    <ContentControl.ToolTip>
+                        <ToolTip Content="Update directory panel" />
                     </ContentControl.ToolTip>
                 </ContentControl>
             </Grid>

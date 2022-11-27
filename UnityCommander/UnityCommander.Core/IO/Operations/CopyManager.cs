@@ -49,7 +49,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <summary>
         /// Gets or sets the action to processing copy file results.
         /// </summary>
-        public Action<CopyInfo> CopyFileFinish { get; set; }
+        public Action CopyFileFinish { get; set; }
 
         /// <summary>
         /// This method is created.
@@ -79,7 +79,7 @@ namespace UnityCommander.Core.IO.Operations
                     this.copyFile.CopyReportEvent -= this.FileCopier_CopyReportEvent;
                 }
 
-                //this.CopyFileFinish?.Invoke(this.fileCopier.GetParameters);
+                this.CopyFileFinish?.Invoke();
             });
         }
 

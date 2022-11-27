@@ -26,6 +26,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using UnityCommander.Controls.TabPanel;
     using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.TabPanel.Behaviors;
+    using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Commands;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
     {
@@ -73,6 +75,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
         private UserControl activePanel;
         
+        /// <summary>
+        /// Содержит текущюю модель данных файловой панели.
+        /// </summary>
         private ITabPanelContent activeTabPanelContent;
 
         private static string commandStatus;
@@ -109,9 +114,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             IGlobalCommandService globalCommandService,
             CommandManager manager)
         {
-            var fileManger = globalCommandService.GetCommandManager();
-            fileManger.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
-            fileManger.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
+            var globalCommandManager = globalCommandService.GetCommandManager();
+            globalCommandManager.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
+            globalCommandManager.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
+            globalCommandManager.CreateCommand(this, GlobalCommandSelection.SingleFirst);
 
             this.regionManager = regionManager;
             this.commandManager = manager;
@@ -122,6 +128,12 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         }
 
         #region Public Properties
+
+        public ITabPanelContent ActiveTabPanelContent 
+        { 
+            get => this.activeTabPanelContent; 
+            set => activeTabPanelContent = value; 
+        }
 
         /// <summary>
         /// Gets or sets a computer icon.
@@ -195,7 +207,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                             
                         if (panelView.DataContext is IDirectoryPanel directoryPanel)
                         {
-                            directoryPanel.InitializedViewModel(ref token, path ?? this.activeTabPanelContent.GetCurrentPath());
+                            directoryPanel.InitializedViewModel(ref token, path ?? this.ActiveTabPanelContent.GetCurrentPath());
                             this.currentTab = this.CreateTabControl(token, this.TabContentFormat(directoryPanel.GetCurrentPath()), panelView);
                             tabPanel.Collection.Add(this.currentTab);
                         }
@@ -236,6 +248,11 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         
         private static UserControl viewerView;
 
+        /// <summary>
+        /// Отображает тип обозревателя на активной вкладке файловой панели. 
+        /// Например настройки, проводник или текстовый редактор.
+        /// </summary>
+        /// <param name="obj"></param>
         public static void DisplayViewerContent(object obj)
         {
             commandStatus = "Add";
@@ -290,7 +307,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             
             if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
             {
-                var panelContent = tabPanel.activeTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
+                var panelContent = tabPanel.ActiveTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
                 var vpanelContent = tabPanel.activePanel.DataContext as IViewerPanel;
                 vpanelContent.SetViewerContent(obj);
 
@@ -299,6 +316,21 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 tabPanel.TabCollection.Add(tabPanel.currentTab);
                 tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, directoryPanel);
                 tabPanel.ActivateFilePanel(token);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [GlobalCommand(CommandNames.DirectoryUpdate, CommandKeys.CtrlT)]
+        public void DirectoryUpdate()
+        {
+            var activeTabPanelContentModel = currentTabPanel.ActiveTabPanelContent;
+
+            if (activeTabPanelContentModel != null)
+            {
+                IDirectoryPanel directoryPanel = currentTabPanel.ActiveTabPanelContent as IDirectoryPanel;
+                directoryPanel.DirectoryUpdate(directoryPanel);
             }
         }
 
@@ -317,7 +349,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             {
                 var view = config.ViewType;
                 var token = config.Token;
-                this.activeTabPanelContent ??= view.DataContext as ITabPanelContent;
+                this.ActiveTabPanelContent ??= view.DataContext as ITabPanelContent;
 
                 if (view?.DataContext is ITabPanelContent directoryPanel)
                 {
@@ -403,6 +435,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             return button;
         }
 
+
+
         #region Event Handlers
 
         /// <summary>
@@ -464,7 +498,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             
             if (obj is ITabPanelContent panelContent)
             {
-                this.activeTabPanelContent = panelContent;
+                this.ActiveTabPanelContent = panelContent;
             }
         }
 
@@ -519,6 +553,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         private static ITabPanelContent FindDirectoryPanel(FrameworkElement element) =>
             element.DataContext is ITabPanelContent directoryPanel ? directoryPanel : null;
 
+       /// <summary>
+       /// Данный метод обредиляет активную панель как рабочую. 
+       /// </summary>
+       /// <param name="focusData"></param>
         public void FocusElementDataProvider(ElementFocusData focusData)
         {
             elementFocusData = focusData;

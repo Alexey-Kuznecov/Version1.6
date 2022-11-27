@@ -9,6 +9,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using UnityCommander.Common.Module;
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Commands.Base;
+    using UnityCommander.Integration.Commands;
 
     /// <summary>
     /// The split panel view model.
@@ -24,6 +25,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// The computer icon.
         /// </summary>
         private IIcon backButtonIcon;
+
+        /// <summary>
+        /// The computer icon.
+        /// </summary>
+        private IIcon updateDirectoryPanelIcon;
 
         /// <summary>
         /// The computer icon.
@@ -56,6 +62,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.backButtonIcon;
             set => this.SetProperty(ref this.backButtonIcon, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a computer icon.
+        /// </summary>
+        public IIcon UpdateDirectoryIcon
+        {
+            get => this.updateDirectoryPanelIcon;
+            set => this.SetProperty(ref this.updateDirectoryPanelIcon, value);
         }
 
         /// <summary>
@@ -114,6 +129,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                     this.ThisComputerIconIsEnabled = false;
                 });
+
+        /// <summary>
+        ///  Goes to the device and drive panel.
+        /// </summary>
+        public DelegateCommand<object> UpdateDirectoryPanelCommand => new DelegateCommand<object>(
+            index =>
+            {
+                var globalCommandManager = globalCommandService.GetCommandManager();
+                var cmd = globalCommandManager.GetCommand(CommandNames.DirectoryUpdate);
+                cmd.Command?.Execute(null);
+            });
 
         #region ITabPanelContent Impelements
 

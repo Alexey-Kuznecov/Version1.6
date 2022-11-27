@@ -87,7 +87,11 @@ namespace UnityCommander.Core
         /// </param>
         public void Execute(object parameter)
         {
-            if (this.action != null || parameter == null) return;
+            if (this.action != null || parameter == null)
+            {
+                this.Command.Method.Invoke(this.Command.Target ?? this.Command.Method.DeclaringType, null);
+                return; 
+            }
 
             if (parameter is object[] arr)
                 this.Command.Method.Invoke(this.Command.Target ?? this.Command.Method.DeclaringType, arr);

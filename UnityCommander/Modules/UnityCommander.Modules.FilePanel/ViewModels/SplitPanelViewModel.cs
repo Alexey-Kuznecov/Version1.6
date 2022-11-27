@@ -106,9 +106,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.settingsService = settingsService.GetAppConfig();
             this.globalCommandService = globalCommandService;
             //this.TestCommand = this.globalCommandService.GetCommandManager().GetCommand("OnSettingsChanged").Command;
-            var fileManger = globalCommandService.GetCommandManager();
+            //var fileManger = globalCommandService.GetCommandManager();
             //fileManger.CreateSingletonCommand(nameof(UpdateFilePanel), null, UpdateFilePanel);
-            fileManger.CreateCommand(this, GlobalCommandSelection.All);
+            //fileManger.CreateCommand(this, GlobalCommandSelection.All);
 
             // Composite command
             this.multiCommandService = multiCommandService;
@@ -116,6 +116,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
             this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
+            this.UpdateDirectoryIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.Refresh);
             this.ThisComputerIconIsEnabled = true;
             this.BackButtonIsEnabled = true;
         }
@@ -248,11 +249,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
             BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
             string targetPath = null;
+            var visualTarget = (dropInfo.VisualTarget as ListBox);
+            var splitPanelViewModel = visualTarget.DataContext as SplitPanelViewModel;
 
             if (targetItem is null)
             {
-                var firstItem = (dropInfo.VisualTarget as ListBox)?.SelectedItem as BaseDirectory;
-
+                var firstItem = visualTarget?.SelectedItem as BaseDirectory;
+                
                 if (firstItem != null)
                 {
                     var path = firstItem.Path.Split('\\');
@@ -262,16 +265,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     targetPath = this.CurrentDirectory;
             }
 
-            targetPath = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath;
-
-            // targetItem.Add(sourceItem);
-            var copyParameters = new CopyParameters
+            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(new CopyParameters
             {
                 Source = (dropInfo.Data as BaseDirectory)?.Path,
-                Target = targetPath
-            };
+                Target = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath
+            }), r => { });
 
-            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
+            
+            if (sourceItem is FolderModel folderModels)
+                splitPanelViewModel.DirectoryList.Add(folderModels);
+            else
+                splitPanelViewModel.FileList.Add(sourceItem as FileModel);
         }
 
         /// <summary>
@@ -595,15 +599,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.UpdatePluginColumns();
         }
 
-        [GlobalCommand(CommandNames.DirectoryUpdate, CommandKeys.CtrlT)]
-        public void UpdateDirectoryPanel(object dirPath)
+        public void DirectoryUpdate(IDirectoryPanel directoryPanel)
         {
             var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
             if (!this.DirectoryPanelTemplate.Equals(template))
                 this.DirectoryPanelTemplate = template;
 
-            var path = Directory.Exists(dirPath.ToString()) ? dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
+            var path = Directory.Exists(directoryPanel.GetCurrentPath()) 
+                ? directoryPanel.GetCurrentPath() 
+                : Directory.GetDirectoryRoot(directoryPanel.GetCurrentPath());
             this.DirectoryList = this.dataService.GetDirectories(path);
             this.FileList = this.dataService.GetFiles(path);
             this.CurrentDirectory = path;

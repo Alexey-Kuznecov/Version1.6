@@ -44,14 +44,23 @@
                 Command="{Binding CopyCommand}"
                 Content="Copy" />
             <Button
-                Grid.Row="3"
                 Margin="10"
                 Command="{Binding CopyCommand}"
                 Content="Move" />
+            <Button
+                Margin="10"
+                Command="{Binding CloseDialogCommand}"
+                Content="Close" />
         </WrapPanel>
-        <Grid Grid.Row="3">
-            <CheckBox Content="Копировать только содержимое папки" IsChecked="{Binding CopyOnlyFolderContent}" />
-        </Grid>
-
+        <WrapPanel Grid.Row="3">
+            <CheckBox
+                Margin="2"
+                Content="Копировать только содержимое папки"
+                IsChecked="{Binding CopyOnlyFolderContent}" />
+            <CheckBox
+                Margin="2"
+                Content="Закрыть окно полсе копирования"
+                IsChecked="{Binding CloseDialogAfterCopyingComplete}" />
+        </WrapPanel>
     </Grid>
 </UserControl>
