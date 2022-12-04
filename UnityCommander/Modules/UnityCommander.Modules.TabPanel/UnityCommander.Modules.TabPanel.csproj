@@ -5,6 +5,9 @@
 	  <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.TabPanel</AssemblyName>
   </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>Nlog;DEBUG</DefineConstants>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>

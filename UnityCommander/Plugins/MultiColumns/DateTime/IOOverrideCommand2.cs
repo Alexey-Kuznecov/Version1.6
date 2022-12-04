@@ -15,7 +15,7 @@ namespace MultiColumns.DateTime
         /// <param name="source">
         /// The source.
         /// </param>
-        [GlobalCommand("MultiColumns File Moving", CommandKeys.CtrlB)]
+        [GlobalCommand("MultiColumns File Delete", CommandKeys.CtrlB)]
         public override void Delete(string source)
         {
             base.Delete(source);

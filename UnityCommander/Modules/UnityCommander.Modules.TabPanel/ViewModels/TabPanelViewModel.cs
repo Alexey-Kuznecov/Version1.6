@@ -28,6 +28,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using UnityCommander.Modules.TabPanel.Behaviors;
     using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
+    using UnityCommander.Core;
+    using System.Collections.Generic;
+    using NLog;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
     {
@@ -49,6 +52,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         private readonly IAppConfigService appConfigService;
 
         /// <summary>
+        /// Содержит ссылку на менеджер для регистрации или выполнения глобальных команд.
+        /// </summary>
+        private readonly IGlobalCommandManager globalCommandManager;
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly Logger logger;
+
+        /// <summary>
         /// The navigationCommand class instance.
         /// </summary>
         private NavigationInvoker navigationCommand;
@@ -66,6 +79,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The token display.
         /// </summary>
+        private static ITabPanelContent previousLostFocusTabPanel;
+
+        /// <summary>
+        /// The token display.
+        /// </summary>
+        private static List<IDirectoryPanel> directoryPanels = new List<IDirectoryPanel>();
+
+        /// <summary>
+        /// The token display.
+        /// </summary>
         private TabControl currentTab;
 
         /// <summary>
@@ -73,6 +96,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </summary>
         private TabCollection tabCollection;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private UserControl activePanel;
         
         /// <summary>
@@ -112,9 +138,13 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             IMultiCommandService commandService,
             IAppConfigService configService,
             IGlobalCommandService globalCommandService,
-            CommandManager manager)
+            CommandManager manager, 
+            ModuleLogger logger)
         {
-            var globalCommandManager = globalCommandService.GetCommandManager();
+            this.logger = logger.GetLogger();
+            this.globalCommandManager = globalCommandService.GetCommandManager();
+            GlobalCommandExecute.GlobalCommandExecuteChanged += OnGlobalCommandExecuteChanged;
+            globalCommandManager.CreateCommandByAttribute(this);
             globalCommandManager.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
             globalCommandManager.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
             globalCommandManager.CreateCommand(this, GlobalCommandSelection.SingleFirst);
@@ -125,6 +155,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
             // Composite command
             commandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+        }
+
+        private void OnGlobalCommandExecuteChanged(object sender, EventArgs e)
+        {
+            var globalCmds = this.globalCommandManager.GetGlobalCommands(CommandNames.DirectoryUpdate);
+
+            foreach (var command in globalCmds)
+            {
+                command.Command.Execute(null);
+            }
         }
 
         #region Public Properties
@@ -200,6 +240,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
                         var token = Guid.NewGuid();
                         var panelView = new SplitPanelView();
+                        
                         string path = null;
 
                         if (this.activePanel is { DataContext: IDirectoryPanel panel })
@@ -284,6 +325,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                     }
                 }
 
+                //directoryPanels.Add(directoryPanel);
                 viewerView = new ViewerView();
                 var panelContent = viewerView.DataContext as ITabPanelContent;
                 var vpanelContent = viewerView.DataContext as IViewerPanel;
@@ -326,12 +368,26 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         public void DirectoryUpdate()
         {
             var activeTabPanelContentModel = currentTabPanel.ActiveTabPanelContent;
+            var lastActiveTabPanelContentModel = previousLostFocusTabPanel;
+
+            if (ActiveTabPanelContent is IDirectoryPanel directory)
+            {
+                directory.DirectoryUpdate(directory);
+            }
 
             if (activeTabPanelContentModel != null)
             {
-                IDirectoryPanel directoryPanel = currentTabPanel.ActiveTabPanelContent as IDirectoryPanel;
-                directoryPanel.DirectoryUpdate(directoryPanel);
+                var regions = this.GetCurrentRegion();
+
+                foreach (var directoryPanel in directoryPanels)
+                {
+                    if (directoryPanel != null)
+                        directoryPanel.DirectoryUpdate(directoryPanel);
+                }
             }
+
+            var cmd = this.globalCommandManager.GetGlobalCommand("CloseCopyFileDialogCommand");
+            cmd.Command?.Execute(null);
         }
 
         /// <summary>
@@ -349,8 +405,14 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             {
                 var view = config.ViewType;
                 var token = config.Token;
-                this.ActiveTabPanelContent ??= view.DataContext as ITabPanelContent;
+                var isActive = config.IsActive;
 
+                if (isActive)
+                    this.ActiveTabPanelContent = view.DataContext as ITabPanelContent;
+                
+                if (view.DataContext is IDirectoryPanel dir)
+                    directoryPanels.Add(dir);
+                
                 if (view?.DataContext is ITabPanelContent directoryPanel)
                 {
                     directoryPanel.InitializedViewModel(ref token, config.Path);
@@ -434,8 +496,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             button.SetBinding(AddTabControl.CommandParameterProperty, binding);
             return button;
         }
-
-
 
         #region Event Handlers
 
@@ -528,6 +588,11 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             this.activePanel = (UserControl)regions.Views.Single(
                 view => FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == token);
             regions.Activate(this.activePanel);
+            previousLostFocusTabPanel = this.activePanel.DataContext as ITabPanelContent;
+            ActiveTabPanelContent = this.activePanel.DataContext as ITabPanelContent;
+#if (Nlog)
+            logger.Info("Текущий путь: '{0}'", ActiveTabPanelContent.GetCurrentPath());
+#endif
         }
 
         /// <summary>
@@ -561,6 +626,27 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         {
             elementFocusData = focusData;
             currentTabPanel = (TabPanelViewModel)focusData.TabPanel;
+
+            if (currentTabPanel.activeTabPanelContent is ITabPanelContent directory)
+            {
+                ActiveTabPanelContent = directory;
+#if (Nlog)
+                logger.Info("Текущий путь:Focus: '{0}'", ActiveTabPanelContent.GetCurrentPath());
+#endif
+            }
+        }
+
+        public void LastFocusElementDataProvider(ElementFocusData focusData)
+        {
+            var dd = (TabPanelViewModel)focusData.TabPanel;
+
+            if (dd.ActiveTabPanelContent is ITabPanelContent directory)
+            {
+                previousLostFocusTabPanel = directory;
+#if (Nlog)
+                logger.Info("Текущий путь:LostFocus: '{0}'", previousLostFocusTabPanel.GetCurrentPath());
+#endif
+            }
         }
     }
 }

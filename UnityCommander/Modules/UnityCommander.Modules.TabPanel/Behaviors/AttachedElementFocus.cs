@@ -70,7 +70,18 @@ namespace UnityCommander.Modules.TabPanel.Behaviors
             {
                 element.GotFocus += Element_GotFocus;
                 element.LostFocus += Element_LostFocus;
+                element.PreviewDrop += Element_PreviewDrop;
                 SetFocusOnActiveTabPanel(element);
+            }
+        }
+
+        private static void Element_PreviewDrop(object sender, DragEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                //border = sender as Border;
+                //border.BorderBrush = new SolidColorBrush(Color.FromRgb(125, 162, 230));
+                SetFocusOnActiveTabPanel(border);
             }
         }
 
@@ -119,6 +130,15 @@ namespace UnityCommander.Modules.TabPanel.Behaviors
             if (sender is Border border)
             {
                 border.BorderBrush = Brushes.White;
+
+                if (border.DataContext is IElementFocusable tabPanel)
+                {
+                    tabPanel.LastFocusElementDataProvider(new ElementFocusData
+                    {
+                        ElementFocusable = border,
+                        TabPanel = (ITabPanel)tabPanel
+                    });
+                }
             }
         }
     }

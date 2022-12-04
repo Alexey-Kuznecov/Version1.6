@@ -11,6 +11,7 @@ using Prism.Services.Dialogs;
 using UnityCommander.Common.Commands;
 using UnityCommander.Core;
 using UnityCommander.Core.Mvvm;
+using UnityCommander.Integration.Commands;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Views.CopyDialogs;
 using UnityCommander.Views.Dialogs;
@@ -173,6 +174,15 @@ namespace UnityCommander.ViewModels.Dialogs
                 source,
                 destination
             });
+        });
+
+        /// <summary>
+        /// Gets the command to copy files or folders from one panel to another.
+        /// </summary>
+        public ICommand MoveCommand => new DelegateCommand(() =>
+        {
+            var cmdMove = this.globalCommandManager.GetCommand("Move");
+            cmdMove.Command.Execute(new object[] { this.Source, this.Target });
         });
 
         /// <summary>

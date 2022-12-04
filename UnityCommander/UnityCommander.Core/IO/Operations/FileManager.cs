@@ -19,18 +19,20 @@ namespace UnityCommander.Core.IO.Operations
         /// </param>
         public static void Move(string source, string target)
         {
-            if (source == null || target == null) return;
-            
-            //if (File.Exists(source))
-            //{
-            //    var fileInfo = new FileInfo(source);
-            //    File.Move(source, Path.Combine(target, fileInfo.Name));
-            //}
-            //else
-            //{
-            //    var directoryInfo = new DirectoryInfo(source);
-            //    Directory.Move(source, Path.Combine(target, directoryInfo.Name));
-            //}
+            if (source == null && target == null) return;
+
+            if (File.Exists(source))
+            {
+                var fileInfo = new FileInfo(source);
+                File.Move(source, Path.Combine(target, fileInfo.Name));
+            }
+            else
+            {
+                var directoryInfo = new DirectoryInfo(source);
+                Directory.Move(source, Path.Combine(target, directoryInfo.Name));
+            }
+
+            GlobalCommandExecute.OnGlobalCommandExecuteChanged(null);
         }
 
         /// <summary>
@@ -54,6 +56,8 @@ namespace UnityCommander.Core.IO.Operations
             {
                 file.MoveTo(Path.Combine(target, file.Name));
             }
+
+            Delete(source);
         }
 
         /// <summary>
@@ -70,6 +74,8 @@ namespace UnityCommander.Core.IO.Operations
                 File.Delete(source);
             else
                 Directory.Delete(source, true);
+
+            GlobalCommandExecute.OnGlobalCommandExecuteChanged(null);
         }
 
         /// <summary>

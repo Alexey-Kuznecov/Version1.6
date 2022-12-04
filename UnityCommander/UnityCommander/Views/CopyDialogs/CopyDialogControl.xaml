@@ -45,7 +45,7 @@
                 Content="Copy" />
             <Button
                 Margin="10"
-                Command="{Binding CopyCommand}"
+                Command="{Binding MoveCommand}"
                 Content="Move" />
             <Button
                 Margin="10"

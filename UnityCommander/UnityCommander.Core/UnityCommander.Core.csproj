@@ -8,6 +8,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Modules\**" />
+    <EmbeddedResource Remove="Modules\**" />
+    <None Remove="Modules\**" />
+    <Page Remove="Modules\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Remove="Behaviors\DragDrop\Drag.cs" />
     <Compile Remove="Behaviors\DragDrop\Drop.cs" />
   </ItemGroup>
@@ -47,8 +53,5 @@
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\" />
   </ItemGroup>
 </Project>

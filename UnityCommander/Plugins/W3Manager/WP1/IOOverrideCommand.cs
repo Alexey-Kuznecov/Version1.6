@@ -30,7 +30,7 @@ namespace W3Manager.WP1
         /// <param name="source">
         /// The source.
         /// </param>
-        [GlobalCommand("W3Manager File Moving", CommandKeys.CtrlB)]
+        [GlobalCommand("W3Manager File Delete", CommandKeys.CtrlB)]
         public override void Delete(string source)
         {
             base.Delete(source);

@@ -30,6 +30,17 @@ namespace UnityCommander.Common.Commands
         /// <returns>
         /// The <see cref="GlobalCommand"/>.
         /// </returns>
+        IEnumerable<IGlobalCommand> GetGlobalCommands(string commandName);
+
+        /// <summary>
+        /// The get command.
+        /// </summary>
+        /// <param name="commandName">
+        /// The command name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="GlobalCommand"/>.
+        /// </returns>
         IGlobalCommand GetGlobalCommand(string commandName);
 
         /// <summary>
@@ -66,6 +77,8 @@ namespace UnityCommander.Common.Commands
         /// The command.
         /// </param>
         void CreateCommand(object command, GlobalCommandSelection selector);
+
+        public void CreateCommandByAttribute(object instance, bool addAll = false);
 
         /// <summary>
         /// Регистрирует команду для ее использования в глобальном пространстве программы.

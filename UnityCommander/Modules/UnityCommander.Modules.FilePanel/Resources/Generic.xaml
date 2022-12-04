@@ -46,6 +46,10 @@
         </Border>
     </DataTemplate>
 
+    <!--
+        Шаблон для понели папок
+    -->
+
     <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
@@ -60,6 +64,9 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding NavigateDirectoryCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseRightButtonUp">
+                        <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <!--<i:Interaction.Behaviors>

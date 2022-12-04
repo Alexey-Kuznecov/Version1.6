@@ -12,6 +12,7 @@ namespace UnityCommander.Common.Module
         public string Path { get; set; }
         public Guid Token { get; set; }
         public string Panel { get; set; }
+        public bool IsActive { get; set; }
         public UserControl ViewType { get; set; }
     }
 }

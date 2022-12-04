@@ -76,7 +76,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Select base directory.
         /// </summary>
-        private BaseDirectory selectedBaseDirectory;
+        private BaseDirectory selectedCurrentDirectoryItem;
 
         #endregion
 
@@ -217,20 +217,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Sets the selected directory.
         /// </summary>
-        public BaseDirectory SelectedBaseDirectory
+        public BaseDirectory SelectedCurrentDirectoryItem
         {
-            set
-            {
-                if (value != null)
-                {
-                    this.SelectedDirectories.Add(value);
-                }
-            }
+            get => this.selectedCurrentDirectoryItem;
+            set => this.SetProperty(ref this.selectedCurrentDirectoryItem, value);
         }
-        
-        /// <summary>
-        /// Gets or sets the selected directory.
-        /// </summary>
-        public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
     }
 }

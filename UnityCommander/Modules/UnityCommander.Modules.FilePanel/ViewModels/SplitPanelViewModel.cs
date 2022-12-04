@@ -133,6 +133,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Goes to the selected directory.
         /// </summary>
+        public DelegateCommand<BaseDirectory> SelectCurrentDirectoryItem => new DelegateCommand<BaseDirectory>(
+            item =>
+            {
+                this.SelectedCurrentDirectoryItem = item;
+            });
+
+        /// <summary>
+        /// Goes to the selected directory.
+        /// </summary>
         public DelegateCommand<FolderModel> NavigateDirectoryCommand => new DelegateCommand<FolderModel>(
             dir =>
             {
@@ -272,10 +281,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }), r => { });
 
             
-            if (sourceItem is FolderModel folderModels)
-                splitPanelViewModel.DirectoryList.Add(folderModels);
-            else
-                splitPanelViewModel.FileList.Add(sourceItem as FileModel);
+            //if (sourceItem is FolderModel folderModels)
+            //    splitPanelViewModel.DirectoryList.Add(folderModels);
+            //else
+            //    splitPanelViewModel.FileList.Add(sourceItem as FileModel);
         }
 
         /// <summary>
@@ -426,11 +435,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var globalCommands = new List<GlobalCommand>
             {
-                new () { DisplayName = CommandNames.ContentViewer, Name =  CommandNames.ContentViewer, SelectionFlag = GlobalCommandSelection.SingleFirst },
-                new () { DisplayName = "Create", Name = CommandNames.FileCreate, SelectionFlag = GlobalCommandSelection.SingleFirst },
-                new () { DisplayName = "Delete", Name = CommandNames.FileDelete, SelectionFlag = GlobalCommandSelection.SingleFirst },
-                new () { DisplayName = "Move", Name = CommandNames.FileMove, SelectionFlag = GlobalCommandSelection.SingleFirst},
-                new () { DisplayName = "DirectoryUpdate", Name = CommandNames.DirectoryUpdate, SelectionFlag = GlobalCommandSelection.All },
+                new () { DisplayName = CommandNames.ContentViewer, Name =  CommandNames.ContentViewer },
+                new () { DisplayName = "Create", Name = CommandNames.FileCreate },
+                new () { DisplayName = "Delete", Name = CommandNames.FileDelete },
+                new () { DisplayName = "Move", Name = CommandNames.FileMove },
+                new () { DisplayName = "Directory Update", Name = CommandNames.DirectoryUpdate },
             };
             
             foreach (var command in globalCommands)
@@ -439,8 +448,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     command,
                     paramManager =>
                         {
-                            paramManager.AddParam(this, "CurrentDirectory");
-                            paramManager.AddParam(this, "CurrentDirectory");
+                            paramManager.AddParam(this, "SelectedCurrentDirectoryItem.Path");
+                            paramManager.AddParam(this, "SelectedCurrentDirectoryItem.Path");
                         }));
             }
         }

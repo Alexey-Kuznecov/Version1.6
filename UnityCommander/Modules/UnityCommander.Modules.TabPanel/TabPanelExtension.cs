@@ -63,7 +63,8 @@ namespace UnityCommander.Modules.TabPanel
                              Token = Guid.Parse(element.GetAttributeValueByName("Id")),
                              Panel = element.GetAttributeValueByName("Name"),
                              ViewType = element.GetAttributeValueByName("ViewType") == nameof(SplitPanelViewModel) 
-                                           ? new SplitPanelView() : new PluginSettingsView()
+                                           ? new SplitPanelView() : new PluginSettingsView(),
+                             IsActive = Convert.ToBoolean(element.GetAttributeValueByName("IsActive")),
                         };
                         
                         yield return record;

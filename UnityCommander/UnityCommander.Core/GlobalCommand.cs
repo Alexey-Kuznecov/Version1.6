@@ -13,6 +13,11 @@ namespace UnityCommander.Core
     public class GlobalCommand : IGlobalCommand
     {
         /// <summary>
+        /// The can execute changed.
+        /// </summary>
+        public event EventHandler ExecuteChanged;
+
+        /// <summary>
         /// Gets or sets the display name.
         /// </summary>
         public string DisplayName { get; set; }
@@ -53,5 +58,10 @@ namespace UnityCommander.Core
         public InputGesture ShortcutKey { get; set; }
 
         public GlobalCommandSelection SelectionFlag { get; set; }
+
+        public void OnExecuteChanged(object sender)
+        {
+            this.ExecuteChanged?.Invoke(sender, new EventArgs());
+        }
     }
 }

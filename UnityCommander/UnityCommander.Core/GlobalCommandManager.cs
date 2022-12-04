@@ -22,6 +22,9 @@ namespace UnityCommander.Core
         /// </summary>
         private readonly Queue<IGlobalCommand> globalCommands;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly HashSet<IGlobalCommand> allCommands = new HashSet<IGlobalCommand>();
 
         /// <summary>
@@ -54,18 +57,29 @@ namespace UnityCommander.Core
                 return;
             }
 
-            this.SetCommandByAttribute(command);
+            this.SetCommandOld(this.SetCommandByAttribute(command));
         }
 
-        public void CreateCommand(object command, GlobalCommandSelection selector)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="selector"></param>
+        public void CreateCommand(object instance, GlobalCommandSelection selector)
         {
             this.globalCommandSelection = selector;
-            this.SetCommandByAttribute(command);
+            this.SetCommandOld(this.SetCommandByAttribute(instance));
         }
 
-        public void CreateCommandByAttribute(string name, ICommand command)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="addAll"></param>
+        public void CreateCommandByAttribute(object instance, bool addAll = false)
         {
-            this.SetCommandByAttribute(command);
+
+            this.SetCommand(this.SetCommandByAttribute(instance), addAll);
         }
 
         /// <summary>
@@ -115,22 +129,23 @@ namespace UnityCommander.Core
 
                 var baseType = command.Delegate.Method.GetBaseDefinition().DeclaringType;
                 var type = command.SourceMethod.DeclaringType;
+                select = command;
 
-                switch (globalCommand.SelectionFlag)
-                {
-                    case GlobalCommandSelection.All:
+                //switch (globalCommand.SelectionFlag)
+                //{
+                //    case GlobalCommandSelection.All:
 
-                        break;
-                    case GlobalCommandSelection.SingleFirst:
-                        if (baseType != type) return command;
-                        select = command;
-                        continue;
+                //        break;
+                //    case GlobalCommandSelection.SingleFirst:
+                //        if (baseType != type) return command;
+                //        select = command;
+                //        continue;
 
-                    case GlobalCommandSelection.SingleLast:
-                        if (baseType != type) return command;
-                        select = command;
-                        continue;
-                }
+                //    case GlobalCommandSelection.SingleLast:
+                //        if (baseType != type) return command;
+                //        select = command;
+                //        continue;
+                //}
             }
         
             return select;
@@ -157,8 +172,8 @@ namespace UnityCommander.Core
         /// <returns>
         /// The <see cref="IEnumerable"/>.
         /// </returns>
-        public IEnumerable<IGlobalCommand> GetCommands(string commandName) 
-            => this.globalCommands.Where(p => ((GlobalCommandExecute)p.Command).Command.Method.Name.Contains(commandName));
+        public IEnumerable<IGlobalCommand> GetGlobalCommands(string commandName) 
+            => this.allCommands.Where(p => p.Name.Contains(commandName));
 
         /// <summary>
         /// The get commands.
@@ -174,7 +189,66 @@ namespace UnityCommander.Core
         /// <param name="instance">
         /// The instance.
         /// </param>
-        private void SetCommandByAttribute(object instance)
+        private IGlobalCommand SetCommandByAttribute(object instance)
+        {
+            const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
+            Type type = instance.GetType();
+            MethodInfo[] methods = type.GetMethods(Flags);
+
+            foreach (var method in methods)
+            {
+                if (method.CustomAttributes.All(p => p.AttributeType.Name != "GlobalCommandAttribute")) continue;
+
+                var action = Delegate.CreateDelegate(DelegateTypeFactory.Create(method), instance, method);
+                var command = new GlobalCommandExecute(action, type);
+
+                var globalCommand = new GlobalCommand
+                { 
+                    Command = command,
+                    SourceFullName = instance.GetType().FullName,
+                    SourceType = instance.GetType(),
+                    SourceMethod = method
+                };
+
+                foreach (var attribute in method.GetCustomAttributes())
+                {
+                    var properties = attribute.GetType().GetProperties();
+                    globalCommand.Name = (string)attribute.GetType().GetProperty("Name")?.GetValue(attribute);
+                    globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey")?.GetValue(attribute);
+                }
+
+                 return globalCommand;
+            }
+
+            return null;
+        }
+
+        [Obsolete]
+        private void SetCommandOld(IGlobalCommand globalCommand) 
+        {
+            this.globalCommands.Enqueue(globalCommand);
+        }
+
+        private void SetCommand(IGlobalCommand globalCommand, bool addAll)
+        {
+            if (addAll)
+            {
+                this.allCommands.Add(globalCommand);
+                return;
+            }
+
+            if (this.allCommands.SingleOrDefault(c => c.Name == globalCommand.Name) != null)
+                this.allCommands.RemoveWhere(c => c.Name == globalCommand.Name);
+            this.allCommands.Add(globalCommand);
+        }
+
+        /// <summary>
+        /// The set command.
+        /// </summary>
+        /// <param name="instance">
+        /// The instance.
+        /// </param>
+        private void SetCommand(object instance)
         {
             const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance;
             Type type = instance.GetType();
@@ -264,6 +338,11 @@ namespace UnityCommander.Core
             const BindingFlags Flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
             var baseType = methodOverride.GetBaseDefinition().DeclaringType;
             return baseType?.GetMethods(Flags).FirstOrDefault(methodVirtual => methodVirtual.Name == methodOverride.Name);
+        }
+
+        public IEnumerable<IGlobalCommand> GetCommands(string commandName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

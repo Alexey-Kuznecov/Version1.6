@@ -7,8 +7,10 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>Nlog;DEBUG</DefineConstants>
+	</PropertyGroup>
+	
   <ItemGroup>
     <Compile Remove="Behavior\**" />
     <EmbeddedResource Remove="Behavior\**" />

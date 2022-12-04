@@ -327,8 +327,18 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         private void CopyFileFinish()
         {
-            var cmd = this.globalCommandManager.GetGlobalCommand("CloseCopyFileDialogCommand");
-            cmd.Command?.Execute(null);
+            //var cmd = this.globalCommandManager.GetGlobalCommand("CloseCopyFileDialogCommand");
+            //cmd.Command?.Execute(null);
+
+            GlobalCommandExecute.OnGlobalCommandExecuteChanged(this, false);
+
+            //var globalCmd = this.globalCommandManager.GetGlobalCommand(CommandNames.DirectoryUpdate);
+            //globalCmd.Command.Execute(null);
+
+            //if (globalCmd is GlobalCommand comm)
+            //{
+            //    comm.OnExecuteChanged(this);
+            //}
         }
 
         /// <summary>

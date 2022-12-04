@@ -14,6 +14,8 @@ namespace UnityCommander.Core
         /// The action.
         /// </summary>
         private readonly Action<object> action;
+        
+        private static bool raiseEventGlobalCommandExecuteChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GlobalCommandExecute"/> class.
@@ -51,6 +53,11 @@ namespace UnityCommander.Core
         public event EventHandler CanExecuteChanged;
 
         /// <summary>
+        /// The can execute changed.
+        /// </summary>
+        public static event EventHandler GlobalCommandExecuteChanged;
+
+        /// <summary>
         /// Gets the command.
         /// </summary>
         public Delegate Command { get; }
@@ -64,6 +71,12 @@ namespace UnityCommander.Core
         /// Gets the view model instance.
         /// </summary>
         public object Args { get; }
+
+        public static void OnGlobalCommandExecuteChanged(object sender, bool raiseEvent = true)
+        {
+            raiseEventGlobalCommandExecuteChanged = raiseEvent;
+            GlobalCommandExecuteChanged?.Invoke(sender, new EventArgs());
+        }
 
         /// <summary>
         /// The can execute.
@@ -100,27 +113,11 @@ namespace UnityCommander.Core
                 var args = this.GetDefaultParameterValues(parameter);
                 this.Command.Method.Invoke(this.Command.Target ?? this.Command.Method.DeclaringType, args);
             }
-            
-            //Type type = this.DeclaringType;
-            //object[] parameters = this.GetDefaultParameterValues(parameter);
-            //if (type == null && parameter == null)
-            //{
-            //    this.Command.Method.Invoke(this.Args, parameters);
-            //    return;
-            //}
-            //var constructor = type.GetConstructor(Type.EmptyTypes);
-            //var instance = constructor?.Invoke(new object[] { });
-            //if (parameter != null)
-            //{
-            //    this.Command.Method.Invoke(instance, parameter as object[]);
-            //    return;
-            //}
-            //this.Command.Method.Invoke(instance, parameters);
 
-            //if (this.action != null)
-            //{
-            //    this.action.Method.Invoke(this.action.Target, new object[] { null });
-            //}
+            if (raiseEventGlobalCommandExecuteChanged)
+            {
+                OnGlobalCommandExecuteChanged(this);
+            }
         }
 
         /// <summary>
