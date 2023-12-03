@@ -22,7 +22,7 @@ namespace UnityCommander.ViewModels.Dialogs
     /// <summary>
     /// The dialog view model.
     /// </summary>
-    public class CopyDialogViewModel : BindableBase, IDialogAware
+    public class CopyDialogSkipReplaceViewModel : BindableBase, IDialogAware
     {
         
         #region Declaration Fields
@@ -36,6 +36,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// Содержит ссылку на менеджер для регистрации или выполнения глобальных команд.
         /// </summary>
         private readonly IGlobalCommandManager globalCommandManager;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private readonly MessageSendEvent messenger;
 
         /// <summary>
         /// The close trigger.
@@ -52,16 +57,6 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         private string target;
 
-        /// <summary>
-        /// Описание смотри сдесь <see cref="CopyOnlyFolderContent"/>.
-        /// </summary>
-        private bool copyOnlyFolderContent;
-
-        /// <summary>
-        /// Описание смотри сдесь <see cref="СloseDialogAfterCopyingComplete"/>.
-        /// </summary>
-        private bool сloseDialogAfterCopyingComplete;
-
         #endregion
         
         /// <summary>
@@ -69,12 +64,13 @@ namespace UnityCommander.ViewModels.Dialogs
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
-        public CopyDialogViewModel(IEventAggregator viewModelMessage, IGlobalCommandService globalCommandService)
+        public CopyDialogSkipReplaceViewModel(IEventAggregator viewModelMessage, IGlobalCommandService globalCommandService)
         {
             this.globalCommandManager = globalCommandService.GetCommandManager();
-            this.globalCommandManager.RegisterCommand("CloseCopyFileDialogCommand", this.CloseDialogCommand);
+            //messenger = viewModelMessage.GetEvent<MessageSendEvent>();
+            //messenger.Subscribe(this.SetupCopyFiles);
+            //this.globalCommandManager.RegisterCommand("CloseCopyFileDialogCommand", this.CloseDialogCommand);
             this.viewModelMessage = viewModelMessage;
-            this.CloseDialogAfterCopyingComplete = true;
         }
 
         /// <summary>
@@ -93,10 +89,16 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         private UserControl control;
 
+
+        /// <summary>
+        /// The control.
+        /// </summary>
+        private CopyInfo copyInfo;
+
         /// <summary>
         /// Gets the title.
         /// </summary>
-        public string Title => "Копирование файлов";
+        public string Title => "Диалог подтверждения замены файлов";
 
         /// <summary>
         /// The request close.
@@ -131,59 +133,27 @@ namespace UnityCommander.ViewModels.Dialogs
         }
 
         /// <summary>
-        /// Данная опция отвечает за копирования содержимого папки. 
-        /// Если опция равна истине то будет скопированно только содержимое 
-        /// папки иначе будет скопированна вся папка. 
-        /// </summary>
-        public bool CopyOnlyFolderContent
-        {
-            get => this.copyOnlyFolderContent;
-            set => this.SetProperty(ref this.copyOnlyFolderContent, value);
-        }
-
-        /// <summary>
-        /// Данная опция отвечает за закрытие окна после копирования. 
-        /// Если данная опция включена то после завершения копирования (файлов/попок),
-        /// окно операции над файломи будет закрыто.
-        /// </summary>
-        public bool CloseDialogAfterCopyingComplete
-        {
-            get => this.сloseDialogAfterCopyingComplete;
-            set => this.SetProperty(ref this.сloseDialogAfterCopyingComplete, value);
-        }
-
-        /// <summary>
         /// Gets the command to copy files or folders from one panel to another.
         /// </summary>
-        public ICommand CopyCommand => new DelegateCommand(() =>
+        public ICommand SkipAllCommand => new DelegateCommand(() =>
         {
-            this.CopyStateView = new CopyProcessView();
-
-            var source = new DirectoryInfo(this.Source);
-            var destination = new DirectoryInfo(this.Target);
-
-            if (!this.CopyOnlyFolderContent && source.Exists)
-            {
-                var fname = new DirectoryInfo(this.Source).Name;
-                var dirC = destination.FullName + "\\" + fname;
-                Directory.CreateDirectory(dirC);
-                destination = new DirectoryInfo(dirC);
-            }
-
-            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new CopyInfo() 
-            {
-                Source = source.FullName,
-                Destination = destination.FullName
-            });
+            this.copyInfo.DialogSkipReplaceStatus = CopyDialogSkipReplaceStatus.SkipAll;
+            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(this.copyInfo);
+            //this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
         });
 
         /// <summary>
         /// Gets the command to copy files or folders from one panel to another.
         /// </summary>
-        public ICommand MoveCommand => new DelegateCommand(() =>
+        public ICommand ReplaceAllCommand => new DelegateCommand(() =>
         {
-            var cmdMove = this.globalCommandManager.GetCommand("Move");
-            cmdMove.Command.Execute(new object[] { this.Source, this.Target });
+            this.copyInfo.DialogSkipReplaceStatus = CopyDialogSkipReplaceStatus.ReplaceAll;
+            this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(this.copyInfo);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+            });
         });
 
         /// <summary>
@@ -202,11 +172,6 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         public void OnDialogClosed()
         {
-            //if (Directory.Exists(Target))
-            //{
-            //    Directory.Delete(Target, true);
-            //    Directory.CreateDirectory(Target);
-            //}
         }
 
         /// <summary>
@@ -217,13 +182,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </param>
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            this.CopyStateView = new CopyDialogControl();
             var param = parameters as OverrideDialogParameters;
 
-            if (param?.Package is CopyParameters copyParameters)
+            if (param?.Package is CopyInfo copyParameters)
             {
-                this.Source = copyParameters.Source;
-                this.Target = copyParameters.Target;
+                this.copyInfo = copyParameters;
             }
         }
 
@@ -232,13 +195,10 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         private void ExecuteCloseDialogCommand()
         {
-            if (this.CloseDialogAfterCopyingComplete)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
-                });
-            }
+                this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+            });
         }
     }
 }

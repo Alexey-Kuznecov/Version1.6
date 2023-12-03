@@ -72,6 +72,7 @@ namespace UnityCommander
 
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
             containerRegistry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
+            containerRegistry.RegisterDialog<CopyDialogSkipReplace, CopyDialogSkipReplaceViewModel>("CopyDialogSkipReplace");
             containerRegistry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig");
             containerRegistry.RegisterInstance(typeof(IPluginLoaderService), pluginLoaderService);
             containerRegistry.RegisterInstance(typeof(IGlobalCommandService), globalCommandService);

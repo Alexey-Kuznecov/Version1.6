@@ -10,6 +10,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using Prism.Services.Dialogs;
 
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Core;
     using UnityCommander.Core.Commands;
     using UnityCommander.Services.Interfaces;
 
@@ -65,7 +66,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// The logger.
         /// </summary>
-        private readonly Logger logger;
+        private readonly ModuleLogger logger;
 
         /// <summary>
         /// If true, the plugin was cached and the result will be restored

@@ -26,36 +26,33 @@ namespace UnityCommander.Controls.Ribbon
         /// The ribbon width.
         /// </summary>
         private static double ribbonWidth;
-
+        
         /// <summary>
         /// The ribbon.
         /// </summary>
         private static Ribbon ribbon;
 
         /// <summary>
-        /// Gets or sets the tab command.
+        /// The Minimize command.
         /// </summary>
-        public static ICommand MinimizeCommand = new RelayCommand(
+        public static ICommand MinimizeCommand
+            = new RelayCommand(
             obj =>
                 {
-                    var parent = ribbon.Parent as FrameworkElement;
-
-                    while (parent?.Name != "RibbonExpandButtonHere")
-                    {
-                        parent = parent?.Parent as FrameworkElement;
-
-                        if (parent?.Name == "CollapseHere")
-                        {
-                            parent.Visibility = parent.IsVisible ? Visibility.Hidden : Visibility.Visible;
-                        }
-                    }
+                    HideRibbon();
                 });
+
+        /// <summary>
+        /// The ribbon config.
+        /// </summary>
+        private RibbonConfig ribbonConfig;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Ribbon"/> class.
         /// </summary>
         public Ribbon()
         {
+            this.ribbonConfig = new RibbonConfig();
         }
 
         /// <summary>
@@ -82,6 +79,26 @@ namespace UnityCommander.Controls.Ribbon
             ribbon = (Ribbon)d;
             manager?.Collapse(MinimizeCommand);
             manager?.Initial(ribbon);
+            manager?.Configure(ribbon.ribbonConfig);
+        }
+
+
+        /// <summary>
+        /// The hide ribbon.
+        /// </summary>
+        private static void HideRibbon()
+        {
+            var parent = ribbon.Parent as FrameworkElement;
+
+            while (parent?.Name != "RibbonExpandButtonHere")
+            {
+                parent = parent?.Parent as FrameworkElement;
+
+                if (parent?.Name == "CollapseHere")
+                {
+                    parent.Visibility = parent.IsVisible ? Visibility.Hidden : Visibility.Visible;
+                }
+            }
         }
 
         #region Override methods
@@ -104,6 +121,9 @@ namespace UnityCommander.Controls.Ribbon
                 child.Arrange(new Rect(new Point(margin, 0), child.DesiredSize));
                 margin += child.DesiredSize.Width;
             }
+
+            if (!ribbon.ribbonConfig.Visibility)
+                HideRibbon();
 
             return finalSize;
         }
@@ -133,7 +153,7 @@ namespace UnityCommander.Controls.Ribbon
         }
 
         #endregion
-
+        
         /// <summary>
         /// The get window.
         /// </summary>

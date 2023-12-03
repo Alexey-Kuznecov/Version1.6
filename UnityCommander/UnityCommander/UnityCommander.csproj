@@ -3,6 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+	  <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ApplicationIcon>icon.ico</ApplicationIcon>

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.IO;
 
 namespace UnityCommander.Core.IO.Operations
 {
@@ -22,6 +23,11 @@ namespace UnityCommander.Core.IO.Operations
         /// Gets or sets the target directory.
         /// </summary>
         public string Destination { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target directory.
+        /// </summary>
+        public FileInfo FileInfo { get; set; }
 
         /// <summary>
         /// Gets or sets the file length in bytes.
@@ -83,6 +89,8 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         public bool Skipped { get; set; }
 
+        public CopyDialogSkipReplaceStatus DialogSkipReplaceStatus { get; set; }
+
 #region Log Properties
 
         public long CurrentBytesTransferred { get; set; }
@@ -90,7 +98,5 @@ namespace UnityCommander.Core.IO.Operations
         public long TotalBytesTransferred { get; set; }
 
 #endregion
-
-
     }
 }

@@ -39,8 +39,10 @@ namespace UnityCommander.Common.Styling.Converters
 
             if (outputOrder > collection.Count - 1)
                 outputOrder = 0;
-                
-            values = collection[outputOrder++];
+
+            if (collection.Count > 0)
+                values = collection[outputOrder++];
+
             return values;
         }
 

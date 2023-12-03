@@ -22,5 +22,10 @@ namespace UnityCommander.Services.Interfaces
         /// Gets the session files.
         /// </summary>
         string SessionFiles { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether ribbon visibility.
+        /// </summary>
+        bool RibbonVisibility { get; }
     }
 }

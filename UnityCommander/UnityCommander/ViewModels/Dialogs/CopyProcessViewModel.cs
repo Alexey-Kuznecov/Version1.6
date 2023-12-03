@@ -14,22 +14,25 @@ namespace UnityCommander.ViewModels.Dialogs
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Windows;
+    using NLog;
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
+    using Prism.Services.Dialogs;
     using UnityCommander.Common.Commands;
     using UnityCommander.Core;
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Helper;
     using UnityCommander.Core.IO;
     using UnityCommander.Core.IO.Operations;
+    using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The class is a view model for dialog window of the copy files.
     /// </summary>
-    public class CopyProcessViewModel : BindableBase
+    public class CopyProcessViewModel : BindableBase, IDisposable
     {
         #region Declaration Fields
 
@@ -39,6 +42,11 @@ namespace UnityCommander.ViewModels.Dialogs
         private readonly CopyManager copyManager = (CopyManager)Commander<CopyFiles>.GetManager();
 
         private IGlobalCommandManager globalCommandManager;
+
+        /// <summary>
+        /// The dialog service.
+        /// </summary>
+        private readonly IDialogService dialogService;
 
         /// <summary>
         /// The invoker class instance.
@@ -95,6 +103,11 @@ namespace UnityCommander.ViewModels.Dialogs
         /// </summary>
         private string current;
 
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly Logger logger;
+
         private readonly MessageSendEvent messenger;
 
         #endregion
@@ -106,8 +119,14 @@ namespace UnityCommander.ViewModels.Dialogs
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
-        public CopyProcessViewModel(IEventAggregator viewModelMessage, IGlobalCommandService globalCommandService)
+        public CopyProcessViewModel(
+            IDialogService dialogService,
+            IEventAggregator viewModelMessage,
+            IGlobalCommandService globalCommandService,
+            ModuleLogger moduleLogger)
         {
+            this.logger = moduleLogger.GetLogger();
+            this.dialogService = dialogService;
             this.globalCommandManager = globalCommandService.GetCommandManager();
             this.invoker = new CopyFileInvoker();
             messenger = viewModelMessage.GetEvent<MessageSendEvent>();
@@ -255,26 +274,87 @@ namespace UnityCommander.ViewModels.Dialogs
         /// Gets control on the copy thread.
         /// </summary>
         /// <param name="copyInfo"> Expected two strings the source path and destination path. </param>
-        private void SetupCopyFiles(object copyInfo)
+        //private void SetupCopyFiles(object copyInfo)
+        //{
+        //    //this.SkippedFile = new ObservableCollection<CopyInfoModel>();
+        //    //this.CopyReport = new ObservableCollection<CopyInfoModel>();
+
+        //    //if (copyInfo is object[] address)
+        //    //{
+        //    //    var source = address[0] as DirectoryInfo;
+        //    //    var destination = address[1] as DirectoryInfo;
+
+        //    //    this.copyManager.CopyFileReport += this.CopyFileReport;
+        //    //    this.copyManager.CopyFileFinish += this.CopyFileFinish;
+        //    //    this.copyManager.CopySkipReplace += this.CopyFileSkipReplace;
+        //    //    this.copyManager.Copy(source.FullName, destination.FullName);
+        //    //    //CopyManager.CopyFileResult += this.CopyFileResult;
+        //    //}
+        //}
+
+        /// <summary>
+        /// Gets control on the copy thread.
+        /// </summary>
+        /// <param name="copyInfo"> Expected two strings the source path and destination path. </param>
+        private void SetupCopyFiles(object obj)
         {
-            //this.SkippedFile = new ObservableCollection<CopyInfoModel>();
-            //this.CopyReport = new ObservableCollection<CopyInfoModel>();
-
-            if (copyInfo is object[] address)
+            if (obj is CopyInfo copyInfo)
             {
-                var source = address[0] as DirectoryInfo;
-                var destination = address[1] as DirectoryInfo;
+                if (copyInfo.DialogSkipReplaceStatus == CopyDialogSkipReplaceStatus.SkipAll)
+                {
+                    this.copyManager.Cancel();
+                    return;
+                }
+                else if (copyInfo.DialogSkipReplaceStatus == CopyDialogSkipReplaceStatus.ReplaceAll)
+                {
+                    var dirName = copyInfo.FileInfo.Directory;
 
-                this.copyManager.CopyFileReport += this.CopyFileReport;
-                this.copyManager.CopyFileFinish += this.CopyFileFinish;
-                this.copyManager.Copy(source.FullName, destination.FullName);
-                //CopyManager.CopyFileResult += this.CopyFileResult;
+                    if (File.Exists(copyInfo.Destination))
+                        File.Delete(copyInfo.Destination);
+                    copyInfo.Destination = dirName.FullName;
+                    this.copyManager.Resume();
+                    return;
+                }
+
+                var source = copyInfo.Source;
+                var destination = copyInfo.Destination;
+
+                try
+                {
+                    //var fileCk = source.Replace(new FileInfo(source).Directory.FullName, destination);
+
+                    //if (File.Exists(fileCk))
+                    //    throw new Exception(($"Файл ({fileCk}) уже существует!"));
+
+                    this.copyManager.CopyFileReport += this.CopyFileReport;
+                    this.copyManager.CopyFileFinish += this.CopyFileFinish;
+                    //this.copyManager.FileAlreadyExistsEvent += this.OnFileAlreadyExistsEvent;
+                    this.copyManager.CopySkipReplace = OnFileAlreadyExistsEvent;
+                    this.copyManager.Copy(source, destination);
+                }
+                catch (Exception ex)
+                {
+                    this.logger.Error(ex.Message.ToString());
+                }
             }
+        }
 
-            if (messenger.Contains(this.SetupCopyFiles))
+        private void OnFileAlreadyExistsEvent(CopyInfo info)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                messenger.Unsubscribe(this.SetupCopyFiles);
-            }
+                this.dialogService.ShowDialog("CopyDialogSkipReplace",
+                    new OverrideDialogParameters(info), r => { });
+            });
+        }
+
+        /// <summary>
+        /// Обрабатывет событие которое возникает когда файл уже существует и требуется 
+        /// дополнительные действия для подтверждения пропуска или замены существующего файла.
+        /// </summary>>
+        /// <param name="progressInfo"> Данный объект содержит подробную информацию об копируемом файле. </param>
+        private void OnFileAlreadyExistsEvent(object sender, EventArgs e)
+        {
         }
 
         /// <summary>
@@ -321,6 +401,7 @@ namespace UnityCommander.ViewModels.Dialogs
             this.TotalTimeLeft = info.TotalTimeLeft;
             //this.CurrentName = info.Name;
         }
+
 
         /// <summary>
         /// Обработчик события завершения копирования (файлов/папок).
@@ -371,6 +452,14 @@ namespace UnityCommander.ViewModels.Dialogs
             }
 
             return format.Length > 10 ? format : "Calculating..";
+        }
+
+        public void Dispose()
+        {
+            if (messenger.Contains(this.SetupCopyFiles))
+            {
+                messenger.Unsubscribe(this.SetupCopyFiles);
+            }
         }
 
         #endregion

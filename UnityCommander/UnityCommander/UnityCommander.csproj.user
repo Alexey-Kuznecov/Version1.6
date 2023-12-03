@@ -9,6 +9,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\CopyDialogs\CopyDialogSkipReplace.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\CopyDialogs\CopyDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -21,6 +24,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\CopyDialogs\CopyDialogControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CopyDialogs\CopyDialogSkipReplace.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\CopyDialogs\CopyDialogView.xaml">

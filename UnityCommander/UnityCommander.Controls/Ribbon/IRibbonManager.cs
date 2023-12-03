@@ -23,5 +23,13 @@ namespace UnityCommander.Controls.Ribbon
         /// The ribbon.
         /// </param>
         void Initial(Ribbon ribbon);
+
+        /// <summary>
+        /// The configure.
+        /// </summary>
+        /// <param name="config">
+        /// The config.
+        /// </param>
+        void Configure(RibbonConfig config);
     }
 }

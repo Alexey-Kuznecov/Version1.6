@@ -1,7 +1,9 @@
 ﻿#define Nlog
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using UnityCommander.Core.Helper;
@@ -32,9 +34,10 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         private string target;
 
-        public CopyManager()
-        {
-        }
+        /// <summary>
+        /// The target path to the directory.
+        /// </summary>
+        private static CancellationTokenSource cancellationTokenSource;
 
         /// <summary>
         /// Gets or sets copy progress report..
@@ -49,7 +52,17 @@ namespace UnityCommander.Core.IO.Operations
         /// <summary>
         /// Gets or sets the action to processing copy file results.
         /// </summary>
+        public Action<CopyInfo> CopySkipReplace { get; set; }
+
+        /// <summary>
+        /// Gets or sets the action to processing copy file results.
+        /// </summary>
         public Action CopyFileFinish { get; set; }
+
+        /// <summary>
+        /// The copy progress report.
+        /// </summary>
+        public event EventHandler FileAlreadyExistsEvent;
 
         /// <summary>
         /// This method is created.
@@ -58,29 +71,66 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="targetPath"> The <c>target</c> path to the directory. </param>
         public void Copy(string sourcePath, string targetPath)
         {
-            Task.Factory.StartNew(() =>
+            this.source = sourcePath;
+            this.target = targetPath;
+            cancellationTokenSource = new CancellationTokenSource();
+            Task.Factory.StartNew(() => CopyTask(cancellationTokenSource.Token), cancellationTokenSource.Token);
+        }
+
+        public async void CopyTask(CancellationToken cancellationToken)
+        {
+            using (this.copyFile = new CopyFiles())
             {
-                this.source = sourcePath;
-                this.target = targetPath;
+                cancellationToken.Register(CollectionTokenCancel);
+                this.copyFile.FileAlreadyExistsEvent += FileCopier_CopySkipReplace;
+                //if (File.Exists(source.Replace(new FileInfo(source).Directory.FullName, target)))
+                //{
+                //    await Task.Delay(100, cancellationToken);
+                //}
 
-                using (this.copyFile = new CopyFiles())
+                await Task.Run(() =>
                 {
+                    if (File.Exists(source.Replace(new FileInfo(source).Directory.FullName, target)))
+                        cancellationTokenSource.Cancel();
+
                     this.copyFile.CopyReportEvent += this.FileCopier_CopyReportEvent;
-                    
-                    if (File.Exists(sourcePath))
-                    {
+
+                    if (File.Exists(this.source))
                         this.copyFile.Copy(this.source, this.target);
-                    }
-                    else
-                    {
+
+                    if (Directory.Exists(this.source))
                         this.copyFile.DeepCopy(this.source, this.target);
-                    }
-
+                    
                     this.copyFile.CopyReportEvent -= this.FileCopier_CopyReportEvent;
-                }
+                    this.CopyFileFinish?.Invoke();
 
-                this.CopyFileFinish?.Invoke();
-            });
+                }, cancellationToken);
+            }
+        }
+
+        private void CollectionTokenCancel()
+        {
+        }
+
+
+        private void FileCopier_CopySkipReplace(object sender, EventArgs e)
+        {
+            var copyArgs = (CopyReportEventArg)e;
+            this.CopySkipReplace?.Invoke(copyArgs.Info);
+        }
+
+        /// <summary>
+        /// The raise event.
+        /// </summary>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        private void RaiseFileAlreadyExistsEvent(CopyInfo info)
+        {
+            if (this.FileAlreadyExistsEvent != null)
+            {
+                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
+            }
         }
 
         private void FileCopier_CopyReportEvent(object sender, EventArgs e)

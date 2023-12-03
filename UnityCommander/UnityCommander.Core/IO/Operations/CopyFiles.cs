@@ -106,6 +106,11 @@ namespace UnityCommander.Core.IO.Operations
         /// </summary>
         public event EventHandler CopyReportEvent;
 
+        /// <summary>
+        /// The copy progress report.
+        /// </summary>
+        public event EventHandler FileAlreadyExistsEvent;
+
         #endregion
 
         #region Test Properties
@@ -155,14 +160,27 @@ namespace UnityCommander.Core.IO.Operations
             copyBehaviors = changeOn;
         }
 
+        internal void RaiseFileAlreadyExistsEvent(CopyInfo info)
+        {
+            if (this.FileAlreadyExistsEvent != null)
+            {
+                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
+            }
+        }
+
         public void Copy(string source, string target)
         {
             FileInfo info = new FileInfo(source);
             totalFileSize = info.Length;
             copyInfo.TotalBytes += info.Length;
 
-            SpeedTimer.Start();
-            ElapsedTimer.Start();
+            var existPath = File.Exists(source.Replace(new FileInfo(source).Directory.FullName, target));
+
+            if (!existPath)
+            {
+                SpeedTimer.Start();
+                ElapsedTimer.Start();
+            }
             
             this.CopyFile(source, target);
         }
@@ -185,6 +203,7 @@ namespace UnityCommander.Core.IO.Operations
                 }
             }
 
+            // Копирует файлы которые лежат внутри копируемой папки 
             if (Directory.GetFiles(source).Length != 0)
             {
                 foreach (var oldFile in Directory.GetFiles(source))
@@ -207,17 +226,22 @@ namespace UnityCommander.Core.IO.Operations
         {
             FileInfo info = new FileInfo(oldFile);
             string newFile = Path.Combine(newDir, new DirectoryInfo(oldFile).Name);
+            FileInfo infoF = new FileInfo(newFile);
 
             fileSize = info.Length;
             copyInfo.Name = info.Name;
             copyInfo.Length = info.Length;
             copyInfo.Source = info.FullName;
             copyInfo.Destination = newFile;
+            copyInfo.FileInfo = infoF;
 
-            if (!File.Exists(newFile))
+            if (File.Exists(copyInfo.Destination))
             {
-                fileOperation.XCopy(oldFile, newFile, CopyProgressHandle);
+                this.copyBehaviors = CopyBehaviors.Pause;
+                RaiseFileAlreadyExistsEvent(copyInfo);
             }
+
+            fileOperation.XCopy(oldFile, newFile, CopyProgressHandle);
         }
 
         /// <summary>
@@ -228,7 +252,7 @@ namespace UnityCommander.Core.IO.Operations
         /// </param>
         public void CalculateTotalFilesSize(string source)
         {
-            Task.Factory.StartNew(() =>
+           var t = Task.Factory.StartNew(() =>
             {
                 totalFileSize = 0;
 
@@ -239,6 +263,8 @@ namespace UnityCommander.Core.IO.Operations
                     copyInfo.TotalBytes += info.Length;
                 }
             });
+
+            t.Wait();
         }
 
         /// <summary>
@@ -289,6 +315,7 @@ namespace UnityCommander.Core.IO.Operations
                         case CopyBehaviors.Pause:
                             var timeout = TimeSpan.FromMinutes(10D);
                             var mre = new ManualResetEvent(false);
+                           
                             while (copyBehaviors != CopyBehaviors.Resume)
                             {
                                 mre.Set();

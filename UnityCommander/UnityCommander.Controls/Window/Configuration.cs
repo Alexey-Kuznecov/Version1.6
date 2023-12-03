@@ -209,7 +209,6 @@ namespace UnityCommander.Controls.Window
 
         #endregion
 
-
         #region Commands
 
         /// <summary>

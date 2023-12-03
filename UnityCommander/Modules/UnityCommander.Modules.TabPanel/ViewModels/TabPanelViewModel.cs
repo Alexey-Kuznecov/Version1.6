@@ -11,6 +11,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using Prism.Mvvm;
     using Prism.Regions;
     using Common.Models.Icons;
+    using System.Runtime.CompilerServices;
 
     using Core.Commands;
     using Core.Commands.Base;
@@ -30,6 +31,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using UnityCommander.Integration.Commands;
     using UnityCommander.Core;
     using System.Collections.Generic;
+
+    using Accessibility;
+
     using NLog;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
@@ -59,7 +63,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The logger.
         /// </summary>
-        private readonly Logger logger;
+        private readonly ModuleLogger logger;
 
         /// <summary>
         /// The navigationCommand class instance.
@@ -141,7 +145,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             CommandManager manager, 
             ModuleLogger logger)
         {
-            this.logger = logger.GetLogger();
+            this.logger = logger;
             this.globalCommandManager = globalCommandService.GetCommandManager();
             GlobalCommandExecute.GlobalCommandExecuteChanged += OnGlobalCommandExecuteChanged;
             globalCommandManager.CreateCommandByAttribute(this);
@@ -233,18 +237,26 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </summary>
         public DelegateCommand<object> AddNewTabCommand =>
             new DelegateCommand<object>(
-                obj =>
+                 obj =>
                     {
+#if (Nlog)
+                        this.logger.Log(LogLevel.Info, "Инициализация команды (добавить новую вкладку).");
+
+#endif
                         if (obj is not TabPanel tabPanel) return;
                         commandStatus = "Add";
 
                         var token = Guid.NewGuid();
                         var panelView = new SplitPanelView();
-                        
                         string path = null;
-
+#if (Nlog)
+                        if (this.activePanel == null)
+                            this.logger.Log(LogLevel.Error, "Текущая панель была не обнаружена");
+#endif
                         if (this.activePanel is { DataContext: IDirectoryPanel panel })
+                        {
                             path = panel.GetCurrentPath();
+                        }
                             
                         if (panelView.DataContext is IDirectoryPanel directoryPanel)
                         {
@@ -265,8 +277,12 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             new DelegateCommand<object>(
                 token =>
                 {
+                    this.logger.Log(LogLevel.Info, "Инициализация команды (выбрать активную вкладку).");
                     this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand((Guid)token);
                     this.ActivateFilePanel((Guid)token);
+#if (Nlog)
+                    this.logger.Log(LogLevel.Info, $"Текущий путь: '{this.ActiveTabPanelContent?.GetCurrentPath()}'");
+#endif
                 });
 
         /// <summary>
@@ -306,12 +322,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 {
                     foreach (var tab in tabPanel.TabCollection)
                     {
-                        if (tab is TabControl control)
+                        if (tab is TabControl { TabType: TabTypes.SettingsViewer } control)
                         {
-                            if (control.TabType == TabTypes.SettingsViewer)
-                            {
-                                tabConfig = control;
-                            }
+                            tabConfig = control;
                         }
                     }
 
@@ -328,8 +341,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 //directoryPanels.Add(directoryPanel);
                 viewerView = new ViewerView();
                 var panelContent = viewerView.DataContext as ITabPanelContent;
-                var vpanelContent = viewerView.DataContext as IViewerPanel;
-                vpanelContent.SetViewerContent(obj);
+                var vPanelContent = viewerView.DataContext as IViewerPanel;
+                vPanelContent?.SetViewerContent(obj);
                 FindDirectoryPanel(viewerView).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
 
                 tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
@@ -350,8 +363,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
             {
                 var panelContent = tabPanel.ActiveTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
-                var vpanelContent = tabPanel.activePanel.DataContext as IViewerPanel;
-                vpanelContent.SetViewerContent(obj);
+                var vPanelContent = tabPanel.activePanel.DataContext as IViewerPanel;
+                vPanelContent?.SetViewerContent(obj);
 
                 FindDirectoryPanel(directoryPanel).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
                 tabPanel.currentTab = tabPanel.CreateTabControl(token, tabPanel.TabContentFormat(panelContent?.GetCurrentFilePath()), directoryPanel);
@@ -590,9 +603,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             regions.Activate(this.activePanel);
             previousLostFocusTabPanel = this.activePanel.DataContext as ITabPanelContent;
             ActiveTabPanelContent = this.activePanel.DataContext as ITabPanelContent;
-#if (Nlog)
-            logger.Info("Текущий путь: '{0}'", ActiveTabPanelContent.GetCurrentPath());
-#endif
         }
 
         /// <summary>
@@ -619,7 +629,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             element.DataContext is ITabPanelContent directoryPanel ? directoryPanel : null;
 
        /// <summary>
-       /// Данный метод обредиляет активную панель как рабочую. 
+       /// Данный метод определяет активную панель как рабочую. 
        /// </summary>
        /// <param name="focusData"></param>
         public void FocusElementDataProvider(ElementFocusData focusData)
@@ -630,9 +640,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             if (currentTabPanel.activeTabPanelContent is ITabPanelContent directory)
             {
                 ActiveTabPanelContent = directory;
-#if (Nlog)
-                logger.Info("Текущий путь:Focus: '{0}'", ActiveTabPanelContent.GetCurrentPath());
-#endif
             }
         }
 
@@ -643,9 +650,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             if (dd.ActiveTabPanelContent is ITabPanelContent directory)
             {
                 previousLostFocusTabPanel = directory;
-#if (Nlog)
-                logger.Info("Текущий путь:LostFocus: '{0}'", previousLostFocusTabPanel.GetCurrentPath());
-#endif
             }
         }
     }

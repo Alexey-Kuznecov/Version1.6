@@ -24,6 +24,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     using System.Windows.Documents;
     using System.Windows.Input;
 
+    using NLog;
+
     using Prism.Commands;
     using Prism.Regions;
     using Prism.Services.Dialogs;
@@ -100,7 +102,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.configService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
-            this.logger = logger.GetLogger();
+            this.logger = logger;
             this.pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
@@ -141,14 +143,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         /// <summary>
         /// Goes to the selected directory.
-        /// </summary>
+        /// </summary>*
         public DelegateCommand<FolderModel> NavigateDirectoryCommand => new DelegateCommand<FolderModel>(
             dir =>
             {
                 if (dir != null)
                 {
 #if (Nlog)
-                    logger.Info("File Panel: '{0}'", dir.Path);
+                    this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
 #endif
                     navigationCommand.Execute(UpdateFilePanel, dir.Path);
                 }
@@ -163,7 +165,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    logger.Info("Driv Panel: '{0}'", dir.Letter);
+
+                    this.logger.Log(LogLevel.Info, $"Открыт мой компьютер ({dir.Letter})");
 #endif
                     navigationCommand.Execute(UpdateFilePanel, dir.Letter);
                 }
@@ -178,7 +181,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    logger.Info("Navi Panel: '{0}'", dir);
+                    this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
 #endif
                     navigationCommand.Execute(UpdateFilePanel, dir);
                 }
@@ -610,18 +613,18 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public void DirectoryUpdate(IDirectoryPanel directoryPanel)
         {
-            var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+            //var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
-            if (!this.DirectoryPanelTemplate.Equals(template))
-                this.DirectoryPanelTemplate = template;
+            //if (!this.DirectoryPanelTemplate.Equals(template))
+            //    this.DirectoryPanelTemplate = template;
 
-            var path = Directory.Exists(directoryPanel.GetCurrentPath()) 
-                ? directoryPanel.GetCurrentPath() 
-                : Directory.GetDirectoryRoot(directoryPanel.GetCurrentPath());
-            this.DirectoryList = this.dataService.GetDirectories(path);
-            this.FileList = this.dataService.GetFiles(path);
-            this.CurrentDirectory = path;
-            this.UpdatePluginColumns();
+            //var path = Directory.Exists(directoryPanel.GetCurrentPath()) 
+            //    ? directoryPanel.GetCurrentPath() 
+            //    : Directory.GetDirectoryRoot(directoryPanel.GetCurrentPath());
+            //this.DirectoryList = this.dataService.GetDirectories(path);
+            //this.FileList = this.dataService.GetFiles(path);
+            //this.CurrentDirectory = path;
+            //this.UpdatePluginColumns();
         }
 
         /// <summary>

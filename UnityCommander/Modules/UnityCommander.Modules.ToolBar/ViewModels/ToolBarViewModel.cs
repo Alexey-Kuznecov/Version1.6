@@ -44,10 +44,13 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// </summary>
         private readonly IIconProviderService iconProvider;
 
-        private readonly IGlobalCommandManager globalCommandManager;
+        /// <summary>
+        /// The config service.
+        /// </summary>
+        private readonly ISettingsProviderService configService;
 
         #endregion
-
+        
         /// <summary>
         /// Gets or sets the minimize command.
         /// </summary>
@@ -85,14 +88,20 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         /// <param name="pluginLoaderService">
         /// The plugin Loader Service.
         /// </param>
+        /// <param name="globalCommandService">
+        /// The global Command Service.
+        /// </param>
+        /// <param name="configService">
+        /// The config Service.
+        /// </param>
         public ToolBarViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
             IPluginLoaderService pluginLoaderService,
-            IGlobalCommandService globalCommandService)
-         {
-            this.globalCommandManager = globalCommandService.GetCommandManager();
-            //this.globalCommandManager.CreateCommand("ShowDialog", this, this.ShowDialogCommand);
+            IGlobalCommandService globalCommandService,
+            ISettingsProviderService configService)
+         { 
+             this.configService = configService;
             this.pluginLoader = pluginLoaderService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
@@ -170,6 +179,18 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 .SetSection(this.RibbonViewSectionBuilder())
                 .SetSection(this.RibbonLaunchSectionBuilder())
                 .BuildGrid());
+        }
+
+        /// <summary>
+        /// The configure.
+        /// </summary>
+        /// <param name="config">
+        /// The config.
+        /// </param>
+        public void Configure(RibbonConfig config)
+        {
+            var appConfig = configService.GetAppConfig();
+            config.Visibility = appConfig.RibbonVisibility;
         }
 
         #region Ribbon File Section
