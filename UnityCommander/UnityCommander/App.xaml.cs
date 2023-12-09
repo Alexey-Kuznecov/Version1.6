@@ -5,6 +5,7 @@ using System.Windows.Navigation;
 using DryIoc;
 using Microsoft.Extensions.DependencyInjection;
 using Prism.DryIoc;
+using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.TabPanel.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 
@@ -32,6 +33,8 @@ namespace UnityCommander
     using UnityCommander.Modules.Viewer;
     using UnityCommander.Modules.Viewer.ViewModels;
     using UnityCommander.Modules.Viewer.Views;
+
+
 
     /// <summary>
     /// The application.
@@ -161,6 +164,7 @@ namespace UnityCommander
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
             moduleCatalog.AddModule<ViewerModule>();
+            moduleCatalog.AddModule<SettingsPanelModule>();
         }
     }
 }

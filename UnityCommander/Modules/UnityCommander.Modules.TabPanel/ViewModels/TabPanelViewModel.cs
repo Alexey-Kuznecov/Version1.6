@@ -211,11 +211,9 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
                 foreach (UserControl view in region.Views)
                 {
-                    if (view is FrameworkElement element)
+                    if (view is FrameworkElement { DataContext: ITabPanelContent panelContent })
                     {
-                        if (element.DataContext is ITabPanelContent panelContent)
-                        {
-                            tabsResult.Add(
+                        tabsResult.Add(
                             elementRecord =>
                             {
                                 elementRecord.Tag = "Tab";
@@ -224,7 +222,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                                 elementRecord.Attributes.Add("ViewType", panelContent.GetType().Name);
                                 return elementRecord;
                             });
-                        }
                     }
                 }
 

@@ -131,6 +131,7 @@
             Functional selection region on the left side panel.
         -->
         <ContentControl
+            
             Grid.Row="2"
             Grid.Column="0"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
@@ -138,6 +139,13 @@
             File panel region.
         -->
         <ContentControl
+            Grid.Row="2"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            MinWidth="200"
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.SettingsPanelRegion}" />
+        <ContentControl
+            Visibility="Hidden"
             Grid.Row="2"
             Grid.Column="3"
             Grid.ColumnSpan="2"

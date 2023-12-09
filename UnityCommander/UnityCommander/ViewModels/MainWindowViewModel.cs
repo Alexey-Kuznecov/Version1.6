@@ -8,6 +8,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Linq;
+
 namespace UnityCommander.ViewModels
 {
     using System.Collections.Generic;
@@ -263,12 +265,9 @@ namespace UnityCommander.ViewModels
         {
             Grid grid = dependencyObject as Grid;
 
-            foreach (var globalCommand in this.globalCommandManager.GetCommands())
+            foreach (var globalCommand in this.globalCommandManager.GetCommands().Where(globalCommand => globalCommand?.ShortcutKey != null))
             {
-                if (globalCommand?.ShortcutKey != null)
-                {
-                    grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
-                }
+                grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
             }
         }
 
@@ -312,11 +311,9 @@ namespace UnityCommander.ViewModels
                 this.SidebarContent = sideBarContent.Content;
             }
 
-            if (obj is byte index)
-            {
-                this.SidebarContentWidth = index == sidebarItemIndex ? 0 : 250;
-                sidebarItemIndex = index;
-            }
+            if (obj is not byte index) return;
+            this.SidebarContentWidth = index == sidebarItemIndex ? 0 : 250;
+            sidebarItemIndex = index;
         }
 
         #endregion
