@@ -35,5 +35,10 @@ namespace UnityCommander.Core
         /// The left sidebar region.
         /// </summary>
         public const string SettingsPanelRegion = nameof(SettingsPanelRegion);
+
+        /// <summary>
+        /// The left sidebar region.
+        /// </summary>
+        public const string WebBrowserRegion = nameof(WebBrowserRegion);
     }
 }

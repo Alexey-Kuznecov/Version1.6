@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Prism.DryIoc;
 using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.TabPanel.ViewModels;
+using UnityCommander.Modules.WebBrowser;
 using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
@@ -165,6 +166,7 @@ namespace UnityCommander
             moduleCatalog.AddModule<ToolBarModule>();
             moduleCatalog.AddModule<ViewerModule>();
             moduleCatalog.AddModule<SettingsPanelModule>();
+            moduleCatalog.AddModule<WebBrowserModule>();
         }
     }
 }

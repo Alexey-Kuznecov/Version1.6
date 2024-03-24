@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DefineConstants>Nlog;DEBUG</DefineConstants>
+    <DefineConstants>Nlog;DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\**" />
@@ -26,7 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
-    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
@@ -39,19 +38,17 @@
       <HintPath>..\..\..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-	<Choose>
-		<When Condition="'$(TargetFramework)' == 'net472'">
-			<ItemGroup>
-				<PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
-				</PackageReference>
-			</ItemGroup>
-		</When>
-		<When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-			<ItemGroup>
-				<Reference Include="System.Windows.Interactivity" Version="4.0.0.0" />
-			</ItemGroup>
-		</When>
-	</Choose>
-
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net472'">
+      <ItemGroup>
+        <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
+        </PackageReference>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+      <ItemGroup>
+        <Reference Include="System.Windows.Interactivity" Version="4.0.0.0" />
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>

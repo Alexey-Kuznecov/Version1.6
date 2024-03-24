@@ -1,23 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-	  <UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DefineConstants>FEATURE_UNLOAD;DEBUG</DefineConstants>
+    <DefineConstants>FEATURE_UNLOAD;DEBUG</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

@@ -282,7 +282,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 Source = (dropInfo.Data as BaseDirectory)?.Path,
                 Target = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath
             }), r => { });
-
             
             //if (sourceItem is FolderModel folderModels)
             //    splitPanelViewModel.DirectoryList.Add(folderModels);

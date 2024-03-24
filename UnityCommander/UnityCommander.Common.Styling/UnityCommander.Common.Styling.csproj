@@ -1,41 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
     <Page Remove="Settings\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Styles\UnityWindow.cs" />
     <Compile Remove="Styles\UnityWindowResizer.cs" />
     <Compile Remove="Styles\UnityWindowVM.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Colors\DefaultColors.xaml~RF45e465bc.TMP" />
     <None Remove="Colors\DefaultColors.xaml~RF45ef6d19.TMP" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="MaterialDesignTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
   </ItemGroup>
-
   <ItemGroup>
     <Page Update="Images\Icons.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -66,19 +58,10 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Directories\" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\UnityCommander\bin\Debug\netcoreapp3.1\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

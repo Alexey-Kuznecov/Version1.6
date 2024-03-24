@@ -1,27 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  <UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\W3Manager</OutputPath>
-		<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="Microsoft.Extensions.DependencyInjection">
-			<HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-			<HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="UnityCommander.Integration">
-			<HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-	</ItemGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\W3Manager</OutputPath>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityCommander.Integration">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

@@ -173,7 +173,7 @@ namespace UnityCommander.ViewModels.Dialogs
             this.viewModelMessage.GetEvent<MessageSendEvent>().Publish(new CopyInfo() 
             {
                 Source = source.FullName,
-                Destination = destination.FullName
+                Destination = this.Target
             });
         });
 

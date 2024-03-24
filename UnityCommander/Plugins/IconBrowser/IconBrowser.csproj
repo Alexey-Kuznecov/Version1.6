@@ -1,32 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>AIconBrowser</AssemblyName>
     <RootNamespace>AIconBrowser</RootNamespace>
   </PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\AIconBrowser</OutputPath>
-		<OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\AIconBrowser</OutputPath>
-	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Resources\IconsData.xml" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="Microsoft.Extensions.DependencyInjection">
-	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-	    <Private>false</Private>
-	  </Reference>
-	  <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-	    <Private>false</Private>
-	  </Reference>
-	  <Reference Include="UnityCommander.Integration">
-	    <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
-	    <Private>false</Private>
-	  </Reference>
-	</ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\AIconBrowser</OutputPath>
+    <OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\AIconBrowser</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\IconsData.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityCommander.Integration">
+      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\IconsData.xml" />
   </ItemGroup>
@@ -49,5 +48,4 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
 </Project>

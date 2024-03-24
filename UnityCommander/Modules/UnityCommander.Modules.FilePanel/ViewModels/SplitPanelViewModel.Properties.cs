@@ -34,7 +34,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDataProviderService dataService;
 
         /// <summary>
-        /// The application settings.
+        /// Настройки приложения  
         /// </summary>
         private readonly ISettings settingsService;
 

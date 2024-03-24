@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.Viewer</AssemblyName>
@@ -11,10 +11,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

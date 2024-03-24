@@ -1,11 +1,12 @@
 ﻿
+using Microsoft.Xaml.Behaviors;
+
 namespace UnityCommander.Modules.Viewer.Behaviors
 {
     using System;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using System.Windows.Interactivity;
     using System.Windows.Media;
 
     using UnityCommander.Common.Models.Directory;

@@ -6,20 +6,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnityCommander.Modules.SettingsPanel.ViewModels
+namespace UnityCommander.Modules.WebBrowser.ViewModels
 {
-    public class SettingsPanelViewModel : BindableBase
+    public class WebBrowserViewModel : BindableBase
     {
         private string message;
+        
         public string Message
         {
             get => message;
             set => SetProperty(ref message, value);
         }
 
-        public SettingsPanelViewModel()
+        public WebBrowserViewModel()
         {
-            Message = "Здесь будет настройки приложения и плагинов";
+            Message = "Здесь будет веб-браузер";
         }
     }
 }

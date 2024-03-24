@@ -1,24 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-	<UseWPF>true</UseWPF>
-	<LangVersion>9.0</LangVersion>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Config.Net" Version="4.15.0" />
     <PackageReference Include="MaterialDesign.Icons" Version="1.1.0" />
     <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
-	</ItemGroup>
-
+  </ItemGroup>
 </Project>
