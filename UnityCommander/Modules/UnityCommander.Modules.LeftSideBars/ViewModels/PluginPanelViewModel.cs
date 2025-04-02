@@ -21,12 +21,12 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     public class PluginPanelViewModel : BindableBase
     {
         /// <summary>
-        /// The dialog service.
+        /// Служба для получения и управления диалоговыми окнами приложения.
         /// </summary>
         private readonly IDialogService dialogService;
 
         /// <summary>
-        /// The plugin loaders.
+        /// Служба для загрузки плагинов.
         /// </summary>
         private readonly IPluginLoaderService pluginLoaders;
 

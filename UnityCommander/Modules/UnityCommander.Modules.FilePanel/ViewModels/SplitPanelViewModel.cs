@@ -125,6 +125,79 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
+        #region ITabPanelContent Impelements
+
+        /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
+        public Guid Token { get; set; }
+
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public Guid GetPanelToken() => this.Token;
+
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public string GetCurrentPath()
+        {
+            return this.CurrentDirectory;
+        }
+
+        /// <summary>
+        /// The get panel token.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Guid"/>.
+        /// </returns>
+        public string GetCurrentFilePath()
+        {
+            return this.CurrentFile.Path;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Инициализирует панель и устанавливает уникальный id для каждой открытой вкладки текущей панели.
+        /// </summary>
+        /// <param name="token">
+        /// Уникальный ключ который присваивается каждой открытой вкладки. 
+        /// </param>
+        /// <param name="path">
+        /// Путь папки на панели файлов.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ITabPanelContent"/>.
+        /// </returns>
+        public ITabPanelContent InitializedViewModel(ref Guid token, string path)
+        {
+            this.CurrentDirectory = path;
+            this.Token = token == null ? Guid.NewGuid() : token;
+            var invoker = new NavigationInvoker();
+            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, invoker);
+            this.SetLastPanelState();
+
+            if (path == null && this.openFolderUnderCursorIsEnabled)
+            {
+                var command = this.navigationCommand.GetCommand();
+                this.CurrentDirectory = command.GetPath();
+                this.SetCommands(this.CurrentDirectory);
+            }
+            else
+            {
+                this.SetCommands(path);
+            }
+
+            return this;
+        }
+
         #region Commands
 
         /// <summary>
@@ -414,7 +487,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// CreatePluginContextMenu
+        /// Заполняет контекстное меню для элементов файловой панели командами созданые с помощью плагинов.
         /// </summary>
         private void CreatePluginContextMenu(IColumn column)
         {
@@ -431,17 +504,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// CreateContextMenu
+        /// Добавляет контекстное меню для элементов файловой панели.
         /// </summary>
         private void CreateContextMenu()
         {
             var globalCommands = new List<GlobalCommand>
             {
-                new () { DisplayName = CommandNames.ContentViewer, Name =  CommandNames.ContentViewer },
-                new () { DisplayName = "Create", Name = CommandNames.FileCreate },
-                new () { DisplayName = "Delete", Name = CommandNames.FileDelete },
-                new () { DisplayName = "Move", Name = CommandNames.FileMove },
-                new () { DisplayName = "Directory Update", Name = CommandNames.DirectoryUpdate },
+                new GlobalCommand () { DisplayName = CommandNames.ContentViewer, Name =  CommandNames.ContentViewer },
+                new GlobalCommand () { DisplayName = "Create", Name = CommandNames.FileCreate },
+                new GlobalCommand () { DisplayName = "Delete", Name = CommandNames.FileDelete },
+                new GlobalCommand () { DisplayName = "Move", Name = CommandNames.FileMove },
+                new GlobalCommand () { DisplayName = "Directory Update", Name = CommandNames.DirectoryUpdate },
             };
             
             foreach (var command in globalCommands)

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Боковая панель слева ">
+    <Position X="1.625" Y="0.5" Height="1.573" Width="2.794" />
+  </Comment>
+  <Class Name="UnityCommander.Modules.LeftSideBars.ViewModels.SidebarViewModel">
+    <Position X="1.75" Y="3" Width="1.5" />
+    <AssociationLine Name="PluginPanelViewModel1" Type="UnityCommander.Modules.LeftSideBars.ViewModels.PluginPanelViewModel" ManuallyRouted="true">
+      <Path>
+        <Point X="3.25" Y="5.061" />
+        <Point X="4.488" Y="5.061" />
+        <Point X="4.488" Y="4.127" />
+        <Point X="5.762" Y="4.127" />
+        <Point X="5.762" Y="4.773" />
+        <Point X="7" Y="4.773" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="1.037" Y="-0.013" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>QBAAAAABAAAAAAAAEAgABAAAAAABBAAAgAAABIgEEAA=</HashCode>
+      <FileName>ViewModels\SideBarViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PluginPanelViewModel1" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="UnityCommander.Modules.LeftSideBars.ViewModels.PluginPanelViewModel">
+    <Position X="7" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAgABAgAAAAACAAAAAIAAgAgAAAAAAQAAAAGAgAA=</HashCode>
+      <FileName>ViewModels\PluginPanelViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

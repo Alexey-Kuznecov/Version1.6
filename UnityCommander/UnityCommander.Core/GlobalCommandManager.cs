@@ -217,7 +217,7 @@ namespace UnityCommander.Core
                     globalCommand.ShortcutKey = (InputGesture)attribute.GetType().GetProperty("Hotkey")?.GetValue(attribute);
                 }
 
-                 return globalCommand;
+                return globalCommand;
             }
 
             return null;

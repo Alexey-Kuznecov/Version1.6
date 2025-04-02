@@ -146,8 +146,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             ModuleLogger logger)
         {
             this.logger = logger;
-            this.globalCommandManager = globalCommandService.GetCommandManager();
             GlobalCommandExecute.GlobalCommandExecuteChanged += OnGlobalCommandExecuteChanged;
+            
+            // Регистрация глобальных комманд
+            this.globalCommandManager = globalCommandService.GetCommandManager();
             globalCommandManager.CreateCommandByAttribute(this);
             globalCommandManager.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
             globalCommandManager.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
@@ -305,6 +307,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// Отображает тип обозревателя на активной вкладке файловой панели. 
         /// Например настройки, проводник или текстовый редактор.
+        /// Являеться глобальной командой. 
         /// </summary>
         /// <param name="obj"></param>
         public static void DisplayViewerContent(object obj)
@@ -351,6 +354,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             }
         }
 
+        /// <summary>
+        /// Отображает содержимое на активной файловой панели. Являеться глобальной командой. 
+        /// </summary>
+        /// <param name="obj"></param>
         public static void DisplayContent(object obj)
         {
             commandStatus = "Add";

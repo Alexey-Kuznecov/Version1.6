@@ -14,6 +14,7 @@ using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.Viewer.ViewModels
 {
+    [Obsolete]
     public class PluginSettingsViewModel : PropertiesChanged, ITabPanelContent, IPluginSettingsViewer
     {
         /// <summary>

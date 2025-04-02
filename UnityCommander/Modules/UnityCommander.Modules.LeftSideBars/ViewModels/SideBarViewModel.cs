@@ -8,6 +8,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Windows.Media;
+using Prism.Commands;
+
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     using System.Collections.Generic;
@@ -27,7 +30,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     /// <summary>
     /// The view a view model.
     /// </summary>
-    public class SidebarViewModel : BindableBase
+    public class SidebarViewModel
     {
         /// <summary>
         /// The view model message.
@@ -38,6 +41,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The pack icon.
         /// </summary>
         private readonly ObservableCollection<IIcon> packIcon;
+
+        /// <summary>
+        /// Служба получения диалоговых окон для использования их в VM.
+        /// </summary>
+        private readonly IDialogService dialogService;
 
         /// <summary>
         /// The content control register.
@@ -95,16 +103,12 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IPluginLoaderService pluginLoader,
             IGlobalCommandService globalCommandService)
         {
+            this.dialogService = dialogService;
             this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader, globalCommandService));
             this.mainViewModelExchange = mainViewModelExchange;
             this.packIcon = iconProvider.GetIcons();
             this.CreateSidebarElement();
         }
-
-        /// <summary>
-        /// Gets or sets the sidebar element.
-        /// </summary>
-        public ObservableCollection<SidebarItem> SidebarItem { get; set; } = new ObservableCollection<SidebarItem>();
 
         /// <summary>
         /// Gets or sets the sidebar content.
@@ -119,6 +123,20 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// Gets or sets the sidebar element.
+        /// </summary>
+        public ObservableCollection<SidebarItem> SidebarItem { get; set; } = new ObservableCollection<SidebarItem>();
+
+        private DelegateCommand openSettingDialogCommand;
+        public DelegateCommand OpenSettingDialogCommand => openSettingDialogCommand ??= new DelegateCommand(OpenDialogCommand);
+
+        void OpenDialogCommand()
+        {
+            this.dialogService.ShowDialog("AppConfigDialog");
+        }
+
         /// <summary>
         /// Gets or sets the index of the sidebar item is selected.
         /// The current index of the sidebar element that will be passed to the main view model
@@ -131,6 +149,14 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             {
                 this.currentSideBarItemIndex = value;
                 this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(this.CurrentSideBarItemIndex);
+            }
+        }
+
+        public PluginPanelViewModel PluginPanelViewModel1
+        {
+            get => default;
+            set
+            {
             }
         }
 

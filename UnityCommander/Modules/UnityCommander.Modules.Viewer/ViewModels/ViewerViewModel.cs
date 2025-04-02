@@ -58,6 +58,10 @@ namespace UnityCommander.Modules.Viewer.ViewModels
             set => this.SetProperty(ref this.viewerContent, value);
         }
 
+        /// <summary>
+        /// Устанавливает содержимое панели в ViewerView.
+        /// </summary>
+        /// <param name="content"></param>
         public void SetViewerContent(object content)
         {
             if (content != null)

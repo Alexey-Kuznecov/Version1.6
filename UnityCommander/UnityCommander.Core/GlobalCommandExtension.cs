@@ -8,6 +8,13 @@ namespace UnityCommander.Core
 
     public static class GlobalCommandExtension
     {
+        /// <summary>
+        /// Устанавливает  
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="command"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
         public static Control SetParam(this Control control, IGlobalCommand command, Action<CommandParametersManager> callback)
         {
             var parametersManager = new CommandParametersManager();
