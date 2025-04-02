@@ -6,7 +6,7 @@ namespace UnityCommander.Integration.Converters
     using System.Globalization;
     using System.Windows;
     using System.Windows.Controls;
-    
+    using UnityCommander.Common;
     using UnityCommander.Integration.Options;
 
     using Selector = System.Windows.Controls.Primitives.Selector;

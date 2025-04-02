@@ -35,16 +35,7 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj">
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <Private>false</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\UnityCommander.Controls\UnityCommander.Controls.csproj">
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <Private>false</Private>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </ProjectReference>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj">
       <Private>false</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>

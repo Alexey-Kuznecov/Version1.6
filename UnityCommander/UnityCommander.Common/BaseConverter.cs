@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Common.Styling.Converters
+namespace UnityCommander.Common
 {
     using System;
     using System.Globalization;

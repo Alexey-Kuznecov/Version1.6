@@ -36,6 +36,7 @@
     <ProjectReference Include="..\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.WebBrowser\UnityCommander.Modules.WebBrowser.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
