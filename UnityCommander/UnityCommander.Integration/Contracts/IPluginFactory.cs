@@ -26,5 +26,13 @@ namespace UnityCommander.Integration.Contracts
         /// The types Register.
         /// </param>
         void SetAssociatedTypes(AssociatedTypesRegister typesRegister);
+
+        /// <summary>
+        /// Устанавливает уникальный идентификатор для каждого плагина (например, GUID).
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types Register.
+        /// </param>
+        void SetToken(string token);
     }
 }

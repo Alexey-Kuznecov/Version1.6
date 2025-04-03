@@ -48,6 +48,10 @@ namespace MultiColumns.Image
         {
         }
 
+        public void SetToken(string token)
+        {
+        }
+
         /// <summary>
         /// The implementation factory.
         /// </summary>

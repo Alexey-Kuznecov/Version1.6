@@ -73,5 +73,13 @@ namespace MultiColumns.DateTime
         {
             return this.dateTimeColumn;
         }
+
+        /// <summary>
+        /// Set token
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void SetToken(string token)
+        {
+        }
     }
 }

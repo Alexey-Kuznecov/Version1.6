@@ -18,7 +18,9 @@ namespace UnityCommander.Services.Plugins
     using UnityCommander.Integration.Options;
 
     /// <summary>
-    /// The plugin provider service.
+    ///  Это основной класс, который отвечает за загрузку плагинов, их регистрацию
+    ///  и создание контекста для каждого плагина. Он инкапсулирует логику загрузки 
+    ///  плагинов и управления их состоянием (например, выгрузка плагинов).
     /// </summary>
     public class PluginLoaderService : IPluginLoaderService
     {
@@ -51,12 +53,16 @@ namespace UnityCommander.Services.Plugins
             this.CreatePluginContext();
         }
 
+        /// <summary>
+        ///  Загружает плагины из указанной директории
+        /// </summary>
+        /// <param name="pluginsDir"></param>
         private void LoadPlugins(string pluginsDir)
         {
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
                 string dirName = Path.GetFileName(dir);
-                string pluginDll = Path.Combine(dir, "netcoreapp3.1", $"{dirName}.dll");
+                string pluginDll = Path.Combine(dir, "net9.0-windows", $"{dirName}.dll");
 
                 if (File.Exists(pluginDll))
                 {
@@ -75,7 +81,7 @@ namespace UnityCommander.Services.Plugins
         }
 
         /// <summary>
-        /// 
+        /// Возвращает базовый путь к приложению, который используется для поиска плагинов.
         /// </summary>
         /// <returns></returns>
         private string GetMainPath()
@@ -115,7 +121,7 @@ namespace UnityCommander.Services.Plugins
         public IEnumerable<IPluginContext> GetPluginContext() => this.pluginContexts;
 
         /// <summary>
-        /// The create plugin context.
+        /// Создает контексты плагинов, заполняет их необходимыми данными (например, команды и настройки).
         /// </summary>
         public void CreatePluginContext()
         {
@@ -149,7 +155,7 @@ namespace UnityCommander.Services.Plugins
         }
 
         /// <summary>
-        /// The unload plugins.
+        /// Выгружает плагины.
         /// </summary>
         /// <returns>
         /// The <see cref="bool"/>.
@@ -157,21 +163,19 @@ namespace UnityCommander.Services.Plugins
         public bool UnloadPlugins()
         {
             this.ClearHashTable();
+            bool isLoaded = false;
 
-            bool isLoaded = default(bool);
-            
-            Research:
-            foreach (var plugin in PluginLoaders)
+            var pluginLoadersToUnload = new List<IPluginLoader>(PluginLoaders);
+
+            foreach (var plugin in pluginLoadersToUnload)
             {
                 if (plugin.UnloadPlugin())
                 {
                     isLoaded = true;
+                    ((List<IPluginLoader>)PluginLoaders).Remove(plugin);
                 }
-
-                ((List<IPluginLoader>)PluginLoaders).Remove(plugin);
-                goto Research;
             }
-            
+
             return isLoaded;
         }
 

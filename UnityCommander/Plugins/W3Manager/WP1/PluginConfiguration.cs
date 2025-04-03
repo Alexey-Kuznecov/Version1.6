@@ -64,6 +64,10 @@ namespace W3Manager.WP1
             typesRegister.RegisterSettings<ModSettings>(this.modStatusColumn);
         }
 
+        public void SetToken(string token)
+        {
+        }
+
         /// <summary>
         /// The implementation factory.
         /// </summary>

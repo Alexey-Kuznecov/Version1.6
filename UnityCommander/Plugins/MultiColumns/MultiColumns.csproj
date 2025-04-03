@@ -1,13 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+	  <TargetFramework>net9.0-windows</TargetFramework>
+	  <OutputPath>..\..\plugins\</OutputPath>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\MultiColumns</OutputPath>
+	  <OutputPath Condition="'$(TargetFramework)' == 'net9.0-windows'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net9.0-windows\plugins\MultiColumns</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
+      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.DependencyInjection">
@@ -16,10 +20,6 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityCommander.Integration">
-      <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\UnityCommander.Integration.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

@@ -46,6 +46,10 @@ namespace MultiColumns.Sized
             typesRegister.RegisterSettings<SizeSettings>(this.sizedColumn);
         }
 
+        public void SetToken(string token)
+        {
+        }
+
         /// <summary>
         /// The implementation factory.
         /// </summary>

@@ -133,6 +133,10 @@ namespace UnityCommander.Services.Plugins
 
             var typesRegister = new AssociatedTypesRegister(this.associatedTypes);
 
+            // Генерация уникального токена для плагина
+            var token = Guid.NewGuid().ToString();
+
+           
             foreach (var type in assembly.GetTypes())
             {
                 if (typeof(IPluginFactory).IsAssignableFrom(type) && !type.IsAbstract)
@@ -140,6 +144,7 @@ namespace UnityCommander.Services.Plugins
                     var plugin = Activator.CreateInstance(type) as IPluginFactory;
                     plugin?.Configure(services);
                     plugin?.SetAssociatedTypes(typesRegister);
+                    plugin.SetToken(token);  // Передаем токен плагину 
 
 
                     if (typeof(ICommandFactory).IsAssignableFrom(type) && !type.IsAbstract)
@@ -201,6 +206,7 @@ namespace UnityCommander.Services.Plugins
             {
                 ((List<IEnumerable<IPluginService>>)this.pluginsRegistered).Add(registered);
             }
+
         }
 
         /// <summary>
