@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace UnityCommander.Core
+namespace UnityCommander.Common
 {
     public class DelegateTypeFactory
     {

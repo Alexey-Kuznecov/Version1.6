@@ -13,7 +13,6 @@ namespace UnityCommander.Integration.Commands
     using UnityCommander.Common;
     using AlexeyKuznecov;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Core;
 
     /// <summary>
     /// Построитель команд подключаемых модулей.

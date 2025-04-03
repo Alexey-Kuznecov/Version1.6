@@ -1,5 +1,4 @@
-﻿
-namespace UnityCommander.Common.Commands
+﻿namespace UnityCommander.Common.Commands
 {
     using System;
     using System.Reflection;
