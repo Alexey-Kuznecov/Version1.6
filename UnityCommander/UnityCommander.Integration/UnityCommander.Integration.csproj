@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <langVersion>9.0</langVersion>
     <BaseOutputPath>bin\</BaseOutputPath>
@@ -17,10 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
-    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj">
-      <Private>false</Private>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </ProjectReference>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
+    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 namespace UnityCommander.Core.IO.Operations
 {
     using System.IO;
+    using UnityCommander.Common.Commands;
 
     /// <summary>
     /// The file manager.
@@ -17,7 +18,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="target">
         /// The target.
         /// </param>
-        public static void Move(string source, string target)
+        public void Move(string source, string target)
         {
             if (source == null && target == null) return;
 
@@ -66,7 +67,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="source">
         /// The source.
         /// </param>
-        public static void Delete(string source)
+        public void Delete(string source)
         {
             if (source == null) return;
 
@@ -84,7 +85,7 @@ namespace UnityCommander.Core.IO.Operations
         /// <param name="dirName">
         /// The dir path.
         /// </param>
-        public static void Create(string dirName)
+        public void Create(string dirName)
         {
             //if (dirName != null)
             //    Directory.CreateDirectory(dirName);

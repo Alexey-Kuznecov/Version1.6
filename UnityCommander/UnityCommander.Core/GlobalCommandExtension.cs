@@ -4,6 +4,7 @@ using System.Windows.Controls;
 
 namespace UnityCommander.Core
 {
+    using UnityCommander.Common;
     using UnityCommander.Common.Commands;
 
     public static class GlobalCommandExtension

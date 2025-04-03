@@ -22,6 +22,7 @@ using NLog;
 using Prism.Commands;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using UnityCommander.Common;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;

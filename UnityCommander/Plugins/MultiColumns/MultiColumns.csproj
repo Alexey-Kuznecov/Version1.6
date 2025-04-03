@@ -1,11 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\MultiColumns</OutputPath>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.DependencyInjection">
       <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll</HintPath>

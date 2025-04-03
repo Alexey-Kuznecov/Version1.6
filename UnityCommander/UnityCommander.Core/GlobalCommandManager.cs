@@ -7,9 +7,8 @@ namespace UnityCommander.Core
     using System.Linq;
     using System.Reflection;
     using System.Windows.Input;
-    
+    using UnityCommander.Common;
     using UnityCommander.Common.Commands;
-    using UnityCommander.Core.Generators;
 
     /// <summary>
     /// The global command manager.

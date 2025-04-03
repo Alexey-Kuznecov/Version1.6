@@ -4,9 +4,8 @@ namespace UnityCommander.Integration.Columns
 {
     using System;
     using System.Collections.Generic;
-
     using UnityCommander.Common;
-    using UnityCommander.Core;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
 
 
@@ -75,7 +74,7 @@ namespace UnityCommander.Integration.Columns
                 Command = new GlobalCommand
                 {
                     DisplayName = header,
-                    Command = new UnityCommander.Core.GlobalCommandExecute(action, type)
+                    Command = new GlobalCommandExecute(action, type)
                 }
             });
         }

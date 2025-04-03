@@ -37,12 +37,26 @@ namespace UnityCommander.Services.Plugins
         /// </summary>
         public PluginLoaderService()
         {
-            string mainPath = GetMainPath() + "\\UnityCommander\\bin\\Debug\\netcoreapp3.1\\";
-            var pluginsDir = Path.Combine(mainPath, "plugins");
+            string mainPath = GetMainPath();
+            string pluginsDir = Path.Combine(mainPath, "plugins");
+
+            if (!Directory.Exists(pluginsDir))
+            {
+                Console.WriteLine("Plugins directory not found.");
+                return;
+            }
+
+            LoadPlugins(pluginsDir);
+
+            this.CreatePluginContext();
+        }
+
+        private void LoadPlugins(string pluginsDir)
+        {
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
-                var dirName = Path.GetFileName(dir);
-                var pluginDll = Path.Combine(dir + "\\netcoreapp3.1\\", dirName + ".dll");
+                string dirName = Path.GetFileName(dir);
+                string pluginDll = Path.Combine(dir, "netcoreapp3.1", $"{dirName}.dll");
 
                 if (File.Exists(pluginDll))
                 {
@@ -51,10 +65,24 @@ namespace UnityCommander.Services.Plugins
                     Console.WriteLine($"{dirName} is loaded.");
                     ((List<IPluginLoader>)PluginLoaders).Add(pluginLoader);
                 }
+                else
+                {
+                    Console.WriteLine($"Plugin DLL not found: {pluginDll}");
+                }
             }
 
             this.CreatePluginContext();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private string GetMainPath()
+        {
+            return AppContext.BaseDirectory; // Универсальный путь, учитывает публикацию и окружение
+        }
+
 
         #region Implementations Methods
 
@@ -146,20 +174,6 @@ namespace UnityCommander.Services.Plugins
             
             return isLoaded;
         }
-
-        /// <summary>
-        /// The get main path.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private static string GetMainPath()
-            => Path.GetFullPath(Path.Combine(
-                Path.GetDirectoryName(
-                    Path.GetDirectoryName(
-                        Path.GetDirectoryName(
-                            Path.GetDirectoryName(
-                                Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory))))) ?? string.Empty));
 
         /// <summary>
         /// The clear hash table.

@@ -10,9 +10,10 @@ namespace UnityCommander.Integration.Commands
     using AlexeyKuznecov.Library.Mvvm.Base;
 
     using UnityCommander.Common.Commands;
-    using UnityCommander.Core;
-    using UnityCommander.Core.Generators;
+    using UnityCommander.Common;
+    using AlexeyKuznecov;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Core;
 
     /// <summary>
     /// Построитель команд подключаемых модулей.

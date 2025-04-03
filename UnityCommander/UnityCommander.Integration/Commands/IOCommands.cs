@@ -1,11 +1,13 @@
 ﻿
+using UnityCommander.Common;
+
 namespace UnityCommander.Integration.Commands
 {
     /// <summary>
     /// The io commands.
     /// </summary>
     /// ReSharper disable once InconsistentNaming
-    public class IOCommands : BaseCommand
+    public class IOCommands : BaseCommand, IFileOperations
     {
         /// <summary>
         /// The move.
@@ -19,7 +21,7 @@ namespace UnityCommander.Integration.Commands
         [GlobalCommand(CommandNames.FileMove, CommandKeys.CtrlG)]
         public virtual void Move(string source, string destination)
         {
-            Core.IO.Operations.FileManager.Move(source, destination);
+            //Core.IO.Operations.FileManager.Move(source, destination);
         }
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace UnityCommander.Integration.Commands
         [GlobalCommand(CommandNames.FileDelete, CommandKeys.CtrlH)]
         public virtual void Delete(string source)
         {
-            Core.IO.Operations.FileManager.Delete(source);
+            //Core.IO.Operations.FileManager.Delete(source);
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace UnityCommander.Integration.Commands
         [GlobalCommand(CommandNames.FileCreate, CommandKeys.CtrlI)]
         public virtual void Create(string dirName)
         {
-            Core.IO.Operations.FileManager.Create(dirName);
+            //Core.IO.Operations.FileManager.Create(dirName);
         }
     }
 }

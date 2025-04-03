@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
@@ -10,5 +10,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
     <ProjectReference Include="..\Components\Components.csproj" />
+	  <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
   </ItemGroup>
 </Project>

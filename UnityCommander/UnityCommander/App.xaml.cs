@@ -34,6 +34,10 @@ namespace UnityCommander
     using UnityCommander.Modules.Viewer;
     using UnityCommander.Modules.Viewer.ViewModels;
     using UnityCommander.Modules.Viewer.Views;
+    using UnityCommander.Common;
+    using UnityCommander.Native;
+    using UnityCommander.Integration;
+    using UnityCommander.Core.IO.Operations;
 
 
 
@@ -62,7 +66,13 @@ namespace UnityCommander
         {
             base.InitializeShell(shell);
         }
-        
+
+        public void OnInitialized(IContainerProvider containerProvider)
+        {
+            var pluginBridge = containerProvider.Resolve<PluginBridge>();
+            pluginBridge.ExecuteCreate();
+        }
+
         /// <summary>
         /// The register types.
         /// </summary>
@@ -87,25 +97,14 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
-            
+
+            //containerRegistry.RegisterSingleton<IFileOperations, FileManager>();
+            containerRegistry.Register<PluginBridge>();
+
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
-
-            //Container.UseInstance(typeof(IPluginLoaderService),
-            //    new PluginLoaderService(),
-            //    IfAlreadyRegistered.Replace, false, true, 1);
         }
-
-        //protected override Rules CreateContainerRules()
-        //{
-        //    return Rules.Default
-        //        .WithAutoConcreteTypeResolution(Condition)
-        //        .With(Made.Of(FactoryMethod.ConstructorWithResolvableArguments))
-        //        .WithoutThrowOnRegisteringDisposableTransient()
-        //        .WithFuncAndLazyWithoutRegistration()
-        //        .WithDefaultIfAlreadyRegistered(IfAlreadyRegistered.Replace);
-        //}
 
         private bool Condition(Request arg)
         {
@@ -150,8 +149,6 @@ namespace UnityCommander
             base.ConfigureViewModelLocator();
             
             ViewModelLocationProvider.Register(typeof(LeftPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
-            //ViewModelLocationProvider.Register(typeof(RightPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
-            //ViewModelLocationProvider.Register(typeof(ViewerView).ToString(), () => Container.Resolve<ViewerViewModel>());
         }
 
         /// <summary>
