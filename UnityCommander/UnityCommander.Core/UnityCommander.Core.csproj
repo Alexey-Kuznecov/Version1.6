@@ -36,8 +36,12 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
-    <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj">
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">

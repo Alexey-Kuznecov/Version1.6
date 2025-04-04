@@ -56,6 +56,10 @@ namespace AIconBrowser
         {
         }
 
+        public void SetToken(string token)
+        {
+        }
+
         /// <summary>
         /// The on plugin unloading requested.
         /// </summary>
