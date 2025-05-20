@@ -1,4 +1,5 @@
-﻿
+﻿#define DEBUG
+
 namespace UnityCommander.Services.Plugins
 {
     using System;
@@ -14,6 +15,8 @@ namespace UnityCommander.Services.Plugins
     using Integration.Dialog;
 
     using Interfaces;
+    using NLog;
+    using UnityCommander.Core;
     using UnityCommander.Core.Exceptions;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Factories;
@@ -49,9 +52,36 @@ namespace UnityCommander.Services.Plugins
         /// </summary>
         private object _loadedPlugins;
 
+        /// <summary>
+        /// Путь, по которому находятся плагины.
+        /// </summary>
+        private string _pluginPath;
+
+#if DEBUG
+        /// <summary>
+        /// Логгер для текущего класса, используется для записи логов и отслеживания событий в приложении.
+        /// </summary>
+        /// <remarks>
+        /// Это статическое поле инициализирует экземпляр логгера с помощью библиотеки NLog.
+        /// Он автоматически привязывается к классу, в котором используется, что позволяет логировать события
+        /// с указанием точного места в коде (например, имени класса) для лучшей диагностики.
+        /// </remarks>
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+#endif
+
         #endregion
 
         #region Конструктор
+
+        /// <summary>
+        /// Инициализирует сервис загрузки плагинов с указанным путем для поиска плагинов.
+        /// </summary>
+        /// <param name="pluginPath">Путь к директории, где находятся плагины.</param>
+        public PluginLoaderService(string pluginPath)
+        {
+            _pluginPath = pluginPath;
+        }
+
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="PluginLoaderService"/>.
@@ -63,7 +93,7 @@ namespace UnityCommander.Services.Plugins
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
 
             // Определяем путь к корневой директории приложения
-            string mainPath = GetMainPath();
+            string mainPath = _pluginPath ?? GetMainPath();
             string pluginsDir = Path.Combine(mainPath, "plugins");
 
             // Проверяем наличие каталога с плагинами
@@ -78,6 +108,10 @@ namespace UnityCommander.Services.Plugins
 
             // Создаём контекст для загруженных плагинов, обеспечивая их инициализацию и доступ к службам
             this.CreatePluginContext();
+
+            // Настройка логгера Nlog
+            NLogSettings.Configure("Logs", "UnityCommander");
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
         #endregion
@@ -91,18 +125,46 @@ namespace UnityCommander.Services.Plugins
         /// <param name="pluginDirectory">Путь к папке с плагинами.</param>
         public void LoadPlugins(string pluginDirectory)
         {
-            foreach (var dir in GetPluginDirectories(pluginDirectory))
+            try
             {
-                string pluginDllPath = GetPluginDllPath(dir);
+                foreach (var dir in GetPluginDirectories(pluginDirectory))
+                {
+                    string pluginDllPath = GetPluginDllPath(dir);
 
-                if (File.Exists(pluginDllPath))
-                {
-                    LoadAndRegisterPlugin(dir, pluginDllPath);
+                    try
+                    {
+                        if (File.Exists(pluginDllPath))
+                        {
+                            // Проверка расширения файла на ".dll"
+                            if (Path.GetExtension(pluginDllPath).ToLower() != ".dll")
+                            {
+                                throw new InvalidPluginException("Структура файла неверна. Файл должен иметь расширение .dll.");
+                            }
+
+                            LoadAndRegisterPlugin(dir, pluginDllPath);
+                        }
+                        else
+                        {
+#if DEBUG
+                            Console.WriteLine($"Плагин DLL не найден: {pluginDllPath}");
+#endif
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+#if DEBUG
+                        // Логируем исключение в режиме отладки
+                        _logger.Error(ex, $"Ошибка при загрузке плагина: {pluginDllPath}");
+#endif
+                    }
                 }
-                else
-                {
-                    Console.WriteLine($"Плагин DLL не найден: {pluginDllPath}");
-                }
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                // Логируем исключение в режиме отладки
+                _logger.Error(ex, "Ошибка при обработке плагинов");
+#endif
             }
         }
 

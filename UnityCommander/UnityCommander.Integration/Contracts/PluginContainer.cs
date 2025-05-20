@@ -49,5 +49,11 @@ namespace UnityCommander.Integration.Contracts
         /// </summary>
         /// <returns></returns>
         public string GetPluginName() => this.PluginName;
+
+        /// <summary>
+        /// Возращает полный путь к плагина.
+        /// </summary>
+        /// <returns></returns>
+        public string GetPluginPath() => this.AssemblyPath;
     }
 }

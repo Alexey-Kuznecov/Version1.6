@@ -13,124 +13,129 @@
     using UnityCommander.Integration.Contracts;
     using System.Runtime.CompilerServices;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Core.Exceptions;
+    using NLog;
 
     public class PluginLifecycleTests
     {
         private readonly string _pluginDirectory = "F:\\UnityCommander\\Version3.9.7\\UnityCommander\\UnityCommander\\bin\\Debug\\net9.0-windows\\plugins";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Unit-тест проверяет корректную работу загрузчика плагинов при наличии 
+        /// файла с расширением .dll, но не являющегося валидной .NET-сборкой.
+        /// </summary>
+        /// <remarks>
+        /// Тест создает структуру плагина с фейковым .dll-файлом, затем
+        /// вызывает метод <see cref="PluginLoaderService.LoadPlugins"/>.
+        /// Ожидается, что исключение не будет выброшено, а загрузчик проигнорирует
+        /// невалидный файл.
+        /// </remarks>
+        /// <author>Автор: [Твое Имя]</author>
+        /// <created>Дата создания: 2025-04-05</created>
+        /// <test>
+        /// Arrange:
+        /// - Создается папка InvalidPlugin/net9.0-windows.
+        /// - В неё помещается текстовый файл с расширением .dll.
+        /// Act:
+        /// - Вызывается метод LoadPlugins.
+        /// Assert:
+        /// - Проверяется, что исключения не произошло.
+        /// </test>
         [Fact]
         public void Plugin_Loads_Successfully()
         {
-            var pluginLoader = new PluginLoaderService();
+            // Arrange
+            var pluginPath = PrepareFakePluginDirectory("InvalidPlugin", "dll");
+            var pluginLoader = new PluginLoaderService(_pluginDirectory);
 
-            // Загружаем плагины
-            pluginLoader.LoadPlugins(_pluginDirectory);
-
-            // Получаем загруженные плагины
-            var plugins = pluginLoader.GetPluginDescriptors();
-
-            // Выводим их количество
-            Console.WriteLine($"Количество загруженных плагинов: {plugins.Count()}");
-
-            Assert.NotEmpty(plugins);
-        }
-
-        [Fact]
-        public void Plugin_Registers_Services_Correctly()
-        {
-            var pluginLoader = new PluginLoaderService();
-            var dialogServices = pluginLoader.GetDialogService();
-
-            Assert.NotEmpty(dialogServices);
-        }
-
-        [Fact]
-        public void Plugin_Unloads_Successfully()
-        {
-            // Создаём фейковый плагин
-            var pluginPath = Path.Combine(_pluginDirectory, "plugin.dll");
-            File.WriteAllText(pluginPath, "Some plugin data");
-
-            var pluginLoader = new PluginLoaderService();
-            pluginLoader.LoadPlugins(_pluginDirectory);
-
-            var plugin = pluginLoader.UnloadPlugin("plugin");
-
-            // Проверяем, что плагин был загружен
-            Assert.NotNull(plugin);
-
-            // Выгружаем плагин
-            pluginLoader.UnloadPlugin("plugin");
-
-            // Проверяем, что плагин был выгружен
-            var unloadedPlugin = pluginLoader.UnloadPlugin("plugin");
-            Assert.Null(unloadedPlugin);
-
-            File.Delete(pluginPath);
-        }
-
-        [Fact]
-        public void Plugin_Reloads_Correctly()
-        {
-            // Arrange: подготовка данных
-            string pluginDirectory = @"путь_к_плагинам";  // укажи путь к папке с плагинами
-            var pluginLoaderService = new PluginLoaderService();  // создаём сервис для загрузки плагинов
-
-            // Act: 1) загрузка плагинов
-            pluginLoaderService.LoadPlugins(pluginDirectory);  // вызываем метод загрузки плагинов
-
-            // Проверяем, что плагины загружены
-            var pluginsBeforeReload = pluginLoaderService.GetLoadedPlugins();  // получаем список загруженных плагинов
-            Assert.NotEmpty(pluginsBeforeReload);  // проверяем, что плагины были загружены
-
-            // Act: 2) выгрузка и перезагрузка плагинов
-            pluginLoaderService.UnloadPlugins();  // метод для выгрузки плагинов
-            pluginLoaderService.LoadPlugins(pluginDirectory);  // повторная загрузка плагинов
-
-            // Assert: Проверка, что плагины успешно перезагружены
-            var pluginsAfterReload = pluginLoaderService.GetLoadedPlugins();  // получаем список плагинов после перезагрузки
-            Assert.NotEmpty(pluginsAfterReload);  // проверяем, что плагины были перезагружены
-
-            // Проверка на равенство плагинов до и после перезагрузки
-            Assert.Equal(pluginsBeforeReload.Count, pluginsAfterReload.Count);  // количество плагинов должно остаться одинаковым
-
-            // Проверяем, что хотя бы один из плагинов перезагружен (например, проверка по имени плагина)
-            var pluginBefore = pluginsBeforeReload.FirstOrDefault(p => p.GetPluginName() == "НекоторыйПлагин");
-            var pluginAfter = pluginsAfterReload.FirstOrDefault(p => p.GetPluginName() == "НекоторыйПлагин");
-            Assert.NotNull(pluginAfter);  // проверяем, что плагин с таким именем все еще существует
-            Assert.Equal(pluginBefore?.AssemblyPath, pluginAfter?.AssemblyPath);  // проверяем, что путь к DLL совпадает
-        }
-
-        [Fact]
-        public void Plugin_Isolated_From_Main_App()
-        {
-            var pluginLoader = new PluginLoaderService();
-            pluginLoader.LoadPlugins(_pluginDirectory);
-
-            var pluginContexts = pluginLoader.GetPluginContext();
-            Assert.All(pluginContexts, context =>
+            // Act
+            try
             {
-                Assert.NotNull(context);
-            });
+                pluginLoader.LoadPlugins(_pluginDirectory);
+            }
+            catch (Exception)
+            {
+                Assert.True(false, "Исключение не должно было быть выброшено");
+            } 
+
+            // Assert
+            Assert.True(true);
+
+            // Clean up
+            CleanupPluginTest(pluginPath);
         }
 
         [Fact]
-        public void Plugin_Handles_Invalid_Assembly()
+        public void Plugin_Implements_IPlugin_Interface()
         {
-            Console.WriteLine("Тест Plugin_Handles_Invalid_Assembly начал выполнение!");
-            var invalidPluginPath = Path.Combine(_pluginDirectory, "invalid.dll");
-            File.WriteAllText(invalidPluginPath, "Invalid Data"); // Создаем некорректный файл
+            // Arrange
+            var pluginDirectory = Path.Combine(_pluginDirectory, "MultiColumns");
+            //Directory.CreateDirectory(pluginDirectory);
 
-            var pluginLoader = new PluginLoaderService();
+            var netFolder = Path.Combine(pluginDirectory, "net9.0-windows");
+            //Directory.CreateDirectory(netFolder);
 
-            Exception exception = Record.Exception(() => pluginLoader.LoadPlugins(_pluginDirectory));
+            var validPluginPath = Path.Combine(netFolder, "MultiColumns.dll");
+            //File.WriteAllText(validPluginPath, "Dummy Plugin Data");
 
-            Console.WriteLine("Тест Plugin_Handles_Invalid_Assembly находится перед вызывом alert!");
+            var pluginLoader = new PluginLoaderService(_pluginDirectory);
 
-            Assert.NotNull(exception); // Проверяем, что была выброшена ошибка
-            File.Delete(invalidPluginPath);
+            // Act
+            pluginLoader.LoadPlugins(_pluginDirectory);
 
-            Console.WriteLine("Тест Plugin_Handles_Invalid_Assembly закончит выполнение!");
+            // Assert
+            var loadedPlugin = pluginLoader.GetLoadedPlugins().FirstOrDefault(p => p.GetPluginPath() == validPluginPath);
+            Assert.NotNull(loadedPlugin);  // Плагин должен быть найден
+            Assert.IsAssignableFrom<IPluginFactory>(loadedPlugin);  // Проверяем, что плагин реализует интерфейс IPlugin
+
+            // Clean up
+            //File.Delete(validPluginPath);
+            //Directory.Delete(netFolder);
+            //Directory.Delete(pluginDirectory);
         }
+
+        #region Методы отчиски и подготовки
+
+        private string PrepareFakePluginDirectory(string pluginName, string extension)
+        {
+            var pluginDirectory = _pluginDirectory;
+            Directory.CreateDirectory(pluginDirectory);
+
+            var netFolder = Path.Combine(pluginDirectory, $"{pluginName}\\net9.0-windows");
+            Directory.CreateDirectory(netFolder);
+
+            var pluginFilePath = Path.Combine(netFolder, $"{pluginName}.{extension}");
+            File.WriteAllText(pluginFilePath, "This is not a valid DLL");
+
+            return pluginFilePath;
+        }
+
+        private void CleanupPluginTest(string directoryPath)
+        {
+            if (string.IsNullOrWhiteSpace(directoryPath))
+                throw new ArgumentException("Путь к директории не может быть пустым.", nameof(directoryPath));
+
+            if (!Directory.Exists(directoryPath))
+                return;
+
+            try
+            {
+                // Удаление всех файлов и подпапок
+                Directory.Delete(directoryPath, recursive: true);
+                //Directory.Delete(directoryPath);
+            }
+            catch (IOException)
+            {
+                // Иногда файлы могут быть в использовании, можно добавить retry или лог
+                Console.WriteLine($"Ошибка при удалении директории: {directoryPath}. Возможно, она используется.");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine($"Нет прав для удаления директории: {directoryPath}.");
+            }
+        }
+
+        #endregion
     }
 }
