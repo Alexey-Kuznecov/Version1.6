@@ -4,7 +4,7 @@ namespace UnityCommander.Core.Commands
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
+    using System.Threading.Tasks;
     using UnityCommander.Core.Commands.Base;
 
     /// <summary>
@@ -84,6 +84,12 @@ namespace UnityCommander.Core.Commands
         public void AddCommand(Action action)
         {
             NavigationInvoker.currentCommand = new ConcreteCommand(new Navigator(action));
+            this.ModuleCommands.Add(NavigationInvoker.currentCommand);
+        }
+
+        public void AddCommand(Func<object, Task> asyncAction, object path)
+        {
+            //NavigationInvoker.currentCommand = new ConcreteCommandAsync(new AsyncNavigator(asyncAction, path));
             this.ModuleCommands.Add(NavigationInvoker.currentCommand);
         }
 

@@ -1,91 +1,85 @@
 ﻿
 namespace UnityCommander.Services
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
-
+    using System.Threading.Tasks;
     using AlexeyKuznecov.Library.Converters;
 
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
- 
+
     /// <summary>
     /// The files provider.
     /// </summary>
     public class DataProviderService : IDataProviderService
     {
-        /// <summary>
-        /// Gets files list of the specific location.
-        /// </summary>
-        /// <param name="path"> The path to the directory where the files are located. </param>
-        /// <returns> The files collection. </returns>
-        public ObservableCollection<FileModel> GetFiles(string path)
+        public async Task<List<FileModel>> GetFilesAsync(string path)
         {
-            ObservableCollection<FileModel> models = new ObservableCollection<FileModel>();
-            DirectoryInfo dir = new DirectoryInfo(path + "\\");
-
-            foreach (var file in dir.GetFiles())
+            return await Task.Run(() =>
             {
-                if ((file.Attributes & FileAttributes.Hidden) == 0)
-                {
-                    models.Add(new FileModel
-                    {
-                        Name = Path.GetFileNameWithoutExtension(file.Name),
-                        Path = file.FullName,
-                        Extension = file.Extension,
-                        CreationTime = file.CreationTime,
-                        LastAccessTime = file.LastAccessTime,
-                        TargetPanel = TargetPanel.Files
-                    });
-                }
-            }
+                var list = new List<FileModel>();
+                var dir = new DirectoryInfo(path);
 
-            return models;
+                foreach (var file in dir.GetFiles())
+                {
+                    if ((file.Attributes & FileAttributes.Hidden) == 0)
+                    {
+                        list.Add(new FileModel
+                        {
+                            Name = Path.GetFileNameWithoutExtension(file.Name),
+                            Path = file.FullName,
+                            Extension = file.Extension,
+                            CreationTime = file.CreationTime,
+                            LastAccessTime = file.LastAccessTime,
+                            TargetPanel = TargetPanel.Files
+                        });
+                    }
+                }
+
+                return list;
+            });
         }
 
-        /// <summary>
-        /// Gets directories list of the specific location.
-        /// </summary>
-        /// <param name="path"> The path to the directory where the directories are located. </param>
-        /// <returns> The directories collection. </returns>
-        public ObservableCollection<FolderModel> GetDirectories(string path)
+        public async Task<List<FolderModel>> GetDirectoriesAsync(string path)
         {
-            ObservableCollection<FolderModel> models = new ObservableCollection<FolderModel>();
-            DirectoryInfo dir = new DirectoryInfo(path + "\\");
-
-            foreach (var item in dir.GetDirectories())
+            return await Task.Run(() =>
             {
-                if ((item.Attributes & FileAttributes.Hidden) == 0)
-                {
-                    models.Add(new FolderModel
-                    {
-                        Name = item.Name,
-                        Path = item.FullName,
-                        CreationTime = item.CreationTime,
-                        LastAccessTime = item.LastAccessTime,
-                        TargetPanel = TargetPanel.Folders
-                    }); 
-                }
-            }
+                var list = new List<FolderModel>();
+                var dir = new DirectoryInfo(path);
 
-            return models;
+                foreach (var item in dir.GetDirectories())
+                {
+                    if ((item.Attributes & FileAttributes.Hidden) == 0)
+                    {
+                        list.Add(new FolderModel
+                        {
+                            Name = item.Name,
+                            Path = item.FullName,
+                            CreationTime = item.CreationTime,
+                            LastAccessTime = item.LastAccessTime,
+                            TargetPanel = TargetPanel.Folders
+                        });
+                    }
+                }
+
+                return list;
+            });
         }
 
-        /// <summary>
-        /// Gets directories list of the specific location.
-        /// </summary>
-        /// <returns> The directories collection. </returns>
-        public ObservableCollection<DriveModel> GetDrives()
+        public async Task<List<DriveModel>> GetDrivesAsync()
         {
-            ObservableCollection<DriveModel> models = new ObservableCollection<DriveModel>();
-            
-            foreach (var drive in DriveInfo.GetDrives())
+            return await Task.Run(() =>
             {
-                if (drive.DriveType == DriveType.Network) continue;
+                var list = new List<DriveModel>();
 
-                if (drive.IsReady)
+                foreach (var drive in DriveInfo.GetDrives())
                 {
-                    models.Add(new DriveModel
+                    if (drive.DriveType == DriveType.Network) continue;
+                    if (!drive.IsReady) continue;
+
+                    list.Add(new DriveModel
                     {
                         Letter = drive.Name,
                         FreeSpace = ConverterBytes.AutoConvertFormatBytes(drive.AvailableFreeSpace),
@@ -94,9 +88,9 @@ namespace UnityCommander.Services
                         TargetPanel = TargetPanel.LocalDisk
                     });
                 }
-            }
 
-            return models;
+                return list;
+            });
         }
     }
 }

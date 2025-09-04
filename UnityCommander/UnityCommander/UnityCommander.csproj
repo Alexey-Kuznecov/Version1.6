@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Config.Net" Version="4.15.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +40,17 @@
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CommandSystem.Core">
+      <HintPath>..\..\..\..\CommandSystemBak\CommandSystem.Gui\bin\Debug\net8.0\CommandSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandSystem.Gui">
+      <HintPath>..\..\..\..\CommandSystemBak\CommandSystem.Gui\bin\Debug\net8.0\CommandSystem.Gui.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandSystem.Infrastructure">
+      <HintPath>..\..\..\..\CommandSystemBak\CommandSystem.Gui\bin\Debug\net8.0\CommandSystem.Infrastructure.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Update="App.xaml">

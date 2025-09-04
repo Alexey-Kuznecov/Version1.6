@@ -13,11 +13,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using CommandSystem.Core.Commands;
+using CommandSystem.Core.Metadata;
+using CommandSystem.Gui.Integraion;
 using NLog;
 using Prism.Commands;
 using Prism.Regions;
@@ -58,6 +63,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IMultiCommandService multiCommandService;
         private readonly IGlobalCommandService globalCommandService;
         private readonly IPluginLoaderService pluginLoaderService;
+        private readonly GuiCommandRegistrar commandRegistered;
+        private readonly GuiCommandExecute commandExecute;
         private readonly IAppConfigService configService;
         private readonly CommandManager commandManager;
         private readonly ModuleLogger logger;
@@ -114,10 +121,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IGlobalCommandService globalCommandService,
             IIconProviderService iconProvider,
             IAppConfigService configService,
+            GuiCommandRegistrar guiCommandRegistrar,
+            GuiCommandExecute guiCommandExecute,
             CommandManager manager,
             ModuleLogger logger)
             : base(regionManager)
         {
+            this.commandRegistered = guiCommandRegistrar;
+            this.commandExecute = guiCommandExecute;
             this.configService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
@@ -128,7 +139,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.globalCommandService = globalCommandService;
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
-
+            
             // Инициализация иконок
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
             this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
@@ -339,7 +350,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
-#endif
+#endif                  
+                    var currentPath = this.commandExecute.ExecuteAsync("setcurpath", dir.Path);
                     navigationCommand.Execute(UpdateFilePanel, dir.Path);
                 }
             });
@@ -524,7 +536,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFileColumns();
             this.AddFolderColumns();
             this.AddDriveColumns();
-            this.AddPluginColumns();
+            //this.AddPluginColumns();
             this.CreateContextMenu();
             this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(this.Token);
             this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
@@ -636,30 +648,42 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Обновляет плагинные колонки для папок и файлов.
         /// </summary>
-        private void UpdateColumnsCommand()
+        private async void UpdateColumnsCommand()
         {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            // Выполним в пуле потоков, чтобы не блокировать UI
+            await Task.Run(() =>
             {
-                foreach (var column in pluginContext.GetColumns())
+                foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
                 {
-                    foreach (var folder in this.DirectoryList)
+                    foreach (var column in pluginContext.GetColumns())
                     {
-                        var value = column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder);
-                        if (value != null)
+                        foreach (var folder in this.DirectoryList)
                         {
-                            folder.Additional[column.Header] = value;
+                            var value = column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder);
+                            if (value != null)
+                            {
+                                // UI-операции отложим
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    folder.Additional[column.Header] = value;
+                                });
+                            }
                         }
-                    }
-                    foreach (var file in this.FileList)
-                    {
-                        var value = column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File);
-                        if (value != null)
+
+                        foreach (var file in this.FileList)
                         {
-                            file.Additional[column.Header] = value;
+                            var value = column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File);
+                            if (value != null)
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    file.Additional[column.Header] = value;
+                                });
+                            }
                         }
                     }
                 }
-            }
+            }).ConfigureAwait(false); // Не вернёмся в UI-поток, оставим фоновым
         }
 
         /// <summary>
@@ -755,11 +779,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Восстанавливает состояние панели из предыдущего сеанса, устанавливает шаблон, загружает файлы и папки, и инициализирует колонки.
         /// </summary>
-        private void SetLastPanelState()
+        private async void SetLastPanelState()
         {
             this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-            this.FileList = this.dataService.GetFiles(this.CurrentDirectory);
-            this.DirectoryList = this.dataService.GetDirectories(this.CurrentDirectory);
+            var files = await dataService.GetFilesAsync(this.CurrentDirectory);
+            var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
+            FileList = new ObservableCollection<FileModel>();
+            foreach (var f in files)
+                FileList.Add(f);
+            DirectoryList = new ObservableCollection<FolderModel>();
+            foreach (var d in dirs)
+                DirectoryList.Add(d);
             this.InitializeColumns();
         }
 
@@ -768,7 +798,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// а затем обновляет плагинные колонки.
         /// </summary>
         /// <param name="dirPath">Путь к новой директории.</param>
-        private void UpdateFilePanel(object dirPath)
+        private async void UpdateFilePanel(object dirPath)
         {
             var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
             if (!this.DirectoryPanelTemplate.Equals(template))
@@ -776,8 +806,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 this.DirectoryPanelTemplate = template;
             }
             var path = Directory.Exists(dirPath.ToString()) ? dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
-            this.DirectoryList = this.dataService.GetDirectories(path);
-            this.FileList = this.dataService.GetFiles(path);
+            var files = await dataService.GetFilesAsync(path);
+            var dirs = await dataService.GetDirectoriesAsync(path);
+            FileList = new ObservableCollection<FileModel>();
+            foreach (var f in files)
+                FileList.Add(f);
+            DirectoryList = new ObservableCollection<FolderModel>();
+            foreach (var d in dirs)
+                DirectoryList.Add(d);
+
             this.CurrentDirectory = path;
             this.UpdateColumnsCommand(); // Обновление плагинных колонок
         }
@@ -786,10 +823,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Переключает панель в режим отображения дисков.
         /// </summary>
         /// <param name="root">Путь к корневой директории (например, "C:\").</param>
-        private void GoDrivePanel(object root)
+        private async Task GoDrivePanel(object root)
         {
             this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
-            this.DriveList = this.dataService.GetDrives();
+            var drivers = await this.dataService.GetDrivesAsync();
+            foreach (var d in drivers)
+                DriveList.Add(d);
             this.CurrentDirectory = (string)root;
         }
 

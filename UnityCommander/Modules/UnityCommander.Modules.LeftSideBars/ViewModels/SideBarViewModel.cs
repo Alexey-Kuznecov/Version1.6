@@ -17,8 +17,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows.Controls;
+    using CommandSystem.Core.Commands;
+    using CommandSystem.Gui.Integraion;
     using Prism.Events;
-    using Prism.Mvvm;
     using Prism.Services.Dialogs;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
@@ -36,6 +37,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The view model message.
         /// </summary>
         private readonly IEventAggregator mainViewModelExchange;
+        private readonly GuiCommandExecute _guiCommandExecute;
 
         /// <summary>
         /// The pack icon.
@@ -101,11 +103,13 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IEventAggregator mainViewModelExchange,
             IIconProviderService iconProvider,
             IPluginLoaderService pluginLoader,
-            IGlobalCommandService globalCommandService)
+            IGlobalCommandService globalCommandService,
+            GuiCommandExecute guiCommandExecute)
         {
             this.dialogService = dialogService;
             this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader, globalCommandService));
             this.mainViewModelExchange = mainViewModelExchange;
+            _guiCommandExecute = guiCommandExecute;
             this.packIcon = iconProvider.GetIcons();
             this.CreateSidebarElement();
         }
@@ -118,11 +122,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             get => this.currentSidebarItem;
             set
             {
+                var curr =  _guiCommandExecute.Execute("getcurpath", new CommandContext());
                 this.currentSidebarItem = value;
                 this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(value);
             }
         }
-
 
         /// <summary>
         /// Gets or sets the sidebar element.

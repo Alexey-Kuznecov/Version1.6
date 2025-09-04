@@ -1,10 +1,5 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Windows.Navigation;
 using DryIoc;
-using Microsoft.Extensions.DependencyInjection;
-using Prism.DryIoc;
 using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.TabPanel.ViewModels;
 using UnityCommander.Modules.WebBrowser;
@@ -22,7 +17,6 @@ namespace UnityCommander
     using Core;
     using Core.Commands;
     using Modules.LeftSideBars;
-    using Modules.TabPanel;
     using Modules.TabPanel.Views;
     using Modules.ToolBar;
     using Services;
@@ -32,12 +26,16 @@ namespace UnityCommander
     using Views;
     using Views.CopyDialogs;
     using UnityCommander.Modules.Viewer;
-    using UnityCommander.Modules.Viewer.ViewModels;
     using UnityCommander.Modules.Viewer.Views;
-    using UnityCommander.Common;
-    using UnityCommander.Native;
     using UnityCommander.Integration;
-    using UnityCommander.Core.IO.Operations;
+    using UnityCommander.Modules.FilePanel;
+    using CommandSystem.Core.Abstractions;
+    using CommandSystem.Gui.Integraion;
+    using CommandSystem.Infrastructure.Execution;
+    using CommandSystem.Infrastructure.Lifecycle;
+    using CommandSystem.Core.Factory;
+    using ICommandExecutor = CommandSystem.Core.Abstractions.ICommandExecutor;
+    using ICommandFactory = CommandSystem.Core.Abstractions.ICommandFactory;
 
 
 
@@ -65,6 +63,7 @@ namespace UnityCommander
         protected override void InitializeShell(Window shell)
         {
             base.InitializeShell(shell);
+        
         }
 
         public void OnInitialized(IContainerProvider containerProvider)
@@ -91,6 +90,7 @@ namespace UnityCommander
             containerRegistry.RegisterDialog<AppConfigDialogControl, AppConfigDialogViewModel>("AppConfigDialog");
             containerRegistry.RegisterInstance(typeof(IPluginLoaderService), pluginLoaderService);
             containerRegistry.RegisterInstance(typeof(IGlobalCommandService), globalCommandService);
+            containerRegistry.RegisterSingleton<IDockingService, DockingService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
@@ -104,6 +104,14 @@ namespace UnityCommander
             // Commander Manager
             containerRegistry.RegisterSingleton<CommandManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
+
+            containerRegistry.RegisterSingleton<ICommandRegistry, CommandRegistry>();
+            containerRegistry.RegisterSingleton<ICommandFactory, CommandFactory>();
+            containerRegistry.RegisterSingleton<ICommandExecutor, CommandExecutor>();
+            containerRegistry.RegisterSingleton<ICommandDispatcher, CommandDispatcher>();
+
+            containerRegistry.RegisterSingleton<GuiCommandRegistrar>();
+            containerRegistry.RegisterSingleton<GuiCommandExecute>();
         }
 
         private bool Condition(Request arg)
@@ -159,7 +167,7 @@ namespace UnityCommander
         /// </param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            moduleCatalog.AddModule<TabPanelModule>();
+            moduleCatalog.AddModule<FilePanelModule>();
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
             moduleCatalog.AddModule<ViewerModule>();

@@ -8,7 +8,7 @@
     xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
-    xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
+    xmlns:viewModels="clr-namespace:UnityCommander.ViewModels" xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
     x:Name="Window"
     Title="Unity Commander"
     Width="1350"
@@ -79,14 +79,14 @@
         <!--
             Grid splitter.
         -->
-        <!--<GridSplitter
+        <GridSplitter
             Grid.Row="2"
             Grid.Column="2"
             Width="10"
             HorizontalAlignment="Center"
             DragIncrement="1"
             ResizeDirection="Columns"
-            ShowsPreview="False" />-->
+            ShowsPreview="False" />
         <!--
             The content display region of ​​the left sidebar.
         -->
@@ -125,13 +125,11 @@
                 <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
             </Border>
         </Grid>
-
-
+        
         <!--
             Functional selection region on the left side panel.
         -->
         <ContentControl
-            
             Grid.Row="2"
             Grid.Column="0"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
@@ -145,13 +143,20 @@
             Grid.ColumnSpan="2"
             MinWidth="200"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.SettingsPanelRegion}" />
-        <ContentControl
+
+        <Grid Grid.Row="2"
+              Grid.Column="3"
+              Grid.ColumnSpan="2"
+              Background="#F3F2F2"> 
+            <xcad:DockingManager x:Name="DockManager" x:FieldModifier="public" />
+        </Grid>
+        <!--<ContentControl
             
             Grid.Row="2"
             Grid.Column="3"
             Grid.ColumnSpan="2"
             MinWidth="200"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.TabPanelRegion}" />
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.TabPanelRegion}" />-->
         <!--
             Context line region.
         -->
