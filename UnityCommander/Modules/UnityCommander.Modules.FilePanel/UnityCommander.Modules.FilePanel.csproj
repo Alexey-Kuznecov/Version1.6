@@ -35,10 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CommandSystem.Core">
-      <HintPath>..\..\..\..\..\CommandSystemBak\CommandSystem.Gui\bin\Debug\net8.0\CommandSystem.Core.dll</HintPath>
+      <HintPath>..\..\..\..\_builds\CommandSystem.Core.dll</HintPath>
     </Reference>
     <Reference Include="CommandSystem.Gui">
-      <HintPath>..\..\..\..\..\CommandSystemBak\CommandSystem.Gui\bin\Debug\net8.0\CommandSystem.Gui.dll</HintPath>
+      <HintPath>..\..\..\..\_builds\CommandSystem.Gui.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\..\..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
