@@ -9,28 +9,34 @@
 
 namespace UnityCommander.Modules.FilePanel
 {
+    using CommandSystem.Core.Abstractions;
+    using CommandSystem.Core.Commands;
+    using CommandSystem.Core.Metadata;
+    using CommandSystem.Gui.Integraion;
+    using Newtonsoft.Json.Linq;
+    using Prism.Commands;
     using Prism.Ioc;
     using Prism.Modularity;
+    using Prism.Mvvm;
     using Prism.Regions;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
+    using System.Windows.Threading;
     using UnityCommander.Common.Module;
+    using UnityCommander.Core;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
-    using Xceed.Wpf.AvalonDock.Layout;
-    using Prism.Commands;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
-    using System.IO;
+    using Xceed.Wpf.AvalonDock.Layout;
     using Xceed.Wpf.AvalonDock.Layout.Serialization;
-    using Prism.Mvvm;
-    using System.Windows.Threading;
-    using CommandSystem.Gui.Integraion;
-    using CommandSystem.Core.Commands;
-    using System.Threading.Tasks;
-    using CommandSystem.Core.Metadata;
 
     /// <summary>
     /// The file panel module.
@@ -43,9 +49,9 @@ namespace UnityCommander.Modules.FilePanel
         private readonly IRegionManager regionManager;
         private IMultiCommandService _multiCommands;
         private GuiCommandRegistrar _commandRegistered;
+        private GuiCommandExecute _commandExecute;
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
-        HashSet<LayoutDocumentPane> knownPanes = new();
         private string _currentPath  = string.Empty;
         private string _currentCommand  = string.Empty;
 
@@ -53,7 +59,7 @@ namespace UnityCommander.Modules.FilePanel
         public Action<CommandContext> GetCurrentPathCommand => new Action<CommandContext>(
             (ctx) =>
             {
-                _ = GetCurrentPath(ctx);
+                GetCurrentPath(ctx);
             }
         );
 
@@ -118,7 +124,7 @@ namespace UnityCommander.Modules.FilePanel
         {
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
             _commandRegistered = containerProvider.Resolve<GuiCommandRegistrar>();
-            //_commandExecute = containerProvider.Resolve<GuiCommandExecute>();
+            _commandExecute = containerProvider.Resolve<GuiCommandExecute>();
             _multiCommands.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
             var metadata = new CommandMetadata("getcurpath", "Получает текущий путь директории");
             this._commandRegistered.Register(metadata, GetCurrentPathCommand);
@@ -127,8 +133,8 @@ namespace UnityCommander.Modules.FilePanel
             _dockingService = containerProvider.Resolve<IDockingService>();
             var manager = _dockingService.GetDockingManager();
             manager.MouseDoubleClick += Manager_MouseDoubleClick;
-
             _appConfigService = containerProvider.Resolve<IAppConfigService>();
+            
 
             // 🧠 Попробуем восстановить layout, если он есть
             var layoutFilePath = "layout.xml";
@@ -162,6 +168,14 @@ namespace UnityCommander.Modules.FilePanel
                                     var viewModel = view?.DataContext as ITabPanelContent;
                                     viewModel.InitializedViewModel(ref token, path);
                                     args.Content = view; // Привязать контент
+
+                                    contentControl.LayoutUpdated += (s2, e2) =>
+                                    {
+                                        viewModel.PathChanged += newPath =>
+                                        {
+                                            args.Model.Title = newPath;
+                                        };
+                                    };
                                 }
                             });
                         }));
@@ -196,55 +210,79 @@ namespace UnityCommander.Modules.FilePanel
             }
         }
 
-        private void Manager_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            // если команда setcurpath была вызвана — можно обработать логику
             if (_currentCommand == "setcurpath")
             {
                 _currentCommand = string.Empty;
-                return; 
+                return;
             }
 
-            var path = _currentPath;
+            // 1. Получаем реальный источник клика
+            if (e.OriginalSource is DependencyObject source)
+            {
+                // 2. Проверяем — не был ли клик внутри UI панели директорий
+                if (FindParentOfType<ListView>(source) != null      // если список директорий — ListView
+                    || FindParentOfType<TreeView>(source) != null    // если дерево директорий
+                    || FindParentOfType<GridViewColumnHeader>(source) != null) // клик по заголовку таблицы
+                {
+                    return; // 👉 это не пустая область; вкладку НЕ СОЗДАЁМ
+                }
+            }
+
+            // Получаем путь, из которого создавать новую вкладку
+            var context = _commandExecute.Execute("getcurpath");
+            var basePath = context.Result as string;  // или null, если нет
+
             var token = Guid.NewGuid();
             var regionName = $"Tab_{token}";
-            _dockingService.AddActiveDocumentTab(path, regionName);
-
+            _dockingService.AddActiveDocumentTab(basePath, regionName);
             regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
             {
                 if (result.Result == true)
                 {
                     var view = result.Context.NavigationService.Region.ActiveViews.FirstOrDefault() as SplitPanelView;
                     var viewModel = view?.DataContext as ITabPanelContent;
-                    viewModel.InitializedViewModel(ref token, path);
+                    viewModel.InitializedViewModel(ref token, basePath);
                 }
             });
         }
 
-        private string GetCurrentPath(CommandContext ctx)
+        private void GetCurrentPath(CommandContext ctx)
         {
-            return _currentPath;
+            ctx.Result = _dockingService.GetActiveTabPath();
         }
 
         private async Task<string> SetCurrentPath(CommandContext ctx)
         {
-            _currentPath = ctx.Parameter.ToString();
-            _currentCommand = ctx.Name;
-
-            Task<string> task = Task.Run(() =>
+            var value = ctx.Parameter.ToString();
+            // задаём путь в активной вкладке, если она есть
+            var vm = _dockingService.GetActiveDirectoryPanel() as ITabPanelContent;
+            if (vm != null)
             {
-                return ctx.Parameter.ToString();
-            });
-
-            return await task;
+                vm.SetCurrentPath(value); // предположим что в ITabPanelContent есть SetCurrentPath
+            }
+            // сохраняем локально команду, если нужно логировать:
+            _currentCommand = ctx.Name;
+            return await Task.FromResult(value);
         }
 
-        /// <summary>
-        /// The register types.
-        /// </summary>
-        /// <param name="containerRegistry"> The container registry. </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<SplitPanelView>();
+        }
+
+        public static T? FindParentOfType<T>(DependencyObject child) where T : DependencyObject
+        {
+            while (child != null)
+            {
+                if (child is T found)
+                    return found;
+
+                child = VisualTreeHelper.GetParent(child);
+            }
+            return null;
         }
     }
 }

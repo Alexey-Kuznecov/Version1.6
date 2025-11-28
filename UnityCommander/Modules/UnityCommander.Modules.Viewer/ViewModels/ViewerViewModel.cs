@@ -49,6 +49,8 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 
         public object viewerContent;
 
+        public event Action<string> PathChanged;
+
         /// <summary>
         /// Gets or sets the current directory.
         /// </summary>
@@ -124,6 +126,11 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         public string GetCurrentFilePath()
         {
             return this.CurrentPath;
+        }
+
+        public void SetCurrentPath(string value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

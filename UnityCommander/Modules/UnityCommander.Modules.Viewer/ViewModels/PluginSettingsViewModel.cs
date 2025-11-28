@@ -42,6 +42,8 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 
         private List<PluginSettingsModel> pluginSettingsModels;
 
+        public event Action<string> PathChanged;
+
         public PluginSettingsViewModel(CommandManager manager, IPluginLoaderService pluginService, IGlobalCommandService globalCommandService)
         {
             this.globalCommandManager = globalCommandService.GetCommandManager();
@@ -196,6 +198,11 @@ namespace UnityCommander.Modules.Viewer.ViewModels
             this.Token = token;
             this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
             return this;
+        }
+
+        public void SetCurrentPath(string value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

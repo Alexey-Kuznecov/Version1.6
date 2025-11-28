@@ -93,6 +93,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private bool backButtonIsEnabled;
         private bool openFolderUnderCursorIsEnabled = true;
 
+        public event Action<string> PathChanged;
+
         #endregion
 
         #region Конструктор
@@ -175,6 +177,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <returns>Путь к файлу.</returns>
         public string GetCurrentFilePath() => this.CurrentFile?.Path;
 
+        public void SetCurrentPath(string value) => this.CurrentDirectory = value;
+
         #endregion
 
         #region Свойства (Properties)
@@ -185,7 +189,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public string CurrentDirectory
         {
             get => this.currentDirectory;
-            set => this.SetProperty(ref this.currentDirectory, value);
+            set 
+            { 
+                this.SetProperty(ref this.currentDirectory, value);
+                PathChanged?.Invoke(currentDirectory);
+            }
         }
 
         /// <summary>
@@ -351,8 +359,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
 #endif                  
-                    var currentPath = this.commandExecute.ExecuteAsync("setcurpath", dir.Path);
+                    //var currentPath = this.commandExecute.ExecuteAsync("setcurpath", dir.Path);
                     navigationCommand.Execute(UpdateFilePanel, dir.Path);
+                    //PathChanged?.Invoke(dir.Path);
                 }
             });
 
@@ -368,6 +377,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.logger.Log(LogLevel.Info, $"Открыт мой компьютер ({dir.Letter})");
 #endif
                     navigationCommand.Execute(UpdateFilePanel, dir.Letter);
+                    //PathChanged?.Invoke(dir.ToString());
                 }
             });
 
@@ -383,6 +393,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
 #endif
                     navigationCommand.Execute(UpdateFilePanel, dir);
+                    //PathChanged?.Invoke(dir.ToString());
                 }
             });
 

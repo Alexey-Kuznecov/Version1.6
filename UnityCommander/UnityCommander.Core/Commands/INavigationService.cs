@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UnityCommander.Core.Commands
+{
+    public interface INavigationService
+    {
+        /// <summary>Текущий путь. null = "Мой компьютер" (root).</summary>
+        string? Current { get; }
+
+        /// <summary>Проверяет путь — валиден ли (например, диск/папка существует). Для виртуальных провайдеров можно адаптировать.</summary>
+        bool IsValidPath(string? path);
+
+        /// <summary>Пытается перейти на указанный путь. Возвращает true если успешно.</summary>
+        bool TryNavigateTo(string? path);
+
+        /// <summary>Событие при изменении Current.</summary>
+        event Action<string?>? CurrentChanged;
+    }
+}

@@ -1,16 +1,9 @@
 ﻿using Prism.Ioc;
+using System.Windows;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Views
 {
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using UnityCommander.Services.Interfaces;
-    using Xceed.Wpf.AvalonDock;
-    using Xceed.Wpf.AvalonDock.Controls;
-    using Xceed.Wpf.AvalonDock.Layout;
-
     /// <summary>  
     /// The main window.  
     /// </summary>  

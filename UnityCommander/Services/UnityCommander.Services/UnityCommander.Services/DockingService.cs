@@ -1,16 +1,22 @@
-﻿using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout;
-using System.Windows.Controls;
-using System.Linq;
-using UnityCommander.Services.Interfaces;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using Prism.Regions;
+using System;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Windows;
+using System.Windows.Controls;
+using UnityCommander.Common.Module;
+using UnityCommander.Services.Interfaces;
+using Xceed.Wpf.AvalonDock;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander
 {
     public class DockingService : IDockingService
     {
         private DockingManager _dockingManager;
+
+        public event EventHandler ActiveContentChanged;
 
         public DockingService(DockingManager dockingManager)
         {
@@ -118,8 +124,19 @@ namespace UnityCommander
                 Content = contentControl
             };
 
-            var activePane = GetActiveDocumentPane();
+            // 🔥 Подписка после загрузки (когда VM уже создана)
+            contentControl.Loaded += (s, e) =>
+            {
+                if (GetActiveDirectoryPanel() is IDirectoryPanel panel)
+                {
+                    panel.PathChanged += path =>
+                    {
+                        document.Title = path; // обновляем вкладку
+                    };
+                }
+            };
 
+            var activePane = GetActiveDocumentPane();
             if (activePane != null)
             {
                 activePane.Children.Add(document);
@@ -127,9 +144,12 @@ namespace UnityCommander
             }
             else
             {
-                // fallback: в первую попавшуюся
-                var firstPane = _dockingManager.Layout.Descendents()
-                                    .OfType<LayoutDocumentPane>().FirstOrDefault();
+                // fallback
+                var firstPane = _dockingManager.Layout
+                    .Descendents()
+                    .OfType<LayoutDocumentPane>()
+                    .FirstOrDefault();
+
                 firstPane?.Children.Add(document);
                 document.IsActive = true;
             }
@@ -251,6 +271,29 @@ namespace UnityCommander
             //anchorable.IsActive = true;
             //anchorable.IsSelected = true;
             //anchorable.AddToLayout(_dockingManager, false);
+        }
+
+        // --- существующие методы ShowDocument / AddDocumentTab и т.д. ---
+
+        public ITabPanelContent GetActiveDirectoryPanel()
+        {
+            if (_dockingManager?.ActiveContent is not LayoutContent layout)
+                return null;
+
+            if (layout.Content is not ContentControl cc)
+                return null;
+
+            if (cc.Content is not FrameworkElement fe)
+                return null;
+
+            return fe.DataContext as ITabPanelContent;
+        }
+
+        public string GetActiveTabPath()
+        {
+            if (GetActiveDirectoryPanel() is ITabPanelContent directoryPanel)
+                return directoryPanel.GetCurrentPath();
+            throw new ArgumentNullException();
         }
     }
 }

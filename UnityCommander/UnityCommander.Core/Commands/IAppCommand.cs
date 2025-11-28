@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace UnityCommander.Core.Commands
 {
-    public interface ICommandExecutor
+    public interface IAppCommand
     {
-        Task ExecuteAsync();
+        void Execute();
+        void Undo();
     }
 }

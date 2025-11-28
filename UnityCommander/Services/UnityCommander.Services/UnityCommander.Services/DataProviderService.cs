@@ -2,7 +2,6 @@
 namespace UnityCommander.Services
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.IO;
     using System.Threading.Tasks;
     using AlexeyKuznecov.Library.Converters;
