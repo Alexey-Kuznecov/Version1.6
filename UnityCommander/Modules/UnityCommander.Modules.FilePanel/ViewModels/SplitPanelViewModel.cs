@@ -8,6 +8,13 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using CommandSystem.Core.Commands;
+using CommandSystem.Core.Metadata;
+using CommandSystem.Gui.Integraion;
+using NLog;
+using Prism.Commands;
+using Prism.Regions;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,13 +27,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using CommandSystem.Core.Commands;
-using CommandSystem.Core.Metadata;
-using CommandSystem.Gui.Integraion;
-using NLog;
-using Prism.Commands;
-using Prism.Regions;
-using Prism.Services.Dialogs;
+using System.Windows.Navigation;
 using UnityCommander.Common;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
@@ -38,12 +39,12 @@ using UnityCommander.Core.Commands.Base;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
+using UnityCommander.Core.Navgator;
 using UnityCommander.Integration.Columns;
 using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services.Interfaces;
-using CommandManager = UnityCommander.Core.Commands.CommandManager;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -63,6 +64,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IMultiCommandService multiCommandService;
         private readonly IGlobalCommandService globalCommandService;
         private readonly IPluginLoaderService pluginLoaderService;
+        private readonly NavigationManager _navigationService;
         private readonly GuiCommandRegistrar commandRegistered;
         private readonly GuiCommandExecute commandExecute;
         private readonly IAppConfigService configService;
@@ -79,7 +81,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<FileModel> fileList;
         private ObservableCollection<FolderModel> directoryList;
         private ObservableCollection<DriveModel> driveList;
-        private NavigationInvoker navigationCommand;
+        private NavigationContextDirectory _navigationContext;
         private ControlTemplate directoryPanelTemplate;
         private string currentDirectory;
         private object selectedDirectory;
@@ -123,6 +125,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IGlobalCommandService globalCommandService,
             IIconProviderService iconProvider,
             IAppConfigService configService,
+            NavigationContextDirectory navigationContext,
             GuiCommandRegistrar guiCommandRegistrar,
             GuiCommandExecute guiCommandExecute,
             CommandManager manager,
@@ -141,13 +144,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.globalCommandService = globalCommandService;
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
-            
+
             // Инициализация иконок
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
             this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
             this.UpdateDirectoryIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.Refresh);
             this.ThisComputerIconIsEnabled = true;
             this.BackButtonIsEnabled = true;
+            this._navigationContext = navigationContext;
+            this._navigationService = new NavigationManager(null);
+            this.DriveList = new ObservableCollection<DriveModel>();
         }
 
         #endregion
@@ -215,7 +221,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             set
             {
                 this.SetProperty(ref this.currentFile, value);
-                this.navigationCommand?.RaiseExecuteChanged(this);
+                //this.navigationCommand?.RaiseExecuteChanged(this);
             }
         }
 
@@ -358,10 +364,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
-#endif                  
-                    //var currentPath = this.commandExecute.ExecuteAsync("setcurpath", dir.Path);
-                    navigationCommand.Execute(UpdateFilePanel, dir.Path);
-                    //PathChanged?.Invoke(dir.Path);
+#endif
+                    _navigationService.TryNavigateTo(dir.Path);
                 }
             });
 
@@ -375,9 +379,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Открыт мой компьютер ({dir.Letter})");
-#endif
-                    navigationCommand.Execute(UpdateFilePanel, dir.Letter);
-                    //PathChanged?.Invoke(dir.ToString());
+#endif                    
+                    _navigationService.TryNavigateTo(dir.Letter);
                 }
             });
 
@@ -392,8 +395,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
 #endif
-                    navigationCommand.Execute(UpdateFilePanel, dir);
-                    //PathChanged?.Invoke(dir.ToString());
+                    _navigationService.TryNavigateTo(dir.ToString(), forceRecord: true);
                 }
             });
 
@@ -504,24 +506,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.CurrentDirectory = path;
             this.Token = token == null ? Guid.NewGuid() : token;
 
-            // Инициализация навигационного инвокера через менеджер команд
-            var invoker = new NavigationInvoker();
-            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, invoker);
+            // Регистрируем его в глобальном реестре
+            NavigationContextDirectory.Instance.Register(this.Token, _navigationService);
+
+            // Подписка на изменения пути
+            _navigationService.CurrentChanged += OnPathChanged;
 
             // Восстановление состояния панели из предыдущего сеанса
             this.SetLastPanelState();
-
-            // Если путь не задан и разрешено открывать папку под курсором, получить путь из команды
-            if (path == null && this.openFolderUnderCursorIsEnabled)
-            {
-                var command = this.navigationCommand.GetCommand();
-                this.CurrentDirectory = command.GetPath();
-                this.SetCommands(this.CurrentDirectory);
-            }
-            else
-            {
-                this.SetCommands(path);
-            }
 
             return this;
         }
@@ -547,10 +539,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFileColumns();
             this.AddFolderColumns();
             this.AddDriveColumns();
-            //this.AddPluginColumns();
             this.CreateContextMenu();
-            this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(this.Token);
-            this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
+
         }
 
         /// <summary>
@@ -843,20 +833,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.CurrentDirectory = (string)root;
         }
 
-        /// <summary>
-        /// Регистрирует команды навигации по директориям.
-        /// </summary>
-        /// <param name="dirPath">Путь к директории.</param>
-        private void SetCommands(string dirPath)
-        {
-            var paths = HelperFunctions.ParsePath(dirPath);
-            this.navigationCommand.AddCommand(this.GoDrivePanel, "Root:C:\\");
-            foreach (var path in paths)
-            {
-                this.navigationCommand.AddCommand(this.UpdateFilePanel, path);
-            }
-        }
-
         #endregion
 
         #region Обработка событий и очистка ресурсов
@@ -866,15 +842,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Обновляет доступность иконок в зависимости от текущего состояния.
         /// </summary>
         /// <param name="obj">Объект команды с данными навигации.</param>
-        private void OnExecuteChanged(object obj)
+        private void OnPathChanged(string path)
         {
-            if (obj is ConcreteCommand { Receiver: Navigator navigator })
+            if (string.IsNullOrEmpty(path))
             {
-                if (!navigator.Path.Contains("Root:"))
-                {
-                    this.ThisComputerIconIsEnabled = true;
-                    this.BackButtonIsEnabled = true;
-                }
+                string drive = Path.GetPathRoot(CurrentDirectory);
+                _ = this.GoDrivePanel(drive);
+                this.ThisComputerIconIsEnabled = false;
+                this.BackButtonIsEnabled = false;
+            }
+            else
+            {
+                this.UpdateFilePanel(path);
+                this.ThisComputerIconIsEnabled = true;
+                this.BackButtonIsEnabled = true;
             }
         }
 
@@ -898,11 +879,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public DelegateCommand<object> GoBackDirectoryPanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                if (this.navigationCommand.CanUndo)
-                {
-                    this.navigationCommand.Previous();
-                }
-                if (!this.navigationCommand.CanUndo)
+                if (_navigationService.CanGoBack) _navigationService.GoBack();
+                else
                 {
                     this.BackButtonIsEnabled = false;
                     this.ThisComputerIconIsEnabled = false;
@@ -916,14 +894,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public DelegateCommand<object> GoDrivePanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                var command = (ConcreteCommand)this.navigationCommand.FirstCommand;
-                if (command?.Receiver is Navigator navigator)
-                {
-                    if (navigator.Path.Contains("Root:"))
-                    {
-                        navigator.CommandArg.Invoke(navigator.Path);
-                    }
-                }
+                _navigationService.TryNavigateTo(null); // root
                 this.ThisComputerIconIsEnabled = false;
             });
 
@@ -938,21 +909,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 cmd.Command?.Execute(null);
             });
 
-        /// <summary>
-        /// Обработчик изменения состояния глобальных команд.
-        /// Обновляет состояние иконок на основе текущего пути навигации.
-        /// </summary>
-        /// <param name="obj">Объект навигационных данных.</param>
-        private void OnExecuteChangedTools(object obj)
+        // Пример команды для перехода
+        public void NavigateTo(string? path)
         {
-            if (obj is ConcreteCommand { Receiver: Navigator navigator })
-            {
-                if (!navigator.Path.Contains("Root:"))
-                {
-                    this.ThisComputerIconIsEnabled = true;
-                    this.BackButtonIsEnabled = true;
-                }
-            }
+            if (_navigationService.IsValidPath(path))
+                _navigationService.TryNavigateTo(path);
         }
 
         #endregion

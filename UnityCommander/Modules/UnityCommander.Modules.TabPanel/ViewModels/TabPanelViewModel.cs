@@ -43,7 +43,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The command manager.
         /// </summary>
-        private readonly CommandManager commandManager;
+        //private readonly CommandManager commandManager;
 
         /// <summary>
         /// The region manager.
@@ -68,7 +68,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// The navigationCommand class instance.
         /// </summary>
-        private NavigationInvoker navigationCommand;
+        //private NavigationInvoker navigationCommand;
 
         /// <summary>
         /// The token display.
@@ -142,7 +142,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             IMultiCommandService commandService,
             IAppConfigService configService,
             IGlobalCommandService globalCommandService,
-            CommandManager manager, 
             ModuleLogger logger)
         {
             this.logger = logger;
@@ -156,7 +155,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             globalCommandManager.CreateCommand(this, GlobalCommandSelection.SingleFirst);
 
             this.regionManager = regionManager;
-            this.commandManager = manager;
+            //this.commandManager = manager;
             this.appConfigService = configService;
 
             // Composite command
@@ -263,8 +262,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                             this.currentTab = this.CreateTabControl(token, this.TabContentFormat(directoryPanel.GetCurrentPath()), panelView);
                             tabPanel.Collection.Add(this.currentTab);
                         }
-                        this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
-                        this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
+                        //this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand(token);
+                        //this.navigationCommand.OnExecuteChanged += this.OnExecuteChanged;
                         this.regionManager.AddToRegion(this.GetCurrentRegion().Name, panelView);
                         this.ActivateFilePanel(token);
                     });
@@ -277,7 +276,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 token =>
                 {
                     this.logger.Log(LogLevel.Info, "Инициализация команды (выбрать активную вкладку).");
-                    this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand((Guid)token);
+                    //this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand((Guid)token);
                     this.ActivateFilePanel((Guid)token);
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Текущий путь: '{this.ActiveTabPanelContent?.GetCurrentPath()}'");
@@ -433,7 +432,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 if (view?.DataContext is ITabPanelContent directoryPanel)
                 {
                     directoryPanel.InitializedViewModel(ref token, config.Path);
-                    this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
+                    //this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
                 }
 
                 this.regionManager.AddToRegion(this.GetCurrentRegion().Name, view);
@@ -563,20 +562,20 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </param>
         private void OnExecuteChanged(object obj)
         {
-            if (obj is ConcreteCommand { Receiver: Navigator navigator })
-            {
-                this.currentPath = navigator.Path;
+            //if (obj is ConcreteCommand { Receiver: Navigator navigator })
+            //{
+            //    this.currentPath = navigator.Path;
 
-                if (this.currentTab != null)
-                {
-                    this.currentTab.Content = this.TabContentFormat(this.currentPath);
-                }
-            }
+            //    if (this.currentTab != null)
+            //    {
+            //        this.currentTab.Content = this.TabContentFormat(this.currentPath);
+            //    }
+            //}
             
-            if (obj is ITabPanelContent panelContent)
-            {
-                this.ActiveTabPanelContent = panelContent;
-            }
+            //if (obj is ITabPanelContent panelContent)
+            //{
+            //    this.ActiveTabPanelContent = panelContent;
+            //}
         }
 
         #endregion

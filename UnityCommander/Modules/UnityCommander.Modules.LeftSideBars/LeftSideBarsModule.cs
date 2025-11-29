@@ -20,7 +20,6 @@ namespace UnityCommander.Modules.LeftSideBars
         /// The region manager.
         /// </summary>
         private readonly IRegionManager regionManager;
-        private readonly IDockingService _dockingService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LeftSideBarsModule"/> class.
@@ -37,7 +36,6 @@ namespace UnityCommander.Modules.LeftSideBars
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            var dockingService = containerProvider.Resolve<IDockingService>();
             this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, nameof(Sidebar));
         }
 

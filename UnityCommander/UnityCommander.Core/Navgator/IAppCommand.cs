@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnityCommander.Core.Commands
+namespace UnityCommander.Core.Navgator
 {
     public interface IAppCommand
     {

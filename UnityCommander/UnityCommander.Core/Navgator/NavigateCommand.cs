@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnityCommander.Core.Commands
+namespace UnityCommander.Core.Navgator
 {
     public sealed class NavigateCommand : IAppCommand
     {
         private readonly INavigationService _nav;
-        private readonly string? _newPath;
-        private string? _oldPath;
+        private readonly string _newPath;
+        private string _oldPath;
         private bool _executed;
 
-        public NavigateCommand(INavigationService navigation, string? newPath)
+        public NavigateCommand(INavigationService navigation, string newPath)
         {
             _nav = navigation ?? throw new ArgumentNullException(nameof(navigation));
             _newPath = newPath;

@@ -9,18 +9,15 @@
 
 namespace UnityCommander.Modules.FilePanel
 {
-    using CommandSystem.Core.Abstractions;
     using CommandSystem.Core.Commands;
     using CommandSystem.Core.Metadata;
     using CommandSystem.Gui.Integraion;
-    using Newtonsoft.Json.Linq;
     using Prism.Commands;
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Mvvm;
     using Prism.Regions;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -28,14 +25,11 @@ namespace UnityCommander.Modules.FilePanel
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
-    using System.Windows.Shapes;
     using System.Windows.Threading;
     using UnityCommander.Common.Module;
-    using UnityCommander.Core;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
-    using Xceed.Wpf.AvalonDock.Layout;
     using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
     /// <summary>
@@ -52,7 +46,6 @@ namespace UnityCommander.Modules.FilePanel
         private GuiCommandExecute _commandExecute;
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
-        private string _currentPath  = string.Empty;
         private string _currentCommand  = string.Empty;
 
 

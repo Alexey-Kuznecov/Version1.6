@@ -18,12 +18,12 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// <summary>
         /// The command manager.
         /// </summary>
-        private readonly CommandManager commandManager;
+        //private readonly CommandManager commandManager;
 
         /// <summary>
         /// The navigation command.   
         /// </summary>
-        private NavigationInvoker navigationCommand;
+        //private NavigationInvoker navigationCommand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerViewModel"/> class.
@@ -31,10 +31,10 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         /// <param name="manager">
         /// The manager.
         /// </param>
-        public ViewerViewModel(CommandManager manager)
-        {
-            this.commandManager = manager;
-        }
+        //public ViewerViewModel(CommandManager manager)
+        //{
+        //    this.commandManager = manager;
+        //}
 
         /// <summary>
         /// Gets or sets the token.
@@ -91,7 +91,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         {
             this.CurrentPath = path;
             this.Token = token;
-            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
+            //this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
             return this;
         }
 
