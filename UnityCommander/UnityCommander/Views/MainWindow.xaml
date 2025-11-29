@@ -8,7 +8,8 @@
     xmlns:inputBinding="clr-namespace:UnityCommander.Core.Behaviors;assembly=UnityCommander.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
-    xmlns:viewModels="clr-namespace:UnityCommander.ViewModels" xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+    xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
+    xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
     x:Name="Window"
     Title="Unity Commander"
     Width="1350"
@@ -52,6 +53,7 @@
             <RowDefinition Height="{Binding RibbonContainerSize}" />
             <RowDefinition Height="{Binding TabContainerSize}" />
             <RowDefinition />
+            <RowDefinition Height="250" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <!--
@@ -125,43 +127,32 @@
                 <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
             </Border>
         </Grid>
-        
+
         <!--
             Functional selection region on the left side panel.
         -->
         <ContentControl
             Grid.Row="2"
+            Grid.RowSpan="2"
             Grid.Column="0"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
         <!--
             File panel region.
         -->
-        <ContentControl
-            Visibility="Hidden"
+        <Grid
             Grid.Row="2"
             Grid.Column="3"
             Grid.ColumnSpan="2"
-            MinWidth="200"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.SettingsPanelRegion}" />
-
-        <Grid Grid.Row="2"
-              Grid.Column="3"
-              Grid.ColumnSpan="2"
-              Background="#F3F2F2"> 
+            Background="#F3F2F2">
             <xcad:DockingManager x:Name="DockManager" x:FieldModifier="public" />
         </Grid>
-        <!--<ContentControl
-            
-            Grid.Row="2"
+        <Border
+            Grid.Row="3"
             Grid.Column="3"
-            Grid.ColumnSpan="2"
-            MinWidth="200"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.TabPanelRegion}" />-->
-        <!--
-            Context line region.
-        -->
+            Grid.ColumnSpan="3">
+            <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}" Background="#F3F2F2" />
+        </Border>
     </Grid>
-
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="46"

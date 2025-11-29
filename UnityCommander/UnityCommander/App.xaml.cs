@@ -7,33 +7,32 @@ using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
 {
-    using System.Windows;
-
+    using CommandSystem.Core.Abstractions;
+    using CommandSystem.Core.Factory;
+    using CommandSystem.Gui.Integraion;
+    using CommandSystem.Infrastructure.Execution;
+    using CommandSystem.Infrastructure.Lifecycle;
+    using Core;
+    using Modules.LeftSideBars;
+    using Modules.TabPanel.Views;
+    using Modules.ToolBar;
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-
-    using Core;
-    using Core.Commands;
-    using Modules.LeftSideBars;
-    using Modules.TabPanel.Views;
-    using Modules.ToolBar;
     using Services;
     using Services.Interfaces;
     using Services.Plugins;
+    using System.Windows;
+    using UnityCommander.Core.Navgator;
+    using UnityCommander.Integration;
+    using UnityCommander.Modules.BottomPanel;
+    using UnityCommander.Modules.FilePanel;
+    using UnityCommander.Modules.Viewer;
+    using UnityCommander.Modules.Viewer.Views;
     using ViewModels;
     using Views;
     using Views.CopyDialogs;
-    using UnityCommander.Modules.Viewer;
-    using UnityCommander.Modules.Viewer.Views;
-    using UnityCommander.Integration;
-    using UnityCommander.Modules.FilePanel;
-    using CommandSystem.Core.Abstractions;
-    using CommandSystem.Gui.Integraion;
-    using CommandSystem.Infrastructure.Execution;
-    using CommandSystem.Infrastructure.Lifecycle;
-    using CommandSystem.Core.Factory;
     using ICommandExecutor = CommandSystem.Core.Abstractions.ICommandExecutor;
     using ICommandFactory = CommandSystem.Core.Abstractions.ICommandFactory;
 
@@ -97,13 +96,15 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
+            containerRegistry.RegisterSingleton<NavigationContextDirectory>();
 
             //containerRegistry.RegisterSingleton<IFileOperations, FileManager>();
             containerRegistry.Register<PluginBridge>();
 
             // Commander Manager
-            containerRegistry.RegisterSingleton<CommandManager>();
+            //containerRegistry.RegisterSingleton<CommandManager>();
             containerRegistry.RegisterSingleton<ModuleLogger>();
+           
 
             containerRegistry.RegisterSingleton<ICommandRegistry, CommandRegistry>();
             containerRegistry.RegisterSingleton<ICommandFactory, CommandFactory>();
@@ -173,6 +174,7 @@ namespace UnityCommander
             moduleCatalog.AddModule<ViewerModule>();
             moduleCatalog.AddModule<SettingsPanelModule>();
             moduleCatalog.AddModule<WebBrowserModule>();
+            moduleCatalog.AddModule<BottomPanelModule>();
         }
     }
 }

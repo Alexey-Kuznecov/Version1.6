@@ -18,43 +18,16 @@ namespace UnityCommander.Core
     public class ModuleLogger
     {
 #if (Nlog)
-        /// <summary>
-        /// The Logger.
-        /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 #endif
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ModuleLogger"/> class.
-        /// </summary>
         public ModuleLogger()
         {
             var dir = AppDomain.CurrentDomain.BaseDirectory;
             LogManager.Configuration = new XmlLoggingConfiguration($"{dir}\\NLog.config");
         }
 
-        /// <summary>
-        /// The get logger.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Logger"/>.
-        /// </returns>
         public Logger GetLogger() => Logger;
 
-        /// <summary>
-        /// The show message.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="lineNumber">
-        /// The line number.
-        /// </param>
-        /// <param name="caller">
-        /// The caller.
-        /// </param>
-        /// <param name="file">
-        /// The file.
-        /// </param>
         public void Log(
                         string message, 
                         [CallerLineNumber] int lineNumber = 0,
@@ -64,24 +37,6 @@ namespace UnityCommander.Core
             Logger.Info(message + " at line " + lineNumber + " (" + caller + ")");
         }
 
-        /// <summary>
-        /// The log.
-        /// </summary>
-        /// <param name="logLevel">
-        /// The log level.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="lineNumber">
-        /// The line number.
-        /// </param>
-        /// <param name="caller">
-        /// The caller.
-        /// </param>
-        /// <param name="file">
-        /// The file.
-        /// </param>
         public void Log(
                         LogLevel logLevel,
                         string message,

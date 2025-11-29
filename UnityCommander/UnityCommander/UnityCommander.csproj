@@ -30,6 +30,7 @@
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Modules\BottomPanelModule\UnityCommander.Modules.BottomPanel\UnityCommander.Modules.BottomPanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.SettingsPanel\UnityCommander.Modules.SettingsPanel.csproj" />
