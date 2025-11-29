@@ -8,5 +8,16 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid />
+    <Grid>
+        <TextBox
+            Background="#1E1E1E"
+            FontFamily="Consolas"
+            FontSize="12"
+            Foreground="White"
+            HorizontalScrollBarVisibility="Auto"
+            IsReadOnly="True"
+            Text="{Binding LogText}"
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Auto" />
+    </Grid>
 </UserControl>

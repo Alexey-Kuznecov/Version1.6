@@ -96,6 +96,7 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
+            containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<NavigationContextDirectory>();
 
             //containerRegistry.RegisterSingleton<IFileOperations, FileManager>();
