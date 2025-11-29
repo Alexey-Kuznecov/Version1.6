@@ -8,8 +8,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using CommandSystem.Core.Commands;
-using CommandSystem.Core.Metadata;
 using CommandSystem.Gui.Integraion;
 using NLog;
 using Prism.Commands;
@@ -20,30 +18,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using UnityCommander.Common;
-using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;
 using UnityCommander.Common.Module;
 using UnityCommander.Core;
-using UnityCommander.Core.Commands;
-using UnityCommander.Core.Commands.Base;
 using UnityCommander.Core.DragDrop;
-using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navgator;
 using UnityCommander.Integration.Columns;
 using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
 using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
@@ -70,6 +63,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IAppConfigService configService;
         private readonly CommandManager commandManager;
         private readonly ModuleLogger logger;
+        private IAppLogger _appLogger;
 
         /// <summary>
         /// Флаг, указывающий, что значения плагинов были кэшированы.
@@ -129,7 +123,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             GuiCommandRegistrar guiCommandRegistrar,
             GuiCommandExecute guiCommandExecute,
             CommandManager manager,
-            ModuleLogger logger)
+            ModuleLogger logger,
+            IAppLogger appLogger)
             : base(regionManager)
         {
             this.commandRegistered = guiCommandRegistrar;
@@ -138,6 +133,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dialogService = dialogService;
             this.commandManager = manager;
             this.logger = logger;
+            this._appLogger = appLogger;
             this.pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
@@ -221,7 +217,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             set
             {
                 this.SetProperty(ref this.currentFile, value);
-                //this.navigationCommand?.RaiseExecuteChanged(this);
             }
         }
 
@@ -364,6 +359,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
+                    _appLogger.Info($"Открыта папка ({dir.Path})");
 #endif
                     _navigationService.TryNavigateTo(dir.Path);
                 }
@@ -378,8 +374,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Log(LogLevel.Info, $"Открыт мой компьютер ({dir.Letter})");
-#endif                    
+                    this.logger.Log(LogLevel.Info, $"Открыт диск ({dir.Letter})");
+                    _appLogger.Info($"Открыт диск ({dir.Letter})");
+#endif
                     _navigationService.TryNavigateTo(dir.Letter);
                 }
             });
@@ -394,6 +391,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
+                    _appLogger.Info($"Текущая папка изменена на ({dir})");
 #endif
                     _navigationService.TryNavigateTo(dir.ToString(), forceRecord: true);
                 }
@@ -540,7 +538,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.AddFolderColumns();
             this.AddDriveColumns();
             this.CreateContextMenu();
-
         }
 
         /// <summary>
@@ -782,6 +779,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private async void SetLastPanelState()
         {
+            if (this.CurrentDirectory == VirtualPaths.MyComputer)
+            {
+                _ = this.GoDrivePanel();
+                this.InitializeColumns();
+                return;
+            }
+
             this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
             var files = await dataService.GetFilesAsync(this.CurrentDirectory);
             var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
@@ -824,13 +828,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// Переключает панель в режим отображения дисков.
         /// </summary>
         /// <param name="root">Путь к корневой директории (например, "C:\").</param>
-        private async Task GoDrivePanel(object root)
+        private async Task GoDrivePanel()
         {
             this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
             var drivers = await this.dataService.GetDrivesAsync();
+            DriveList.Clear();
             foreach (var d in drivers)
                 DriveList.Add(d);
-            this.CurrentDirectory = (string)root;
         }
 
         #endregion
@@ -844,12 +848,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="obj">Объект команды с данными навигации.</param>
         private void OnPathChanged(string path)
         {
-            if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
             {
                 string drive = Path.GetPathRoot(CurrentDirectory);
-                _ = this.GoDrivePanel(drive);
+                _ = this.GoDrivePanel();
                 this.ThisComputerIconIsEnabled = false;
-                this.BackButtonIsEnabled = false;
             }
             else
             {
@@ -879,12 +882,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public DelegateCommand<object> GoBackDirectoryPanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                if (_navigationService.CanGoBack) _navigationService.GoBack();
+                if (_navigationService.CanGoBack) _navigationService.GoBack(); 
                 else
                 {
+                    if (this.CurrentDirectory != VirtualPaths.MyComputer)
+                    {
+                        this.CurrentDirectory = VirtualPaths.MyComputer;
+                        _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true); // root
+                    }
+
                     this.BackButtonIsEnabled = false;
-                    this.ThisComputerIconIsEnabled = false;
                 }
+
+#if (Nlog)
+                _appLogger.Info($"Возврат в папку ({this.CurrentDirectory})");
+#endif
             });
 
         /// <summary>
@@ -894,8 +906,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public DelegateCommand<object> GoDrivePanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                _navigationService.TryNavigateTo(null); // root
+                this.CurrentDirectory = VirtualPaths.MyComputer;
+                _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true); // root
                 this.ThisComputerIconIsEnabled = false;
+
+                if (this.CurrentDirectory == VirtualPaths.MyComputer)
+                {
+#if (Nlog)
+                    _appLogger.Info($"Открыт Мой компьютер ({this.CurrentDirectory})");
+#endif
+                }
             });
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+﻿
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FilePanelModule.cs" company="T">
 // Copyright (p) Alexey Kuznecov. All right reserved.
 // </copyright>
@@ -12,12 +13,15 @@ namespace UnityCommander.Modules.FilePanel
     using CommandSystem.Core.Commands;
     using CommandSystem.Core.Metadata;
     using CommandSystem.Gui.Integraion;
+    using NLog;
     using Prism.Commands;
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Mvvm;
     using Prism.Regions;
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -25,11 +29,14 @@ namespace UnityCommander.Modules.FilePanel
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Media.Media3D;
     using System.Windows.Threading;
     using UnityCommander.Common.Module;
     using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
+    using Xceed.Wpf.AvalonDock;
     using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
     /// <summary>
@@ -47,7 +54,7 @@ namespace UnityCommander.Modules.FilePanel
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
         private string _currentCommand  = string.Empty;
-
+        private IAppLogger _appLogger;
 
         public Action<CommandContext> GetCurrentPathCommand => new Action<CommandContext>(
             (ctx) =>
@@ -115,6 +122,7 @@ namespace UnityCommander.Modules.FilePanel
         /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
+            this._appLogger = containerProvider.Resolve<IAppLogger>(); ;
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
             _commandRegistered = containerProvider.Resolve<GuiCommandRegistrar>();
             _commandExecute = containerProvider.Resolve<GuiCommandExecute>();
@@ -203,43 +211,160 @@ namespace UnityCommander.Modules.FilePanel
             }
         }
 
+        // поле класса — для дебаунса (вставь в класс)
+        private DateTime _lastNavigationTime = DateTime.MinValue;
+        private DateTime _lastDoubleClickHandled = DateTime.MinValue;
+
+        // вызывай это при навигации (вместо CurrentChanged handler или там где делаешь Back/Forward)
+        private void MarkNavigationOccured()
+        {
+            _lastNavigationTime = DateTime.UtcNow;
+        }
+
+        // Заменяющий метод
         private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // если команда setcurpath была вызвана — можно обработать логику
-            if (_currentCommand == "setcurpath")
+            try
             {
-                _currentCommand = string.Empty;
-                return;
-            }
-
-            // 1. Получаем реальный источник клика
-            if (e.OriginalSource is DependencyObject source)
-            {
-                // 2. Проверяем — не был ли клик внутри UI панели директорий
-                if (FindParentOfType<ListView>(source) != null      // если список директорий — ListView
-                    || FindParentOfType<TreeView>(source) != null    // если дерево директорий
-                    || FindParentOfType<GridViewColumnHeader>(source) != null) // клик по заголовку таблицы
+                // дебаунс: если двойной клик пришёл сразу после навигации — игнорируем (защита от "быстро нажал назад")
+                if ((DateTime.UtcNow - _lastNavigationTime).TotalMilliseconds < 300)
                 {
-                    return; // 👉 это не пустая область; вкладку НЕ СОЗДАЁМ
+#if (Nlog1)
+                    _appLogger.Info("DoubleClick: ignored due to recent navigation");
+#endif
+                    return;
                 }
-            }
 
-            // Получаем путь, из которого создавать новую вкладку
-            var context = _commandExecute.Execute("getcurpath");
-            var basePath = context.Result as string;  // или null, если нет
+                var dockObj = sender as DockingManager;
+                if (dockObj == null) return;
 
-            var token = Guid.NewGuid();
-            var regionName = $"Tab_{token}";
-            _dockingService.AddActiveDocumentTab(basePath, regionName);
-            regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
-            {
-                if (result.Result == true)
+                // hit test
+                var pos = e.GetPosition(dockObj);
+                var hit = VisualTreeHelper.HitTest(dockObj, pos);
+                if (hit == null) return;
+
+                var start = hit.VisualHit as DependencyObject;
+                if (start == null) return;
+
+                // Собираем полную цепочку для логирования (как у тебя было)
+                var fullChain = new List<string>();
+                var node = start;
+                while (node != null)
                 {
-                    var view = result.Context.NavigationService.Region.ActiveViews.FirstOrDefault() as SplitPanelView;
-                    var viewModel = view?.DataContext as ITabPanelContent;
-                    viewModel.InitializedViewModel(ref token, basePath);
+                    fullChain.Add(node.GetType().Name);
+                    node = GetParentSafely(node);
                 }
-            });
+#if (Nlog1)
+                _appLogger.Info("DoubleClick Hit chain: " + string.Join(" -> ", fullChain));
+#endif
+                // 1) Обязательно должна быть LayoutDocumentPaneControl в цепочке
+                bool hasPane = fullChain.Any(n => n == "LayoutDocumentPaneControl");
+                if (!hasPane)
+                {
+#if (Nlog1)
+                    _appLogger.Info("DoubleClick: no LayoutDocumentPaneControl -> reject");
+#endif
+                    return;
+                }
+
+                // 2) Проверяем первые N узлов от VisualHit вверх — если среди них есть элементы списка/контрола, отклоняем.
+                int checkDepth = 6; // количество ближайших узлов, которые анализируем
+                var firstNodes = fullChain.Take(checkDepth).ToArray();
+
+                // blacklist близких типов (на основе твоих логов)
+                var closeBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "ListViewItem","ListView","ListBoxItem","GridViewRowPresenter","TextBlock",
+                    "TreeViewItem","ScrollViewer","GridView","Path","Button","Image", "ContentControl"
+                };
+
+                if (firstNodes.Any(n => closeBlacklist.Contains(n)))
+                {
+#if (Nlog1)
+                    _appLogger.Info("DoubleClick: close-blacklist hit -> reject (" +
+                                    string.Join(", ", firstNodes.Where(n => closeBlacklist.Contains(n))) + ")");
+#endif
+                    return;
+                }
+
+                // 3) Если ближайшие узлы не указывают на список/контент — пропускаем.
+                // Доп. эвристика: если start сам по себе является LayoutDocumentControl (то есть клик по заголовку),
+                // это OK.
+                if (start.GetType().Name == "LayoutDocumentControl")
+                {
+                    // разрешить
+                }
+                else
+                {
+                    // Дополнительно: убедимся, что клик не был глубоко внутри ContentPresenter (внутри документа)
+                    int idxContentPresenter = fullChain.FindIndex(n => n == "ContentPresenter");
+                    if (idxContentPresenter >= 0 && idxContentPresenter <= 2)
+                    {
+#if (Nlog1)
+                        _appLogger.Info("DoubleClick: ContentPresenter close to hit -> reject");
+#endif
+                        return;
+                    }
+                }
+
+                // Дополнительно: если в цепочке есть явные управляющие элементы (toolbar, menu и т.д.) — отклоняем.
+                var broaderBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "ToolBar","ToolBarTray","MenuItem","ContextMenu","Thumb","Popup"
+                };
+                if (fullChain.Any(n => broaderBlacklist.Contains(n)))
+                {
+#if (Nlog1)
+                    _appLogger.Info("DoubleClick: broader blacklist -> reject");
+#endif
+                    return;
+                }
+
+                // Пройдя все проверки — считаем это клик по области вкладок
+                // Доп. защита: минимальный интервал между обработками double-click, чтобы не было "быстрой серии"
+                if ((DateTime.UtcNow - _lastDoubleClickHandled).TotalMilliseconds < 200)
+                {
+#if (Nlog1)
+                    _appLogger.Info("DoubleClick: suppressed due to double handling cooldown");
+#endif
+                    return;
+                }
+
+                _lastDoubleClickHandled = DateTime.UtcNow;
+
+                // --- Создаём вкладку ---
+                var context = _commandExecute.Execute("getcurpath");
+                var basePath = context.Result as string;
+
+                var token = Guid.NewGuid();
+                var regionName = $"Tab_{token}";
+                _dockingService.AddActiveDocumentTab(basePath, regionName);
+
+                regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
+                {
+                    if (result.Result == true)
+                    {
+                        var view = result.Context.NavigationService.Region.ActiveViews.FirstOrDefault() as SplitPanelView;
+                        var viewModel = view?.DataContext as ITabPanelContent;
+                        viewModel?.InitializedViewModel(ref token, basePath);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+#if (Nlog1)
+                _appLogger.Info("Manager_MouseDoubleClick error: " + ex);
+#endif
+            }
+        }
+
+        // Вспомогательный метод — уже у тебя есть похожий, но оставлю для полноты
+        private DependencyObject GetParentSafely(DependencyObject node)
+        {
+            if (node == null) return null;
+            if (node is Visual || node is Visual3D)
+                return VisualTreeHelper.GetParent(node);
+            return LogicalTreeHelper.GetParent(node) as DependencyObject;
         }
 
         private void GetCurrentPath(CommandContext ctx)
@@ -264,18 +389,6 @@ namespace UnityCommander.Modules.FilePanel
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<SplitPanelView>();
-        }
-
-        public static T? FindParentOfType<T>(DependencyObject child) where T : DependencyObject
-        {
-            while (child != null)
-            {
-                if (child is T found)
-                    return found;
-
-                child = VisualTreeHelper.GetParent(child);
-            }
-            return null;
         }
     }
 }

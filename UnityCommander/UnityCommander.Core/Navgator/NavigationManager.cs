@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,11 @@ namespace UnityCommander.Core.Navgator
 
         public NavigationManager(Func<string?, bool>? pathValidator = null)
         {
-            _pathValidator = pathValidator ?? (_ => true);
+            if (pathValidator != null)
+                _pathValidator = pathValidator;
+            else
+                _pathValidator = path => Directory.Exists(path) || VirtualPaths.MyComputer == path;
+
             Current = null;
         }
 
