@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <!--  Левая вкладка: консоль / логи  -->
-        <TabControl Grid.Column="0" SelectedIndex="1">
+        <TabControl Grid.Column="0" SelectedIndex="0">
             <TabItem Header="Console">
                 <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.ConsoleTabRegion}" />
             </TabItem>

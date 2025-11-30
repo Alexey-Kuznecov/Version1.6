@@ -2,7 +2,11 @@
 using Prism.Modularity;
 using Prism.Regions;
 using System.Diagnostics;
+using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.Core;
+using UnityCommander.Modules.BottomPanel.ViewModels;
 using UnityCommander.Modules.BottomPanel.Views;
 
 namespace UnityCommander.Modules.BottomPanel
@@ -34,6 +38,9 @@ namespace UnityCommander.Modules.BottomPanel
             regionManager.RequestNavigate(RegionNames.ConsoleTabRegion, nameof(ConsoleView));
             regionManager.RequestNavigate(RegionNames.LogTabRegion, nameof(LogView));
             regionManager.RequestNavigate(RegionNames.PreviewRegion, nameof(PreviewView));
+            
+            // Internal Console
+            //regionManager.RequestNavigate("BottomPanelRegion", "InternalConsole");
         }
 
         /// <summary>
@@ -46,6 +53,17 @@ namespace UnityCommander.Modules.BottomPanel
             containerRegistry.RegisterForNavigation<ConsoleView>();
             containerRegistry.RegisterForNavigation<LogView>();
             containerRegistry.RegisterForNavigation<PreviewView>();
+
+            // Internal Console
+            containerRegistry.RegisterSingleton<IConsoleInput, InternalConsoleInput>();
+            containerRegistry.RegisterSingleton<IConsoleOutput, InternalConsoleOutput>();
+
+            containerRegistry.RegisterSingleton<ConsoleCommandDispatcher>();
+            containerRegistry.RegisterSingleton<ConsoleCommandFactory>();
+            containerRegistry.RegisterSingleton<IConsoleCommandRegistry, ConsoleCommandRegistry>();
+            containerRegistry.RegisterSingleton<IConsoleCommandInvoker, ConsoleCommandInvoker>();
+
+            //containerRegistry.RegisterForNavigation<ConsoleView, ConsoleViewModel>("InternalConsole");
         }
     }
 }

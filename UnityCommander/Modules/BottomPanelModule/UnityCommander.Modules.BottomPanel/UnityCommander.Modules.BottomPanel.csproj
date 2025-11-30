@@ -9,6 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 </Project>

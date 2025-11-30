@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UnityCommander.Modules.BottomPanel.ViewModels;
 
 namespace UnityCommander.Modules.BottomPanel.Views
 {
@@ -24,5 +25,16 @@ namespace UnityCommander.Modules.BottomPanel.Views
         {
             InitializeComponent();
         }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (DataContext is ConsoleViewModel vm)
+                    vm.SendCommandCommand.Execute();
+
+                e.Handled = true;
+            }
+        } 
     }
 }
