@@ -24,6 +24,10 @@ namespace UnityCommander
     using Services.Interfaces;
     using Services.Plugins;
     using System.Windows;
+    using UnityCommander.AI.ImageSearch;
+    using UnityCommander.CLI.Core;
+    using UnityCommander.CLI.Integration;
+    using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
     using UnityCommander.Core.Navgator;
     using UnityCommander.Integration;
     using UnityCommander.Modules.BottomPanel;
@@ -114,6 +118,10 @@ namespace UnityCommander
 
             containerRegistry.RegisterSingleton<GuiCommandRegistrar>();
             containerRegistry.RegisterSingleton<GuiCommandExecute>();
+
+            // AI Services
+            containerRegistry.RegisterSingleton<IImageSimilarityService>(() =>
+                new ImageSimilarityService(@"F:\01. Active\CSharp\UnityCommander\UnityCommander\Resources\ai_models"));
         }
 
         private bool Condition(Request arg)
