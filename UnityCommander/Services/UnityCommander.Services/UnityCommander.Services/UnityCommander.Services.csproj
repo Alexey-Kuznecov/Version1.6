@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <LangVersion>9.0</LangVersion>
+	  <TargetFramework>net9.0-windows</TargetFramework>
+	  <UseWPF>true</UseWPF>
+	  <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>FEATURE_UNLOAD;DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>
 </Project>

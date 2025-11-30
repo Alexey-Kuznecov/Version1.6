@@ -14,6 +14,7 @@
     <PackageReference Include="Prism.Core" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
