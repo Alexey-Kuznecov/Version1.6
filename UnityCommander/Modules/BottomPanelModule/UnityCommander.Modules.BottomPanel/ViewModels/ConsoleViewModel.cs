@@ -23,6 +23,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly ConsoleCommandDispatcher _dispatcher;
         private readonly IServiceProvider _services;
         private readonly ConsoleApplicationLifetime _lifetime;
+        private readonly IConsoleCommandProvider _consoleCommandProvider;
 
         private string _inputText;
         public string InputText
@@ -35,6 +36,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         public ReadOnlyObservableCollection<string> Lines { get; }
 
         public DelegateCommand SendCommandCommand { get; }
+        public DelegateCommand CopyCommand => new DelegateCommand(() =>
+        {
+            var text = string.Join(Environment.NewLine, Lines);
+            Clipboard.SetText(text);
+        });
 
         public ConsoleViewModel(
             IConsoleInput input,
@@ -43,20 +49,20 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IServiceProvider services,
             ConsoleApplicationLifetime lifetime,
             IEventAggregator ea, 
-            IConsoleCommandProvider consoleCommand)
+            IConsoleCommandProvider consoleCommandProvider)
         {
             _input = input;
             _output = output;
             _dispatcher = dispatcher;
             _services = services;
             _lifetime = lifetime;
+            _consoleCommandProvider = consoleCommandProvider;
 
-            //var loadedCommands = ConsoleCommandDiscovery.DiscoverCommands(null, new ConsoleCommandCatalog(), output, "F:\\01. Active\\CSharp\\_builds\\cmd");
-            //foreach (var command in loadedCommands)
-            //{
-            //    dispatcher.RegisterCommand(command);
-            //}
-
+            // Регистрируем все команды из сервиса
+            foreach (var cmd in _consoleCommandProvider.GetAllCommands())
+            {
+                _dispatcher.RegisterCommand(cmd);
+            }
 
             Lines = new ReadOnlyObservableCollection<string>(_lines);
             // САМОЕ ВАЖНОЕ: подписка на UI-потоке

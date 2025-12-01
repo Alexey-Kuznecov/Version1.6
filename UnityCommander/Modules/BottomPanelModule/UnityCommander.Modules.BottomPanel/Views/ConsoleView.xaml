@@ -32,18 +32,30 @@
 
         <!--  Ввод  -->
         <DockPanel Grid.Row="1" Margin="0,4,0,0">
-            <TextBlock
-                VerticalAlignment="Center"
-                FontFamily="Consolas"
-                Foreground="#00ff90"
-                Text="&gt; " />
-            <TextBox
-                Background="#2D2D30"
-                BorderBrush="#3F3F46"
-                FontFamily="Consolas"
-                Foreground="White"
-                KeyDown="TextBox_KeyDown"
-                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="25" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontFamily="Consolas"
+                    Foreground="#00ff90"
+                    Text="&gt; " />
+                <TextBox
+                    Grid.Column="1"
+                    Background="#2D2D30"
+                    BorderBrush="#3F3F46"
+                    FontFamily="Consolas"
+                    Foreground="White"
+                    KeyDown="TextBox_KeyDown"
+                    Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+                <Button
+                    Grid.Column="2"
+                    Command="{Binding CopyCommand}"
+                    Content="Копировать" />
+            </Grid>
         </DockPanel>
 
     </Grid>

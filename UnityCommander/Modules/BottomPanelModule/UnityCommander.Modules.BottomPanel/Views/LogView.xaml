@@ -9,15 +9,27 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
         <TextBox
+            Grid.Column="0"
+            AcceptsReturn="True"
+            AcceptsTab="True"
             Background="#1E1E1E"
             FontFamily="Consolas"
             FontSize="12"
             Foreground="White"
             HorizontalScrollBarVisibility="Auto"
             IsReadOnly="True"
+            IsReadOnlyCaretVisible="False"
             Text="{Binding LogText}"
             TextWrapping="Wrap"
             VerticalScrollBarVisibility="Auto" />
+        <Button
+            Grid.Column="1"
+            Command="{Binding CopyCommand}"
+            Content="Копировать" />
     </Grid>
 </UserControl>
