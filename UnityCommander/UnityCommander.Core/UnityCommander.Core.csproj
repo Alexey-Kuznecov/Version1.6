@@ -33,7 +33,6 @@
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.14" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
