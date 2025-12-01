@@ -11,6 +11,7 @@
 using CommandSystem.Gui.Integraion;
 using NLog;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
@@ -18,12 +19,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Threading;
 using UnityCommander.Common;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;
@@ -38,6 +41,7 @@ using UnityCommander.Integration.Enums;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using Xceed.Wpf.Toolkit;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -119,6 +123,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IGlobalCommandService globalCommandService,
             IIconProviderService iconProvider,
             IAppConfigService configService,
+            IDirectoryChangeNotifier directoryChangeNotifier,
             NavigationContextDirectory navigationContext,
             GuiCommandRegistrar guiCommandRegistrar,
             GuiCommandExecute guiCommandExecute,
@@ -150,6 +155,40 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this._navigationContext = navigationContext;
             this._navigationService = new NavigationManager(null);
             this.DriveList = new ObservableCollection<DriveModel>();
+
+            directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
+        }
+
+        private void OnDirectoryChanged(string changedPath)
+        {
+            if (!IsSameDirectory(changedPath, this.CurrentDirectory))
+                return;
+
+            ScheduleLightRefresh(changedPath);
+        }
+
+        private void ScheduleLightRefresh(string changedPath)
+        {
+            if (_refreshScheduled)
+                return;
+
+            _refreshScheduled = true;
+
+            Task.Delay(150).ContinueWith(_ =>
+            {
+                _refreshScheduled = false;
+                Application.Current.Dispatcher.Invoke(async () =>
+                {
+                    await UpdateFilePanelAsync(changedPath);
+                });
+            });
+        }
+
+        private bool _refreshScheduled = false;
+
+        private bool IsSameDirectory(string changedPath, string currentPath) 
+        {
+            return string.Equals(changedPath.TrimEnd('\\'), currentPath.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase); 
         }
 
         #endregion
@@ -803,25 +842,68 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// а затем обновляет плагинные колонки.
         /// </summary>
         /// <param name="dirPath">Путь к новой директории.</param>
-        private async void UpdateFilePanel(object dirPath)
+        private async Task UpdateFilePanelAsync(object dirPath)
         {
+            var path = Directory.Exists(dirPath.ToString())
+                ? dirPath.ToString()
+                : Directory.GetDirectoryRoot(dirPath.ToString());
+
             var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
             if (!this.DirectoryPanelTemplate.Equals(template))
-            {
                 this.DirectoryPanelTemplate = template;
-            }
-            var path = Directory.Exists(dirPath.ToString()) ? dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
-            var files = await dataService.GetFilesAsync(path);
-            var dirs = await dataService.GetDirectoriesAsync(path);
-            FileList = new ObservableCollection<FileModel>();
-            foreach (var f in files)
-                FileList.Add(f);
-            DirectoryList = new ObservableCollection<FolderModel>();
-            foreach (var d in dirs)
-                DirectoryList.Add(d);
+
+            await RefreshDirectoriesAsync(path);
+            await RefreshFilesAsync(path);
 
             this.CurrentDirectory = path;
             this.UpdateColumnsCommand(); // Обновление плагинных колонок
+        }
+
+        private async Task RefreshFilesAsync(string dirPath)
+        {
+            var files = await dataService.GetFilesAsync(dirPath);
+
+            // Создаём временный список для сравнения
+            var newFiles = files.ToDictionary(f => f.Path, f => f);
+
+            // Удаляем устаревшие файлы
+            for (int i = FileList.Count - 1; i >= 0; i--)
+            {
+                if (!newFiles.ContainsKey(FileList[i].Path))
+                    FileList.RemoveAt(i);
+            }
+
+            // Добавляем новые или обновляем существующие
+            foreach (var file in files)
+            {
+                var existing = FileList.FirstOrDefault(f => f.Path == file.Path);
+                if (existing == null)
+                    FileList.Add(file);
+                   // existing.UpdateFrom(file); // Если у FileModel есть метод обновления свойств
+            }
+        }
+
+        private async Task RefreshDirectoriesAsync(string dirPath)
+        {
+            var dirs = await dataService.GetDirectoriesAsync(dirPath);
+
+            // Словарь для сравнения
+            var newDirs = dirs.ToDictionary(d => d.Path, d => d);
+
+            // Удаляем устаревшие
+            for (int i = DirectoryList.Count - 1; i >= 0; i--)
+            {
+                if (!newDirs.ContainsKey(DirectoryList[i].Path))
+                    DirectoryList.RemoveAt(i);
+            }
+
+            // Добавляем новые или обновляем существующие
+            foreach (var dir in dirs)
+            {
+                var existing = DirectoryList.FirstOrDefault(d => d.Path == dir.Path);
+                if (existing == null)
+                    DirectoryList.Add(dir);
+            }
         }
 
         /// <summary>
@@ -856,7 +938,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
             else
             {
-                this.UpdateFilePanel(path);
+                _ = this.UpdateFilePanelAsync(path);
                 this.ThisComputerIconIsEnabled = true;
                 this.BackButtonIsEnabled = true;
             }

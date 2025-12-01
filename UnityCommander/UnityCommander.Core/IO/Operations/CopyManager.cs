@@ -1,175 +1,126 @@
 ﻿#define Nlog
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
-using UnityCommander.Core.Helper;
 
 namespace UnityCommander.Core.IO.Operations
 {
     public class CopyManager : ManagerBase
     {
-#if (Nlog)
-        /// <summary>
-        /// The reference the current log event manager.
-        /// </summary>
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-#endif
 
-        /// <summary>
-        /// The file copier.
-        /// </summary>
         private CopyFiles copyFile;
-
-        /// <summary>
-        /// The source path to the directory.
-        /// </summary>
         private string source;
+        private string targetRoot;
 
-        /// <summary>
-        /// The target path to the directory.
-        /// </summary>
-        private string target;
-
-        /// <summary>
-        /// The target path to the directory.
-        /// </summary>
         private static CancellationTokenSource cancellationTokenSource;
 
-        /// <summary>
-        /// Gets or sets copy progress report..
-        /// </summary>
-        public Action<CopyInfo> CopyFileReport { get; set; }
+        public bool CopyOnlyFolderContent { get; set; } = true;
 
-        /// <summary>
-        /// Gets or sets the action to processing copy file results.
-        /// </summary>
-        public Action<CopyInfo> CopyFileResult { get; set; }
+        // События для внешнего мира (UI, панели и т.д.)
+        public event Action<CopyInfo> FileStarted;
+        public event Action<CopyInfo> FileCompleted;
+        public event Action<string> DirectoryCreated;
+        public event Action<CopyInfo> CopySkipped;
+        public event Action CopyFileFinish;
+        public event Action<CopyInfo> CopyFileReport;
+        public event Action<CopyInfo> CopyFileResult;
 
-        /// <summary>
-        /// Gets or sets the action to processing copy file results.
-        /// </summary>
-        public Action<CopyInfo> CopySkipReplace { get; set; }
+        // Подписки
+        private void SubscribeEvents()
+        {
+            copyFile.FileStarted += info => FileStarted?.Invoke(info);
+            copyFile.FileCompleted += info => FileCompleted?.Invoke(info);
+            copyFile.DirectoryCreated += dir => DirectoryCreated?.Invoke(dir);
+            copyFile.FileAlreadyExistsEvent += (sender, e) =>
+            {
+                var args = (CopyReportEventArg)e;
+                CopySkipped?.Invoke(args.Info);
+            };
+            copyFile.CopyReportEvent += FileCopier_CopyReportEvent;
+        }
 
-        /// <summary>
-        /// Gets or sets the action to processing copy file results.
-        /// </summary>
-        public Action CopyFileFinish { get; set; }
-
-        /// <summary>
-        /// The copy progress report.
-        /// </summary>
-        public event EventHandler FileAlreadyExistsEvent;
-
-        /// <summary>
-        /// This method is created.
-        /// </summary>
-        /// <param name="sourcePath"> The <c>source</c> path to the directory. </param>
-        /// <param name="targetPath"> The <c>target</c> path to the directory. </param>
+        // Основной метод копирования
         public void Copy(string sourcePath, string targetPath)
         {
             this.source = sourcePath;
-            this.target = targetPath;
+            var src = new DirectoryInfo(sourcePath);
+
+            if (!this.CopyOnlyFolderContent && src.Exists)
+            {
+                // Формируем корень назначения, добавляя имя папки источника
+                this.targetRoot = Path.Combine(targetPath, src.Name);
+                Directory.CreateDirectory(this.targetRoot);
+            }
+            else
+            {
+                this.targetRoot = targetPath;
+            }
+            
+            // Создаём один экземпляр CopyFiles
+            this.copyFile = new CopyFiles
+            {
+                SourceRoot = sourcePath,
+                TargetRoot = targetPath
+            };
+
+            // Подписываем события
+            SubscribeEvents();
+
+            // Создаём токен отмены
             cancellationTokenSource = new CancellationTokenSource();
-            Task.Factory.StartNew(() => CopyTask(cancellationTokenSource.Token), cancellationTokenSource.Token);
+
+            // Запускаем копирование в отдельном таске
+            Task.Run(() => CopyTask(cancellationTokenSource.Token), cancellationTokenSource.Token);
         }
 
-        public async void CopyTask(CancellationToken cancellationToken)
+        private void CopyTask(CancellationToken cancellationToken)
         {
-            using (this.copyFile = new CopyFiles())
+            cancellationToken.Register(() => copyFile.ChangeCopyStatus(CopyBehaviors.Cancel));
+
+            // Если это файл
+            if (File.Exists(source))
             {
-                cancellationToken.Register(CollectionTokenCancel);
-                this.copyFile.FileAlreadyExistsEvent += FileCopier_CopySkipReplace;
-                //if (File.Exists(source.Replace(new FileInfo(source).Directory.FullName, target)))
-                //{
-                //    await Task.Delay(100, cancellationToken);
-                //}
-
-                await Task.Run(() =>
-                {
-                    if (File.Exists(source.Replace(new FileInfo(source).Directory.FullName, target)))
-                        cancellationTokenSource.Cancel();
-
-                    this.copyFile.CopyReportEvent += this.FileCopier_CopyReportEvent;
-
-                    if (File.Exists(this.source))
-                        this.copyFile.Copy(this.source, this.target);
-
-                    if (Directory.Exists(this.source))
-                        this.copyFile.DeepCopy(this.source, this.target);
-                    
-                    this.copyFile.CopyReportEvent -= this.FileCopier_CopyReportEvent;
-                    this.CopyFileFinish?.Invoke();
-
-                }, cancellationToken);
+                copyFile.Copy(source, targetRoot);
             }
-        }
-
-        private void CollectionTokenCancel()
-        {
-        }
-
-
-        private void FileCopier_CopySkipReplace(object sender, EventArgs e)
-        {
-            var copyArgs = (CopyReportEventArg)e;
-            this.CopySkipReplace?.Invoke(copyArgs.Info);
-        }
-
-        /// <summary>
-        /// The raise event.
-        /// </summary>
-        /// <param name="info">
-        /// The info.
-        /// </param>
-        private void RaiseFileAlreadyExistsEvent(CopyInfo info)
-        {
-            if (this.FileAlreadyExistsEvent != null)
+            // Если это папка
+            else if (Directory.Exists(source))
             {
-                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
+                copyFile.DeepCopy(source, targetRoot);
             }
+
+            // Завершение копирования
+            CopyFileFinish?.Invoke();
+
+            // Отписка от событий после окончания
+            copyFile.FileStarted -= info => FileStarted?.Invoke(info);
+            copyFile.FileCompleted -= info => FileCompleted?.Invoke(info);
+            copyFile.DirectoryCreated -= dir => DirectoryCreated?.Invoke(dir);
+            copyFile.FileAlreadyExistsEvent -= (sender, e) =>
+            {
+                var args = (CopyReportEventArg)e;
+                CopySkipped?.Invoke(args.Info);
+            };
+
+            copyFile.CopyReportEvent -= FileCopier_CopyReportEvent;
         }
 
         private void FileCopier_CopyReportEvent(object sender, EventArgs e)
         {
             var copyArgs = (CopyReportEventArg)e;
             this.CopyFileReport?.Invoke(copyArgs.Info);
-#if (Nlog)
-            Logger.Info(string.Format("{0} | {1} | {2} | {3} | {4}",
-                copyArgs.Info.Name,
-                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.CurrentFileSize),
-                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.AverageSpeed),
-                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.CurrentBytesTransferred),
-                ConverterBytes.AutoConvertFormatBytes((decimal)copyArgs.Info.TotalBytesTransferred)));
-#endif
         }
 
-        /// <summary>
-        /// The pause.
-        /// </summary>
-        public void Pause()
-        {
-            this.copyFile.ChangeCopyStatus(CopyBehaviors.Pause);
-        }
-
-        /// <summary>
-        /// The resume.
-        /// </summary>
-        public void Resume()
-        {
-            this.copyFile.ChangeCopyStatus(CopyBehaviors.Resume);
-        }
-
-        /// <summary>
-        /// The cancel.
-        /// </summary>
+        public void Pause() => copyFile.ChangeCopyStatus(CopyBehaviors.Pause);
+        public void Resume() => copyFile.ChangeCopyStatus(CopyBehaviors.Resume);
         public void Cancel()
         {
-            this.copyFile.ChangeCopyStatus(CopyBehaviors.Cancel);
-            Directory.Delete(this.target, true);
+            copyFile.ChangeCopyStatus(CopyBehaviors.Cancel);
+            if (Directory.Exists(targetRoot))
+                Directory.Delete(targetRoot, true);
         }
     }
 }

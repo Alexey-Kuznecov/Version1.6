@@ -27,6 +27,11 @@ namespace UnityCommander.Core.IO.Operations
         /// <summary>
         /// Gets or sets the target directory.
         /// </summary>
+        public string Root { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target directory.
+        /// </summary>
         public FileInfo FileInfo { get; set; }
 
         /// <summary>

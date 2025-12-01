@@ -100,6 +100,7 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
+            containerRegistry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
             containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<NavigationContextDirectory>();

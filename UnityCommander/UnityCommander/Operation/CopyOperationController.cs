@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityCommander.Core;
 using UnityCommander.Core.IO;
 using UnityCommander.Core.IO.Operations;
 
@@ -10,6 +7,7 @@ namespace UnityCommander.Operation
 {
     public class CopyOperationController : IDisposable
     {
+        private readonly IDirectoryChangeNotifier notifier;
         private readonly CopyManager copyManager;
         private readonly CopyProgressCalculator progressCalculator;
         private readonly CopyConflictResolver conflictResolver;
@@ -21,12 +19,14 @@ namespace UnityCommander.Operation
         public event Action<CopyInfoModel> FileSkipped;
         public event Action Completed;
 
-        public CopyOperationController(
+        public  CopyOperationController(
+            IDirectoryChangeNotifier notifier,
             CopyManager copyManager,
             CopyProgressCalculator progressCalculator,
             CopyConflictResolver conflictResolver,
             CopyReportCollector reportCollector)
         {
+            this.notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
             this.copyManager = copyManager;
             this.progressCalculator = progressCalculator;
             this.conflictResolver = conflictResolver;
@@ -35,7 +35,15 @@ namespace UnityCommander.Operation
             // Подписка на события CopyManager
             this.copyManager.CopyFileReport += OnCopyFileReport;
             this.copyManager.CopyFileFinish += OnCopyFileFinish;
-            this.copyManager.CopySkipReplace += OnCopySkipReplace;
+            this.copyManager.FileCompleted += OnCopyFileCompleted;
+            this.copyManager.FileStarted += OnFileStarted;
+            this.copyManager.DirectoryCreated += OnDirectoryCreated;
+            this.copyManager.CopySkipped += OnCopySkipReplace;
+        }
+
+        private void OnCopyFileCompleted(CopyInfo info)
+        {
+            this.notifier.NotifyChanged(info.Root);
         }
 
         // Команды управления копированием
@@ -60,6 +68,16 @@ namespace UnityCommander.Operation
         private void OnCopyFileFinish()
         {
             Completed?.Invoke();
+        }
+
+        private void OnFileStarted(CopyInfo copyInfo)
+        {
+           // this.notifier.NotifyChanged(changedPath);
+        }
+
+        private void OnDirectoryCreated(string dir)
+        {
+            this.notifier.NotifyChanged(dir);
         }
 
         private void OnCopySkipReplace(CopyInfo info)
@@ -95,7 +113,7 @@ namespace UnityCommander.Operation
         {
             copyManager.CopyFileReport -= OnCopyFileReport;
             copyManager.CopyFileFinish -= OnCopyFileFinish;
-            copyManager.CopySkipReplace -= OnCopySkipReplace;
+            copyManager.CopySkipped -= OnCopySkipReplace;
         }
     }
 }
