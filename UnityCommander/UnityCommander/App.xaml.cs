@@ -25,22 +25,18 @@ namespace UnityCommander
     using Services.Plugins;
     using System.Windows;
     using UnityCommander.AI.ImageSearch;
-    using UnityCommander.CLI.Core;
-    using UnityCommander.CLI.Integration;
-    using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
     using UnityCommander.Core.Navgator;
     using UnityCommander.Integration;
     using UnityCommander.Modules.BottomPanel;
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.Viewer;
     using UnityCommander.Modules.Viewer.Views;
+    using UnityCommander.Operation;
     using ViewModels;
     using Views;
     using Views.CopyDialogs;
     using ICommandExecutor = CommandSystem.Core.Abstractions.ICommandExecutor;
     using ICommandFactory = CommandSystem.Core.Abstractions.ICommandFactory;
-
-
 
     /// <summary>
     /// The application.
@@ -107,6 +103,10 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
             containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<NavigationContextDirectory>();
+            containerRegistry.RegisterSingleton<CopyProgressCalculator>();
+            containerRegistry.RegisterSingleton<CopyReportCollector>();
+            containerRegistry.RegisterSingleton<CopyConflictResolver>();
+            containerRegistry.RegisterSingleton<CopyOperationController>();
 
             //containerRegistry.RegisterSingleton<IFileOperations, FileManager>();
             containerRegistry.Register<PluginBridge>();
