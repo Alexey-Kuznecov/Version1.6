@@ -25,6 +25,7 @@ namespace UnityCommander.Services
             //_commands.Add(new SysStatCommand());
             //_commands.Add(new TestCommand());
             //_commands.Add(new TestFlashCommand());
+            _commands.Add(new FindSimilarCommand(new ImageSimilarityService("F:\\01. Active\\CSharp\\UnityCommander\\UnityCommander\\Resources\\ai_models\\model.onnx")));
         }
 
         public IEnumerable<IConsoleCommand> GetAllCommands() => _commands;

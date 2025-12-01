@@ -85,6 +85,10 @@ namespace UnityCommander
         {
             var pluginLoaderService = new PluginLoaderService();
             var globalCommandService = new GlobalCommandService(pluginLoaderService);
+            // AI Services
+            //containerRegistry.RegisterSingleton<IImageSimilarityService>(() =>
+            //    new ImageSimilarityService(@"F:\01. Active\CSharp\UnityCommander\UnityCommander\Resources\ai_models"));
+
 
             containerRegistry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
             containerRegistry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
@@ -119,10 +123,6 @@ namespace UnityCommander
 
             containerRegistry.RegisterSingleton<GuiCommandRegistrar>();
             containerRegistry.RegisterSingleton<GuiCommandExecute>();
-
-            // AI Services
-            containerRegistry.RegisterSingleton<IImageSimilarityService>(() =>
-                new ImageSimilarityService(@"F:\01. Active\CSharp\UnityCommander\UnityCommander\Resources\ai_models"));
         }
 
         private bool Condition(Request arg)

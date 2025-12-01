@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.AI.ImageSearch\UnityCommander.AI.ImageSearch.csproj" />
     <ProjectReference Include="..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
