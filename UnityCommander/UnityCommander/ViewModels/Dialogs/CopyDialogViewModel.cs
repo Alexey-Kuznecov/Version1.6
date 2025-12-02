@@ -4,7 +4,9 @@ using Prism.Events;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -32,6 +34,7 @@ namespace UnityCommander.ViewModels.Dialogs
         private bool closeTrigger;
         private string source;
         private string target;
+        public List<string> manySource;
         private bool copyOnlyFolderContent;
         private bool сloseDialogAfterCopyingComplete;
         private DelegateCommand closeDialogCommand;
@@ -110,14 +113,21 @@ namespace UnityCommander.ViewModels.Dialogs
         /// <summary>
         /// Gets the command to copy files or folders from one panel to another.
         /// </summary>
-        public ICommand CopyCommand => new DelegateCommand(() =>
+        public ICommand CopyCommand => new DelegateCommand(async () =>
         {
             this.CopyStateView = new CopyProcessView();
 
-            var source = new DirectoryInfo(this.Source);
-            var destination = new DirectoryInfo(this.Target);
-
-            this.copyOperationController.StartCopy(source.FullName, destination.FullName);
+            if (manySource != null && manySource.Any())
+            {
+                // Запускаем одну общую операцию для всех источников
+                await this.copyOperationController.StartCopyManyAsync(manySource, this.Target);
+            }
+            else
+            {
+                var source = this.Source;
+                var dest = this.Target;
+                await this.copyOperationController.StartCopyManyAsync(new[] { source }, dest);
+            }
         });
 
         public ICommand MoveCommand => new DelegateCommand(() =>
@@ -148,6 +158,7 @@ namespace UnityCommander.ViewModels.Dialogs
             {
                 this.Source = copyParameters.Source;
                 this.Target = copyParameters.Target;
+                this.manySource = copyParameters.ManySource;
             }
         }
 

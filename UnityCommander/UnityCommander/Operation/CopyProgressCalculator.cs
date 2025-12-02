@@ -23,7 +23,6 @@ namespace UnityCommander.Operation
 
         private string FormatBytes(double bytes)
         {
-            // Простейшая конвертация в K/M/G
             if (bytes > 1024 * 1024 * 1024) return $"{bytes / (1024 * 1024 * 1024):F2} GB";
             if (bytes > 1024 * 1024) return $"{bytes / (1024 * 1024):F2} MB";
             if (bytes > 1024) return $"{bytes / 1024:F2} KB";

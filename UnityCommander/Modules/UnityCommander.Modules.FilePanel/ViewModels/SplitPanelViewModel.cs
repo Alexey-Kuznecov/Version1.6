@@ -161,7 +161,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private void OnDirectoryChanged(string changedPath)
         {
-            if (!IsSameDirectory(changedPath, this.CurrentDirectory))
+            // TODO Сделать более надежный способ для определения пути для целевой панели, пока работает стабльно но может сломаться
+            if (!ShouldRefresh(changedPath, this.CurrentDirectory))
                 return;
 
             ScheduleLightRefresh(changedPath);
@@ -179,7 +180,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 _refreshScheduled = false;
                 Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    await UpdateFilePanelAsync(changedPath);
+                    await UpdateFilePanelAsync(this.CurrentDirectory);
                 });
             });
         }
@@ -189,6 +190,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private bool IsSameDirectory(string changedPath, string currentPath) 
         {
             return string.Equals(changedPath.TrimEnd('\\'), currentPath.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase); 
+        }
+
+        private bool ShouldRefresh(string changedPath, string panelCurrentPath)
+        {
+            return changedPath.StartsWith(panelCurrentPath, StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion
@@ -457,6 +463,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">Информация о событии перетаскивания.</param>
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
+            // Проверяем, есть ли реально выбранные элементы
+            bool hasElements = false;
+
+            if (dropInfo.Data is BaseDirectory)
+                hasElements = true;
+            else if (dropInfo.Data is IList list && list.Count > 0)
+                hasElements = true;
+
+            // Если драг начат с пустого места (нет элементов) — блокируем драг
+            if (!hasElements)
+            {
+                dropInfo.Effects = DragDropEffects.None;
+                dropInfo.DropTargetAdorner = null;
+                return;
+            }
+
+            // Если драг идёт по элементу — разрешаем
             bool isMultiSelect = dropInfo.Data is List<object> && dropInfo.TargetItem is ListBox or BaseDirectory;
             bool isSingleSelect = dropInfo.Data is BaseDirectory && dropInfo.TargetItem is ListBox or BaseDirectory;
 
@@ -479,12 +502,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="dropInfo">Информация о событии Drop.</param>
         void IDropTarget.Drop(IDropInfo dropInfo)
         {
-            BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
-            BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
-            string targetPath = null;
             var visualTarget = dropInfo.VisualTarget as ListBox;
-            var splitPanelViewModel = visualTarget.DataContext as SplitPanelViewModel;
+            var splitPanelViewModel = visualTarget?.DataContext as SplitPanelViewModel;
 
+            string targetPath = null;
+            var targetItem = dropInfo.TargetItem as BaseDirectory;
+
+            // Определяем путь назначения
             if (targetItem == null)
             {
                 var firstItem = visualTarget?.SelectedItem as BaseDirectory;
@@ -495,15 +519,35 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
                 else
                 {
-                    targetPath = this.CurrentDirectory;
+                    targetPath = splitPanelViewModel?.CurrentDirectory ?? this.CurrentDirectory;
+                }
+            }
+            else
+            {
+                targetPath = targetItem.Path;
+            }
+
+            // Собираем список исходных элементов
+            List<string> sourcePaths = new();
+            if (dropInfo.Data is BaseDirectory single)
+            {
+                sourcePaths.Add(single.Path);
+            }
+            else if (dropInfo.Data is IList list)
+            {
+                foreach (var item in list)
+                {
+                    if (item is BaseDirectory dir)
+                        sourcePaths.Add(dir.Path);
                 }
             }
 
+            // Отправляем **в одно окно** все исходные пути
             this.dialogService.ShowDialog("CopyDialog",
                 new OverrideDialogParameters(new CopyParameters
                 {
-                    Source = (dropInfo.Data as BaseDirectory)?.Path,
-                    Target = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath
+                    ManySource = sourcePaths,
+                    Target = targetPath
                 }), r => { });
         }
 

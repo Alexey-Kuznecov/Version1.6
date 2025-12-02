@@ -17,8 +17,9 @@ namespace UnityCommander.Core.IO.Operations
         private string targetRoot;
 
         private static CancellationTokenSource cancellationTokenSource;
+        private TaskCompletionSource<bool> _currentTcs;
 
-        public bool CopyOnlyFolderContent { get; set; } = true;
+        public bool CopyOnlyFolderContent { get; set; } = false;
 
         // События для внешнего мира (UI, панели и т.д.)
         public event Action<CopyInfo> FileStarted;
@@ -81,12 +82,10 @@ namespace UnityCommander.Core.IO.Operations
         {
             cancellationToken.Register(() => copyFile.ChangeCopyStatus(CopyBehaviors.Cancel));
 
-            // Если это файл
             if (File.Exists(source))
             {
                 copyFile.Copy(source, targetRoot);
             }
-            // Если это папка
             else if (Directory.Exists(source))
             {
                 copyFile.DeepCopy(source, targetRoot);
@@ -94,6 +93,15 @@ namespace UnityCommander.Core.IO.Operations
 
             // Завершение копирования
             CopyFileFinish?.Invoke();
+
+            try
+            {
+                _currentTcs?.TrySetResult(true);
+            }
+            catch
+            {
+                // ignore
+            }
 
             // Отписка от событий после окончания
             copyFile.FileStarted -= info => FileStarted?.Invoke(info);
@@ -108,6 +116,18 @@ namespace UnityCommander.Core.IO.Operations
             copyFile.CopyReportEvent -= FileCopier_CopyReportEvent;
         }
 
+        public Task CopyAsync(string sourcePath, string targetPath)
+        {
+            // Подготовка TCS
+            _currentTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            // Вызываем старый Copy (он стартует Task.Run внутри)
+            Copy(sourcePath, targetPath);
+
+            // Возвращаем таск, который завершится, когда CopyTask внутри установит результат
+            return _currentTcs.Task;
+        }
+
         private void FileCopier_CopyReportEvent(object sender, EventArgs e)
         {
             var copyArgs = (CopyReportEventArg)e;
@@ -119,6 +139,7 @@ namespace UnityCommander.Core.IO.Operations
         public void Cancel()
         {
             copyFile.ChangeCopyStatus(CopyBehaviors.Cancel);
+            if (_currentTcs != null) _currentTcs.TrySetCanceled();
             if (Directory.Exists(targetRoot))
                 Directory.Delete(targetRoot, true);
         }
