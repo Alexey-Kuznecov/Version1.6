@@ -24,25 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NSwag.Core" Version="13.12.0" />
+    <PackageReference Include="Prism.Core" Version="8.1.97" />
   </ItemGroup>
-  <!--<ItemGroup>
-    <Folder Include="Logger\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="D:\Works\WPF Projects\UnityCommander\Version2.6\nlogconfig" Link="NLog.config">
-      <Private>True</Private>
-      <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <NuGetItemType>None</NuGetItemType>
-      <TargetPath>NLog.config</TargetPath>
-      <NuGetPackageId>NLog.Config</NuGetPackageId>
-    </None>
-    <None Include="D:\Works\WPF Projects\UnityCommander\Version2.6\nlogconfig" Link="NLog.xsd">
-      <Private>False</Private>
-      <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
-      <NuGetItemType>None</NuGetItemType>
-      <NuGetPackageId>NLog.Schema</NuGetPackageId>
-    </None>
-  </ItemGroup>-->
 </Project>

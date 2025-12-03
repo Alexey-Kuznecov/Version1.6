@@ -4,6 +4,10 @@ using System.Windows.Markup;
 #endif
 namespace UnityCommander.Modules.FilePanel.Views
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows;
     using System.Windows.Controls;
 
     /// <summary>

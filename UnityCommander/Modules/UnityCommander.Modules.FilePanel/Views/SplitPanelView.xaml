@@ -2,6 +2,7 @@
     x:Class="UnityCommander.Modules.FilePanel.Views.SplitPanelView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -55,24 +56,128 @@
         -->
         <Grid Grid.Row="3">
             <ListView
+                behaviors:SelectionBehavior.EnableSelection="True"
+                behaviors:SelectionBehavior.Manager="{Binding SelectionManager}"
+                behaviors:SelectionBehavior.PanelId="{Binding Token}"
+                behaviors:SelectionBehavior.SelectionContext="{Binding SelectionContext}"
                 commands:GridViewSort.AutoSort="True"
                 dd:DragDrop.DropHandler="{Binding Mode=Default}"
                 dd:DragDrop.IsDragSource="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
                 SelectedItem="{Binding CurrentFile}"
-                SelectionMode="Single"
+                SelectionMode="Multiple"
                 View="{Binding FilePanelContainer}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp">
                         <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
+                <!--<i:Interaction.Behaviors>
+                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel ContextMenu="{Binding ContextMenu}" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid>
+                                <AdornerDecorator>
+                                    <ContentPresenter>
+                                        <ContentPresenter.Content>
+                                            <behaviors:BindableParameter
+                                                Binding="{Binding Icon}"
+                                                Converter="{StaticResource IconConverter}"
+                                                ConverterParameter="{Binding TargetPanel}" />
+                                        </ContentPresenter.Content>
+                                    </ContentPresenter>
+                                </AdornerDecorator>
+                            </Grid>
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" Foreground="BlueViolet">
+                                    <TextBlock.Text>
+                                        <behaviors:BindableParameter
+                                            Binding="{Binding Additional.Values}"
+                                            Converter="{StaticResource ColumnValueConverter}"
+                                            ConverterParameter="{Binding RelativeSource={RelativeSource Mode=Self}}" />
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
+                                <ContentPresenter Grid.Column="0">
+                                    <ContentPresenter.Content>
+                                        <behaviors:BindableParameter
+                                            Binding="{Binding Icon}"
+                                            Converter="{StaticResource IconConverter}"
+                                            ConverterParameter="{Binding TargetPanel}" />
+                                    </ContentPresenter.Content>
+                                </ContentPresenter>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+                <!--<ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+
+                        --><!--  Высота строки: широкая, современная  --><!--
+                        <Setter Property="Padding" Value="10" />
+                        <Setter Property="MinHeight" Value="40" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Foreground" Value="Black" />
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+
+                        --><!--  Привязка выделения к твоей модели  --><!--
+                        <Setter Property="behaviors:HighlightBehavior.IsHighlighted" Value="{Binding IsSelected}" />
+
+                        --><!--  Кастомный шаблон без градиентов  --><!--
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border
+                                        x:Name="Border"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        CornerRadius="4">
+                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+
+                                        --><!--  Hover (минимальный, современный)  --><!--
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#1AFFFFFF" />
+                                        </Trigger>
+
+                                        --><!--  Selected  --><!--
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#336CB5FF" />
+                                            <Setter Property="Foreground" Value="White" />
+                                            <Setter Property="FontWeight" Value="Medium" />
+                                        </Trigger>
+
+                                        --><!--  Disabled  --><!--
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Opacity" Value="0.4" />
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>-->
             </ListView>
         </Grid>
         <ContentControl Grid.Row="4">

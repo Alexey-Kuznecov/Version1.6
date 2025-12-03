@@ -11,7 +11,7 @@ namespace UnityCommander.Services
     {
         private readonly List<IConsoleCommand> _commands = new();
 
-        public ConsoleCommandProvider()
+        public ConsoleCommandProvider(ISelectionService selectionService, IPanelRegistry panelRegistry)
         {
             //// Здесь регистрируем команды вручную
             _commands.Add(new ClearCommand());
@@ -26,6 +26,7 @@ namespace UnityCommander.Services
             _commands.Add(new SysStatCommand());
             _commands.Add(new TestCommand());
             _commands.Add(new TestFlashCommand());
+            _commands.Add(new SelectFilesCommand(panelRegistry, selectionService));
             _commands.Add(new FindSimilarCommand(new ImageSimilarityService("F:\\01. Active\\CSharp\\UnityCommander\\UnityCommander\\Resources\\ai_models\\model.onnx")));
         }
 

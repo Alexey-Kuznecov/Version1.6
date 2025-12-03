@@ -11,6 +11,26 @@
     <converter:IconConverter x:Key="IconConverter" />
     <converter:MultiParameterConverter x:Key="MultiConverter" />
     <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
+    <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
+
+    <!--<DataTemplate DataType="{x:Type models:BaseDirectory}">
+        <Grid Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Grid.Column="0"
+                Margin="4"
+                Text="{Binding Name}" />
+            <TextBlock
+                Grid.Column="1"
+                Margin="4"
+                Text="{Binding CreationTime}" />
+        </Grid>
+    </DataTemplate>-->
+
 
     <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>

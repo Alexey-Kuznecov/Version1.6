@@ -2,6 +2,8 @@
 namespace UnityCommander.Common.Module
 {
     using System;
+    using System.Collections.Generic;
+    using UnityCommander.Common.Models.Directory;
 
     /// <summary>
     /// The DirectoryPanel interface.
@@ -9,5 +11,6 @@ namespace UnityCommander.Common.Module
     public interface IDirectoryPanel : ITabPanelContent
     {
         public void DirectoryUpdate(IDirectoryPanel directoryPanel);
+        IReadOnlyList<BaseDirectory> GetFiles();
     }
 }

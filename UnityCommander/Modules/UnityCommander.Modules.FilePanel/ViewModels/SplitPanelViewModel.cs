@@ -11,10 +11,10 @@
 using CommandSystem.Gui.Integraion;
 using NLog;
 using Prism.Commands;
-using Prism.Events;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -26,11 +26,11 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Threading;
 using UnityCommander.Common;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;
 using UnityCommander.Common.Module;
+using UnityCommander.Common.Selection;
 using UnityCommander.Core;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Mvvm;
@@ -41,7 +41,7 @@ using UnityCommander.Integration.Enums;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
-using Xceed.Wpf.Toolkit;
+using UnityCommander.Services.Selection;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -50,7 +50,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// Реализует обработку навигации, команд, drag & drop и интеграцию плагинных колонок.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
+    public class SplitPanelViewModel : RegionViewModelBase, IDisposable, IDropTarget, IDirectoryPanel
     {
         #region Поля и зависимости
 
@@ -61,20 +61,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IMultiCommandService multiCommandService;
         private readonly IGlobalCommandService globalCommandService;
         private readonly IPluginLoaderService pluginLoaderService;
+        private readonly IAppConfigService configService;
+        private readonly IAppLogger _appLogger;
         private readonly NavigationManager _navigationService;
         private readonly GuiCommandRegistrar commandRegistered;
         private readonly GuiCommandExecute commandExecute;
-        private readonly IAppConfigService configService;
         private readonly CommandManager commandManager;
         private readonly ModuleLogger logger;
-        private IAppLogger _appLogger;
-
-        /// <summary>
-        /// Флаг, указывающий, что значения плагинов были кэшированы.
-        /// </summary>
-        private bool pluginValuesIsCached;
+        private IPanelRegistry _panelRegistry;
+        private PanelViewModelAdapter _adapter;
+        private ISelectionManager _selectionManager;  
+        private ISelectionContext _selectionContext;
+        public bool IsActive => _panelRegistry.ActivePanel == this;
 
         // --- Прочие поля
+        public ObservableCollection<BaseDirectory> Items { get; set; } = new();
+        public ObservableCollection<BaseDirectory> SelectedItems { get; set; } = new();
         private BaseDirectory selectedCurrentDirectoryItem;
         private ObservableCollection<FileModel> fileList;
         private ObservableCollection<FolderModel> directoryList;
@@ -91,7 +93,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private IIcon updateDirectoryPanelIcon;
         private bool thisComputerIconIsEnabled;
         private bool backButtonIsEnabled;
+        private bool _refreshScheduled = false;
         private bool openFolderUnderCursorIsEnabled = true;
+        /// Флаг, указывающий, что значения плагинов были кэшированы.
+        private bool pluginValuesIsCached;
 
         public event Action<string> PathChanged;
 
@@ -124,6 +129,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             IIconProviderService iconProvider,
             IAppConfigService configService,
             IDirectoryChangeNotifier directoryChangeNotifier,
+            ISelectionManager selectionManager,
+            IPanelRegistry panelRegistry,
             NavigationContextDirectory navigationContext,
             GuiCommandRegistrar guiCommandRegistrar,
             GuiCommandExecute guiCommandExecute,
@@ -134,6 +141,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             this.commandRegistered = guiCommandRegistrar;
             this.commandExecute = guiCommandExecute;
+            this._panelRegistry = panelRegistry;
+            this._selectionManager = selectionManager;
             this.configService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
@@ -145,6 +154,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.globalCommandService = globalCommandService;
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            this._panelRegistry = panelRegistry ?? throw new ArgumentNullException(nameof(panelRegistry));
 
             // Инициализация иконок
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
@@ -159,45 +169,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
         }
 
-        private void OnDirectoryChanged(string changedPath)
-        {
-            // TODO Сделать более надежный способ для определения пути для целевой панели, пока работает стабльно но может сломаться
-            if (!ShouldRefresh(changedPath, this.CurrentDirectory))
-                return;
-
-            ScheduleLightRefresh(changedPath);
-        }
-
-        private void ScheduleLightRefresh(string changedPath)
-        {
-            if (_refreshScheduled)
-                return;
-
-            _refreshScheduled = true;
-
-            Task.Delay(150).ContinueWith(_ =>
-            {
-                _refreshScheduled = false;
-                Application.Current.Dispatcher.Invoke(async () =>
-                {
-                    await UpdateFilePanelAsync(this.CurrentDirectory);
-                });
-            });
-        }
-
-        private bool _refreshScheduled = false;
-
-        private bool IsSameDirectory(string changedPath, string currentPath) 
-        {
-            return string.Equals(changedPath.TrimEnd('\\'), currentPath.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase); 
-        }
-
-        private bool ShouldRefresh(string changedPath, string panelCurrentPath)
-        {
-            return changedPath.StartsWith(panelCurrentPath, StringComparison.OrdinalIgnoreCase);
-        }
-
         #endregion
+
+        public IReadOnlyList<BaseDirectory> GetFiles() => this.FileList;
+
+        public void Dispose()
+        {
+            _panelRegistry.UnregisterPanel(_adapter.PanelId);
+        }
 
         #region Реализация интерфейсов IDirectoryPanel
 
@@ -230,6 +209,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Свойства (Properties)
 
+        /// <summary>
+        /// Менеджер для управления выделением файлов и папок
+        /// </summary>
+        public ISelectionManager SelectionManager => this._selectionManager;
+        public ISelectionContext SelectionContext => this._selectionContext;
         /// <summary>
         /// Текущий путь директории.
         /// </summary>
@@ -490,9 +474,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             if (isMultiSelect || isSingleSelect)
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
 
-            if (dropInfo.Data is BaseDirectory && dropInfo.VisualTarget is ListBox && dropInfo.TargetItem == null)
-                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-
             dropInfo.Effects = DragDropEffects.Copy;
         }
 
@@ -585,7 +566,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
             this.CurrentDirectory = path;
-            this.Token = token == null ? Guid.NewGuid() : token;
+
+            // Если токен не задан, создаём новый
+            if (token == Guid.Empty)
+                token = Guid.NewGuid();
+
+            this.Token = token;
 
             // Регистрируем его в глобальном реестре
             NavigationContextDirectory.Instance.Register(this.Token, _navigationService);
@@ -595,6 +581,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             // Восстановление состояния панели из предыдущего сеанса
             this.SetLastPanelState();
+
+            _adapter = new PanelViewModelAdapter(this);
+            _panelRegistry.RegisterPanel(_adapter);
+
+
+            if (FileList != null)
+                _selectionContext = new SelectionContext(FileList.Cast<ISelectableItem>());
 
             return this;
         }
@@ -995,6 +988,41 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             base.Destroy();
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+        }
+
+        #endregion
+
+        #region Методы для обновления панели файлов
+
+        private void OnDirectoryChanged(string changedPath)
+        {
+            // TODO Сделать более надежный способ для определения пути для целевой панели, пока работает стабльно но может сломаться
+            if (!ShouldRefresh(changedPath, this.CurrentDirectory))
+                return;
+
+            ScheduleLightRefresh(changedPath);
+        }
+
+        private void ScheduleLightRefresh(string changedPath)
+        {
+            if (_refreshScheduled)
+                return;
+
+            _refreshScheduled = true;
+
+            Task.Delay(150).ContinueWith(_ =>
+            {
+                _refreshScheduled = false;
+                Application.Current.Dispatcher.Invoke(async () =>
+                {
+                    await UpdateFilePanelAsync(this.CurrentDirectory);
+                });
+            });
+        }
+
+        private bool ShouldRefresh(string changedPath, string panelCurrentPath)
+        {
+            return changedPath.StartsWith(panelCurrentPath, StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion

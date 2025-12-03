@@ -20,4 +20,7 @@
     <ProjectReference Include="..\..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\_builds\&quot;" />
+	</Target>
 </Project>

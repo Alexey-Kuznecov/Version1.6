@@ -13,7 +13,6 @@ namespace UnityCommander.Modules.FilePanel
     using CommandSystem.Core.Commands;
     using CommandSystem.Core.Metadata;
     using CommandSystem.Gui.Integraion;
-    using NLog;
     using Prism.Commands;
     using Prism.Ioc;
     using Prism.Modularity;
@@ -21,7 +20,6 @@ namespace UnityCommander.Modules.FilePanel
     using Prism.Regions;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -37,6 +35,7 @@ namespace UnityCommander.Modules.FilePanel
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
     using Xceed.Wpf.AvalonDock;
+    using Xceed.Wpf.AvalonDock.Layout;
     using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
     /// <summary>
@@ -53,6 +52,7 @@ namespace UnityCommander.Modules.FilePanel
         private GuiCommandExecute _commandExecute;
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
+        private IPanelRegistry _panelRegistry;
         private string _currentCommand  = string.Empty;
         private IAppLogger _appLogger;
 
@@ -124,6 +124,7 @@ namespace UnityCommander.Modules.FilePanel
         {
             this._appLogger = containerProvider.Resolve<IAppLogger>(); ;
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
+            _panelRegistry = containerProvider.Resolve<IPanelRegistry>();
             _commandRegistered = containerProvider.Resolve<GuiCommandRegistrar>();
             _commandExecute = containerProvider.Resolve<GuiCommandExecute>();
             _multiCommands.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
@@ -134,6 +135,7 @@ namespace UnityCommander.Modules.FilePanel
             _dockingService = containerProvider.Resolve<IDockingService>();
             var manager = _dockingService.GetDockingManager();
             manager.MouseDoubleClick += Manager_MouseDoubleClick;
+            manager.ActiveContentChanged += Manager_ActiveContentChanged;
             _appConfigService = containerProvider.Resolve<IAppConfigService>();
             
 
@@ -207,6 +209,24 @@ namespace UnityCommander.Modules.FilePanel
                             viewModel.InitializedViewModel(ref token, config.Path);
                         }
                     });
+                }
+            }
+        }
+
+        private void Manager_ActiveContentChanged(object? sender, EventArgs e)
+        {
+            var manager = sender as DockingManager;
+            if (manager?.ActiveContent is LayoutDocument document)
+            {
+                if (document?.Content is ContentControl contol)
+                {
+                    if (contol?.Content is ContentControl view)
+                    {
+                        if (view?.DataContext is ITabPanelContent vm)
+                        {
+                            _panelRegistry.SetActivePanel(vm.GetPanelToken().ToString());
+                        }
+                    }
                 }
             }
         }

@@ -32,7 +32,8 @@ namespace UnityCommander.Services
                             Extension = file.Extension,
                             CreationTime = file.CreationTime,
                             LastAccessTime = file.LastAccessTime,
-                            TargetPanel = TargetPanel.Files
+                            TargetPanel = TargetPanel.Files,
+                            Key = file.FullName // ключ для сравнения расширения
                         });
                     }
                 }
@@ -58,7 +59,8 @@ namespace UnityCommander.Services
                             Path = item.FullName,
                             CreationTime = item.CreationTime,
                             LastAccessTime = item.LastAccessTime,
-                            TargetPanel = TargetPanel.Folders
+                            TargetPanel = TargetPanel.Folders,
+                            Key = item.FullName // ключ для сравнения расширения
                         });
                     }
                 }

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
 	  <TargetFramework>net9.0-windows</TargetFramework>
+	  <UseWPF>true</UseWPF>
+	  <LangVersion>12.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +14,14 @@
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.AI.ImageSearch\UnityCommander.AI.ImageSearch.csproj" />
     <ProjectReference Include="..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityCommander.Services.Interfaces">
+      <HintPath>..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\bin\Debug\net9.0-windows\UnityCommander.Services.Interfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
