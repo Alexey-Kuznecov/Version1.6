@@ -1,6 +1,6 @@
 ﻿
 // ReSharper disable All
-namespace UnityCommander.Integration.Mvvm.Base
+namespace UnityCommander.Mvvm.Base
 {
     using System;
     using System.ComponentModel;

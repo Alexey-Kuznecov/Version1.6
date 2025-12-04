@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="CommandSystem.Core">
       <HintPath>..\..\..\_builds\CommandSystem.Core.dll</HintPath>
     </Reference>

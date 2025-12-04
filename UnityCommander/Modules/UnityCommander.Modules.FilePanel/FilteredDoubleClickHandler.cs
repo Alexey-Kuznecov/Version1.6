@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace AlexeyKuznecov.Library.Utils
+namespace UnityCommander.Modules.FilePanel
 {
     public class FilteredDoubleClickHandler
     {
@@ -34,9 +34,9 @@ namespace AlexeyKuznecov.Library.Utils
             _target = target;
             _onDoubleClick = onDoubleClick;
 
-            _closeBlacklist = new HashSet<string>((closeBlacklist ?? Array.Empty<string>()), StringComparer.OrdinalIgnoreCase);
-            _broadBlacklist = new HashSet<string>((broadBlacklist ?? Array.Empty<string>()), StringComparer.OrdinalIgnoreCase);
-            _requiredTypes = new HashSet<string>((requiredTypes ?? Array.Empty<string>()), StringComparer.OrdinalIgnoreCase);
+            _closeBlacklist = new HashSet<string>(closeBlacklist ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+            _broadBlacklist = new HashSet<string>(broadBlacklist ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+            _requiredTypes = new HashSet<string>(requiredTypes ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
 
             _checkDepth = checkDepth;
             _debounceMs = debounceMs;

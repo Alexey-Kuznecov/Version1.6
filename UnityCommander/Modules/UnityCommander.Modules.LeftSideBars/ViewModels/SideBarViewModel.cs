@@ -24,6 +24,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Core;
+    using UnityCommander.Integration.Plugins;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;

@@ -4,14 +4,11 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using NLog;
 
 namespace UnityCommander.Core.IO.Operations
 {
     public class CopyManager : ManagerBase
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private CopyFiles copyFile;
         private string source;
         private string targetRoot;

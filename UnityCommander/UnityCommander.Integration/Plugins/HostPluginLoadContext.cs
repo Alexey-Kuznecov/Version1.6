@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace UnityCommander.Services
+namespace UnityCommander.Integration.Plugins
 {
     public class HostPluginLoadContext : AssemblyLoadContext
     {

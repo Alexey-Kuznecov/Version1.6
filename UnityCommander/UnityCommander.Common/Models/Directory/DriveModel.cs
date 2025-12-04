@@ -21,17 +21,17 @@ namespace UnityCommander.Common.Models.Directory
         /// <summary>
         /// Gets or sets the total disk space.
         /// </summary>
-        public string TotalAmount { get; set; }
+        public long TotalAmount { get; set; }
 
         /// <summary>
         /// Gets or sets the available disk space.
         /// </summary>
-        public string FreeSpace { get; set; }
+        public long FreeSpace { get; set; }
 
         /// <summary>
         /// Gets or sets the byte space to be occupied.
         /// </summary>
-        public string UsedSpace { get; set; }
+        public long UsedSpace { get; set; }
 
         /// <summary>
         /// Gets or sets the target panel.

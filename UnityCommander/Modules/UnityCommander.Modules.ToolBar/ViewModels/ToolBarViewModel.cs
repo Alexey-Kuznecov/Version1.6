@@ -14,12 +14,10 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-    using UnityCommander.Common;
-    using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Ribbon;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Core.Mvvm;
-    using UnityCommander.Modules.ToolBar.Views;
+    using UnityCommander.Integration.Plugins;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>

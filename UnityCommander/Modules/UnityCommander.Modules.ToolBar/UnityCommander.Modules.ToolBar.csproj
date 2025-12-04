@@ -18,5 +18,7 @@
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Controls\UnityCommander.Controls.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
   </ItemGroup>
 </Project>

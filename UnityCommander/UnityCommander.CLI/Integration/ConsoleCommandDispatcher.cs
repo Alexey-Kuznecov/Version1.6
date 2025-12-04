@@ -2,6 +2,7 @@
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using CommandSystem.Core.Metadata;
 using CommandSystem.Infrastructure.Lifecycle;
+using UnityCommander.Common.Commands;
 
 namespace UnityCommander.CLI.Integration
 {
@@ -28,9 +29,12 @@ namespace UnityCommander.CLI.Integration
             _registry.Register(command);
         }
 
-        public void RegisterCommand(IConsoleCommand command)
+        public void RegisterCommand(IConsoleCommandBase command)
         {
-            _registry.Register(command);
+            if (command is not IConsoleCommand console)
+                throw new InvalidOperationException("Trying to register non-CLI command in CLI command registry.");
+
+            _registry.Register(console);
         }
 
         // Выполняет команду

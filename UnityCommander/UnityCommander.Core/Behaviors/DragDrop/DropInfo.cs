@@ -6,8 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
-using JetBrains.Annotations;
-
 namespace UnityCommander.Core.DragDrop
 {
     using NJsonSchema.Annotations;

@@ -4,28 +4,29 @@ namespace UnityCommander.Services
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
-    using AlexeyKuznecov.Library.Converters;
-
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
-    /// The files provider.
+    /// Сервис получения данных с диска — формирует готовые модели для приложения.
     /// </summary>
     public class DataProviderService : IDataProviderService
     {
+        /// <summary>
+        /// Получить файлы в директории.
+        /// </summary>
         public async Task<List<FileModel>> GetFilesAsync(string path)
         {
             return await Task.Run(() =>
             {
-                var list = new List<FileModel>();
                 var dir = new DirectoryInfo(path);
+                var files = new List<FileModel>();
 
                 foreach (var file in dir.GetFiles())
                 {
                     if ((file.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        list.Add(new FileModel
+                        files.Add(new FileModel
                         {
                             Name = Path.GetFileNameWithoutExtension(file.Name),
                             Path = file.FullName,
@@ -33,64 +34,70 @@ namespace UnityCommander.Services
                             CreationTime = file.CreationTime,
                             LastAccessTime = file.LastAccessTime,
                             TargetPanel = TargetPanel.Files,
-                            Key = file.FullName // ключ для сравнения расширения
+                            Key = file.FullName
                         });
                     }
                 }
 
-                return list;
+                return files;
             });
         }
 
+        /// <summary>
+        /// Получить папки в директории.
+        /// </summary>
         public async Task<List<FolderModel>> GetDirectoriesAsync(string path)
         {
             return await Task.Run(() =>
             {
-                var list = new List<FolderModel>();
                 var dir = new DirectoryInfo(path);
+                var folders = new List<FolderModel>();
 
-                foreach (var item in dir.GetDirectories())
+                foreach (var folder in dir.GetDirectories())
                 {
-                    if ((item.Attributes & FileAttributes.Hidden) == 0)
+                    if ((folder.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        list.Add(new FolderModel
+                        folders.Add(new FolderModel
                         {
-                            Name = item.Name,
-                            Path = item.FullName,
-                            CreationTime = item.CreationTime,
-                            LastAccessTime = item.LastAccessTime,
+                            Name = folder.Name,
+                            Path = folder.FullName,
+                            CreationTime = folder.CreationTime,
+                            LastAccessTime = folder.LastAccessTime,
                             TargetPanel = TargetPanel.Folders,
-                            Key = item.FullName // ключ для сравнения расширения
+                            Key = folder.FullName
                         });
                     }
                 }
 
-                return list;
+                return folders;
             });
         }
 
+        /// <summary>
+        /// Получить локальные диски.
+        /// </summary>
         public async Task<List<DriveModel>> GetDrivesAsync()
         {
             return await Task.Run(() =>
             {
-                var list = new List<DriveModel>();
+                var drives = new List<DriveModel>();
 
                 foreach (var drive in DriveInfo.GetDrives())
                 {
-                    if (drive.DriveType == DriveType.Network) continue;
                     if (!drive.IsReady) continue;
+                    if (drive.DriveType == DriveType.Network) continue;
 
-                    list.Add(new DriveModel
+                    drives.Add(new DriveModel
                     {
                         Letter = drive.Name,
-                        FreeSpace = ConverterBytes.AutoConvertFormatBytes(drive.AvailableFreeSpace),
-                        UsedSpace = ConverterBytes.AutoConvertFormatBytes(drive.TotalSize - drive.AvailableFreeSpace),
-                        TotalAmount = ConverterBytes.AutoConvertFormatBytes(drive.TotalSize),
+                        FreeSpace = drive.AvailableFreeSpace,   // сырые байты
+                        UsedSpace = drive.TotalSize - drive.AvailableFreeSpace, // сырые байты
+                        TotalAmount = drive.TotalSize,          // сырые байты
                         TargetPanel = TargetPanel.LocalDisk
                     });
                 }
 
-                return list;
+                return drives;
             });
         }
     }

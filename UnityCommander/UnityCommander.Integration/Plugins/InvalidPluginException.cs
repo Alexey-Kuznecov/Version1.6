@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UnityCommander.Core.Exceptions
+namespace UnityCommander.Integration.Plugins
 {
     /// <summary>
     /// Исключение, возникающее при загрузке плагина, если файл отсутствует, повреждён

@@ -1,14 +1,11 @@
 ﻿
 #define Nlog
 
-namespace UnityCommander.Core
+namespace UnityCommander.Logging
 {
     using System;
-    using System.Configuration;
-    using System.Data.SQLite;
     using System.IO;
     using System.Runtime.CompilerServices;
-
     using NLog;
     using NLog.Config;
 
@@ -53,19 +50,6 @@ namespace UnityCommander.Core
                     .WithProperty("CommandName", caller)
                     .Log(logLevel, message);
             }
-        }
-
-        private static void EnsureDb()
-        {
-            if (File.Exists("C:/Users/Lexa/Desktop/logs/logs.db"))
-                return;
-
-            using var connection = new SQLiteConnection("Data Source=C:/Users/Lexa/Desktop/logs/logs.db");
-            using SQLiteCommand command = new SQLiteCommand(
-                "CREATE TABLE Logging (Date TEXT, Level TEXT,ModuleName TEXT,CommandName TEXT,Message TEXT,Stacktrace TEXT)",
-                connection);
-            connection.Open();
-            command.ExecuteNonQuery();
         }
     }
 }

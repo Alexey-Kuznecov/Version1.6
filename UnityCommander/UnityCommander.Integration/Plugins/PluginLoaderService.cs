@@ -1,6 +1,6 @@
 ﻿#define DEBUG
 
-namespace UnityCommander.Services.Plugins
+namespace UnityCommander.Integration.Plugins
 {
     using System;
     using System.Collections;
@@ -14,10 +14,6 @@ namespace UnityCommander.Services.Plugins
     using Integration.Contracts;
     using Integration.Dialog;
 
-    using Interfaces;
-    using NLog;
-    using UnityCommander.Core;
-    using UnityCommander.Core.Exceptions;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
@@ -66,7 +62,7 @@ namespace UnityCommander.Services.Plugins
         /// Он автоматически привязывается к классу, в котором используется, что позволяет логировать события
         /// с указанием точного места в коде (например, имени класса) для лучшей диагностики.
         /// </remarks>
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        //private static Logger _logger = LogManager.GetCurrentClassLogger();
 #endif
 
         #endregion
@@ -110,8 +106,8 @@ namespace UnityCommander.Services.Plugins
             this.CreatePluginContext();
 
             // Настройка логгера Nlog
-            NLogSettings.Configure("Logs", "UnityCommander");
-            _logger = LogManager.GetCurrentClassLogger();
+            //NLogSettings.Configure("Logs", "UnityCommander");
+            //_logger = LogManager.GetCurrentClassLogger();
         }
 
         #endregion
@@ -152,7 +148,7 @@ namespace UnityCommander.Services.Plugins
                     }
                     catch (Exception ex)
                     {
-#if DEBUG
+#if DEBUG1
                         // Логируем исключение в режиме отладки
                         _logger.Error(ex, $"Ошибка при загрузке плагина: {pluginDllPath}");
 #endif
@@ -161,7 +157,7 @@ namespace UnityCommander.Services.Plugins
             }
             catch (Exception ex)
             {
-#if DEBUG
+#if DEBUG1
                 // Логируем исключение в режиме отладки
                 _logger.Error(ex, "Ошибка при обработке плагинов");
 #endif

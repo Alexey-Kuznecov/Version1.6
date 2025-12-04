@@ -7,6 +7,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="IColumnProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="IColumnProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Config.Net" Version="4.15.0" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="MaterialDesign.Icons" Version="1.1.0" />
@@ -14,11 +20,7 @@
     <PackageReference Include="Prism.Core" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
-    <ProjectReference Include="..\..\..\UnityCommander.Commands\UnityCommander.Commands.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
-    <ProjectReference Include="..\..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
-    <ProjectReference Include="..\..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\_builds\&quot;" />

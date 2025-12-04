@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Collections.Generic;
 using System.Windows.Media.Media3D;
-using JetBrains.Annotations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace UnityCommander.Core.DragDrop.Utilities

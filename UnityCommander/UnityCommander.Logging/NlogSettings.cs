@@ -1,14 +1,8 @@
 ﻿using NLog.Config;
 using NLog.Targets;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UnityCommander.Core
+namespace UnityCommander.Logging
 {
     /// <summary>
     /// Класс для конфигурации логгера NLog.
@@ -41,7 +35,6 @@ namespace UnityCommander.Core
                 ArchiveEvery = FileArchivePeriod.Day,
                 MaxArchiveFiles = 10,
                 Encoding = System.Text.Encoding.UTF8,
-                ConcurrentWrites = true,
                 KeepFileOpen = false
             };
 

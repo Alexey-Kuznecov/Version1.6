@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UnityCommander.Services.Plugins.Helper
+namespace UnityCommander.Integration.Plugins.Helper
 {
     public class WeekRefMethod
     {

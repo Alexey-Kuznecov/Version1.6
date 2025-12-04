@@ -1,9 +1,8 @@
 ﻿
 // ReSharper disable All
-namespace UnityCommander.Integration.Mvvm.Base
+namespace UnityCommander.Mvvm
 {
     using System;
-    using System.Diagnostics;
     using System.Windows.Input;
 
     ///[DebuggerStepThrough]

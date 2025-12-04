@@ -9,8 +9,7 @@ namespace UnityCommander.ViewModels
     using Prism.Services.Dialogs;
 
     using UnityCommander.Core.Mvvm;
-    using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
+    using UnityCommander.Integration.Plugins;
 
     /// <summary>
     /// The dialog plugin config vm.

@@ -27,11 +27,6 @@
     <None Remove="RegionNames.cs~RF22523a1b.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.4" />
-    <PackageReference Include="NLog.Config" Version="4.7.4" />
-    <PackageReference Include="NLog.Schema" Version="4.7.4" />
-    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.14" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
   </ItemGroup>
@@ -47,5 +42,8 @@
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

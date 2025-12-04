@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Interfaces
 {
     using System;
     using System.Collections.Generic;
@@ -8,8 +8,7 @@ namespace UnityCommander.Services
 
     using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
-    using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
+    using UnityCommander.Integration.Plugins;
 
     /// <summary>
     /// The global command service.

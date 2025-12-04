@@ -38,10 +38,11 @@ using UnityCommander.Core.Navgator;
 using UnityCommander.Integration.Columns;
 using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
+using UnityCommander.Integration.Plugins;
+using UnityCommander.Logging;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Selection;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {

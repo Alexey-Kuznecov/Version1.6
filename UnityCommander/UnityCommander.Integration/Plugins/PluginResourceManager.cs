@@ -7,7 +7,7 @@ using System.Resources;
 using System.Windows;
 using System.Windows.Baml2006;
 
-namespace UnityCommander.Services.Plugins
+namespace UnityCommander.Integration.Plugins
 {
     public class PluginResourceManager
     {

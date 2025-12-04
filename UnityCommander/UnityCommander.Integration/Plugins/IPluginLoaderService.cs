@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Services.Interfaces
+namespace UnityCommander.Integration.Plugins
 {
     using System.Collections.Generic;
     using UnityCommander.Integration.Contracts;

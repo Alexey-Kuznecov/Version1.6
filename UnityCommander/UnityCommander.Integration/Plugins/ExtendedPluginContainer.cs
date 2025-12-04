@@ -1,9 +1,7 @@
 ﻿using System.Runtime.Loader;
-using UnityCommander.Integration;
 using UnityCommander.Integration.Contracts;
-using UnityCommander.Services.Interfaces;
 
-namespace UnityCommander.Services.Plugins
+namespace UnityCommander.Integration.Plugins
 {
     /// <summary>
     /// Расширенный контейнер для плагина, включающий загрузчик плагина.

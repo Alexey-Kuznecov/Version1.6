@@ -10,31 +10,21 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Regions;
-    using Common.Models.Icons;
-    using System.Runtime.CompilerServices;
 
-    using Core.Commands;
-    using Core.Commands.Base;
     using Modules.FilePanel.Views;
     using Modules.Viewer.Views;
     using Services.Interfaces;
     using Services.Interfaces.Database.Queries.Xml;
-    using TabControl = UnityCommander.Controls.TabPanel.TabControl;
-    using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
 
     using UnityCommander.Common.Module;
     using UnityCommander.Controls.TabPanel;
-    using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.TabPanel.Behaviors;
     using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
-    using UnityCommander.Core;
     using System.Collections.Generic;
-
-    using Accessibility;
-
+    using UnityCommander.Logging;
     using NLog;
+    using TabControl = Controls.TabPanel.TabControl;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
     {

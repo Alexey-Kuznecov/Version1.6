@@ -22,12 +22,17 @@ namespace UnityCommander
     using Prism.Services.Dialogs;
     using Services;
     using Services.Interfaces;
-    using Services.Plugins;
     using System.Windows;
+    using UnityCommander.AI.ImageSearch;
+    using UnityCommander.CLI.Core;
+    using UnityCommander.Commands;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Selection;
     using UnityCommander.Core.Behaviors.Selection;
     using UnityCommander.Core.Navgator;
     using UnityCommander.Integration;
+    using UnityCommander.Integration.Plugins;
+    using UnityCommander.Logging;
     using UnityCommander.Modules.BottomPanel;
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.Viewer;
@@ -122,6 +127,16 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
+            // Команды
+            containerRegistry.Register<IConsoleCommandBase, EchoCommand>();
+            containerRegistry.Register<IConsoleCommandBase, SysStatCommand>();
+            containerRegistry.Register<IConsoleCommandBase, TestCommand>();
+            containerRegistry.Register<IConsoleCommandBase, ProcessControlCommand>();
+            containerRegistry.Register<IConsoleCommandBase, SelectFilesCommand>();
+            containerRegistry.Register<IConsoleCommandBase, FindSimilarCommand>();
+            containerRegistry.Register<IConsoleCommandBase, FileUnlockCommand>();
+            containerRegistry.Register<IConsoleCommandBase, TestFlashCommand>();
+
             // Навигационный контекст, нужен один на всё приложение
             containerRegistry.RegisterSingleton<NavigationContextDirectory>();
 
@@ -167,8 +182,8 @@ namespace UnityCommander
             // -------------------------------
             // 9. AI сервисы (пока закомментированы)
             // -------------------------------
-            //containerRegistry.RegisterSingleton<IImageSimilarityService>(() =>
-            //    new ImageSimilarityService(@"F:\01. Active\CSharp\UnityCommander\UnityCommander\Resources\ai_models"));
+            containerRegistry.RegisterSingleton<IImageSimilarityService>(() =>
+                new ImageSimilarityService(@"F:\\01. Active\\CSharp\\UnityCommander\\UnityCommander\\Resources\\ai_models\\model.onnx"));
         }
 
 

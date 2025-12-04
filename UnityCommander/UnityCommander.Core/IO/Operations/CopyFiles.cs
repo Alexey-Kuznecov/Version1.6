@@ -1,7 +1,6 @@
 ﻿#define Nlog
 
-using NLog;
-using NLog.Targets;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +19,7 @@ namespace UnityCommander.Core.IO.Operations
     public class CopyFiles : IDisposable
     {
         #region Fields
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly Queue<long> Snapshots = new Queue<long>(30);
         private readonly Timer SpeedTimer = new Timer(1000D);
         private readonly Timer ElapsedTimer = new Timer(1000D);

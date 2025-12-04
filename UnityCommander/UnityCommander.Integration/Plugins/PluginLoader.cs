@@ -1,4 +1,4 @@
-﻿namespace UnityCommander.Services.Plugins
+﻿namespace UnityCommander.Integration.Plugins
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +18,6 @@
     using UnityCommander.Integration.Dialog;
     using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
-    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// Класс <see cref="PluginLoader"/> предназначен для загрузки, выполнения и выгрузки плагинов 

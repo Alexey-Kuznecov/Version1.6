@@ -9,11 +9,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-    using UnityCommander.Common.Models;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
+    using UnityCommander.Integration.Plugins;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
 
     /// <summary>
     /// The plugin panel view model.
