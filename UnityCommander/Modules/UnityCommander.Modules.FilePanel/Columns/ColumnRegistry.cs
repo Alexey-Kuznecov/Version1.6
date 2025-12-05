@@ -1,14 +1,18 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Windows.Controls;
 
 namespace UnityCommander.Modules.FilePanel.Columns
 {
     public class ColumnRegistry
     {
         private readonly List<IColumnProvider> providers = new();
-        public void RegisterProvider(IColumnProvider provider) => providers.Add(provider);
+        public ColumnRegistry(IEnumerable<IColumnProvider> providers)
+        {
+            this.providers = providers.ToList();
+            Debug.WriteLine("Providers count: " + this.providers.Count);
+        }
         public IEnumerable<ColumnModel> GetColumns(PanelType panelType)
            => providers.SelectMany(p => p.GetColumnDefinitions(panelType))
                        .Where(c =>

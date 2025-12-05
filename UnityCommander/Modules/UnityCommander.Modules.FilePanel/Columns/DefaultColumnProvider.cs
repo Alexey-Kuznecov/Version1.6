@@ -1,9 +1,6 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Modules.FilePanel.Columns
@@ -20,41 +17,45 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     {
                         Id = "Name",
                         Header = "Name",
+                        //DisplayMemberPath = "Name",
                         CellTemplateResourceKey = "ColumnNameDataTemplate",
                         Width = 200,
                         Order = 1,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => f.Name
+                        SyncGroup = "Name",
+                        ColumnValueHandler = f => ((BaseDirectory)f).Name
                     },
                     new ColumnModel
                     {
                         Id = "CreationTime",
                         Header = "Created",
+                        //DisplayMemberPath = "CreationTime",
                         CellTemplateResourceKey = "ColumnCreationDateDataTemplate",
                         Width = 100,
                         Order = 2,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => f.CreationTime
+                        SyncGroup = "Created",
+                        ColumnValueHandler = f => ((BaseDirectory)f).CreationTime
                     },
                     new ColumnModel
                     {
                         Id = "LastAccessTime",
                         Header = "Last Access",
+                        //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
                         Width = 100,
                         Order = 3,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => f.LastAccessTime
+                        SyncGroup = "LastAccess",
+                        ColumnValueHandler = f => ((BaseDirectory)f).LastAccessTime
                     },
                     new ColumnModel
                     {
                         Id = "Extension",
                         Header = "Ext",
+                        //DisplayMemberPath = "Extension",
                         CellTemplateResourceKey = "ColumnExtensionDataTemplate",
                         Width = 80,
                         Order = 4,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => ((FileModel)f).Extension
+                        SyncGroup = "Ext",
+                        ColumnValueHandler = f => ((FileModel)f).Extension
                     }
                 };
             }
@@ -67,31 +68,34 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     {
                         Id = "Name",
                         Header = "Name",
+                        //DisplayMemberPath = "Name",
                         CellTemplateResourceKey = "ColumnNameDataTemplate",
                         Width = 200,
                         Order = 1,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => f.Name
+                        SyncGroup = "Name",
+                        ColumnValueHandler = f => ((BaseDirectory)f).Name
                     },
                     new ColumnModel
                     {
                         Id = "CreationTime",
                         Header = "Created",
+                        //DisplayMemberPath = "CreationTime",
                         CellTemplateResourceKey = "ColumnCreationDateDataTemplate",
                         Width = 100,
                         Order = 2,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => f.CreationTime
+                        SyncGroup = "Created",
+                        ColumnValueHandler = f => ((BaseDirectory)f).CreationTime
                     },
                     new ColumnModel
                     {
                         Id = "LastAccessTime",
                         Header = "Last Access",
+                        //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
                         Width = 100,
                         Order = 3,
-                        SyncGroup = "Main",
-                        //ColumnValueHandler = f => f.LastAccessTime
+                        SyncGroup = "LastAccess",
+                        ColumnValueHandler = f => ((BaseDirectory)f).LastAccessTime
                     }
                 };
             }
@@ -107,7 +111,8 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         CellTemplateResourceKey = "ColumnLetterDataTemplate",
                         Width = 100,
                         Order = 1,
-                        SyncGroup = "Main"
+                        SyncGroup = "Main",
+                        ColumnValueHandler = f => ((DriveModel)f).Letter
                     },
                     new ColumnModel
                     {
@@ -116,7 +121,8 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         CellTemplateResourceKey = "ColumnFreeSpaceDataTemplate",
                         Width = 100,
                         Order = 2,
-                        SyncGroup = "Main"
+                        SyncGroup = "Main",
+                        ColumnValueHandler = f => ((DriveModel)f).FreeSpace
                     },
                     new ColumnModel
                     {
@@ -125,7 +131,8 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         CellTemplateResourceKey = "ColumnUsedSpaceDataTemplate",
                         Width = 100,
                         Order = 3,
-                        SyncGroup = "Main"
+                        SyncGroup = "Main",
+                        ColumnValueHandler = f => ((DriveModel)f).UsedSpace
                     },
                     new ColumnModel
                     {
@@ -134,7 +141,8 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         CellTemplateResourceKey = "ColumnTotalSpaceDataTemplate",
                         Width = 100,
                         Order = 4,
-                        SyncGroup = "Main"
+                        SyncGroup = "Main",
+                        ColumnValueHandler = f => ((DriveModel)f).TotalAmount
                     }
                 };
             }

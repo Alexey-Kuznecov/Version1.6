@@ -35,10 +35,13 @@ namespace UnityCommander
     using UnityCommander.Logging;
     using UnityCommander.Modules.BottomPanel;
     using UnityCommander.Modules.FilePanel;
+    using UnityCommander.Modules.FilePanel.Columns;
     using UnityCommander.Modules.Viewer;
     using UnityCommander.Modules.Viewer.Views;
     using UnityCommander.Operation;
+    using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Selection;
+    using UnityCommander.Services.Settings;
     using ViewModels;
     using Views;
     using Views.CopyDialogs;
@@ -122,7 +125,6 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
-            containerRegistry.RegisterSingleton<ISelectionService, SelectionService>();
             containerRegistry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
             containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
@@ -155,9 +157,16 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISelectionStrategy, CtrlSelectionStrategy>();
             containerRegistry.RegisterSingleton<ISelectionStrategy, ExtensionSelectionRuleStrategy>();
 
-            // Теперь SelectionManager сможет получить их через конструктор
+            // Службы для управления выделением в файловых панелях
+            containerRegistry.RegisterSingleton<ISelectionService, SelectionService>();
             containerRegistry.Register<ISelectionManager, SelectionManager>();
-            containerRegistry.Register<PluginBridge>();
+            //containerRegistry.Register<PluginBridge>();
+
+            // Колонки по умолчанию для файлового менеджера
+            containerRegistry.RegisterSingleton<IColumnProvider, DefaultColumnProvider>();
+            containerRegistry.Register<IColumnStateManager, ColumnStateManager>(); // по панели
+            containerRegistry.Register<ISettingsStore, InMemorySettingsStore>(); // глобально
+            containerRegistry.Register<ColumnRegistry>(); // зависит от задач
 
             // -------------------------------
             // 6. Логгеры и менеджеры

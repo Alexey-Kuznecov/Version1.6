@@ -59,7 +59,7 @@
     <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
-                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FolderViewColumns, Mode=OneWay}"
+                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FolderViewColumns, Mode=Default}"
                 be:MultiSelectionMouseBehavior.IsEnableSelection="False"
                 core:DragDrop.DropHandler="{Binding Mode=Default}"
                 core:DragDrop.IsDragSource="True"
@@ -67,8 +67,7 @@
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding DirectoryList, Mode=OneWay}"
                 SelectedItem="{Binding SelectedDirectory}"
-                SelectionMode="Multiple"
-                View="{Binding FolderPanelContainer}">
+                SelectionMode="Multiple">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding NavigateDirectoryCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
@@ -91,11 +90,11 @@
     <ControlTemplate x:Key="DriveListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
-                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding DriveViewColumns, Mode=OneWay}"
+                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding DriveViewColumns}"
+                be:GridViewColumnsBehavior.PanelId="LeftPanel.Drive"
                 commands:GridViewSort.AutoSort="True"
                 IsSynchronizedWithCurrentItem="True"
-                ItemsSource="{Binding DriveList, Mode=OneWay}"
-                View="{Binding DrivePanelContainer}">
+                ItemsSource="{Binding DriveList, Mode=OneWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseDoubleClick">
                         <i:InvokeCommandAction
@@ -107,6 +106,7 @@
             </ListView>
         </Grid>
     </ControlTemplate>
+
     <!--
         Style for back button in file panel
     -->

@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using CommandSystem.Gui.Integraion;
-using Microsoft.Win32;
 using NLog;
 using Prism.Commands;
 using Prism.Regions;
@@ -19,7 +18,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -28,14 +26,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using UnityCommander.Common;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;
 using UnityCommander.Common.Module;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
-using UnityCommander.Core.Database.Xml;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navgator;
@@ -47,6 +43,7 @@ using UnityCommander.Logging;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Settings;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -55,7 +52,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// Реализует обработку навигации, команд, drag & drop и интеграцию плагинных колонок.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDisposable, IDropTarget, IDirectoryPanel
+    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
     {
         #region Поля и зависимости
 
@@ -85,7 +82,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private BaseDirectory selectedCurrentDirectoryItem;
         private ObservableCollection<FileModel> fileList;
         private ObservableCollection<FolderModel> directoryList;
-        private ObservableCollection<Common.Models.Directory.DriveModel> driveList;
+        private ObservableCollection<DriveModel> driveList;
         private NavigationContextDirectory _navigationContext;
         private ControlTemplate directoryPanelTemplate;
         private string currentDirectory;
@@ -105,6 +102,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private IEnumerable<ColumnModel> fileViewColumns;
         private IEnumerable<ColumnModel> folderViewColumns;
         private IEnumerable<ColumnModel> driveViewColumns;
+        private IColumnProvider columnProvider;
+        private readonly IColumnStateManager columnStateManager;
+        private readonly ColumnRegistry columnRegistry;
+        private readonly ISettingsStore settings;
+        private readonly string PanelId;
 
         public event Action<string> PathChanged;
 
@@ -127,24 +129,29 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="manager">Менеджер команд.</param>
         /// <param name="logger">Логгер для записи событий.</param>
         public SplitPanelViewModel(
-            IDialogService dialogService,
-            IRegionManager regionManager,
-            ISettingsProviderService settingsService,
-            IDataProviderService dataService,
-            IMultiCommandService multiCommandService,
-            IPluginLoaderService pluginService,
-            IGlobalCommandService globalCommandService,
-            IIconProviderService iconProvider,
-            IAppConfigService configService,
-            IDirectoryChangeNotifier directoryChangeNotifier,
-            ISelectionManager selectionManager,
-            IPanelRegistry panelRegistry,
-            NavigationContextDirectory navigationContext,
-            GuiCommandRegistrar guiCommandRegistrar,
-            GuiCommandExecute guiCommandExecute,
-            CommandManager manager,
-            ModuleLogger logger,
-            IAppLogger appLogger)
+              IDialogService dialogService,
+              IRegionManager regionManager,
+              ISettingsProviderService settingsService,
+              IDataProviderService dataService,
+              IMultiCommandService multiCommandService,
+              IPluginLoaderService pluginService,
+              IGlobalCommandService globalCommandService,
+              IIconProviderService iconProvider,
+              IAppConfigService configService,
+              IDirectoryChangeNotifier directoryChangeNotifier,
+              ISelectionManager selectionManager,
+              IPanelRegistry panelRegistry,
+              NavigationContextDirectory navigationContext,
+              GuiCommandRegistrar guiCommandRegistrar,
+              GuiCommandExecute guiCommandExecute,
+              CommandManager manager,
+              ModuleLogger logger,
+              IAppLogger appLogger,
+              // <-- NEW dependencies
+              IColumnProvider columnProvider,
+              IColumnStateManager columnStateManager,
+              ISettingsStore settingsStore,
+              ColumnRegistry columnRegistry) 
             : base(regionManager)
         {
             this.commandRegistered = guiCommandRegistrar;
@@ -175,17 +182,49 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.DriveList = new ObservableCollection<DriveModel>();
 
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
-            this.columnRegistry = new ColumnRegistry();
-            this.columnSync = new ColumnSyncService(new InMemorySettingsStore());
-            // Подписка на синхронизацию ширины колонок
-            this.columnSync.ColumnChanged += OnColumnChanged;
+            // заменить локальные new/недостающие поля на внедрённые
+            this.columnProvider = columnProvider ?? throw new ArgumentNullException(nameof(columnProvider));
+            this.columnStateManager = columnStateManager ?? throw new ArgumentNullException(nameof(columnStateManager));;
+            this.settings = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
+            this.columnRegistry = columnRegistry ?? throw new ArgumentNullException(nameof(settingsStore));
+            // подпись на главный обработчик (одно место)
+            ColumnSyncService.RegisterHandler("Main", width => OnRemoteWidthChanged("Main", width));
+
+            // если нужен старый OnColumnChanged, оставляем
+            //this.columnSync.ColumnChanged += OnColumnChanged;
         }
 
         #endregion
 
-        private readonly ColumnRegistry columnRegistry;
-        private readonly ColumnSyncService columnSync;
-        private readonly ISettingsStore settings;
+        public void UpdateColumnWidth(ColumnModel column, double newWidth)
+        {
+            if (column == null) return;
+            column.Width = newWidth;
+            if (!string.IsNullOrEmpty(column.SyncGroup))
+                ColumnSyncService.NotifyWidthChanged(column.SyncGroup, newWidth); // ← double, а не column
+        }
+
+        private void OnColumnChanged(string syncGroup, ColumnModel changedColumn)
+        {
+            // Применяем ширину ко всем колонкам в текущих коллекциях, которые принадлежат syncGroup
+            void Apply(IEnumerable<ColumnModel> cols)
+            {
+                foreach (var c in cols.Where(c => c.SyncGroup == syncGroup && c.Id != changedColumn.Id))
+                {
+                    c.Width = changedColumn.Width;
+                }
+            }
+
+            if (FileViewColumns != null) Apply(FileViewColumns);
+            if (FolderViewColumns != null) Apply(FolderViewColumns);
+            if (DriveViewColumns != null) Apply(DriveViewColumns);
+        }
+
+        private void OnRemoteWidthChanged(string v, double width)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<ColumnModel> FileViewColumns
         {
             get => this.fileViewColumns;
@@ -213,42 +252,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         }
 
-        private void OnColumnChanged(string syncGroup, ColumnModel column)
-        {
-            var columns = GetColumnsForPanel(PanelType.Folders)
-                .Where(c => c.SyncGroup == syncGroup);
-
-            foreach (var c in columns)
-            {
-                if (c.Id != column.Id)
-                    c.Width = column.Width;
-            }
-        }
-        public IEnumerable<ColumnModel> GetColumnsForPanel(PanelType panelType)
-        {
-            var columns = columnRegistry.GetColumns(panelType).ToList();
-            columnSync.RestoreWidths(columns);
-            return columns;
-        }
-
-        public void SetPanelType(PanelType type)
-        {
-           // CurrentPanelType = CurrentPanelType;
-            // Обновить View и колонки через GridViewColumnsBehavior
-        }
-
-        public void UpdateColumnWidth(ColumnModel column, double newWidth)
-        {
-            column.Width = newWidth;
-            columnSync.NotifyWidthChanged(column.SyncGroup, column);
-        }
-
         public IReadOnlyList<BaseDirectory> GetFiles() => this.FileList;
-
-        public void Dispose()
-        {
-            _panelRegistry.UnregisterPanel(_adapter.PanelId);
-        }
 
         #region Реализация интерфейсов IDirectoryPanel
 
@@ -661,131 +665,33 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         #region Новая система колонок
-      
-        private void InitializeColumns()
-        {
-            // Если нет данных — не инициализируем
-            if (FileList == null || DirectoryList == null)
-                return;
-
-            FilePanelContainer.Columns.Clear();
-            FolderPanelContainer.Columns.Clear();
-            DrivePanelContainer.Columns.Clear();
-
-            var fileColumns = columnRegistry.GetColumns(PanelType.Files);
-            var folderColumns = columnRegistry.GetColumns(PanelType.Folders);
-            var driveColumns = columnRegistry.GetColumns(PanelType.Drives);
-
-            FolderViewColumns = folderColumns;
-            FileViewColumns = fileColumns;
-            DriveViewColumns = driveColumns;
-
-            // --- файлы ---
-            foreach (var column in fileColumns)
-            {
-                var gridColumn = CreateGridViewColumn(column);
-                FilePanelContainer.Columns.Add(gridColumn);
-
-                columnSync.ColumnChanged += (syncGroup, changedColumn) =>
-                {
-                    if (changedColumn.Id == column.Id &&
-                        changedColumn.SyncGroup == column.SyncGroup)
-                    {
-                        gridColumn.Width = changedColumn.Width;
-                    }
-                };
-            }
-
-            // --- папки ---
-            foreach (var column in folderColumns)
-            {
-                var gridColumn = CreateGridViewColumn(column);
-                FolderPanelContainer.Columns.Add(gridColumn);
-
-                columnSync.ColumnChanged += (syncGroup, changedColumn) =>
-                {
-                    if (changedColumn.Id == column.Id &&
-                        changedColumn.SyncGroup == column.SyncGroup)
-                    {
-                        gridColumn.Width = changedColumn.Width;
-                    }
-                };
-            }
-
-            // --- диски ---
-            foreach (var column in driveColumns)
-            {
-                var gridColumn = CreateGridViewColumn(column);
-                DrivePanelContainer.Columns.Add(gridColumn);
-            }
-
-            // Заполняем данные — теперь FileList точно не null
-            //foreach (var file in FileList)
-            //{
-            //    foreach (var column in fileColumns)
-            //    {
-            //        file.Additional[column.Id] = column.ColumnValueHandler(file);
-            //    }
-            //}
-
-            //foreach (var folder in DirectoryList)
-            //{
-            //    foreach (var column in folderColumns)
-            //    {
-            //        folder.Additional[column.Id] = column.ColumnValueHandler(folder);
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// Создает GridViewColumn для новой системы, привязанной к Additional[column.Id].
-        /// </summary>
-        private GridViewColumn CreateGridViewColumn(ColumnModel column)
-        {
-            var textFactory = new FrameworkElementFactory(typeof(TextBlock));
-            textFactory.SetBinding(TextBlock.TextProperty, new Binding($"Additional[{column.Id}]"));
-
-            var cellTemplate = new DataTemplate
-            {
-                VisualTree = textFactory
-            };
-
-            var gridColumn = new GridViewColumn
-            {
-                Header = column.Header,
-                Width = column.Width,
-                CellTemplate = cellTemplate
-            };
-
-            return gridColumn;
-        }
 
         private async Task UpdateColumnValuesAsync()
         {
-            //var fileColumns = columnRegistry.GetColumns(PanelType.Files).ToList();
-            //var folderColumns = columnRegistry.GetColumns(PanelType.Folders).ToList();
+            var fileColumns = columnRegistry.GetColumns(PanelType.Files).ToList();
+            var folderColumns = columnRegistry.GetColumns(PanelType.Folders).ToList();
 
-            //var folderUpdates = new List<(FolderModel folder, string columnId, object value)>();
-            //var fileUpdates = new List<(FileModel file, string columnId, object value)>();
+            var folderUpdates = new List<(FolderModel folder, string columnId, object value)>();
+            var fileUpdates = new List<(FileModel file, string columnId, object value)>();
 
-            //await Task.Run(() =>
-            //{
-            //    foreach (var folder in DirectoryList)
-            //        foreach (var column in folderColumns)
-            //            folderUpdates.Add((folder, column.Id, column.ColumnValueHandler(folder)));
+            await Task.Run(() =>
+            {
+                foreach (var folder in DirectoryList)
+                    foreach (var column in folderColumns)
+                        folderUpdates.Add((folder, column.Id, column.ColumnValueHandler(folder)));
 
-            //    foreach (var file in FileList)
-            //        foreach (var column in fileColumns)
-            //            fileUpdates.Add((file, column.Id, column.ColumnValueHandler(file)));
-            //});
+                foreach (var file in FileList)
+                    foreach (var column in fileColumns)
+                        fileUpdates.Add((file, column.Id, column.ColumnValueHandler(file)));
+            });
 
-            //Application.Current.Dispatcher.Invoke(() =>
-            //{
-            //    foreach (var u in folderUpdates)
-            //        u.folder.Additional[u.columnId] = u.value;
-            //    foreach (var u in fileUpdates)
-            //        u.file.Additional[u.columnId] = u.value;
-            //});
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (var u in folderUpdates)
+                    u.folder.Additional[u.columnId] = u.value;
+                foreach (var u in fileUpdates)
+                    u.file.Additional[u.columnId] = u.value;
+            });
         }
 
         private void RefreshFileList(IEnumerable<FileModel> files)
@@ -1044,19 +950,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         private async Task SetLastPanelState()
         {
-            columnRegistry.RegisterProvider(new DefaultColumnProvider());
+            // Зарегистрируй провайдеры через DI, если нужно (если у тебя columnRegistry используешь — можно оставить)
+            //columnRegistry.RegisterProvider(new DefaultColumnProvider()); // можно убрать если провайдер инжектируется
 
+            // Для текущего пути — если MyComputer — грузим диски
             if (this.CurrentDirectory == VirtualPaths.MyComputer)
             {
                 DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
                 DriveList = new ObservableCollection<DriveModel>();
                 var drives = await dataService.GetDrivesAsync();
-                foreach (var dr in drives)
-                    DriveList.Add(dr);
+                foreach (var dr in drives) DriveList.Add(dr);
             }
-            else this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+            else
+            {
+            }
+            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
-            // Создаём коллекции заранее, чтобы не было null
+            // Загружаем пустые коллекции
             FileList = new ObservableCollection<FileModel>();
             DirectoryList = new ObservableCollection<FolderModel>();
 
@@ -1066,21 +976,26 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 {
                     var files = await dataService.GetFilesAsync(this.CurrentDirectory);
                     var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
-
-                    foreach (var f in files)
-                        FileList.Add(f);
-                    foreach (var d in dirs)
-                        DirectoryList.Add(d);
+                    foreach (var f in files) FileList.Add(f);
+                    foreach (var d in dirs) DirectoryList.Add(d);
                 }
-              
             }
             catch (Exception ex)
             {
-                // лог, иначе async void съест исключение
                 Debug.WriteLine("Ошибка загрузки: " + ex);
             }
 
-            this.InitializeColumns();
+            // Загрузить определения колонок и состояние через state manager
+            var defsFiles = columnRegistry.GetColumns(PanelType.Files).ToList();
+            var defsFolders = columnRegistry.GetColumns(PanelType.Folders).ToList();
+            var defsDrives = columnRegistry.GetColumns(PanelType.Drives).ToList();
+
+            FileViewColumns = columnStateManager.LoadState("LeftPanel.Files", PanelType.Files, defsFiles);
+            FolderViewColumns = columnStateManager.LoadState("LeftPanel.Folders", PanelType.Folders, defsFolders);
+            DriveViewColumns = columnStateManager.LoadState("LeftPanel.Drives", PanelType.Drives, defsDrives);
+
+            // Теперь инициализируем колонки (но не создаём GridViewColumn в VM)
+            await UpdateColumnValuesAsync();
         }
 
         /// <summary>
@@ -1133,7 +1048,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public override void Destroy()
         {
             _navigationService.CurrentChanged -= OnPathChanged;
-            columnSync.ColumnChanged -= OnColumnChanged;
+            //columnSync.ColumnChanged -= OnColumnChanged;
             _panelRegistry.UnregisterPanel(_adapter.PanelId);
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
             base.Destroy();

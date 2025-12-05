@@ -56,11 +56,10 @@
         -->
         <Grid Grid.Row="3">
             <ListView
-                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=OneWay}"
+                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
                 SelectedItem="{Binding CurrentFile}"
-                SelectionMode="Extended"
-                View="{Binding FilePanelContainer}">
+                SelectionMode="Extended">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp">
                         <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
