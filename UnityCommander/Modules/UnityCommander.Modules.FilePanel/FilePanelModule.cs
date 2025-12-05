@@ -34,6 +34,7 @@ namespace UnityCommander.Modules.FilePanel
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
+    using UnityCommander.Services.Interfaces.Settings;
     using Xceed.Wpf.AvalonDock;
     using Xceed.Wpf.AvalonDock.Layout;
     using Xceed.Wpf.AvalonDock.Layout.Serialization;

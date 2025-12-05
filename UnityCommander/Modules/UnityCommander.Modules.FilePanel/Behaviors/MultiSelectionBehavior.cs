@@ -1,14 +1,13 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
+    using global::UnityCommander.Common.Models.Directory;
     using System;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Interactivity;
     using System.Windows.Media;
-
-    using UnityCommander.Common.Models.Directory;
 
     public class MultiSelectionBehavior : Behavior<ListBox>
     {

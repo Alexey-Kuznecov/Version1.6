@@ -1,9 +1,7 @@
-﻿
-namespace UnityCommander.Services
+﻿namespace UnityCommander.Services.Settings
 {
     using Config.Net;
-
-    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Interfaces.Settings;
 
     /// <summary>
     /// The settings provider.

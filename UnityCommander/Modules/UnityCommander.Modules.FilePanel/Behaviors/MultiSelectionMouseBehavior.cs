@@ -1,17 +1,13 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
-    using System;
+    using global::UnityCommander.Common.Models.Directory;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
-
-    using UnityCommander.Common.Models.Directory;
-
     public class MultiSelectionMouseBehavior
     {
         public static readonly DependencyProperty IsEnableSelectionProperty =

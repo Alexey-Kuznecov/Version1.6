@@ -19,6 +19,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Plugins;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Interfaces.Settings;
 
     /// <summary>
     /// The view a view model.

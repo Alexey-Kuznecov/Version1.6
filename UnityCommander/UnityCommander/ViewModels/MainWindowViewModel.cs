@@ -33,7 +33,7 @@ namespace UnityCommander.ViewModels
     using UnityCommander.Core.Behaviors;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Services.Interfaces;
-
+    using UnityCommander.Services.Interfaces.Settings;
     using Path = System.Windows.Shapes.Path;
 
     /// <summary>

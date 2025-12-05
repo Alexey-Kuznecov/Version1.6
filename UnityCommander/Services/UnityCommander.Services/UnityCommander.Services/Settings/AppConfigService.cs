@@ -1,8 +1,8 @@
 ﻿
-namespace UnityCommander.Services
+namespace UnityCommander.Services.Settings
 {
-    using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
+    using UnityCommander.Services.Interfaces.Settings;
 
     /// <summary>
     /// The app config service.
@@ -19,7 +19,7 @@ namespace UnityCommander.Services
         /// </summary>
         public AppConfigService()
         {
-            this.appSession = new XDocument("app.session", "AppSession");
+            appSession = new XDocument("app.session", "AppSession");
         }
 
         /// <summary>
@@ -28,6 +28,6 @@ namespace UnityCommander.Services
         /// <returns>
         /// The <see cref="XDocument"/>.
         /// </returns>
-        public XDocument GetSession() => this.appSession;
+        public XDocument GetSession() => appSession;
     }
 }

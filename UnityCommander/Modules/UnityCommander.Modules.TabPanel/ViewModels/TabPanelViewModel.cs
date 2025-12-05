@@ -25,6 +25,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using UnityCommander.Logging;
     using NLog;
     using TabControl = Controls.TabPanel.TabControl;
+    using UnityCommander.Services.Interfaces.Settings;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
     {

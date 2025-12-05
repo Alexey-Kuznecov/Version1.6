@@ -1,5 +1,4 @@
-﻿
-namespace UnityCommander.Services.Interfaces
+﻿namespace UnityCommander.Services.Interfaces.Settings
 {
     using System;
 
