@@ -849,50 +849,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
-        #region Управление колонками и плагинами
-
-        /// <summary>
-        /// Добавляет колонки для папок.
-        /// </summary>
-        private void AddFolderColumns()
-        {
-            new FolderColumnModel().GetColumn((columns, error) =>
-            {
-                foreach (var col in columns)
-                {
-                    this.FolderPanelContainer.Columns.Add((GridViewColumn)col.Template);
-                }
-            });
-        }
-
-        /// <summary>
-        /// Добавляет колонки для файлов.
-        /// </summary>
-        private void AddFileColumns()
-        {
-            new FileColumnModel().GetColumn((columns, error) =>
-            {
-                foreach (var col in columns)
-                {
-                    this.FilePanelContainer.Columns.Add((GridViewColumn)col.Template);
-                }
-            });
-        }
-
-        /// <summary>
-        /// Добавляет колонки для отображения дисков.
-        /// </summary>
-        private void AddDriveColumns()
-        {
-            new DriveContainerModel().GetColumn((columns, error) =>
-            {
-                foreach (var col in columns)
-                {
-                    this.DrivePanelContainer.Columns.Add((GridViewColumn)col.Template);
-                }
-            });
-        }
-
         #region Работа с плагинными колонками
 
         /// <summary>
@@ -1081,8 +1037,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
-        #endregion
-
         #region Управление ресурсами и навигация
 
         /// <summary>
@@ -1091,7 +1045,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private async Task SetLastPanelState()
         {
             columnRegistry.RegisterProvider(new DefaultColumnProvider());
-            //columnRegistry.RegisterProvider(new DriveColumnsProvider());
 
             if (this.CurrentDirectory == VirtualPaths.MyComputer)
             {
