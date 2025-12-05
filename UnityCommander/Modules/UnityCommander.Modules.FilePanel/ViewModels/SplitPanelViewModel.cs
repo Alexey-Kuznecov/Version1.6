@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using CommandSystem.Gui.Integraion;
+using Microsoft.Win32;
 using NLog;
 using Prism.Commands;
 using Prism.Regions;
@@ -17,6 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -26,12 +28,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using UnityCommander.Common;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;
 using UnityCommander.Common.Module;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
+using UnityCommander.Core.Database.Xml;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navgator;
@@ -81,7 +85,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private BaseDirectory selectedCurrentDirectoryItem;
         private ObservableCollection<FileModel> fileList;
         private ObservableCollection<FolderModel> directoryList;
-        private ObservableCollection<DriveModel> driveList;
+        private ObservableCollection<Common.Models.Directory.DriveModel> driveList;
         private NavigationContextDirectory _navigationContext;
         private ControlTemplate directoryPanelTemplate;
         private string currentDirectory;
@@ -98,6 +102,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private bool openFolderUnderCursorIsEnabled = true;
         /// Флаг, указывающий, что значения плагинов были кэшированы.
         private bool pluginValuesIsCached;
+        private IEnumerable<ColumnModel> fileViewColumns;
+        private IEnumerable<ColumnModel> folderViewColumns;
+        private IEnumerable<ColumnModel> driveViewColumns;
 
         public event Action<string> PathChanged;
 
@@ -168,9 +175,73 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.DriveList = new ObservableCollection<DriveModel>();
 
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
+            this.columnRegistry = new ColumnRegistry();
+            this.columnSync = new ColumnSyncService(new InMemorySettingsStore());
+            // Подписка на синхронизацию ширины колонок
+            this.columnSync.ColumnChanged += OnColumnChanged;
         }
 
         #endregion
+
+        private readonly ColumnRegistry columnRegistry;
+        private readonly ColumnSyncService columnSync;
+        private readonly ISettingsStore settings;
+        public IEnumerable<ColumnModel> FileViewColumns
+        {
+            get => this.fileViewColumns;
+            set
+            {
+                this.SetProperty(ref this.fileViewColumns, value);
+            }
+        }
+
+        public IEnumerable<ColumnModel> FolderViewColumns
+        {
+            get => this.folderViewColumns;
+            set
+            {
+                this.SetProperty(ref this.folderViewColumns, value);
+            }
+        }
+
+        public IEnumerable<ColumnModel> DriveViewColumns
+        {
+            get => this.driveViewColumns;
+            set
+            {
+                this.SetProperty(ref this.driveViewColumns, value);
+            }
+        }
+
+        private void OnColumnChanged(string syncGroup, ColumnModel column)
+        {
+            var columns = GetColumnsForPanel(PanelType.Folders)
+                .Where(c => c.SyncGroup == syncGroup);
+
+            foreach (var c in columns)
+            {
+                if (c.Id != column.Id)
+                    c.Width = column.Width;
+            }
+        }
+        public IEnumerable<ColumnModel> GetColumnsForPanel(PanelType panelType)
+        {
+            var columns = columnRegistry.GetColumns(panelType).ToList();
+            columnSync.RestoreWidths(columns);
+            return columns;
+        }
+
+        public void SetPanelType(PanelType type)
+        {
+           // CurrentPanelType = CurrentPanelType;
+            // Обновить View и колонки через GridViewColumnsBehavior
+        }
+
+        public void UpdateColumnWidth(ColumnModel column, double newWidth)
+        {
+            column.Width = newWidth;
+            columnSync.NotifyWidthChanged(column.SyncGroup, column);
+        }
 
         public IReadOnlyList<BaseDirectory> GetFiles() => this.FileList;
 
@@ -215,14 +286,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public ISelectionManager SelectionManager => this._selectionManager;
         public ISelectionContext SelectionContext => this._selectionContext;
+        
         /// <summary>
         /// Текущий путь директории.
         /// </summary>
         public string CurrentDirectory
         {
             get => this.currentDirectory;
-            set 
-            { 
+            set
+            {
                 this.SetProperty(ref this.currentDirectory, value);
                 PathChanged?.Invoke(currentDirectory);
             }
@@ -291,7 +363,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Список дисков.
         /// </summary>
-        public ObservableCollection<DriveModel> DriveList
+        public ObservableCollection<Common.Models.Directory.DriveModel> DriveList
         {
             get => this.driveList;
             set => this.SetProperty(ref this.driveList, value);
@@ -369,11 +441,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Команды
 
         /// <summary>
-        /// Пример тестовой команды.
-        /// </summary>
-        public ICommand TestCommand { get; set; }
-
-        /// <summary>
         /// Команда для выбора текущего элемента директории.
         /// </summary>
         public DelegateCommand<BaseDirectory> SelectCurrentDirectoryItem =>
@@ -406,7 +473,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 #if (Nlog)
                     this.logger.Log(LogLevel.Info, $"Открыт диск ({dir.Letter})");
                     _appLogger.Info($"Открыт диск ({dir.Letter})");
-#endif
+#endif  
                     _navigationService.TryNavigateTo(dir.Letter);
                 }
             });
@@ -497,7 +564,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (firstItem != null)
                 {
                     var pathParts = firstItem.Path.Split('\\');
-                    targetPath = Path.Combine(pathParts.Take(pathParts.Length - 1).ToArray());
+                    targetPath = System.IO.Path.Combine(pathParts.Take(pathParts.Length - 1).ToArray());
                 }
                 else
                 {
@@ -579,9 +646,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             // Подписка на изменения пути
             _navigationService.CurrentChanged += OnPathChanged;
-
+            
             // Восстановление состояния панели из предыдущего сеанса
-            this.SetLastPanelState();
+            _ = this.SetLastPanelState();
 
             _adapter = new PanelViewModelAdapter(this);
             _panelRegistry.RegisterPanel(_adapter);
@@ -593,29 +660,196 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             return this;
         }
 
-        /// <summary>
-        /// Обнавляет панель файлов, как правило метод вызвается из вне.
-        /// </summary>
-        /// <param name="directoryPanel"></param>
-        public void DirectoryUpdate(IDirectoryPanel directoryPanel)
+        #region Новая система колонок
+      
+        private void InitializeColumns()
         {
-            // Реализация логики по обнавлению директории.
+            // Если нет данных — не инициализируем
+            if (FileList == null || DirectoryList == null)
+                return;
+
+            FilePanelContainer.Columns.Clear();
+            FolderPanelContainer.Columns.Clear();
+            DrivePanelContainer.Columns.Clear();
+
+            var fileColumns = columnRegistry.GetColumns(PanelType.Files);
+            var folderColumns = columnRegistry.GetColumns(PanelType.Folders);
+            var driveColumns = columnRegistry.GetColumns(PanelType.Drives);
+
+            FolderViewColumns = folderColumns;
+            FileViewColumns = fileColumns;
+            DriveViewColumns = driveColumns;
+
+            // --- файлы ---
+            foreach (var column in fileColumns)
+            {
+                var gridColumn = CreateGridViewColumn(column);
+                FilePanelContainer.Columns.Add(gridColumn);
+
+                columnSync.ColumnChanged += (syncGroup, changedColumn) =>
+                {
+                    if (changedColumn.Id == column.Id &&
+                        changedColumn.SyncGroup == column.SyncGroup)
+                    {
+                        gridColumn.Width = changedColumn.Width;
+                    }
+                };
+            }
+
+            // --- папки ---
+            foreach (var column in folderColumns)
+            {
+                var gridColumn = CreateGridViewColumn(column);
+                FolderPanelContainer.Columns.Add(gridColumn);
+
+                columnSync.ColumnChanged += (syncGroup, changedColumn) =>
+                {
+                    if (changedColumn.Id == column.Id &&
+                        changedColumn.SyncGroup == column.SyncGroup)
+                    {
+                        gridColumn.Width = changedColumn.Width;
+                    }
+                };
+            }
+
+            // --- диски ---
+            foreach (var column in driveColumns)
+            {
+                var gridColumn = CreateGridViewColumn(column);
+                DrivePanelContainer.Columns.Add(gridColumn);
+            }
+
+            // Заполняем данные — теперь FileList точно не null
+            //foreach (var file in FileList)
+            //{
+            //    foreach (var column in fileColumns)
+            //    {
+            //        file.Additional[column.Id] = column.ColumnValueHandler(file);
+            //    }
+            //}
+
+            //foreach (var folder in DirectoryList)
+            //{
+            //    foreach (var column in folderColumns)
+            //    {
+            //        folder.Additional[column.Id] = column.ColumnValueHandler(folder);
+            //    }
+            //}
+        }
+
+        /// <summary>
+        /// Создает GridViewColumn для новой системы, привязанной к Additional[column.Id].
+        /// </summary>
+        private GridViewColumn CreateGridViewColumn(ColumnModel column)
+        {
+            var textFactory = new FrameworkElementFactory(typeof(TextBlock));
+            textFactory.SetBinding(TextBlock.TextProperty, new Binding($"Additional[{column.Id}]"));
+
+            var cellTemplate = new DataTemplate
+            {
+                VisualTree = textFactory
+            };
+
+            var gridColumn = new GridViewColumn
+            {
+                Header = column.Header,
+                Width = column.Width,
+                CellTemplate = cellTemplate
+            };
+
+            return gridColumn;
+        }
+
+        private async Task UpdateColumnValuesAsync()
+        {
+            //var fileColumns = columnRegistry.GetColumns(PanelType.Files).ToList();
+            //var folderColumns = columnRegistry.GetColumns(PanelType.Folders).ToList();
+
+            //var folderUpdates = new List<(FolderModel folder, string columnId, object value)>();
+            //var fileUpdates = new List<(FileModel file, string columnId, object value)>();
+
+            //await Task.Run(() =>
+            //{
+            //    foreach (var folder in DirectoryList)
+            //        foreach (var column in folderColumns)
+            //            folderUpdates.Add((folder, column.Id, column.ColumnValueHandler(folder)));
+
+            //    foreach (var file in FileList)
+            //        foreach (var column in fileColumns)
+            //            fileUpdates.Add((file, column.Id, column.ColumnValueHandler(file)));
+            //});
+
+            //Application.Current.Dispatcher.Invoke(() =>
+            //{
+            //    foreach (var u in folderUpdates)
+            //        u.folder.Additional[u.columnId] = u.value;
+            //    foreach (var u in fileUpdates)
+            //        u.file.Additional[u.columnId] = u.value;
+            //});
+        }
+
+        private void RefreshFileList(IEnumerable<FileModel> files)
+        {
+            if (FileList == null)
+                FileList = new ObservableCollection<FileModel>();
+
+            var newFiles = files.ToDictionary(f => f.Path, f => f);
+
+            for (int i = FileList.Count - 1; i >= 0; i--)
+            {
+                if (!newFiles.ContainsKey(FileList[i].Path))
+                    FileList.RemoveAt(i);
+            }
+
+            foreach (var file in files)
+            {
+                if (!FileList.Any(f => f.Path == file.Path))
+                    FileList.Add(file);
+            }
+        }
+
+        private void RefreshDirectoryList(IEnumerable<FolderModel> dirs)
+        {
+            if (DirectoryList == null)
+                DirectoryList = new ObservableCollection<FolderModel>();
+
+            var newDirs = dirs.ToDictionary(d => d.Path, d => d);
+
+            for (int i = DirectoryList.Count - 1; i >= 0; i--)
+            {
+                if (!newDirs.ContainsKey(DirectoryList[i].Path))
+                    DirectoryList.RemoveAt(i);
+            }
+
+            foreach (var dir in dirs)
+            {
+                if (!DirectoryList.Any(f => f.Path == dir.Path))
+                    DirectoryList.Add(dir);
+            }
+        }
+
+        private async Task RefreshPanelAsync(string dirPath)
+        {
+            // Загружаем параллельно
+            var dirsTask = dataService.GetDirectoriesAsync(dirPath);
+            var filesTask = dataService.GetFilesAsync(dirPath);
+
+            var dirs = await dirsTask;
+            var files = await filesTask;
+
+            RefreshDirectoryList(dirs);
+            RefreshFileList(files);
+
+            this.CurrentDirectory = dirPath;
+            // 🔥 Асинхронный пересчёт колонок
+            await UpdateColumnValuesAsync();
         }
 
         #endregion
 
-        #region Управление колонками и плагинами
+        #endregion
 
-        /// <summary>
-        /// Инициализирует колонки панели, включая стандартные и плагинные, а также настраивает контекстное меню.
-        /// </summary>
-        private void InitializeColumns()
-        {
-            this.AddFileColumns();
-            this.AddFolderColumns();
-            this.AddDriveColumns();
-            this.CreateContextMenu();
-        }
+        #region Управление колонками и плагинами
 
         /// <summary>
         /// Добавляет колонки для папок.
@@ -854,94 +1088,46 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <summary>
         /// Восстанавливает состояние панели из предыдущего сеанса, устанавливает шаблон, загружает файлы и папки, и инициализирует колонки.
         /// </summary>
-        private async void SetLastPanelState()
+        private async Task SetLastPanelState()
         {
+            columnRegistry.RegisterProvider(new DefaultColumnProvider());
+            //columnRegistry.RegisterProvider(new DriveColumnsProvider());
+
             if (this.CurrentDirectory == VirtualPaths.MyComputer)
             {
-                _ = this.GoDrivePanel();
-                this.InitializeColumns();
-                return;
+                DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
+                DriveList = new ObservableCollection<DriveModel>();
+                var drives = await dataService.GetDrivesAsync();
+                foreach (var dr in drives)
+                    DriveList.Add(dr);
             }
+            else this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
 
-            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-            var files = await dataService.GetFilesAsync(this.CurrentDirectory);
-            var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
+            // Создаём коллекции заранее, чтобы не было null
             FileList = new ObservableCollection<FileModel>();
-            foreach (var f in files)
-                FileList.Add(f);
             DirectoryList = new ObservableCollection<FolderModel>();
-            foreach (var d in dirs)
-                DirectoryList.Add(d);
+
+            try
+            {
+                if (this.CurrentDirectory != VirtualPaths.MyComputer)
+                {
+                    var files = await dataService.GetFilesAsync(this.CurrentDirectory);
+                    var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
+
+                    foreach (var f in files)
+                        FileList.Add(f);
+                    foreach (var d in dirs)
+                        DirectoryList.Add(d);
+                }
+              
+            }
+            catch (Exception ex)
+            {
+                // лог, иначе async void съест исключение
+                Debug.WriteLine("Ошибка загрузки: " + ex);
+            }
+
             this.InitializeColumns();
-        }
-
-        /// <summary>
-        /// Обновляет файловую панель: устанавливает новый шаблон, загружает директории и файлы, обновляет текущий путь,
-        /// а затем обновляет плагинные колонки.
-        /// </summary>
-        /// <param name="dirPath">Путь к новой директории.</param>
-        private async Task UpdateFilePanelAsync(object dirPath)
-        {
-            var path = Directory.Exists(dirPath.ToString())
-                ? dirPath.ToString()
-                : Directory.GetDirectoryRoot(dirPath.ToString());
-
-            var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-            if (!this.DirectoryPanelTemplate.Equals(template))
-                this.DirectoryPanelTemplate = template;
-
-            await RefreshDirectoriesAsync(path);
-            await RefreshFilesAsync(path);
-
-            this.CurrentDirectory = path;
-            this.UpdateColumnsCommand(); // Обновление плагинных колонок
-        }
-
-        private async Task RefreshFilesAsync(string dirPath)
-        {
-            var files = await dataService.GetFilesAsync(dirPath);
-
-            // Создаём временный список для сравнения
-            var newFiles = files.ToDictionary(f => f.Path, f => f);
-
-            // Удаляем устаревшие файлы
-            for (int i = FileList.Count - 1; i >= 0; i--)
-            {
-                if (!newFiles.ContainsKey(FileList[i].Path))
-                    FileList.RemoveAt(i);
-            }
-
-            // Добавляем новые или обновляем существующие
-            foreach (var file in files)
-            {
-                var existing = FileList.FirstOrDefault(f => f.Path == file.Path);
-                if (existing == null)
-                    FileList.Add(file);
-                   // existing.UpdateFrom(file); // Если у FileModel есть метод обновления свойств
-            }
-        }
-
-        private async Task RefreshDirectoriesAsync(string dirPath)
-        {
-            var dirs = await dataService.GetDirectoriesAsync(dirPath);
-
-            // Словарь для сравнения
-            var newDirs = dirs.ToDictionary(d => d.Path, d => d);
-
-            // Удаляем устаревшие
-            for (int i = DirectoryList.Count - 1; i >= 0; i--)
-            {
-                if (!newDirs.ContainsKey(DirectoryList[i].Path))
-                    DirectoryList.RemoveAt(i);
-            }
-
-            // Добавляем новые или обновляем существующие
-            foreach (var dir in dirs)
-            {
-                var existing = DirectoryList.FirstOrDefault(d => d.Path == dir.Path);
-                if (existing == null)
-                    DirectoryList.Add(dir);
-            }
         }
 
         /// <summary>
@@ -950,11 +1136,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// <param name="root">Путь к корневой директории (например, "C:\").</param>
         private async Task GoDrivePanel()
         {
-            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
-            var drivers = await this.dataService.GetDrivesAsync();
+            // 1. Загружаем диски
+            var drives = await dataService.GetDrivesAsync();
             DriveList.Clear();
-            foreach (var d in drivers)
+            foreach (var d in drives)
                 DriveList.Add(d);
+
+            // 3. Другое состояние UI
+            ThisComputerIconIsEnabled = false;
+            BackButtonIsEnabled = true;
         }
 
         #endregion
@@ -970,13 +1160,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
             {
-                string drive = Path.GetPathRoot(CurrentDirectory);
+                DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
                 _ = this.GoDrivePanel();
+                
                 this.ThisComputerIconIsEnabled = false;
             }
             else
             {
-                _ = this.UpdateFilePanelAsync(path);
+                this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+                _ = RefreshPanelAsync(path);
                 this.ThisComputerIconIsEnabled = true;
                 this.BackButtonIsEnabled = true;
             }
@@ -987,8 +1179,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         /// </summary>
         public override void Destroy()
         {
-            base.Destroy();
+            _navigationService.CurrentChanged -= OnPathChanged;
+            columnSync.ColumnChanged -= OnColumnChanged;
+            _panelRegistry.UnregisterPanel(_adapter.PanelId);
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+            base.Destroy();
+            
         }
 
         #endregion
@@ -1014,9 +1210,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             Task.Delay(150).ContinueWith(_ =>
             {
                 _refreshScheduled = false;
+
                 Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    await UpdateFilePanelAsync(this.CurrentDirectory);
+                    await RefreshPanelAsync(CurrentDirectory);
                 });
             });
         }
@@ -1070,6 +1267,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 #if (Nlog)
                     _appLogger.Info($"Открыт Мой компьютер ({this.CurrentDirectory})");
 #endif
+                    // Обновляем диски
+                    _ = GoDrivePanel();
                 }
             });
 
