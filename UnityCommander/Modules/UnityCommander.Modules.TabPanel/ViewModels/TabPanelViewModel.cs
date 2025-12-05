@@ -378,7 +378,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
             if (ActiveTabPanelContent is IDirectoryPanel directory)
             {
-                directory.DirectoryUpdate(directory);
+                //directory.DirectoryUpdate(directory);
             }
 
             if (activeTabPanelContentModel != null)
@@ -387,8 +387,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
                 foreach (var directoryPanel in directoryPanels)
                 {
-                    if (directoryPanel != null)
-                        directoryPanel.DirectoryUpdate(directoryPanel);
+                    //if (directoryPanel != null)
+                        //directoryPanel.DirectoryUpdate(directoryPanel);
                 }
             }
 

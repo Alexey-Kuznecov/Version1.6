@@ -1,33 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <LangVersion>9.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Models\Columns\**" />
-    <EmbeddedResource Remove="Models\Columns\**" />
-    <None Remove="Models\Columns\**" />
-    <Page Remove="Models\Columns\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ExtensionMethod.cs" />
-    <Compile Remove="HelperMethods.cs" />
-    <Compile Remove="Models\Column\ColumnDefinition.cs" />
-    <Compile Remove="Models\DirectoryPathModel.cs" />
-    <Compile Remove="Models\Directory\MetaModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Models\DirectoryPathModel.cs~RF86a07a.TMP" />
-    <None Remove="Models\IconModel.cs~RF55d2a94.TMP" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NSwag.Core" Version="13.12.0" />
-    <PackageReference Include="Prism.Core" Version="8.1.97" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Models\Column\ColumnDefinition.cs" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<LangVersion>9.0</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="NSwag.Core" Version="13.12.0" />
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
+	</ItemGroup>
 </Project>

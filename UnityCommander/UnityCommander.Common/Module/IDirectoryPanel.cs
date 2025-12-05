@@ -10,7 +10,6 @@ namespace UnityCommander.Common.Module
     /// </summary>
     public interface IDirectoryPanel : ITabPanelContent
     {
-        public void DirectoryUpdate(IDirectoryPanel directoryPanel);
         IReadOnlyList<BaseDirectory> GetFiles();
     }
 }

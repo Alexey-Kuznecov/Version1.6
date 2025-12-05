@@ -11,18 +11,6 @@ namespace UnityCommander.Modules.FilePanel.Selectors
     /// </summary>
     public class ColumnDataTemplateSelector : DataTemplateSelector
     {
-        /// <summary>
-        /// The select template.
-        /// </summary>
-        /// <param name="item">
-        /// The item.
-        /// </param>
-        /// <param name="container">
-        /// The container.
-        /// </param>
-        /// <returns>
-        /// The <see cref="DataTemplate"/>.
-        /// </returns>
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             DataTemplate dataTemplate = null;
