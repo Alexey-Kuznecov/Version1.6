@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using System;
 using System.Globalization;
-using System.Text;
 using System.Windows.Data;
 
-namespace UnityCommander.Common.Styling.Converters
+namespace UnityCommander.Modules.FilePanel.Converters
 {
     public class MultiParameterConverter : IMultiValueConverter
     {

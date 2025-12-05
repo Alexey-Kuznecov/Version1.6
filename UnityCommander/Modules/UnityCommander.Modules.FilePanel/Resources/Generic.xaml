@@ -7,6 +7,11 @@
     xmlns:core="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="DrivePanelColumns.xaml" />
+        <ResourceDictionary Source="DirectoryPanelColumns.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <!--
         Back button style in file panel.
     -->
@@ -54,6 +59,7 @@
     <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
+                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FolderViewColumns, Mode=OneWay}"
                 be:MultiSelectionMouseBehavior.IsEnableSelection="False"
                 core:DragDrop.DropHandler="{Binding Mode=Default}"
                 core:DragDrop.IsDragSource="True"
@@ -71,54 +77,6 @@
                         <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <!--<i:Interaction.Behaviors>
-                    <be:MultiSelectionBehavior SelectedItems="{Binding SelectedBaseDirectory, Mode=OneWayToSource}" />
-                </i:Interaction.Behaviors>-->
-                <!--<ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        --><!--  Высота строки: широкая, современная  --><!--
-                        <Setter Property="Padding" Value="12,8" />
-                        <Setter Property="MinHeight" Value="40" />
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Foreground" Value="Black" />
-                        <Setter Property="SnapsToDevicePixels" Value="True" />
-                        --><!--  Привязка выделения к твоей модели  --><!--
-                        <Setter Property="behaviors:HighlightBehavior.IsHighlighted" Value="{Binding IsSelected}" />
-                        --><!--  Кастомный шаблон без градиентов  --><!--
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListViewItem">
-                                    <Border
-                                        x:Name="Border"
-                                        Padding="{TemplateBinding Padding}"
-                                        Background="{TemplateBinding Background}"
-                                        CornerRadius="4">
-                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        --><!--  Hover (минимальный, современный)  --><!--
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#1AFFFFFF" />
-                                        </Trigger>
-                                        --><!--  Selected  --><!--
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#336CB5FF" />
-                                            <Setter Property="Foreground" Value="Black" />
-                                            <Setter Property="FontWeight" Value="Medium" />
-                                        </Trigger>
-                                        --><!--  Disabled  --><!--
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <Setter Property="Opacity" Value="0.4" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>-->
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel ContextMenu="{Binding ContextMenu}" />
@@ -133,6 +91,7 @@
     <ControlTemplate x:Key="DriveListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
+                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding DriveViewColumns, Mode=OneWay}"
                 commands:GridViewSort.AutoSort="True"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding DriveList, Mode=OneWay}"

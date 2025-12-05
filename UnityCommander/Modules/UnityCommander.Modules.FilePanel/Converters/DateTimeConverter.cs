@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Common.Styling.Converters
+namespace UnityCommander.Modules.FilePanel.Converters
 {
     using System;
     using System.Globalization;

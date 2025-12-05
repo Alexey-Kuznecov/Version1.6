@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converter="clr-namespace:UnityCommander.Common.Styling.Converters"
+    xmlns:converter="clr-namespace:UnityCommander.Modules.FilePanel.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,7 +9,6 @@
     mc:Ignorable="d">
 
     <converter:IconConverter x:Key="IconConverter" />
-    <converter:MultiParameterConverter x:Key="MultiConverter" />
     <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
     <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
 
@@ -30,7 +29,6 @@
                 Text="{Binding CreationTime}" />
         </Grid>
     </DataTemplate>-->
-
 
     <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>

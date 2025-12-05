@@ -59,9 +59,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Directories\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 </Project>

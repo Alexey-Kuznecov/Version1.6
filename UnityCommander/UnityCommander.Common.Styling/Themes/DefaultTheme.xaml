@@ -9,9 +9,9 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/DirectoryPanelStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/NavigationBarStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Styles/IconStyles.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/DirectoryPanel.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/MergedDataTemplates.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Controls/RadioButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Images/Icons.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xceed.Wpf.AvalonDock.Themes.Metro;component/Theme.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/Xceed.Wpf.AvalonDock.Themes.Metro;component/Theme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
