@@ -11,42 +11,15 @@ namespace UnityCommander.Modules.FilePanel
     using UnityCommander.Modules.Viewer.Views;
     using UnityCommander.Services.Interfaces.Database.Queries.Xml;
 
-    /// <summary>
-    /// The state panel serializer.
-    /// </summary>
     public static class DataPanelExtension
     {
-        /// <summary>
-        /// The tabs info.
-        /// </summary>
         private static List<XElementInfo> tabsInfos;
 
-        /// <summary>
-        /// The xml deserialize.
-        /// </summary>
-        /// <param name="o">
-        /// The o.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public static bool XmlDeserialize(object o)
         {
             return false;
         }
 
-        /// <summary>
-        /// The get tab config.
-        /// </summary>
-        /// <param name="document">
-        /// The document.
-        /// </param>
-        /// <param name="filter">
-        /// The filter.
-        /// </param>
-        /// <returns>
-        /// The collection of <see cref="TabPanelRecord"/>.
-        /// </returns>
         public static IEnumerable<TabPanelRecord> GetTabConfigs(this XDocument document, string filter)
         {
             foreach (var element in document.Find("Tab"))
@@ -73,15 +46,6 @@ namespace UnityCommander.Modules.FilePanel
             }
         }
 
-        /// <summary>
-        /// The get paths.
-        /// </summary>
-        /// <param name="document">
-        /// The document.
-        /// </param>
-        /// <returns>
-        /// The D.
-        /// </returns>
         public static string[] GetPaths(this XDocument document)
         {
             int counter = 0;

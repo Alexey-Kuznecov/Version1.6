@@ -1,5 +1,4 @@
 ﻿
-using DryIoc;
 using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.TabPanel.ViewModels;
 using UnityCommander.Modules.WebBrowser;

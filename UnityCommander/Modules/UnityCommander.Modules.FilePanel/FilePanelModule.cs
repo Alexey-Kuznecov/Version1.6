@@ -95,19 +95,11 @@ namespace UnityCommander.Modules.FilePanel
                 }
             });
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FilePanelModule"/> class.
-        /// </summary>
-        /// <param name="regionManager"> The region manager. </param>
         public FilePanelModule(IRegionManager regionManager)
         {
             this.regionManager = regionManager;
         }
 
-        /// <summary>
-        /// The on initialized.
-        /// </summary>
-        /// <param name="containerProvider"> The container provider. </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
             this._appLogger = containerProvider.Resolve<IAppLogger>(); ;
