@@ -271,10 +271,8 @@ namespace UnityCommander.Modules.FilePanel.Controls
                     Content = panel.parsePath[counter],
                     Command = panel.NavigateCommand
                 };
-                
-                navButton.CommandParameter = panel.parseParams[counter].Substring(
-                    0,
-                    panel.parseParams[counter].LastIndexOf('\\'));
+                var path = panel.parseParams[counter].Substring(0, panel.parseParams[counter].LastIndexOf('\\'));
+                navButton.CommandParameter = Normalize(path);
 
                 var grid = CreateGridNavigationItem(navButton, popButton);
                 popButton.CommandParameter = new PopupParameters { CurrentItem = grid, Panel = panel, CurrentPath = panel.parseParams[counter] };
@@ -287,6 +285,28 @@ namespace UnityCommander.Modules.FilePanel.Controls
         #endregion
 
         #region Helper methods
+
+        private static string Normalize(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return path;
+
+            path = path.Trim();
+
+            // E → E:\
+            if (path.Length == 1 && char.IsLetter(path[0]))
+                return path + @":\";
+
+            // E: → E:\
+            if (path.Length == 2 && path[1] == ':' && char.IsLetter(path[0]))
+                return path + @"\";
+
+            // Убираем двойные слеши
+            while (path.Contains(@"\\"))
+                path = path.Replace(@"\\", @"\");
+
+            return path;
+        }
 
         /// <summary>
         /// Creates a pop-up menu for each item in the navigation bar.

@@ -49,7 +49,7 @@ namespace UnityCommander
             doc.IsSelected = true;
         }
 
-        public void AddDocumentTab(string title, string regionName)
+        public void AddDocumentTab(string title, string realPath, string regionName)
         {
             var contentControl = new ContentControl();
             RegionManager.SetRegionName(contentControl, regionName);
@@ -58,7 +58,8 @@ namespace UnityCommander
             var document = new LayoutDocument
             {
                 Title = title,
-                Content = contentControl
+                Content = contentControl,
+                ContentId = realPath // важно для восстановления
             };
 
             _dockingManager.Layout.Descendents()
@@ -67,52 +68,7 @@ namespace UnityCommander
                 .Children.Add(document);
         }
 
-        public void AddDocumentTabInNewPane(string title, string regionName)
-        {
-            var contentControl = new ContentControl();
-            RegionManager.SetRegionName(contentControl, regionName);
-            ViewModelLocator.SetAutoWireViewModel(contentControl, true);
-
-            var newDocument = new LayoutDocument
-            {
-                Title = title,
-                Content = contentControl,
-                ContentId = regionName // важно для восстановления
-            };
-
-            var newPane = new LayoutDocumentPane(newDocument);
-
-            // Вставим новый LayoutDocumentPane справа от текущей панели
-            var root = _dockingManager.Layout.RootPanel;
-
-            if (root != null)
-            {
-                var newPaneGroup = new LayoutPanel
-                {
-                    Orientation = Orientation.Horizontal
-                };
-
-                // Добавим существующий контент влево, новый — вправо
-                newPaneGroup.Children.Add(root.Children.First());
-                newPaneGroup.Children.Add(newPane);
-
-                root.Children.Clear();
-                root.Children.Add(newPaneGroup);
-            }
-            else
-            {
-                // fallback: просто добавим в новый Layout
-                _dockingManager.Layout.RootPanel = new LayoutPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    Children = { newPane }
-                };
-            }
-
-            newDocument.IsActive = true;
-        }
-
-        public void AddActiveDocumentTab(string title, string regionName)
+        public void AddActiveDocumentTab(string title, string realPath, string regionName)
         {
             var contentControl = new ContentControl();
             RegionManager.SetRegionName(contentControl, regionName);
@@ -121,7 +77,8 @@ namespace UnityCommander
             var document = new LayoutDocument
             {
                 Title = title,
-                Content = contentControl
+                Content = contentControl,
+                ContentId = realPath // важно для восстановления
             };
 
             // 🔥 Подписка после загрузки (когда VM уже создана)
@@ -129,9 +86,9 @@ namespace UnityCommander
             {
                 if (GetActiveDirectoryPanel() is IDirectoryPanel panel)
                 {
-                    panel.PathChanged += path =>
+                    panel.TabTitleChanged += formatPath =>
                     {
-                        document.Title = path; // обновляем вкладку
+                        document.Title = formatPath; // обновляем вкладку
                     };
                 }
             };

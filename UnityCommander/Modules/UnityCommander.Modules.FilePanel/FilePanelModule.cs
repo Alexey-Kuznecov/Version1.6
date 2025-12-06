@@ -30,6 +30,7 @@ namespace UnityCommander.Modules.FilePanel
     using System.Windows.Media.Media3D;
     using System.Windows.Threading;
     using UnityCommander.Common.Module;
+    using UnityCommander.Core.Commands.Base;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
@@ -52,11 +53,16 @@ namespace UnityCommander.Modules.FilePanel
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
         private IPanelRegistry _panelRegistry;
-        private string _currentCommand  = string.Empty;
         private IAppLogger _appLogger;
+        private DoubleClickHandlerHelper _doubleClickHelper;
 
         // поле класса — для дебаунса (вставь в класс)
         private DateTime _lastNavigationTime = DateTime.MinValue;
+
+        public FilePanelModule(IRegionManager regionManager)
+        {
+            this.regionManager = regionManager;
+        }
 
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
@@ -86,7 +92,7 @@ namespace UnityCommander.Modules.FilePanel
                 }
 
                 appConfig.Save();
-
+                var dock = _dockingService.GetDockingManager();
                 var serializer = new XmlLayoutSerializer(_dockingService.GetDockingManager());
 
                 using (var stream = new StreamWriter("layout.xml"))
@@ -95,46 +101,39 @@ namespace UnityCommander.Modules.FilePanel
                 }
             });
 
-        public FilePanelModule(IRegionManager regionManager)
-        {
-            this.regionManager = regionManager;
-        }
-
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            this._appLogger = containerProvider.Resolve<IAppLogger>(); ;
+            _appLogger = containerProvider.Resolve<IAppLogger>(); ;
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
             _panelRegistry = containerProvider.Resolve<IPanelRegistry>();
-            _multiCommands.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
             _dockingService = containerProvider.Resolve<IDockingService>();
-            var manager = _dockingService.GetDockingManager();
-            manager.MouseDoubleClick += Manager_MouseDoubleClick;
-            manager.ActiveContentChanged += Manager_ActiveContentChanged;
             _appConfigService = containerProvider.Resolve<IAppConfigService>();
             
-
-            // 🧠 Попробуем восстановить layout, если он есть
             var layoutFilePath = "layout.xml";
+            var manager = _dockingService.GetDockingManager();
+            var command = containerProvider.Resolve<CommandService>();
+            manager.MouseDoubleClick += Manager_MouseDoubleClick;
+            manager.ActiveContentChanged += Manager_ActiveContentChanged;
+            _multiCommands.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            _doubleClickHelper = new DoubleClickHandlerHelper(this._appLogger, command, _dockingService, regionManager);
             if (File.Exists(layoutFilePath))
             {
                 var serializer = new XmlLayoutSerializer(manager);
-
-                // Привязка контента при восстановлении
                 serializer.LayoutSerializationCallback += (s, args) =>
                 {
-                    var path = args.Model.Title;
+                    var path = args.Model.ContentId;
+                    args.Model.Title = PathTitleHelper.GetTabTitle(path); // красивый заголовок
 
                     if (!string.IsNullOrEmpty(path))
                     {
                         var token = Guid.NewGuid();
                         var regionName = $"Tab_{token}";
                         var contentControl = new ContentControl();
-
+                        args.Content = contentControl;
 
                         RegionManager.SetRegionName(contentControl, regionName);
                         ViewModelLocator.SetAutoWireViewModel(contentControl, true);
 
-                        args.Content = contentControl;
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
                         {
                             regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
@@ -144,15 +143,14 @@ namespace UnityCommander.Modules.FilePanel
                                     var view = result.Context.NavigationService.Region.ActiveViews.FirstOrDefault() as SplitPanelView;
                                     var viewModel = view?.DataContext as ITabPanelContent;
                                     viewModel.InitializedViewModel(ref token, path);
-                                    args.Content = view; // Привязать контент
-
+                                    args.Content = view;
                                     contentControl.LayoutUpdated += (s2, e2) =>
                                     {
-                                        viewModel.PathChanged += newPath =>
+                                        viewModel.TabTitleChanged += formatPath =>
                                         {
-                                            args.Model.Title = newPath;
+                                            args.Model.Title = formatPath;
                                         };
-                                    };
+                                    };                                
                                 }
                             });
                         }));
@@ -172,7 +170,7 @@ namespace UnityCommander.Modules.FilePanel
                 {
                     var token = config.Token;
                     var regionName = $"Tab_{Guid.NewGuid()}";
-                    _dockingService.AddDocumentTab(config.Path, regionName);
+                    _dockingService.AddDocumentTab(config.Path, config.Path, regionName);
                     var region = this.regionManager.Regions.Select(r => r.Name == regionName).FirstOrDefault();
                     regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
                     {
@@ -205,148 +203,21 @@ namespace UnityCommander.Modules.FilePanel
             }
         }
 
-        // поле класса — для дебаунса (вставь в класс)
-        private DateTime _lastNavigationTime = DateTime.MinValue;
-        private DateTime _lastDoubleClickHandled = DateTime.MinValue;
-
-        // вызывай это при навигации (вместо CurrentChanged handler или там где делаешь Back/Forward)
-        private void MarkNavigationOccured()
-        {
-            _lastNavigationTime = DateTime.UtcNow;
-        }
-
-        // Заменяющий метод
         private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
+         {
             try
             {
-                // дебаунс: если двойной клик пришёл сразу после навигации — игнорируем (защита от "быстро нажал назад")
-                if ((DateTime.UtcNow - _lastNavigationTime).TotalMilliseconds < 300)
-                {
-#if (Nlog1)
-                    _appLogger.Info("DoubleClick: ignored due to recent navigation");
-#endif
-                    return;
-                }
-
                 var dockObj = sender as DockingManager;
                 if (dockObj == null) return;
 
-                // hit test
                 var pos = e.GetPosition(dockObj);
                 var hit = VisualTreeHelper.HitTest(dockObj, pos);
                 if (hit == null) return;
 
-                var start = hit.VisualHit as DependencyObject;
-                if (start == null) return;
-
-                // Собираем полную цепочку для логирования (как у тебя было)
-                var fullChain = new List<string>();
-                var node = start;
-                while (node != null)
-                {
-                    fullChain.Add(node.GetType().Name);
-                    node = GetParentSafely(node);
-                }
-#if (Nlog1)
-                _appLogger.Info("DoubleClick Hit chain: " + string.Join(" -> ", fullChain));
-#endif
-                // 1) Обязательно должна быть LayoutDocumentPaneControl в цепочке
-                bool hasPane = fullChain.Any(n => n == "LayoutDocumentPaneControl");
-                if (!hasPane)
-                {
-#if (Nlog1)
-                    _appLogger.Info("DoubleClick: no LayoutDocumentPaneControl -> reject");
-#endif
-                    return;
-                }
-
-                // 2) Проверяем первые N узлов от VisualHit вверх — если среди них есть элементы списка/контрола, отклоняем.
-                int checkDepth = 6; // количество ближайших узлов, которые анализируем
-                var firstNodes = fullChain.Take(checkDepth).ToArray();
-
-                // blacklist близких типов (на основе твоих логов)
-                var closeBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    "ListViewItem","ListView","ListBoxItem","GridViewRowPresenter","TextBlock",
-                    "TreeViewItem","ScrollViewer","GridView","Path","Button","Image", "ContentControl"
-                };
-
-                if (firstNodes.Any(n => closeBlacklist.Contains(n)))
-                {
-#if (Nlog1)
-                    _appLogger.Info("DoubleClick: close-blacklist hit -> reject (" +
-                                    string.Join(", ", firstNodes.Where(n => closeBlacklist.Contains(n))) + ")");
-#endif
-                    return;
-                }
-
-                // 3) Если ближайшие узлы не указывают на список/контент — пропускаем.
-                // Доп. эвристика: если start сам по себе является LayoutDocumentControl (то есть клик по заголовку),
-                // это OK.
-                if (start.GetType().Name == "LayoutDocumentControl")
-                {
-                    // разрешить
-                }
-                else
-                {
-                    // Дополнительно: убедимся, что клик не был глубоко внутри ContentPresenter (внутри документа)
-                    int idxContentPresenter = fullChain.FindIndex(n => n == "ContentPresenter");
-                    if (idxContentPresenter >= 0 && idxContentPresenter <= 2)
-                    {
-#if (Nlog1)
-                        _appLogger.Info("DoubleClick: ContentPresenter close to hit -> reject");
-#endif
-                        return;
-                    }
-                }
-
-                // Дополнительно: если в цепочке есть явные управляющие элементы (toolbar, menu и т.д.) — отклоняем.
-                var broaderBlacklist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    "ToolBar","ToolBarTray","MenuItem","ContextMenu","Thumb","Popup"
-                };
-                if (fullChain.Any(n => broaderBlacklist.Contains(n)))
-                {
-#if (Nlog1)
-                    _appLogger.Info("DoubleClick: broader blacklist -> reject");
-#endif
-                    return;
-                }
-
-                // Пройдя все проверки — считаем это клик по области вкладок
-                // Доп. защита: минимальный интервал между обработками double-click, чтобы не было "быстрой серии"
-                if ((DateTime.UtcNow - _lastDoubleClickHandled).TotalMilliseconds < 200)
-                {
-#if (Nlog1)
-                    _appLogger.Info("DoubleClick: suppressed due to double handling cooldown");
-#endif
-                    return;
-                }
-
-                _lastDoubleClickHandled = DateTime.UtcNow;
-
-                // --- Создаём вкладку ---
-                var context = _commandExecute.Execute("getcurpath");
-                var basePath = context.Result as string;
-
-                var token = Guid.NewGuid();
-                var regionName = $"Tab_{token}";
-                _dockingService.AddActiveDocumentTab(basePath, regionName);
-
-                regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
-                {
-                    if (result.Result == true)
-                    {
-                        var view = result.Context.NavigationService.Region.ActiveViews.FirstOrDefault() as SplitPanelView;
-                        var viewModel = view?.DataContext as ITabPanelContent;
-                        viewModel?.InitializedViewModel(ref token, basePath);
-                    }
-                });
+                _doubleClickHelper.HandleDoubleClick(dockObj, hit.VisualHit, _lastNavigationTime);
             }
             catch (Exception ex)
             {
-#if (Nlog1)
                 _appLogger.Info("Manager_MouseDoubleClick error: " + ex);
             }
         }

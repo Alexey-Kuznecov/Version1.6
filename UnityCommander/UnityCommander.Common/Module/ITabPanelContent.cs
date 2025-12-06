@@ -6,6 +6,7 @@ namespace UnityCommander.Common.Module
     public interface ITabPanelContent
     {
         event Action<string> PathChanged;
+        public event Action<string> TabTitleChanged;
         public Guid GetPanelToken();
         public ITabPanelContent InitializedViewModel(ref Guid token, string path);
         public string GetCurrentPath();

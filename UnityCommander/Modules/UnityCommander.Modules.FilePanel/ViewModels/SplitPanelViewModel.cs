@@ -108,6 +108,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly string PanelId;
 
         public event Action<string> PathChanged;
+        public event Action<string> TabTitleChanged;
 
         #endregion
 
@@ -279,6 +280,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 this.SetProperty(ref this.currentDirectory, value);
                 PathChanged?.Invoke(currentDirectory);
+                var title = PathTitleHelper.GetTabTitle(currentDirectory);
+                TabTitleChanged?.Invoke(title);
             }
         }
 

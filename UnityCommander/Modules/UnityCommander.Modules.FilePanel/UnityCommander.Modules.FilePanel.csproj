@@ -5,9 +5,9 @@
     <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>Nlog;DEBUG</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>Nlog;DEBUG</DefineConstants>
+	</PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\**" />
     <EmbeddedResource Remove="Models\**" />

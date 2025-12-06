@@ -14,6 +14,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         public object viewerContent;
 
         public event Action<string> PathChanged;
+        public event Action<string> TabTitleChanged;
 
         public object ViewerContent
         {
