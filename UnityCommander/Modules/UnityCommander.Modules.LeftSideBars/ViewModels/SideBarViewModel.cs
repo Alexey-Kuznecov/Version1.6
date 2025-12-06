@@ -8,19 +8,17 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Windows.Media;
 using Prism.Commands;
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
+    using CommandSystem.Abstractions;
+    using Prism.Events;
+    using Prism.Services.Dialogs;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows.Controls;
-    using CommandSystem.Core.Commands;
-    using CommandSystem.Gui.Integraion;
-    using Prism.Events;
-    using Prism.Services.Dialogs;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Core;
@@ -38,7 +36,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The view model message.
         /// </summary>
         private readonly IEventAggregator mainViewModelExchange;
-        private readonly GuiCommandExecute _guiCommandExecute;
+        private readonly IGuiCommandExecutor _guiCommandExecutor;
 
         /// <summary>
         /// The pack icon.
@@ -105,12 +103,12 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IIconProviderService iconProvider,
             IPluginLoaderService pluginLoader,
             IGlobalCommandService globalCommandService,
-            GuiCommandExecute guiCommandExecute)
+            IGuiCommandExecutor guiCommandExecutor)
         {
             this.dialogService = dialogService;
             this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader, globalCommandService));
             this.mainViewModelExchange = mainViewModelExchange;
-            _guiCommandExecute = guiCommandExecute;
+            _guiCommandExecutor = guiCommandExecutor;
             this.packIcon = iconProvider.GetIcons();
             this.CreateSidebarElement();
         }
@@ -123,7 +121,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             get => this.currentSidebarItem;
             set
             {
-                var curr =  _guiCommandExecute.Execute("getcurpath", new CommandContext());
+                var curr = _guiCommandExecutor.Execute("getcurpath").Result;
                 this.currentSidebarItem = value;
                 this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(value);
             }

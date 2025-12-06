@@ -57,9 +57,17 @@
         <Grid Grid.Row="3">
             <ListView
                 be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
+                be:SelectionBehavior.EnableSelection="True"
+                be:SelectionBehavior.Manager="{Binding SelectionManager}"
+                be:SelectionBehavior.PanelId="{Binding Token}"
+                be:SelectionBehavior.SelectionContext="{Binding SelectionContext}"
+                commands:GridViewSort.AutoSort="True"
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
+                IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding FileList, Mode=OneWay}"
                 SelectedItem="{Binding CurrentFile}"
-                SelectionMode="Extended">
+                SelectionMode="Multiple">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp">
                         <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
@@ -71,17 +79,10 @@
 
             </ListView>
             <!--<ListView
-                behaviors:SelectionBehavior.EnableSelection="True"
-                behaviors:SelectionBehavior.Manager="{Binding SelectionManager}"
-                behaviors:SelectionBehavior.PanelId="{Binding Token}"
-                behaviors:SelectionBehavior.SelectionContext="{Binding SelectionContext}"
-                commands:GridViewSort.AutoSort="True"
-                dd:DragDrop.DropHandler="{Binding Mode=Default}"
-                dd:DragDrop.IsDragSource="True"
-                IsSynchronizedWithCurrentItem="True"
+
                 ItemsSource="{Binding FileList, Mode=OneWay}"
                 SelectedItem="{Binding CurrentFile}"
-                SelectionMode="Multiple"
+
                 View="{Binding FilePanelContainer}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp">

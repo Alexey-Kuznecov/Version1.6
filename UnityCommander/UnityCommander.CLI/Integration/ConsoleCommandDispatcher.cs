@@ -1,8 +1,9 @@
-﻿using UnityCommander.CLI.Core;
+﻿
+using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
-using CommandSystem.Core.Metadata;
-using CommandSystem.Infrastructure.Lifecycle;
 using UnityCommander.Common.Commands;
+using CommandSystem.Infrastructure.Lifecycle;
+using CommandSystem.Abstractions;
 
 namespace UnityCommander.CLI.Integration
 {

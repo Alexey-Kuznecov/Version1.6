@@ -8,7 +8,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using CommandSystem.Gui.Integraion;
+using CommandSystem.Abstractions;
 using NLog;
 using Prism.Commands;
 using Prism.Regions;
@@ -66,10 +66,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IAppConfigService configService;
         private readonly IAppLogger _appLogger;
         private readonly NavigationManager _navigationService;
-        private readonly GuiCommandRegistrar commandRegistered;
-        private readonly GuiCommandExecute commandExecute;
         private readonly CommandManager commandManager;
         private readonly ModuleLogger logger;
+        private IGuiCommandExecutor guiCommandExecutor;
         private IPanelRegistry _panelRegistry;
         private PanelViewModelAdapter _adapter;
         private ISelectionManager _selectionManager;  
@@ -142,8 +141,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ISelectionManager selectionManager,
               IPanelRegistry panelRegistry,
               NavigationContextDirectory navigationContext,
-              GuiCommandRegistrar guiCommandRegistrar,
-              GuiCommandExecute guiCommandExecute,
+              IGuiCommandExecutor guiCommandExecutor,
               CommandManager manager,
               ModuleLogger logger,
               IAppLogger appLogger,
@@ -154,8 +152,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ColumnRegistry columnRegistry) 
             : base(regionManager)
         {
-            this.commandRegistered = guiCommandRegistrar;
-            this.commandExecute = guiCommandExecute;
+            this.guiCommandExecutor = guiCommandExecutor;
             this._panelRegistry = panelRegistry;
             this._selectionManager = selectionManager;
             this.configService = configService;
@@ -189,9 +186,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.columnRegistry = columnRegistry ?? throw new ArgumentNullException(nameof(settingsStore));
             // подпись на главный обработчик (одно место)
             ColumnSyncService.RegisterHandler("Main", width => OnRemoteWidthChanged("Main", width));
-
-            // если нужен старый OnColumnChanged, оставляем
-            //this.columnSync.ColumnChanged += OnColumnChanged;
         }
 
         #endregion
@@ -202,22 +196,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             column.Width = newWidth;
             if (!string.IsNullOrEmpty(column.SyncGroup))
                 ColumnSyncService.NotifyWidthChanged(column.SyncGroup, newWidth); // ← double, а не column
-        }
-
-        private void OnColumnChanged(string syncGroup, ColumnModel changedColumn)
-        {
-            // Применяем ширину ко всем колонкам в текущих коллекциях, которые принадлежат syncGroup
-            void Apply(IEnumerable<ColumnModel> cols)
-            {
-                foreach (var c in cols.Where(c => c.SyncGroup == syncGroup && c.Id != changedColumn.Id))
-                {
-                    c.Width = changedColumn.Width;
-                }
-            }
-
-            if (FileViewColumns != null) Apply(FileViewColumns);
-            if (FolderViewColumns != null) Apply(FolderViewColumns);
-            if (DriveViewColumns != null) Apply(DriveViewColumns);
         }
 
         private void OnRemoteWidthChanged(string v, double width)

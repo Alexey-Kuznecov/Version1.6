@@ -15,30 +15,6 @@ namespace UnityCommander.Modules.Viewer.ViewModels
     /// </summary>
     public class ViewerViewModel : BindableBase, ITabPanelContent, IViewerPanel
     {
-        /// <summary>
-        /// The command manager.
-        /// </summary>
-        //private readonly CommandManager commandManager;
-
-        /// <summary>
-        /// The navigation command.   
-        /// </summary>
-        //private NavigationInvoker navigationCommand;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ViewerViewModel"/> class.
-        /// </summary>
-        /// <param name="manager">
-        /// The manager.
-        /// </param>
-        //public ViewerViewModel(CommandManager manager)
-        //{
-        //    this.commandManager = manager;
-        //}
-
-        /// <summary>
-        /// Gets or sets the token.
-        /// </summary>
         public Guid Token { get; set; }
 
         /// <summary>

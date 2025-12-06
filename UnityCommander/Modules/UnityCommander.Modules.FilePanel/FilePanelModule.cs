@@ -49,27 +49,14 @@ namespace UnityCommander.Modules.FilePanel
         /// </summary>
         private readonly IRegionManager regionManager;
         private IMultiCommandService _multiCommands;
-        private GuiCommandRegistrar _commandRegistered;
-        private GuiCommandExecute _commandExecute;
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
         private IPanelRegistry _panelRegistry;
         private string _currentCommand  = string.Empty;
         private IAppLogger _appLogger;
 
-        public Action<CommandContext> GetCurrentPathCommand => new Action<CommandContext>(
-            (ctx) =>
-            {
-                GetCurrentPath(ctx);
-            }
-        );
-
-        public Func<CommandContext, Task> SetCurrentPathCommand => new Func<CommandContext, Task>(
-            async (ctx) =>
-            {
-                _ = await SetCurrentPath(ctx);
-            }
-        );
+        // поле класса — для дебаунса (вставь в класс)
+        private DateTime _lastNavigationTime = DateTime.MinValue;
 
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
@@ -126,13 +113,7 @@ namespace UnityCommander.Modules.FilePanel
             this._appLogger = containerProvider.Resolve<IAppLogger>(); ;
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
             _panelRegistry = containerProvider.Resolve<IPanelRegistry>();
-            _commandRegistered = containerProvider.Resolve<GuiCommandRegistrar>();
-            _commandExecute = containerProvider.Resolve<GuiCommandExecute>();
             _multiCommands.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
-            var metadata = new CommandMetadata("getcurpath", "Получает текущий путь директории");
-            this._commandRegistered.Register(metadata, GetCurrentPathCommand);
-            metadata = new CommandMetadata("setcurpath", "Устанавливает текущий путь директории");
-            this._commandRegistered.Register(metadata, SetCurrentPathCommand);
             _dockingService = containerProvider.Resolve<IDockingService>();
             var manager = _dockingService.GetDockingManager();
             manager.MouseDoubleClick += Manager_MouseDoubleClick;
@@ -375,36 +356,7 @@ namespace UnityCommander.Modules.FilePanel
             {
 #if (Nlog1)
                 _appLogger.Info("Manager_MouseDoubleClick error: " + ex);
-#endif
             }
-        }
-
-        // Вспомогательный метод — уже у тебя есть похожий, но оставлю для полноты
-        private DependencyObject GetParentSafely(DependencyObject node)
-        {
-            if (node == null) return null;
-            if (node is Visual || node is Visual3D)
-                return VisualTreeHelper.GetParent(node);
-            return LogicalTreeHelper.GetParent(node) as DependencyObject;
-        }
-
-        private void GetCurrentPath(CommandContext ctx)
-        {
-            ctx.Result = _dockingService.GetActiveTabPath();
-        }
-
-        private async Task<string> SetCurrentPath(CommandContext ctx)
-        {
-            var value = ctx.Parameter.ToString();
-            // задаём путь в активной вкладке, если она есть
-            var vm = _dockingService.GetActiveDirectoryPanel() as ITabPanelContent;
-            if (vm != null)
-            {
-                vm.SetCurrentPath(value); // предположим что в ITabPanelContent есть SetCurrentPath
-            }
-            // сохраняем локально команду, если нужно логировать:
-            _currentCommand = ctx.Name;
-            return await Task.FromResult(value);
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

@@ -13,4 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CommandSystem.Abstractions">
+      <HintPath>..\..\..\..\..\_builds\CommandSystem.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ using UnityCommander.ViewModels.Dialogs;
 
 namespace UnityCommander
 {
-    using CommandSystem.Core.Abstractions;
+    using CommandSystem.Abstractions;
     using CommandSystem.Core.Factory;
     using CommandSystem.Gui.Integraion;
     using CommandSystem.Infrastructure.Execution;
@@ -24,13 +24,11 @@ namespace UnityCommander
     using Services.Interfaces;
     using System.Windows;
     using UnityCommander.AI.ImageSearch;
-    using UnityCommander.CLI.Core;
     using UnityCommander.Commands;
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.Selection;
     using UnityCommander.Core.Behaviors.Selection;
     using UnityCommander.Core.Navgator;
-    using UnityCommander.Integration;
     using UnityCommander.Integration.Plugins;
     using UnityCommander.Logging;
     using UnityCommander.Modules.BottomPanel;
@@ -45,20 +43,9 @@ namespace UnityCommander
     using ViewModels;
     using Views;
     using Views.CopyDialogs;
-    using ICommandExecutor = CommandSystem.Core.Abstractions.ICommandExecutor;
-    using ICommandFactory = CommandSystem.Core.Abstractions.ICommandFactory;
 
-    /// <summary>
-    /// The application.
-    /// </summary>
     public partial class App
     {
-        /// <summary>
-        /// The create shell.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Window"/>.
-        /// </returns>
         protected override Window CreateShell()
         {
             foreach (var dictionary in SharedDictionaryManager.SharedDictionary)
@@ -75,18 +62,6 @@ namespace UnityCommander
         
         }
 
-        public void OnInitialized(IContainerProvider containerProvider)
-        {
-            var pluginBridge = containerProvider.Resolve<PluginBridge>();
-            pluginBridge.ExecuteCreate();
-        }
-
-        /// <summary>
-        /// The register types.
-        /// </summary>
-        /// <param name="containerRegistry">
-        /// The container registry.
-        /// </param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             // -------------------------------
@@ -185,8 +160,9 @@ namespace UnityCommander
             // -------------------------------
             // 8. Регистрация GUI-команд
             // -------------------------------
-            containerRegistry.RegisterSingleton<GuiCommandRegistrar>();
-            containerRegistry.RegisterSingleton<GuiCommandExecute>();
+            containerRegistry.RegisterSingleton<ICommandRegister, GuiCommandRegister>();
+            containerRegistry.RegisterSingleton<IGuiCommandExecutor, GuiCommandExecuter>();
+            containerRegistry.RegisterSingleton<CommandService>();
 
             // -------------------------------
             // 9. AI сервисы (пока закомментированы)
@@ -195,45 +171,6 @@ namespace UnityCommander
                 new ImageSimilarityService(@"F:\\01. Active\\CSharp\\UnityCommander\\UnityCommander\\Resources\\ai_models\\model.onnx"));
         }
 
-
-        private bool Condition(Request arg)
-        {
-            return true;
-        }
-
-        #region Research
-
-        //private bool Condition(Request arg)
-        //{
-        //    arg.Container.Use(typeof(IPluginLoaderService), Instance);
-        //    return true;
-        //}
-
-        //private object Instance(IResolverContext r)
-        //{
-        //    return null;
-        //}
-
-        //private Factory Rule(Request request, KeyValuePair<object, Factory>[] factories)
-        //{
-        //    var f = default(Factory);
-
-        //    foreach (var factory in factories)
-        //    {
-        //        var ddd = factory.Value.GetDelegateOrDefault(request);
-        //        var dd2d = factory.Value.GetExpressionOrDefault(request);
-        //        request.WithResolvedFactory(factory.Value);
-        //        var dd = Factory.GetNextID();
-        //    }
-
-        //    return null;
-        //}
-
-        #endregion
-
-        /// <summary>
-        /// The configure view model locator.
-        /// </summary>
         protected override void ConfigureViewModelLocator()
         {
             base.ConfigureViewModelLocator();
@@ -241,15 +178,10 @@ namespace UnityCommander
             ViewModelLocationProvider.Register(typeof(LeftPanelContentView).ToString(), () => Container.Resolve<TabPanelViewModel>());
         }
 
-        /// <summary>
-        /// The configure module catalog.
-        /// </summary>
-        /// <param name="moduleCatalog">
-        /// The module catalog.
-        /// </param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            moduleCatalog.AddModule<FilePanelModule>();
+            moduleCatalog.AddModule<FilePanelModule>();        // Панели
+            moduleCatalog.AddModule<FilePanelCommandModule>(); // Команды
             moduleCatalog.AddModule<LeftSideBarsModule>();
             moduleCatalog.AddModule<ToolBarModule>();
             moduleCatalog.AddModule<ViewerModule>();

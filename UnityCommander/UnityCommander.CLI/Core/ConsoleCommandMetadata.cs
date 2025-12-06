@@ -1,11 +1,11 @@
 ﻿
-using CommandSystem.Core.Metadata;
+using CommandSystem.Abstractions;
 
 namespace UnityCommander.CLI.Core
 {
     public class ConsoleCommandMetadata
     {
-        public CommandMetadata Metadata { get; }
+        public CommandMetadata? Metadata { get; }
         public IReadOnlyList<string> Aliases { get; }
         public string Name { get; internal set; }
         public string? Description { get; internal set; }
@@ -15,10 +15,10 @@ namespace UnityCommander.CLI.Core
             Func<IConsoleCommandContext, CancellationToken, Task> handler,
             IEnumerable<string>? aliases = null)
         {
-            Name = metadata.Name;
-            Description = metadata.Description;
             Metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
-            Handler = handler;
+            Name = metadata.Name ?? throw new ArgumentNullException(nameof(metadata.Name));
+            Description = metadata.Description;
+            Handler = handler ?? throw new ArgumentNullException(nameof(handler));
             Aliases = aliases?.ToList() ?? new List<string>();
         }
     }
