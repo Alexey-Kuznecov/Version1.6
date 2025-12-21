@@ -6,12 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:ribbon="clr-namespace:UnityCommander.Ribbon.Wpf.Controls;assembly=UnityCommander.Ribbon.Wpf"
     xmlns:vm="clr-namespace:UnityCommander.Modules.ToolBar.ViewModels"
     d:DataContext="{d:DesignInstance vm:ToolBarViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <StackPanel>
-        <!--<ContentControl Content="{Binding Ribbon}" />-->
-        <control:Ribbon RibbonManager="{Binding}"></control:Ribbon>
-    </StackPanel>
+    <Grid>
+        <ribbon:Ribbon Manager="{Binding DataContext.RibbonManager, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+    </Grid>
 </UserControl>

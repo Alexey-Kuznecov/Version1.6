@@ -1,5 +1,4 @@
-﻿
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MainWindowViewModel.cs" company="T">
 //  Copyright (p) Alexey Kuznecov. All right reserved.
 // </copyright>
@@ -12,26 +11,24 @@ using System.Linq;
 
 namespace UnityCommander.ViewModels
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-
+    using AlexeyKuznecov.Library.Mvvm.Base;
+    using CefSharp.DevTools.CSS;
     using MaterialDesignThemes.Wpf;
-
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-
-    using UnityCommander.Common;
+    using System;
+    using System.IO;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models;
     using UnityCommander.Controls.Window;
     using UnityCommander.Core;
     using UnityCommander.Core.Behaviors;
-    using UnityCommander.Integration.Commands;
+    using UnityCommander.Ribbon.Core.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Settings;
     using Path = System.Windows.Shapes.Path;
@@ -42,6 +39,8 @@ namespace UnityCommander.ViewModels
     public class MainWindowViewModel : BindableBase, IKeyBinding
     {
         #region DECLARATION FIELDS
+
+        private readonly IRibbonManager _ribbonManager;
 
         /// <summary>
         /// The index of the sidebar item.
@@ -96,7 +95,7 @@ namespace UnityCommander.ViewModels
 
         /// <summary>
         /// Size of the ribbon container.
-        /// </summary>
+        /// </summary}
         private double ribbonContainerSize;
 
         /// <summary>
@@ -135,8 +134,9 @@ namespace UnityCommander.ViewModels
             ISettingsProviderService settingsProviderService,
             IIconProviderService iconProviderService,
             IMultiCommandService command,
-            IGlobalCommandService globalCommand)
+            IGlobalCommandService globalCommand, IRibbonManager ribbonManager)
         {
+            _ribbonManager = ribbonManager;
             this.StateCommand = command;
             this.globalCommandManager = globalCommand.GetCommandManager();
             this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
@@ -145,10 +145,21 @@ namespace UnityCommander.ViewModels
 
             var settings = settingsProviderService.GetAppConfig();
             this.SidebarContentWidth = settings.SidebarDisplayContent ? 250 : 0;
-            this.RibbonContainerSize = 60;
-            this.TabContainerSize = 80;
+            this.IsRibbonExpanded = false;
             this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
+            _ribbonManager.TabCollapsed += RibbonManager_TabCollapsed;
+            _ribbonManager.TabExpanded += RibbonManager_TabExpanded;
+        }
+
+        private void RibbonManager_TabExpanded(object sender, RibbonTabEventArgs e)
+        {
+            RibbonContainerSize = 180;
+        }
+
+        private void RibbonManager_TabCollapsed(object sender, RibbonTabEventArgs e)
+        {
+            RibbonContainerSize = 38;
         }
 
         #region Properties
@@ -183,11 +194,17 @@ namespace UnityCommander.ViewModels
                 {
                     value.CloseCommand = this.StateCommand.SaveCommand;
                     this.SetProperty(ref this.importCustomWindow, value);
+                    this.importCustomWindow.CollapseRibbonCommand = new RelayCommand(obj =>
+                    {
+                        //this.importCustomWindow.GridRowShadow = this.importCustomWindow.GridRowShadow == 0 ? 10 : 0;
+                        this.importCustomWindow.CollapseContent = (this.importCustomWindow.CollapseContent as string) == "Max" ? "Mix" : "Max";
+                        IsRibbonExpanded = !IsRibbonExpanded;
+                    });
                 }
             }
         }
 
-        /// <summary>
+        /// <summary> 
         /// Gets or sets the application commands.
         /// </summary>
         public IMultiCommandService StateCommand
@@ -233,20 +250,21 @@ namespace UnityCommander.ViewModels
         public Visibility ToolBarVisibility
         {
             get => this.toolBarVisibility;
-            set 
-            {
-                this.SetProperty(ref this.toolBarVisibility, value);
+            set => this.SetProperty(ref this.toolBarVisibility, value);
+        }
 
-                if (this.toolBarVisibility == Visibility.Hidden)
-                {
-                    this.RibbonContainerSize = 0;
-                    this.TabContainerSize = 0;
-                }
-                else
-                {
-                    this.RibbonContainerSize = 60;
-                    this.TabContainerSize = 80;
-                }
+        private bool _isRibbonExpanded;
+
+        public bool IsRibbonExpanded
+        {
+            get => _isRibbonExpanded;
+            set
+            {
+                if (!SetProperty(ref _isRibbonExpanded, value))
+                    return;
+
+                RibbonContainerSize = value ? 180 : 0;
+                ToolBarVisibility = value ? Visibility.Visible : Visibility.Hidden;
             }
         }
 

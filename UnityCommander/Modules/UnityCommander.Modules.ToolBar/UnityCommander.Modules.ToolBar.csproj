@@ -21,4 +21,15 @@
     <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
     <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityCommander.Ribbon.Core">
+      <HintPath>..\..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Resources">
+      <HintPath>..\..\..\..\_builds\UnityCommander.Ribbon.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Wpf">
+      <HintPath>..\..\..\..\_builds\UnityCommander.Ribbon.Wpf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

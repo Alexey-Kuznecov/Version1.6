@@ -57,6 +57,21 @@
     <Reference Include="CommandSystem.Infrastructure">
       <HintPath>..\..\..\_builds\CommandSystem.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="UnityCommander.Ribbon.Core">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.DefaultIcons">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.DefaultIcons.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Resources">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Services">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Wpf">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Update="App.xaml">

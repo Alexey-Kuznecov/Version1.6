@@ -20,6 +20,9 @@ namespace UnityCommander
             "/UnityCommander.Controls;component/Ribbon/Ribbon.xaml",
             "/UnityCommander.Controls;component/TabPanel/Generic.xaml",
             "/UnityCommander.Modules.FilePanel;component/Resources/Generic.xaml",
+            "/UnityCommander.Ribbon.Wpf;component/Themes/Generic.xaml",
+            "/UnityCommander.Ribbon.Resources;component/Styles/RibbonStyles.xaml"
+
         };
 
         /// <summary>

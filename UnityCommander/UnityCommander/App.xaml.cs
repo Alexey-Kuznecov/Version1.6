@@ -36,6 +36,7 @@ namespace UnityCommander
     using UnityCommander.Modules.Viewer;
     using UnityCommander.Modules.Viewer.Views;
     using UnityCommander.Operation;
+    using UnityCommander.Ribbon.Core.Services;
     using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Selection;
     using UnityCommander.Services.Settings;
@@ -130,6 +131,8 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ISelectionStrategy, ShiftSelectionStrategy>();
             containerRegistry.RegisterSingleton<ISelectionStrategy, CtrlSelectionStrategy>();
             containerRegistry.RegisterSingleton<ISelectionStrategy, ExtensionSelectionRuleStrategy>();
+
+            containerRegistry.RegisterSingleton<IRibbonManager, RibbonManager>();
 
             // Службы для управления выделением в файловых панелях
             containerRegistry.RegisterSingleton<ISelectionService, SelectionService>();
