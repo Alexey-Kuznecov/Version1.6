@@ -8,14 +8,8 @@ namespace UnityCommander.Controls.Ribbon
 
     using AlexeyKuznecov.Library.Mvvm.Base;
 
-    /// <summary>
-    /// The ribbon tab.
-    /// </summary>
     public class RibbonTab : Panel
     {
-        /// <summary>
-        /// Gets or sets the tab command.
-        /// </summary>
         public ICommand MinimizeCommand => new RelayCommand(obj =>
         {
             FrameworkElement parent = this.Parent as FrameworkElement;
@@ -37,25 +31,10 @@ namespace UnityCommander.Controls.Ribbon
             }
         });
 
-        /// <summary>
-        /// The on render.
-        /// </summary>
-        /// <param name="dc">
-        /// The dc.
-        /// </param>
         protected override void OnRender(DrawingContext dc)
         {
         }
-
-        /// <summary>
-        /// The arrange override.
-        /// </summary>
-        /// <param name="finalSize">
-        /// The arrange bounds.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
+     
         protected override Size ArrangeOverride(Size finalSize)
         {
             double margin = 0;
@@ -82,15 +61,6 @@ namespace UnityCommander.Controls.Ribbon
             return finalSize;
         }
 
-        /// <summary>
-        /// The measure override.
-        /// </summary>
-        /// <param name="availableSize">
-        /// The available size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);

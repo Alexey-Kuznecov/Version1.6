@@ -11,46 +11,14 @@ namespace UnityCommander.Controls.Ribbon
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Controls.Ribbon.Subgroup;
 
-    /// <summary>
-    /// Adds a list of controls below each other..
-    /// </summary>
     [SuppressMessage("ReSharper", "ConvertToUsingDeclaration")]
     public class RibbonControlListBuilder : IDisposable
     {
-        /// <summary>
-        /// The item collection.
-        /// </summary>
         private readonly List<UIElement> itemCollection = new ();
-
-        /// <summary>
-        /// The ribbon control models.
-        /// </summary>
         private readonly List<DataBindingControl> dataBindingControls = new ();
-
-        /// <summary>
-        /// The combo box.
-        /// </summary>
         private readonly List<RibbonComboBox> comboBoxes = new ();
-
-        /// <summary>
-        /// Gets the controls stack group.
-        /// </summary>
         public ControlsStackGroup ControlsStackGroup { get; } = new ();
-
-        /// <summary>
-        /// The add item.
-        /// </summary>
-        /// <param name="item">
-        /// The item.
-        /// </param>
         public void AddItem(Action<RibbonControlListBuilder> item) => item(this);
-
-        /// <summary>
-        /// The add item.
-        /// </summary>
-        /// <param name="control">
-        /// The item.
-        /// </param>
         public void AddItem(IRibbonControl control)
         {
             ListBoxItem listBoxItem = new ()
@@ -62,26 +30,12 @@ namespace UnityCommander.Controls.Ribbon
             
             this.itemCollection.Add(listBoxItem);
         }
-
-        /// <summary>
-        /// The add combo box item.
-        /// </summary>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
         public void AddDropItem(string content, IIcon icon, Action<RibbonDropListBuilder> callback)
         {
             var dropList = new RibbonDropListBuilder(content, icon);
             callback(dropList);
             this.itemCollection.Add(dropList.DropListItem);
         }
-
-        /// <summary>
-        /// The add combo box item.
-        /// </summary>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
         public void AddComboBoxItem(Action<RibbonComboBox> callback)
         {
             using (var comboBox = new RibbonComboBox())
@@ -95,10 +49,6 @@ namespace UnityCommander.Controls.Ribbon
                 }
             }
         }
-
-        /// <summary>
-        /// The dispose.
-        /// </summary>
         public void Dispose()
         {
             this.comboBoxes.Clear();

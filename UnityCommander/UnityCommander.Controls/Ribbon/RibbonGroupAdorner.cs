@@ -1,28 +1,12 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-    using System.Globalization;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
 
-    /// <summary>
-    /// The group adorner.
-    /// </summary>
     public class RibbonGroupAdorner : Panel
     {
-        /// <summary>
-        /// The set adorner.
-        /// </summary>
-        /// <param name="groupName">
-        /// The group name.
-        /// </param>
-        /// <param name="ribbonGroup">
-        /// The ribbon group.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RibbonGroupAdorner"/>.
-        /// </returns>
         public RibbonGroupAdorner SetAdorner(string groupName, RibbonGroup ribbonGroup)
         {
             TextBlock groupNameContainer = new TextBlock()
@@ -40,15 +24,6 @@ namespace UnityCommander.Controls.Ribbon
             return this;
         }
 
-        /// <summary>
-        /// The arrange override.
-        /// </summary>
-        /// <param name="arrangeSize">
-        /// The arrange size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size ArrangeOverride(Size arrangeSize)
         {
             double margin = 0;
@@ -61,15 +36,6 @@ namespace UnityCommander.Controls.Ribbon
             return arrangeSize;
         }
 
-        /// <summary>
-        /// The measure override.
-        /// </summary>
-        /// <param name="constraint">
-        /// The constraint.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size MeasureOverride(Size constraint)
         {
             double width = 0;

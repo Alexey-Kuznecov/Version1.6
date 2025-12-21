@@ -28,71 +28,19 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     {
         #region Dependency Injection Fields
 
-        /// <summary>
-        /// The dialog service.
-        /// </summary>
         private readonly IDialogService dialogService;
-
-        /// <summary>
-        /// The plugin loader service.
-        /// </summary>
         private readonly IPluginLoaderService pluginLoader;
-
-        /// <summary>
-        /// The plugin loader service.
-        /// </summary>
         private readonly IIconProviderService iconProvider;
-
-        /// <summary>
-        /// The config service.
-        /// </summary>
         private readonly ISettingsProviderService configService;
 
         #endregion
         
-        /// <summary>
-        /// Gets or sets the minimize command.
-        /// </summary>
         private ICommand minimizeCommand;
-
-        /// <summary>
-        /// The icon.
-        /// </summary>
         private Path icon;
-
-        /// <summary>
-        /// The user controls.
-        /// </summary>
         private UserControl userControls;
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
         private DelegateCommand showDialogCommand;
-
-        /// <summary>
-        /// The message.
-        /// </summary>
         private string message;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ToolBarViewModel"/> class.
-        /// </summary>
-        /// <param name="dialogService">
-        /// The dialog Service.
-        /// </param>
-        /// <param name="iconProvider">
-        /// The icon Provider.
-        /// </param>
-        /// <param name="pluginLoaderService">
-        /// The plugin Loader Service.
-        /// </param>
-        /// <param name="globalCommandService">
-        /// The global Command Service.
-        /// </param>
-        /// <param name="configService">
-        /// The config Service.
-        /// </param>
         public ToolBarViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
@@ -109,45 +57,29 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         }
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the icon.
-        /// </summary>
         public Path Icon
         {
             get => this.icon;
             set => this.SetProperty(ref this.icon, value);
         }
 
-        /// <summary>
-        /// Gets or sets the user controls.
-        /// </summary>
         public UserControl UserControls
         {
             get => this.userControls;
             set => this.SetProperty(ref this.userControls, value);
         }
 
-        /// <summary>
-        /// Gets or sets the message.
-        /// </summary>
         public string Message
         {
             get => this.message;
             set => this.SetProperty(ref this.message, value);
         }
 
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
         public DelegateCommand ShowDialogCommand =>
             this.showDialogCommand ?? new DelegateCommand(this.ExecuteShowDialogCommand);
 
         #endregion
-        
-        /// <summary>
-        /// Gets or sets the minimize command.
-        /// </summary>
+
         public ICommand MinimizeCommand =>
             new RelayCommand(
                 obj =>
@@ -155,23 +87,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                         this.minimizeCommand.Execute(null);
                     });
 
-        /// <summary>
-        /// The maximize.
-        /// </summary>
-        /// <param name="command">
-        /// The command.
-        /// </param>
         void IRibbonManager.Collapse(ICommand command)
         {
             this.minimizeCommand = command;
         }
 
-        /// <summary>
-        /// The initial.
-        /// </summary>
-        /// <param name="ribbon">
-        /// The ribbon.
-        /// </param>
         void IRibbonManager.Initial(Ribbon ribbon)
         {
             ribbon.Children.Add(RibbonBuilderExtension.SetSection(this.RibbonFileSectionBuilder())
@@ -180,12 +100,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 .BuildGrid());
         }
 
-        /// <summary>
-        /// The configure.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
         public void Configure(RibbonConfig config)
         {
             var appConfig = configService.GetAppConfig();
@@ -194,12 +108,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
         #region Ribbon File Section
 
-        /// <summary>
-        /// The ribbon build.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
         private RibbonBuilder RibbonFileSectionBuilder()
         {
             return RibbonBuilderExtension.Initial("File").SetGroup(
@@ -260,12 +168,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
         #region Ribbon View Section
 
-        /// <summary>
-        /// The ribbon view build.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
         private RibbonBuilder RibbonLaunchSectionBuilder()
         {
             return RibbonBuilderExtension.Initial("Launch").SetGroup(
@@ -282,12 +184,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
         #region Ribbon View Section
 
-        /// <summary>
-        /// The ribbon view build.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
         private RibbonBuilder RibbonViewSectionBuilder()
         {
             return RibbonBuilderExtension.Initial("View").SetGroup(
@@ -310,9 +206,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
         #endregion
 
-        /// <summary>
-        /// The execute show dialog command.
-        /// </summary>
         private void ExecuteShowDialogCommand()
         {
             var dialogs = this.pluginLoader.GetDialogService();

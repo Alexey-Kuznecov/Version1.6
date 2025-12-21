@@ -1,13 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Ribbon2\**" />
     <Compile Remove="Window\Styles\**" />
+    <EmbeddedResource Remove="Ribbon2\**" />
     <EmbeddedResource Remove="Window\Styles\**" />
+    <None Remove="Ribbon2\**" />
     <None Remove="Window\Styles\**" />
+    <Page Remove="Ribbon2\**" />
     <Page Remove="Window\Styles\**" />
   </ItemGroup>
   <ItemGroup>
