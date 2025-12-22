@@ -13,6 +13,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using UnityCommander.Ribbon.Core.Models;
     using UnityCommander.Ribbon.Core.Models.Controls;
     using UnityCommander.Ribbon.Core.Services;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Settings;
 
@@ -27,6 +28,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private readonly IPluginLoaderService pluginLoader;
         private readonly IIconProviderService iconProvider;
         private readonly ISettingsProviderService configService;
+        private readonly CommandService _commandService;
 
         #endregion
 
@@ -43,8 +45,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             IPluginLoaderService pluginLoaderService,
             IGlobalCommandService globalCommandService,
             ISettingsProviderService configService,
-            IRibbonManager ribbonManager)
+            IRibbonManager ribbonManager, CommandService commandService)
          {
+            _commandService = commandService;
             RibbonManager = ribbonManager;
             this.configService = configService;
             this.pluginLoader = pluginLoaderService;
@@ -57,7 +60,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                            .AddGroup(new RibbonGroupBuilder("grp1", "Large")
                                        .AddSection(sec => sec
                                         .WithLayout(RibbonGroupLayout.Inline)
-                                           .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                                           .AddButton("btn1", "Команда 1", new ToggleBottomPanel(_commandService, "btn1"), RibbonItemCategory.FileOpen, "file.add")
                                            .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "edit.delete")
                                            .AddItem(new RibbonCheckBoxModel()
                                            {

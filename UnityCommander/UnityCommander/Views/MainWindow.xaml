@@ -2,6 +2,7 @@
     x:Class="UnityCommander.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:at="clr-namespace:UnityCommander.AttachProperties"
     xmlns:controls="clr-namespace:UnityCommander.Controls.Window;assembly=UnityCommander.Controls"
     xmlns:conv="clr-namespace:UnityCommander.Converters"
     xmlns:core="clr-namespace:UnityCommander.Core;assembly=UnityCommander.Core"
@@ -53,8 +54,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding RibbonContainerSize}" />
-            <RowDefinition />
-            <RowDefinition Height="200" />
+            <RowDefinition Height="1*" />
+            <RowDefinition at:Collapsible.IsCollapsed="{Binding IsBottomPanelVisible, RelativeSource={RelativeSource AncestorType=Window}}" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <!--
@@ -140,11 +141,12 @@
         <Border
             Grid.Row="2"
             Grid.Column="3"
-            Grid.ColumnSpan="3">
+            Grid.ColumnSpan="3"
+            Height="230">
             <ContentControl
                 prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}"
                 Background="#F3F2F2"
-                Visibility="{Binding IsBottomPanelVisible, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}}" />
+                Visibility="{Binding IsBottomPanelVisible, RelativeSource={RelativeSource AncestorType=Window}}" />
         </Border>
     </Grid>
     <!--<WindowChrome.WindowChrome>
