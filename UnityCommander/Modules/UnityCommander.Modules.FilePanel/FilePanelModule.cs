@@ -31,6 +31,7 @@ namespace UnityCommander.Modules.FilePanel
     using System.Windows.Threading;
     using UnityCommander.Common.Module;
     using UnityCommander.Core.Commands.Base;
+    using UnityCommander.Logging.Abstractions;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
@@ -53,7 +54,7 @@ namespace UnityCommander.Modules.FilePanel
         private IDockingService _dockingService;
         private IAppConfigService _appConfigService;
         private IPanelRegistry _panelRegistry;
-        private IAppLogger _appLogger;
+        private ILogger _logger;
         private DoubleClickHandlerHelper _doubleClickHelper;
 
         // поле класса — для дебаунса (вставь в класс)
@@ -103,7 +104,7 @@ namespace UnityCommander.Modules.FilePanel
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            _appLogger = containerProvider.Resolve<IAppLogger>(); ;
+            _logger = containerProvider.Resolve<ILogger>(); ;
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
             _panelRegistry = containerProvider.Resolve<IPanelRegistry>();
             _dockingService = containerProvider.Resolve<IDockingService>();
@@ -115,7 +116,7 @@ namespace UnityCommander.Modules.FilePanel
             manager.MouseDoubleClick += Manager_MouseDoubleClick;
             manager.ActiveContentChanged += Manager_ActiveContentChanged;
             _multiCommands.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
-            _doubleClickHelper = new DoubleClickHandlerHelper(this._appLogger, command, _dockingService, regionManager);
+            _doubleClickHelper = new DoubleClickHandlerHelper(this._logger, command, _dockingService, regionManager);
             if (File.Exists(layoutFilePath))
             {
                 var serializer = new XmlLayoutSerializer(manager);
@@ -218,7 +219,7 @@ namespace UnityCommander.Modules.FilePanel
             }
             catch (Exception ex)
             {
-                _appLogger.Info("Manager_MouseDoubleClick error: " + ex);
+                _logger.Info("Manager_MouseDoubleClick error: " + ex);
             }
         }
 

@@ -14,6 +14,7 @@
     <PackageReference Include="Prism.Core" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\UnityCommander.Logging\UnityCommander.Logging.Abstractions\UnityCommander.Logging.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

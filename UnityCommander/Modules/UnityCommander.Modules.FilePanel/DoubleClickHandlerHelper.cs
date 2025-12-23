@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using UnityCommander.Common.Module;
+using UnityCommander.Logging.Abstractions;
 using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
@@ -18,7 +19,7 @@ namespace UnityCommander.Modules.FilePanel
     // Хелпер для обработки двойного клика
     public class DoubleClickHandlerHelper
     {
-        private readonly IAppLogger _appLogger;
+        private readonly ILogger _logger;
         private readonly CommandService _commandExecute;
         private readonly IDockingService _dockingService;
         private readonly IRegionManager _regionManager;
@@ -26,12 +27,12 @@ namespace UnityCommander.Modules.FilePanel
         private DateTime _lastDoubleClickHandled = DateTime.MinValue;
 
         public DoubleClickHandlerHelper(
-            IAppLogger appLogger,
+            ILogger logger,
             CommandService commandExecute,
             IDockingService dockingService,
             IRegionManager regionManager)
         {
-            _appLogger = appLogger;
+            _logger = logger;
             _commandExecute = commandExecute;
             _dockingService = dockingService;
             _regionManager = regionManager;
@@ -44,7 +45,7 @@ namespace UnityCommander.Modules.FilePanel
                 if ((DateTime.UtcNow - lastNavigationTime).TotalMilliseconds < 300)
                 {
 #if DEBUG
-                    _appLogger.Info("DoubleClick: ignored due to recent navigation");
+                    _logger.Info("DoubleClick: ignored due to recent navigation");
 #endif
                     return;
                 }
@@ -66,7 +67,7 @@ namespace UnityCommander.Modules.FilePanel
             catch (Exception ex)
             {
 #if DEBUG
-                _appLogger.Info("DoubleClickHandlerHelper error: " + ex);
+                _logger.Info("DoubleClickHandlerHelper error: " + ex);
 #endif
             }
         }
@@ -86,7 +87,7 @@ namespace UnityCommander.Modules.FilePanel
         private void LogChain(List<string> chain)
         {
 #if DEBUG
-            _appLogger.Info("DoubleClick Hit chain: " + string.Join(" -> ", chain));
+            _logger.Info("DoubleClick Hit chain: " + string.Join(" -> ", chain));
 #endif
         }
 
@@ -95,7 +96,7 @@ namespace UnityCommander.Modules.FilePanel
             if (!chain.Any(n => n == "LayoutDocumentPaneControl"))
             {
 #if DEBUG
-                _appLogger.Info("DoubleClick: no LayoutDocumentPaneControl -> reject");
+                _logger.Info("DoubleClick: no LayoutDocumentPaneControl -> reject");
 #endif
                 return false;
             }
@@ -116,7 +117,7 @@ namespace UnityCommander.Modules.FilePanel
             if (hits.Any())
             {
 #if DEBUG
-                _appLogger.Info("DoubleClick: close-blacklist hit -> reject (" + string.Join(", ", hits) + ")");
+                _logger.Info("DoubleClick: close-blacklist hit -> reject (" + string.Join(", ", hits) + ")");
 #endif
                 return true;
             }
@@ -132,7 +133,7 @@ namespace UnityCommander.Modules.FilePanel
                 if (idxContentPresenter >= 0 && idxContentPresenter <= 2)
                 {
 #if DEBUG
-                    _appLogger.Info("DoubleClick: ContentPresenter close to hit -> reject");
+                    _logger.Info("DoubleClick: ContentPresenter close to hit -> reject");
 #endif
                     return true;
                 }
@@ -150,7 +151,7 @@ namespace UnityCommander.Modules.FilePanel
             if (chain.Any(n => broaderBlacklist.Contains(n)))
             {
 #if DEBUG
-                _appLogger.Info("DoubleClick: broader blacklist -> reject");
+                _logger.Info("DoubleClick: broader blacklist -> reject");
 #endif
                 return true;
             }
@@ -162,7 +163,7 @@ namespace UnityCommander.Modules.FilePanel
             if ((DateTime.UtcNow - _lastDoubleClickHandled).TotalMilliseconds < 200)
             {
 #if DEBUG
-                _appLogger.Info("DoubleClick: suppressed due to double handling cooldown");
+                _logger.Info("DoubleClick: suppressed due to double handling cooldown");
 #endif
                 return true;
             }

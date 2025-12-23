@@ -64,10 +64,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IGlobalCommandService globalCommandService;
         private readonly IPluginLoaderService pluginLoaderService;
         private readonly IAppConfigService configService;
-        private readonly IAppLogger _appLogger;
+        //private readonly IAppLogger _appLogger;
         private readonly NavigationManager _navigationService;
         private readonly CommandManager commandManager;
-        private readonly ModuleLogger logger;
+        private readonly Logging.Abstractions.ILogger _logger;
         private IGuiCommandExecutor guiCommandExecutor;
         private IPanelRegistry _panelRegistry;
         private PanelViewModelAdapter _adapter;
@@ -144,13 +144,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               NavigationContextDirectory navigationContext,
               IGuiCommandExecutor guiCommandExecutor,
               CommandManager manager,
-              ModuleLogger logger,
-              IAppLogger appLogger,
+              //ModuleLogger logger,
+              //IAppLogger appLogger,
               // <-- NEW dependencies
               IColumnProvider columnProvider,
               IColumnStateManager columnStateManager,
               ISettingsStore settingsStore,
-              ColumnRegistry columnRegistry) 
+              ColumnRegistry columnRegistry,
+              Logging.Abstractions.ILogger logger) 
             : base(regionManager)
         {
             this.guiCommandExecutor = guiCommandExecutor;
@@ -159,8 +160,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.configService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
-            this.logger = logger;
-            this._appLogger = appLogger;
+            this._logger = logger;
+            //this._appLogger = appLogger;
             this.pluginLoaderService = pluginService;
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
@@ -440,8 +441,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
-                    _appLogger.Info($"Открыта папка ({dir.Path})");
+                    //this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
+                    _logger.Info($"Открыта папка ({dir.Path})");
 #endif
                     _navigationService.TryNavigateTo(dir.Path);
                 }
@@ -456,8 +457,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Log(LogLevel.Info, $"Открыт диск ({dir.Letter})");
-                    _appLogger.Info($"Открыт диск ({dir.Letter})");
+                    //this.logger.Log(LogLevel.Info, $"Открыт диск ({dir.Letter})");
+                    _logger.Info($"Открыт диск ({dir.Letter})");
 #endif  
                     _navigationService.TryNavigateTo(dir.Letter);
                 }
@@ -472,8 +473,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (dir != null)
                 {
 #if (Nlog)
-                    this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
-                    _appLogger.Info($"Текущая папка изменена на ({dir})");
+                    //this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
+                    _logger.Info($"Текущая папка изменена на ({dir})");
 #endif
                     _navigationService.TryNavigateTo(dir.ToString(), forceRecord: true);
                 }
@@ -1096,7 +1097,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
 
 #if (Nlog)
-                _appLogger.Info($"Возврат в папку ({this.CurrentDirectory})");
+                _logger.Info($"Возврат в папку ({this.CurrentDirectory})");
 #endif
             });
 
@@ -1114,7 +1115,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (this.CurrentDirectory == VirtualPaths.MyComputer)
                 {
 #if (Nlog)
-                    _appLogger.Info($"Открыт Мой компьютер ({this.CurrentDirectory})");
+                    _logger.Info($"Открыт Мой компьютер ({this.CurrentDirectory})");
 #endif
                     // Обновляем диски
                     _ = GoDrivePanel();

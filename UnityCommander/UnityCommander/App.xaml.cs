@@ -38,6 +38,7 @@ namespace UnityCommander
     using UnityCommander.Core.Navgator;
     using UnityCommander.Integration.Plugins;
     using UnityCommander.Logging;
+    using UnityCommander.Logging.Abstractions;
     using UnityCommander.Modules.BottomPanel;
     using UnityCommander.Modules.FilePanel;
     using UnityCommander.Modules.FilePanel.Columns;
@@ -48,6 +49,7 @@ namespace UnityCommander
     using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Selection;
     using UnityCommander.Services.Settings;
+    using UnityCommander.Sinks;
     using ViewModels;
     using Views;
     using Views.CopyDialogs;
@@ -67,7 +69,6 @@ namespace UnityCommander
         protected override void InitializeShell(Window shell)
         {
             base.InitializeShell(shell);
-        
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -109,8 +110,13 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
             containerRegistry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
-            containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
+            //containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
+
+            containerRegistry.RegisterSingleton<ILogSink, NullSink>();
+            containerRegistry.RegisterSingleton<LogHub>();
+            containerRegistry.RegisterSingleton<ILogger, Logging.Abstractions.Logger>();
+
 
             //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();
             containerRegistry.RegisterSingleton<IPluginManager, PluginManager>();
@@ -178,7 +184,7 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ICommandRegister, GuiCommandRegister>();
             containerRegistry.RegisterSingleton<IGuiCommandExecutor, GuiCommandExecuter>();
             containerRegistry.RegisterSingleton<CommandService>();
-
+            
             // -------------------------------
             // 9. AI сервисы (пока закомментированы)
             // -------------------------------

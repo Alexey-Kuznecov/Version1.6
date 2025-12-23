@@ -2,40 +2,42 @@
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
+using UnityCommander.Logging.Abstractions;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
     public class LogViewModel : BindableBase
     {
-        private readonly IAppLogger logger;
+        private readonly StringBuilder _builder = new();
 
-        private StringBuilder logBuilder = new();
-
-        private string _logText = string.Empty;
+        private string _logText = "";
         public string LogText
         {
             get => _logText;
             set => SetProperty(ref _logText, value);
         }
 
-        public LogViewModel(IAppLogger logger)
+        public LogViewModel(LogHub hub)
         {
-            this.logger = logger;
-
-            logger.OnLog += e =>
-            {
-                var formatted = FormatEntry(e);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    logBuilder.AppendLine(formatted);
-                    LogText = logBuilder.ToString();
-                });
-            };
+            hub.LogReceived += OnLog;
         }
 
-        private string FormatEntry(LogEntry e)
+        private void OnLog(Logging.Abstractions.LogEntry entry)
+        {
+            if (entry.Channel != LogChannel.Journal)
+                return;
+
+            var formatted = FormatEntry(entry);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _builder.AppendLine(formatted);
+                LogText = _builder.ToString();
+            });
+        }
+
+        private string FormatEntry(Logging.Abstractions.LogEntry e)
         {
             return
                 $"[{e.Timestamp:yyyy-MM-dd HH:mm:ss.fff}] " +
