@@ -57,6 +57,12 @@
     <Reference Include="CommandSystem.Infrastructure">
       <HintPath>..\..\..\_builds\CommandSystem.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="PluginSystem.Abstractions">
+      <HintPath>..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginSystem.Runtime">
+      <HintPath>..\..\..\_builds\PluginSystem.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="UnityCommander.Ribbon.Core">
       <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
     </Reference>

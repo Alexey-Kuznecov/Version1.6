@@ -24,6 +24,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IServiceProvider _services;
         private readonly ConsoleApplicationLifetime _lifetime;
         private readonly IConsoleCommandProvider _consoleCommandProvider;
+        private readonly IPluginProvider _pluginProvider;
 
         private string _inputText;
         public string InputText
@@ -49,7 +50,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IServiceProvider services,
             ConsoleApplicationLifetime lifetime,
             IEventAggregator ea, 
-            IConsoleCommandProvider consoleCommandProvider)
+            IConsoleCommandProvider consoleCommandProvider,
+            IPluginProvider pluginProvider) //, IPluginProvider pluginProvider)
         {
             _input = input;
             _output = output;
@@ -57,6 +59,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             _services = services;
             _lifetime = lifetime;
             _consoleCommandProvider = consoleCommandProvider;
+            _pluginProvider = pluginProvider;
 
             // Регистрируем все команды из сервиса
             foreach (var cmd in _consoleCommandProvider.GetAllCommands())
@@ -74,6 +77,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             SendCommandCommand = new DelegateCommand(SendInput);
 
             Task.Run(MainLoop);
+            _pluginProvider = pluginProvider;
         }
 
         private void AppendLine(string text)

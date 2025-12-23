@@ -18,4 +18,10 @@
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="PluginSystem.Abstractions">
+      <HintPath>..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -16,6 +16,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PluginSystem.Abstractions">
+      <HintPath>..\..\..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\_builds\&quot;" />
 	</Target>

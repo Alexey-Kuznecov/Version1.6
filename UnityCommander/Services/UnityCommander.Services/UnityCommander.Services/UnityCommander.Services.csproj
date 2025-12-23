@@ -17,5 +17,8 @@
     <Reference Include="CommandSystem.Abstractions">
       <HintPath>..\..\..\..\..\_builds\CommandSystem.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="PluginSystem.Abstractions">
+      <HintPath>..\..\..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -12,19 +12,27 @@ namespace UnityCommander
     using CommandSystem.Infrastructure.Execution;
     using CommandSystem.Infrastructure.Lifecycle;
     using Core;
+    using Example;
     using Modules.LeftSideBars;
     using Modules.TabPanel.Views;
     using Modules.ToolBar;
+    using PluginSystem.Abstractions.Plugin;
+    using PluginSystem.Abstractions.Services;
+    using PluginSystem.Runtime;
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
     using Services;
     using Services.Interfaces;
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
     using System.Windows;
     using UnityCommander.AI.ImageSearch;
     using UnityCommander.Commands;
     using UnityCommander.Common.Commands;
+    using UnityCommander.Common.Plugins;
     using UnityCommander.Common.Selection;
     using UnityCommander.Core.Behaviors.Selection;
     using UnityCommander.Core.Navgator;
@@ -104,6 +112,10 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
+            //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();
+            containerRegistry.RegisterSingleton<IPluginManager, PluginManager>();
+            containerRegistry.RegisterSingleton<IPluginProvider, PluginProvider>();
+
             // Команды
             containerRegistry.Register<IConsoleCommandBase, EchoCommand>();
             containerRegistry.Register<IConsoleCommandBase, SysStatCommand>();
@@ -113,6 +125,7 @@ namespace UnityCommander
             containerRegistry.Register<IConsoleCommandBase, FindSimilarCommand>();
             containerRegistry.Register<IConsoleCommandBase, FileUnlockCommand>();
             containerRegistry.Register<IConsoleCommandBase, TestFlashCommand>();
+            containerRegistry.Register<IConsoleCommandBase, PluginConsoleCommand>();
 
             // Навигационный контекст, нужен один на всё приложение
             containerRegistry.RegisterSingleton<NavigationContextDirectory>();
