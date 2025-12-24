@@ -8,6 +8,7 @@ namespace UnityCommander.CLI.Commands
     /// Реализация интерфейса <see cref="ICommandParameters"/> для хранения и работы с параметрами консольных команд.
     /// Позволяет задавать и получать значения по имени параметра с возможностью преобразования типов.
     /// </summary>
+    [Obsolete]
     public class ConsoleCommandParameters : ICommandParameters
     {
         /// <summary>

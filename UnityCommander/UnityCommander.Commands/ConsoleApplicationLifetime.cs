@@ -3,6 +3,7 @@ using System;
 
 namespace UnityCommander.Commands
 {
+    [Obsolete]
     public class ConsoleApplicationLifetime
     {
         private bool _isRunning = true;

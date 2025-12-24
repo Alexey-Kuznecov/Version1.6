@@ -3,6 +3,7 @@ using UnityCommander.CLI.Core;
 
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     public abstract class ConsoleCommandBase
     {
         public abstract string Name { get; }

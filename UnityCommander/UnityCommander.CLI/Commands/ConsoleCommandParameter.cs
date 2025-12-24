@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     public class ConsoleCommandParameter
     {
         public string Input { get; }

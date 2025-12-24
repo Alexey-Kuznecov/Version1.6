@@ -14,6 +14,7 @@ using UnityCommander.CLI.Autocomplete;
 using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
+using UnityCommander.CLI.Input;
 using UnityCommander.CLI.Integration;
 using UnityCommander.Core.Navgator;
 using UnityCommander.Services.Interfaces;
@@ -31,7 +32,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IPluginProvider _pluginProvider;
         private readonly IConsoleAutoComplete _autoComplete;
 
-        private string _inputText;
+        private readonly ICompletionEngine _completionEngine;
+
+        private string _inputText = "";
         public string InputText
         {
             get => _inputText;
@@ -39,17 +42,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             {
                 if (SetProperty(ref _inputText, value))
                 {
-                    UpdateSuggestions();
-                    MoveCaretToEnd();
+                    UpdateCompletions();
                 }
             }
-        }
-
-        private int _selectedSuggestionIndex = -1;
-        public int SelectedSuggestionIndex
-        {
-            get => _selectedSuggestionIndex;
-            set => SetProperty(ref _selectedSuggestionIndex, value);
         }
 
         private int _caretIndex;
@@ -59,8 +54,15 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             set => SetProperty(ref _caretIndex, value);
         }
 
-        private readonly ObservableCollection<string> _suggestions = new();
-        public ReadOnlyObservableCollection<string> Suggestions { get; }
+        private int _selectedIndex = -1;
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set => SetProperty(ref _selectedIndex, value);
+        }
+
+        private readonly ObservableCollection<CompletionItem> _completions = new();
+        public ReadOnlyObservableCollection<CompletionItem> Completions { get; }
 
         private readonly ObservableCollection<string> _lines = new();
         public ReadOnlyObservableCollection<string> Lines { get; }
@@ -72,12 +74,10 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             Clipboard.SetText(text);
         });
 
-        private bool CanNavigate() => Suggestions.Count > 0;
-
         public ICommand NavigateUpCommand { get; }
         public ICommand NavigateDownCommand { get; }
-        public ICommand AcceptSuggestionCommand { get; }
-        public ICommand CancelSuggestionCommand { get; }
+        public ICommand AcceptCommand { get; }
+        public ICommand CancelCommand { get; }
 
         public ConsoleViewModel(
             IConsoleInput input,
@@ -87,8 +87,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             ConsoleApplicationLifetime lifetime,
             IEventAggregator ea, 
             IConsoleCommandProvider consoleCommandProvider,
-            IPluginProvider pluginProvider, 
-            IConsoleAutoComplete autoComplete) //, IPluginProvider pluginProvider)
+            IPluginProvider pluginProvider,
+            ICompletionEngine completionEngine) //, IPluginProvider pluginProvider)
         {
             _input = input;
             _output = output;
@@ -97,12 +97,15 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             _lifetime = lifetime;
             _consoleCommandProvider = consoleCommandProvider;
             _pluginProvider = pluginProvider;
-            _autoComplete = autoComplete;
-            Suggestions = new ReadOnlyObservableCollection<string>(_suggestions);
-            NavigateUpCommand = new DelegateCommand(OnNavigateUp, CanNavigate);
-            NavigateDownCommand = new DelegateCommand(OnNavigateDown, CanNavigate);
-            AcceptSuggestionCommand = new DelegateCommand(OnAccept, CanNavigate);
-            CancelSuggestionCommand = new DelegateCommand(OnCancel);
+            _completionEngine = completionEngine;
+
+            Completions = new ReadOnlyObservableCollection<CompletionItem>(_completions);
+
+            AcceptCommand = new DelegateCommand(Accept, CanAccept)
+                .ObservesProperty(() => SelectedIndex);
+
+            CancelCommand = new DelegateCommand(ClearCompletions);
+            
             // Регистрируем все команды из сервиса
             foreach (var cmd in _consoleCommandProvider.GetAllCommands())
             {
@@ -154,129 +157,42 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             }
         }
 
-        private void UpdateSuggestions()
+        private void UpdateCompletions()
         {
-            _suggestions.Clear();
+            var state = new InputState(InputText, CaretIndex);
 
-            var parts = InputText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 0)
-            {
-                _suggestions.Clear();
-                return;
-            }
+            var result = _completionEngine.GetCompletions(state);
 
-            var cmdName = parts[0];
-            var args = parts.Skip(1).ToArray();
+            _completions.Clear();
+            foreach (var item in result.Items)
+                _completions.Add(item);
 
-            // Проверяем, это автокомплит команд или аргументов
-            if (args.Length == 0)
-            {
-                // Автокомплит команд
-                foreach (var c in _dispatcher.GetAvailableCommands()
-                                             .Select(c => c.Name)
-                                             .Where(name => name.StartsWith(cmdName, StringComparison.OrdinalIgnoreCase)))
-                {
-                    if (cmdName == c)
-                    {
-                        _suggestions.Clear();
-                        return;
-                    }
-
-                    _suggestions.Add(c);
-                }
-            }
-            else
-            {
-                if (_dispatcher.TryGetCommand(cmdName, out var cmd) && cmd is IAutoCompleteArgumentsProvider argProvider)
-                {
-                    var lastArg = args.Length > 0 ? args.Last() : "";
-                    var suggestions = argProvider.GetArgumentSuggestions(args).ToList();
-
-                    // 🔥 если последний аргумент полностью совпадает с одним из вариантов → список скрываем
-                    if (suggestions.Any() && suggestions.Contains(lastArg, StringComparer.OrdinalIgnoreCase))
-                    {
-                        _suggestions.Clear();
-                        return;
-                    }
-
-                    // иначе показываем список частичных совпадений
-                    foreach (var s in argProvider.GetArgumentSuggestions(args))
-                    {
-                        if (s.StartsWith(args.Last(), StringComparison.OrdinalIgnoreCase))
-                            _suggestions.Add(s);
-                    }
-                }
-            }
-
-            // Выбираем элемент по умолчанию
-            if (Suggestions.Count > 0)
-            {
-                // Выделяем последний элемент через Dispatcher, чтобы ListBox успел обновиться
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    SelectedSuggestionIndex = Suggestions.Count - 1;
-                }, DispatcherPriority.Background);
-            }
-            else
-            {
-                SelectedSuggestionIndex = -1;
-            }
-        }
-        
-        private void OnNavigateUp()
-        {
-            SelectedSuggestionIndex =
-                Math.Max(SelectedSuggestionIndex - 1, 0);
+            SelectedIndex = result.DefaultSelectedIndex;
         }
 
-        private void OnNavigateDown()
-        {
-            SelectedSuggestionIndex =
-                Math.Min(SelectedSuggestionIndex + 1, Suggestions.Count - 1);
-        }
+        private bool CanAccept() =>
+            SelectedIndex >= 0 && SelectedIndex < _completions.Count;
 
-        private void OnAccept()
+        private void Accept()
         {
-            if (SelectedSuggestionIndex < 0 || SelectedSuggestionIndex >= Suggestions.Count)
+            if (!CanAccept())
                 return;
 
-            var selected = Suggestions[SelectedSuggestionIndex];
+            var state = new InputState(InputText, CaretIndex);
+            var item = _completions[SelectedIndex];
 
-            var parts = InputText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var edit = _completionEngine.ApplyCompletion(state, item);
 
-            if (parts.Length <= 1)
-            {
-                // вставка команды
-                InputText = selected + " ";
-            }
-            else
-            {
-                // вставка аргумента
-                parts[parts.Length - 1] = selected;
-                InputText = string.Join(" ", parts) + " ";
-            }
+            InputText = edit.InsertText;
+            CaretIndex = edit.ReplaceLength;
 
-            // 🔥 каретка теперь реально будет в конце
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                CaretIndex = InputText.Length;
-            }, DispatcherPriority.Render);
-
-            _suggestions.Clear();
-            SelectedSuggestionIndex = -1;
+            ClearCompletions();
         }
 
-        private void OnCancel()
+        private void ClearCompletions()
         {
-            _suggestions.Clear();
-            SelectedSuggestionIndex = -1;
-        }
-
-        private void MoveCaretToEnd()
-        {
-            _caretIndex = InputText.Length;
-            if (InputText.Length == CaretIndex)
-                RaisePropertyChanged(nameof(CaretIndex)); // форсируем уведомление
+            _completions.Clear();
+            SelectedIndex = -1;
         }
     }
 }

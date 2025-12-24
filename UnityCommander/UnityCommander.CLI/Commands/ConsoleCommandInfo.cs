@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     public class ConsoleCommandInfo
     {
         public IEnumerable<string> Aliases { get; }

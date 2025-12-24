@@ -3,6 +3,7 @@ using System.Text;
 
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     internal class ConsoleCommandHelper
     {
         private static string[] ParseCommandLine(string commandLine)

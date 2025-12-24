@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     public class ConsoleCommandCatalog
     {
         private readonly List<ConsoleCommandInfo> _commands = new();

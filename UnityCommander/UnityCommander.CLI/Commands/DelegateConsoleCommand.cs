@@ -3,6 +3,7 @@ using UnityCommander.CLI.Core;
 
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     public class DelegateConsoleCommand : IConsoleCommand
     {
         private Action<ConsoleCommandContext, IConsoleOutput> _handler;

@@ -67,9 +67,9 @@
                         <TextBox.InputBindings>
                             <KeyBinding Key="Up" Command="{Binding NavigateUpCommand}" />
                             <KeyBinding Key="Down" Command="{Binding NavigateDownCommand}" />
-                            <KeyBinding Key="Enter" Command="{Binding AcceptSuggestionCommand}" />
-                            <KeyBinding Key="Tab" Command="{Binding AcceptSuggestionCommand}" />
-                            <KeyBinding Key="Escape" Command="{Binding CancelSuggestionCommand}" />
+                            <KeyBinding Key="Enter" Command="{Binding AcceptCommand}" />
+                            <KeyBinding Key="Tab" Command="{Binding AcceptCommand}" />
+                            <KeyBinding Key="Escape" Command="{Binding CancelCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
                     <Button
@@ -83,9 +83,16 @@
                     MaxHeight="150"
                     Background="#222"
                     Foreground="White"
-                    ItemsSource="{Binding Suggestions}"
-                    SelectedIndex="{Binding SelectedSuggestionIndex}"
-                    Visibility="{Binding Suggestions.Count, Converter={StaticResource CountToVisibility}}">
+                    ItemsSource="{Binding Completions}"
+                    SelectedIndex="{Binding SelectedIndex}"
+                    Visibility="{Binding Completions.Count, Converter={StaticResource CountToVisibility}}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding DisplayText}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                     <ListBox.Resources>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="FontFamily" Value="Consolas" />

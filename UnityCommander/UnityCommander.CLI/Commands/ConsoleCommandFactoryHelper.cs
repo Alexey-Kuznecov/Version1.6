@@ -4,7 +4,8 @@ namespace UnityCommander.CLI.Commands
     using global::UnityCommander.CLI.Core;
     using Microsoft.Extensions.DependencyInjection;
     using System.Linq.Expressions;
-
+    
+    [Obsolete ("Use IServiceProvider directly to create command instances.")]
     public static class ConsoleCommandFactoryHelper
     {
         private static readonly Dictionary<Type, Func<IServiceProvider, ConsoleCommandCatalog?, IConsoleCommand>> _factoryCache = new();

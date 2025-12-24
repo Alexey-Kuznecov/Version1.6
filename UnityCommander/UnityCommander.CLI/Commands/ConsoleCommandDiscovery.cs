@@ -5,6 +5,7 @@ using UnityCommander.CLI.Integration;
 
 namespace UnityCommander.CLI.Commands
 {
+    [Obsolete]
     public static class ConsoleCommandDiscovery
     {
         private static readonly string _cmdPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cmd");

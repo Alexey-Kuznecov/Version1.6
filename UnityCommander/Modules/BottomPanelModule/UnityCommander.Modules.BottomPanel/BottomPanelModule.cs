@@ -3,6 +3,7 @@ using Prism.Modularity;
 using Prism.Regions;
 using System.Diagnostics;
 using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Input;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.Core;
@@ -64,7 +65,12 @@ namespace UnityCommander.Modules.BottomPanel
             containerRegistry.RegisterSingleton<ConsoleCommandFactory>();
             containerRegistry.RegisterSingleton<IConsoleCommandRegistry, ConsoleCommandRegistry>();
             containerRegistry.RegisterSingleton<IConsoleCommandInvoker, ConsoleCommandInvoker>();
-            containerRegistry.RegisterSingleton<IConsoleAutoComplete, ConsoleAutoCompleteService>();
+           
+            containerRegistry.RegisterSingleton<ICompletionProvider, ArgumentCompletionProvider>();
+            containerRegistry.RegisterSingleton<ICompletionProvider, CommandCompletionProvider>();
+            containerRegistry.RegisterSingleton<IInputContextResolver, SimpleInputContextResolver>();
+            containerRegistry.RegisterSingleton<IInputTokenizer, SimpleInputTokenizer>();
+            containerRegistry.RegisterSingleton<ICompletionEngine, CompletionEngine>();
 
             //containerRegistry.RegisterForNavigation<ConsoleView, ConsoleViewModel>("InternalConsole");
         }
