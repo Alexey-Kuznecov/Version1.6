@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.CLI.Autocomplete;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.Services.Interfaces;
@@ -14,7 +15,7 @@ using UnityCommander.Services.Interfaces;
 namespace UnityCommander.Commands
 {
     [ConsoleCommand("plugin", "Управление плагинами", "pl")]
-    public class PluginConsoleCommand : IConsoleCommand
+    public class PluginConsoleCommand : IConsoleCommand, IAutoCompleteArgumentsProvider
     {
         private readonly IPluginProvider _pluginProvider;
         public string Name => "plugin";
@@ -24,6 +25,17 @@ namespace UnityCommander.Commands
         public PluginConsoleCommand(IPluginProvider pluginProvider)
         {
             _pluginProvider = pluginProvider;
+        }
+
+        public IEnumerable<string> GetArgumentSuggestions(string[] currentArgs)
+        {
+            // Простейший пример: 3 аргумента
+            var allArgs = new[] { "load", "unload", "reload", "list", "info" };
+
+            if (currentArgs.Length == 0)
+                return allArgs;
+
+            return allArgs.Where(a => a.StartsWith(currentArgs.Last(), StringComparison.OrdinalIgnoreCase));
         }
 
         public Task ExecuteAsync(

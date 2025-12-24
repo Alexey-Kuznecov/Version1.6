@@ -4,6 +4,7 @@ using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
+    [Obsolete("Use Microsoft.Extensions.Logging instead.")]
     public class AppLogger : IAppLogger
     {
         public event Action<LogEntry> OnLog;

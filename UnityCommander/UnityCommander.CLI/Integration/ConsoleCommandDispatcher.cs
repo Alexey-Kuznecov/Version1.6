@@ -1,5 +1,4 @@
-﻿
-using UnityCommander.CLI.Core;
+﻿using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.Common.Commands;
 using CommandSystem.Infrastructure.Lifecycle;
@@ -101,6 +100,21 @@ namespace UnityCommander.CLI.Integration
                     disposable.Dispose();
                 }
             }
+        }
+
+        public IEnumerable<IConsoleCommand> GetAvailableCommands()
+                => _registry.GetAllCommands();
+
+        public bool TryGetCommand(string cmdName, out object cmd)
+        {
+            var found = _registry.Find(cmdName);
+            if (found != null)
+            {
+                cmd = found;
+                return true;
+            }
+            cmd = null!;
+            return false;
         }
     }
 }

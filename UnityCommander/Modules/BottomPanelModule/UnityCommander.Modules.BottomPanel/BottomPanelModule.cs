@@ -8,6 +8,8 @@ using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.Core;
 using UnityCommander.Modules.BottomPanel.ViewModels;
 using UnityCommander.Modules.BottomPanel.Views;
+using UnityCommander.Services;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel
 {
@@ -62,6 +64,7 @@ namespace UnityCommander.Modules.BottomPanel
             containerRegistry.RegisterSingleton<ConsoleCommandFactory>();
             containerRegistry.RegisterSingleton<IConsoleCommandRegistry, ConsoleCommandRegistry>();
             containerRegistry.RegisterSingleton<IConsoleCommandInvoker, ConsoleCommandInvoker>();
+            containerRegistry.RegisterSingleton<IConsoleAutoComplete, ConsoleAutoCompleteService>();
 
             //containerRegistry.RegisterForNavigation<ConsoleView, ConsoleViewModel>("InternalConsole");
         }
