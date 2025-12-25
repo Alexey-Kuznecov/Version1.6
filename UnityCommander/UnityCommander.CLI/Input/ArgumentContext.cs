@@ -4,24 +4,22 @@ namespace UnityCommander.CLI.Input
     public sealed class ArgumentContext : InputContext
     {
         public string CommandName { get; }
-        public IReadOnlyList<string> ExistingArguments { get; }
         public string PartialArgument { get; }
-
-        // 🔥 ВАЖНО
+        public IReadOnlyList<string> ExistingArguments { get; }
         public int ReplaceStart { get; }
         public int ReplaceLength { get; }
 
         public ArgumentContext(
             TokenizationResult tokens,
             string commandName,
-            IReadOnlyList<string> existingArgs,
+            IReadOnlyList<string> existingArguments,
             string partialArgument,
             int replaceStart,
-            int replaceLength)
-            : base(tokens)
+            int replaceLength
+        ) : base(tokens)
         {
             CommandName = commandName;
-            ExistingArguments = existingArgs;
+            ExistingArguments = existingArguments;
             PartialArgument = partialArgument;
             ReplaceStart = replaceStart;
             ReplaceLength = replaceLength;

@@ -31,8 +31,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IConsoleCommandProvider _consoleCommandProvider;
         private readonly IPluginProvider _pluginProvider;
         private readonly IConsoleAutoComplete _autoComplete;
-
         private readonly ICompletionEngine _completionEngine;
+        private bool _suppressCompletionUpdate;
 
         private string _inputText = "";
         public string InputText
@@ -42,7 +42,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             {
                 if (SetProperty(ref _inputText, value))
                 {
-                    UpdateCompletions();
+                    if (!_suppressCompletionUpdate)
+                        UpdateCompletions();
                 }
             }
         }
@@ -177,16 +178,32 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         {
             if (!CanAccept())
                 return;
+            _suppressCompletionUpdate = true;
 
-            var state = new InputState(InputText, CaretIndex);
-            var item = _completions[SelectedIndex];
+            try
+            {
+                var state = new InputState(InputText, CaretIndex);
+                var item = _completions[SelectedIndex];
 
-            var edit = _completionEngine.ApplyCompletion(state, item);
+                var edit = _completionEngine.ApplyCompletion(state, item);
 
-            InputText = edit.InsertText;
-            CaretIndex = edit.ReplaceLength;
+                // Заменяем только нужный диапазон
+                InputText = InputText.Substring(0, edit.ReplaceStart)
+                            + edit.InsertText
+                            + InputText.Substring(edit.ReplaceStart + edit.ReplaceLength);
 
-            ClearCompletions();
+                // Ставим каретку после вставленного текста
+                Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    CaretIndex = edit.ReplaceStart + edit.InsertText.Length;
+                }, DispatcherPriority.Background);
+
+                ClearCompletions();
+            }
+            finally
+            {
+                _suppressCompletionUpdate = false;
+            }
         }
 
         private void ClearCompletions()

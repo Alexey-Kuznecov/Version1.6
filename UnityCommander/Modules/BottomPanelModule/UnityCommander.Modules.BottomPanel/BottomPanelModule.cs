@@ -68,7 +68,7 @@ namespace UnityCommander.Modules.BottomPanel
            
             containerRegistry.RegisterSingleton<ICompletionProvider, ArgumentCompletionProvider>();
             containerRegistry.RegisterSingleton<ICompletionProvider, CommandCompletionProvider>();
-            containerRegistry.RegisterSingleton<IInputContextResolver, SimpleInputContextResolver>();
+            containerRegistry.RegisterSingleton<IInputContextResolver, InputContextResolver>();
             containerRegistry.RegisterSingleton<IInputTokenizer, SimpleInputTokenizer>();
             containerRegistry.RegisterSingleton<ICompletionEngine, CompletionEngine>();
 

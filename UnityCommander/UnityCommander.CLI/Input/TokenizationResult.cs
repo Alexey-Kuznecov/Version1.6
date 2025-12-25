@@ -6,5 +6,10 @@ namespace UnityCommander.CLI.Input
     {
         public IReadOnlyList<InputToken>? Tokens { get; init; }
         public int CaretPosition { get; init; }
+
+        // 👇 ВОТ ОНИ
+        public int CurrentTokenStart { get; init; }
+        public int CurrentTokenLength { get; init; }
+        public string? CurrentTokenValue { get; init; }
     }
 }

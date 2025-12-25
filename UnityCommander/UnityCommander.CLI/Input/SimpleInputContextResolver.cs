@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UnityCommander.CLI.Input
 {
-    public class SimpleInputContextResolver : IInputContextResolver
+    public class InputContextResolver : IInputContextResolver
     {
         public InputContext Resolve(TokenizationResult tokens)
         {
@@ -21,22 +21,39 @@ namespace UnityCommander.CLI.Input
             }
             else
             {
-                var cmd = tokenList[0].Value;
-                var args = tokenList.Skip(1).Select(t => t.Value ?? string.Empty).ToArray();
-                var partialArg = args.Last();
-                var lastToken = tokens.Tokens!.Last();
+                var tokensResult = tokens;
+                InputToken currentToken;
 
-                var replaceStart = lastToken.StartIndex;
-                var replaceLength = lastToken.Length;
-                var activeToken = tokens;
+                if (tokensResult.Tokens.Count == 0)
+                {
+                    currentToken = new InputToken
+                    {
+                        Start = 0,
+                        Length = 0,
+                        Value = string.Empty
+                    };
+                }
+                else
+                {
+                    currentToken = tokensResult.Tokens
+                        .FirstOrDefault(t =>
+                            tokensResult.CaretPosition >= t.Start &&
+                            tokensResult.CaretPosition <= t.Start + t.Length)
+                        ?? new InputToken
+                        {
+                            Start = tokensResult.CaretPosition,
+                            Length = 0,
+                            Value = string.Empty
+                        };
+                }
+
                 return new ArgumentContext(
-                    tokens,
-                    cmd ?? string.Empty,
-                    args,
-                    lastToken.Value ?? string.Empty,
-                    replaceStart,
-                    replaceLength
-                );
+                    tokensResult,
+                    commandName: tokensResult.Tokens.FirstOrDefault()?.Value ?? string.Empty,
+                    existingArguments: tokensResult.Tokens.Skip(1).Select(t => t.Value ?? string.Empty).ToArray(),
+                    partialArgument: currentToken.Value ?? throw new InvalidOperationException("currentToken не может быть null"),
+                    replaceStart: currentToken.Start,
+                    replaceLength: currentToken.Length);
             }
         }
     }

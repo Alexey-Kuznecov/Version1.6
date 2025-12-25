@@ -35,7 +35,7 @@ namespace UnityCommander.CLI.Input
                 .Select(a => new CompletionItem
                 {
                     DisplayText = a,
-                    EditFactory = _ => new TextEdit(
+                    EditFactory = state => new TextEdit(
                         argCtx.ReplaceStart,
                         argCtx.ReplaceLength,
                         a + " "
