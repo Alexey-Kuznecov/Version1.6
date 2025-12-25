@@ -53,6 +53,7 @@
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="Consolas"
+                        FontSize="16"
                         Foreground="#00ff90"
                         Text="&gt; " />
                     <TextBox
@@ -61,6 +62,7 @@
                         Background="#2D2D30"
                         BorderBrush="#3F3F46"
                         FontFamily="Consolas"
+                        FontSize="16"
                         Foreground="White"
                         KeyDown="TextBox_KeyDown"
                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
@@ -88,9 +90,7 @@
                     Visibility="{Binding Completions.Count, Converter={StaticResource CountToVisibility}}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock
-                                FontFamily="Consolas"
-                                Text="{Binding DisplayText}" />
+                            <TextBlock FontSize="14" FontFamily="Consolas" Text="{Binding DisplayText}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListBox.Resources>

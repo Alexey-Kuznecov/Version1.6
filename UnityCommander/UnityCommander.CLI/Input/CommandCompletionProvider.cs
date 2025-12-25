@@ -30,6 +30,7 @@ namespace UnityCommander.CLI.Input
                         return new TextEdit(
                             cmdContext.ReplaceStart,
                             cmdContext.PartialCommand.Length,
+                            cmdContext.CurrentToken,
                             c.Name + " "
                         );
                     }

@@ -16,42 +16,24 @@ namespace UnityCommander.CLI.Input
             // Простейшая логика: если токен первый → команда, иначе аргумент
             if (tokenList.Count == 0 || tokenList.Count == 1)
             {
-                var partial = tokenList.FirstOrDefault()?.Value ?? "";
+                var partial = tokenList.FirstOrDefault()?.CurrentValue ?? "";
                 return new CommandNameContext(tokens, partial);
             }
             else
             {
-                var tokensResult = tokens;
-                InputToken currentToken;
-
-                if (tokensResult.Tokens.Count == 0)
+                var tokensResult = tokens.Tokens ?? throw new InvalidOperationException("CurrentToken не может быть null"); ;
+                InputToken currentToken = tokens.CurrentToken ?? new InputToken
                 {
-                    currentToken = new InputToken
-                    {
-                        Start = 0,
-                        Length = 0,
-                        Value = string.Empty
-                    };
-                }
-                else
-                {
-                    currentToken = tokensResult.Tokens
-                        .FirstOrDefault(t =>
-                            tokensResult.CaretPosition >= t.Start &&
-                            tokensResult.CaretPosition <= t.Start + t.Length)
-                        ?? new InputToken
-                        {
-                            Start = tokensResult.CaretPosition,
-                            Length = 0,
-                            Value = string.Empty
-                        };
-                }
+                    Start = tokens.CaretPosition,
+                    Length = 0,
+                    CurrentValue = string.Empty
+                };
 
                 return new ArgumentContext(
-                    tokensResult,
-                    commandName: tokensResult.Tokens.FirstOrDefault()?.Value ?? string.Empty,
-                    existingArguments: tokensResult.Tokens.Skip(1).Select(t => t.Value ?? string.Empty).ToArray(),
-                    partialArgument: currentToken.Value ?? throw new InvalidOperationException("currentToken не может быть null"),
+                    tokens,
+                    commandName: tokensResult.FirstOrDefault()?.CurrentValue ?? string.Empty,
+                    existingArguments: tokensResult.Skip(1).Select(t => t.CurrentValue ?? string.Empty).ToArray(),
+                    partialArgument: currentToken.CurrentValue ?? throw new InvalidOperationException("currentToken не может быть null"),
                     replaceStart: currentToken.Start,
                     replaceLength: currentToken.Length);
             }

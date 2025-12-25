@@ -1,8 +1,10 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -33,6 +35,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IConsoleAutoComplete _autoComplete;
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
+        private string _lastTokenValue;
+        private InputToken _lastInputToken;
 
         private string _inputText = "";
         public string InputText
@@ -56,6 +60,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         }
 
         private int _selectedIndex = -1;
+
         public int SelectedIndex
         {
             get => _selectedIndex;
@@ -161,13 +166,21 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private void UpdateCompletions()
         {
             var state = new InputState(InputText, CaretIndex);
-
             var result = _completionEngine.GetCompletions(state);
+            var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
+
+            if (token == null)
+                return;
+
+            //if (token.IsModified)
+            //    return;
+
+            //if (token.CurrentValue == _lastTokenValue)
+            //return; // токен не изменился — не открываем
 
             _completions.Clear();
             foreach (var item in result.Items)
                 _completions.Add(item);
-
             SelectedIndex = result.DefaultSelectedIndex;
         }
 
@@ -202,7 +215,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             }
             finally
             {
+                //_lastInputToken = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
                 _suppressCompletionUpdate = false;
+                _lastTokenValue = InputText;
             }
         }
 

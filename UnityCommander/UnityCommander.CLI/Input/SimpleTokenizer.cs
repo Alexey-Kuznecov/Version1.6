@@ -25,7 +25,8 @@
 
                 tokens.Add(new InputToken
                 {
-                    Value = text.Substring(start, length),
+                    CurrentValue = text.Substring(start, length),
+                    OriginalValue = text.Substring(start, length),
                     Start = start,
                     Length = length
                 });
@@ -65,7 +66,8 @@
                 CaretPosition = state.CaretPosition,
                 CurrentTokenStart = currentToken?.Start ?? state.CaretPosition,
                 CurrentTokenLength = currentToken?.Length ?? 0,
-                CurrentTokenValue = currentToken?.Value ?? string.Empty,
+                CurrentTokenValue = currentToken?.CurrentValue ?? string.Empty,
+                CurrentToken = currentToken
             };
         }
     }

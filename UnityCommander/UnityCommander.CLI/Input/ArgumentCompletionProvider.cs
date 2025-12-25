@@ -38,6 +38,7 @@ namespace UnityCommander.CLI.Input
                     EditFactory = state => new TextEdit(
                         argCtx.ReplaceStart,
                         argCtx.ReplaceLength,
+                        argCtx.CurrentToken,
                         a + " "
                     )
                 });

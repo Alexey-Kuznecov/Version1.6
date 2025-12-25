@@ -5,7 +5,7 @@
         private readonly IInputTokenizer _tokenizer;
         private readonly IInputContextResolver _contextResolver;
         private readonly IEnumerable<ICompletionProvider> _providers;
-
+        private readonly ITokenRegistry _tokenRegistry = new TokenRegistry(); // внутренний регистр
         public CompletionEngine(
             IInputTokenizer tokenizer,
             IInputContextResolver contextResolver,
@@ -19,6 +19,7 @@
         public CompletionResult GetCompletions(InputState state)
         {
             var tokens = _tokenizer.Tokenize(state);
+            _tokenRegistry.UpdateTokens(tokens.Tokens); // обновляем регистр
             var context = _contextResolver.Resolve(tokens);
 
             var items = _providers
@@ -38,5 +39,12 @@
                 throw new ArgumentNullException(nameof(item.EditFactory), "EditFactory не должен быть null.");
             return item.EditFactory(state);
         }
+
+        // Новая точка доступа к токенам из VM
+        public InputToken? GetTokenNearCaret(string text, int caretPosition)
+            => _tokenRegistry.GetTokenNearCaret(text, caretPosition);
+
+        public IReadOnlyList<InputToken> GetAllTokens()
+            => _tokenRegistry.Tokens;
     }
 }

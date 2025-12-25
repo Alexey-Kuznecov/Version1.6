@@ -8,5 +8,8 @@ namespace UnityCommander.CLI.Input
         TextEdit ApplyCompletion(
             InputState state,
             CompletionItem item);
+
+        IReadOnlyList<InputToken> GetAllTokens();
+        public InputToken? GetTokenNearCaret(string text, int caretPosition);
     }
 }
