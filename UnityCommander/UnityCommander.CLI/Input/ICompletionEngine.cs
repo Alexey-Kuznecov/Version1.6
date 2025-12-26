@@ -11,6 +11,5 @@ namespace UnityCommander.CLI.Input
 
         IReadOnlyList<InputToken> GetAllTokens();
         InputToken? GetTokenNearCaret(string text, int caretPosition);
-        InputToken? GetTokenAtCaret(string text, int caretPos);
     }
 }

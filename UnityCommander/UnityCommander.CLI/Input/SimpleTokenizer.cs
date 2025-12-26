@@ -1,9 +1,21 @@
-﻿namespace UnityCommander.CLI.Input
+﻿
+using UnityCommander.Logging.Abstractions;
+using UnityCommander.Services.Interfaces;
+
+namespace UnityCommander.CLI.Input
 {
     public sealed class SimpleInputTokenizer : IInputTokenizer
     {
+        private readonly ILogger? _appLogger; // внутренний регистр
+
+        public SimpleInputTokenizer(ILogger? appLogger = null)
+        {
+            _appLogger = appLogger;
+        }
+
         public TokenizationResult Tokenize(InputState state)
         {
+            _appLogger?.Info($"Tokenize called with caretPos: {state.CaretPosition} on text: '{state.Text}'");
             var text = state.Text;
             var tokens = new List<InputToken>();
 
@@ -30,6 +42,15 @@
                     Start = start,
                     Length = length
                 });
+            }
+
+            foreach (var token in tokens)
+            {
+                InputToken? currentToken2 = tokens.FirstOrDefault(t =>
+                state.CaretPosition >= t.Start &&
+                state.CaretPosition < t.Start + t.Length);
+                _appLogger?.ObjectInfo($"text: {token.CurrentValue} is found: {currentToken2 != null} ", token);
+
             }
 
             InputToken? currentToken = tokens.FirstOrDefault(t =>

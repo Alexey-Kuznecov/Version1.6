@@ -1,42 +1,22 @@
 ﻿
-using Newtonsoft.Json.Linq;
+using UnityCommander.Logging.Abstractions;
 
 namespace UnityCommander.CLI.Input
 {
     public class TokenRegistry : ITokenRegistry
     {
         private readonly List<InputToken> _tokens = new();
+        private readonly ILogger? _appLogger;
+
+        public TokenRegistry(ILogger? appLogger = null)
+        {
+            _appLogger = appLogger;
+        }
 
         public void UpdateTokens(IEnumerable<InputToken> tokens)
         {
             _tokens.Clear();
             _tokens.AddRange(tokens);
-        }
-
-        public InputToken? GetTokenAtCaret(string text, int caretPos)
-        {
-            if (string.IsNullOrEmpty(text) || caretPos == 0)
-                return null;
-
-            int pos = caretPos - 1;
-            while (pos >= 0 && !char.IsLetterOrDigit(text[pos]))
-                pos--;
-
-            if (pos < 0)
-                return null;
-
-            int start = pos;
-            while (start > 0 && char.IsLetterOrDigit(text[start - 1]))
-                start--;
-
-            int length = pos - start + 1;
-
-            return new InputToken
-            {
-                StartIndex = start,
-                Length = length,
-                CurrentValue = text.Substring(start, length)
-            };
         }
 
         public InputToken? GetTokenAtPosition(int position)
@@ -46,6 +26,7 @@ namespace UnityCommander.CLI.Input
 
         public InputToken? GetTokenNearCaret(string text, int caretPosition)
         {
+            _appLogger?.Info($"GetTokenNearCaret called with caretPos: {caretPosition} on text: '{text}'");
             if (_tokens.Count == 0 || string.IsNullOrEmpty(text))
                 return null;
 

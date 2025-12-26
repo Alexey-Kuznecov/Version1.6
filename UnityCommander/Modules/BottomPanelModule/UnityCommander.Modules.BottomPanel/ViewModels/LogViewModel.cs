@@ -21,7 +21,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             hub.LogReceived += OnLog;
         }
 
-        private void OnLog(Logging.Abstractions.LogEntry entry)
+        private void OnLog(LogEntry entry)
         {
             if (entry.Channel != LogChannel.Journal)
                 return;
@@ -35,13 +35,14 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             });
         }
 
-        private string FormatEntry(Logging.Abstractions.LogEntry e)
-        {
+        private string FormatEntry(LogEntry e)
+        {        
             return
-                $"[{e.Timestamp:yyyy-MM-dd HH:mm:ss.fff}] " +
-                $"[{e.Level}] " +
-                $"{(string.IsNullOrWhiteSpace(e.Source) ? "" : $"[{e.Source}] ")}" +
-                $"{e.Message}";
+            $"[{e.Scope}] " +
+            $"[{e.Category}] " +
+            $"[{e.Level}] " +
+            $"{(string.IsNullOrWhiteSpace(e.Source) ? "" : $"[{e.Source}] ")}" +
+            $"{e.Message}";
         }
     }
 }

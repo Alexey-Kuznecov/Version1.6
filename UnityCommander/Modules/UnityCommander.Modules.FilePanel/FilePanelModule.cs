@@ -10,27 +10,20 @@
 
 namespace UnityCommander.Modules.FilePanel
 {
-    using CommandSystem.Core.Commands;
-    using CommandSystem.Core.Metadata;
-    using CommandSystem.Gui.Integraion;
     using Prism.Commands;
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Mvvm;
     using Prism.Regions;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
-    using System.Windows.Media.Media3D;
     using System.Windows.Threading;
     using UnityCommander.Common.Module;
-    using UnityCommander.Core.Commands.Base;
     using UnityCommander.Logging.Abstractions;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services;
@@ -104,7 +97,12 @@ namespace UnityCommander.Modules.FilePanel
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            _logger = containerProvider.Resolve<ILogger>(); ;
+            var log = containerProvider.Resolve<IAppLogger>();
+            _logger = log.Create(
+                category: LogCategory.Autocomplete,
+                scope: LogScope.UI
+            );
+
             _multiCommands = containerProvider.Resolve<IMultiCommandService>();
             _panelRegistry = containerProvider.Resolve<IPanelRegistry>();
             _dockingService = containerProvider.Resolve<IDockingService>();

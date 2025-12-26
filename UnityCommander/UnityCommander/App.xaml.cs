@@ -26,6 +26,7 @@ namespace UnityCommander
     using Services;
     using Services.Interfaces;
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Windows;
@@ -113,10 +114,32 @@ namespace UnityCommander
             //containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
-            containerRegistry.RegisterSingleton<ILogSink, NullSink>();
             containerRegistry.RegisterSingleton<LogHub>();
-            containerRegistry.RegisterSingleton<ILogger, Logging.Abstractions.Logger>();
 
+            var settings = new GlobalLoggerSettings
+            {
+                Mode = LoggingMode.Debug,
+                MinimumLevel = LogLevel.Debug,
+                EnabledScopes = new HashSet<string>
+                {
+                    "Startup",
+                    "Runtime"
+                },
+                EnabledCategories = new HashSet<string>
+                {
+                    "System",
+                    "Plugin"
+                }
+            };
+
+            containerRegistry.RegisterInstance(settings);
+            containerRegistry.RegisterSingleton<ILogSink, NullSink>();
+            containerRegistry.RegisterSingleton<ILogSink>(_ => new FileLogSink("journal.log", LogChannel.Journal));
+            containerRegistry.RegisterSingleton<ILogSink>(_ => new FileLogSink("errors.log", LogChannel.Error));
+            containerRegistry.RegisterSingleton<ILogFilter, LoggingPolicyFilter>();
+            containerRegistry.RegisterSingleton<ILogColorResolver, DefaultLogColorResolver>();
+            containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
+            containerRegistry.RegisterSingleton<LoggingSinkService>();
 
             //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();
             containerRegistry.RegisterSingleton<IPluginManager, PluginManager>();

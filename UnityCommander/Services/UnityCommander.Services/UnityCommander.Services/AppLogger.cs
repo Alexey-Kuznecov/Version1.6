@@ -1,33 +1,37 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Abstractions.Helper;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
-    [Obsolete("Use Microsoft.Extensions.Logging instead.")]
-    public class AppLogger : IAppLogger
+    public sealed class AppLogger : IAppLogger
     {
-        public event Action<LogEntry> OnLog;
+        private readonly LoggerCore _core;
 
-        private void Write(AppLogLevel level, string message)
+        public AppLogger(
+            LogHub hub,
+            ILogFilter policy,
+            ILogColorResolver colorResolver)
         {
-            var entry = new LogEntry
-            {
-                Timestamp = DateTime.Now,
-                Message = message,
-                Level = level,
-                Source = GetCallerName()
-            };
-
-            OnLog?.Invoke(entry);
+            _core = new LoggerCore(hub, policy, colorResolver);
         }
 
-        public void Info(string message) => Write(AppLogLevel.Info, message);
-        public void Debug(string message) => Write(AppLogLevel.Debug, message);
-        public void Warn(string message) => Write(AppLogLevel.Warning, message);
-        public void Error(string message) => Write(AppLogLevel.Error, message);
+        public ILogger Create(string category, LogScope scope)
+        {
+            if (scope.Equals(default)) scope = LogScope.UI;
+            return new Logger(_core, category, scope.ToString());
+        }
 
-        private string GetCallerName([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-            => name ?? "Unknown";
+        public ILogger For<T>(LogScope scope = default)
+        {
+            return Create(typeof(T).Name, scope);
+        }
+
+        public ILogger ForPlugin(string pluginId)
+            => Create("Plugin", LogScope.Plugin(pluginId));
     }
 }

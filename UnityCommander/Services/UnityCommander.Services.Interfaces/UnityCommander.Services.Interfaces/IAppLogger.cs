@@ -1,32 +1,12 @@
 ﻿
-using Prism.Events;
-using System;
+using UnityCommander.Logging.Abstractions;
 
 namespace UnityCommander.Services.Interfaces
 {
     public interface IAppLogger
     {
-        void Info(string message);
-        void Debug(string message);
-        void Warn(string message);
-        void Error(string message);
-
-        event Action<LogEntry> OnLog;
-    }
-
-    public class LogEntry
-    {
-        public DateTime Timestamp { get; set; }
-        public string Message { get; set; }
-        public AppLogLevel Level { get; set; }
-        public string Source { get; set; }
-    }
-
-        public enum AppLogLevel
-    {
-        Debug,
-        Info,
-        Warning,
-        Error
+        ILogger Create(string category, LogScope scope);
+        ILogger For<T>(LogScope scope = default);
+        ILogger ForPlugin(string pluginId);
     }
 }

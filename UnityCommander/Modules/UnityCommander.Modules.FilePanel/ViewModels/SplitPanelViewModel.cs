@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using CommandSystem.Abstractions;
-using NLog;
 using Prism.Commands;
 using Prism.Regions;
 using Prism.Services.Dialogs;
@@ -39,7 +38,7 @@ using UnityCommander.Integration.Columns;
 using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
 using UnityCommander.Integration.Plugins;
-using UnityCommander.Logging;
+using UnityCommander.Logging.Abstractions;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
@@ -67,7 +66,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         //private readonly IAppLogger _appLogger;
         private readonly NavigationManager _navigationService;
         private readonly CommandManager commandManager;
-        private readonly Logging.Abstractions.ILogger _logger;
+        private readonly ILogger _logger;
         private IGuiCommandExecutor guiCommandExecutor;
         private IPanelRegistry _panelRegistry;
         private PanelViewModelAdapter _adapter;
@@ -151,16 +150,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IColumnStateManager columnStateManager,
               ISettingsStore settingsStore,
               ColumnRegistry columnRegistry,
-              Logging.Abstractions.ILogger logger) 
+              IAppLogger logger) 
             : base(regionManager)
         {
+            this._logger = logger.Create(
+                category: "FilePanel.Module",
+                scope: LogScope.UserAction
+                );
+
             this.guiCommandExecutor = guiCommandExecutor;
             this._panelRegistry = panelRegistry;
             this._selectionManager = selectionManager;
             this.configService = configService;
             this.dialogService = dialogService;
             this.commandManager = manager;
-            this._logger = logger;
             //this._appLogger = appLogger;
             this.pluginLoaderService = pluginService;
             this.dataService = dataService;

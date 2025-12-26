@@ -1,19 +1,28 @@
-﻿namespace UnityCommander.CLI.Input
+﻿
+using UnityCommander.Logging.Abstractions;
+using UnityCommander.Services.Interfaces;
+
+namespace UnityCommander.CLI.Input
 {
     public sealed class CompletionEngine : ICompletionEngine
     {
         private readonly IInputTokenizer _tokenizer;
         private readonly IInputContextResolver _contextResolver;
         private readonly IEnumerable<ICompletionProvider> _providers;
-        private readonly ITokenRegistry _tokenRegistry = new TokenRegistry(); // внутренний регистр
+        private readonly ITokenRegistry _tokenRegistry; // внутренний регистр
+        private readonly ILogger? _appLogger; // внутренний регистр
         public CompletionEngine(
             IInputTokenizer tokenizer,
             IInputContextResolver contextResolver,
-            IEnumerable<ICompletionProvider> providers)
+            IEnumerable<ICompletionProvider> providers,
+            ITokenRegistry tokenRegistry,
+            ILogger? appLogger = null)
         {
+            _appLogger = appLogger;
             _tokenizer = tokenizer;
             _contextResolver = contextResolver;
             _providers = providers;
+            _tokenRegistry = tokenRegistry;
         }
 
         public CompletionResult GetCompletions(InputState state)
@@ -43,8 +52,7 @@
         // Новая точка доступа к токенам из VM
         public InputToken? GetTokenNearCaret(string text, int caretPosition)
             => _tokenRegistry.GetTokenNearCaret(text, caretPosition);
-        public InputToken? GetTokenAtCaret(string text, int caretPos) 
-            => _tokenRegistry.GetTokenAtCaret(text, caretPos);
+
         public IReadOnlyList<InputToken> GetAllTokens()
             => _tokenRegistry.Tokens;
     }

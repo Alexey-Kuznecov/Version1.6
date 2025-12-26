@@ -95,9 +95,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IConsoleCommandProvider consoleCommandProvider,
             IPluginProvider pluginProvider,
             ICompletionEngine completionEngine,
-            ILogger logger) //, IPluginProvider pluginProvider)
+            IAppLogger logger) //, IPluginProvider pluginProvider)
         {
-            _logger = logger;
+            _logger = logger.For<ConsoleViewModel>(LogScope.UI);
             _input = input;
             _output = output;
             _dispatcher = dispatcher;
