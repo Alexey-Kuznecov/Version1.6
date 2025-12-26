@@ -1,9 +1,7 @@
 ﻿using Prism.Mvvm;
-using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using UnityCommander.Logging.Abstractions;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {

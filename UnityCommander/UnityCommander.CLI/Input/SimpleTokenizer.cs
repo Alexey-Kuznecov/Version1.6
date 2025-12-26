@@ -32,17 +32,9 @@
                 });
             }
 
-            InputToken? currentToken = null;
-
-            foreach (var token in tokens)
-            {
-                if (state.CaretPosition >= token.Start &&
-                    state.CaretPosition <= token.Start + token.Length)
-                {
-                    currentToken = token;
-                    break;
-                }
-            }
+            InputToken? currentToken = tokens.FirstOrDefault(t =>
+                state.CaretPosition >= t.Start &&
+                state.CaretPosition < t.Start + t.Length);
 
             int currentStart;
 

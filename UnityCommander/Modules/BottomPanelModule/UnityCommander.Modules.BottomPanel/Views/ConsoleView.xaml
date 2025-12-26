@@ -58,7 +58,7 @@
                         Text="&gt; " />
                     <TextBox
                         Grid.Column="1"
-                        at:TextBoxCaret.CaretIndex="{Binding CaretIndex}"
+                        at:TextBoxCaretBinding.CaretIndex="{Binding CaretIndex, Mode=TwoWay}"
                         Background="#2D2D30"
                         BorderBrush="#3F3F46"
                         FontFamily="Consolas"
@@ -90,7 +90,10 @@
                     Visibility="{Binding Completions.Count, Converter={StaticResource CountToVisibility}}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock FontSize="14" FontFamily="Consolas" Text="{Binding DisplayText}" />
+                            <TextBlock
+                                FontFamily="Consolas"
+                                FontSize="14"
+                                Text="{Binding DisplayText}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListBox.Resources>

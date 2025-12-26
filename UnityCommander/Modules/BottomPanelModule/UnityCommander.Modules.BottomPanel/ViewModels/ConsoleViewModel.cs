@@ -12,19 +12,19 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using UnityCommander.CLI.Autocomplete;
 using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
 using UnityCommander.CLI.Input;
 using UnityCommander.CLI.Integration;
-using UnityCommander.Core.Navgator;
+using UnityCommander.Logging.Abstractions;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
     public class ConsoleViewModel : BindableBase
     {
+        private readonly ILogger _logger;
         private readonly IConsoleInput _input;
         private readonly IConsoleOutput _output;
         private readonly ConsoleCommandDispatcher _dispatcher;
@@ -94,8 +94,10 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IEventAggregator ea, 
             IConsoleCommandProvider consoleCommandProvider,
             IPluginProvider pluginProvider,
-            ICompletionEngine completionEngine) //, IPluginProvider pluginProvider)
+            ICompletionEngine completionEngine,
+            ILogger logger) //, IPluginProvider pluginProvider)
         {
+            _logger = logger;
             _input = input;
             _output = output;
             _dispatcher = dispatcher;
@@ -169,19 +171,17 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             var result = _completionEngine.GetCompletions(state);
             var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
 
+            _completions.Clear();
+
+            _logger.Info($"UpdateCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
             if (token == null)
                 return;
 
-            //if (token.IsModified)
-            //    return;
-
-            //if (token.CurrentValue == _lastTokenValue)
-            //return; // токен не изменился — не открываем
-
-            _completions.Clear();
+            _logger.ObjectInfo("UpdateCompletions ", token);
             foreach (var item in result.Items)
                 _completions.Add(item);
             SelectedIndex = result.DefaultSelectedIndex;
+            CaretIndex = InputText.Length + 1;
         }
 
         private bool CanAccept() =>
@@ -195,11 +195,15 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             try
             {
-                var state = new InputState(InputText, CaretIndex);
+                if (string.IsNullOrEmpty(InputText))
+                    return;
+
+                var state = new InputState(InputText, CaretIndex -1);
                 var item = _completions[SelectedIndex];
 
                 var edit = _completionEngine.ApplyCompletion(state, item);
-
+                _logger.Info($"AcceptCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
+                _logger.ObjectInfo("AcceptCompletions ", edit.CurrentToken);
                 // Заменяем только нужный диапазон
                 InputText = InputText.Substring(0, edit.ReplaceStart)
                             + edit.InsertText

@@ -10,6 +10,7 @@ namespace UnityCommander.CLI.Input
             CompletionItem item);
 
         IReadOnlyList<InputToken> GetAllTokens();
-        public InputToken? GetTokenNearCaret(string text, int caretPosition);
+        InputToken? GetTokenNearCaret(string text, int caretPosition);
+        InputToken? GetTokenAtCaret(string text, int caretPos);
     }
 }

@@ -43,7 +43,8 @@
         // Новая точка доступа к токенам из VM
         public InputToken? GetTokenNearCaret(string text, int caretPosition)
             => _tokenRegistry.GetTokenNearCaret(text, caretPosition);
-
+        public InputToken? GetTokenAtCaret(string text, int caretPos) 
+            => _tokenRegistry.GetTokenAtCaret(text, caretPos);
         public IReadOnlyList<InputToken> GetAllTokens()
             => _tokenRegistry.Tokens;
     }
