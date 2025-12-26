@@ -1,5 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <SolidColorBrush x:Key="log.error" Color="#FF4D4D"/>
+    <SolidColorBrush x:Key="log.plugin" Color="#FFB347"/>
+    <SolidColorBrush x:Key="log.system" Color="#4DA6FF"/>
+    <SolidColorBrush x:Key="log.default" Color="#E0E0E0"/>
+    <SolidColorBrush x:Key="log.user.action" Color="#33CC33"/>
+    <SolidColorBrush x:Key="log.autocomplete" Color="#FFFF66"/>
+
     <!--  General Colors  -->
     <Color x:Key="GeneralHeaderColor">#324A77</Color>
     <Color x:Key="GeneralContainerColor">#B6CAEB</Color>

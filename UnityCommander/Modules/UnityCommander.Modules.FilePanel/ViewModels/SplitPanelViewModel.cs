@@ -154,7 +154,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             : base(regionManager)
         {
             this._logger = logger.Create(
-                category: "FilePanel.Module",
+                category: LogCategory.UserAction,
                 scope: LogScope.UserAction
                 );
 

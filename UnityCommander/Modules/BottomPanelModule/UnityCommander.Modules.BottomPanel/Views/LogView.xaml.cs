@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,18 @@ namespace UnityCommander.Modules.BottomPanel.Views
         public LogView()
         {
             InitializeComponent();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ListBox lb)
+            {
+                ((INotifyCollectionChanged)lb.Items).CollectionChanged += (_, __) =>
+                {
+                    if (lb.Items.Count > 0)
+                        lb.ScrollIntoView(lb.Items[^1]);
+                };
+            }
         }
     }
 }

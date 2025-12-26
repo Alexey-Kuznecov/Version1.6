@@ -8,9 +8,9 @@ namespace UnityCommander.CLI.Input
     {
         private readonly ILogger? _appLogger; // внутренний регистр
 
-        public SimpleInputTokenizer(ILogger? appLogger = null)
+        public SimpleInputTokenizer(IAppLogger? appLogger = null)
         {
-            _appLogger = appLogger;
+            _appLogger = appLogger?.For<SimpleInputTokenizer>(LogScope.Runtime);
         }
 
         public TokenizationResult Tokenize(InputState state)

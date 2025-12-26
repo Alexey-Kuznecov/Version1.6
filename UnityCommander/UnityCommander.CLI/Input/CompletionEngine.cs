@@ -16,9 +16,9 @@ namespace UnityCommander.CLI.Input
             IInputContextResolver contextResolver,
             IEnumerable<ICompletionProvider> providers,
             ITokenRegistry tokenRegistry,
-            ILogger? appLogger = null)
+            IAppLogger? appLogger = null)
         {
-            _appLogger = appLogger;
+            _appLogger = appLogger?.For<CompletionEngine>(LogScope.Runtime);
             _tokenizer = tokenizer;
             _contextResolver = contextResolver;
             _providers = providers;

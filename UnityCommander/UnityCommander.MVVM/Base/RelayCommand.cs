@@ -11,81 +11,51 @@ namespace UnityCommander.Mvvm
         private readonly Action _command;
         private readonly Action<object> _execute;
         private readonly Predicate<object> _canExecute;
+
         public event EventHandler CanExecuteChanged;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RelayCommand"/> class.
-        /// </summary>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        /// <param name="canExecute">
-        /// The can execute.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// </exception>
+        // Конструктор для команд без параметра
         public RelayCommand(Action command, Func<bool> canExecute = null)
         {
-            if (command == null)
-                throw new ArgumentNullException(nameof(command));
-            _command = command;
+            _command = command ?? throw new ArgumentNullException(nameof(command));
+            if (canExecute != null)
+                _canExecute = _ => canExecute();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RelayCommand"/> class.
-        /// </summary>
-        /// <param name="execute">
-        /// The execute.
-        /// </param>
-        /// <param name="canExecute">
-        /// The can execute.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// </exception>
+        // Конструктор для команд с параметром
         public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
         {
-            if (execute == null)
-                throw new ArgumentNullException(nameof(execute));
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
-        /// <summary>
-        /// The can execute.
-        /// </summary>
-        /// <param name="parameter">
-        /// The parameter.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public bool CanExecute(object parameter)
         {
             return _canExecute == null || _canExecute(parameter);
         }
 
-        /// <summary>
-        /// The execute.
-        /// </summary>
-        /// <param name="parameter">
-        /// The parameter.
-        /// </param>
         public void Execute(object parameter)
         {
-            _execute.Invoke(parameter);
+            if (_execute != null)
+            {
+                _execute(parameter);
+            }
+            else if (_command != null)
+            {
+                _command();
+            }
+            else
+            {
+                throw new InvalidOperationException("No action assigned to execute.");
+            }
         }
 
-        /// <summary>
-        /// The execute.
-        /// </summary>
+        // Только для команд без параметра
         public void Execute()
         {
-            _command.Invoke();
+            _command?.Invoke();
         }
 
-        /// <summary>
-        /// The raise can execute changed.
-        /// </summary>
         public void RaiseCanExecuteChanged()
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
