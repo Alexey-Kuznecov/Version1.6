@@ -24,7 +24,10 @@ namespace UnityCommander.Modules.FilePanel
     using System.Windows.Media;
     using System.Windows.Threading;
     using UnityCommander.Common.Module;
-    using UnityCommander.Logging.Abstractions;
+    using UnityCommander.Logging.Configuration;
+    using UnityCommander.Logging.Contracts;
+    using UnityCommander.Logging.Core;
+    using UnityCommander.Logging.Infrastructure;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
@@ -97,7 +100,7 @@ namespace UnityCommander.Modules.FilePanel
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            var log = containerProvider.Resolve<IAppLogger>();
+            var log = containerProvider.Resolve<LoggerCreator>();
             _logger = log.Create(
                 category: LogCategory.Autocomplete,
                 scope: LogScope.UI

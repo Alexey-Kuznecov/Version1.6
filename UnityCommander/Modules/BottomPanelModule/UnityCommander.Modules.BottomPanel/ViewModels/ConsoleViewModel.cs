@@ -1,10 +1,7 @@
-﻿
-using Newtonsoft.Json.Linq;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -12,12 +9,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using UnityCommander.Autocomplete.Completion;
+using UnityCommander.Autocomplete.Input;
 using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
-using UnityCommander.CLI.Input;
 using UnityCommander.CLI.Integration;
-using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
@@ -95,9 +95,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IConsoleCommandProvider consoleCommandProvider,
             IPluginProvider pluginProvider,
             ICompletionEngine completionEngine,
-            IAppLogger logger) //, IPluginProvider pluginProvider)
+            LoggerCreator loggerCreator) //, IPluginProvider pluginProvider)
         {
-            _logger = logger.For<ConsoleViewModel>(LogScope.UI);
+            _logger = loggerCreator.For<ConsoleViewModel>(LogScope.UI);
             _input = input;
             _output = output;
             _dispatcher = dispatcher;

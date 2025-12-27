@@ -1,8 +1,7 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
-using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Core;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {

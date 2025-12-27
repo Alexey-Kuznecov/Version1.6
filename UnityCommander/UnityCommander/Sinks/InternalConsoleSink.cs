@@ -1,7 +1,8 @@
 ﻿
 using Prism.Events;
 using System;
-using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 using UnityCommander.Modules.BottomPanel;
 
 namespace UnityCommander.Sinks

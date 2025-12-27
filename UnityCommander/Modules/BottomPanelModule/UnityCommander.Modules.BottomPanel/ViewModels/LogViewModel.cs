@@ -3,7 +3,8 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Configuration;
+using UnityCommander.Logging.Core;
 using UnityCommander.Mvvm;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
@@ -27,13 +28,6 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         }
         public string EditModeText => IsHighlightMode ? "Highlight" : "Edit";
 
-        //private string _editModeText;
-        //public string EditModeText
-        //{
-        //    get => _editModeText;
-        //    set => SetProperty(ref _editModeText, value);
-        //}
-
         private bool _isHighlightMode = true;
         public bool IsHighlightMode
         {
@@ -42,7 +36,6 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         }
         public ICommand ToggleEditModeCommand => new RelayCommand(() =>
         {
-            //EditModeText = IsHighlightMode ? "Highlight" : "Edit";
             IsHighlightMode = !IsHighlightMode;
         });
 

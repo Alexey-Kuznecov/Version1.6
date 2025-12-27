@@ -1,60 +1,58 @@
-﻿
+﻿using CommandSystem.Abstractions;
+using CommandSystem.Core.Factory;
+using CommandSystem.Gui.Integraion;
+using CommandSystem.Infrastructure.Execution;
+using CommandSystem.Infrastructure.Lifecycle;
+using PluginSystem.Abstractions.Plugin;
+using PluginSystem.Runtime;
+using Prism.Ioc;
+using Prism.Modularity;
+using Prism.Mvvm;
+using Prism.Services.Dialogs;
+using System.Collections.Generic;
+using System.Windows;
+using UnityCommander.AI.ImageSearch;
+using UnityCommander.Commands;
+using UnityCommander.Common.Commands;
+using UnityCommander.Common.Selection;
+using UnityCommander.Core;
+using UnityCommander.Core.Behaviors.Selection;
+using UnityCommander.Core.Navgator;
+using UnityCommander.Integration.Plugins;
+using UnityCommander.Logging;
+using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Configuration;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Filters;
+using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Logging.Sinks;
+using UnityCommander.Modules.BottomPanel;
+using UnityCommander.Modules.FilePanel;
+using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.TabPanel.ViewModels;
+using UnityCommander.Modules.TabPanel.Views;
+using UnityCommander.Modules.ToolBar;
+using UnityCommander.Modules.Viewer;
+using UnityCommander.Modules.Viewer.Views;
 using UnityCommander.Modules.WebBrowser;
+using UnityCommander.Operation;
+using UnityCommander.Ribbon.Core.Services;
+using UnityCommander.Services;
+using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Settings;
+using UnityCommander.Services.Selection;
+using UnityCommander.Services.Settings;
+using UnityCommander.Sinks;
+using UnityCommander.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
+using UnityCommander.Views;
+using UnityCommander.Views.CopyDialogs;
 
 namespace UnityCommander
 {
-    using CommandSystem.Abstractions;
-    using CommandSystem.Core.Factory;
-    using CommandSystem.Gui.Integraion;
-    using CommandSystem.Infrastructure.Execution;
-    using CommandSystem.Infrastructure.Lifecycle;
-    using Core;
-    using Example;
-    using Modules.LeftSideBars;
-    using Modules.TabPanel.Views;
-    using Modules.ToolBar;
-    using PluginSystem.Abstractions.Plugin;
-    using PluginSystem.Abstractions.Services;
-    using PluginSystem.Runtime;
-    using Prism.Ioc;
-    using Prism.Modularity;
-    using Prism.Mvvm;
-    using Prism.Services.Dialogs;
-    using Services;
-    using Services.Interfaces;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Windows;
-    using UnityCommander.AI.ImageSearch;
-    using UnityCommander.Commands;
-    using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Plugins;
-    using UnityCommander.Common.Selection;
-    using UnityCommander.Core.Behaviors.Selection;
-    using UnityCommander.Core.Navgator;
-    using UnityCommander.Integration.Plugins;
-    using UnityCommander.Logging;
-    using UnityCommander.Logging.Abstractions;
-    using UnityCommander.Modules.BottomPanel;
-    using UnityCommander.Modules.FilePanel;
-    using UnityCommander.Modules.FilePanel.Columns;
-    using UnityCommander.Modules.Viewer;
-    using UnityCommander.Modules.Viewer.Views;
-    using UnityCommander.Operation;
-    using UnityCommander.Ribbon.Core.Services;
-    using UnityCommander.Services.Interfaces.Settings;
-    using UnityCommander.Services.Selection;
-    using UnityCommander.Services.Settings;
-    using UnityCommander.Sinks;
-    using ViewModels;
-    using Views;
-    using Views.CopyDialogs;
-
     public partial class App
     {
         protected override Window CreateShell()
@@ -111,7 +109,6 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
             containerRegistry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
-            //containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
             containerRegistry.RegisterSingleton<LogHub>();
@@ -138,7 +135,7 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ILogSink>(_ => new FileLogSink("errors.log", LogChannel.Error));
             containerRegistry.RegisterSingleton<ILogFilter, LoggingPolicyFilter>();
             containerRegistry.RegisterSingleton<ILogColorResolver, DefaultLogColorResolver>();
-            containerRegistry.RegisterSingleton<IAppLogger, AppLogger>();
+            containerRegistry.RegisterSingleton<LoggerCreator>();
             containerRegistry.RegisterSingleton<LoggingSinkService>();
 
             //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();

@@ -1,7 +1,5 @@
-﻿
-using System.Collections.Generic;
-using System.Windows.Documents;
-using UnityCommander.Logging.Abstractions;
+﻿using System.Collections.Generic;
+using UnityCommander.Logging.Core;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {

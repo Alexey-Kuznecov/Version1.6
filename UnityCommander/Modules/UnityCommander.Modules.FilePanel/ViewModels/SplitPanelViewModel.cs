@@ -38,7 +38,10 @@ using UnityCommander.Integration.Columns;
 using UnityCommander.Integration.Commands;
 using UnityCommander.Integration.Enums;
 using UnityCommander.Integration.Plugins;
-using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Configuration;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
@@ -150,10 +153,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IColumnStateManager columnStateManager,
               ISettingsStore settingsStore,
               ColumnRegistry columnRegistry,
-              IAppLogger logger) 
+              LoggerCreator loggerCreator) 
             : base(regionManager)
         {
-            this._logger = logger.Create(
+            this._logger = loggerCreator.Create(
                 category: LogCategory.UserAction,
                 scope: LogScope.UserAction
                 );

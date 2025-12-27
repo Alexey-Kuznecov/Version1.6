@@ -1,6 +1,5 @@
-﻿
-using System;
-using UnityCommander.Logging.Abstractions;
+﻿using System;
+using UnityCommander.Logging.Configuration;
 
 namespace UnityCommander.Services.Interfaces.Settings
 {

@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using UnityCommander.Common.Module;
-using UnityCommander.Logging.Abstractions;
+using UnityCommander.Logging.Contracts;
 using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;

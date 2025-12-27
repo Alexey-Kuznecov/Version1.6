@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>
   <ItemGroup>

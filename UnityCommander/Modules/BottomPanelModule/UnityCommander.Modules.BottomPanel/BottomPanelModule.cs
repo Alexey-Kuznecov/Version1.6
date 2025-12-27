@@ -1,16 +1,15 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
-using System.Diagnostics;
+using UnityCommander.Autocomplete.Completion;
+using UnityCommander.Autocomplete.Context.Resolution;
+using UnityCommander.Autocomplete.Tokenization;
 using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Input;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.Core;
-using UnityCommander.Modules.BottomPanel.ViewModels;
+using UnityCommander.Modules.BottomPanel.Completions;
 using UnityCommander.Modules.BottomPanel.Views;
-using UnityCommander.Services;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel
 {

@@ -1,9 +1,7 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityCommander.Logging.Abstractions;
-using UnityCommander.Logging.Abstractions.Helper;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services

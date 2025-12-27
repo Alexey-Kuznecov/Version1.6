@@ -1,6 +1,6 @@
-﻿
-using System.Collections.Generic;
-using UnityCommander.Logging.Abstractions;
+﻿using System.Collections.Generic;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 
 namespace UnityCommander.Services
 {
