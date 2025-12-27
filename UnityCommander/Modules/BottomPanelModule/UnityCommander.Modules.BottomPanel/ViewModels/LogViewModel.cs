@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Core;
 using UnityCommander.Mvvm;
@@ -39,6 +40,12 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IsHighlightMode = !IsHighlightMode;
         });
 
+        public ICommand ClearCommand => new RelayCommand(() =>
+        {
+            LogText = "";
+            Logs.Clear();
+        });
+
         private void OnLog(LogEntry entry)
         {
             if (entry.Channel != LogChannel.Journal)
@@ -63,7 +70,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             $"[{e.Category}] " +
             $"[{e.Level}] " +
             $"{(string.IsNullOrWhiteSpace(e.Source) ? "" : $"[{e.Source}] ")}" +
-            $"{e.Message}";
+            $"{e.Message}" +
+            $"{(e.Payload == null ? "" : $"{e.Payload}")}";
         }
     }
 }

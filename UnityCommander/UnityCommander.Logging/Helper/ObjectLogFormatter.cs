@@ -3,6 +3,7 @@ namespace UnityCommander.Logging.Abstractions.Helper
 {
     using System.Reflection;
     using System.Text;
+    using System.Collections;
 
     public static class ObjectLogFormatter
     {
@@ -10,6 +11,10 @@ namespace UnityCommander.Logging.Abstractions.Helper
         {
             if (obj == null)
                 return null;
+
+            // ❗ коллекции (но не string)
+            if (obj is IEnumerable enumerable && obj is not string)
+                return FormatEnumerable(enumerable);
 
             var type = obj.GetType();
 
@@ -74,6 +79,39 @@ namespace UnityCommander.Logging.Abstractions.Helper
                 || type == typeof(decimal)
                 || type == typeof(DateTime)
                 || type == typeof(Guid);
+        }
+
+        private static string FormatEnumerable(IEnumerable enumerable)
+        {
+            var sb = new StringBuilder();
+            sb.Append('[');
+
+            bool first = true;
+
+            foreach (var item in enumerable)
+            {
+                if (!first)
+                    sb.Append(", ");
+
+                sb.Append(FormatItem(item));
+                first = false;
+            }
+
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string FormatItem(object? item)
+        {
+            if (item == null)
+                return "null";
+
+            return item switch
+            {
+                string s => $"\"{s}\"",
+                char c => $"'{c}'",
+                _ => item.ToString() ?? item.GetType().Name
+            };
         }
     }
 }

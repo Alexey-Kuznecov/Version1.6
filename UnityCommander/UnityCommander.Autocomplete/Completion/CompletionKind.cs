@@ -3,9 +3,10 @@
     public enum CompletionKind
     {
         Command,
-        Argument,
-        Path,
-        Variable,
-        Value
+        PositionalArgument,
+        Flag,
+        FlagValue,
+        Nothing,
+        Error
     }
 }

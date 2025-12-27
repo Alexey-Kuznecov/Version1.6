@@ -1,6 +1,7 @@
 ﻿using UnityCommander.Logging.Abstractions.Helper;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
+using System.Collections;
 
 namespace UnityCommander.Logging.Core
 {
@@ -40,12 +41,120 @@ namespace UnityCommander.Logging.Core
             _core.Process(entry);
         }
 
-        public void Debug(string message, Func<bool>? condition = null) => LogInternal(LogLevel.Debug, message, condition: condition);
+        private void LogInternal<T>(
+            LogLevel level,
+            string message,
+            T payload,
+            Action<T>? action = null)
+        {
+            {
+                var obj = payload != null ? ObjectLogFormatter.Format(payload) : null;
+
+                var entry = new LogEntry
+                {
+                    Timestamp = DateTime.Now,
+                    Level = level,
+                    Message = message,
+                    Payload = obj,
+                    Category = _category,
+                    Scope = _scope
+                };
+
+                _core.Process(entry);
+                action?.Invoke(payload);
+            } 
+        }
+
+        public void Debug(string message, Func<bool>? condition = null) 
+            => LogInternal(LogLevel.Debug, message, condition: condition);
         public void Info(string m) => LogInternal(LogLevel.Info, m);
         public void Debug(string m) => LogInternal(LogLevel.Debug, m);
         public void Warning(string m) => LogInternal(LogLevel.Warning, m);
         public void Trace(string m) => LogInternal(LogLevel.Trace, m);
-        public void ObjectInfo(string message, object obj) => LogInternal(LogLevel.Info, message, payload: obj);
+        public void ObjectInfo(string message, object obj, Func<bool>? condition = null) 
+            => LogInternal(
+                LogLevel.Debug, 
+                message, 
+                payload: obj,
+                condition: condition);
+        public void CollectionInfo(string message, IEnumerable collection, Func<bool>? condition = null)
+             => LogInternal(
+                 LogLevel.Debug, 
+                 message, 
+                 payload: collection, 
+                 condition: condition);
+        
+        public void ObjectInfo<T>(
+            string title,
+            T obj,
+            Action<T> unpack)
+        {
+            // защита от говна
+            if (unpack == null)
+                throw new ArgumentNullException(nameof(unpack));
+
+            if (obj == null)
+            {
+                Info($"{title}: <null>");
+                return;
+            }
+
+            LogInternal(
+                LogLevel.Debug,
+                title,
+                payload: obj,
+                action: unpack);
+            // 🔽 РАЗДЕЛИТЕЛЬ
+            LogInternal(
+                LogLevel.Debug,
+                "--------------------",
+                payload: null);
+        }
+
+        public void CollectionInfo<T>(
+            string title,
+            IEnumerable<T> collection,
+            Action<T> unpack)
+        {
+            if (unpack == null)
+                throw new ArgumentNullException(nameof(unpack));
+
+            if (collection == null)
+            {
+                Info($"{title}: <null>");
+                return;
+            }
+
+            LogInternal(
+                LogLevel.Debug,
+                title,
+                payload: collection,
+                action: col =>
+                {
+                    int index = 0;
+
+                    foreach (var item in col)
+                    {
+                        if (index > 0)
+                        {
+                            // 🔽 РАЗДЕЛИТЕЛЬ
+                            LogInternal(
+                                LogLevel.Debug,
+                                "--------------------",
+                                payload: null);
+                        }
+
+                        LogInternal(
+                            LogLevel.Debug,
+                            $"[{index}]",
+                            payload: item,
+                            action: unpack);
+
+                        index++;
+                    }
+                });
+        }
+
         public void Error(string m, Exception? e = null) => LogInternal(LogLevel.Error, m, e);
         public void Fatal(string m, Exception? e = null) => LogInternal(LogLevel.Fatal, m, e);
     }

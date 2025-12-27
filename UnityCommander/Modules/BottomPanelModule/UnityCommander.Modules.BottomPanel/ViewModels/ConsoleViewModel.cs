@@ -10,11 +10,13 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using UnityCommander.Autocomplete.Completion;
+using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Input;
 using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
 using UnityCommander.CLI.Integration;
+using UnityCommander.Core.Commands.Base;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
@@ -24,6 +26,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
     public class ConsoleViewModel : BindableBase
     {
+        private readonly ICliInputAnalyzer _cliInputAnalyzer;
         private readonly ILogger _logger;
         private readonly IConsoleInput _input;
         private readonly IConsoleOutput _output;
@@ -95,8 +98,10 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IConsoleCommandProvider consoleCommandProvider,
             IPluginProvider pluginProvider,
             ICompletionEngine completionEngine,
-            LoggerCreator loggerCreator) //, IPluginProvider pluginProvider)
+            LoggerCreator loggerCreator,
+            ICliInputAnalyzer cliInputAnalyzer) //, IPluginProvider pluginProvider)
         {
+            _cliInputAnalyzer = cliInputAnalyzer;
             _logger = loggerCreator.For<ConsoleViewModel>(LogScope.UI);
             _input = input;
             _output = output;
@@ -168,20 +173,85 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private void UpdateCompletions()
         {
             var state = new InputState(InputText, CaretIndex);
-            var result = _completionEngine.GetCompletions(state);
-            var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
 
-            _completions.Clear();
+            var cmdString = new[] 
+            {
+                //"git commit -m",
+                //"git commit -m --amend",
+                "git commit --amend -m test"
+                //"",
+                //"git",
+                //"git commit",
+                //"commit",
+                //"commit test",
+                //"commit test --amend", 
+                //"commit test -m --amend", 
+                //"(\"commit test extra\"", 
+                //"commit test --amend",
+                //"commit test -m"
+            }; 
 
-            _logger.Info($"UpdateCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
-            if (token == null)
-                return;
+            foreach (var cmd in cmdString)
+            {
+                var parseState = _cliInputAnalyzer.Analyze(cmd, cmd.Length);
+                _logger.Info($"UpdateCompletions [{cmd}]");
+                _logger.ObjectInfo($"UpdateCompletions", parseState, p =>
+                {
+                    _logger.Info($"Name: {p.Command?.Name}");
+                    _logger.CollectionInfo($"PositionalArguments: ", p.PositionalArguments, pa =>
+                    {
+                        _logger.ObjectInfo($"Name: {pa.Descriptor}", pa.Descriptor, d =>
+                        {
+                            _logger.Info($"     Name: {d.Name}");
+                            _logger.Info($"     Description: {d.ValueType}");
+                            _logger.Info($"     Type: {d.IsRepeatable}");
+                            _logger.Info($"     IsRequired: {d.IsRequired}");
+                        });
+                        _logger.Info($"Value: {pa.Value}");
+                    });
+                    _logger.CollectionInfo($"Flags: ", p.Flags, f =>
+                    {
+                        _logger.ObjectInfo($"Name: {f.Descriptor}", f.Descriptor, n =>
+                        {
+                            _logger.Info($"     Name: {n.Name}");
+                            _logger.Info($"     ShortName: {n.ShortName}");
+                            _logger.Info($"     ValueType: {n.ValueType}");
+                            _logger.Info($"     IsRepeatable: {n.IsRepeatable}");
+                            _logger.Info($"     RequiresValue: {n.RequiresValue}");
+                        });
+                        _logger.Info($"Value: {f.Value}");
+                        _logger.Info($"HasValue: {f.HasValue}");
+                    });
+                    _logger.Info($"ExpectedNext: {p.ExpectedNext}");
+                    _logger.Info($"ArgumentIndex: {p.ArgumentIndex}");
+                    _logger.Info($"Error: {p.Error}");
+                });
+            }
 
-            _logger.ObjectInfo("UpdateCompletions ", token);
-            foreach (var item in result.Items)
-                _completions.Add(item);
-            SelectedIndex = result.DefaultSelectedIndex;
-            CaretIndex = InputText.Length + 1;
+            //_logger.Info($"UpdateCompletions [InputText={InputText}] [CaretIndex={CaretIndex}]");
+            //_logger.Info(string.Format($"UpdateCompletions [Command={0}])", parseState.Command == null ? parseState.Command : parseState.Command.Name));
+            //_logger.Info(string.Format($"UpdateCompletions [Error={0}])", parseState.Error == null ? "null" : parseState.Error.Message));
+            ////_logger.Info($"UpdateCompletions [ArgumentIndex={parseState.ArgumentIndex}]");
+            //_logger.Info($"UpdateCompletions [ExpectedNext={parseState.ExpectedNext.ToString()}]");
+            //_logger.Info($"=====================================================");
+            //_logger.Info($"UpdateCompletions [Flags.Count={parseState.Flags.Count}]");
+            //_logger.Info($"UpdateCompletions [PositionalArguments={parseState.PositionalArguments.Count}]");
+
+            //var result = _completionEngine.GetCompletions(state);
+            //var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
+
+            //_completions.Clear();
+
+            //_logger.Info($"UpdateCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
+            //if (token == null)
+            //    return;
+
+            //_logger.ObjectInfo("UpdateCompletions ", token);
+            //foreach (var item in result.Items)
+            //    _completions.Add(item);
+            //SelectedIndex = result.DefaultSelectedIndex;
+            CaretIndex = InputText.Length;
+            //CaretIndex = InputText.Length + 1;
         }
 
         private bool CanAccept() =>

@@ -12,6 +12,8 @@ using Prism.Services.Dialogs;
 using System.Collections.Generic;
 using System.Windows;
 using UnityCommander.AI.ImageSearch;
+using UnityCommander.Autocomplete.Context.Descriptors;
+using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Selection;
@@ -137,6 +139,81 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ILogColorResolver, DefaultLogColorResolver>();
             containerRegistry.RegisterSingleton<LoggerCreator>();
             containerRegistry.RegisterSingleton<LoggingSinkService>();
+
+            var commitCommand = new SimpleCommandDescriptor(
+               name: "commit",
+               positionalArguments: new[]
+               {
+                   new SimplePositionalArgumentDescriptor(
+                       "message",
+                       ArgumentValueType.String)
+               },
+               flags: new[]
+                {
+                    new SimpleFlagDescriptor(
+                        name: "--amend",
+                        shortName: "--amd",
+                        requiresValue: false),
+
+                    new SimpleFlagDescriptor(
+                        name: "-m",
+                        shortName: null,
+                        requiresValue: true,
+                        valueType: ArgumentValueType.String)
+                },
+                flagOrderPolicy: FlagOrderPolicy.AnyOrder,
+                usage: "commit <message> [-m <message>] [--amend]"
+           );
+
+            var gitCommitCommand = new SimpleCommandDescriptor(
+                name: "git commit",
+                positionalArguments: new[]
+                {
+                    new SimplePositionalArgumentDescriptor(
+                        "message",
+                        ArgumentValueType.String)
+                },
+                flags: new[]
+                {
+                    new SimpleFlagDescriptor(
+                        name: "--amend",
+                        shortName: null,
+                        requiresValue: false),
+
+                    new SimpleFlagDescriptor(
+                        name: "-m",
+                        shortName: null,
+                        requiresValue: true,
+                        valueType: ArgumentValueType.String)
+                },
+                flagOrderPolicy: FlagOrderPolicy.AnyOrder,
+                usage: "git commit <message> [-m <message>] [--amend]"
+            );
+
+            var gitCommand = new SimpleCommandDescriptor
+            {
+                Name = "git",
+                Variants = new Dictionary<string, CommandVariant>
+                {
+                    ["commit"] = new CommandVariant
+                    {
+                        Name = "commit",
+                        Arguments = new List<IArgumentDescriptor>
+            {
+                new PositionalArgumentDescriptor("message", typeof(string), false)
+            },
+                        Flags = new List<FlagDescriptor>
+            {
+                new FlagDescriptor("-m", true),
+                new FlagDescriptor("--amend", false)
+            }
+                    }
+                }
+            };
+
+            containerRegistry.RegisterInstance<ICommandDescriptor>(commitCommand);
+            containerRegistry.RegisterInstance<ICommandDescriptor>(gitCommitCommand);
+            containerRegistry.RegisterSingleton<ICliInputAnalyzer, DefaultCliInputAnalyzer>();
 
             //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();
             containerRegistry.RegisterSingleton<IPluginManager, PluginManager>();

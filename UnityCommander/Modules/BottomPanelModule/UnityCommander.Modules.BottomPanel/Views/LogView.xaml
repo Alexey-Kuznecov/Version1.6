@@ -17,6 +17,10 @@
         <KeyBinding
             Key="E"
             Command="{Binding ToggleEditModeCommand}"
+            Modifiers="Ctrl" />
+        <KeyBinding
+            Key="D"
+            Command="{Binding ClearCommand}"
             Modifiers="Alt" />
     </UserControl.InputBindings>
     <Grid Background="#1E1E1E">
