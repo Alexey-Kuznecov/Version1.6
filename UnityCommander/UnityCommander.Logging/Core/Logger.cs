@@ -52,10 +52,7 @@ namespace UnityCommander.Logging.Core
 
                 var entry = new LogEntry
                 {
-                    Timestamp = DateTime.Now,
-                    Level = level,
                     Message = message,
-                    Payload = obj,
                     Category = _category,
                     Scope = _scope
                 };

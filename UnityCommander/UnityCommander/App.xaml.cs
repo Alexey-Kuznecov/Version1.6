@@ -140,79 +140,59 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<LoggerCreator>();
             containerRegistry.RegisterSingleton<LoggingSinkService>();
 
-            var commitCommand = new SimpleCommandDescriptor(
-               name: "commit",
-               positionalArguments: new[]
-               {
-                   new SimplePositionalArgumentDescriptor(
-                       "message",
-                       ArgumentValueType.String)
-               },
-               flags: new[]
+            var gitCommand = new SimpleCommandDescriptor(
+                name: "git",
+                variants: new[]
                 {
-                    new SimpleFlagDescriptor(
-                        name: "--amend",
-                        shortName: "--amd",
-                        requiresValue: false),
+                    new CommandVariant(
+                        name: "commit",
+                        flags: new[]
+                        {
+                            new SimpleFlagDescriptor(
+                                name: "--amend",
+                                shortName: null,
+                                requiresValue: false),
 
-                    new SimpleFlagDescriptor(
-                        name: "-m",
-                        shortName: null,
-                        requiresValue: true,
-                        valueType: ArgumentValueType.String)
-                },
-                flagOrderPolicy: FlagOrderPolicy.AnyOrder,
-                usage: "commit <message> [-m <message>] [--amend]"
-           );
+                            new SimpleFlagDescriptor(
+                                name: "-m",
+                                shortName: null,
+                                requiresValue: true,
+                                valueType: ArgumentValueType.String)
+                        },
+                        arguments : new List<IPositionalArgumentDescriptor>
+                        {
+                            new SimplePositionalArgumentDescriptor("message", ArgumentValueType.String)
+                        },
+                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                        usage: "git commit <message> [-m <message>] [--amend]"),
+                    new CommandVariant(
+                        name: "push",
+                        flags: new[]
+                        {
+                            new SimpleFlagDescriptor(
+                                name: "--all",
+                                shortName: null,
+                                requiresValue: false),
 
-            var gitCommitCommand = new SimpleCommandDescriptor(
-                name: "git commit",
-                positionalArguments: new[]
-                {
-                    new SimplePositionalArgumentDescriptor(
-                        "message",
-                        ArgumentValueType.String)
-                },
-                flags: new[]
-                {
-                    new SimpleFlagDescriptor(
-                        name: "--amend",
-                        shortName: null,
-                        requiresValue: false),
-
-                    new SimpleFlagDescriptor(
-                        name: "-m",
-                        shortName: null,
-                        requiresValue: true,
-                        valueType: ArgumentValueType.String)
-                },
-                flagOrderPolicy: FlagOrderPolicy.AnyOrder,
-                usage: "git commit <message> [-m <message>] [--amend]"
-            );
-
-            var gitCommand = new SimpleCommandDescriptor
-            {
-                Name = "git",
-                Variants = new Dictionary<string, CommandVariant>
-                {
-                    ["commit"] = new CommandVariant
-                    {
-                        Name = "commit",
-                        Arguments = new List<IArgumentDescriptor>
-            {
-                new PositionalArgumentDescriptor("message", typeof(string), false)
-            },
-                        Flags = new List<FlagDescriptor>
-            {
-                new FlagDescriptor("-m", true),
-                new FlagDescriptor("--amend", false)
-            }
+                            new SimpleFlagDescriptor(
+                                name: "-a",
+                                shortName: null,
+                                requiresValue: false,
+                                valueType: ArgumentValueType.String)
+                        },
+                        arguments : new List<IPositionalArgumentDescriptor>
+                        {
+                            new SimplePositionalArgumentDescriptor("remote", ArgumentValueType.String)
+                        },
+                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                        usage: "git push <message> [-m <message>] [--amend]"
+                        )
                     }
-                }
-            };
+                );
 
-            containerRegistry.RegisterInstance<ICommandDescriptor>(commitCommand);
-            containerRegistry.RegisterInstance<ICommandDescriptor>(gitCommitCommand);
+            //containerRegistry.RegisterInstance<ICommandDescriptor>(commitCommand);
+            //containerRegistry.RegisterInstance<ICommandDescriptor>(gitCommitCommand);
+            containerRegistry.RegisterInstance<ICommandDescriptor>(gitCommand);
             containerRegistry.RegisterSingleton<ICliInputAnalyzer, DefaultCliInputAnalyzer>();
 
             //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();

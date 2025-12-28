@@ -7,6 +7,6 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
         string Name { get; }
         ArgumentValueType ValueType { get; }
         bool IsRequired { get; }
-        bool IsRepeatable { get; } // например: files...
+        bool IsRepeatable { get; }
     }
 }

@@ -177,8 +177,20 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             var cmdString = new[] 
             {
                 //"git commit -m",
+                //"git commit message",
+                //"git commit message \"It is works!\"",
+                //"git commit message \"It is works!\" -m",
+                "git commit message -m  \"It is works!\" --amend",
+                "git commit message --amend -m \"It is works!\"",
                 //"git commit -m --amend",
-                "git commit --amend -m test"
+                //"git commit -m \"Initial commit\" --amend",
+                //"git commit --amend\r\n",
+                //"git commit -m \"Fix bug\" --amend",
+                //"git subcommand commit-all -a -m \"Batch commit\"",
+                //"git subcommand commit-all --all",
+                //"git subcommand commit-all -m \"Batch commit\"",
+                //"git commit --amend -m test",
+
                 //"",
                 //"git",
                 //"git commit",
@@ -198,7 +210,12 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 _logger.ObjectInfo($"UpdateCompletions", parseState, p =>
                 {
                     _logger.Info($"Name: {p.Command?.Name}");
-                    _logger.CollectionInfo($"PositionalArguments: ", p.PositionalArguments, pa =>
+                    _logger.CollectionInfo($"Name: {p.Command?.Name}", p.Command?.Variants, v =>
+                    {
+                        _logger.Info($"Name: {v.Name}");
+                        _logger.Info($"FlagOrderPolicy: {v.FlagOrderPolicy}");
+                    });
+                    _logger.CollectionInfo($"PositionalArguments: {p.PositionalArguments?.Count}", p.PositionalArguments, pa =>
                     {
                         _logger.ObjectInfo($"Name: {pa.Descriptor}", pa.Descriptor, d =>
                         {
@@ -209,7 +226,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                         });
                         _logger.Info($"Value: {pa.Value}");
                     });
-                    _logger.CollectionInfo($"Flags: ", p.Flags, f =>
+                    _logger.CollectionInfo($"Flags: {p.Flags?.Count} ", p.Flags, f =>
                     {
                         _logger.ObjectInfo($"Name: {f.Descriptor}", f.Descriptor, n =>
                         {
@@ -224,9 +241,21 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                     });
                     _logger.Info($"ExpectedNext: {p.ExpectedNext}");
                     _logger.Info($"ArgumentIndex: {p.ArgumentIndex}");
+                    _logger.Info($"AvailableArguments: {p.AvailableArguments.Count}");
+                    _logger.Info($"AvailableFlags: {p.AvailableFlags.Count}");
+                    _logger.Info($"IsComplete: {p.IsComplete}");
                     _logger.Info($"Error: {p.Error}");
                 });
             }
+
+            //if (parseState.IsComplete)
+            //    return;
+
+            //if (parseState.ExpectedNext == ExpectedNext.Flag)
+            //    return parseState.AvailableFlags;
+
+            //if (parseState.ExpectedNext == ExpectedNext.Argument)
+            //    return parseState.AvailableArguments;
 
             //_logger.Info($"UpdateCompletions [InputText={InputText}] [CaretIndex={CaretIndex}]");
             //_logger.Info(string.Format($"UpdateCompletions [Command={0}])", parseState.Command == null ? parseState.Command : parseState.Command.Name));

@@ -1,15 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using UnityCommander.Autocomplete.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
     public class CommandVariant
     {
-        public string Name; // mode-значение, например "commit"
-        public List<IPositionalArgumentDescriptor> Arguments; // аргументы для этого режима
-        public List<SimpleFlagDescriptor> Flags; // флаги для этого режима
+        public string? Name { get; } // mode-значение, например "commit"
+        public IReadOnlyList<IFlagDescriptor> Flags { get; } // флаги для этого варианта
+        public IReadOnlyList<IPositionalArgumentDescriptor> Arguments { get; } // аргументы для этого варианта
+        public FlagOrderPolicy FlagOrderPolicy { get; }
+        public string Usage { get; }
+
+        public CommandVariant(
+            string name,
+            IReadOnlyList<IFlagDescriptor> flags,
+            IReadOnlyList<IPositionalArgumentDescriptor> arguments,
+            FlagOrderPolicy flagOrderPolicy,
+            string usage)
+        {
+            Name = name;
+            Flags = flags;
+            Arguments = arguments;
+            FlagOrderPolicy = flagOrderPolicy;
+            Usage = usage;
+        }
     }
 }
