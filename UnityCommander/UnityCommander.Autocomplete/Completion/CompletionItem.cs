@@ -1,4 +1,5 @@
-﻿using UnityCommander.Autocomplete.Input;
+﻿using UnityCommander.Abstractions.Completion;
+using UnityCommander.Autocomplete.Input;
 
 namespace UnityCommander.Autocomplete.Completion
 {

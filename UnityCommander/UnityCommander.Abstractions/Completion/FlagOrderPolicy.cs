@@ -1,4 +1,4 @@
-﻿namespace UnityCommander.Autocomplete.Infrastructure
+﻿namespace UnityCommander.Abstractions.Completion
 {
     public enum FlagOrderPolicy
     {

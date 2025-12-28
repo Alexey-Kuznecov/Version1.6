@@ -1,6 +1,5 @@
-﻿using UnityCommander.Autocomplete.Infrastructure;
-
-namespace UnityCommander.Autocomplete.Context.Descriptors
+﻿
+namespace UnityCommander.Abstractions.Completion
 {
     public interface IFlagDescriptor
     {

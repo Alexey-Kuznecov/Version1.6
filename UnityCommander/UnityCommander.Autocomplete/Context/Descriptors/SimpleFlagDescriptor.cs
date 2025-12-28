@@ -1,4 +1,5 @@
-﻿using UnityCommander.Autocomplete.Infrastructure;
+﻿
+using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
@@ -11,14 +12,16 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
         public bool RequiresValue { get; }
 
         public SimpleFlagDescriptor(
-            string name,
-            string? shortName,
-            bool requiresValue,
-            ArgumentValueType? valueType = null)
+         string name,
+         string? shortName,
+         bool requiresValue,
+         bool isRepeatable = false,
+         ArgumentValueType? valueType = null)
         {
             Name = name;
             ShortName = shortName;
             RequiresValue = requiresValue;
+            IsRepeatable = isRepeatable;
             ValueType = valueType;
         }
     }

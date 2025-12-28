@@ -1,9 +1,10 @@
 ﻿
-using UnityCommander.Autocomplete.Infrastructure;
+
+using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
-    public class CommandVariant
+    public class CommandVariant : ICommandVariant
     {
         public string? Name { get; } // mode-значение, например "commit"
         public IReadOnlyList<IFlagDescriptor> Flags { get; } // флаги для этого варианта

@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using System.Text;
-using UnityCommander.Autocomplete.Completion;
+﻿using System.Text;
+using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Context.Descriptors;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -11,20 +10,25 @@ namespace UnityCommander.Autocomplete.Infrastructure
     public sealed class DefaultCliInputAnalyzer : ICliInputAnalyzer
     {
         private readonly IReadOnlyList<ICommandDescriptor> _commands;
-        private readonly ILogger _logger;
+        private readonly ILogger? _logger;
 
         public DefaultCliInputAnalyzer(
             IReadOnlyList<ICommandDescriptor> commands,
-            LoggerCreator loggerCreator)
+            LoggerCreator? loggerCreator = null)
         {
             _commands = commands;
-            _logger = loggerCreator.For<DefaultCliInputAnalyzer>(LogScope.UserAction);
+            _logger = loggerCreator?.For<DefaultCliInputAnalyzer>(LogScope.UserAction);
+        }
+
+        public DefaultCliInputAnalyzer(ICommandCatalog catalog)
+        {
+            _commands = catalog.GetAll().ToList();
         }
 
         public CliParseState Analyze(string text, int caretPosition)
         {
             var tokens = Tokenize(text);
-            _logger.CollectionInfo("Tokens:", tokens);
+            //_logger.CollectionInfo("Tokens:", tokens);
 
             // ────────────────────────────────
             // 0️⃣ Пустой ввод
@@ -68,12 +72,16 @@ namespace UnityCommander.Autocomplete.Infrastructure
             if (variant == null)
                 return ErrorState(CompletionKind.Variant, $"Unknown subcommand '{variantToken}'");
 
+
             var positionalArgs = new List<ParsedArgument>();
             var flags = new List<ParsedFlag>();
 
             int i = 2;          // после command + variant
             int argIndex = 0;   // индекс позиции в variant.Arguments
             int lastFlagIndex = -1; // для StrictOrder
+            
+            _logger?.CollectionInfo("Variant Flags:", variant.Flags.Select(f => f.Name).ToList());
+            _logger?.CollectionInfo("Tokens:", tokens);
 
             // ────────────────────────────────
             // 3️⃣ Разбор аргументов и флагов

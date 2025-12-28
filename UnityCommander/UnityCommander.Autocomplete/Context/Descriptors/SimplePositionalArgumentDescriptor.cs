@@ -1,5 +1,5 @@
 ﻿
-using UnityCommander.Autocomplete.Infrastructure;
+using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
@@ -14,7 +14,7 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
             ArgumentValueType valueType,
             bool isRequired = false,
             bool isRepeatable = false,
-            IReadOnlyList<CommandVariant>? variants = null)
+            IReadOnlyList<ICommandVariant>? variants = null)
         {
             Name = name;
             ValueType = valueType;

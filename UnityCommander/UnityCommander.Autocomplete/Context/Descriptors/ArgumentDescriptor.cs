@@ -1,4 +1,4 @@
-﻿using UnityCommander.Autocomplete.Infrastructure;
+﻿using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
@@ -9,6 +9,6 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
         public ArgumentValueType ValueType { get; init; }
         public bool IsRequired { get; init; }
         public bool IsRepeatable { get; init; }
-        public CommandVariant? Variant { get; init; }
+        public ICommandVariant? Variant { get; init; }
     }
 }

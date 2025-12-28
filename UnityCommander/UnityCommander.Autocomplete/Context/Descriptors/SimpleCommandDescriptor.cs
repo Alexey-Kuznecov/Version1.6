@@ -1,14 +1,16 @@
 ﻿
+using UnityCommander.Abstractions.Completion;
+
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
     public sealed class SimpleCommandDescriptor : ICommandDescriptor
     {
         public string Name { get; }
-        public IReadOnlyList<CommandVariant> Variants { get; }
+        public IReadOnlyList<ICommandVariant> Variants { get; }
 
         public SimpleCommandDescriptor(
             string name,
-            IReadOnlyList<CommandVariant> variants)
+            IReadOnlyList<ICommandVariant> variants)
         {
             Name = name;
             Variants = variants;

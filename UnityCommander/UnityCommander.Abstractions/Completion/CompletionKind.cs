@@ -1,4 +1,4 @@
-﻿namespace UnityCommander.Autocomplete.Completion
+﻿namespace UnityCommander.Abstractions.Completion
 {
     public enum CompletionKind
     {
@@ -9,6 +9,7 @@
         FlagValue,
         Nothing,
         Error,
-        Variant
+        Variant,
+        Container
     }
 }

@@ -11,6 +11,7 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System.Collections.Generic;
 using System.Windows;
+using UnityCommander.Abstractions.Completion;
 using UnityCommander.AI.ImageSearch;
 using UnityCommander.Autocomplete.Context.Descriptors;
 using UnityCommander.Autocomplete.Infrastructure;
@@ -149,15 +150,14 @@ namespace UnityCommander
                         flags: new[]
                         {
                             new SimpleFlagDescriptor(
-                                name: "--amend",
-                                shortName: null,
-                                requiresValue: false),
-
-                            new SimpleFlagDescriptor(
                                 name: "-m",
                                 shortName: null,
                                 requiresValue: true,
-                                valueType: ArgumentValueType.String)
+                                valueType: ArgumentValueType.String),
+                            new SimpleFlagDescriptor(
+                                name: "--amend",
+                                shortName: null,
+                                requiresValue: false)
                         },
                         arguments : new List<IPositionalArgumentDescriptor>
                         {

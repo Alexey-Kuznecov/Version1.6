@@ -1,4 +1,4 @@
-﻿using UnityCommander.Autocomplete.Context.Descriptors;
+﻿using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Completion
 {
