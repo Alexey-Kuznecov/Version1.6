@@ -33,11 +33,43 @@ namespace UnityCommander.Autocomplete.Tests.AnalizerTests
         [InlineData("git commit test", CompletionKind.Flag)]
         [InlineData("git commit test -m", CompletionKind.FlagValue)]
         [InlineData("git commit test -m message", CompletionKind.Flag)]
-        // Анализатор вернул CompletionKind.None ошибка системы или нет хотя по мне так 
-        // завершонная строка команды далжна выглядеть так git commit test -m message -amend
-        // Скороее всего message посцитал как флаг или как значения флага -m 
-        // здесь надо выдовать ошибку и вообще опозиционный аргумент это message а test ошибка которую система не обработала по факту
-        public void Analyze_Should_Return_Expected_Next_State(
+        public void Git_Command_Analyze_Should_Return_Expected_Next_State(
+            string input,
+            CompletionKind expectedNext)
+        {
+            var result = _analyzer.Analyze(input, input.Length);
+
+            result.ExpectedNext.Should().Be(expectedNext);
+        }
+
+        [Theory]
+        // ─── Начало ввода команды ─────────────────
+        [InlineData("plugin", CompletionKind.Variant)]
+        //[InlineData("plugin l", CompletionKind.Variant)]           // должен предложить load, list
+        //[InlineData("plugin lo", CompletionKind.Variant)]          // должен предложить load
+        //[InlineData("plugin unload", CompletionKind.PositionalArgument)]
+        //[InlineData("plugin reload", CompletionKind.PositionalArgument)]
+        //[InlineData("plugin info", CompletionKind.PositionalArgument)]
+
+        //// ─── Позиционные аргументы ─────────────────
+        //[InlineData("plugin load ", CompletionKind.PositionalArgument)]          // ждем путь
+        //[InlineData("plugin load C:\\Plugins\\MyPlugin.dll", CompletionKind.Flag)]
+        //[InlineData("plugin unload MyPlugin", CompletionKind.Flag)]
+        //[InlineData("plugin reload MyPlugin", CompletionKind.Flag)]
+        //[InlineData("plugin info MyPlugin", CompletionKind.Flag)]
+
+        //// ─── Флаги ─────────────────
+        //[InlineData("plugin load C:\\Plugins\\MyPlugin.dll --force", CompletionKind.Flag)]
+        //[InlineData("plugin load C:\\Plugins\\MyPlugin.dll -f", CompletionKind.Flag)]
+        //[InlineData("plugin load C:\\Plugins\\MyPlugin.dll --dependencies", CompletionKind.Flag)]
+        //[InlineData("plugin unload --all", CompletionKind.Flag)]
+        //[InlineData("plugin reload --all", CompletionKind.Flag)]
+        //[InlineData("plugin list --verbose", CompletionKind.Flag)]
+        //[InlineData("plugin info MyPlugin --all", CompletionKind.Flag)]
+
+        // ─── Значения флагов (если бы были флаги с значениями) ─────────────────
+        //[InlineData("plugin load C:\\Plugins\\MyPlugin.dll --some-flag ", CompletionKind.FlagValue)] // пример
+        public void Plugin_Command_Analyze_Should_Return_Expected_Next_State(
             string input,
             CompletionKind expectedNext)
         {

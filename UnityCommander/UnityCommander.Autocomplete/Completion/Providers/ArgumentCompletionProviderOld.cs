@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityCommander.Autocomplete.Completion;
+﻿
 using UnityCommander.Autocomplete.Context;
 using UnityCommander.Autocomplete.Input;
-using UnityCommander.CLI.Autocomplete;
-using UnityCommander.CLI.Integration;
 
-namespace UnityCommander.Modules.BottomPanel.Completions
+namespace UnityCommander.Autocomplete.Completion.Providers
 {
     //public sealed class ArgumentCompletionProvider : ICompletionProvider
     //{

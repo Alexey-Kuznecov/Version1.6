@@ -6,6 +6,7 @@ namespace UnityCommander.Autocomplete.Tokenization
         Command,
         Argument,
         Path,
-        Unknown
+        Unknown,
+        Flag
     }
 }

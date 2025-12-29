@@ -1,10 +1,11 @@
-﻿using UnityCommander.Autocomplete.Input;
+﻿using UnityCommander.Autocomplete.Infrastructure;
+using UnityCommander.Autocomplete.Input;
 
 namespace UnityCommander.Autocomplete.Completion
 {
     public interface ICompletionEngine
     {
-        CompletionResult GetCompletions(InputState state);
+        public CompletionResult GetCompletions(InputState state, CliParseState parseState);
 
         TextEdit ApplyCompletion(
             InputState state,

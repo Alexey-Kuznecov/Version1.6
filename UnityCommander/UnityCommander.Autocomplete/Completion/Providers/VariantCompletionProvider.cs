@@ -4,23 +4,18 @@ using UnityCommander.Autocomplete.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Completion.Providers
 {
-    public class CommandCompletionProvider : ICompletionProvider
+    public class VariantCompletionProvider : ICompletionProvider
     {
-        private readonly IReadOnlyList<ICommandDescriptor> _allCommands;
-
-        public CommandCompletionProvider(IReadOnlyList<ICommandDescriptor> allCommands)
-        {
-            _allCommands = allCommands;
-        }
-
         public bool CanHandle(CliParseState ctx)
-            => ctx.ExpectedNext == CompletionKind.Command;
+            => ctx.ExpectedNext == CompletionKind.Variant;
 
         public IEnumerable<CompletionItem> GetCompletions(CliParseState ctx)
         {
             // фильтруем команды по тому, что уже введено
             var partial = ctx.PartialValue ?? "";
-            return _allCommands
+            var command = ctx.Command ?? throw new ArgumentNullException();
+
+            return command.Variants
                 .Where(c => c.Name.StartsWith(partial, StringComparison.OrdinalIgnoreCase))
                 .Select(cmd => new CompletionItem
                 {

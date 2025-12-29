@@ -4,18 +4,18 @@ using UnityCommander.Autocomplete.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Completion.Providers
 {
-    public class ArgumentCompletionProvider : ICompletionProvider
+    public class FlagCompletionProvider : ICompletionProvider
     {
         public bool CanHandle(CliParseState ctx)
-            => ctx.ExpectedNext == CompletionKind.PositionalArgument;
+            => ctx.ExpectedNext == CompletionKind.Flag;
 
         public IEnumerable<CompletionItem> GetCompletions(CliParseState ctx)
         {
-            return ctx.AvailableArguments
-                .Select(arg => new CompletionItem
+            return ctx.AvailableFlags
+                .Select(f => new CompletionItem
                 {
-                    DisplayText = arg.Name,
-                    InsertText = arg.Name
+                    DisplayText = f.Name,
+                    InsertText = f.Name
                 });
         }
     }

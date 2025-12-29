@@ -2,7 +2,6 @@
 {
     public enum CompletionKind
     {
-        None,
         Command,
         PositionalArgument,
         Flag,

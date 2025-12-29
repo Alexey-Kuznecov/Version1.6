@@ -1,21 +1,15 @@
-﻿using UnityCommander.Autocomplete.Input;
-using UnityCommander.Autocomplete.Tokenization;
+﻿
+using UnityCommander.Autocomplete.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Context
 {
     public abstract class InputContext
     {
-        public TokenizationResult Tokens { get; }
-        public InputToken CurrentToken { get; }
-        public InputContext(TokenizationResult tokens)
+        public CliParseState ParseState { get; }
+
+        protected InputContext(CliParseState parseState)
         {
-            Tokens = tokens;
-            CurrentToken = tokens.CurrentToken ?? new InputToken
-            {
-                Start = tokens.CaretPosition,
-                Length = 0,
-                CurrentValue = string.Empty
-            };
+            ParseState = parseState;
         }
     }
 }

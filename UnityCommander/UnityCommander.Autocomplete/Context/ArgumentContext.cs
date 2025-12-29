@@ -1,29 +1,17 @@
-﻿using UnityCommander.Autocomplete.Tokenization;
+﻿
+using UnityCommander.Abstractions.Completion;
+using UnityCommander.Autocomplete.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Context
 {
     public sealed class ArgumentContext : InputContext
     {
-        public string CommandName { get; }
-        public string PartialArgument { get; }
-        public IReadOnlyList<string> ExistingArguments { get; }
-        public int ReplaceStart { get; }
-        public int ReplaceLength { get; }
+        public int CurrentTokenIndex => ParseState.ArgumentIndex;
+        public IReadOnlyList<IPositionalArgumentDescriptor> AvailableArguments => ParseState.AvailableArguments;
+        public IReadOnlyList<IFlagDescriptor> AvailableFlags => ParseState.AvailableFlags;
 
-        public ArgumentContext(
-            TokenizationResult tokens,
-            string commandName,
-            IReadOnlyList<string> existingArguments,
-            string partialArgument,
-            int replaceStart,
-            int replaceLength
-        ) : base(tokens)
-        {
-            CommandName = commandName;
-            ExistingArguments = existingArguments;
-            PartialArgument = partialArgument;
-            ReplaceStart = replaceStart;
-            ReplaceLength = replaceLength;
-        }
+        public CompletionKind ExpectedNext => ParseState.ExpectedNext;
+
+        public ArgumentContext(CliParseState parseState) : base(parseState) { }
     }
 }

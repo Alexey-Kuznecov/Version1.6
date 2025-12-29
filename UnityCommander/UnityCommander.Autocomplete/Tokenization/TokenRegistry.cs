@@ -1,5 +1,4 @@
 ﻿using UnityCommander.Autocomplete.Input;
-using UnityCommander.Logging.Abstractions;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;

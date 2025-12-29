@@ -14,7 +14,8 @@ namespace UnityCommander.Testing.Infrastructure
             // Команды
             var commands = new[]
             {
-                TestCliInputAnalyzerFactory.CreateGitCommand()
+                TestCliInputAnalyzerFactory.CreateGitCommand(),
+                TestCliInputAnalyzerFactory.CreatePluginCommand()
             };
 
             catalog.RegisterInstance<ICommandCatalog>(

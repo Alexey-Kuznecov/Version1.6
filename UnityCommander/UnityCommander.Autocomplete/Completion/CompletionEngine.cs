@@ -1,42 +1,39 @@
-﻿using UnityCommander.Autocomplete.Context.Resolution;
+﻿
+using UnityCommander.Abstractions.Completion;
+using UnityCommander.Autocomplete.Context;
+using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Input;
 using UnityCommander.Autocomplete.Tokenization;
-using UnityCommander.Logging.Contracts;
-using UnityCommander.Logging.Core;
-using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Completion
 {
     public sealed class CompletionEngine : ICompletionEngine
     {
-        private readonly IInputTokenizer _tokenizer;
-        private readonly IInputContextResolver _contextResolver;
+        private readonly ITokenRegistry _tokenRegistry;
         private readonly IEnumerable<ICompletionProvider> _providers;
-        private readonly ITokenRegistry _tokenRegistry; // внутренний регистр
-        private readonly ILogger? _appLogger; // внутренний регистр
-        public CompletionEngine(
-            IInputTokenizer tokenizer,
-            IInputContextResolver contextResolver,
-            IEnumerable<ICompletionProvider> providers,
-            ITokenRegistry tokenRegistry,
-            LoggerCreator? loggerCreator = null)
+
+        public CompletionEngine(ITokenRegistry tokenRegistry, IEnumerable<ICompletionProvider> providers)
         {
-            _appLogger = loggerCreator?.For<CompletionEngine>(LogScope.Runtime);
-            _tokenizer = tokenizer;
-            _contextResolver = contextResolver;
-            _providers = providers;
             _tokenRegistry = tokenRegistry;
+            _providers = providers;
         }
 
-        public CompletionResult GetCompletions(InputState state)
+        public CompletionResult GetCompletions(InputState state, CliParseState analyze)
         {
-            var tokens = _tokenizer.Tokenize(state);
-            _tokenRegistry.UpdateTokens(tokens.Tokens ?? throw new ArgumentNullException()); // обновляем регистр
-            var context = _contextResolver.Resolve(tokens);
-
             var items = _providers
-                .Where(p => p.CanHandle(context))
-                .SelectMany(p => p.GetCompletions(context))
+                .Where(p => p.CanHandle(analyze))
+                .SelectMany(p => p.GetCompletions(analyze))
+                .Select(item => new CompletionItem
+                {
+                    DisplayText = item.DisplayText,
+                    InsertText = item.InsertText,
+                    EditFactory = s => new TextEdit(
+                        analyze.ReplaceStart,
+                        analyze.ReplaceLength,
+                        analyze.CurrentToken,
+                        item.InsertText + " "
+                    )
+                })
                 .ToList();
 
             return new CompletionResult(items)
@@ -52,7 +49,6 @@ namespace UnityCommander.Autocomplete.Completion
             return item.EditFactory(state);
         }
 
-        // Новая точка доступа к токенам из VM
         public InputToken? GetTokenNearCaret(string text, int caretPosition)
             => _tokenRegistry.GetTokenNearCaret(text, caretPosition);
 

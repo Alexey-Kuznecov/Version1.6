@@ -28,6 +28,20 @@ namespace UnityCommander.Testing.Fake
                 });
         }
 
+        public static ICommandDescriptor CreatePluginCommand()
+        {
+            return new SimpleCommandDescriptor(
+               name: "plugin",
+               variants: new[]
+               {
+                  CreatePluginLoadVariant(),
+                  CreatePluginUnloadVariant(),
+                  CreatePluginReloadVariant(),
+                  CreatePluginListVariant(),
+                  CreatePluginInfoVariant()
+               });
+        }
+
         private static ICommandVariant CreateGitCommitVariant()
         {
             return new CommandVariant(
@@ -82,6 +96,129 @@ namespace UnityCommander.Testing.Fake
                 },
                 flagOrderPolicy: FlagOrderPolicy.StrictOrder,
                 usage: "git push <remote> [--all]"
+            );
+        }
+
+        private static ICommandVariant CreatePluginLoadVariant()
+        {
+            return new CommandVariant(
+            name: "load",
+            flags: new[]
+            {
+                new SimpleFlagDescriptor(
+                    name: "--force",
+                    shortName: "-f",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean),
+                new SimpleFlagDescriptor(
+                    name: "--dependencies",
+                    shortName: "-d",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean)
+            },
+            arguments: new List<IPositionalArgumentDescriptor>
+            {
+                new SimplePositionalArgumentDescriptor(
+                    name: "path",
+                    valueType: ArgumentValueType.Path,
+                    isRequired: true)
+            },
+            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            usage: "plugin load <path> [--force] [--dependencies]"
+            );
+        }
+        private static ICommandVariant CreatePluginUnloadVariant()
+        {
+            return new CommandVariant(
+            name: "unload",
+            flags: new[]
+            {
+                new SimpleFlagDescriptor(
+                    name: "--all",
+                    shortName: "-a",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean),
+                new SimpleFlagDescriptor(
+                    name: "--force",
+                    shortName: "-f",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean)
+            },
+            arguments: new List<IPositionalArgumentDescriptor>
+            {
+                new SimplePositionalArgumentDescriptor(
+                    name: "name",
+                    valueType: ArgumentValueType.String,
+                    isRequired: false)
+            },
+            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            usage: "plugin unload [name] [--all] [--force]"
+            );
+        }
+
+        private static ICommandVariant CreatePluginReloadVariant()
+        {
+            return new CommandVariant(
+            name: "reload",
+            flags: new[]
+            {
+                new SimpleFlagDescriptor(
+                    name: "--all",
+                    shortName: "-a",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean)
+            },
+            arguments: new List<IPositionalArgumentDescriptor>
+            {
+                new SimplePositionalArgumentDescriptor(
+                    name: "name",
+                    valueType: ArgumentValueType.String,
+                    isRequired: false)
+            },
+            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            usage: "plugin reload [name] [--all]"
+            );
+        }
+
+        private static ICommandVariant CreatePluginListVariant()
+        {
+            return new CommandVariant(
+            name: "list",
+            flags: new[]
+            {
+                new SimpleFlagDescriptor(
+                    name: "--verbose",
+                    shortName: "-v",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean)
+            },
+            arguments: new List<IPositionalArgumentDescriptor>(), // путь не нужен для list
+            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            usage: "plugin list [--verbose]"
+            );
+        }
+
+        private static ICommandVariant CreatePluginInfoVariant()
+        {
+            return new CommandVariant(
+            name: "info",
+            flags: new[]
+            {
+                new SimpleFlagDescriptor(
+                    name: "--all",
+                    shortName: "-a",
+                    requiresValue: false,
+                    valueType: ArgumentValueType.Boolean)
+            },
+            arguments: new List<IPositionalArgumentDescriptor>
+            {
+                new SimplePositionalArgumentDescriptor(
+                    name: "name",
+                    valueType: ArgumentValueType.String,
+                    isRequired: true)
+            },
+            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            usage: "plugin info <name> [--all]"
             );
         }
     }

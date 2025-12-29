@@ -6,6 +6,7 @@ namespace UnityCommander.Logging.Contracts
     {
         void Trace(string message);
         void Debug(string message);
+        void Debug(string message, Func<bool>? condition = null);
         void Info(string message);
         void ObjectInfo(string message, object obj, Func<bool>? condition = null);
         public void CollectionInfo(string message, IEnumerable collection, Func<bool>? condition = null);

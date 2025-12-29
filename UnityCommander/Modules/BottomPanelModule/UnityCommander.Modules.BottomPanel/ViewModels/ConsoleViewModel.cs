@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Completion;
 using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Input;
@@ -172,114 +173,24 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void UpdateCompletions()
         {
-            var state = new InputState(InputText, CaretIndex);
-
-            var cmdString = new[] 
-            {
-                //"git commit -m",
-                //"git commit message",
-                //"git commit message \"It is works!\"",
-                "git commit message \"It is works!\" -m",
-                "git commit message -m  \"It is works!\" --amend",
-                //"git commit message --amend -m \"It is works!\"",
-                //"git commit -m --amend",
-                //"git commit -m \"Initial commit\" --amend",
-                //"git commit --amend\r\n",
-                //"git commit -m \"Fix bug\" --amend",
-                //"git subcommand commit-all -a -m \"Batch commit\"",
-                //"git subcommand commit-all --all",
-                //"git subcommand commit-all -m \"Batch commit\"",
-                //"git commit --amend -m test",
-
-                //"",
-                //"git",
-                //"git commit",
-                //"commit",
-                //"commit test",
-                //"commit test --amend",
-                //"commit test -m --amend",
-                //"(\"commit test extra\"",
-                //"commit test --amend",
-                //"commit test -m"
-            }; 
-
-            foreach (var cmd in cmdString)
-            {
-                var parseState = _cliInputAnalyzer.Analyze(cmd, cmd.Length);
-                _logger.Info($"UpdateCompletions [{cmd}]");
-                _logger.ObjectInfo($"UpdateCompletions", parseState, p =>
-                {
-                    _logger.Info($"Name: {p.Command?.Name}");
-                    _logger.CollectionInfo($"Name: {p.Command?.Name}", p.Command?.Variants, v =>
-                    {
-                        _logger.Info($"Name: {v.Name}");
-                        _logger.Info($"FlagOrderPolicy: {v.FlagOrderPolicy}");
-                    });
-                    _logger.CollectionInfo($"PositionalArguments: {p.PositionalArguments?.Count}", p.PositionalArguments, pa =>
-                    {
-                        _logger.ObjectInfo($"Name: {pa.Descriptor}", pa.Descriptor, d =>
-                        {
-                            _logger.Info($"     Name: {d.Name}");
-                            _logger.Info($"     Description: {d.ValueType}");
-                            _logger.Info($"     Type: {d.IsRepeatable}");
-                            _logger.Info($"     IsRequired: {d.IsRequired}");
-                        });
-                        _logger.Info($"Value: {pa.Value}");
-                    });
-                    _logger.CollectionInfo($"Flags: {p.Flags?.Count} ", p.Flags, f =>
-                    {
-                        _logger.ObjectInfo($"Name: {f.Descriptor}", f.Descriptor, n =>
-                        {
-                            _logger.Info($"     Name: {n.Name}");
-                            _logger.Info($"     ShortName: {n.ShortName}");
-                            _logger.Info($"     ValueType: {n.ValueType}");
-                            _logger.Info($"     IsRepeatable: {n.IsRepeatable}");
-                            _logger.Info($"     RequiresValue: {n.RequiresValue}");
-                        });
-                        _logger.Info($"Value: {f.Value}");
-                        _logger.Info($"HasValue: {f.HasValue}");
-                    });
-                    _logger.Info($"ExpectedNext: {p.ExpectedNext}");
-                    _logger.Info($"ArgumentIndex: {p.ArgumentIndex}");
-                    _logger.Info($"AvailableArguments: {p.AvailableArguments.Count}");
-                    _logger.Info($"AvailableFlags: {p.AvailableFlags.Count}");
-                    _logger.Info($"IsComplete: {p.IsComplete}");
-                    _logger.Info($"Error: {p.Error}");
-                });
-            }
-
-            //if (parseState.IsComplete)
+            var caret = Math.Max(0, CaretIndex);
+            var parseState = _cliInputAnalyzer.Analyze(InputText, caret);
+            var state = new InputState(InputText, caret);
+            //if (parseState.IsEditingToken)
             //    return;
-
-            //if (parseState.ExpectedNext == ExpectedNext.Flag)
-            //    return parseState.AvailableFlags;
-
-            //if (parseState.ExpectedNext == ExpectedNext.Argument)
-            //    return parseState.AvailableArguments;
-
-            //_logger.Info($"UpdateCompletions [InputText={InputText}] [CaretIndex={CaretIndex}]");
-            //_logger.Info(string.Format($"UpdateCompletions [Command={0}])", parseState.Command == null ? parseState.Command : parseState.Command.Name));
-            //_logger.Info(string.Format($"UpdateCompletions [Error={0}])", parseState.Error == null ? "null" : parseState.Error.Message));
-            ////_logger.Info($"UpdateCompletions [ArgumentIndex={parseState.ArgumentIndex}]");
-            //_logger.Info($"UpdateCompletions [ExpectedNext={parseState.ExpectedNext.ToString()}]");
-            //_logger.Info($"=====================================================");
-            //_logger.Info($"UpdateCompletions [Flags.Count={parseState.Flags.Count}]");
-            //_logger.Info($"UpdateCompletions [PositionalArguments={parseState.PositionalArguments.Count}]");
-
-            //var result = _completionEngine.GetCompletions(state);
+            var result = _completionEngine.GetCompletions(state, parseState);
             //var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
 
-            //_completions.Clear();
+            _completions.Clear();
 
-            //_logger.Info($"UpdateCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
-            //if (token == null)
-            //    return;
+            _logger.Info($"UpdateCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
+            if (result == null)
+                return;
 
             //_logger.ObjectInfo("UpdateCompletions ", token);
-            //foreach (var item in result.Items)
-            //    _completions.Add(item);
-            //SelectedIndex = result.DefaultSelectedIndex;
-            CaretIndex = InputText.Length;
+            foreach (var item in result.Items)
+                _completions.Add(item);
+            SelectedIndex = result.DefaultSelectedIndex;
             //CaretIndex = InputText.Length + 1;
         }
 
