@@ -1,4 +1,4 @@
-﻿using UnityCommander.Autocomplete.Infrastructure;
+﻿using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Autocomplete.Tokenization;
 
 namespace UnityCommander.Autocomplete.Input
@@ -14,8 +14,8 @@ namespace UnityCommander.Autocomplete.Input
 
         public int Start { get; init; }
         public int Length { get; init; }
-        public TokenKind Kind { get; init; }
-        public CaretContext CaretContext { get; init; }
+        //public TokenKind Kind { get; init; }
+        //public CaretContext CaretContext { get; init; }
         public int StartIndex { get; internal set; }
     }
 }

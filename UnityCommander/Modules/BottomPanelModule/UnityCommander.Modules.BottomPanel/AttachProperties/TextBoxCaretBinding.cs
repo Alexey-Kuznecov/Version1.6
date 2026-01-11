@@ -20,11 +20,24 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnCaretIndexChanged));
 
+        private static readonly DependencyProperty IsAttachedProperty =
+            DependencyProperty.RegisterAttached(
+                "IsAttached",
+                typeof(bool),
+                typeof(TextBoxCaretBinding),
+                new PropertyMetadata(false));
+
         public static int GetCaretIndex(DependencyObject obj)
             => (int)obj.GetValue(CaretIndexProperty);
 
         public static void SetCaretIndex(DependencyObject obj, int value)
             => obj.SetValue(CaretIndexProperty, value);
+
+        private static bool GetIsAttached(DependencyObject obj)
+            => (bool)obj.GetValue(IsAttachedProperty);
+
+        private static void SetIsAttached(DependencyObject obj, bool value)
+            => obj.SetValue(IsAttachedProperty, value);
 
         private static void OnCaretIndexChanged(
             DependencyObject d,
@@ -33,20 +46,26 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
             if (d is not TextBox tb)
                 return;
 
-            int newIndex = (int)e.NewValue;
-
-            if (tb.CaretIndex != newIndex)
-            {
-                tb.CaretIndex = Math.Min(newIndex, tb.Text.Length);
-            }
-
             Attach(tb);
+
+            int newIndex = (int)e.NewValue;
+            int clamped = Math.Min(newIndex, tb.Text.Length);
+
+            if (tb.CaretIndex != clamped)
+            {
+                tb.CaretIndex = clamped;
+            }
         }
 
         private static void Attach(TextBox tb)
         {
-            tb.SelectionChanged -= OnSelectionChanged;
+            if (GetIsAttached(tb))
+                return;
+
+            SetIsAttached(tb, true);
+
             tb.SelectionChanged += OnSelectionChanged;
+            tb.TextChanged += OnTextChanged;
         }
 
         private static void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -54,6 +73,19 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
             if (sender is not TextBox tb)
                 return;
 
+            SyncCaretToBinding(tb);
+        }
+
+        private static void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox tb)
+                return;
+
+            SyncCaretToBinding(tb);
+        }
+
+        private static void SyncCaretToBinding(TextBox tb)
+        {
             int caret = tb.CaretIndex;
             int bound = GetCaretIndex(tb);
 

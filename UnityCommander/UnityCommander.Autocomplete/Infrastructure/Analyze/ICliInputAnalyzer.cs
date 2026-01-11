@@ -1,9 +1,9 @@
 ﻿
-namespace UnityCommander.Autocomplete.Infrastructure
+namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
     public interface ICliInputAnalyzer
     {
-        CliParseState Analyze(
+        InputStatus Analyze(
             string text,
             int caretPosition
         );

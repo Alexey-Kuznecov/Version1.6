@@ -15,6 +15,7 @@ using UnityCommander.Abstractions.Completion;
 using UnityCommander.AI.ImageSearch;
 using UnityCommander.Autocomplete.Context.Descriptors;
 using UnityCommander.Autocomplete.Infrastructure;
+using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Selection;
@@ -154,7 +155,7 @@ namespace UnityCommander
                         new SimpleFlagDescriptor(
                             name: "--force",
                             shortName: "-f",
-                            requiresValue: false,
+                            requiresValue: true,
                             valueType: ArgumentValueType.Boolean),
                         new SimpleFlagDescriptor(
                             name: "--dependencies",
@@ -315,7 +316,10 @@ namespace UnityCommander
             //containerRegistry.RegisterInstance<ICommandDescriptor>(gitCommitCommand);
             containerRegistry.RegisterInstance<ICommandDescriptor>(gitCommand);
             containerRegistry.RegisterInstance<ICommandDescriptor>(pluginCommand);
-            containerRegistry.RegisterSingleton<ICliInputAnalyzer, DefaultCliInputAnalyzer>();
+
+            containerRegistry.RegisterSingleton<Autocomplete.Infrastructure.Analyze.ICliInputAnalyzer, CliInputAnalyzer>();
+            containerRegistry.RegisterSingleton<ICliParseStateBuilder, CliParseStateBuilder>();
+            //containerRegistry.RegisterSingleton<ICliInputAnalyzer, DefaultCliInputAnalyzer>();
 
             //containerRegistry.RegisterSingleton<ILoggerService, NLogLoggerService>();
             containerRegistry.RegisterSingleton<IPluginManager, PluginManager>();

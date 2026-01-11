@@ -8,7 +8,7 @@ using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Infrastructure
 {
-    public sealed class DefaultCliInputAnalyzer : ICliInputAnalyzer
+    public sealed class DefaultCliInputAnalyzer  //: ICliInputAnalyzer
     {
         private readonly IReadOnlyList<ICommandDescriptor> _commands;
         private readonly ILogger? _logger;
@@ -36,13 +36,6 @@ namespace UnityCommander.Autocomplete.Infrastructure
                 return Empty(CompletionKind.Nothing, caretPosition);
 
             var currentToken = GetCurrentToken(tokens, caretPosition);
-
-            //if (currentToken.Start > currentToken.Length)
-            //{
-            //    var index = text.IndexOf(' ', currentToken.Start - currentToken.Length);
-            //    if (index == -1)
-            //        return StateForIncompleteToken(null, currentToken, _expectedNext);
-            //}
 
             var caretPositionMin = int.Min(caretPosition - 1, currentToken.Start - currentToken.Length);
 
@@ -216,19 +209,6 @@ namespace UnityCommander.Autocomplete.Infrastructure
             _logger?.Debug($"Ожидание ввода флага Flag", () => _expectedNext == CompletionKind.Flag);
             _logger?.Debug($"Ожидание ввода значения флага FlagValue", () => _expectedNext == CompletionKind.FlagValue);
             _logger?.Debug($"Команда полностью введена None", () => _expectedNext == CompletionKind.Nothing);
-            //CompletionKind expectedNext = availableArguments.Any()
-            //    ? CompletionKind.PositionalArgument
-            //    : availableFlags.Any()
-            //        ? CompletionKind.Flag
-            //        : CompletionKind.None;
-
-            //CompletionKind expectedNext = availableArguments.Any(a => a.IsRequired)
-            //  ? CompletionKind.PositionalArgument
-            //  : availableFlags.Any()
-            //      ? CompletionKind.Flag
-            //      : (availableArguments.Count == 0 || allFlagsWithoutValue)
-            //          ? CompletionKind.None
-            //          : CompletionKind.PositionalArgument;
 
             return new CliParseState(
                 command,

@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Completion;
-using UnityCommander.Autocomplete.Infrastructure;
+using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Autocomplete.Input;
 using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
+
 using UnityCommander.CLI.Integration;
-using UnityCommander.Core.Commands.Base;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
@@ -28,6 +27,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
     public class ConsoleViewModel : BindableBase
     {
         private readonly ICliInputAnalyzer _cliInputAnalyzer;
+        private readonly ICliParseStateBuilder _parseStateBuilder;
         private readonly ILogger _logger;
         private readonly IConsoleInput _input;
         private readonly IConsoleOutput _output;
@@ -100,9 +100,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             IPluginProvider pluginProvider,
             ICompletionEngine completionEngine,
             LoggerCreator loggerCreator,
-            ICliInputAnalyzer cliInputAnalyzer) //, IPluginProvider pluginProvider)
+            ICliInputAnalyzer cliInputAnalyzer,
+            ICliParseStateBuilder parseStateBuilder) //, IPluginProvider pluginProvider)
         {
             _cliInputAnalyzer = cliInputAnalyzer;
+            _parseStateBuilder = parseStateBuilder;
             _logger = loggerCreator.For<ConsoleViewModel>(LogScope.UI);
             _input = input;
             _output = output;
@@ -135,6 +137,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             SendCommandCommand = new DelegateCommand(SendInput);
 
+            InputText = string.Empty;
+            CaretIndex = 1;
             Task.Run(MainLoop);
             _pluginProvider = pluginProvider;
         }
@@ -174,7 +178,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private void UpdateCompletions()
         {
             var caret = Math.Max(0, CaretIndex);
-            var parseState = _cliInputAnalyzer.Analyze(InputText, caret);
+            var inputStatus = _cliInputAnalyzer.Analyze(InputText, caret);
+            var parseState = _parseStateBuilder.Build(inputStatus);
             var state = new InputState(InputText, caret);
             //if (parseState.IsEditingToken)
             //    return;
@@ -191,7 +196,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             foreach (var item in result.Items)
                 _completions.Add(item);
             SelectedIndex = result.DefaultSelectedIndex;
-            //CaretIndex = InputText.Length + 1;
+            //CaretIndex = CaretIndex < InputText.Length ? InputText.Length : CaretIndex;
+            //RaisePropertyChanged(nameof(CaretIndex));
         }
 
         private bool CanAccept() =>

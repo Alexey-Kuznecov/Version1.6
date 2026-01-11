@@ -8,5 +8,6 @@ namespace UnityCommander.Abstractions.Completion
         IReadOnlyList<IPositionalArgumentDescriptor> Arguments { get; } 
         FlagOrderPolicy FlagOrderPolicy { get; }
         string Usage { get; }
+        bool IsStrictOrder { get; }
     }
 }

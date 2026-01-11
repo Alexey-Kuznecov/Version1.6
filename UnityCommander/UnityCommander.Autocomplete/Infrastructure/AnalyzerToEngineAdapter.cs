@@ -47,5 +47,4 @@ namespace UnityCommander.Autocomplete.Infrastructure
             };
         }
     }
-
 }

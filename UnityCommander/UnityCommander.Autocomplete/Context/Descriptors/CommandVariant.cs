@@ -11,7 +11,7 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
         public IReadOnlyList<IPositionalArgumentDescriptor> Arguments { get; } // аргументы для этого варианта
         public FlagOrderPolicy FlagOrderPolicy { get; }
         public string? Usage { get; }
-
+        public bool IsStrictOrder { get; }
         public CommandVariant(
             string name,
             IReadOnlyList<IFlagDescriptor> flags,
