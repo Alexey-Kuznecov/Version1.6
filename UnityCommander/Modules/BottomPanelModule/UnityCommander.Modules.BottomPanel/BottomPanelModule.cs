@@ -3,15 +3,11 @@ using Prism.Modularity;
 using Prism.Regions;
 using UnityCommander.Autocomplete.Completion;
 using UnityCommander.Autocomplete.Completion.Providers;
-using UnityCommander.Autocomplete.Context.Resolution;
-using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Tokenization;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.Core;
-using UnityCommander.Core.Commands.Base;
-using UnityCommander.Modules.BottomPanel.Completions;
 using UnityCommander.Modules.BottomPanel.Views;
 
 namespace UnityCommander.Modules.BottomPanel

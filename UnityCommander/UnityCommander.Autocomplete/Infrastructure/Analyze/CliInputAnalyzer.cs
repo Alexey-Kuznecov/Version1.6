@@ -58,8 +58,14 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             IReadOnlyList<AnalyzerToken> tokens,
             int caretPosition)
         {
+            _logger?.CollectionInfo("IReadOnlyList<AnalyzerToken> tokens", tokens, p => 
+            {
+                _logger?.ObjectInfo($"", p);
+            });
+
             foreach (var token in tokens)
             {
+                //_logger?.ObjectInfo("", token);
                 if (IsCaretInsideToken(caretPosition, token))
                 {
                     token.Status = TokenStatus.Editing;
@@ -69,7 +75,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
                 token.Status = TokenStatus.Completed;
             }
-
+            
             // Каретка после пробела → создаём виртуальный токен
             var last = tokens.LastOrDefault();
             if (last != null && caretPosition > last.End)

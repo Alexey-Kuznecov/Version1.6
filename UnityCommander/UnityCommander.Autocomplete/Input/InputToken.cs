@@ -1,6 +1,4 @@
-﻿using UnityCommander.Autocomplete.Infrastructure.Analyze;
-using UnityCommander.Autocomplete.Tokenization;
-
+﻿
 namespace UnityCommander.Autocomplete.Input
 {
     public sealed class InputToken
