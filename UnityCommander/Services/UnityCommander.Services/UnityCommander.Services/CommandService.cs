@@ -21,12 +21,20 @@ namespace UnityCommander.Services
             _register.Register(metadata, handler);
         }
 
-        public void Register(CommandMetadata metadata, Func<CommandContext, Task> handler)
+        public void Register(CommandMetadata metadata, Func<CommandContext, Task<UndoToken>> handler)
         {
             _register.Register(metadata, handler);
         }
 
-        public Task ExecuteAsync(string commandName, CommandContext ctx)
+        // 🔥 undoable команда
+        public void RegisterUndoable(
+            CommandMetadata metadata,
+            Func<CommandContext, Task<UndoToken>> handler)
+        {
+            _register.Register(metadata, handler);
+        }
+
+        public Task ExecuteAsync(string commandName, CommandContext ctx = null)
         {
             return _executor.ExecuteAsync(commandName, ctx);
         }

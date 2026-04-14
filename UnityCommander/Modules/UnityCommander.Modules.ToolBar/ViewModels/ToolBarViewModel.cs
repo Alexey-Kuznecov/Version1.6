@@ -61,7 +61,8 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                                        .AddSection(sec => sec
                                         .WithLayout(RibbonGroupLayout.Inline)
                                            .AddButton("btn1", "Команда 1", new ToggleBottomPanel(_commandService, "btn1"), RibbonItemCategory.FileOpen, "file.add")
-                                           .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "edit.delete")
+                                           .AddButton("btn2", "Команда 2", new FileRemoveCommand(_commandService, "btn2"), RibbonItemCategory.FileOpen, "file.delete")
+                                           .AddButton("btn2", "Команда 3", new UndoCommand(_commandService, "btn3"), RibbonItemCategory.FileOpen, "edit.undo")
                                            .AddItem(new RibbonCheckBoxModel()
                                            {
                                                Id = "chk1",

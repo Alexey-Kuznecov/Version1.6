@@ -1,5 +1,6 @@
 ﻿using CommandSystem.Abstractions;
 using CommandSystem.Core.Factory;
+using CommandSystem.Core.UndoRedo;
 using CommandSystem.Gui.Integraion;
 using CommandSystem.Infrastructure.Execution;
 using CommandSystem.Infrastructure.Lifecycle;
@@ -380,6 +381,8 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ICommandFactory, CommandFactory>();
             containerRegistry.RegisterSingleton<ICommandExecutor, CommandExecutor>();
             containerRegistry.RegisterSingleton<ICommandDispatcher, CommandDispatcher>();
+            containerRegistry.RegisterSingleton<IHistoryStore, InMemoryHistoryStore>();
+            containerRegistry.RegisterSingleton<IHistoryManager, CommandHistoryManager>();
 
             // -------------------------------
             // 8. Регистрация GUI-команд

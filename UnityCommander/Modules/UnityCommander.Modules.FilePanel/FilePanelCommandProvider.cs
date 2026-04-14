@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace UnityCommander.Modules.FilePanel
 {
-    using Common.Module;
     using Services.Interfaces;
 
     public class FilePanelCommandProvider
@@ -23,12 +22,14 @@ namespace UnityCommander.Modules.FilePanel
             ctx.Result = path;
         };
 
-        public Func<CommandContext, Task> SetCurrentPathCommand => async ctx =>
+        public Func<CommandContext, Task<UndoToken?>> SetCurrentPathCommand => async ctx =>
         {
             var value = ctx.Parameter?.ToString();
-            var panel = _dockingService.GetActiveDirectoryPanel() as ITabPanelContent;
+            var panel = _dockingService.GetActiveDirectoryPanel();
+
             panel?.SetCurrentPath(value);
-            await Task.CompletedTask;
+
+            return null; // 🔥 ВОТ И ВСЁ
         };
 
         // В будущем сюда можно добавлять команды, которые не имеют отношения к FilePanelModule
