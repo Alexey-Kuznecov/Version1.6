@@ -1,7 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityCommander.Common;
+using UnityCommander.Common.Panels;
+using UnityCommander.Common.Panels.Panels;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
@@ -13,6 +15,8 @@ namespace UnityCommander.Services
         private readonly object _lock = new();
 
         private Guid? _activePanelId;
+
+        public event Action<TabAddedEvent> TabAdded;
 
         public Guid? ActivePanelId 
         {
@@ -95,12 +99,44 @@ namespace UnityCommander.Services
         }
 
         // --- Работа с вкладками через панель ---
+        public void MoveTab(Guid panelId, Guid tabId)
+        {
+            lock (_lock)
+            {
+                IPanel sourcePanel = null;
+
+                foreach (var panel in _panels.Values)
+                {
+                    if (panel.Tabs.Contains(tabId))
+                    {
+                        sourcePanel = panel;
+                        break;
+                    }
+                }
+
+                if (sourcePanel == null)
+                    return;
+
+                if (sourcePanel.PanelId == panelId)
+                    return;
+
+                sourcePanel.RemoveTab(tabId);
+
+                var targetPanel = GetPanel(panelId);
+                targetPanel.AddTab(tabId);
+            }
+        }
 
         public void AddTab(Guid panelId, Guid tabId)
         {
             lock (_lock)
             {
                 GetPanel(panelId).AddTab(tabId);
+                TabAdded.Invoke(new TabAddedEvent() 
+                { 
+                    PanelId = panelId,
+                    TabId = tabId 
+                });
             }
         }
 
@@ -124,6 +160,20 @@ namespace UnityCommander.Services
             lock (_lock)
             {
                 GetPanel(panelId).SetActiveTab(tabId);
+            }
+        }
+
+        public Guid? FindPanelByTab(Guid tabId)
+        {
+            lock (_lock)
+            {
+                foreach (var panel in _panels.Values)
+                {
+                    if (panel.Tabs.Contains(tabId))
+                        return panel.PanelId;
+                }
+
+                return null;
             }
         }
 

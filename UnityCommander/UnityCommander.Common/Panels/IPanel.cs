@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UnityCommander.Common
+namespace UnityCommander.Common.Panels
 {
     public interface IPanel
     {

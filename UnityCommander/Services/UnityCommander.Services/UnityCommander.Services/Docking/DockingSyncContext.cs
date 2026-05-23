@@ -1,6 +1,8 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Services.Docking
@@ -22,17 +24,14 @@ namespace UnityCommander.Services.Docking
 
         public Guid GetTabId(LayoutDocument doc) => _tabs[doc];
         
-        public Guid GetOrCreatePaneId(LayoutDocumentPane pane)
+        public Guid GetPaneId(LayoutDocumentPane pane)
         {
-            if (!_panes.TryGetValue(pane, out var id))
-            {
-                id = Guid.NewGuid();
-                _panes[pane] = id;
-            }
+            if (_panes.TryGetValue(pane, out var id))
+                return id; // без create вообще
 
-            return id;
+            throw new InvalidOperationException();
         }
-        
+
         public Guid GetOrCreateTabId(LayoutDocument doc)
         {
             if (!_tabs.TryGetValue(doc, out var id))

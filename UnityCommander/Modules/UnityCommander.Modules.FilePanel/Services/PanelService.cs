@@ -2,6 +2,7 @@
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ using System.Windows.Media;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Module;
+using UnityCommander.Common.Panels.Panels;
 using UnityCommander.Common.State;
 using UnityCommander.Core.Helper;
 using UnityCommander.Logging.Configuration;
@@ -63,9 +65,14 @@ namespace UnityCommander.Modules.FilePanel.Services
             var manager = _dockingService.GetDockingManager();
             manager.MouseDoubleClick += Manager_MouseDoubleClick;
             manager.ActiveContentChanged += Manager_ActiveContentChanged;
-            manager.LayoutChanged += Manager_LayoutChanged;
             _dockingSyncService.OnDiff += _dockingSyncService_OnDiff;
+            _panelRegistry.TabAdded += _panelRegistry_TabAdded;
             _tabDoubleClick = new DoubleClickHandlerHelper(_logger);
+        }
+
+        private void _panelRegistry_TabAdded(TabAddedEvent panel)
+        {
+            //ProcessNavigation();
         }
 
         private void _dockingSyncService_OnDiff(DiffResult result)
@@ -73,92 +80,53 @@ namespace UnityCommander.Modules.FilePanel.Services
             if (result == null) 
                 return;
 
-            if (result.RemovedTabs.Count > 0) 
+            foreach (var op in result.Operations)
             {
-                foreach (var tab in result.RemovedTabs)
+                switch (op.Type)
                 {
-                    _panelRegistry.RemoveTab(tab);
-                    var vm = _tabRegistry.GetTab(tab);
-                    //vm.Destroy();
+                    case TabOperationType.Add:
+                        _panelRegistry.AddTab(op.ToPanelId.Value, op.TabId);
+                        break;
+
+                    case TabOperationType.Remove:
+                        _panelRegistry.RemoveTab(op.TabId);
+                        break;
+
+                    case TabOperationType.Move:
+                        _panelRegistry.MoveTab(op.ToPanelId.Value, op.TabId);
+                        break;
+
+                    case TabOperationType.Activate:
+                        _panelRegistry.SetActiveTab(op.ToPanelId.Value, op.TabId);
+                        break;
                 }
             }
-
-            if (result.AddedTabs.Count > 0)
-            {
-                if (_panelRegistry.ActivePanelId is Guid panelId)
-                {
-                    var tabId = Guid.NewGuid();
-                    //_panelRegistry.CreateTab(panelId, tabId);
-                }
-            }
-
-            if (result.MovedTabs.Count > 0)
-            {
-                foreach (var tab in result.MovedTabs)
-                {
-                    _panelRegistry.AddTab(tab.ToPanel, tab.TabId);
-                    _panelRegistry.RemoveTab(tab.TabId);
-                }
-            }
-        }
-
-        public void Restore(List<PanelState> panels)
-        {
-            foreach (var panel in panels)
-            {
-                RestorePanel(panel);
-            }
-        }
-
-        private void RestorePanel(PanelState panel)
-        {
-            foreach (var tab in panel.Tabs)
-            {
-                OpenTabInPane(tab);
-            }
-        }
-
-        public void OpenTabInPane(TabState tab)
-        {
-            var regionName = $"Tab_{Guid.NewGuid()}";
-
-            _regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
-            {
-                if (result.Result != true) return;
-
-                var view = result.Context.NavigationService.Region.ActiveViews
-                    .FirstOrDefault() as SplitPanelView;
-
-                var vm = view?.DataContext as ITabPanelContent;
-
-                if (vm == null) return;
-
-                var token = tab.TabId;
-                vm.InitializedViewModel(ref token, tab.Path);
-            });
-        }
-
-        private void Manager_LayoutChanged(object sender, EventArgs e)
-        {
         }
 
         private void Manager_ActiveContentChanged(object sender, EventArgs e)
         {
-            var manager = sender as DockingManager;
-            if (manager?.ActiveContent is LayoutDocument document)
-            {
-                if (document?.Content is ContentControl contol)
+            if (sender is not DockingManager
                 {
-                    if (contol?.Content is ContentControl view)
+                    ActiveContent: LayoutDocument
                     {
-                        if (view?.DataContext is ITabPanelContent vm)
+                        Content: ContentControl
                         {
-                            _tabRegistry.SetActive(vm.GetPanelToken());
-                            //_panelRegistry.SetActivePanel(vm.GetPanelToken());
+                            Content: ContentControl
+                            {
+                                DataContext: ITabPanelContent vm
+                            }
                         }
                     }
-                }
-            
+                })
+            {
+                return;
+            }
+
+            _tabRegistry.SetActive(vm.GetPanelToken());
+
+            if (_panelRegistry.FindPanelByTab(_tabRegistry.ActiveTab.TabId) is Guid panelId)
+            {
+                _panelRegistry.SetActivePanel(panelId);
             }
         }
 

@@ -37,7 +37,7 @@ namespace UnityCommander.DockingSync.Tests
                 }
             });
 
-            service.Initialize();
+            //service.Initialize();
 
             // новое состояние (добавили вкладку)
             builder.Set(new DockingSnapshot

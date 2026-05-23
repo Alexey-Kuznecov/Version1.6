@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnityCommander.Common
+namespace UnityCommander.Common.Panels
 {
     public class Panel : IPanel
     {

@@ -39,7 +39,7 @@ namespace UnityCommander.Modules.FilePanel.Docking.Builders
                 {
                     doc = pane.Children[i] as LayoutDocument;
                 }
-                var panelId = _syncContext.GetOrCreatePaneId(pane);
+                var panelId = _syncContext.GetPaneId(pane);
 
                 if (!Guid.TryParse(doc.ContentId, out var tabId))
                     continue;

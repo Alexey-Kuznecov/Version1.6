@@ -1,7 +1,9 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Common.Docking;
+using UnityCommander.Common.State;
 using UnityCommander.Modules.FilePanel.Docking.Builders;
 using UnityCommander.Modules.FilePanel.Docking.Diff;
 using UnityCommander.Modules.FilePanel.Docking.Snapshot;
@@ -19,9 +21,10 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
         private IPanelRegistry _panelRegistry;
         private DockingSyncContext _dockingSyncContext;
         private DockingManager _manager;
-
         private DockingSnapshot _previous;
         public event Action<DiffResult> OnDiff;
+
+        private bool _initialized;
 
         public DockingSyncService(
             DockingSyncContext syncContext,
@@ -37,13 +40,7 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             _panelRegistry = panelRegistry;
         }
 
-        public void Initialize()
-        {
-            Bootstrap(); // читаем уже созданный layout
-            _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_,__);
-        }
-
-        private void Bootstrap()
+        public void Initialize(List<PanelState> panels)
         {
             foreach (var doc in _manager.Layout.Descendents().OfType<LayoutDocument>())
             {
@@ -53,29 +50,57 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
                 _dockingSyncContext.GetOrCreateTabId(doc);
             }
 
-            _previous = _builder.Build();
+            var panes = _manager.Layout.Descendents().OfType<LayoutDocumentPane>().ToList();
 
-            foreach (var panel in _previous.Panels)
+            foreach (var pane in panes)
             {
-                _panelRegistry.EnsurePanel(panel.PanelId);
+                var state = FindPanelStateForPane(pane, panels);
 
-                foreach (var tabId in panel.Tabs)
+                if (state == null)
+                    continue;
+
+                _panelRegistry.EnsurePanel(state.PanelId);
+
+                _dockingSyncContext.Register(pane, state.PanelId);
+
+                foreach (var tab in state.Tabs)
                 {
-                    _panelRegistry.AddTab(panel.PanelId, tabId);
+                    _panelRegistry.AddTab(state.PanelId, tab.TabId);
                 }
 
-                // 👉 можно задать активную вкладку (например первую)
-                var firstTab = panel.Tabs.FirstOrDefault();
-                if (firstTab != Guid.Empty)
+                var firstTab = state.Tabs.FirstOrDefault();
+                if (firstTab.TabId != Guid.Empty)
                 {
-                    _panelRegistry.SetActiveTab(panel.PanelId, firstTab);
-                    _panelRegistry.SetActivePanel(panel.PanelId);
+                    _panelRegistry.SetActiveTab(state.PanelId, firstTab.TabId);
+                    _panelRegistry.SetActivePanel(state.PanelId);
                 }
             }
+
+            _previous = _builder.Build();
+
+            _initialized = true;
+
+            _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_,__);
+        }
+
+        private PanelState FindPanelStateForPane(
+            LayoutDocumentPane pane,
+            List<PanelState> states)
+        {
+            var paneTabs = pane.Children
+                .OfType<LayoutDocument>()
+                .Select(d => Guid.Parse(d.ContentId))
+                .ToHashSet();
+
+            return states.FirstOrDefault(state =>
+                state.Tabs.Any(t => paneTabs.Contains(t.TabId)));
         }
 
         public void HandleLayoutChanged(object sender, EventArgs e)
         {
+            if (!_initialized)
+                return;
+
             var current = _builder.Build();
 
             var diff = _diff.Diff(_previous, current);
@@ -90,9 +115,7 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
 
         private bool HasChanges(DiffResult diff)
         {
-            return diff.AddedTabs.Any()
-                || diff.RemovedTabs.Any()
-                || diff.MovedTabs.Any();
+            return diff.Operations.Any();
         }
     }
 }

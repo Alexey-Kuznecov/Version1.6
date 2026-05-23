@@ -20,18 +20,24 @@ namespace UnityCommander.Modules.FilePanel.Docking.Diff
             {
                 if (!oldMap.TryGetValue(tabId, out var oldPanel))
                 {
-                    result.AddedTabs.Add(tabId);
+                    result.Operations.Add(new TabOperation()
+                    {
+                        Type = TabOperationType.Add,
+                        TabId = tabId,
+                        ToPanelId = newPanel
+                    });
 
                     continue;
                 }
 
                 if (oldPanel != newPanel)
                 {
-                    result.MovedTabs.Add(new MoveTab
+                    result.Operations.Add(new TabOperation()
                     {
+                        Type = TabOperationType.Move,
                         TabId = tabId,
-                        FromPanel = oldPanel,
-                        ToPanel = newPanel
+                        FromPanelId = oldPanel,
+                        ToPanelId = newPanel
                     });
                 }
             }
@@ -40,7 +46,11 @@ namespace UnityCommander.Modules.FilePanel.Docking.Diff
             foreach (var tabId in oldMap.Keys)
             {
                 if (!newMap.ContainsKey(tabId))
-                    result.RemovedTabs.Add(tabId);
+                    result.Operations.Add(new TabOperation()
+                    {
+                        Type = TabOperationType.Remove,
+                        TabId = tabId
+                    });
             }
 
             return result;
