@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:layout="clr-namespace:UnityCommander.Modules.FilePanel.Layout"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
@@ -20,26 +21,130 @@
             <Setter Property="Padding" Value="8,2,0,0" />
             <Setter Property="Height" Value="35" />
         </Style>
+        <DataTemplate DataType="{x:Type layout:FixedNode}">
+            <Border Height="{Binding Size}">
+                <ContentControl Content="{Binding Content}" />
+            </Border>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type layout:StackNode}">
+            <ItemsControl ItemsSource="{Binding Children}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="{Binding Orientation}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type layout:ContentNode}">
+            <ContentControl>
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+
+                            <DataTrigger Binding="{Binding Key}" Value="PanelHeader">
+                                <Setter Property="Template" Value="{DynamicResource ContentDirectoryPanelTemplate}" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Key}" Value="DirectoryView">
+                                <Setter Property="Template" Value="{Binding DataContext.DirectoryPanelTemplate, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Key}" Value="FileView">
+                                <Setter Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ListView
+                                                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
+                                                    be:SelectionBehavior.EnableSelection="True"
+                                                    be:SelectionBehavior.Manager="{Binding SelectionManager}"
+                                                    be:SelectionBehavior.PanelId="{Binding Token}"
+                                                    be:SelectionBehavior.SelectionContext="{Binding SelectionContext}"
+                                                    commands:GridViewSort.AutoSort="True"
+                                                    dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                                                    dd:DragDrop.IsDragSource="True"
+                                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    IsSynchronizedWithCurrentItem="True"
+                                                    ItemsSource="{Binding FileList, Mode=OneWay}"
+                                                    SelectedItem="{Binding CurrentFile}"
+                                                    SelectionMode="Multiple">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseRightButtonUp">
+                                                            <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                                                        </i:EventTrigger>
+                                                        <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                                                            <i:InvokeCommandAction Command="{Binding ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                    <i:Interaction.Behaviors>
+                                                        <be:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
+                                                    </i:Interaction.Behaviors>
+                                                    <ListView.ContextMenu>
+                                                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding ContextMenuItems}">
+                                                            <ContextMenu.ItemContainerStyle>
+                                                                <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+                                                                    <Setter Property="Header" Value="{Binding Title}" />
+                                                                    <Setter Property="Command" Value="{Binding Command}" />
+                                                                    <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                                                </Style>
+                                                            </ContextMenu.ItemContainerStyle>
+                                                        </ContextMenu>
+                                                    </ListView.ContextMenu>
+                                                </ListView>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type layout:SplitNode}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" MinHeight="200" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" MinHeight="200" />
+
+                </Grid.RowDefinitions>
+
+                <ContentControl Content="{Binding First}" />
+
+                <GridSplitter
+                    Grid.Row="1"
+                    Height="5"
+                    HorizontalAlignment="Stretch" />
+
+                <ContentControl Grid.Row="2" Content="{Binding Second}" />
+                <!--<Border Grid.Row="3" Background="Red">
+                    <TextBlock Text="SPLIT WORKS" />
+                </Border>-->
+            </Grid>
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
-            <RowDefinition Height="*" MinHeight="200" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" MinHeight="200" />
+            <RowDefinition Height="*" MinHeight="400" />
             <RowDefinition Height="50" />
-            <!--<RowDefinition Height="50" />-->
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.Row="0" Template="{DynamicResource ContentDirectoryPanelTemplate}" />
+
+        <ContentControl Content="{Binding LayoutRoot}" />
+        <!--<ContentControl Grid.Row="0" Template="{DynamicResource ContentDirectoryPanelTemplate}" />-->
         <!--
             Directory view
         -->
-        <Grid Grid.Row="1">
-            <!--
-                This markup responds to display folder items.
-                Template path: Resource\Generic.xml Name: DirectoryListViewTemplate
-            -->
+        <!--<Grid Grid.Row="1">
+        -->
+        <!--
+            This markup responds to display folder items.
+            Template path: Resource\Generic.xml Name: DirectoryListViewTemplate
+        -->
+        <!--
             <ContentControl Template="{Binding DirectoryPanelTemplate, Mode=TwoWay}" />
         </Grid>
         <GridSplitter
@@ -48,12 +153,14 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             ShowsPreview="False" />
+        -->
         <!--
             All the logic that is responsible for working and displaying the file panel is behind the code,
             because there you need to add and update the column data.
             
             ItemContainerStyle="{StaticResource OverrideMaterialDesignGridViewItem}"
         -->
+        <!--
         <Grid Grid.Row="3">
             <ListView
                 be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
@@ -72,169 +179,31 @@
                     <i:EventTrigger EventName="MouseRightButtonUp">
                         <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                     </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                        <i:InvokeCommandAction Command="{Binding ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <i:Interaction.Behaviors>
                     <be:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
                 </i:Interaction.Behaviors>
-
-            </ListView>
-            <!--<ListView
-
-                ItemsSource="{Binding FileList, Mode=OneWay}"
-                SelectedItem="{Binding CurrentFile}"
-
-                View="{Binding FilePanelContainer}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseRightButtonUp">
-                        <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-
-            <i:Interaction.Behaviors>
-                    <behaviors:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
-                </i:Interaction.Behaviors>
-
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel ContextMenu="{Binding ContextMenu}" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid>
-                                <AdornerDecorator>
-                                    <ContentPresenter>
-                                        <ContentPresenter.Content>
-                                            <behaviors:BindableParameter
-                                                Binding="{Binding Icon}"
-                                                Converter="{StaticResource IconConverter}"
-                                                ConverterParameter="{Binding TargetPanel}" />
-                                        </ContentPresenter.Content>
-                                    </ContentPresenter>
-                                </AdornerDecorator>
-                            </Grid>
-                            <Grid>
-                                <TextBlock VerticalAlignment="Center" Foreground="BlueViolet">
-                                    <TextBlock.Text>
-                                        <behaviors:BindableParameter
-                                            Binding="{Binding Additional.Values}"
-                                            Converter="{StaticResource ColumnValueConverter}"
-                                            ConverterParameter="{Binding RelativeSource={RelativeSource Mode=Self}}" />
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
-                                <ContentPresenter Grid.Column="0">
-                                    <ContentPresenter.Content>
-                                        <behaviors:BindableParameter
-                                            Binding="{Binding Icon}"
-                                            Converter="{StaticResource IconConverter}"
-                                            ConverterParameter="{Binding TargetPanel}" />
-                                    </ContentPresenter.Content>
-                                </ContentPresenter>
-                            </Grid>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>-->
-
-            <!--<ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-
-            -->
-            <!--  Высота строки: широкая, современная  -->
-            <!--
-                        <Setter Property="Padding" Value="10" />
-                        <Setter Property="MinHeight" Value="40" />
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Foreground" Value="Black" />
-                        <Setter Property="SnapsToDevicePixels" Value="True" />
-
-            -->
-            <!--  Привязка выделения к твоей модели  -->
-            <!--
-                        <Setter Property="behaviors:HighlightBehavior.IsHighlighted" Value="{Binding IsSelected}" />
-
-            -->
-            <!--  Кастомный шаблон без градиентов  -->
-            <!--
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListViewItem">
-                                    <Border
-                                        x:Name="Border"
-                                        Padding="{TemplateBinding Padding}"
-                                        Background="{TemplateBinding Background}"
-                                        CornerRadius="4">
-                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                                    </Border>
-
-                                    <ControlTemplate.Triggers>
-
-            -->
-            <!--  Hover (минимальный, современный)  -->
-            <!--
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#1AFFFFFF" />
-                                        </Trigger>
-
-            -->
-            <!--  Selected  -->
-            <!--
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#336CB5FF" />
-                                            <Setter Property="Foreground" Value="White" />
-                                            <Setter Property="FontWeight" Value="Medium" />
-                                        </Trigger>
-
-            -->
-            <!--  Disabled  -->
-            <!--
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <Setter Property="Opacity" Value="0.4" />
-                                        </Trigger>
-
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
+                <ListView.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding ContextMenuItems}">
+                        <ContextMenu.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Title}" />
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="ItemsSource" Value="{Binding Children}" />
+                            </Style>
+                        </ContextMenu.ItemContainerStyle>
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>-->
-        </Grid>
-        <ContentControl Grid.Row="4">
+
+        <ContentControl Grid.Row="1">
             <control:NavigationPanel
                 Margin="10"
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
         </ContentControl>
-        <!--<Grid Grid.Row="4">
-            <Button
-                Width="50"
-                commands1:MultiCommandParameter.IsInclude="True"
-                Command="{Binding TestCommand}">
-                <Button.Content>
-                    <commands1:XArray Content="Start" Type="False">
-                        <commands1:XParam Value="{Binding CurrentDirectory}" />
-                        <commands1:XParam Value="{Binding CurrentDirectory}" />
-                    </commands1:XArray>
-                </Button.Content>
-            </Button>
-        </Grid>-->
-        <!--<Grid Grid.Row="4">
-            <Button Width="50" Command="{Binding TestCommand}">
-                <Button.Content>
-                    Test
-                </Button.Content>
-            </Button>
-        </Grid>-->
     </Grid>
 </UserControl>

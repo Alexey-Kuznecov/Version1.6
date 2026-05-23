@@ -20,7 +20,7 @@ namespace UnityCommander.Services.Interfaces
         public DockingManager GetDockingManager();
         void ShowDocument(UserControl view, string title);
         void AddDocumentTab(string title, string realPath, string regionName);
-        void AddActiveDocumentTab(string title, string realPath, string regionName);
+        void AddActiveDocumentTab(string tabId, string title, string regionName);
         void ShowAnchorable(UserControl view, string title, bool state, AnchorableShowStrategy strategy = AnchorableShowStrategy.Left);
         void ShowAnchorable(UserControl view, string title, AnchorableShowStrategy strategy = AnchorableShowStrategy.Left);
 

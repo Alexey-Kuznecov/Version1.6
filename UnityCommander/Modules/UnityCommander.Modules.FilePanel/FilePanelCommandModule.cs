@@ -3,6 +3,7 @@ using Prism.Ioc;
 using Prism.Modularity;
 using System.IO;
 using System.Threading.Tasks;
+using UnityCommander.Common.Commands;
 using UnityCommander.Services;
 
 namespace UnityCommander.Modules.FilePanel
@@ -25,40 +26,64 @@ namespace UnityCommander.Modules.FilePanel
         {
             var commandService = containerProvider.Resolve<CommandService>();
             var filePanelProvider = containerProvider.Resolve<FilePanelCommandProvider>();
+            var presentation = containerProvider.Resolve<CommandPresentationProvider>();
 
             commandService.Register(
-                new CommandMetadata("getcurpath", "Получает текущий путь директории"),
+                new CommandMetadata(CommandNames.Panel.GetCurrentPath,
+                presentation.Get(CommandNames.Panel.GetCurrentPath).Description)
+                {
+                    Category = nameof(CommandNames.Panel),
+                },
                 filePanelProvider.GetCurrentPathCommand);
 
             commandService.Register(
-                new CommandMetadata("setcurpath", "Устанавливает текущий путь директории"),
+                new CommandMetadata(CommandNames.Panel.SetCurrentPath,
+                presentation.Get(CommandNames.Panel.SetCurrentPath).Description)
+                {
+                    Category = nameof(CommandNames.Panel),
+                },
                 filePanelProvider.SetCurrentPathCommand);
 
             commandService.RegisterUndoable(
-                new CommandMetadata("file.delete", "Удалить файл/Восстановить файл"),
-                async ctx =>
-                {
-                    var path = ctx.Parameter?.ToString();
+                 new CommandMetadata(
+                     CommandNames.File.Delete,
+                     presentation.Get(CommandNames.File.Delete).Description)
+                 {
+                     Category = nameof(CommandNames.File),
+                     ContextTypes = { typeof(FilePanelContext) }
+                 },
+                 ExecuteDeleteAsync);
+        }
 
-                    if (string.IsNullOrEmpty(path) || !File.Exists(path))
-                        return null;
+        private Task<UndoToken> ExecuteDeleteAsync(CommandContext ctx)
+        {
+            var path = ctx.Parameter?.ToString();
 
-                    var backup = Path.GetTempFileName();
-                    File.Copy(path, backup);
-                    File.Delete(path);
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                return Task.FromResult<UndoToken>(null);
 
-                    return new DelegateUndoToken(
-                        undo: async () =>
-                        {
-                            File.Copy(backup, path, overwrite: true);
-                        },
-                        redo: async () =>
-                        {
-                            if (File.Exists(path))
-                                File.Delete(path);
-                        }
-                    );
-                });
+            var backup = Path.GetTempFileName();
+            File.Copy(path, backup);
+            File.Delete(path);
+
+            return Task.FromResult<UndoToken>(new DelegateUndoToken(
+                undo: () => UndoDeleteAsync(backup, path),
+                redo: () => RedoDeleteAsync(path)
+            ));
+        }
+
+        private Task UndoDeleteAsync(string backup, string path)
+        {
+            File.Copy(backup, path, overwrite: true);
+            return Task.CompletedTask;
+        }
+
+        private Task RedoDeleteAsync(string path)
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+
+            return Task.CompletedTask;
         }
     }
 }

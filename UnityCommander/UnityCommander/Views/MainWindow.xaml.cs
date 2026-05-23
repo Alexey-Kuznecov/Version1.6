@@ -2,7 +2,9 @@
 using Prism.Ioc;
 using System.Windows;
 using UnityCommander.Commands;
+using UnityCommander.Common.Commands;
 using UnityCommander.Services;
+using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Views
@@ -39,10 +41,15 @@ namespace UnityCommander.Views
         private void RegisterCommands()
         {
             var commandService = ContainerLocator.Container.Resolve<CommandService>();
+            var presentation = ContainerLocator.Container.Resolve<CommandPresentationProvider>();
             var shellProvider = new ShellCommandProvider(this);
             // Регистрируем базовые команды
             commandService.Register(
-               new CommandMetadata("toggle.bottom.panel", "Скрывает/показывает нижнюю панель"),
+               new CommandMetadata(CommandNames.UI.ToggleBottomPanel, 
+               presentation.Get(CommandNames.UI.ToggleBottomPanel).Description)
+               {
+                   Category = nameof(CommandNames.UI),
+               },
                shellProvider.ToggleBottomPanel);
         }
     }

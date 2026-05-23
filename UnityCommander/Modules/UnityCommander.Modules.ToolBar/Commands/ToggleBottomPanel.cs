@@ -1,5 +1,6 @@
 ﻿
 using System;
+using UnityCommander.Common.Commands;
 using UnityCommander.Ribbon.Core.Commands;
 using UnityCommander.Ribbon.Core.Models;
 using UnityCommander.Services;
@@ -21,7 +22,7 @@ namespace UnityCommander.Modules.ToolBar.Commands
 
         public void Execute()
         {
-            _commandService.Execute("toggle.bottom.panel");
+            _commandService.Execute(CommandNames.UI.ToggleBottomPanel);
         }
     }
 }

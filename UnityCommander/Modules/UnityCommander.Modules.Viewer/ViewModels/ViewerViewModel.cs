@@ -22,6 +22,8 @@ namespace UnityCommander.Modules.Viewer.ViewModels
             set => this.SetProperty(ref this.viewerContent, value);
         }
 
+        public bool IsActive => throw new NotImplementedException();
+
         public void SetViewerContent(object content)
         {
             if (content != null)

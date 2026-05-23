@@ -20,10 +20,13 @@ namespace UnityCommander.Core.Behaviors.Selection
 
             foreach (var item in context.Items)
             {
-                if (!string.IsNullOrEmpty(item.Key) && item.Key.ToLowerInvariant().EndsWith(ext))
+                if (string.IsNullOrEmpty(item.Key))
                 {
-                    item.IsSelected = true;
+                    item.IsSelected = false;
+                    continue;
                 }
+
+                item.IsSelected = item.Key.EndsWith(ext, StringComparison.OrdinalIgnoreCase);
             }
         }
     }

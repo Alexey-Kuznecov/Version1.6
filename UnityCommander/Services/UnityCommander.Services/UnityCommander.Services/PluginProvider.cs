@@ -44,7 +44,7 @@ namespace UnityCommander.Services
                 _manager.UnloadPlugin(plugin.PluginInfo.DeveloperID);
         }
 
-        public PluginInfo? GetInfo(string pluginId)
+        public PluginInfo GetInfo(string pluginId)
             => _manager.GetPluginInfo(pluginId);
     }
 }

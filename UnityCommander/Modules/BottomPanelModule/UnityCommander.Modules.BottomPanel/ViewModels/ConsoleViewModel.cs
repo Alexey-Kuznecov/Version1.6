@@ -39,6 +39,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IConsoleAutoComplete _autoComplete;
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
+        private bool _autoCompleteEnabled = false;
         private string _lastTokenValue;
         private InputToken _lastInputToken;
 
@@ -63,7 +64,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             set => SetProperty(ref _caretIndex, value);
         }
 
-        private int _selectedIndex = -1;
+        private int _selectedIndex = 0;
 
         public int SelectedIndex
         {
@@ -77,7 +78,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly ObservableCollection<string> _lines = new();
         public ReadOnlyObservableCollection<string> Lines { get; }
 
-        public DelegateCommand SendCommandCommand { get; }
+        public DelegateCommand SendCommand { get; }
         public DelegateCommand CopyCommand => new DelegateCommand(() =>
         {
             var text = string.Join(Environment.NewLine, Lines);
@@ -135,7 +136,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 Application.Current.Dispatcher.Invoke(() => AppendLine(text));
             });
 
-            SendCommandCommand = new DelegateCommand(SendInput);
+            SendCommand = new DelegateCommand(SendInput);
 
             InputText = string.Empty;
             CaretIndex = 1;
@@ -177,6 +178,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void UpdateCompletions()
         {
+            if (!_autoCompleteEnabled)
+                return;
+
             var caret = Math.Max(0, CaretIndex);
             var inputStatus = _cliInputAnalyzer.Analyze(InputText, caret);
             var parseState = _parseStateBuilder.Build(inputStatus);

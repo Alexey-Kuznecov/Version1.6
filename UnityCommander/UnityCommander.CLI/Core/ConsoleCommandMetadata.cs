@@ -7,8 +7,9 @@ namespace UnityCommander.CLI.Core
     {
         public CommandMetadata? Metadata { get; }
         public IReadOnlyList<string> Aliases { get; }
-        public string Name { get; internal set; }
-        public string? Description { get; internal set; }
+        public string? Name => Metadata?.Name;
+        public string? Description => Metadata?.Description;
+
         public Func<IConsoleCommandContext, CancellationToken, Task> Handler { get; }
 
         public ConsoleCommandMetadata(CommandMetadata metadata, 
@@ -16,8 +17,6 @@ namespace UnityCommander.CLI.Core
             IEnumerable<string>? aliases = null)
         {
             Metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
-            Name = metadata.Name ?? throw new ArgumentNullException(nameof(metadata.Name));
-            Description = metadata.Description;
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));
             Aliases = aliases?.ToList() ?? new List<string>();
         }

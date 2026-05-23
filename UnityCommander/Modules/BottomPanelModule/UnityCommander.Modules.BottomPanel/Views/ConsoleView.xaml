@@ -69,7 +69,7 @@
                         <TextBox.InputBindings>
                             <KeyBinding Key="Up" Command="{Binding NavigateUpCommand}" />
                             <KeyBinding Key="Down" Command="{Binding NavigateDownCommand}" />
-                            <KeyBinding Key="Enter" Command="{Binding AcceptCommand}" />
+                            <KeyBinding Key="Enter" Command="{Binding SendCommand}" />
                             <KeyBinding Key="Tab" Command="{Binding AcceptCommand}" />
                             <KeyBinding Key="Escape" Command="{Binding CancelCommand}" />
                         </TextBox.InputBindings>

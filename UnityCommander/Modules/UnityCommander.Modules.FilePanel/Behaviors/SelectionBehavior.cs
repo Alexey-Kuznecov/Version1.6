@@ -1,10 +1,10 @@
 ﻿
 using Prism.Ioc;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UnityCommander.Common.Module;
 using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;
 
@@ -64,6 +64,14 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 // регистрируем менеджер один раз
                 var service = Service;
                 service.Register(id, manager);
+
+                manager.SelectionChanged += () =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SyncFromManager(list, manager);
+                    });
+                };
             }
         }
 
@@ -98,16 +106,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 return;
 
             int index = list.ItemContainerGenerator.IndexFromContainer(container);
-
-            // Получаем контекст и менеджер
-
-            //if (list.DataContext is IDirectoryPanel panel) 
-            //{
-            //    panel.
-            //}
-
-            var ctx = list.DataContext as ISelectionContext;
-            //var ctx = GetSelectionContext(list);
+            var ctx = GetSelectionContext(list);
             var manager = GetManager(list); // через AttachedProperty
             if (ctx == null || manager == null)
                 return;
@@ -119,8 +118,20 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             };
 
             manager.Handle(ctx, action);
-
             e.Handled = true;
+        }
+
+        private static void SyncFromManager(ListView list, ISelectionManager manager)
+        {
+            list.SelectedItems.Clear();
+
+            foreach (var item in list.Items)
+            {
+                if (item is ISelectableItem select && select.IsSelected)
+                {
+                    list.SelectedItems.Add(select);
+                }
+            }
         }
     }
 }

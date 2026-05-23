@@ -10,6 +10,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="DrivePanelColumns.xaml" />
         <ResourceDictionary Source="DirectoryPanelColumns.xaml" />
+        <!--<ResourceDictionary Source="PanelLayout.xaml" />-->
     </ResourceDictionary.MergedDictionaries>
 
     <!--
@@ -64,6 +65,7 @@
                 core:DragDrop.DropHandler="{Binding Mode=Default}"
                 core:DragDrop.IsDragSource="True"
                 core:DragDrop.IsDropTarget="True"
+                DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding DirectoryList, Mode=OneWay}"
                 SelectedItem="{Binding SelectedDirectory}"
@@ -111,7 +113,7 @@
         Style for back button in file panel
     -->
     <ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
-        <Grid>
+        <Grid DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
                 <RowDefinition Height="*" />

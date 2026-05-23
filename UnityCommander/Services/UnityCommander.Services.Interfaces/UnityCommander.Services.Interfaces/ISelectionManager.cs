@@ -9,6 +9,9 @@ namespace UnityCommander.Services.Interfaces
 {
     public interface ISelectionManager
     {
-        public void Handle(ISelectionContext ctx, SelectionAction action);
+        event Action SelectionChanged;
+
+        IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
+        void Handle(ISelectionContext ctx, SelectionAction action);
     }
 }

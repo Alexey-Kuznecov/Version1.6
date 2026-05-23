@@ -155,12 +155,12 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
         private void OnGlobalCommandExecuteChanged(object sender, EventArgs e)
         {
-            var globalCmds = this.globalCommandManager.GetGlobalCommands(CommandNames.DirectoryUpdate);
+            //var globalCmds = this.globalCommandManager.GetGlobalCommands(CommandNames.DirectoryUpdate);
 
-            foreach (var command in globalCmds)
-            {
-                command.Command.Execute(null);
-            }
+            //foreach (var command in globalCmds)
+            //{
+            //    command.Command.Execute(null);
+            //}
         }
 
         #region Public Properties
@@ -371,7 +371,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// <summary>
         /// 
         /// </summary>
-        [GlobalCommand(CommandNames.DirectoryUpdate, CommandKeys.CtrlT)]
+        //[GlobalCommand(CommandNames.DirectoryUpdate, CommandKeys.CtrlT)]
         public void DirectoryUpdate()
         {
             var activeTabPanelContentModel = currentTabPanel.ActiveTabPanelContent;

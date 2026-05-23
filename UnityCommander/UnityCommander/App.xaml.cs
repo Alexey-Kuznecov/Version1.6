@@ -15,10 +15,11 @@ using System.Windows;
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.AI.ImageSearch;
 using UnityCommander.Autocomplete.Context.Descriptors;
-using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
+using UnityCommander.Common.Docking;
+using UnityCommander.Common.Layout;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
@@ -35,6 +36,8 @@ using UnityCommander.Logging.Sinks;
 using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Modules.FilePanel.Docking.Services;
+using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.TabPanel.ViewModels;
@@ -46,7 +49,10 @@ using UnityCommander.Modules.WebBrowser;
 using UnityCommander.Operation;
 using UnityCommander.Ribbon.Core.Services;
 using UnityCommander.Services;
+using UnityCommander.Services.Bootstrap;
+using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Settings;
 using UnityCommander.Services.Selection;
 using UnityCommander.Services.Settings;
@@ -78,7 +84,17 @@ namespace UnityCommander
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             // -------------------------------
-            // 1. Создание сервисов вручную
+            // 1. Службы инициализации приложения 
+            // -------------------------------
+            containerRegistry.RegisterSingleton<ILayoutService, LayoutService>();
+            containerRegistry.RegisterSingleton<ILayoutContentFactory, PanelContentFactory>();
+            containerRegistry.RegisterSingleton<ISessionService, SessionService>();
+            containerRegistry.RegisterSingleton<ISessionBuilder, SessionBuilder>();
+            containerRegistry.RegisterSingleton<IPanelService, PanelService>();
+            containerRegistry.RegisterSingleton<AppInitializer>();
+
+            // -------------------------------
+            // 1.1 Создание сервисов вручную
             // -------------------------------
             // Сервис загрузки плагинов
             var pluginLoaderService = new PluginLoaderService();
@@ -105,7 +121,6 @@ namespace UnityCommander
             // -------------------------------
             // 4. Регистрация синглтонов (один экземпляр на приложение)
             // -------------------------------
-            containerRegistry.RegisterSingleton<IDockingService, DockingService>();
             containerRegistry.RegisterSingleton<IDialogService, OverrideDialogService>();
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
@@ -113,7 +128,11 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
             containerRegistry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
+            containerRegistry.RegisterSingleton<ITabRegistry, TabRegistry>();
             containerRegistry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
+            containerRegistry.RegisterSingleton<IDockingService, DockingService>();
+            containerRegistry.RegisterSingleton<IDockingSyncService, DockingSyncService>();
+            containerRegistry.RegisterSingleton<DockingSyncContext>();
             containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
             containerRegistry.RegisterSingleton<LogHub>();
@@ -133,7 +152,7 @@ namespace UnityCommander
                     "Plugin"
                 }
             };
-
+           
             containerRegistry.RegisterInstance(settings);
             containerRegistry.RegisterSingleton<ILogSink, NullSink>();
             containerRegistry.RegisterSingleton<ILogSink>(_ => new FileLogSink("journal.log", LogChannel.Journal));
@@ -389,6 +408,8 @@ namespace UnityCommander
             // -------------------------------
             containerRegistry.RegisterSingleton<ICommandRegister, GuiCommandRegister>();
             containerRegistry.RegisterSingleton<IGuiCommandExecutor, GuiCommandExecuter>();
+            containerRegistry.RegisterSingleton<IGuiCommandProvider, GuiCommandProvider>();
+            containerRegistry.RegisterSingleton<CommandPresentationProvider>();
             containerRegistry.RegisterSingleton<CommandService>();
             
             // -------------------------------

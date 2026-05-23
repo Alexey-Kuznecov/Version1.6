@@ -31,7 +31,7 @@ namespace UnityCommander.Modules.BottomPanel.Views
             if (e.Key == Key.Enter)
             {
                 if (DataContext is ConsoleViewModel vm)
-                    vm.SendCommandCommand.Execute();
+                    vm.SendCommand.Execute();
 
                 e.Handled = true;
             }

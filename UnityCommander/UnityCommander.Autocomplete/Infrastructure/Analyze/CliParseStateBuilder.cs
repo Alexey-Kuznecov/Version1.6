@@ -19,7 +19,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 return CreateBaseState(
                     command: null,
                     variant: null,
-                    new CliError($"Unknown command '{tokens[0].Text}'"),
+                    new CliError($"Unknown command '{tokens[0]?.Text}'"),
                     status,
                     activeToken
                 );

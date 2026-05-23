@@ -1,128 +1,145 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Common;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
     public class PanelRegistry : IPanelRegistry
     {
-        private readonly Dictionary<string, IPanelContentProvider> _map = new();
+        private readonly Dictionary<Guid, IPanel> _panels = new();
+        
         private readonly object _lock = new();
 
-        private string? _activePanelId;
-        private IPanelContentProvider? _activePanel;
+        private Guid? _activePanelId;
 
-        /// <summary>
-        /// Событие вызывается при смене активной панели.
-        /// </summary>
-        public event Action<IPanelContentProvider?>? ActivePanelChanged;
-
-        /// <summary>
-        /// Текущая активная панель (или null, если не установлена)
-        /// </summary>
-        public IPanelContentProvider ActivePanel
+        public Guid? ActivePanelId 
         {
-            get => _activePanel;
-            private set
+            get => _activePanelId; 
+        }
+
+        public IPanel GetPanel(Guid panelId)
+        {
+            lock (_lock)
             {
-                if (!ReferenceEquals(_activePanel, value))
-                {
-                    _activePanel = value;
-                    ActivePanelChanged?.Invoke(_activePanel);
-                }
+                if (!_panels.TryGetValue(panelId, out var panel))
+                    throw new InvalidOperationException($"Panel '{panelId}' not found");
+
+                return panel;
             }
         }
 
-        /// <summary>
-        /// Регистрация новой панели.
-        /// </summary>
-        public void RegisterPanel(IPanelContentProvider provider)
+        public IReadOnlyList<IPanel> GetAllPanels()
         {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
             lock (_lock)
             {
-                _map[provider.PanelId] = provider;
+                return _panels.Values.ToList();
+            }
+        }
 
-                // Если активная панель еще не выбрана — выбираем первую добавленную
+        public IPanel GetActivePanel()
+        {
+            lock (_lock)
+            {
                 if (_activePanelId == null)
+                    throw new InvalidOperationException("Active panel is not set");
+
+                return GetPanel(_activePanelId.Value);
+            }
+        }
+
+        public void RegisterPanel(Guid panelId)
+        {
+            lock (_lock)
+            {
+                if (_panels.ContainsKey(panelId))
+                    return;
+
+                _panels[panelId] = new Panel(panelId);
+
+                if (_activePanelId == null)
+                    _activePanelId = panelId;
+            }
+        }
+
+        public void UnregisterPanel(Guid panelId)
+        {
+            lock (_lock)
+            {
+                if (_panels.Remove(panelId))
                 {
-                    _activePanelId = provider.PanelId;
-                    ActivePanel = provider;
+                    if (_activePanelId == panelId)
+                        _activePanelId = _panels.Keys.FirstOrDefault();
                 }
             }
         }
 
-        /// <summary>
-        /// Удаление панели из реестра.
-        /// </summary>
-        public void UnregisterPanel(string panelId)
+        public void SetActivePanel(Guid panelId)
         {
             lock (_lock)
             {
-                if (_map.Remove(panelId))
+                if (!_panels.ContainsKey(panelId))
+                    throw new InvalidOperationException($"Panel '{panelId}' not found");
+
+                _activePanelId = panelId;
+            }
+        }
+
+        public Guid? GetActivePanelId()
+        {
+            lock (_lock)
+            {
+               return _activePanelId;
+            }
+        }
+
+        // --- Работа с вкладками через панель ---
+
+        public void AddTab(Guid panelId, Guid tabId)
+        {
+            lock (_lock)
+            {
+                GetPanel(panelId).AddTab(tabId);
+            }
+        }
+
+        public void RemoveTab(Guid tabId)
+        {
+            lock (_lock)
+            {
+                foreach (var panel in _panels.Values)
                 {
-                    // если удалили активную панель → выбираем любую другую
-                    if (_activePanelId == panelId)
+                    if (panel.Tabs.Contains(tabId))
                     {
-                        _activePanelId = _map.Keys.FirstOrDefault();
-                        ActivePanel = _activePanelId != null ? _map[_activePanelId] : null;
+                        panel.RemoveTab(tabId);
+                        return;
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Получить панель по ID.
-        /// </summary>
-        public IPanelContentProvider? GetPanel(string panelId)
+        public void SetActiveTab(Guid panelId, Guid tabId)
         {
             lock (_lock)
             {
-                _map.TryGetValue(panelId, out var provider);
-                return provider;
+                GetPanel(panelId).SetActiveTab(tabId);
             }
         }
 
-        /// <summary>
-        /// Получить все панели.
-        /// </summary>
-        public IReadOnlyList<IPanelContentProvider> GetAllPanels()
+        public IReadOnlyList<Guid> GetTabs(Guid panelId)
         {
             lock (_lock)
             {
-                return _map.Values.ToList();
+                return GetPanel(panelId).Tabs;
             }
         }
 
-        /// <summary>
-        /// Получить активную панель. Если активная не выбрана — ошибка.
-        /// </summary>
-        public IPanelContentProvider GetActivePanel()
+        public void EnsurePanel(Guid panelId)
         {
-            lock (_lock)
+            if (!_panels.ContainsKey(panelId))
             {
-                if (_activePanelId == null || !_map.TryGetValue(_activePanelId, out var provider))
-                    throw new InvalidOperationException("Active panel is not set or not available.");
-
-                return provider;
-            }
-        }
-
-        /// <summary>
-        /// Установить активную панель.
-        /// </summary>
-        public void SetActivePanel(string panelId)
-        {
-            lock (_lock)
-            {
-                if (!_map.TryGetValue(panelId, out var provider))
-                    throw new InvalidOperationException($"Panel '{panelId}' is not registered.");
-
-                _activePanelId = panelId;
-                ActivePanel = provider;
+                _panels[panelId] = new Panel(panelId);
             }
         }
     }

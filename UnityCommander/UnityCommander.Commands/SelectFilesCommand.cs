@@ -20,11 +20,13 @@ namespace UnityCommander.Commands
         public IEnumerable<string> Aliases => new[] { "sel", "pick" };
 
         private readonly IPanelRegistry _panelRegistry;
+        private readonly ITabRegistry _tabRegistry;
         private readonly ISelectionService _selectionService;
 
-        public SelectFilesCommand(IPanelRegistry panelRegistry, ISelectionService selectionService)
+        public SelectFilesCommand(IPanelRegistry panelRegistry, ITabRegistry tabRegistry, ISelectionService selectionService)
         {
             _panelRegistry = panelRegistry;
+            _tabRegistry = tabRegistry;
             _selectionService = selectionService;
         }
 
@@ -88,8 +90,8 @@ namespace UnityCommander.Commands
         {
             context.Output.WriteLine($"Выделение по расширениям: {extensionsList}");
 
-            var panel = _panelRegistry.GetActivePanel();
-            var allItems = panel.GetCurrentDirectoryFiles(); // BaseDirectory
+            var tab = _tabRegistry.ActiveTab;
+            var allItems = tab.GetCurrentDirectoryFiles(); // BaseDirectory
 
             if (allItems == null)
             {
@@ -112,6 +114,8 @@ namespace UnityCommander.Commands
 
             // выводим количество выделенных элементов
             context.Output.WriteLine($"Выделено файлов: {ctx.Items.Count(i => i.IsSelected)}");
+            
+            
         }
 
         private void SelectByRegex(IConsoleCommandContext context, ISelectionManager manager, string regexList)

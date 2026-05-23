@@ -19,6 +19,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows.Controls;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Core;
@@ -121,7 +122,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             get => this.currentSidebarItem;
             set
             {
-                var curr = _guiCommandExecutor.Execute("getcurpath").Result;
+                var curr = _guiCommandExecutor.Execute(CommandNames.Panel.GetCurrentPath).Result;
                 this.currentSidebarItem = value;
                 this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(value);
             }

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Common.Selection;
@@ -10,6 +11,10 @@ namespace UnityCommander.Services.Selection
     {
         private readonly Dictionary<SelectionActionType, ISelectionStrategy> strategies;
 
+        public event Action SelectionChanged;
+
+        public IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
+
         public SelectionManager(IEnumerable<ISelectionStrategy> strategies)
         {
             this.strategies = strategies.ToDictionary(x => x.ActionType);
@@ -20,6 +25,12 @@ namespace UnityCommander.Services.Selection
             if (!strategies.TryGetValue(action.Type, out var strategy))
                 return; // или лог ошибки
             strategies[action.Type].Select(ctx, action);
+            RaiseChanged();
+        }
+
+        private void RaiseChanged()
+        {
+            SelectionChanged?.Invoke();
         }
     }
 }

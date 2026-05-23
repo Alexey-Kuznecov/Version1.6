@@ -2,11 +2,10 @@
 using CommandSystem.Abstractions;
 using System;
 using System.Threading.Tasks;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel
 {
-    using Services.Interfaces;
-
     public class FilePanelCommandProvider
     {
         private readonly IDockingService _dockingService;

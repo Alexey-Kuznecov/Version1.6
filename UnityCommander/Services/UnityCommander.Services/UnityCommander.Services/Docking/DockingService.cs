@@ -2,7 +2,6 @@
 using Prism.Regions;
 using System;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using UnityCommander.Common.Module;
@@ -10,17 +9,19 @@ using UnityCommander.Services.Interfaces;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 
-namespace UnityCommander
+namespace UnityCommander.Services.Docking
 {
     public class DockingService : IDockingService
     {
         private DockingManager _dockingManager;
+        private DockingSyncContext _dockingSyncContext;
 
         public event EventHandler ActiveContentChanged;
 
-        public DockingService(DockingManager dockingManager)
+        public DockingService(DockingManager dockingManager, DockingSyncContext dockingSyncContext)
         {
             _dockingManager = dockingManager;
+            _dockingSyncContext = dockingSyncContext;
         }
 
         public void SetDockingManager(DockingManager dockingManager) =>_dockingManager = dockingManager;
@@ -54,7 +55,7 @@ namespace UnityCommander
             var contentControl = new ContentControl();
             RegionManager.SetRegionName(contentControl, regionName);
             ViewModelLocator.SetAutoWireViewModel(contentControl, true);
-           
+            
             var document = new LayoutDocument
             {
                 Title = title,
@@ -62,13 +63,14 @@ namespace UnityCommander
                 ContentId = realPath // важно для восстановления
             };
 
+            _dockingSyncContext.GetOrCreateTabId(document); // Вот это смотри
             _dockingManager.Layout.Descendents()
                 .OfType<LayoutDocumentPane>()
                 .First()
                 .Children.Add(document);
         }
 
-        public void AddActiveDocumentTab(string title, string realPath, string regionName)
+        public void AddActiveDocumentTab(string tabId, string title, string regionName)
         {
             var contentControl = new ContentControl();
             RegionManager.SetRegionName(contentControl, regionName);
@@ -78,7 +80,7 @@ namespace UnityCommander
             {
                 Title = title,
                 Content = contentControl,
-                ContentId = realPath // важно для восстановления
+                ContentId = tabId // важно для восстановления
             };
 
             // 🔥 Подписка после загрузки (когда VM уже создана)

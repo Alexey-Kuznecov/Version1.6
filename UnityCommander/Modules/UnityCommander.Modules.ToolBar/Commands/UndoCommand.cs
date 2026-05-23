@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityCommander.Common.Commands;
 using UnityCommander.Ribbon.Core.Models;
 using UnityCommander.Services;
 
@@ -23,7 +24,7 @@ namespace UnityCommander.Modules.ToolBar.Commands
 
         public void Execute()
         {
-            _commandService.ExecuteAsync("edit.undo");
+            _commandService.ExecuteAsync(CommandNames.History.Undo);
         }
     }
 }

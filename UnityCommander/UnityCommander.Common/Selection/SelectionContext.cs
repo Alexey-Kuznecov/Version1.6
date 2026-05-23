@@ -23,7 +23,6 @@ namespace UnityCommander.Common.Selection
             Items = items.ToList();
         }
 
-
         public void ClearSelection()
         {
             foreach (var item in _selected)

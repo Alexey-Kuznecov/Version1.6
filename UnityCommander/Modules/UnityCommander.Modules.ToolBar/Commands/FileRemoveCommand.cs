@@ -1,4 +1,5 @@
 ﻿
+using UnityCommander.Common.Commands;
 using UnityCommander.Ribbon.Core.Models;
 using UnityCommander.Services;
 
@@ -19,7 +20,7 @@ namespace UnityCommander.Modules.ToolBar.Commands
 
         public void Execute()
         {
-            _commandService.ExecuteAsync("file.delete");
+            _commandService.ExecuteAsync(CommandNames.File.Delete);
         }
     }
 }

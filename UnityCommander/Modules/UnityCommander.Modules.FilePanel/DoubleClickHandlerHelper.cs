@@ -1,17 +1,12 @@
 ﻿#undef DEBUG
 
-using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using UnityCommander.Common.Module;
 using UnityCommander.Logging.Contracts;
-using UnityCommander.Modules.FilePanel.Views;
-using UnityCommander.Services;
-using UnityCommander.Services.Interfaces;
 using Xceed.Wpf.AvalonDock;
 
 namespace UnityCommander.Modules.FilePanel
@@ -20,25 +15,15 @@ namespace UnityCommander.Modules.FilePanel
     public class DoubleClickHandlerHelper
     {
         private readonly ILogger _logger;
-        private readonly CommandService _commandExecute;
-        private readonly IDockingService _dockingService;
-        private readonly IRegionManager _regionManager;
 
         private DateTime _lastDoubleClickHandled = DateTime.MinValue;
 
-        public DoubleClickHandlerHelper(
-            ILogger logger,
-            CommandService commandExecute,
-            IDockingService dockingService,
-            IRegionManager regionManager)
+        public DoubleClickHandlerHelper(ILogger logger)
         {
             _logger = logger;
-            _commandExecute = commandExecute;
-            _dockingService = dockingService;
-            _regionManager = regionManager;
         }
 
-        public void HandleDoubleClick(DockingManager dockObj, DependencyObject hitVisual, DateTime lastNavigationTime)
+        public bool HandleDoubleClick(DockingManager dockObj, DependencyObject hitVisual, DateTime lastNavigationTime)
         {
             try
             {
@@ -47,22 +32,20 @@ namespace UnityCommander.Modules.FilePanel
 #if DEBUG
                     _logger.Info("DoubleClick: ignored due to recent navigation");
 #endif
-                    return;
+                    return false;
                 }
 
                 if (dockObj == null || hitVisual == null)
-                    return;
+                    return false;
 
                 var fullChain = BuildVisualChain(hitVisual);
                 LogChain(fullChain);
 
-                if (!ContainsPane(fullChain)) return;
-                if (HitCloseBlacklist(fullChain)) return;
-                if (HitContentPresenterTooClose(fullChain, hitVisual)) return;
-                if (HitBroaderBlacklist(fullChain)) return;
-                if (IsDoubleClickCooldown()) return;
-
-                ProcessNavigation();
+                if (!ContainsPane(fullChain)) return false;
+                if (HitCloseBlacklist(fullChain)) return false;
+                if (HitContentPresenterTooClose(fullChain, hitVisual)) return false;
+                if (HitBroaderBlacklist(fullChain)) return false;
+                if (IsDoubleClickCooldown()) return false;
             }
             catch (Exception ex)
             {
@@ -70,6 +53,8 @@ namespace UnityCommander.Modules.FilePanel
                 _logger.Info("DoubleClickHandlerHelper error: " + ex);
 #endif
             }
+
+            return true;
         }
 
         private List<string> BuildVisualChain(DependencyObject start)
@@ -169,35 +154,6 @@ namespace UnityCommander.Modules.FilePanel
             }
             _lastDoubleClickHandled = DateTime.UtcNow;
             return false;
-        }
-
-        private void ProcessNavigation()
-        {
-            var context = _commandExecute.Execute("getcurpath");
-            var basePath = context.Result as string;
-
-            // Сохранения реального пути вкладки
-            var contentId = Guid.NewGuid(); // уникальный ID вкладки
-
-            // Формируем короткий путь для отображения в вкладке
-            var tabHeader = PathTitleHelper.GetTabTitle(basePath);
-
-            //var token = Guid.NewGuid();
-            var regionName = $"Tab_{contentId}";
-
-            // Передаём короткий путь как заголовок вкладки
-            _dockingService.AddActiveDocumentTab(tabHeader, basePath, regionName);
-
-            _regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
-            {
-                if (result.Result == true)
-                {
-                    var view = result.Context.NavigationService.Region.ActiveViews
-                                   .FirstOrDefault() as SplitPanelView;
-                    var viewModel = view?.DataContext as ITabPanelContent;
-                    viewModel?.InitializedViewModel(ref contentId, basePath);
-                }
-            });
         }
 
         private DependencyObject GetParentSafely(DependencyObject node)
