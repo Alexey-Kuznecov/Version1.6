@@ -10,7 +10,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="DrivePanelColumns.xaml" />
         <ResourceDictionary Source="DirectoryPanelColumns.xaml" />
-        <!--<ResourceDictionary Source="PanelLayout.xaml" />-->
+        <ResourceDictionary Source="PanelLayout.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <!--

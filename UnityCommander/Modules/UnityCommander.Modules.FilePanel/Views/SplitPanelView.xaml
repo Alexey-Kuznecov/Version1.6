@@ -41,15 +41,15 @@
                     <Style TargetType="ContentControl">
                         <Style.Triggers>
 
-                            <DataTrigger Binding="{Binding Key}" Value="PanelHeader">
+                            <DataTrigger Binding="{Binding Key}" Value="{x:Static layout:ContentViewType.Header}">
                                 <Setter Property="Template" Value="{DynamicResource ContentDirectoryPanelTemplate}" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding Key}" Value="DirectoryView">
+                            <DataTrigger Binding="{Binding Key}" Value="{x:Static layout:ContentViewType.Directory}">
                                 <Setter Property="Template" Value="{Binding DataContext.DirectoryPanelTemplate, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding Key}" Value="FileView">
+                            <DataTrigger Binding="{Binding Key}" Value="{x:Static layout:ContentViewType.File}">
                                 <Setter Property="ContentTemplate">
                                     <Setter.Value>
                                         <DataTemplate>

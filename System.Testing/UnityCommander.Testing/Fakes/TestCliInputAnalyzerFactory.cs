@@ -2,6 +2,7 @@
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Context.Descriptors;
 using UnityCommander.Autocomplete.Infrastructure;
+using UnityCommander.Autocomplete.Infrastructure.Analyze;
 
 namespace UnityCommander.Testing.Fake
 {

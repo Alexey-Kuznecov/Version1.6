@@ -39,7 +39,6 @@ namespace UnityCommander.Services.Bootstrap
             var session = _session.Load();
             _layout.Load(session);
             _panel.Initialize();
-            //_panel.Restore(session.Panels);
             _dockingSync.Initialize(session.Panels);
         }
     }

@@ -11,7 +11,6 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Module;
 using UnityCommander.Common.Panels.Panels;
-using UnityCommander.Common.State;
 using UnityCommander.Core.Helper;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;

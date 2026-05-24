@@ -84,7 +84,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<FolderModel> directoryList;
         private ObservableCollection<DriveModel> driveList;
         private ObservableCollection<MenuItemViewModel> _contextMenuItems = new();
-        private NavigationContextDirectory _navigationContext;
         private ControlTemplate directoryPanelTemplate;
         private string currentDirectory;
         private object selectedDirectory;
@@ -140,7 +139,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IDirectoryChangeNotifier directoryChangeNotifier,
               ISelectionManager selectionManager,
               ITabRegistry tabRegistry,
-              NavigationContextDirectory navigationContext,
               CommandSurfaceEngine surface,
               CommandPresentationProvider presentationProvider,
               IGuiCommandExecutor guiCommandExecutor,
@@ -180,7 +178,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.UpdateDirectoryIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.Refresh);
             this.ThisComputerIconIsEnabled = true;
             this.BackButtonIsEnabled = true;
-            this._navigationContext = navigationContext;
             this._navigationService = new NavigationManager(null);
             this.DriveList = new ObservableCollection<DriveModel>();
 
@@ -192,6 +189,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.columnRegistry = columnRegistry ?? throw new ArgumentNullException(nameof(settingsStore));
             // подпись на главный обработчик (одно место)
             ColumnSyncService.RegisterHandler("Main", width => OnRemoteWidthChanged("Main", width));
+            
             LayoutRoot = BuildLayout();
         }
 
@@ -208,7 +206,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     new FixedNode
                     {
                         Size = 25,
-                        Content = new ContentNode { Key = "PanelHeader" }
+                        Content = new ContentNode { Key = ContentViewType.Header }
                     },
 
                     //new ContentNode { Key = "NavigationPanel" },
@@ -218,8 +216,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         Orientation = Orientation.Vertical,
                         Ratio = 0.5,
 
-                        First = new ContentNode { Key = "DirectoryView" },
-                        Second = new ContentNode { Key = "FileView" }
+                        First = new ContentNode { Key = ContentViewType.Directory },
+                        Second = new ContentNode { Key = ContentViewType.File }
                     }
                 }
             };
@@ -1069,6 +1067,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (this.CurrentDirectory != VirtualPaths.MyComputer)
                 {
+                    this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
                     var files = await dataService.GetFilesAsync(this.CurrentDirectory);
                     var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
                     foreach (var f in files) FileList.Add(f);
