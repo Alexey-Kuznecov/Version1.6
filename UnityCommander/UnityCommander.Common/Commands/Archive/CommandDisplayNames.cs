@@ -1,6 +1,9 @@
 ﻿
+using System;
+
 namespace UnityCommander.Common.Commands
 {
+    [Obsolete]
     public static class CommandDisplayNames
     {
         public static class Panel

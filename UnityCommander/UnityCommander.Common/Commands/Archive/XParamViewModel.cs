@@ -1,6 +1,9 @@
 ﻿
+using System;
+
 namespace UnityCommander.Common.Commands
 {
+    [Obsolete]
     public class XParamViewModel
     {
         public object Instance { get; set; }

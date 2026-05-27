@@ -1,9 +1,9 @@
 ﻿
+using System;
+
 namespace UnityCommander.Common.Commands
 {
-    /// <summary>
-    /// The GlobalCommandProvider interface.
-    /// </summary>
+    [Obsolete]
     public interface IGlobalCommandProvider
     {
         /// <summary>

@@ -5,9 +5,7 @@ namespace UnityCommander.Common.Commands
     using System.Collections.Generic;
     using System.Windows.Input;
 
-    /// <summary>
-    /// The GlobalCommandManager interface.
-    /// </summary>
+    [Obsolete]
     public interface IGlobalCommandManager
     {
         /// <summary>

@@ -1,9 +1,11 @@
 ﻿
 namespace UnityCommander.Common.Commands
 {
+    using System;
     using System.Windows;
     using System.Windows.Controls;
 
+    [Obsolete]
     public class XParam : Panel
     {
         #region IsSortcutEnabledProperty

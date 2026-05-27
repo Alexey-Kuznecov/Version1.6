@@ -2,7 +2,7 @@
 
 namespace UnityCommander.Common.State
 {
-    public class TabState
+    public class TabSessionState
     {
         public string Title { get; set; }
         public Guid TabId { get; set; }

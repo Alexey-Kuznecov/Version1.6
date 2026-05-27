@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnityCommander.Core.Navgator
 {
@@ -16,6 +12,8 @@ namespace UnityCommander.Core.Navgator
 
         /// <summary>Пытается перейти на указанный путь. Возвращает true если успешно.</summary>
         bool TryNavigateTo(string path);
+
+        bool TryNavigateTo(string path, bool forceRecord);
 
         /// <summary>Событие при изменении Current.</summary>
         event Action<string> CurrentChanged;

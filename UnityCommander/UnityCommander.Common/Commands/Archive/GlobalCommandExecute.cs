@@ -7,6 +7,7 @@
     /// <summary>
     /// The global command execute.
     /// </summary>
+    [Obsolete]
     public class GlobalCommandExecute : ICommand
     {
         /// <summary>

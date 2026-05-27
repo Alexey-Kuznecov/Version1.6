@@ -1,22 +1,20 @@
 ﻿
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Context.Descriptors;
-using UnityCommander.Autocomplete.Infrastructure;
-using UnityCommander.Autocomplete.Infrastructure.Analyze;
 
 namespace UnityCommander.Testing.Fake
 {
     public static class TestCliInputAnalyzerFactory
     {
-        public static ICliInputAnalyzer CreateGitLikeAnalyzer()
-        {
-            var commands = new List<ICommandDescriptor>
-            {
-                CreateGitCommand()
-            };
+        //public static ICliInputAnalyzer CreateGitLikeAnalyzer()
+        //{
+        //    var commands = new List<ICommandDescriptor>
+        //    {
+        //        CreateGitCommand()
+        //    };
 
-            return new DefaultCliInputAnalyzer(commands);
-        }
+        //    return new DefaultCliInputAnalyzer(commands);
+        //}
 
         public static ICommandDescriptor CreateGitCommand()
         {

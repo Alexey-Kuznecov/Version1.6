@@ -1,8 +1,10 @@
 ﻿namespace UnityCommander.Common.Commands
 {
+    using System;
     using System.Windows;
     using System.Windows.Controls;
 
+    [Obsolete]
     public class XArray : Panel
     {
         #region IsSortcutEnabledProperty

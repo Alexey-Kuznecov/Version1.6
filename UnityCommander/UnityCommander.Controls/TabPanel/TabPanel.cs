@@ -16,32 +16,17 @@ namespace UnityCommander.Controls.TabPanel
     [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class TabPanel : Panel
     {
-        /// <summary>
-        /// The my property property.
-        /// </summary>
         public static readonly DependencyProperty CollectionProperty =
             DependencyProperty.Register("Collection", typeof(TabCollection), typeof(TabPanel), new PropertyMetadata(null, OnInitialElementsChangedCallback, CoerceValueCallback));
 
         private TabControl dragDataSource;
 
-        /// <summary>
-        /// Gets or sets the my property.
-        /// </summary>
         public TabCollection Collection
         {
             get => (TabCollection)this.GetValue(CollectionProperty);
             set => this.SetValue(CollectionProperty, value);
         }
 
-        /// <summary>
-        /// The measure override.
-        /// </summary>
-        /// <param name="constraint">
-        /// The constraint.
-        /// </param>
-        /// <returns>
-        /// The <see cref="System.Windows.Size"/>.
-        /// </returns>
         protected override Size MeasureOverride(Size constraint)
         {
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
@@ -53,15 +38,6 @@ namespace UnityCommander.Controls.TabPanel
             return new Size();
         }
 
-        /// <summary>
-        /// The arrange override.
-        /// </summary>
-        /// <param name="arrangeBounds">
-        /// The arrange bounds.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             double margin = 0;
@@ -75,15 +51,6 @@ namespace UnityCommander.Controls.TabPanel
             return arrangeBounds;
         }
 
-        /// <summary>
-        /// The initial elements changed callback.
-        /// </summary>
-        /// <param name="d">
-        /// The d.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
         private static void OnInitialElementsChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TabPanel {Collection: { }} tabPanel)
@@ -140,32 +107,11 @@ namespace UnityCommander.Controls.TabPanel
             }
         }
 
-        /// <summary>
-        /// The coerce value callback.
-        /// </summary>
-        /// <param name="d">
-        /// The d.
-        /// </param>
-        /// <param name="value">
-        /// The base value.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
         private static object CoerceValueCallback(DependencyObject d, object value)
         {
             return value;
         }
 
-        /// <summary>
-        /// The on collection changed.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
         private void OnCollectionChanged(object sender, EventArgs e)
         {
             // Если коллекция Children больше чем коллекция пользователя, то элемент был удален и наборот.

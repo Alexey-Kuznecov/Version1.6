@@ -1,9 +1,9 @@
 ﻿
+using System;
+
 namespace UnityCommander.Common.Commands
 {
-    /// <summary>
-    /// The Macros Command interface.
-    /// </summary>
+    [Obsolete]
     public interface IMacrosCommand : ICommandBase
     {
     }

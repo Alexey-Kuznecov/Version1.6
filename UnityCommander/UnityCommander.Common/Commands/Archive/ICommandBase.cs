@@ -1,8 +1,10 @@
 ﻿
 namespace UnityCommander.Common.Commands
 {
+    using System;
     using System.Windows.Input;
 
+    [Obsolete]
     public interface ICommandBase
     {
         public string Name { get; set; }

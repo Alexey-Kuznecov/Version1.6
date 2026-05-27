@@ -5,6 +5,7 @@
     using System.Windows.Controls;
     using System.Windows.Data;
 
+    [Obsolete]
     public class MultiCommandParameter : IDisposable
     {
         #region IsSortcutEnabledProperty

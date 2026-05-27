@@ -3,31 +3,19 @@ namespace UnityCommander.Controls.Ribbon.Control
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Data;
-    using System.Windows.Input;
-    using System.Windows.Media;
     using AlexeyKuznecov.Library.Mvvm.Base;
 
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
 
-    /// <summary>
-    /// The ribbon combo box item.
-    /// </summary>
     public class RibbonDropListBuilder
     {
-        /// <summary>
-        /// The combo box item.
-        /// </summary>
         private readonly List<DropListPopupModel> dropListPopupModel = new ();
 
-        /// <summary>
-        /// The combo box.
-        /// </summary>
         private readonly ComboBox comboBox = new ();
         
         public ListBoxItem DropListItem { get; set; }
@@ -54,18 +42,6 @@ namespace UnityCommander.Controls.Ribbon.Control
             this.DropListItem = popButton;
         }
         
-        /// <summary>
-        /// The add item.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <param name="icon">
-        /// The icon.
-        /// </param>
-        /// <param name="command">
-        /// The command.
-        /// </param>
         public void AddItem(string text, IIcon icon, IGlobalCommand command)
         {
             var listBoxItem = new DropListPopupModel 
@@ -78,12 +54,6 @@ namespace UnityCommander.Controls.Ribbon.Control
             this.dropListPopupModel.Add(listBoxItem);
         }
 
-        /// <summary>
-        /// The set popup navigation.
-        /// </summary>
-        /// <param name="button">
-        /// The button.
-        /// </param>
         private void SetPopupNavigation(object button)
         {
             DropListPopup popupControl = new DropListPopup();

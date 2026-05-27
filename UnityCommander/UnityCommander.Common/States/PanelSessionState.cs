@@ -5,12 +5,12 @@ using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Common.State
 {
-    public class PanelState
+    public class PanelSessionState
     {
         public Guid PanelId { get; set; }   // 💥 ключевая штука
         public PanelMode Mode { get; set; }
         public ViewMode ViewMode { get; set; }
-        public List<TabState> Tabs { get; set; } = new();
+        public List<TabSessionState> Tabs { get; set; } = new();
         public Guid? ActiveTabId { get; set; }
     }
 }
