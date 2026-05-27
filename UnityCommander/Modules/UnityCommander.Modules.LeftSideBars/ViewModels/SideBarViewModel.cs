@@ -122,7 +122,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             get => this.currentSidebarItem;
             set
             {
-                var curr = _guiCommandExecutor.Execute(CommandNames.Panel.GetCurrentPath).Result;
+                //var curr = _guiCommandExecutor.Execute(CommandNames.Panel.GetCurrentPath).Result;
                 this.currentSidebarItem = value;
                 this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(value);
             }

@@ -1,6 +1,6 @@
 ﻿
 using System.IO;
-using UnityCommander.Core.Navgator;
+using UnityCommander.Core.Navigation;
 
 namespace UnityCommander.Core.Helper
 {

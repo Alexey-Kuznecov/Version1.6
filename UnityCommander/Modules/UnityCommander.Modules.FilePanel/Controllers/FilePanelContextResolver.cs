@@ -11,7 +11,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
       : IContextResolver
     {
         public SurfaceContext Resolve(
-            PanelState state,
+            TabState state,
             object? parameter)
         {
             var ctx = new SurfaceContext();

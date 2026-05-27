@@ -2,7 +2,7 @@
 using CommandSystem.Abstractions;
 using System.Threading.Tasks;
 using UnityCommander.Common.Commands;
-using UnityCommander.Core.Navgator;
+using UnityCommander.Core.Navigation;
 
 namespace UnityCommander.Modules.FilePanel
 {

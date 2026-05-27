@@ -1,21 +1,24 @@
-﻿using System;
+﻿
+using System;
 
-namespace UnityCommander.Core.Navgator
+namespace UnityCommander.Core.Navigation
 {
     public interface INavigationService
     {
-        /// <summary>Текущий путь. null = "Мой компьютер" (root).</summary>
         string Current { get; }
+        
+        bool CanGoBack { get; }
+        
+        bool CanGoForward { get; }
 
-        /// <summary>Проверяет путь — валиден ли (например, диск/папка существует). Для виртуальных провайдеров можно адаптировать.</summary>
         bool IsValidPath(string path);
 
-        /// <summary>Пытается перейти на указанный путь. Возвращает true если успешно.</summary>
         bool TryNavigateTo(string path);
 
         bool TryNavigateTo(string path, bool forceRecord);
 
-        /// <summary>Событие при изменении Current.</summary>
+        public void GoBack();
+
         event Action<string> CurrentChanged;
     }
 }

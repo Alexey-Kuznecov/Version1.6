@@ -34,7 +34,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
-using UnityCommander.Core.Navgator;
+using UnityCommander.Core.Navigation;
 using UnityCommander.Integration.Plugins;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -72,7 +72,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly CommandManager commandManager;
         private readonly ILogger _logger;
         private readonly ICommandUIService _commandUIService;
-        private readonly PanelState _state;
+        private readonly TabState _state;
         private ITabRegistry _tabRegistry;
         private TabContentAdapter _adapter;
         private ISelectionManager _selectionManager;

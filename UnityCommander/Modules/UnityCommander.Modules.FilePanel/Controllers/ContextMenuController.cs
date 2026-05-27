@@ -26,7 +26,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
             _resolver = resolver;
         }
 
-        public void Show(PanelState state, object? parameter)
+        public void Show(TabState state, object? parameter)
         {
             var ctx = _resolver.Resolve(state, parameter);
 
@@ -44,7 +44,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
                 state.ContextMenuItems.Add(item);
         }
 
-        private SurfaceContext BuildContext(PanelState state, object? parameter)
+        private SurfaceContext BuildContext(TabState state, object? parameter)
         {
             var ctx = _resolver.Resolve(state, parameter);
 

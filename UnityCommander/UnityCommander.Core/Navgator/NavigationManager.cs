@@ -3,15 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace UnityCommander.Core.Navgator
+namespace UnityCommander.Core.Navigation
 {
-    public class NavigationManager : INavigationService
+    public class NavigationManager // : INavigationService
     {
         private readonly Stack<string> _back = new();
         private readonly Stack<string> _forward = new();
 
         public string? Current { get; private set; }
+        
         public event Action<string?>? CurrentChanged;
+        
         private readonly Func<string?, bool> _pathValidator;
 
         public NavigationManager(Func<string?, bool>? pathValidator = null)
@@ -76,15 +78,6 @@ namespace UnityCommander.Core.Navgator
         {
             _back.Clear();
             _forward.Clear();
-        }
-
-        // Реализация INavigationService:
-        bool INavigationService.TryNavigateTo(string path) => TryNavigateTo(path);
-        bool INavigationService.IsValidPath(string path) => IsValidPath(path);
-        event Action<string> INavigationService.CurrentChanged
-        {
-            add => CurrentChanged += value;
-            remove => CurrentChanged -= value;
         }
     }
 }

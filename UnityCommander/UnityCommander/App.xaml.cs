@@ -23,7 +23,7 @@ using UnityCommander.Common.Layout;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
-using UnityCommander.Core.Navgator;
+using UnityCommander.Core.Navigation;
 using UnityCommander.Integration.Plugins;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Abstractions;

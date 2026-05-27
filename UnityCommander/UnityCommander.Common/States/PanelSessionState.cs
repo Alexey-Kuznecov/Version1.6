@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using UnityCommander.Common.Models;
 using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Common.State

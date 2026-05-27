@@ -2,14 +2,12 @@
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Common.Selection;
 using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Modules.FilePanel.ViewModels;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel.States
 {
-    public class PanelState : BindableBase
+    public class TabState : BindableBase
     {
         public string CurrentDirectory { get; set; }
 
