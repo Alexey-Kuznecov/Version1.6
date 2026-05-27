@@ -1,10 +1,10 @@
 ﻿
 using CommandSystem.Abstractions;
 using CommandSystem.Gui.Integraion;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityCommander.Common.Commands;
 
 namespace UnityCommander.Services
 {
@@ -34,12 +34,19 @@ namespace UnityCommander.Services
             _register.Register(metadata, handler);
         }
 
-        // 🔥 undoable команда
-        public void RegisterUndoable(
-            CommandMetadata metadata,
-            Func<CommandContext, Task<UndoToken>> handler)
+        public void Register(CommandMetadata metadata, Func<CommandContext, Task> handler)
         {
             _register.Register(metadata, handler);
+        }
+
+        public void Register(CommandDefinition commandDefinition)
+        {
+            _register.Register(commandDefinition.Metadata, commandDefinition.Execute);
+        }
+
+        public void RegisterUndoable(CommandDefinition commandDefinition)
+        {
+            _register.Register(commandDefinition.Metadata, commandDefinition.UndoExecute);
         }
 
         public Task ExecuteAsync(string commandName, CommandContext ctx = default)
@@ -47,12 +54,25 @@ namespace UnityCommander.Services
             return _executor.ExecuteAsync(commandName, ctx);
         }
 
-        public CommandContext Execute(string commandName)
+        public CommandContext Execute(string commandName, object args = null)
         {
-            return _executor.Execute(commandName);
+            var ctx = new CommandContext(commandName, args);
+            return _executor.Execute(commandName, args, ctx);
+        }
+
+        public CommandContext Execute(string commandName, CommandArguments args)
+        {
+            var ctx = new CommandContext(commandName, args);
+            return _executor.Execute(commandName, args, ctx);
         }
 
         public IRegisteredCommand Get(string commandName) => _provider.Get(commandName);
+        
         public IReadOnlyCollection<IRegisteredCommand> GetAll() => _provider.GetAll();
+
+        internal bool CanExecute(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

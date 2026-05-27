@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using UnityCommander.Common.Selection;
 
 namespace UnityCommander.Core.Behaviors.Selection
@@ -11,10 +7,13 @@ namespace UnityCommander.Core.Behaviors.Selection
     {
         public SelectionActionType ActionType => SelectionActionType.CtrlClick;
 
-        public void Select(ISelectionContext context, SelectionAction action)
+        public void Select(ISelectionContext ctx, SelectionAction action)
         {
-            var item = context.Items[action.TargetIndex];
+            var item = ctx.Items[action.TargetIndex];
+
             item.IsSelected = !item.IsSelected;
+
+            ctx.FocusedIndex = action.TargetIndex;
         }
     }
 }

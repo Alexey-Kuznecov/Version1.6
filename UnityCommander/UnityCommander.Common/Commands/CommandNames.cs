@@ -35,6 +35,17 @@ namespace UnityCommander.Common.Commands
             public const string SetAttributes = "file.set-attributes";
         }
 
+        public static class Navigation
+        {
+            public const string Goto = "navigation.goto";
+            public const string Back = "navigation.back";
+            public const string Forward = "navigation.forward";
+            public const string Parent = "navigation.parent";
+            public const string Refresh = "navigation.refresh";
+            public const string Desktop = "navigation.desktop";
+            public const string Drives = "navigation.drives";
+        }
+
         public static class History
         {
             public const string Undo = "history.undo";

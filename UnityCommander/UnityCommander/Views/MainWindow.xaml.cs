@@ -45,8 +45,8 @@ namespace UnityCommander.Views
             var shellProvider = new ShellCommandProvider(this);
             // Регистрируем базовые команды
             commandService.Register(
-               new CommandMetadata(CommandNames.UI.ToggleBottomPanel, 
-               presentation.Get(CommandNames.UI.ToggleBottomPanel).Description)
+               new CommandMetadata(CommandNames.UI.ToggleBottomPanel,
+               CommandPresentationProvider.Get(CommandNames.UI.ToggleBottomPanel).Description)
                {
                    Category = nameof(CommandNames.UI),
                },

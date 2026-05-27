@@ -8,6 +8,6 @@ namespace UnityCommander.Common.Docking
     public interface IDockingSyncService
     {
         public event Action<DiffResult> OnDiff;
-        void Initialize(List<PanelState> panels);
+        void Initialize(List<PanelSessionState> panels);
     }
 }

@@ -8,45 +8,5 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:layout="clr-namespace:UnityCommander.Modules.FilePanel.Layout">
 
-    <DataTemplate x:Key="FileViewTemplate">
-        <Grid>
-            <ListView
-                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
-                be:SelectionBehavior.EnableSelection="True"
-                be:SelectionBehavior.Manager="{Binding SelectionManager}"
-                be:SelectionBehavior.PanelId="{Binding Token}"
-                be:SelectionBehavior.SelectionContext="{Binding SelectionContext}"
-                commands:GridViewSort.AutoSort="True"
-                dd:DragDrop.DropHandler="{Binding Mode=Default}"
-                dd:DragDrop.IsDragSource="True"
-                DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                IsSynchronizedWithCurrentItem="True"
-                ItemsSource="{Binding FileList, Mode=OneWay}"
-                SelectedItem="{Binding CurrentFile}"
-                SelectionMode="Multiple">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseRightButtonUp">
-                        <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseRightButtonUp">
-                        <i:InvokeCommandAction Command="{Binding ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <i:Interaction.Behaviors>
-                    <be:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
-                </i:Interaction.Behaviors>
-                <ListView.ContextMenu>
-                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding ContextMenuItems}">
-                        <ContextMenu.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
-                                <Setter Property="Header" Value="{Binding Title}" />
-                                <Setter Property="Command" Value="{Binding Command}" />
-                                <Setter Property="ItemsSource" Value="{Binding Children}" />
-                            </Style>
-                        </ContextMenu.ItemContainerStyle>
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
-        </Grid>
-    </DataTemplate>
+  
 </ResourceDictionary>

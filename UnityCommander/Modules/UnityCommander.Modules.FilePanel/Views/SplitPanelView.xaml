@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:be="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
+    xmlns:controls="clr-namespace:UnityCommander.Controls.Layout;assembly=UnityCommander.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:layout="clr-namespace:UnityCommander.Modules.FilePanel.Layout"
+    xmlns:localControl="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
@@ -30,7 +31,7 @@
             <ItemsControl ItemsSource="{Binding Children}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="{Binding Orientation}" />
+                        <controls:StackLayoutPanel Orientation="Vertical" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
@@ -59,26 +60,24 @@
                                                     be:SelectionBehavior.EnableSelection="True"
                                                     be:SelectionBehavior.Manager="{Binding SelectionManager}"
                                                     be:SelectionBehavior.PanelId="{Binding Token}"
-                                                    be:SelectionBehavior.SelectionContext="{Binding SelectionContext}"
                                                     commands:GridViewSort.AutoSort="True"
                                                     dd:DragDrop.DropHandler="{Binding Mode=Default}"
                                                     dd:DragDrop.IsDragSource="True"
                                                     DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     IsSynchronizedWithCurrentItem="True"
                                                     ItemsSource="{Binding FileList, Mode=OneWay}"
-                                                    SelectedItem="{Binding CurrentFile}"
-                                                    SelectionMode="Multiple">
+                                                    SelectedItem="{Binding CurrentFile}">
                                                     <i:Interaction.Triggers>
                                                         <i:EventTrigger EventName="MouseRightButtonUp">
-                                                            <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                                                            <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay, PresentationTraceSources.TraceLevel=High}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                                                         </i:EventTrigger>
                                                         <i:EventTrigger EventName="PreviewMouseRightButtonUp">
                                                             <i:InvokeCommandAction Command="{Binding ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
                                                         </i:EventTrigger>
                                                     </i:Interaction.Triggers>
-                                                    <i:Interaction.Behaviors>
+                                                    <!--<i:Interaction.Behaviors>
                                                         <be:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
-                                                    </i:Interaction.Behaviors>
+                                                    </i:Interaction.Behaviors>-->
                                                     <ListView.ContextMenu>
                                                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding ContextMenuItems}">
                                                             <ContextMenu.ItemContainerStyle>
@@ -107,9 +106,8 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" MinHeight="200" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="5" />
                     <RowDefinition Height="*" MinHeight="200" />
-
                 </Grid.RowDefinitions>
 
                 <ContentControl Content="{Binding First}" />
@@ -117,7 +115,9 @@
                 <GridSplitter
                     Grid.Row="1"
                     Height="5"
-                    HorizontalAlignment="Stretch" />
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    ResizeDirection="Rows" />
 
                 <ContentControl Grid.Row="2" Content="{Binding Second}" />
                 <!--<Border Grid.Row="3" Background="Red">
@@ -200,7 +200,7 @@
             </ListView>-->
 
         <ContentControl Grid.Row="1">
-            <control:NavigationPanel
+            <localControl:NavigationPanel
                 Margin="10"
                 DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
                 NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />

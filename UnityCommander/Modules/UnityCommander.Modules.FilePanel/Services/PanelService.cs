@@ -155,8 +155,7 @@ namespace UnityCommander.Modules.FilePanel.Services
 
         private void ProcessNavigation()
         {
-            var context = _command.Execute(CommandNames.Panel.GetCurrentPath);
-            var basePath = context.Result as string;
+            var basePath = _tabRegistry.ActiveTab.GetCurrentPath();
 
             var panel = _panelRegistry.GetActivePanel(); // Панель пустая 
             var panelId = panel.PanelId;

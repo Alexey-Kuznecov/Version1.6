@@ -8,7 +8,7 @@ namespace UnityCommander.Services
     using System.Windows.Shapes;
 
     using MaterialDesignThemes.Wpf;
-
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Services.Interfaces;
 
@@ -17,17 +17,11 @@ namespace UnityCommander.Services
     /// <summary>
     /// The icon provider.
     /// </summary>
-    public class IconProviderService : IIconProviderService
+    public class PackIconProvider : IIconProviderService
     {
-        /// <summary>
-        /// The material design icons.
-        /// </summary>
         private readonly Dictionary<string, PackIconKind> materialDesignIcons = new Dictionary<string, PackIconKind>();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IconProviderService"/> class.
-        /// </summary>
-        public IconProviderService()
+        public PackIconProvider()
         {
             this.materialDesignIcons.Add("FileTree", PackIconKind.FileTree);
             this.materialDesignIcons.Add("TableColumn", PackIconKind.TableColumn);
@@ -35,17 +29,11 @@ namespace UnityCommander.Services
             this.materialDesignIcons.Add("Comment", PackIconKind.Comment);
             this.materialDesignIcons.Add("Plugin", PackIconKind.Plugin);
             this.materialDesignIcons.Add("Settings", PackIconKind.Settings);
+            this.materialDesignIcons.Add(CommandNames.Navigation.Drives, PackIconKind.LaptopWindows);
+            this.materialDesignIcons.Add(CommandNames.Navigation.Goto, PackIconKind.ArrowBack);
+            this.materialDesignIcons.Add(CommandNames.Navigation.Refresh, PackIconKind.Refresh);
         }
 
-        /// <summary>
-        /// Gets an icon provided by the material design library.
-        /// </summary>
-        /// <param name="icon">
-        /// Specifies an icon from list of available icons.
-        /// </param>
-        /// <returns>
-        /// Returns an icon of type <see cref="IIcon"/> that is known to the program.
-        /// </returns>
         public IIcon GetIcon(PackIconKind icon)
         {
             var iconModel = new Icon();
@@ -58,11 +46,6 @@ namespace UnityCommander.Services
             return iconModel;
         }
 
-        /// <summary>
-        /// Provides an icon using the name specified in the arguments.
-        /// </summary>
-        /// <param name="iconName"> Icon name. </param>
-        /// <returns> Icon as type of <see cref="IIcon"/>. </returns>
         public IIcon GetIcon(string iconName)
         {
             var iconModel = new Icon();
@@ -75,12 +58,6 @@ namespace UnityCommander.Services
             return iconModel;
         }
 
-        /// <summary>
-        /// Provides all icons is available.
-        /// </summary>
-        /// <returns>
-        /// The collection icons of <see cref="IIcon"/> types.
-        /// </returns>
         public ObservableCollection<IIcon> GetIcons()
         {
             var icons = new ObservableCollection<IIcon>();
@@ -89,13 +66,13 @@ namespace UnityCommander.Services
             {
                 PackIcon packIcon = new PackIcon { Kind = icon.Value };
                 icons.Add(new Icon
-                              {
-                                  Category = icon.Key,
-                                  Path = new Path 
-                                             { 
-                                                 Data = Geometry.Parse(packIcon.Data)
-                                             }
-                              });
+                {
+                    Category = icon.Key,
+                    Path = new Path 
+                    { 
+                        Data = Geometry.Parse(packIcon.Data)
+                    }
+                });
             }
 
             return icons;

@@ -31,6 +31,8 @@
     <PackageReference Include="System.Reactive" Version="6.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
       <Private>False</Private>
     </ProjectReference>

@@ -125,11 +125,13 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IDataProviderService, DataProviderService>();
             containerRegistry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
             containerRegistry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
-            containerRegistry.RegisterSingleton<IIconProviderService, IconProviderService>();
+            containerRegistry.RegisterSingleton<IIconProviderService, PackIconProvider>();
+            containerRegistry.RegisterSingleton<ICommandUIService, CommandUIService>();
             containerRegistry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
             containerRegistry.RegisterSingleton<IAppConfigService, AppConfigService>();
             containerRegistry.RegisterSingleton<ITabRegistry, TabRegistry>();
             containerRegistry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
+            containerRegistry.RegisterSingleton<ITabContextAccessor, TabContextAccessor>();
             containerRegistry.RegisterSingleton<IDockingService, DockingService>();
             containerRegistry.RegisterSingleton<IDockingSyncService, DockingSyncService>();
             containerRegistry.RegisterSingleton<DockingSyncContext>();
@@ -392,6 +394,7 @@ namespace UnityCommander
             // -------------------------------
             //containerRegistry.RegisterSingleton<CommandManager>(); // пока закомментирован
             containerRegistry.RegisterSingleton<ModuleLogger>();
+            containerRegistry.RegisterSingleton<NavigationManager>();
 
             // -------------------------------
             // 7. Регистрация компонентов командной системы

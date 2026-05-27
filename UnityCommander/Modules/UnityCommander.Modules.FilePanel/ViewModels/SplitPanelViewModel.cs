@@ -22,7 +22,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using UnityCommander.CommandSurface;
@@ -36,15 +35,15 @@ using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navgator;
-using UnityCommander.Integration.Columns;
-using UnityCommander.Integration.Enums;
 using UnityCommander.Integration.Plugins;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Layout;
+using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Settings;
@@ -72,6 +71,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly NavigationManager _navigationService;
         private readonly CommandManager commandManager;
         private readonly ILogger _logger;
+        private readonly ICommandUIService _commandUIService;
+        private readonly PanelState _state;
         private ITabRegistry _tabRegistry;
         private TabContentAdapter _adapter;
         private ISelectionManager _selectionManager;
@@ -85,7 +86,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private ObservableCollection<DriveModel> driveList;
         private ObservableCollection<MenuItemViewModel> _contextMenuItems = new();
         private ControlTemplate directoryPanelTemplate;
-        private string currentDirectory;
         private object selectedDirectory;
         private FileModel currentFile;
 
@@ -102,6 +102,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private IColumnProvider columnProvider;
         private CommandService _commandService;
         private CommandPresentationProvider _presentationProvider;
+        private ContextMenuController _contextMenuController;
         private readonly IColumnStateManager columnStateManager;
         private readonly ColumnRegistry columnRegistry;
         private readonly ISettingsStore settings;
@@ -148,7 +149,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ISettingsStore settingsStore,
               ColumnRegistry columnRegistry,
               LoggerCreator loggerCreator,
-              CommandService commandService)
+              CommandService commandService, 
+              ICommandUIService commandUIService,
+              ContextMenuController contextMenuController)
             : base(regionManager)
         {
             this._logger = loggerCreator.Create(
@@ -156,6 +159,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 scope: LogScope.UserAction
                 );
 
+            this._contextMenuController = contextMenuController;
+            this._commandUIService = commandUIService;
+            this._state = new();
             this._surface = surface;
             this._commandService = commandService;
             this._presentationProvider = presentationProvider;
@@ -173,13 +179,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
 
             // Инициализация иконок
+
+            var commandMyComputer 
+                = this._commandUIService.Create(CommandNames.Navigation.Drives);
+            var commandBack 
+                = this._commandUIService.Create(CommandNames.Navigation.Goto);
+            var commandForward 
+                = this._commandUIService.Create(CommandNames.Navigation.Goto);
+            var commandRefresh 
+                = this._commandUIService.Create(CommandNames.Navigation.Refresh);
+
             this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
             this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
             this.UpdateDirectoryIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.Refresh);
             this.ThisComputerIconIsEnabled = true;
             this.BackButtonIsEnabled = true;
             this._navigationService = new NavigationManager(null);
-            this.DriveList = new ObservableCollection<DriveModel>();
+            this.DriveList.Clear();
 
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
             // заменить локальные new/недостающие поля на внедрённые
@@ -199,7 +215,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             return new StackNode
             {
-                Orientation = Orientation.Vertical,
+                Orientation = Orientation.Horizontal,
 
                 Children =
                 {
@@ -273,145 +289,88 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
-        #region Методы
-        
-        public IReadOnlyList<BaseDirectory> GetFiles() => this.FileList;
-        
-        #endregion
-
         #region Реализация интерфейсов IDirectoryPanel
 
-        /// <summary>
-        /// Уникальный токен панели.
-        /// </summary>
         public Guid Token { get; set; }
 
-        /// <summary>
-        /// Возвращает уникальный токен панели.
-        /// </summary>
-        /// <returns>Идентификатор панели.</returns>
         public Guid GetPanelToken() => this.Token;
 
-        /// <summary>
-        /// Возвращает текущий путь директории.
-        /// </summary>
-        /// <returns>Путь директории.</returns>
         public string GetCurrentPath() => this.CurrentDirectory;
 
-        /// <summary>
-        /// Возвращает путь к текущему выбранному файлу.
-        /// </summary>
-        /// <returns>Путь к файлу.</returns>
         public string GetCurrentFilePath() => this.CurrentFile?.Path;
 
         public void SetCurrentPath(string value) => this.CurrentDirectory = value;
 
+        public IReadOnlyList<BaseDirectory> GetFiles() => this.FileList;
         #endregion
 
         #region Свойства (Properties)
 
-        /// <summary>
-        /// Менеджер для управления выделением файлов и папок
-        /// </summary>
         public ISelectionManager SelectionManager => this._selectionManager;
-        public ISelectionContext SelectionContext => this._selectionContext;
 
-        public ObservableCollection<BaseDirectory> Items { get; set; } = new();
-        public ObservableCollection<BaseDirectory> SelectedItems { get; set; } = new();
+        //public ObservableCollection<BaseDirectory> Items { get; set; } = new();
+        public ObservableCollection<BaseDirectory> SelectedItems
+            => _state.SelectedItems;
 
-        /// <summary>
-        /// Текущий путь директории.
-        /// </summary>
         public string CurrentDirectory
         {
-            get => this.currentDirectory;
+            get => _state.CurrentDirectory;
             set
             {
-                this.SetProperty(ref this.currentDirectory, value);
-                PathChanged?.Invoke(currentDirectory);
-                var title = PathTitleHelper.GetTabTitle(currentDirectory);
+                if (_state.CurrentDirectory == value)
+                    return;
+
+                _state.CurrentDirectory = value;
+
+                RaisePropertyChanged();
+
+                PathChanged?.Invoke(value);
+
+                var title = PathTitleHelper.GetTabTitle(value);
+
                 TabTitleChanged?.Invoke(title);
             }
         }
 
-        public PanelMode Mode { get; private set; }
-
-        /// <summary>
-        /// Выбранная директория.
-        /// </summary>
         public object SelectedDirectory
         {
-            get => this.selectedDirectory;
-            set => this.SetProperty(ref this.selectedDirectory, value);
-        }
-
-        /// <summary>
-        /// Текущий выбранный файл.
-        /// При изменении вызывает обновление доступности команд.
-        /// </summary>
-        public FileModel CurrentFile
-        {
-            get => this.currentFile;
+            get => _state.SelectedDirectory;
             set
             {
-                this.SetProperty(ref this.currentFile, value);
+                if (_state.SelectedDirectory == value)
+                    return;
+
+                _state.SelectedDirectory = value;
+                
+                RaisePropertyChanged();
             }
         }
 
-        /// <summary>
-        /// Контекстное меню для файловой панели.
-        /// </summary>
+        public FileModel CurrentFile
+        {
+            get => _state.CurrentFile;
+            set
+            {
+                if (_state.CurrentFile == value)
+                    return;
+
+                _state.CurrentFile = value;
+
+                RaisePropertyChanged();
+            }
+        }
         public ObservableCollection<MenuItemViewModel> ContextMenuItems
-        {
-            get => _contextMenuItems;
-            set => SetProperty(ref _contextMenuItems, value);
-        }
+            => _state.ContextMenuItems;
 
-        /// <summary>
-        /// Контейнер (GridView) для файлов.
-        /// </summary>
-        public GridView FilePanelContainer { get; set; } = new GridView();
-
-        /// <summary>
-        /// Контейнер (GridView) для папок.
-        /// </summary>
-        public GridView FolderPanelContainer { get; set; } = new GridView();
-
-        /// <summary>
-        /// Контейнер (GridView) для дисков.
-        /// </summary>
-        public GridView DrivePanelContainer { get; set; } = new GridView();
-
-        /// <summary>
-        /// Список папок.
-        /// </summary>
         public ObservableCollection<FolderModel> DirectoryList
-        {
-            get => this.directoryList;
-            set => this.SetProperty(ref this.directoryList, value);
-        }
+            => _state.Directories;
 
-        /// <summary>
-        /// Список файлов.
-        /// </summary>
         public ObservableCollection<FileModel> FileList
-        {
-            get => this.fileList;
-            set => this.SetProperty(ref this.fileList, value);
-        }
+            => _state.Files;
 
-        /// <summary>
-        /// Список дисков.
-        /// </summary>
         public ObservableCollection<DriveModel> DriveList
-        {
-            get => this.driveList;
-            set => this.SetProperty(ref this.driveList, value);
-        }
+            => _state.Drives;
 
-        /// <summary>
-        /// Шаблон для отображения элементов панели (например, папок).
-        /// </summary>
         public ControlTemplate DirectoryPanelTemplate
         {
             get => this.directoryPanelTemplate;
@@ -419,8 +378,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         }
 
         /// <summary>
-        /// Выбранный элемент директории.
+        /// Команда для выбора текущего элемента директории.
         /// </summary>
+        public DelegateCommand<BaseDirectory> SelectCurrentDirectoryItem =>
+            new DelegateCommand<BaseDirectory>(item => this.SelectedCurrentDirectoryItem = item);
+
+
         public BaseDirectory SelectedCurrentDirectoryItem
         {
             get => this.selectedCurrentDirectoryItem;
@@ -431,45 +394,30 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Свойства из Tools
 
-        /// <summary>
-        /// Иконка "Мой компьютер".
-        /// </summary>
         public IIcon ThisComputerIcon
         {
             get => this.thisComputerIcon;
             set => this.SetProperty(ref this.thisComputerIcon, value);
         }
 
-        /// <summary>
-        /// Иконка кнопки "Назад".
-        /// </summary>
         public IIcon BackButtonIcon
         {
             get => this.backButtonIcon;
             set => this.SetProperty(ref this.backButtonIcon, value);
         }
 
-        /// <summary>
-        /// Иконка для обновления директории.
-        /// </summary>
         public IIcon UpdateDirectoryIcon
         {
             get => this.updateDirectoryPanelIcon;
             set => this.SetProperty(ref this.updateDirectoryPanelIcon, value);
         }
 
-        /// <summary>
-        /// Флаг, указывающий, активна ли иконка "Мой компьютер".
-        /// </summary>
         public bool ThisComputerIconIsEnabled
         {
             get => this.thisComputerIconIsEnabled;
             set => this.SetProperty(ref this.thisComputerIconIsEnabled, value);
         }
 
-        /// <summary>
-        /// Флаг, указывающий, активна ли кнопка "Назад".
-        /// </summary>
         public bool BackButtonIsEnabled
         {
             get => this.backButtonIsEnabled;
@@ -480,63 +428,42 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Команды
 
-        /// <summary>
-        /// Команда для выбора текущего элемента директории.
-        /// </summary>
-        public DelegateCommand<BaseDirectory> SelectCurrentDirectoryItem =>
-            new DelegateCommand<BaseDirectory>(item => this.SelectedCurrentDirectoryItem = item);
-
-        /// <summary>
-        /// Команда для навигации по выбранной папке.
-        /// </summary>
         public DelegateCommand<FolderModel> NavigateDirectoryCommand =>
             new DelegateCommand<FolderModel>(dir =>
             {
                 if (dir != null)
                 {
 #if (Nlog)
-                    //this.logger.Log(LogLevel.Info, $"Открыта папка ({dir.Path})");
                     _logger.Info($"Открыта папка ({dir.Path})");
 #endif
                     _navigationService.TryNavigateTo(dir.Path);
                 }
             });
 
-        /// <summary>
-        /// Команда для перехода к выбранному диску.
-        /// </summary>
         public DelegateCommand<DriveModel> GotoDiskCommand =>
             new DelegateCommand<DriveModel>(dir =>
             {
                 if (dir != null)
                 {
 #if (Nlog)
-                    //this.logger.Log(LogLevel.Info, $"Открыт диск ({dir.Letter})");
                     _logger.Info($"Открыт диск ({dir.Letter})");
-#endif  
+#endif
                     _navigationService.TryNavigateTo(dir.Letter);
                 }
             });
 
-        /// <summary>
-        /// Команда для обновления панели при изменении текущей директории.
-        /// </summary>
         public DelegateCommand<object> UpdateCommand =>
             new DelegateCommand<object>(dir =>
             {
                 if (dir != null)
                 {
 #if (Nlog)
-                    //this.logger.Log(LogLevel.Info, $"Текущая папка изменена на ({dir})");
                     _logger.Info($"Текущая папка изменена на ({dir})");
 #endif
-                    _navigationService.TryNavigateTo(dir.ToString(), forceRecord: true);
+                    _navigationService.TryNavigateTo(dir.ToString(), true);
                 }
             });
 
-        /// <summary>
-        /// Команда сохранения состояния панели (вызывается при закрытии приложения).
-        /// </summary>
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(() =>
         {
             if (settingsService.IsSessionSaved)
@@ -546,77 +473,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         });
 
         public DelegateCommand<object> ShowContextMenuCommand =>
-            new DelegateCommand<object>(parameter =>
-            {
-                var ctx = BuildContext(parameter);
-                var commands = _commandService
-                    .GetAll()
-                    .Select(x => x.Metadata)
-                    .ToList();
-                var tree = _surface.Build(commands, ctx);
-
-                ContextMenuItems = MapToMenu(tree).ToObservableCollection();
-            });
-
-        private SurfaceContext BuildContext(object parameter)
-        {
-            var ctx = new SurfaceContext();
-
-            List<string> selected;
-
-            if (SelectedItems != null && SelectedItems.Any())
-            {
-                // 👉 есть выделение — используем его
-                selected = SelectedItems.Select(x => x.Path).ToList();
-            }
-            else if (parameter is BaseDirectory item)
-            {
-                // 👉 нет выделения — берём кликнутый элемент
-                selected = new List<string> { item.Path };
-            }
-            else
-            {
-                // 👉 клик по пустоте
-                selected = new List<string>();
-            }
-
-            ctx.Set(new FilePanelContext
-            {
-                CurrentPath = CurrentDirectory,
-                SelectedFiles = selected
-            });
-
-            return ctx;
-        }
-
-        private List<MenuItemViewModel> MapToMenu(IEnumerable<SurfaceNode> nodes)
-        {
-            var result = new List<MenuItemViewModel>();
-
-            foreach (var node in nodes)
-            {
-                var item = new MenuItemViewModel
-                {
-                    Title = node.CommandName == null
-                        ? node.Title
-                        : _presentationProvider.Get(node.CommandName).DisplayName
-                };
-
-                if (node.CommandName != null)
-                {
-                    item.Command = new DelegateCommand(() =>
-                    {
-                        _commandService.ExecuteAsync(node.CommandName);
-                    });
-                }
-
-                item.Children = MapToMenu(node.Children);
-
-                result.Add(item);
-            }
-
-            return result;
-        }
+             new DelegateCommand<object>(parameter =>
+             {
+                 _contextMenuController.Show(_state, parameter);
+             });
 
         #endregion
 
@@ -731,44 +591,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Инициализация панели
 
-        /// <summary>
-        /// Инициализирует панель, устанавливая уникальный идентификатор и начальное состояние.
-        /// Регистрирует команды навигации и устанавливает текущий путь.
-        /// </summary>
-        /// <param name="token">
-        /// Ссылка на токен панели (если null – генерируется новый токен).
-        /// </param>
-        /// <param name="path">
-        /// Начальный путь для отображения.
-        /// </param>
-        /// <returns>
-        /// Инстанс <see cref="ITabPanelContent"/> для текущей панели.
-        /// </returns>
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
             this.CurrentDirectory = path;
 
-            // Если токен не задан, создаём новый
             if (token == Guid.Empty)
                 token = Guid.NewGuid();
 
             this.Token = token;
 
-            // Регистрируем его в глобальном реестре
             NavigationContextDirectory.Instance.Register(this.Token, _navigationService);
 
-            // Подписка на изменения пути
             _navigationService.CurrentChanged += OnPathChanged;
             
-            // Восстановление состояния панели из предыдущего сеанса
             _ = this.SetLastPanelState();
 
             _adapter = new TabContentAdapter(this);
             _tabRegistry.Register(_adapter);
-
-
-            if (FileList != null)
-                _selectionContext = new SelectionContext(FileList.Cast<ISelectableItem>());
 
             return this;
         }
@@ -806,7 +645,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void RefreshFileList(IEnumerable<FileModel> files)
         {
             if (FileList == null)
-                FileList = new ObservableCollection<FileModel>();
+                FileList.Clear();
 
             var newFiles = files.ToDictionary(f => f.Path, f => f);
 
@@ -826,7 +665,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private void RefreshDirectoryList(IEnumerable<FolderModel> dirs)
         {
             if (DirectoryList == null)
-                DirectoryList = new ObservableCollection<FolderModel>();
+                DirectoryList.Clear();
 
             var newDirs = dirs.ToDictionary(d => d.Path, d => d);
 
@@ -845,7 +684,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private async Task RefreshPanelAsync(string dirPath)
         {
-            // Загружаем параллельно
             var dirsTask = dataService.GetDirectoriesAsync(dirPath);
             var filesTask = dataService.GetFilesAsync(dirPath);
 
@@ -856,7 +694,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             RefreshFileList(files);
 
             this.CurrentDirectory = dirPath;
-            // 🔥 Асинхронный пересчёт колонок
             await UpdateColumnValuesAsync();
         }
 
@@ -864,204 +701,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #endregion
 
-        #region Работа с плагинными колонками
-
-        /// <summary>
-        /// Добавляет дополнительные колонки, предоставляемые плагинами.
-        /// </summary>
-        private void AddPluginColumns()
-        {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
-            {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
-                    column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
-
-                    // Инициализация колонок для папок
-                    if (this.InitialFolderColumnValues(column))
-                    {
-                        var gridColumn = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
-                        };
-                        column.ColumnManager.SetHideCommand(this.HideColumnCommand, this.AddColumnCommand, gridColumn);
-                        this.FolderPanelContainer.Columns.Add(gridColumn);
-                    }
-
-                    // Инициализация колонок для файлов
-                    if (this.InitialFileColumnValues(column))
-                    {
-                        var gridColumn = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate")
-                        };
-                        this.FilePanelContainer.Columns.Add(gridColumn);
-                    }
-
-                    this.CreatePluginContextMenu(column);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Создаёт контекстное меню для колонки, предоставляемой плагином.
-        /// </summary>
-        /// <param name="column">Объект колонки.</param>
-        private void CreatePluginContextMenu(IColumn column)
-        {
-            //if (column.ContextItems == null) return;
-
-            //foreach (var item in column.ContextItems)
-            //{
-            //    this.ContextMenu.Items.Add(new MenuItem().SetParam(item.Command, paramManager =>
-            //    {
-            //        paramManager.AddParam(this, "CurrentDirectory");
-            //    }));
-            //}
-        }
-
-        /// <summary>
-        /// Обновляет плагинные колонки для папок и файлов.
-        /// </summary>
-        private async void UpdateColumnsCommand()
-        {
-            // Выполним в пуле потоков, чтобы не блокировать UI
-            await Task.Run(() =>
-            {
-                foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
-                {
-                    foreach (var column in pluginContext.GetColumns())
-                    {
-                        foreach (var folder in this.DirectoryList)
-                        {
-                            var value = column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder);
-                            if (value != null)
-                            {
-                                // UI-операции отложим
-                                Application.Current.Dispatcher.Invoke(() =>
-                                {
-                                    folder.Additional[column.Header] = value;
-                                });
-                            }
-                        }
-
-                        foreach (var file in this.FileList)
-                        {
-                            var value = column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File);
-                            if (value != null)
-                            {
-                                Application.Current.Dispatcher.Invoke(() =>
-                                {
-                                    file.Additional[column.Header] = value;
-                                });
-                            }
-                        }
-                    }
-                }
-            }).ConfigureAwait(false); // Не вернёмся в UI-поток, оставим фоновым
-        }
-
-        /// <summary>
-        /// Инициализирует дополнительные значения колонок для папок.
-        /// </summary>
-        /// <param name="column">Колонка, предоставляемая плагином.</param>
-        /// <returns>True, если для всех папок установлены значения.</returns>
-        private bool InitialFolderColumnValues(IColumn column)
-        {
-            foreach (var folder in this.DirectoryList)
-            {
-                if (!folder.Additional.ContainsKey(column.Header))
-                {
-                    folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(column.Header, folder.Path, DirectoryItemType.Folder));
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Инициализирует дополнительные значения колонок для файлов.
-        /// </summary>
-        /// <param name="column">Колонка, предоставляемая плагином.</param>
-        /// <returns>True, если для всех файлов установлены значения.</returns>
-        private bool InitialFileColumnValues(IColumn column)
-        {
-            foreach (var file in this.FileList)
-            {
-                if (!file.Additional.ContainsKey(column.Header))
-                {
-                    file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(column.Header, file.Path, DirectoryItemType.File));
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Команда для скрытия указанной колонки.
-        /// </summary>
-        /// <param name="column">Объект колонки.</param>
-        private void HideColumnCommand(DependencyObject column)
-        {
-            if (this.FolderPanelContainer.Columns.Contains(column))
-            {
-                this.FolderPanelContainer.Columns.Remove((GridViewColumn)column);
-            }
-        }
-
-        /// <summary>
-        /// Команда для добавления указанной колонки.
-        /// </summary>
-        /// <param name="column">Объект колонки.</param>
-        private void AddColumnCommand(DependencyObject column)
-        {
-            if (!this.FolderPanelContainer.Columns.Contains(column))
-            {
-                this.FolderPanelContainer.Columns.Add((GridViewColumn)column);
-            }
-        }
-
-        /// <summary>
-        /// Создаёт контекстное меню для файловой панели с глобальными командами.
-        /// </summary>
-        private void CreateContextMenu()
-        {
-            //var globalCommands = new List<GlobalCommand>
-            //{
-            //    new GlobalCommand { DisplayName = CommandNames.ContentViewer, Name = CommandNames.ContentViewer },
-            //    new GlobalCommand { DisplayName = "Create", Name = CommandNames.FileCreate },
-            //    new GlobalCommand { DisplayName = "Delete", Name = CommandNames.FileDelete },
-            //    new GlobalCommand { DisplayName = "Move", Name = CommandNames.FileMove },
-            //    new GlobalCommand { DisplayName = "Directory Update", Name = CommandNames.DirectoryUpdate },
-            //};
-
-            //foreach (var command in globalCommands)
-            //{
-            //    this.ContextMenu.Items.Add(new MenuItem().SetParam(
-            //        command,
-            //        paramManager =>
-            //        {
-            //            paramManager.AddParam(this, "SelectedCurrentDirectoryItem.Path");
-            //            paramManager.AddParam(this, "SelectedCurrentDirectoryItem.Path");
-            //        }));
-            //}
-        }
-
-        #endregion
-
         #region Управление ресурсами и навигация
 
-        /// <summary>
-        /// Восстанавливает состояние панели из предыдущего сеанса, устанавливает шаблон, загружает файлы и папки, и инициализирует колонки.
-        /// </summary>
         private async Task SetLastPanelState()
         {
             // Загружаем пустые коллекции
-            FileList = new ObservableCollection<FileModel>();
-            DirectoryList = new ObservableCollection<FolderModel>();
+            //FileList.Clear();
+            //DirectoryList.Clear();
 
             try
             {
@@ -1079,7 +725,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 Debug.WriteLine("Ошибка загрузки: " + ex);
             }
 
-            // Загрузить определения колонок и состояние через state manager
             var defsFiles = columnRegistry.GetColumns(PanelType.Files).ToList();
             var defsFolders = columnRegistry.GetColumns(PanelType.Folders).ToList();
             var defsDrives = columnRegistry.GetColumns(PanelType.Drives).ToList();
@@ -1088,14 +733,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             FolderViewColumns = columnStateManager.LoadState("LeftPanel.Folders", PanelType.Folders, defsFolders);
             DriveViewColumns = columnStateManager.LoadState("LeftPanel.Drives", PanelType.Drives, defsDrives);
 
-            // Теперь инициализируем колонки (но не создаём GridViewColumn в VM)
             await UpdateColumnValuesAsync();
         }
 
-        /// <summary>
-        /// Переключает панель в режим отображения дисков.
-        /// </summary>
-        /// <param name="root">Путь к корневой директории (например, "C:\").</param>
         private async Task GoDrivePanel()
         {
             // 1. Загружаем диски
@@ -1113,11 +753,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Обработка событий и очистка ресурсов
 
-        /// <summary>
-        /// Обработчик изменения состояния выполнения команды навигации.
-        /// Обновляет доступность иконок в зависимости от текущего состояния.
-        /// </summary>
-        /// <param name="obj">Объект команды с данными навигации.</param>
         private void OnPathChanged(string path)
         {
             if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
@@ -1136,9 +771,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
         }
 
-        /// <summary>
-        /// Освобождает ресурсы и отсоединяет команды для предотвращения утечек памяти.
-        /// </summary>
         public override void Destroy()
         {
             _navigationService.CurrentChanged -= OnPathChanged;
@@ -1154,7 +786,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private void OnDirectoryChanged(string changedPath)
         {
-            // TODO Сделать более надежный способ для определения пути для целевой панели, пока работает стабльно но может сломаться
             if (!ShouldRefresh(changedPath, this.CurrentDirectory))
                 return;
 
@@ -1188,10 +819,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Команды из Tools
 
-        /// <summary>
-        /// Команда для возврата к предыдущей директории.
-        /// Если возможен откат, выполняется переход на предыдущий уровень навигации.
-        /// </summary>
         public DelegateCommand<object> GoBackDirectoryPanelCommand =>
             new DelegateCommand<object>(obj =>
             {
@@ -1212,10 +839,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 #endif
             });
 
-        /// <summary>
-        /// Команда для перехода на панель дисков.
-        /// Выполняет команду первого элемента навигационного стека, если он указывает на "Root:".
-        /// </summary>
         public DelegateCommand<object> GoDrivePanelCommand =>
             new DelegateCommand<object>(obj =>
             {
@@ -1228,24 +851,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 #if (Nlog)
                     _logger.Info($"Открыт Мой компьютер ({this.CurrentDirectory})");
 #endif
-                    // Обновляем диски
                     _ = GoDrivePanel();
                 }
             });
 
-        /// <summary>
-        /// Команда обновления панели с использованием глобальных команд.
-        /// </summary>
         public DelegateCommand<object> UpdateDirectoryPanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                //var globalCommandManager = globalCommandService.GetCommandManager();
-                //var cmd = globalCommandManager.GetCommand(UnityCommander.Integration.Commands.CommandNames.DirectoryUpdate);
-                //cmd.Command?.Execute(null);
                 _commandService.Execute(CommandNames.Panel.Refresh);
             });
 
-        // Пример команды для перехода
         public void NavigateTo(string? path)
         {
             if (_navigationService.IsValidPath(path))

@@ -19,14 +19,12 @@ namespace UnityCommander.Commands
         public string Description => "Выделяет файлы по расширению или регулярному выражению.";
         public IEnumerable<string> Aliases => new[] { "sel", "pick" };
 
-        private readonly IPanelRegistry _panelRegistry;
-        private readonly ITabRegistry _tabRegistry;
+        private readonly ITabContextAccessor _tabContextAccessor;
         private readonly ISelectionService _selectionService;
 
-        public SelectFilesCommand(IPanelRegistry panelRegistry, ITabRegistry tabRegistry, ISelectionService selectionService)
+        public SelectFilesCommand(ITabContextAccessor tabContextAccessor, ISelectionService selectionService)
         {
-            _panelRegistry = panelRegistry;
-            _tabRegistry = tabRegistry;
+            _tabContextAccessor = tabContextAccessor;
             _selectionService = selectionService;
         }
 
@@ -90,7 +88,7 @@ namespace UnityCommander.Commands
         {
             context.Output.WriteLine($"Выделение по расширениям: {extensionsList}");
 
-            var tab = _tabRegistry.ActiveTab;
+            var tab = _tabContextAccessor.ActiveTab;
             var allItems = tab.GetCurrentDirectoryFiles(); // BaseDirectory
 
             if (allItems == null)

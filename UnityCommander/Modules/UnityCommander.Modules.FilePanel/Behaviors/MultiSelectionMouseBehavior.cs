@@ -8,6 +8,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
+
     public class MultiSelectionMouseBehavior
     {
         public static readonly DependencyProperty IsEnableSelectionProperty =
@@ -158,5 +159,4 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             }
         }
     }
-
 }

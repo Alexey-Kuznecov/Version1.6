@@ -38,13 +38,13 @@ namespace UnityCommander.Services.Bootstrap
         {
             return new AppSessionState
             {
-                Panels = new List<PanelState>()
+                Panels = new List<PanelSessionState>()
                 {
-                    new PanelState() 
+                    new PanelSessionState() 
                     {
-                         Tabs = new List<TabState>
+                         Tabs = new List<TabSessionState>
                         {
-                            new TabState
+                            new TabSessionState
                             {
                                 Title = "C:\\",
                                 Path = "C:\\",

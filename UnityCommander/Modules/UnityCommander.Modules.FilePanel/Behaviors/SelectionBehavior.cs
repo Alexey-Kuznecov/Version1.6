@@ -1,12 +1,20 @@
 ﻿
+using NLog;
 using Prism.Ioc;
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
+using UnityCommander.Logging.Configuration;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
+using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
@@ -15,6 +23,10 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         private static ISelectionService _service;
         private static ISelectionService Service => _service ??= ContainerLocator.Container.Resolve<ISelectionService>();
 
+        private static LoggerCreator logCreat = ContainerLocator.Container.Resolve<LoggerCreator>();
+        
+        private static ILogger logger;
+           
         public static readonly DependencyProperty PanelIdProperty =
            DependencyProperty.RegisterAttached(
                "PanelId",
@@ -34,20 +46,6 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         public static void SetManager(DependencyObject obj, ISelectionManager value) => obj.SetValue(ManagerProperty, value);
         public static ISelectionManager GetManager(DependencyObject obj) => (ISelectionManager)obj.GetValue(ManagerProperty);
 
-
-        public static readonly DependencyProperty SelectionContextProperty =
-                DependencyProperty.RegisterAttached(
-                "SelectionContext",
-                typeof(ISelectionContext),
-                typeof(SelectionBehavior),
-                new PropertyMetadata(null));
-
-        public static void SetSelectionContext(DependencyObject obj, ISelectionContext value)
-            => obj.SetValue(SelectionContextProperty, value);
-
-        public static ISelectionContext GetSelectionContext(DependencyObject obj)
-            => (ISelectionContext)obj.GetValue(SelectionContextProperty);
-
         private static void OnManagerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is ListView list && e.NewValue is ISelectionManager manager)
@@ -62,8 +60,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 }
 
                 // регистрируем менеджер один раз
-                var service = Service;
-                service.Register(id, manager);
+                Service.Register(id, manager);
 
                 manager.SelectionChanged += () =>
                 {
@@ -91,10 +88,15 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         {
             if (d is ListView list && e.NewValue is true)
             {
-                list.SelectionMode = SelectionMode.Single; // отключаем стандартное выделение
+                list.SelectionMode = SelectionMode.Multiple; // отключаем стандартное выделение
                 list.SelectedItem = null;
 
                 list.PreviewMouseLeftButtonDown += OnMouseDown;
+
+                logger = logCreat.Create(
+                    category: LogCategory.UserAction,
+                    scope: LogScope.UserAction
+                    );
             }
         }
 
@@ -106,19 +108,34 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 return;
 
             int index = list.ItemContainerGenerator.IndexFromContainer(container);
-            var ctx = GetSelectionContext(list);
+            var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
             var manager = GetManager(list); // через AttachedProperty
             if (ctx == null || manager == null)
                 return;
 
+            bool ctrl =
+                Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+            bool shift =
+                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+            
             var action = new SelectionAction
             {
-                Type = SelectionActionType.SingleClick,
+                Type = SelectionActionType.CtrlClick,
                 TargetIndex = index
             };
 
-            manager.Handle(ctx, action);
+            if (shift)
+                action.Type = SelectionActionType.ShiftClick;
+            else if (ctrl)
+                action.Type = SelectionActionType.CtrlClick;
+            else
+                action.Type = SelectionActionType.SingleClick;
+
+            logger.Debug($" Action: {action.Type}");
+
             e.Handled = true;
+            manager.Handle(ctx, action);
         }
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)
@@ -127,6 +144,11 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
             foreach (var item in list.Items)
             {
+                if (item is BaseDirectory dir)
+                {
+                    logger.Debug(dir.Path + $" is selected {dir.IsSelected}");
+                }
+
                 if (item is ISelectableItem select && select.IsSelected)
                 {
                     list.SelectedItems.Add(select);

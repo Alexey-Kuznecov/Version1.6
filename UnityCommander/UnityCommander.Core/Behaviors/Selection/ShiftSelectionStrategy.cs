@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System;
 using UnityCommander.Common.Selection;
 
 namespace UnityCommander.Core.Behaviors.Selection
@@ -11,13 +8,21 @@ namespace UnityCommander.Core.Behaviors.Selection
     {
         public SelectionActionType ActionType => SelectionActionType.ShiftClick;
 
-        public void Select(ISelectionContext context, SelectionAction action)
+        public void Select(ISelectionContext ctx, SelectionAction action)
         {
-            var start = Math.Min(context.FocusedIndex, action.TargetIndex);
-            var end = Math.Max(context.FocusedIndex, action.TargetIndex);
+            if (ctx.FocusedIndex < 0)
+            {
+                ctx.FocusedIndex = action.TargetIndex;
+            }
+
+            int start = Math.Min(ctx.FocusedIndex, action.TargetIndex);
+            int end = Math.Max(ctx.FocusedIndex, action.TargetIndex);
+
+            foreach (var item in ctx.Items)
+                item.IsSelected = false;
 
             for (int i = start; i <= end; i++)
-                context.Items[i].IsSelected = true;
+                ctx.Items[i].IsSelected = true;
         }
     }
 }

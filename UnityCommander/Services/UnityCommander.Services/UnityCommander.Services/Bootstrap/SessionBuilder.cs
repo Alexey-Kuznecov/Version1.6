@@ -28,7 +28,7 @@ namespace UnityCommander.Services.Bootstrap
             {
                 Panels = panels.Select(panel =>
                 {
-                    return new PanelState
+                    return new PanelSessionState
                     {
                         PanelId = panel.PanelId,
 
@@ -37,7 +37,7 @@ namespace UnityCommander.Services.Bootstrap
                             {
                                 var tab = _tabRegistry.GetTab(tabId);
 
-                                return new TabState
+                                return new TabSessionState
                                 {
                                     Title = tab?.GetCurrentPath(),
                                     TabId = tabId,

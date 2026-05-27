@@ -40,7 +40,7 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             _panelRegistry = panelRegistry;
         }
 
-        public void Initialize(List<PanelState> panels)
+        public void Initialize(List<PanelSessionState> panels)
         {
             foreach (var doc in _manager.Layout.Descendents().OfType<LayoutDocument>())
             {
@@ -83,9 +83,9 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_,__);
         }
 
-        private PanelState FindPanelStateForPane(
+        private PanelSessionState FindPanelStateForPane(
             LayoutDocumentPane pane,
-            List<PanelState> states)
+            List<PanelSessionState> states)
         {
             var paneTabs = pane.Children
                 .OfType<LayoutDocument>()

@@ -23,6 +23,8 @@ namespace UnityCommander.Modules.FilePanel
     using System.Windows.Media;
     using UnityCommander.Common.Module;
     using UnityCommander.Logging.Contracts;
+    using UnityCommander.Modules.FilePanel.Controllers;
+    using UnityCommander.Modules.FilePanel.States;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Bootstrap;
     using UnityCommander.Services.Interfaces;
@@ -59,6 +61,8 @@ namespace UnityCommander.Modules.FilePanel
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<SplitPanelView>();
+            containerRegistry.RegisterSingleton<FilePanelContextResolver>();
+            containerRegistry.RegisterSingleton<ContextMenuController>();
         }
     }
 }

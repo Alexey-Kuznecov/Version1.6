@@ -5,7 +5,7 @@ namespace UnityCommander.Common.Commands
 {
     public class CommandPresentationProvider
     {
-        private readonly Dictionary<string, CommandPresentation> _map =
+        private static readonly Dictionary<string, CommandPresentation> _map =
             new()
             {
                 [CommandNames.UI.ToggleBottomPanel] = new(
@@ -50,7 +50,7 @@ namespace UnityCommander.Common.Commands
                 )
             };
 
-        public CommandPresentation Get(string commandId)
+        public static CommandPresentation Get(string commandId)
         {
             if (!_map.TryGetValue(commandId, out var v))
             {

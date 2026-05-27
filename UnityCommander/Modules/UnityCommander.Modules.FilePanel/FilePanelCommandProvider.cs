@@ -1,6 +1,5 @@
 ﻿
 using CommandSystem.Abstractions;
-using System;
 using System.Threading.Tasks;
 using UnityCommander.Services.Interfaces;
 
@@ -15,22 +14,17 @@ namespace UnityCommander.Modules.FilePanel
             _dockingService = dockingService;
         }
 
-        public Action<CommandContext> GetCurrentPathCommand => ctx =>
+        public Task GetCurrentPath(CommandContext ctx)
         {
-            var path = _dockingService.GetActiveTabPath();
-            ctx.Result = path;
-        };
+            ctx.Result = _dockingService.GetActiveTabPath();
+            return Task.CompletedTask;
+        }
 
-        public Func<CommandContext, Task<UndoToken?>> SetCurrentPathCommand => async ctx =>
+        public Task SetCurrentPath(CommandContext ctx)
         {
             var value = ctx.Parameter?.ToString();
-            var panel = _dockingService.GetActiveDirectoryPanel();
-
-            panel?.SetCurrentPath(value);
-
-            return null; // 🔥 ВОТ И ВСЁ
-        };
-
-        // В будущем сюда можно добавлять команды, которые не имеют отношения к FilePanelModule
+            _dockingService.GetActiveDirectoryPanel()?.SetCurrentPath(value);
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,9 +1,11 @@
-﻿using CommandSystem.Abstractions;
+﻿
+using CommandSystem.Abstractions;
 using Prism.Ioc;
 using Prism.Modularity;
 using System.IO;
 using System.Threading.Tasks;
 using UnityCommander.Common.Commands;
+using UnityCommander.Core.Commands;
 using UnityCommander.Services;
 
 namespace UnityCommander.Modules.FilePanel
@@ -28,31 +30,20 @@ namespace UnityCommander.Modules.FilePanel
             var filePanelProvider = containerProvider.Resolve<FilePanelCommandProvider>();
             var presentation = containerProvider.Resolve<CommandPresentationProvider>();
 
-            commandService.Register(
-                new CommandMetadata(CommandNames.Panel.GetCurrentPath,
-                presentation.Get(CommandNames.Panel.GetCurrentPath).Description)
-                {
-                    Category = nameof(CommandNames.Panel),
-                },
-                filePanelProvider.GetCurrentPathCommand);
 
-            commandService.Register(
-                new CommandMetadata(CommandNames.Panel.SetCurrentPath,
-                presentation.Get(CommandNames.Panel.SetCurrentPath).Description)
-                {
-                    Category = nameof(CommandNames.Panel),
-                },
-                filePanelProvider.SetCurrentPathCommand);
+            commandService.Register(CommandFactory.Create(
+                CommandNames.Panel.GetCurrentPath,
+                filePanelProvider.GetCurrentPath
+            ));
+
+            commandService.Register(CommandFactory.Create(
+                CommandNames.Panel.SetCurrentPath,
+                filePanelProvider.SetCurrentPath
+            ));
 
             commandService.RegisterUndoable(
-                 new CommandMetadata(
-                     CommandNames.File.Delete,
-                     presentation.Get(CommandNames.File.Delete).Description)
-                 {
-                     Category = nameof(CommandNames.File),
-                     ContextTypes = { typeof(FilePanelContext) }
-                 },
-                 ExecuteDeleteAsync);
+                CommandFactory.Create(CommandNames.File.Delete, ExecuteDeleteAsync,
+                contextTypes: typeof(FilePanelContext)));
         }
 
         private Task<UndoToken> ExecuteDeleteAsync(CommandContext ctx)

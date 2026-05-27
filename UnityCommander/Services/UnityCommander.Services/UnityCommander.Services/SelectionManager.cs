@@ -14,8 +14,11 @@ namespace UnityCommander.Services.Selection
         public event Action SelectionChanged;
 
         public IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
+        
+      
 
-        public SelectionManager(IEnumerable<ISelectionStrategy> strategies)
+        public SelectionManager(
+            IEnumerable<ISelectionStrategy> strategies)
         {
             this.strategies = strategies.ToDictionary(x => x.ActionType);
         }
