@@ -1,5 +1,6 @@
 ﻿
 using Prism.Mvvm;
+using System;
 using System.Windows.Input;
 using UnityCommander.Common.Models.Icons;
 
@@ -17,7 +18,9 @@ namespace UnityCommander.Common.Commands
 
         public IIcon Icon { get; init; }
 
-        public bool IsEnabled { get; set; }
+        public Func<bool>? CanExecute { get; init; }
+
+        public bool IsEnabled => CanExecute?.Invoke() ?? true;
 
         public bool IsVisible { get; set; }
     }

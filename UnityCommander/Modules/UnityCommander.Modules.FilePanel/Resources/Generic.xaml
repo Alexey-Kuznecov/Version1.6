@@ -7,11 +7,14 @@
     xmlns:core="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
+
+
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="DrivePanelColumns.xaml" />
         <ResourceDictionary Source="DirectoryPanelColumns.xaml" />
-        <ResourceDictionary Source="PanelLayout.xaml" />
+        <ResourceDictionary Source="ContentViewTypeDataTemplate.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
 
     <!--
         Back button style in file panel.
@@ -57,7 +60,7 @@
         Шаблон для понели папок
     -->
 
-    <ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
+    <!--<ControlTemplate x:Key="DirectoryListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
                 be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FolderViewColumns, Mode=Default}"
@@ -86,9 +89,11 @@
             </ListView>
         </Grid>
     </ControlTemplate>
+    -->
     <!--
         Style for back button in file panel
     -->
+    <!--
     <ControlTemplate x:Key="DriveListViewTemplate" TargetType="ContentControl">
         <Grid>
             <ListView
@@ -107,12 +112,12 @@
                 </i:Interaction.Triggers>
             </ListView>
         </Grid>
-    </ControlTemplate>
+    </ControlTemplate>-->
 
     <!--
         Style for back button in file panel
     -->
-    <ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
+    <!--<ControlTemplate x:Key="ContentDirectoryPanelTemplate" TargetType="{x:Type ContentControl}">
         <Grid DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
@@ -177,5 +182,5 @@
                 </ContentControl>
             </Grid>
         </Grid>
-    </ControlTemplate>
+    </ControlTemplate>-->
 </ResourceDictionary>

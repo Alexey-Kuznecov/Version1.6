@@ -26,6 +26,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
+using UnityCommander.Common.Models;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Models.Icons;
 using UnityCommander.Common.Module;
@@ -43,6 +44,7 @@ using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Layout;
+using UnityCommander.Modules.FilePanel.Models;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
@@ -90,11 +92,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private FileModel currentFile;
 
         // Поля из дополнительной части (Tools)
-        private IIcon thisComputerIcon;
-        private IIcon backButtonIcon;
-        private IIcon updateDirectoryPanelIcon;
-        private bool thisComputerIconIsEnabled;
-        private bool backButtonIsEnabled;
         private bool _refreshScheduled = false;
         private IEnumerable<ColumnModel> fileViewColumns;
         private IEnumerable<ColumnModel> folderViewColumns;
@@ -160,10 +157,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 );
 
             this._contextMenuController = contextMenuController;
-            this._commandUIService = commandUIService;
             this._state = new();
             this._surface = surface;
             this._commandService = commandService;
+            this._commandUIService = commandUIService;
+
             this._presentationProvider = presentationProvider;
             this._selectionManager = selectionManager;
             this.configService = configService;
@@ -178,22 +176,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
             this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
 
-            // Инициализация иконок
-
-            var commandMyComputer 
-                = this._commandUIService.Create(CommandNames.Navigation.Drives);
-            var commandBack 
-                = this._commandUIService.Create(CommandNames.Navigation.Goto);
-            var commandForward 
-                = this._commandUIService.Create(CommandNames.Navigation.Goto);
-            var commandRefresh 
-                = this._commandUIService.Create(CommandNames.Navigation.Refresh);
-
-            this.ThisComputerIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.LaptopWindows);
-            this.BackButtonIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.ArrowBack);
-            this.UpdateDirectoryIcon = iconProvider.GetIcon(MaterialDesignThemes.Wpf.PackIconKind.Refresh);
-            this.ThisComputerIconIsEnabled = true;
-            this.BackButtonIsEnabled = true;
             this._navigationService = new NavigationManager(null);
             this.DriveList.Clear();
 
@@ -222,7 +204,31 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     new FixedNode
                     {
                         Size = 25,
-                        Content = new ContentNode { Key = ContentViewType.Header }
+                        Content = new ContentNode {
+
+                            Role = ContentRole.Header,
+                            Context = new States.NavigationContext()
+                            {
+
+                                Navigation =  _navigationService,
+                                Commands = new ObservableCollection<UICommand> ()
+                                {
+                                    //new UICommand ()
+                                    //{
+                                    //    Icon = 
+                                    //    Command =  new DelegateCommand(
+                                    //        () => _navigationService.NavigateTo(_path)),
+
+                                    //    CanExecute = () => _navigationService.CanGoBack
+                                    //},
+
+                                     _commandUIService.Create(CommandNames.Navigation.Back),
+                                     _commandUIService.Create(CommandNames.Navigation.Drives),
+                                     _commandUIService.Create(CommandNames.Navigation.Refresh),
+                                     _commandUIService.Create(CommandNames.Navigation.Goto)
+                                }
+                            }
+                        }
                     },
 
                     //new ContentNode { Key = "NavigationPanel" },
@@ -232,8 +238,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         Orientation = Orientation.Vertical,
                         Ratio = 0.5,
 
-                        First = new ContentNode { Key = ContentViewType.Directory },
-                        Second = new ContentNode { Key = ContentViewType.File }
+                        First = new ContentNode
+                        {
+                            Role = ContentRole.Directory,
+                            ViewMode = ViewMode.Table
+                        },
+                        Second = new ContentNode
+                        {
+                            Role = Models.ContentRole.File,
+                            ViewMode = ViewMode.Table
+                        }
                     }
                 }
             };
@@ -242,7 +256,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public LayoutNode LayoutRoot { get; }
 
         #region Синхронизация колонок
-        
+
         public void UpdateColumnWidth(ColumnModel column, double newWidth)
         {
             if (column == null) return;
@@ -371,12 +385,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public ObservableCollection<DriveModel> DriveList
             => _state.Drives;
 
-        public ControlTemplate DirectoryPanelTemplate
-        {
-            get => this.directoryPanelTemplate;
-            set => this.SetProperty(ref this.directoryPanelTemplate, value);
-        }
-
         /// <summary>
         /// Команда для выбора текущего элемента директории.
         /// </summary>
@@ -388,40 +396,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             get => this.selectedCurrentDirectoryItem;
             set => this.SetProperty(ref this.selectedCurrentDirectoryItem, value);
-        }
-
-        #endregion
-
-        #region Свойства из Tools
-
-        public IIcon ThisComputerIcon
-        {
-            get => this.thisComputerIcon;
-            set => this.SetProperty(ref this.thisComputerIcon, value);
-        }
-
-        public IIcon BackButtonIcon
-        {
-            get => this.backButtonIcon;
-            set => this.SetProperty(ref this.backButtonIcon, value);
-        }
-
-        public IIcon UpdateDirectoryIcon
-        {
-            get => this.updateDirectoryPanelIcon;
-            set => this.SetProperty(ref this.updateDirectoryPanelIcon, value);
-        }
-
-        public bool ThisComputerIconIsEnabled
-        {
-            get => this.thisComputerIconIsEnabled;
-            set => this.SetProperty(ref this.thisComputerIconIsEnabled, value);
-        }
-
-        public bool BackButtonIsEnabled
-        {
-            get => this.backButtonIsEnabled;
-            set => this.SetProperty(ref this.backButtonIsEnabled, value);
         }
 
         #endregion
@@ -705,15 +679,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private async Task SetLastPanelState()
         {
-            // Загружаем пустые коллекции
-            //FileList.Clear();
-            //DirectoryList.Clear();
-
             try
             {
                 if (this.CurrentDirectory != VirtualPaths.MyComputer)
                 {
-                    this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+                    //this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
                     var files = await dataService.GetFilesAsync(this.CurrentDirectory);
                     var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
                     foreach (var f in files) FileList.Add(f);
@@ -745,8 +715,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 DriveList.Add(d);
 
             // 3. Другое состояние UI
-            ThisComputerIconIsEnabled = false;
-            BackButtonIsEnabled = true;
+            //ThisComputerIconIsEnabled = false;
+            //BackButtonIsEnabled = true;
         }
 
         #endregion
@@ -757,17 +727,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
             {
-                DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
+                //DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
                 _ = this.GoDrivePanel();
                 
-                this.ThisComputerIconIsEnabled = false;
+                //this.ThisComputerIconIsEnabled = false;
             }
             else
             {
-                this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+                //this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
                 _ = RefreshPanelAsync(path);
-                this.ThisComputerIconIsEnabled = true;
-                this.BackButtonIsEnabled = true;
+                //this.ThisComputerIconIsEnabled = true;
+                //this.BackButtonIsEnabled = true;
             }
         }
 
@@ -831,7 +801,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true); // root
                     }
 
-                    this.BackButtonIsEnabled = false;
+                    //this.BackButtonIsEnabled = false;
                 }
 
 #if (Nlog)
@@ -844,7 +814,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 this.CurrentDirectory = VirtualPaths.MyComputer;
                 _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true); // root
-                this.ThisComputerIconIsEnabled = false;
+                //this.ThisComputerIconIsEnabled = false;
 
                 if (this.CurrentDirectory == VirtualPaths.MyComputer)
                 {

@@ -72,7 +72,7 @@ namespace UnityCommander.Services
 
         internal bool CanExecute(string id)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }

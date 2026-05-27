@@ -37,69 +37,7 @@
             </ItemsControl>
         </DataTemplate>
         <DataTemplate DataType="{x:Type layout:ContentNode}">
-            <ContentControl>
-                <ContentControl.Style>
-                    <Style TargetType="ContentControl">
-                        <Style.Triggers>
-
-                            <DataTrigger Binding="{Binding Key}" Value="{x:Static layout:ContentViewType.Header}">
-                                <Setter Property="Template" Value="{DynamicResource ContentDirectoryPanelTemplate}" />
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Key}" Value="{x:Static layout:ContentViewType.Directory}">
-                                <Setter Property="Template" Value="{Binding DataContext.DirectoryPanelTemplate, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Key}" Value="{x:Static layout:ContentViewType.File}">
-                                <Setter Property="ContentTemplate">
-                                    <Setter.Value>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <ListView
-                                                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
-                                                    be:SelectionBehavior.EnableSelection="True"
-                                                    be:SelectionBehavior.Manager="{Binding SelectionManager}"
-                                                    be:SelectionBehavior.PanelId="{Binding Token}"
-                                                    commands:GridViewSort.AutoSort="True"
-                                                    dd:DragDrop.DropHandler="{Binding Mode=Default}"
-                                                    dd:DragDrop.IsDragSource="True"
-                                                    DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    IsSynchronizedWithCurrentItem="True"
-                                                    ItemsSource="{Binding FileList, Mode=OneWay}"
-                                                    SelectedItem="{Binding CurrentFile}">
-                                                    <i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="MouseRightButtonUp">
-                                                            <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay, PresentationTraceSources.TraceLevel=High}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                                                        </i:EventTrigger>
-                                                        <i:EventTrigger EventName="PreviewMouseRightButtonUp">
-                                                            <i:InvokeCommandAction Command="{Binding ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
-                                                        </i:EventTrigger>
-                                                    </i:Interaction.Triggers>
-                                                    <!--<i:Interaction.Behaviors>
-                                                        <be:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
-                                                    </i:Interaction.Behaviors>-->
-                                                    <ListView.ContextMenu>
-                                                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding ContextMenuItems}">
-                                                            <ContextMenu.ItemContainerStyle>
-                                                                <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
-                                                                    <Setter Property="Header" Value="{Binding Title}" />
-                                                                    <Setter Property="Command" Value="{Binding Command}" />
-                                                                    <Setter Property="ItemsSource" Value="{Binding Children}" />
-                                                                </Style>
-                                                            </ContextMenu.ItemContainerStyle>
-                                                        </ContextMenu>
-                                                    </ListView.ContextMenu>
-                                                </ListView>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ContentControl.Style>
-            </ContentControl>
-
+            <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource ContentTemplateSelector}" />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type layout:SplitNode}">

@@ -30,8 +30,9 @@ namespace UnityCommander.Services
             this.materialDesignIcons.Add("Plugin", PackIconKind.Plugin);
             this.materialDesignIcons.Add("Settings", PackIconKind.Settings);
             this.materialDesignIcons.Add(CommandNames.Navigation.Drives, PackIconKind.LaptopWindows);
-            this.materialDesignIcons.Add(CommandNames.Navigation.Goto, PackIconKind.ArrowBack);
+            this.materialDesignIcons.Add(CommandNames.Navigation.Goto, PackIconKind.Arrow);
             this.materialDesignIcons.Add(CommandNames.Navigation.Refresh, PackIconKind.Refresh);
+            this.materialDesignIcons.Add(CommandNames.Navigation.Back, PackIconKind.ArrowBack);
         }
 
         public IIcon GetIcon(PackIconKind icon)

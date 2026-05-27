@@ -1,5 +1,7 @@
 ﻿
 using Prism.Commands;
+using System;
+using System.Windows.Input;
 using UnityCommander.Common.Commands;
 using UnityCommander.Services.Interfaces;
 
@@ -32,6 +34,24 @@ namespace UnityCommander.Services
                 Command = new DelegateCommand(
                     () => _commands.Execute(id),
                     () => _commands.CanExecute(id))
+            };
+        }
+
+        public UICommand Create(
+            string id,
+            DelegateCommand command,
+            Func<bool> canExecute)
+        {
+            var meta = CommandPresentationProvider.Get(id);
+
+            return new UICommand
+            {
+                Id = id,
+                Title = meta.DisplayName,
+                Description = meta.Description,
+                Icon = _icons.GetIcon(id),
+                Command = command,
+                CanExecute = canExecute
             };
         }
     }
