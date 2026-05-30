@@ -5,6 +5,7 @@ namespace UnityCommander.Modules.FilePanel.Models
     {
         Directory,
         File,
+        Drive,
         Preview,
         Editor,
         Dashboard,

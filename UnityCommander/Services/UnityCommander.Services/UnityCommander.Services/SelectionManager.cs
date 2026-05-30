@@ -15,7 +15,7 @@ namespace UnityCommander.Services.Selection
 
         public IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
         
-      
+        public ISelectableItem FocusedItem { get; set; }
 
         public SelectionManager(
             IEnumerable<ISelectionStrategy> strategies)

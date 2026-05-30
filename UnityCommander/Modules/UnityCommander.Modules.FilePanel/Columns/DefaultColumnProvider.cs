@@ -56,6 +56,17 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         Order = 4,
                         SyncGroup = "Ext",
                         ColumnValueHandler = f => ((FileModel)f).Extension
+                    },
+                    new ColumnModel
+                    {
+                        Id = "Size",
+                        Header = "Size",
+                        //DisplayMemberPath = "Extension",
+                        CellTemplateResourceKey = "ColumnFileSizeDataTemplate",
+                        Width = 80,
+                        Order = 5,
+                        SyncGroup = "Size",
+                        ColumnValueHandler = f => ((FileModel)f).Size
                     }
                 };
             }

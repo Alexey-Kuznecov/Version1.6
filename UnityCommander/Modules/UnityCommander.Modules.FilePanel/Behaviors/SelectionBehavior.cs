@@ -13,6 +13,7 @@ using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Services.Interfaces;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
@@ -21,7 +22,10 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
     public static class SelectionBehavior
     {
         private static ISelectionService _service;
+        
         private static ISelectionService Service => _service ??= ContainerLocator.Container.Resolve<ISelectionService>();
+
+        private static ITabContextAccessor _tabContextAccessor => ContainerLocator.Container.Resolve<ITabContextAccessor>();
 
         private static LoggerCreator logCreat = ContainerLocator.Container.Resolve<LoggerCreator>();
         
@@ -50,17 +54,9 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         {
             if (d is ListView list && e.NewValue is ISelectionManager manager)
             {
-                var id = (string?)list.GetValue(PanelIdProperty);
+                var tabId = _tabContextAccessor.ActiveTabId;
 
-                if (string.IsNullOrEmpty(id))
-                {
-                    // создаём GUID только если его нет
-                    id = Guid.NewGuid().ToString();
-                    list.SetValue(PanelIdProperty, id);
-                }
-
-                // регистрируем менеджер один раз
-                Service.Register(id, manager);
+                Service.Register(tabId, manager);
 
                 manager.SelectionChanged += () =>
                 {
@@ -79,7 +75,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 typeof(SelectionBehavior),
                 new PropertyMetadata(false, OnEnableChanged));
         public static void SetEnableSelection(DependencyObject obj, bool value)
-    => obj.SetValue(EnableSelectionProperty, value);
+            => obj.SetValue(EnableSelectionProperty, value);
 
         public static bool GetEnableSelection(DependencyObject obj)
             => (bool)obj.GetValue(EnableSelectionProperty);
@@ -102,58 +98,63 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
         private static void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var list = (ListView)sender;
-            var container = list.ContainerFromElement((DependencyObject)e.OriginalSource) as ListViewItem;
-            if (container == null)
-                return;
+            //var list = (ListView)sender;
+            //var container = list.ContainerFromElement((DependencyObject)e.OriginalSource) as ListViewItem;
+            //if (container == null)
+            //    return;
 
-            int index = list.ItemContainerGenerator.IndexFromContainer(container);
-            var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
-            var manager = GetManager(list); // через AttachedProperty
-            if (ctx == null || manager == null)
-                return;
+            //int index = list.ItemContainerGenerator.IndexFromContainer(container);
+            //var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
+            //var manager = GetManager(list); // через AttachedProperty
+            //if (ctx == null || manager == null)
+            //    return;
 
-            bool ctrl =
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            //if (list.SelectedItem is ISelectableItem select)
+            //{
+            //    manager.FocusedItem = select;
+            //}
 
-            bool shift =
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+            //bool ctrl =
+            //    Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+            //bool shift =
+            //    Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
             
-            var action = new SelectionAction
-            {
-                Type = SelectionActionType.CtrlClick,
-                TargetIndex = index
-            };
+            //var action = new SelectionAction
+            //{
+            //    Type = SelectionActionType.CtrlClick,
+            //    TargetIndex = index
+            //};
 
-            if (shift)
-                action.Type = SelectionActionType.ShiftClick;
-            else if (ctrl)
-                action.Type = SelectionActionType.CtrlClick;
-            else
-                action.Type = SelectionActionType.SingleClick;
+            //if (shift)
+            //    action.Type = SelectionActionType.ShiftClick;
+            //else if (ctrl)
+            //    action.Type = SelectionActionType.CtrlClick;
+            //else
+            //    action.Type = SelectionActionType.SingleClick;
 
-            logger.Debug($" Action: {action.Type}");
+            ////logger.Debug($" Action: {action.Type}");
 
-            e.Handled = true;
-            manager.Handle(ctx, action);
+            //e.Handled = true;
+            ////manager.Handle(ctx, action);
         }
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)
         {
-            list.SelectedItems.Clear();
+            //list.SelectedItems.Clear();
 
-            foreach (var item in list.Items)
-            {
-                if (item is BaseDirectory dir)
-                {
-                    logger.Debug(dir.Path + $" is selected {dir.IsSelected}");
-                }
+            //foreach (var item in list.Items)
+            //{
+            //    if (item is BaseDirectory dir)
+            //    {
+            //        //logger.Debug(dir.Path + $" is selected {dir.IsSelected}");
+            //    }
 
-                if (item is ISelectableItem select && select.IsSelected)
-                {
-                    list.SelectedItems.Add(select);
-                }
-            }
+            //    if (item is ISelectableItem select && select.IsSelected)
+            //    {
+            //        list.SelectedItems.Add(select);
+            //    }
+            //}
         }
     }
 }

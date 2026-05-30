@@ -51,7 +51,7 @@ namespace UnityCommander.Modules.FilePanel.Selectors
                 (ContentRole.Header, null)
                     => HeaderTemplate,
 
-                (ContentRole.Dashboard, _)
+                (ContentRole.Drive, _)
                     => DashboardTemplate,
 
                 _ => base.SelectTemplate(item, container)

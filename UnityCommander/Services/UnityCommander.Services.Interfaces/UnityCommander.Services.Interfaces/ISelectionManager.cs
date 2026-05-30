@@ -8,6 +8,8 @@ namespace UnityCommander.Services.Interfaces
     {
         event Action SelectionChanged;
 
+        public ISelectableItem FocusedItem { get; set; }
+
         IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
         void Handle(ISelectionContext ctx, SelectionAction action);
     }

@@ -13,24 +13,22 @@
 
     <selectors:ContentTemplateSelector x:Key="ContentTemplateSelector" />
 
-    <DataTemplate x:Key="DirectoryContentViewDataTemplate">
+    <DataTemplate x:Key="DirectoryContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
         <ListView
-            be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FolderViewColumns, Mode=Default}"
-            be:MultiSelectionMouseBehavior.IsEnableSelection="False"
+            be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
             dd:DragDrop.DropHandler="{Binding Mode=Default}"
             dd:DragDrop.IsDragSource="True"
             dd:DragDrop.IsDropTarget="True"
-            DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
             IsSynchronizedWithCurrentItem="True"
-            ItemsSource="{Binding DirectoryList, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDirectory}"
+            ItemsSource="{Binding Context.Folders, Mode=OneWay}"
+            SelectedItem="{Binding Context.SelectedDirectory}"
             SelectionMode="Multiple">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding NavigateDirectoryCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    <i:InvokeCommandAction Command="{Binding Context.NavigateCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseRightButtonUp">
-                    <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <ListView.ItemsPanel>
@@ -41,59 +39,59 @@
         </ListView>
     </DataTemplate>
 
-    <DataTemplate x:Key="DashboardContentViewDataTemplate">
+    <DataTemplate x:Key="FileContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
+        <Grid>
+            <ListView
+                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
+                be:SelectionBehavior.EnableSelection="True"
+                be:SelectionBehavior.Manager="{Binding Context.SelectionManager}"
+                commands:GridViewSort.AutoSort="True"
+                dd:DragDrop.DropHandler="{Binding Mode=Default}"
+                dd:DragDrop.IsDragSource="True"
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding Context.Files, Mode=OneWay}"
+                SelectedItem="{Binding Context.CurrentFile}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonUp">
+                        <i:InvokeCommandAction Command="{Binding Context.SelectedFile, Mode=OneWay, PresentationTraceSources.TraceLevel=High}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                        <i:InvokeCommandAction Command="{Binding Context.ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <i:Interaction.Behaviors>
+                    <be:MultiSelectionBehavior SelectedItems="{Binding Context.SelectedItems, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+                <ListView.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
+                        <ContextMenu.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Title}" />
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="ItemsSource" Value="{Binding Children}" />
+                            </Style>
+                        </ContextMenu.ItemContainerStyle>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DashboardContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
         <ListView
-            be:GridViewColumnsBehavior.ColumnDefinitions="{Binding DriveViewColumns}"
+            be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
             be:GridViewColumnsBehavior.PanelId="LeftPanel.Drive"
             commands:GridViewSort.AutoSort="True"
             IsSynchronizedWithCurrentItem="True"
-            ItemsSource="{Binding DriveList, Mode=OneWay}">
+            ItemsSource="{Binding Context.Drives, Mode=OneWay}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewMouseDoubleClick">
                     <i:InvokeCommandAction
-                        Command="{Binding GotoDiskCommand, Mode=OneWay}"
+                        Command="{Binding Context.NavigateCommand, Mode=OneWay}"
                         CommandName="NavigateDirCommand"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-        </ListView>
-    </DataTemplate>
-
-    <DataTemplate x:Key="FileContentViewDataTemplate" DataType="{x:Type state:TabState}">
-        <ListView
-            be:GridViewColumnsBehavior.ColumnDefinitions="{Binding FileViewColumns, Mode=Default}"
-            be:SelectionBehavior.EnableSelection="True"
-            be:SelectionBehavior.Manager="{Binding SelectionManager}"
-            be:SelectionBehavior.PanelId="{Binding Token}"
-            commands:GridViewSort.AutoSort="True"
-            dd:DragDrop.DropHandler="{Binding Mode=Default}"
-            dd:DragDrop.IsDragSource="True"
-            DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            IsSynchronizedWithCurrentItem="True"
-            ItemsSource="{Binding FileList, Mode=OneWay}"
-            SelectedItem="{Binding CurrentFile}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseRightButtonUp">
-                    <i:InvokeCommandAction Command="{Binding SelectCurrentDirectoryItem, Mode=OneWay, PresentationTraceSources.TraceLevel=High}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="PreviewMouseRightButtonUp">
-                    <i:InvokeCommandAction Command="{Binding ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <!--<i:Interaction.Behaviors>
-                  <be:MultiSelectionBehavior SelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
-              </i:Interaction.Behaviors>-->
-            <ListView.ContextMenu>
-                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding ContextMenuItems}">
-                    <ContextMenu.ItemContainerStyle>
-                        <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
-                            <Setter Property="Header" Value="{Binding Title}" />
-                            <Setter Property="Command" Value="{Binding Command}" />
-                            <Setter Property="ItemsSource" Value="{Binding Children}" />
-                        </Style>
-                    </ContextMenu.ItemContainerStyle>
-                </ContextMenu>
-            </ListView.ContextMenu>
         </ListView>
     </DataTemplate>
 
@@ -118,7 +116,10 @@
                             Template="{DynamicResource CustomButtonTemplate}"
                             ToolTip="{Binding Description}">
                             <ContentControl.InputBindings>
-                                <MouseBinding Command="{Binding Command}" Gesture="LeftClick" />
+                                <MouseBinding
+                                    Command="{Binding Command}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=DataContext.Context.SelectionManager.FocusedItem}"
+                                    Gesture="LeftClick" />
                             </ContentControl.InputBindings>
                         </ContentControl>
                     </DataTemplate>

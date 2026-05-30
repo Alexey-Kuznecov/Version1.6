@@ -2,10 +2,11 @@
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Commands;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel.States
 {
-    public class NavigationContext
+    public class NavigationNodeContext
     {
         public NavigationManager Navigation { get; set; }
 
@@ -16,5 +17,7 @@ namespace UnityCommander.Modules.FilePanel.States
         public bool CanGoBack => Navigation.CanGoBack;
 
         public bool CanGoForward => Navigation.CanGoForward;
+
+        public ISelectionManager SelectionManager { get; set; }
     }
 }

@@ -33,6 +33,7 @@ namespace UnityCommander.Services
             this.materialDesignIcons.Add(CommandNames.Navigation.Goto, PackIconKind.Arrow);
             this.materialDesignIcons.Add(CommandNames.Navigation.Refresh, PackIconKind.Refresh);
             this.materialDesignIcons.Add(CommandNames.Navigation.Back, PackIconKind.ArrowBack);
+            this.materialDesignIcons.Add(CommandNames.Navigation.Forward, PackIconKind.ArrowForward);
         }
 
         public IIcon GetIcon(PackIconKind icon)

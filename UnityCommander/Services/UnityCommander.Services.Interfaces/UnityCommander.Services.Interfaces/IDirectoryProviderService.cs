@@ -2,9 +2,7 @@
 namespace UnityCommander.Services.Interfaces
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Threading.Tasks;
-    using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Directory;
 
     /// <summary>

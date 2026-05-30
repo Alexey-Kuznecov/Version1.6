@@ -24,7 +24,7 @@ namespace UnityCommander.Modules.FilePanel
     using UnityCommander.Common.Module;
     using UnityCommander.Logging.Contracts;
     using UnityCommander.Modules.FilePanel.Controllers;
-    using UnityCommander.Modules.FilePanel.States;
+    using UnityCommander.Modules.FilePanel.States.Resolver;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Bootstrap;
     using UnityCommander.Services.Interfaces;
@@ -61,7 +61,9 @@ namespace UnityCommander.Modules.FilePanel
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<SplitPanelView>();
+            containerRegistry.RegisterSingleton<DriveContextResolver>();
             containerRegistry.RegisterSingleton<FilePanelContextResolver>();
+            containerRegistry.RegisterSingleton<ContextResolverDispatcher>();
             containerRegistry.RegisterSingleton<ContextMenuController>();
         }
     }

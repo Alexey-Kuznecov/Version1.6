@@ -5,6 +5,7 @@ using System.Linq;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services;
 
@@ -14,19 +15,20 @@ namespace UnityCommander.Modules.FilePanel.Controllers
     {
         private readonly CommandSurfaceEngine _surface;
         private readonly CommandService _commandService;
-        private readonly FilePanelContextResolver _resolver;
+        private readonly ContextResolverDispatcher _resolver;
+
 
         public ContextMenuController(
             CommandSurfaceEngine surface,
             CommandService commandService,
-            FilePanelContextResolver resolver)
+            ContextResolverDispatcher resolver)
         {
             _surface = surface;
             _commandService = commandService;
             _resolver = resolver;
         }
 
-        public void Show(TabState state, object? parameter)
+        public void Show(IContextMenuHost state, object? parameter)
         {
             var ctx = _resolver.Resolve(state, parameter);
 
@@ -42,25 +44,6 @@ namespace UnityCommander.Modules.FilePanel.Controllers
             state.ContextMenuItems.Clear();
             foreach (var item in items)
                 state.ContextMenuItems.Add(item);
-        }
-
-        private SurfaceContext BuildContext(TabState state, object? parameter)
-        {
-            var ctx = _resolver.Resolve(state, parameter);
-
-            var selected = state.SelectedItems?.Select(x => x.Path).ToList()
-                           ?? new List<string>();
-
-            if (selected.Count == 0 && parameter is BaseDirectory dir)
-                selected.Add(dir.Path);
-
-            ctx.Set(new FilePanelContext
-            {
-                CurrentPath = state.CurrentDirectory,
-                SelectedFiles = selected
-            });
-
-            return ctx;
         }
 
         private List<MenuItemViewModel> MapToMenu(IEnumerable<SurfaceNode> nodes)

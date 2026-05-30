@@ -1,13 +1,15 @@
 ﻿
-using Prism.Mvvm;
+using System;
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Modules.FilePanel.ViewModels;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel.States
 {
-    public class TabState : BindableBase
+    public class TabState :
+        IColumnSource<FileModel>,
+        IColumnSource<FolderModel>
     {
         public string CurrentDirectory { get; set; }
 
@@ -29,9 +31,16 @@ namespace UnityCommander.Modules.FilePanel.States
 
         public PanelMode Mode { get; set; }
 
-        public ContentViewType DirectoryViewType { get; set; }
-
         public ObservableCollection<MenuItemViewModel> ContextMenuItems { get; }
            = new();
+
+        public BaseDirectory SelectedCurrentDirectoryItem { get; set; }
+
+        public ISelectionManager SelectionManager { get; set; }
+
+        public Guid Token { get; set; }
+
+        ObservableCollection<FileModel> IColumnSource<FileModel>.Items => Files;
+        ObservableCollection<FolderModel> IColumnSource<FolderModel>.Items => Directories;
     }
 }

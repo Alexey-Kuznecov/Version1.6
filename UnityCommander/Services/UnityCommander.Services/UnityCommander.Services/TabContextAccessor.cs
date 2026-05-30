@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace UnityCommander.Services.Interfaces
 {
     public class TabContextAccessor : ITabContextAccessor
@@ -7,7 +9,7 @@ namespace UnityCommander.Services.Interfaces
 
         public ITabContentAdapter ActiveTab => _registry.ActiveTab;
 
-        public string ActiveTabId => _registry.ActiveTab.TabId.ToString();
+        public Guid ActiveTabId => _registry.ActiveTab.TabId;
         
         public string CurrentPath => _registry.ActiveTab.GetCurrentPath();
        

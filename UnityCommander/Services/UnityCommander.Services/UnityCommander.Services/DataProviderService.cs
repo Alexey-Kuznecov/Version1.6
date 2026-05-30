@@ -15,62 +15,64 @@ namespace UnityCommander.Services
         /// <summary>
         /// Получить файлы в директории.
         /// </summary>
-        public async Task<List<FileModel>> GetFilesAsync(string path)
+        public Task<List<FileModel>> GetFilesAsync(string path)
         {
-            return await Task.Run(() =>
+            var dir = new DirectoryInfo(path);
+            var files = new List<FileModel>();
+
+            foreach (var file in dir.GetFiles())
             {
-                var dir = new DirectoryInfo(path);
-                var files = new List<FileModel>();
-
-                foreach (var file in dir.GetFiles())
+                if ((file.Attributes & FileAttributes.Hidden) == 0)
                 {
-                    if ((file.Attributes & FileAttributes.Hidden) == 0)
+                    files.Add(new FileModel
                     {
-                        files.Add(new FileModel
-                        {
-                            Name = Path.GetFileNameWithoutExtension(file.Name),
-                            Path = file.FullName,
-                            Extension = file.Extension,
-                            CreationTime = file.CreationTime,
-                            LastAccessTime = file.LastAccessTime,
-                            TargetPanel = TargetPanel.Files,
-                            Key = file.FullName
-                        });
-                    }
+                        Name = Path.GetFileNameWithoutExtension(file.Name),
+                        Path = file.FullName,
+                        Extension = file.Extension,
+                        CreationTime = file.CreationTime,
+                        LastAccessTime = file.LastAccessTime,
+                        TargetPanel = TargetPanel.Files,
+                        Key = file.FullName,
+                        Size = file.Length,
+                    });
                 }
+            }
 
-                return files;
-            });
+            return Task.FromResult(files);
         }
 
         /// <summary>
         /// Получить папки в директории.
         /// </summary>
-        public async Task<List<FolderModel>> GetDirectoriesAsync(string path)
+        public Task<List<FolderModel>> GetDirectoriesAsync(string path)
         {
-            return await Task.Run(() =>
+            var dir = new DirectoryInfo(path);
+            var folders = new List<FolderModel>();
+
+            foreach (var folder in dir.EnumerateDirectories())
             {
-                var dir = new DirectoryInfo(path);
-                var folders = new List<FolderModel>();
-
-                foreach (var folder in dir.GetDirectories())
+                try
                 {
-                    if ((folder.Attributes & FileAttributes.Hidden) == 0)
-                    {
-                        folders.Add(new FolderModel
-                        {
-                            Name = folder.Name,
-                            Path = folder.FullName,
-                            CreationTime = folder.CreationTime,
-                            LastAccessTime = folder.LastAccessTime,
-                            TargetPanel = TargetPanel.Folders,
-                            Key = folder.FullName
-                        });
-                    }
-                }
+                    if ((folder.Attributes & FileAttributes.Hidden) != 0)
+                        continue;
 
-                return folders;
-            });
+                    folders.Add(new FolderModel
+                    {
+                        Name = folder.Name,
+                        Path = folder.FullName,
+                        CreationTime = folder.CreationTime,
+                        LastAccessTime = folder.LastAccessTime,
+                        TargetPanel = TargetPanel.Folders,
+                        Key = folder.FullName
+                    });
+                }
+                catch
+                {
+                    // иногда доступ к папке может падать (system/permission)
+                }
+            }
+
+            return Task.FromResult(folders);
         }
 
         /// <summary>

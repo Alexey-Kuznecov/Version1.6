@@ -1,11 +1,16 @@
 ﻿
+using System;
+
 namespace UnityCommander.Services.Interfaces
 {
     public interface ISelectionService
     {
-        void Register(string panelId, ISelectionManager manager);
-        void Unregister(string panelId);
-        ISelectionManager Get(string panelId);
+        void Register(Guid tabId, ISelectionManager manager);
+
+        void Unregister(Guid tabId);
+
+        ISelectionManager Get(Guid tabId);
+
         ISelectionManager GetActive();
     }
 }

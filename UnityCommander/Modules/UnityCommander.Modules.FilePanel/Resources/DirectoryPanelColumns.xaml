@@ -11,6 +11,7 @@
     <converter:IconConverter x:Key="IconConverter" />
     <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
     <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
+    <converter:DataSizeConverter x:Key="DataSizeConverter" />
 
     <!--<DataTemplate DataType="{x:Type models:BaseDirectory}">
         <Grid Background="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}">
@@ -83,6 +84,13 @@
             <TextBlock Text="{Binding Extension}" />
         </Grid>
     </DataTemplate>
+
+    <DataTemplate x:Key="ColumnFileSizeDataTemplate" DataType="{x:Type models:FileModel}">
+        <Grid>
+            <TextBlock VerticalAlignment="Center" Text="{Binding Size, Converter={StaticResource DataSizeConverter}}" />
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
             <TextBlock Foreground="Indigo" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />

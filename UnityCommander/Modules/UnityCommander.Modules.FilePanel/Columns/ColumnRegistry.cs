@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,5 +21,10 @@ namespace UnityCommander.Modules.FilePanel.Columns
                            (panelType == PanelType.Folders && c.ForFolders) ||
                            (panelType == PanelType.Drives && c.ForDrives))
                        .OrderBy(c => c.Order);
+
+        internal object GetColumns(object panelType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

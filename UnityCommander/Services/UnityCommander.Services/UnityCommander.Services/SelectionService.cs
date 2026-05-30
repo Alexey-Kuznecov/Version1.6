@@ -8,7 +8,7 @@ namespace UnityCommander.Services.Selection
 {
     public class SelectionService : ISelectionService
     {
-        readonly Dictionary<string, WeakReference<ISelectionManager>> _map = new();
+        readonly Dictionary<Guid, WeakReference<ISelectionManager>> _map = new();
 
         readonly object _lock = new();
 
@@ -19,29 +19,30 @@ namespace UnityCommander.Services.Selection
             _tabContextAccessor = tabContextAccessor;
         }
 
-        public void Register(string panelId, ISelectionManager manager)
+        public void Register(Guid tabId, ISelectionManager manager)
         {
             lock (_lock)
             {
-                _map[panelId] = new WeakReference<ISelectionManager>(manager);
+                _map[tabId] = new WeakReference<ISelectionManager>(manager);
             }
         }
 
-        public void Unregister(string panelId)
+
+        public void Unregister(Guid tabId)
         {
             lock (_lock)
             {
-                _map.Remove(panelId);
+                _map.Remove(tabId);
             }
         }
 
-        public ISelectionManager Get(string panelId)
+        public ISelectionManager Get(Guid tabId)
         {
             lock (_lock)
             {
-                if (_map.TryGetValue(panelId, out var wr) && wr.TryGetTarget(out var mgr))
+                if (_map.TryGetValue(tabId, out var wr) && wr.TryGetTarget(out var mgr))
                     return mgr;
-                _map.Remove(panelId);
+                _map.Remove(tabId);
                 return null;
             }
         }

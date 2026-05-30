@@ -37,10 +37,10 @@ namespace UnityCommander.Services
             };
         }
 
-        public UICommand Create(
-            string id,
-            DelegateCommand command,
-            Func<bool> canExecute)
+        public UICommand Create<T>(
+           string id,
+           DelegateCommand<T> command,
+           Func<bool> canExecute)
         {
             var meta = CommandPresentationProvider.Get(id);
 

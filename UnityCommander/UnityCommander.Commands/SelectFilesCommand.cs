@@ -57,7 +57,7 @@ namespace UnityCommander.Commands
             var rawValue = args[1];
 
             // Получаем менеджер через SelectionService
-            var manager = panelId != null ? _selectionService.Get(panelId) : _selectionService.GetActive();
+            var manager = panelId != null ? _selectionService.Get(Guid.Parse(panelId)) : _selectionService.GetActive();
             if (manager == null)
             {
                 context.Output.Write("Не найден менеджер выделения для указанной панели.");
@@ -112,8 +112,6 @@ namespace UnityCommander.Commands
 
             // выводим количество выделенных элементов
             context.Output.WriteLine($"Выделено файлов: {ctx.Items.Count(i => i.IsSelected)}");
-            
-            
         }
 
         private void SelectByRegex(IConsoleCommandContext context, ISelectionManager manager, string regexList)

@@ -9,9 +9,9 @@ namespace UnityCommander.Services.Interfaces
     {
         UICommand Create(string id);
 
-        public UICommand Create(
+        public UICommand Create<T>(
              string id,
-             DelegateCommand command,
+             DelegateCommand<T> command,
              Func<bool> canExecute);
     }
 }

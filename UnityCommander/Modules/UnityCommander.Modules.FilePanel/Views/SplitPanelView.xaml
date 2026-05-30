@@ -36,16 +36,19 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type layout:ContentNode}">
-            <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource ContentTemplateSelector}" />
+        <DataTemplate DataType="{x:Type layout:RegionNode}">
+            <ContentControl
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Content="{Binding Content}"
+                ContentTemplateSelector="{StaticResource ContentTemplateSelector}" />
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type layout:SplitNode}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" MinHeight="200" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="5" />
-                    <RowDefinition Height="*" MinHeight="200" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <ContentControl Content="{Binding First}" />
