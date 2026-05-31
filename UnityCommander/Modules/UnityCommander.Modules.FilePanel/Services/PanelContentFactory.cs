@@ -28,11 +28,9 @@ namespace UnityCommander.Modules.FilePanel.Services
             _panelRegistry = panelRegistry;
         }
 
-        public object Create(Guid tabId, string path)
+        public void Create(ContentControl content, Guid tabId, string path, Action<ITabPanelContent> onReady)
         {
             var regionName = $"Tab_{Guid.NewGuid()}";
-
-            var content = new ContentControl();
 
             RegionManager.SetRegionName(content, regionName);
             RegionManager.SetRegionManager(content, _regionManager);
@@ -48,14 +46,14 @@ namespace UnityCommander.Modules.FilePanel.Services
 
                 if (vm != null)
                 {
-                    //_adapter = new TabContentAdapter(vm);
-                    //_tabRegistry.Register(_adapter);
-
                     vm.InitializedViewModel(ref tabId, path);
+
+                    _adapter = new TabContentAdapter(vm);
+                    _tabRegistry.Register(_adapter);
+
+                    onReady?.Invoke(vm);
                 }
             });
-
-            return content;
         }
     }
 }

@@ -13,6 +13,9 @@ namespace UnityCommander.Services.Interfaces
         ITabContentAdapter GetTab(Guid tabId);
 
         void Register(ITabContentAdapter tab);
+
+        bool Contains(Guid tabId);
+
         void Unregister(Guid tabId);
 
         void SetActive(Guid tabId);

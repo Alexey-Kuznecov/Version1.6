@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,7 @@ using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Module;
+using UnityCommander.Controls.Ribbon;
 using UnityCommander.Core;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
@@ -81,9 +83,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private readonly IColumnStateManager columnStateManager;
         private readonly ColumnRegistry columnRegistry;
-        private readonly ColumnController<FileModel> _fileColumnController;
-        private readonly ColumnController<FolderModel> _folderColumnController;
         private readonly ISettingsStore settings;
+        private readonly TabState _state;
         public event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;
 
@@ -142,6 +143,17 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ContextMenuController contextMenuController)
             : base(regionManager)
         {
+            _state = new TabState();
+            _state.CurrentPathChanged += path =>
+            {
+                RaisePropertyChanged(nameof(CurrentDirectory));
+                PathChanged?.Invoke(path);
+                
+                var title = PathTitleHelper.GetTabTitle(path);
+
+                TabTitleChanged?.Invoke(title);
+            };
+
             this._logger = loggerCreator.Create(
                 category: LogCategory.UserAction,
                 scope: LogScope.UserAction
@@ -156,7 +168,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dialogService = dialogService;
             this.commandManager = manager;
         
-
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
             this.multiCommandService = multiCommandService;
@@ -210,38 +221,22 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public LayoutNode LayoutRoot { get; }
 
-        public string GetCurrentPath() => _folderNodeContext.Current;
+        public string GetCurrentPath() => _state.CurrentPath;
 
         public string GetCurrentFilePath() => _fileNodeContext.CurrentPath;
 
-        public void SetCurrentPath(string value) => _folderNodeContext.Current = value;
+        public void SetCurrentPath(string value) => _state.CurrentPath = value;
 
         public IReadOnlyList<BaseDirectory> GetFiles() => _fileNodeContext.Files;
         
         public ISelectionManager SelectionManager => _folderNodeContext.SelectionManager;
-        
-        public Guid Token { get; set; }
 
-        public Guid GetPanelToken() => Token;
+        public Guid GetPanelToken() => _state.TabId;
 
         public string CurrentDirectory
         {
-            get => _folderNodeContext.Current;
-            set
-            {
-                if (_folderNodeContext.Current == value)
-                    return;
-
-                _folderNodeContext.Current = value;
-
-                RaisePropertyChanged();
-
-                PathChanged?.Invoke(value);
-
-                var title = PathTitleHelper.GetTabTitle(value);
-
-                TabTitleChanged?.Invoke(title);
-            }
+            get => _state.CurrentPath;
+            set => _state.CurrentPath = value;
         }
 
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(() =>
@@ -363,7 +358,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
                 else
                 {
-                    targetPath = splitPanelViewModel?.CurrentDirectory ?? this.CurrentDirectory;
+                    targetPath = _state.CurrentPath;
                 }
             }
             else
@@ -413,22 +408,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
-            this.CurrentDirectory = path;
-            _folderNodeContext.Current = path;
+            _state.CurrentPath = path;
             if (token == Guid.Empty)
                 token = Guid.NewGuid();
 
-            Token = token;
+            _state.TabId = token;
 
-            NavigationContextDirectory.Instance.Register(Token, _navigationService);
+            NavigationContextDirectory.Instance.Register(_state.TabId, _navigationService);
 
             _navigationService.CurrentChanged += OnPathChanged;
             
             _ = this.SetLastPanelState();
 
-            _adapter = new TabContentAdapter(this);
-            _tabRegistry.Register(_adapter);
-
+            //_adapter = new TabContentAdapter(this);
+            //_tabRegistry.Register(_adapter);
 
             _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
             return this;
@@ -466,70 +459,57 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private void RefreshFileList(IEnumerable<FileModel> files)
         {
-            if (_fileNodeContext.Files == null)
-                _fileNodeContext.Files.Clear();
-
-            var newFiles = files.ToDictionary(f => f.Path, f => f);
+            var set = files.Select(f => f.Path).ToHashSet();
 
             for (int i = _fileNodeContext.Files.Count - 1; i >= 0; i--)
             {
-                if (!newFiles.ContainsKey(_fileNodeContext.Files[i].Path))
+                if (!set.Contains(_fileNodeContext.Files[i].Path))
                     _fileNodeContext.Files.RemoveAt(i);
             }
 
+            var existing = _fileNodeContext.Files.Select(f => f.Path).ToHashSet();
+
             foreach (var file in files)
             {
-                if (!_fileNodeContext.Files.Any(f => f.Path == file.Path))
+                if (!existing.Contains(file.Path))
                     _fileNodeContext.Files.Add(file);
             }
         }
 
         private void RefreshDirectoryList(IEnumerable<FolderModel> dirs)
         {
-            if (_folderNodeContext.Folders == null)
-                _folderNodeContext.Folders.Clear();
-
-            var newDirs = dirs.ToDictionary(d => d.Path, d => d);
+            var set = dirs.Select(d => d.Path).ToHashSet();
 
             for (int i = _folderNodeContext.Folders.Count - 1; i >= 0; i--)
             {
-                if (!newDirs.ContainsKey(_folderNodeContext.Folders[i].Path))
+                if (!set.Contains(_folderNodeContext.Folders[i].Path))
                     _folderNodeContext.Folders.RemoveAt(i);
             }
 
+            var existing = _folderNodeContext.Folders.Select(d => d.Path).ToHashSet();
+
             foreach (var dir in dirs)
             {
-                if (!_folderNodeContext.Folders.Any(f => f.Path == dir.Path))
+                if (!existing.Contains(dir.Path))
                     _folderNodeContext.Folders.Add(dir);
             }
         }
 
-        private async Task RefreshPanelAsync(string dirPath)
+        private async Task RefreshPanelAsync(string dirPath, CancellationToken token)
         {
-            var sw = Stopwatch.StartNew();
+            var dirsTask = dataService.GetDirectoriesAsync(dirPath, token);
+            var filesTask = dataService.GetFilesAsync(dirPath, token);
 
-            var dirsTask = dataService.GetDirectoriesAsync(dirPath);
-            sw.Stop();
-            Debug.WriteLine($"Dirs loaded: {sw.ElapsedMilliseconds}");
-            sw.Restart();
-            var filesTask = dataService.GetFilesAsync(dirPath);
-            sw.Stop();
-            Debug.WriteLine($"Files loaded: {sw.ElapsedMilliseconds}");
             var dirs = await dirsTask;
             var files = await filesTask;
-            sw.Restart();
+
+            if (token.IsCancellationRequested)
+                return; // ❌ устарело — убиваем
+
             RefreshDirectoryList(dirs);
-            sw.Stop();
-            Debug.WriteLine($"Apply dirs: {sw.ElapsedMilliseconds}");
-            sw.Restart();
             RefreshFileList(files);
 
-            sw.Stop();
-            Debug.WriteLine($"Apply files: {sw.ElapsedMilliseconds}");
-            this.CurrentDirectory = dirPath;
             await UpdateColumnValuesAsync();
-            //Debug.WriteLine($"Columns updated: {sw.ElapsedMilliseconds}");
-            //sw.Stop();
         }
 
         #endregion
@@ -540,15 +520,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             try
             {
-                if (this.CurrentDirectory != VirtualPaths.MyComputer)
+                if (_state.CurrentPath != VirtualPaths.MyComputer)
                 {
                     var sw = Stopwatch.StartNew();
 
-                    var files = await dataService.GetFilesAsync(this.CurrentDirectory);
-                    this._logger.Debug($"Files: {sw.Elapsed}");
-
-                    var dirs = await dataService.GetDirectoriesAsync(this.CurrentDirectory);
-                    this._logger.Debug($"Dirs: {sw.Elapsed}");
+                    var files = await dataService.GetFilesAsync(_state.CurrentPath, CancellationToken.None);
+                    var dirs = await dataService.GetDirectoriesAsync(_state.CurrentPath, CancellationToken.None);
 
                     foreach (var f in files) _fileNodeContext.Files.Add(f);
                     foreach (var d in dirs) _folderNodeContext.Folders.Add(d);
@@ -583,12 +560,15 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Обработка событий и очистка ресурсов
 
+        private CancellationTokenSource _cts;
+
         private void OnPathChanged(string path)
         {
-            var sw = Stopwatch.StartNew();
-            _navigationContext.CurrentPath = path;
+            _state.CurrentPath = path;
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
 
-          
             if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
             {
                 _ = this.GoDrivePanel();
@@ -596,22 +576,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             }
             else
             {
-                _ = RefreshPanelAsync(path);
+                _ = RefreshPanelAsync(path, _cts.Token);
                 _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
             }
-
-            sw.Stop();
-
-            Debug.WriteLine($"OnPathChanged: {sw.ElapsedMilliseconds} ms");
-        }
-
-        public override void Destroy()
-        {
-            _navigationService.CurrentChanged -= OnPathChanged;
-            //columnSync.ColumnChanged -= OnColumnChanged;
-            _tabRegistry.Unregister(_adapter.TabId);
-            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
-            base.Destroy();
         }
 
         #endregion
@@ -620,7 +587,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private void OnDirectoryChanged(string changedPath)
         {
-            if (!ShouldRefresh(changedPath, this.CurrentDirectory))
+            if (!ShouldRefresh(changedPath, _state.CurrentPath))
                 return;
 
             ScheduleLightRefresh(changedPath);
@@ -639,7 +606,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                 Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    await RefreshPanelAsync(CurrentDirectory);
+                    await RefreshPanelAsync(_state.CurrentPath, _cts.Token);
                 });
             });
         }
@@ -647,6 +614,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private bool ShouldRefresh(string changedPath, string panelCurrentPath)
         {
             return changedPath.StartsWith(panelCurrentPath, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public void Dispose()
+        {
+            _navigationService.CurrentChanged -= OnPathChanged;
+            //_tabRegistry.Unregister(_adapter.TabId);
+            //columnSync.ColumnChanged -= OnColumnChanged;
+            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+            base.Destroy();
+        }
+
+        ~SplitPanelViewModel()
+        {
+            Debug.WriteLine($"FINALIZER {_state.TabId}");
         }
 
         #endregion
@@ -659,28 +640,28 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 if (_navigationService.CanGoBack) _navigationService.GoBack(); 
                 else
                 {
-                    if (this.CurrentDirectory != VirtualPaths.MyComputer)
+                    if (_state.CurrentPath != VirtualPaths.MyComputer)
                     {
-                        this.CurrentDirectory = VirtualPaths.MyComputer;
+                        _state.CurrentPath = VirtualPaths.MyComputer;
                         _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true);
                     }
                 }
 
 #if (Nlog)
-                _logger.Info($"Возврат в папку ({this.CurrentDirectory})");
+                _logger.Info($"Возврат в папку ({_state.CurrentPath})");
 #endif
             });
 
         public DelegateCommand<object> GoDrivePanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                this.CurrentDirectory = VirtualPaths.MyComputer;
+                _state.CurrentPath = VirtualPaths.MyComputer;
                 _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true);
 
-                if (this.CurrentDirectory == VirtualPaths.MyComputer)
+                if (_state.CurrentPath == VirtualPaths.MyComputer)
                 {
 #if (Nlog)
-                    _logger.Info($"Открыт Мой компьютер ({this.CurrentDirectory})");
+                    _logger.Info($"Открыт Мой компьютер ({_state.CurrentPath})");
 #endif
                     _ = GoDrivePanel();
                 }

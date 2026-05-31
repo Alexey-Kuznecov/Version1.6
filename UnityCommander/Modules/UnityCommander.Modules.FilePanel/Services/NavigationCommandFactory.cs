@@ -2,7 +2,6 @@
 using Prism.Commands;
 using System;
 using UnityCommander.Common.Commands;
-using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Services.Interfaces;
 

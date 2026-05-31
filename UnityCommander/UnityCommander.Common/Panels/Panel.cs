@@ -34,6 +34,9 @@ namespace UnityCommander.Common.Panels
 
             if (ActiveTabId == tabId)
                 ActiveTabId = _tabs.FirstOrDefault();
+            
+            if (_tabs.Count < 1)
+                ActiveTabId = null;
         }
 
         public void SetActiveTab(Guid tabId)
@@ -42,6 +45,15 @@ namespace UnityCommander.Common.Panels
                 throw new InvalidOperationException("Tab not in panel");
 
             ActiveTabId = tabId;
+        }
+
+        public bool TrySetActiveTab(Guid tabId)
+        {
+            if (!Tabs.Contains(tabId))
+                return false;
+
+            ActiveTabId = tabId;
+            return true;
         }
     }
 }

@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using UnityCommander.Common.Panels;
-using UnityCommander.Common.Panels.Panels;
 
 namespace UnityCommander.Services.Interfaces
 {
     public interface IPanelRegistry
     {
         event Action<TabAddedEvent> TabAdded;
+
+        event Action<TabActionEvent> TabRemoved;
 
         public Guid? ActivePanelId { get; }
 
@@ -30,7 +31,7 @@ namespace UnityCommander.Services.Interfaces
 
         void RemoveTab(Guid tabId);
 
-        void SetActiveTab(Guid panelId, Guid tabId);
+        bool SetActiveTab(Guid panelId, Guid tabId);
 
         void EnsurePanel(Guid panelId);
     }

@@ -3,7 +3,7 @@ namespace UnityCommander.Common.Module
 {
     using System;
 
-    public interface ITabPanelContent
+    public interface ITabPanelContent : IDisposable
     {
         event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;

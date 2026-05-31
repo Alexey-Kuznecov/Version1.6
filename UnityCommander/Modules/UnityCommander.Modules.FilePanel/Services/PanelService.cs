@@ -1,16 +1,13 @@
 ﻿
 using Prism.Regions;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using UnityCommander.Common.Commands;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Module;
-using UnityCommander.Common.Panels.Panels;
+using UnityCommander.Common.Panels;
 using UnityCommander.Core.Helper;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -66,12 +63,17 @@ namespace UnityCommander.Modules.FilePanel.Services
             manager.ActiveContentChanged += Manager_ActiveContentChanged;
             _dockingSyncService.OnDiff += _dockingSyncService_OnDiff;
             _panelRegistry.TabAdded += _panelRegistry_TabAdded;
+            _panelRegistry.TabRemoved += _panelRegistry_TabRemoved;
             _tabDoubleClick = new DoubleClickHandlerHelper(_logger);
         }
 
         private void _panelRegistry_TabAdded(TabAddedEvent panel)
         {
-            //ProcessNavigation();
+        }
+
+        private void _panelRegistry_TabRemoved(TabActionEvent panel)
+        {
+            _tabRegistry.Unregister(panel.TabId);
         }
 
         private void _dockingSyncService_OnDiff(DiffResult result)
@@ -121,12 +123,19 @@ namespace UnityCommander.Modules.FilePanel.Services
                 return;
             }
 
-            _tabRegistry.SetActive(vm.GetPanelToken());
+            if (vm == null)
+                return;
 
-            if (_panelRegistry.FindPanelByTab(_tabRegistry.ActiveTab.TabId) is Guid panelId)
-            {
-                _panelRegistry.SetActivePanel(panelId);
-            }
+            var tabId = vm.GetPanelToken();
+
+            if (!_tabRegistry.Contains(tabId))
+                return;
+
+            if (_panelRegistry.FindPanelByTab(tabId) is not Guid panelId)
+                return;
+
+            _panelRegistry.SetActiveTab(panelId, tabId);
+            _tabRegistry.SetActive(tabId);
         }
 
         private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -178,11 +187,11 @@ namespace UnityCommander.Modules.FilePanel.Services
 
                 viewModel.InitializedViewModel(ref tabId, basePath);
 
-                //var adapter = new TabContentAdapter(viewModel);
+                var adapter = new TabContentAdapter(viewModel);
+                _tabRegistry.Register(adapter);
 
-                //_tabRegistry.Register(adapter);
-                _panelRegistry.AddTab(panelId, tabId);
-                _panelRegistry.SetActiveTab(panelId, tabId);
+                //_panelRegistry.AddTab(panelId, tabId);
+                //_panelRegistry.SetActiveTab(panelId, tabId);
             });
         }
     }

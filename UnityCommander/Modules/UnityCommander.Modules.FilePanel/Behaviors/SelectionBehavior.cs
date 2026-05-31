@@ -58,13 +58,13 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
                 Service.Register(tabId, manager);
 
-                manager.SelectionChanged += () =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        SyncFromManager(list, manager);
-                    });
-                };
+                //manager.SelectionChanged += () =>
+                //{
+                //    Application.Current.Dispatcher.Invoke(() =>
+                //    {
+                //        SyncFromManager(list, manager);
+                //    });
+                //};
             }
         }
 
@@ -141,20 +141,20 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)
         {
-            //list.SelectedItems.Clear();
+            list.SelectedItems.Clear();
 
-            //foreach (var item in list.Items)
-            //{
-            //    if (item is BaseDirectory dir)
-            //    {
-            //        //logger.Debug(dir.Path + $" is selected {dir.IsSelected}");
-            //    }
+            foreach (var item in list.Items)
+            {
+                if (item is BaseDirectory dir)
+                {
+                    //logger.Debug(dir.Path + $" is selected {dir.IsSelected}");
+                }
 
-            //    if (item is ISelectableItem select && select.IsSelected)
-            //    {
-            //        list.SelectedItems.Add(select);
-            //    }
-            //}
+                if (item is ISelectableItem select && select.IsSelected)
+                {
+                    list.SelectedItems.Add(select);
+                }
+            }
         }
     }
 }

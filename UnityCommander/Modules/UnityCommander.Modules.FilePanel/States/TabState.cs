@@ -1,46 +1,36 @@
 ﻿
 using System;
-using System.Collections.ObjectModel;
+using UnityCommander.Common.Models;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.ViewModels;
-using UnityCommander.Services.Interfaces;
+using UnityCommander.Modules.FilePanel.Models;
 
 namespace UnityCommander.Modules.FilePanel.States
 {
-    public class TabState :
-        IColumnSource<FileModel>,
-        IColumnSource<FolderModel>
+    public class TabState
     {
-        public string CurrentDirectory { get; set; }
+        private string _currentPath;
 
-        public ObservableCollection<FolderModel> Directories { get; }
-            = new();
+        public event Action<string> CurrentPathChanged;
 
-        public ObservableCollection<FileModel> Files { get; }
-            = new();
+        public string CurrentPath
+        {
+            get => _currentPath;
+            set
+            {
+                if (_currentPath == value)
+                    return;
 
-        public ObservableCollection<DriveModel> Drives { get; }
-            = new();
+                _currentPath = value;
+                CurrentPathChanged?.Invoke(value);
+            }
+        }
 
-        public object SelectedDirectory { get; set; }
-
-        public FileModel CurrentFile { get; set; }
-
-        public ObservableCollection<BaseDirectory> SelectedItems { get; set; }
-             = new();
+        public Guid TabId { get; set; }
 
         public PanelMode Mode { get; set; }
 
-        public ObservableCollection<MenuItemViewModel> ContextMenuItems { get; }
-           = new();
+        public ContentRole Role { get; set; }
 
-        public BaseDirectory SelectedCurrentDirectoryItem { get; set; }
-
-        public ISelectionManager SelectionManager { get; set; }
-
-        public Guid Token { get; set; }
-
-        ObservableCollection<FileModel> IColumnSource<FileModel>.Items => Files;
-        ObservableCollection<FolderModel> IColumnSource<FolderModel>.Items => Directories;
+        public ViewMode ViewMode { get; set; }
     }
 }

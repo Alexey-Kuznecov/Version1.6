@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityCommander.Common.Panels
 {
@@ -12,7 +13,11 @@ namespace UnityCommander.Common.Panels
         Guid? ActiveTabId { get; }
 
         void AddTab(Guid tabId);
+        
         void RemoveTab(Guid tabId);
+        
         void SetActiveTab(Guid tabId);
+
+        public bool TrySetActiveTab(Guid tabId);
     }
 }

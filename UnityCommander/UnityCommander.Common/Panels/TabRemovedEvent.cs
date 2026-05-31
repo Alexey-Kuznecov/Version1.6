@@ -1,8 +1,9 @@
-﻿using System;
+﻿
+using System;
 
 namespace UnityCommander.Common.Panels
 {
-    public class TabAddedEvent
+    public class TabRemovedEvent
     {
         public Guid PanelId { get; init; }
 

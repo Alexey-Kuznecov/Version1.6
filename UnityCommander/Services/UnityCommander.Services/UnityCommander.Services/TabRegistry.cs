@@ -8,9 +8,11 @@ namespace UnityCommander.Services
     public class TabRegistry : ITabRegistry
     {
         private readonly Dictionary<Guid, ITabContentAdapter> _map = new();
+        
         private readonly object _lock = new();
 
         private Guid? _activeTabId;
+        
         private ITabContentAdapter _activeTab;
 
         /// <summary>
@@ -61,12 +63,22 @@ namespace UnityCommander.Services
         {
             lock (_lock)
             {
-                if (_map.Remove(tabId))
+                if (!_map.Remove(tabId, out var adapter))
+                    return;
+
+                adapter.Dispose(); // 👈 вот тут вся чистка
+
+                if (_activeTabId == tabId)
                 {
-                    if (_activeTabId == tabId)
+                    _activeTabId = Guid.Empty;
+                    ActiveTab = null;
+
+                    // 👇 восстановление состояния
+                    var next = _map.Values.FirstOrDefault();
+                    if (next != null)
                     {
-                        _activeTabId = _map.Keys.FirstOrDefault();
-                        ActiveTab = _activeTabId != null ? _map[_activeTabId.Value] : null;
+                        _activeTabId = next.TabId;
+                        ActiveTab = next;
                     }
                 }
             }
@@ -123,5 +135,8 @@ namespace UnityCommander.Services
                 return adapter;
             }
         }
+
+        public bool Contains(Guid tabId)
+            => _map.ContainsKey(tabId);
     }
 }

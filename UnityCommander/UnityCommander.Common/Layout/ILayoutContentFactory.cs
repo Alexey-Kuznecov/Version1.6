@@ -1,10 +1,12 @@
 ﻿
 using System;
+using System.Windows.Controls;
+using UnityCommander.Common.Module;
 
 namespace UnityCommander.Common.Layout
 {
     public interface ILayoutContentFactory
     {
-        object Create(Guid contentId, string path);
+        public void Create(ContentControl content, Guid tabId, string path, Action<ITabPanelContent> onReady);
     }
 }

@@ -79,6 +79,8 @@ namespace UnityCommander.Services.Bootstrap
         private void OnLayoutItem(object sender, LayoutSerializationCallbackEventArgs args)
         {
             var id = args.Model.ContentId;
+            var content = new ContentControl();
+
 
             if (!Guid.TryParse(id, out var tabId))
             { 
@@ -98,10 +100,15 @@ namespace UnityCommander.Services.Bootstrap
 
             var path = tab?.Path ?? "C:\\";
 
-            //if (tab == null)
-            //    BuildFromLayout();
+            _factory.Create(content, tabId, path, vm =>
+            {
+                vm.TabTitleChanged += formatPath =>
+                {
+                    args.Model.Title = formatPath;
+                };
+            });
 
-            args.Content = _factory.Create(tabId, path);
+            args.Content = content;
         }
 
         public void CreateDefaultLayout()

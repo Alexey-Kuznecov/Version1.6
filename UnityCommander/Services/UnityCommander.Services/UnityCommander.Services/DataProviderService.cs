@@ -1,8 +1,10 @@
 ﻿
 namespace UnityCommander.Services
 {
+    using Newtonsoft.Json.Linq;
     using System.Collections.Generic;
     using System.IO;
+    using System.Threading;
     using System.Threading.Tasks;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
@@ -15,64 +17,69 @@ namespace UnityCommander.Services
         /// <summary>
         /// Получить файлы в директории.
         /// </summary>
-        public Task<List<FileModel>> GetFilesAsync(string path)
+        public async Task<List<FileModel>> GetFilesAsync(string path, CancellationToken cancellation)
         {
-            var dir = new DirectoryInfo(path);
-            var files = new List<FileModel>();
-
-            foreach (var file in dir.GetFiles())
+            return await Task.Run(() =>
             {
-                if ((file.Attributes & FileAttributes.Hidden) == 0)
-                {
-                    files.Add(new FileModel
-                    {
-                        Name = Path.GetFileNameWithoutExtension(file.Name),
-                        Path = file.FullName,
-                        Extension = file.Extension,
-                        CreationTime = file.CreationTime,
-                        LastAccessTime = file.LastAccessTime,
-                        TargetPanel = TargetPanel.Files,
-                        Key = file.FullName,
-                        Size = file.Length,
-                    });
-                }
-            }
+                var dir = new DirectoryInfo(path);
+                var files = new List<FileModel>();
 
-            return Task.FromResult(files);
+                foreach (var file in dir.GetFiles())
+                {
+                    if (cancellation.IsCancellationRequested)
+                        return files;
+
+                    if ((file.Attributes & FileAttributes.Hidden) == 0)
+                    {
+                        files.Add(new FileModel
+                        {
+                            Name = Path.GetFileNameWithoutExtension(file.Name),
+                            Path = file.FullName,
+                            Extension = file.Extension,
+                            CreationTime = file.CreationTime,
+                            LastAccessTime = file.LastAccessTime,
+                            TargetPanel = TargetPanel.Files,
+                            Key = file.FullName,
+                            Size = file.Length,
+                        });
+                    }
+                }
+
+                return files;
+            });
         }
 
         /// <summary>
         /// Получить папки в директории.
         /// </summary>
-        public Task<List<FolderModel>> GetDirectoriesAsync(string path)
+        public async Task<List<FolderModel>> GetDirectoriesAsync(string path, CancellationToken cancellation)
         {
-            var dir = new DirectoryInfo(path);
-            var folders = new List<FolderModel>();
-
-            foreach (var folder in dir.EnumerateDirectories())
+            return await Task.Run(() =>
             {
-                try
-                {
-                    if ((folder.Attributes & FileAttributes.Hidden) != 0)
-                        continue;
+                var dir = new DirectoryInfo(path);
+                var folders = new List<FolderModel>();
 
-                    folders.Add(new FolderModel
+                foreach (var folder in dir.GetDirectories())
+                {
+                    if (cancellation.IsCancellationRequested)
+                        return folders;
+
+                    if ((folder.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        Name = folder.Name,
-                        Path = folder.FullName,
-                        CreationTime = folder.CreationTime,
-                        LastAccessTime = folder.LastAccessTime,
-                        TargetPanel = TargetPanel.Folders,
-                        Key = folder.FullName
-                    });
+                        folders.Add(new FolderModel
+                        {
+                            Name = folder.Name,
+                            Path = folder.FullName,
+                            CreationTime = folder.CreationTime,
+                            LastAccessTime = folder.LastAccessTime,
+                            TargetPanel = TargetPanel.Folders,
+                            Key = folder.FullName
+                        });
+                    }
                 }
-                catch
-                {
-                    // иногда доступ к папке может падать (system/permission)
-                }
-            }
 
-            return Task.FromResult(folders);
+                return folders;
+            });
         }
 
         /// <summary>

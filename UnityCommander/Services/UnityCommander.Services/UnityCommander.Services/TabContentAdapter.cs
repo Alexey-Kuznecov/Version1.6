@@ -28,5 +28,10 @@ namespace UnityCommander.Services
 
             throw new NotSupportedException();
         }
+
+        public void Dispose()
+        {
+            _vm.Dispose();
+        }
     }
 }

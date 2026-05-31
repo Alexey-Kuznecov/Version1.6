@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Common.Panels;
-using UnityCommander.Common.Panels.Panels;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
@@ -17,6 +16,8 @@ namespace UnityCommander.Services
         private Guid? _activePanelId;
 
         public event Action<TabAddedEvent> TabAdded;
+
+        public event Action<TabActionEvent> TabRemoved;
 
         public Guid? ActivePanelId 
         {
@@ -90,6 +91,20 @@ namespace UnityCommander.Services
             }
         }
 
+        public bool SetActiveTab(Guid panelId, Guid tabId)
+        {
+            lock (_lock)
+            {
+                var panel = GetPanel(panelId);
+
+                if (!panel.Tabs.Contains(tabId))
+                    return false;
+
+                panel.TrySetActiveTab(tabId);
+                return true;
+            }
+        }
+
         public Guid? GetActivePanelId()
         {
             lock (_lock)
@@ -132,7 +147,7 @@ namespace UnityCommander.Services
             lock (_lock)
             {
                 GetPanel(panelId).AddTab(tabId);
-                TabAdded.Invoke(new TabAddedEvent() 
+                TabAdded(new TabAddedEvent() 
                 { 
                     PanelId = panelId,
                     TabId = tabId 
@@ -149,17 +164,15 @@ namespace UnityCommander.Services
                     if (panel.Tabs.Contains(tabId))
                     {
                         panel.RemoveTab(tabId);
+
+                        TabRemoved(new TabActionEvent()
+                        {
+                            PanelId = panel.PanelId,
+                            TabId = tabId
+                        });
                         return;
                     }
                 }
-            }
-        }
-
-        public void SetActiveTab(Guid panelId, Guid tabId)
-        {
-            lock (_lock)
-            {
-                GetPanel(panelId).SetActiveTab(tabId);
             }
         }
 
