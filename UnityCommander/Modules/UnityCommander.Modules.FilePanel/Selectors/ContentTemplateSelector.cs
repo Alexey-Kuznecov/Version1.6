@@ -2,8 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using UnityCommander.Common.Models;
-using UnityCommander.Modules.FilePanel.Layout;
-using UnityCommander.Modules.FilePanel.Models;
+using UnityCommander.Controls.Layout;
 
 namespace UnityCommander.Modules.FilePanel.Selectors
 {

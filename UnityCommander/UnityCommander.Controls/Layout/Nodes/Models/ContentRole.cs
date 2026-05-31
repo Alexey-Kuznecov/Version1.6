@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Modules.FilePanel.Models
+namespace UnityCommander.Controls.Layout
 {
     public enum ContentRole
     {

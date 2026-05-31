@@ -69,35 +69,26 @@ namespace UnityCommander.Controls.Layout
         {
             double offset = 0;
 
-            foreach (UIElement child in Children)
+            for (int i = 0; i < Children.Count; i++)
             {
-                if (child == null)
-                    continue;
+                var child = Children[i];
 
-                if (Orientation == Orientation.Vertical)
-                {
-                    double height = child.DesiredSize.Height;
+                bool last = i == Children.Count - 1;
 
-                    child.Arrange(new Rect(
-                        0,
-                        offset,
-                        finalSize.Width,
-                        height));
+                double height;
 
-                    offset += height;
-                }
+                if (last)
+                    height = finalSize.Height - offset;
                 else
-                {
-                    double width = child.DesiredSize.Width;
+                    height = child.DesiredSize.Height;
 
-                    child.Arrange(new Rect(
-                        offset,
-                        0,
-                        width,
-                        finalSize.Height));
+                child.Arrange(new Rect(
+                    0,
+                    offset,
+                    finalSize.Width,
+                    height));
 
-                    offset += width;
-                }
+                offset += height;
             }
 
             return finalSize;

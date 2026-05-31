@@ -1,19 +1,13 @@
 ﻿
-using NLog;
 using Prism.Ioc;
-using System;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
 using UnityCommander.Logging.Configuration;
-using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
-using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Services.Interfaces;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
 

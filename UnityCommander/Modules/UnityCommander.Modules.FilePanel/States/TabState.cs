@@ -2,7 +2,7 @@
 using System;
 using UnityCommander.Common.Models;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.Models;
+using UnityCommander.Controls.Layout;
 
 namespace UnityCommander.Modules.FilePanel.States
 {

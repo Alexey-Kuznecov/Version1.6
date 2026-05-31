@@ -1,7 +1,7 @@
 ﻿
 using System.Windows.Controls;
 
-namespace UnityCommander.Modules.FilePanel.Layout
+namespace UnityCommander.Controls.Layout
 {
     public class SplitNode : LayoutNode
     {
@@ -10,6 +10,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
         public double Ratio { get; set; } = 0.5; // 0..1
 
         public LayoutNode First { get; set; }
+        
         public LayoutNode Second { get; set; }
     }
 }

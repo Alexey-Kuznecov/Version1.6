@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace UnityCommander.Modules.FilePanel.Layout
+namespace UnityCommander.Controls.Layout
 {
     public class RegionNode : LayoutNode
     {

@@ -6,7 +6,7 @@
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:layout="clr-namespace:UnityCommander.Modules.FilePanel.Layout"
+    xmlns:layout="clr-namespace:UnityCommander.Controls.Layout;assembly=UnityCommander.Controls"
     xmlns:models="clr-namespace:UnityCommander.Common.Commands;assembly=UnityCommander.Common"
     xmlns:selectors="clr-namespace:UnityCommander.Modules.FilePanel.Selectors"
     xmlns:state="clr-namespace:UnityCommander.Modules.FilePanel.States">

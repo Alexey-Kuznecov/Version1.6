@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 
-namespace UnityCommander.Modules.FilePanel.Layout
+namespace UnityCommander.Controls.Layout
 {
     public class StackNode : LayoutNode
     {
