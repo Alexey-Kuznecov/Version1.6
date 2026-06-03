@@ -16,7 +16,7 @@ namespace UnityCommander.Common.Selection
             set => SetProperty(ref _focusedIndex, value);
         }
 
-        public IReadOnlyList<ISelectableItem> Items { get; }
+        public IReadOnlyList<ISelectableItem> Items {  get; }
 
         public SelectionContext(IEnumerable<ISelectableItem> items)
         {

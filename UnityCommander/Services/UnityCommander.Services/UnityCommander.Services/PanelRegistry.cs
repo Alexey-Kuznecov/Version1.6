@@ -205,5 +205,18 @@ namespace UnityCommander.Services
                 _panels[panelId] = new Panel(panelId);
             }
         }
+
+        public void RemovePanel(Guid panelId)
+        {
+            _panels.Remove(panelId);
+        }
+
+        public bool IsEmpty(Guid panelId)
+        {
+            if (_panels.TryGetValue(panelId, out var result))
+                return !result.Tabs.Any();
+
+            return true;
+        }
     }
 }

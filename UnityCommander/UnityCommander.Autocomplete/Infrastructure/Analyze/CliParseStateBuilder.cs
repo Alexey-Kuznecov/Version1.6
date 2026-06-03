@@ -1,6 +1,5 @@
 ﻿using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Context.Descriptors;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {

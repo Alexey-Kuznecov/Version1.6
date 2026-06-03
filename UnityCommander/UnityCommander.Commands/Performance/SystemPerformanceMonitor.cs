@@ -11,14 +11,16 @@ namespace UnityCommander.Commands.Performance
         private readonly PerformanceCounter diskWriteCounter;
         private readonly PerformanceCounter diskTransferCounter;
 
-        public SystemPerformanceMonitor(string diskInstance = "_Total")
+        public SystemPerformanceMonitor(string disk = "_Total")
         {
+            var instance = PhysicalDiskResolver.Resolve(disk);
+
             cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             memoryCounter = new PerformanceCounter("Memory", "Available MBytes");
 
-            diskReadCounter = new PerformanceCounter("PhysicalDisk", "Disk Reads/sec", diskInstance);
-            diskWriteCounter = new PerformanceCounter("PhysicalDisk", "Disk Writes/sec", diskInstance);
-            diskTransferCounter = new PerformanceCounter("PhysicalDisk", "Disk Transfers/sec", diskInstance);
+            diskReadCounter = new PerformanceCounter("PhysicalDisk", "Disk Reads/sec", instance);
+            diskWriteCounter = new PerformanceCounter("PhysicalDisk", "Disk Writes/sec", instance);
+            diskTransferCounter = new PerformanceCounter("PhysicalDisk", "Disk Transfers/sec", instance);
         }
 
         public SystemStats GetStats()
@@ -50,14 +52,5 @@ namespace UnityCommander.Commands.Performance
         public float DiskReadsPerSec { get; set; }
         public float DiskWritesPerSec { get; set; }
         public float DiskTransfersPerSec { get; set; }
-
-        public override string ToString()
-        {
-            return $"CPU Usage         : {CpuUsage:F2} %\n" +
-                   $"Available Memory  : {AvailableMemoryMb:F2} MB\n" +
-                   $"Disk Reads/sec    : {DiskReadsPerSec:F2}\n" +
-                   $"Disk Writes/sec   : {DiskWritesPerSec:F2}\n" +
-                   $"Disk Transfers/sec: {DiskTransfersPerSec:F2}";
-        }
     }
 }

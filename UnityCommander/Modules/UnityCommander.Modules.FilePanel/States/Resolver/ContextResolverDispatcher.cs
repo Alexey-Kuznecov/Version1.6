@@ -7,11 +7,11 @@ namespace UnityCommander.Modules.FilePanel.States.Resolver
 {
     public class ContextResolverDispatcher
     {
-        private readonly IReadOnlyList<IContextResolver>
+        private readonly IReadOnlyList<IContextMenuResolver>
             _resolvers;
 
         public ContextResolverDispatcher(
-            IEnumerable<IContextResolver> resolvers)
+            IEnumerable<IContextMenuResolver> resolvers)
         {
             _resolvers = resolvers.ToList();
         }

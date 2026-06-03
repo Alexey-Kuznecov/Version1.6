@@ -4,6 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:prism="http://prismlibrary.com/">
     <prism:PrismApplication.Resources>
-        <Style x:Key="MaterialDesignMenuItem" TargetType="StaticResourceExtension" />
+        <!--<Style BasedOn="UcMenuItemStyle" x:Key="MaterialDesignMenuItem" TargetType="StaticResourceExtension" />-->
     </prism:PrismApplication.Resources>
 </prism:PrismApplication>

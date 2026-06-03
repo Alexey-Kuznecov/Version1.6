@@ -60,5 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
+    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Default\Ribbon\" />
   </ItemGroup>
 </Project>

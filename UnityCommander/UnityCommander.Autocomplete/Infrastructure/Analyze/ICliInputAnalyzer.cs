@@ -1,4 +1,5 @@
 ﻿
+
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
     public interface ICliInputAnalyzer

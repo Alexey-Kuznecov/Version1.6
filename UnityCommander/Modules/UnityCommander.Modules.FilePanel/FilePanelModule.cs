@@ -16,23 +16,13 @@ namespace UnityCommander.Modules.FilePanel
     using Prism.Regions;
     using System;
     using System.IO;
-    using System.Linq;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using UnityCommander.Common.Module;
-    using UnityCommander.Logging.Contracts;
+    using UnityCommander.Core.Behaviors;
     using UnityCommander.Modules.FilePanel.Controllers;
+    using UnityCommander.Modules.FilePanel.Controllers.DnD;
     using UnityCommander.Modules.FilePanel.States.Resolver;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Services.Bootstrap;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Interfaces.Database.Queries.Xml;
-    using UnityCommander.Services.Interfaces.Settings;
-    using Xceed.Wpf.AvalonDock;
-    using Xceed.Wpf.AvalonDock.Layout;
-    using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
     /// <summary>
     /// The file panel module.
@@ -61,10 +51,22 @@ namespace UnityCommander.Modules.FilePanel
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<SplitPanelView>();
-            containerRegistry.RegisterSingleton<DriveContextResolver>();
-            containerRegistry.RegisterSingleton<FilePanelContextResolver>();
+            
+            // Контестное меню 
+            containerRegistry.RegisterSingleton<IContextMenuResolver, DriveContextMenuResolver>();
+            containerRegistry.RegisterSingleton<IContextMenuResolver, FilePanelContextMenuResolver>();
             containerRegistry.RegisterSingleton<ContextResolverDispatcher>();
             containerRegistry.RegisterSingleton<ContextMenuController>();
-        }
+
+            // DragDrop
+            containerRegistry.RegisterSingleton<IDropContextResolver, NodeDragDropContextResolver>();
+            containerRegistry.RegisterSingleton<IDragDropHandler, FilePanelDragDropHandler>();
+            containerRegistry.RegisterSingleton<IDragDropVisualService, DragDropVisualService>();
+            containerRegistry.RegisterSingleton<DragDropController>();
+            containerRegistry.RegisterSingleton<DragDropContextFactory>();
+            containerRegistry.RegisterSingleton<GongDropAdapter>();
+
+
+        }   
     }
 }

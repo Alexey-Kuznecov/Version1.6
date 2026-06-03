@@ -46,11 +46,14 @@ namespace UnityCommander.Modules.FilePanel.Docking.Diff
             foreach (var tabId in oldMap.Keys)
             {
                 if (!newMap.ContainsKey(tabId))
+                {
                     result.Operations.Add(new TabOperation()
                     {
                         Type = TabOperationType.Remove,
-                        TabId = tabId
+                        TabId = tabId,
+                        FromPanelId = oldMap[tabId]
                     });
+                }
             }
 
             return result;

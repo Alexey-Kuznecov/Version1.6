@@ -29,6 +29,18 @@ namespace UnityCommander.Services
             throw new NotSupportedException();
         }
 
+        public void OnAttached(object view)
+        {
+            if (_vm is IViewAttachAware aware)
+                aware.OnViewAttached(view);
+        }
+
+        public void OnDetached()
+        {
+            if (_vm is IViewAttachAware aware)
+                aware.OnViewDetached();
+        }
+
         public void Dispose()
         {
             _vm.Dispose();

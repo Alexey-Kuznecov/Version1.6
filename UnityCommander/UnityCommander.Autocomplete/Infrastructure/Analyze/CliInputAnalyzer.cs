@@ -1,16 +1,17 @@
 ﻿
-using System.Linq;
-using System.Xml.Linq;
+
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Logging.Extensions;
 
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
     public sealed class CliInputAnalyzer : ICliInputAnalyzer
     {
         private readonly IReadOnlyList<ICommandDescriptor> _commands;
+        
         private readonly ILogger? _logger;
 
         public CliInputAnalyzer(
@@ -18,7 +19,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             LoggerCreator? loggerCreator = null)
         {
             _commands = commands;
-            _logger = loggerCreator?.For<DefaultCliInputAnalyzer>(LogScope.UserAction);
+            _logger = loggerCreator?.For<DefaultCliInputAnalyzer>(LogScope.Runtime);
         }
 
         public CliInputAnalyzer(ICommandCatalog catalog)
@@ -28,9 +29,29 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
         public InputStatus Analyze(string text, int caretPosition)
         {
+            _logger?.Info($"text: {text} caretPosition:  {caretPosition}");
+
             var tokens = Tokenize(text);
 
+            var snapshot = tokens
+                .Select(t => t.Clone())
+                .ToList();
+
             MarkActiveToken(tokens, caretPosition);
+
+           _logger?.CollectionDiff("MarkActiveToken", snapshot, tokens,
+           (log, oldToken, newToken) =>
+           {
+               if (oldToken.Status != newToken.Status)
+               {
+                   log.Warning(
+                       $"{oldToken.Text}: {oldToken.Status} -> {newToken.Status}");
+               }
+           });
+
+            var snapshot2 = tokens
+                .Select(t => t.Clone())
+                .ToList();
 
             var status = new InputStatus
             {
@@ -38,18 +59,39 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 ActiveToken = tokens.FirstOrDefault(t => t.Status == TokenStatus.Editing)
             };
 
-            _logger?.CollectionInfo($"TokenStatus {status?.ActiveToken?.Text}", tokens, t =>
-            {
-                _logger.Info($"{t.Text}; = {t.Status}");
-            });
+            //_logger?.CollectionInfo($"TokenStatus {status?.ActiveToken?.Text}", tokens, t =>
+            //{
+            //    _logger.Info($"{t.Text}; = {t.Status} \n");
+            //});
 
             ResolveTokens(status);
+
+            _logger?.CollectionDiff("ResolveTokens", snapshot2, tokens,
+            (log, oldToken, newToken) =>
+            {
+                if (oldToken.Status == newToken.Status)
+                {
+                    log.Warning(
+                        $"{oldToken.Text}: {oldToken.Status} -> {newToken.Status}");
+                }
+            });
+
+            var snapshot3 = tokens
+                .Select(t => t.Clone())
+                .ToList();
 
             // 3. Валидация (пока можно stub)
             //ResolveValidation(status);
 
             // 4. Фаза + ожидания
             ResolveExpectedKind(status);
+
+            _logger?.CollectionDiff("ResolveTokens", snapshot3, tokens,
+            (log, oldToken, newToken) =>
+            {
+                log.Warning(
+                    $"{oldToken.Text}: {oldToken.Status} -> {newToken.Status}");
+            });
 
             return status;
         }
@@ -58,29 +100,31 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             IReadOnlyList<AnalyzerToken> tokens,
             int caretPosition)
         {
-            _logger?.CollectionInfo("IReadOnlyList<AnalyzerToken> tokens", tokens, p => 
-            {
-                _logger?.ObjectInfo($"", p);
-            });
+            //_logger?.CollectionInfo("IReadOnlyList<AnalyzerToken> tokens", tokens, p => 
+            //{
+            //    _logger?.ObjectInfo($"", p);
+            //});
 
             foreach (var token in tokens)
             {
                 //_logger?.ObjectInfo("", token);
                 if (IsCaretInsideToken(caretPosition, token))
                 {
-                    token.Status = TokenStatus.Editing;
-                    token.IsComplete = false;
+                    token.IsActive = true;
+                    //token.Status = TokenStatus.Editing;
+                    //token.SemanticIndex = -1;
                     return;
                 }
 
-                token.Status = TokenStatus.Completed;
+                token.IsActive = false;
+                //token.Status = TokenStatus.Completed;
             }
             
             // Каретка после пробела → создаём виртуальный токен
             var last = tokens.LastOrDefault();
             if (last != null && caretPosition > last.End)
             {
-                last.IsComplete = true;
+                last.IsActive = true;
             }
         }
 
@@ -98,8 +142,11 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             {
                 ResolveToken(token, ctx, status);
                 
-                if (token.Status == TokenStatus.Editing)
+                if (token.IsActive)
+                {
+                    token.Status = TokenStatus.Editing;
                     break;
+                }
             }
         }
 

@@ -24,51 +24,90 @@
             </Setter>
         </Style>
     </UserControl.Resources>
+    <Grid>
+        <Grid Width="60" Background="#173763">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView
+                Grid.Row="0"
+                ItemsSource="{Binding SidebarItem}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                SelectedIndex="{Binding CurrentSideBarItemIndex, Mode=Default}"
+                SelectedValue="{Binding CurrentSidebarItem, Mode=Default}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Viewbox
+                            Width="25"
+                            Height="25"
+                            Margin="6"
+                            Stretch="UniformToFill">
+                            <Path Data="{Binding Icon.Path.Data}" Fill="#FF1368" />
+                        </Viewbox>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <DockPanel Grid.Row="1" Dock="Bottom">
+                <materialDesigh:PopupBox
+                    Height="60"
+                    IsPopupOpen="False"
+                    PlacementMode="TopAndAlignRightEdges"
+                    StaysOpen="True">
+                    <materialDesigh:PopupBox.ToggleContent>
+                        <materialDesigh:PackIcon
+                            Width="25"
+                            Height="25"
+                            Margin="16,0"
+                            Foreground="#FF1368"
+                            Kind="Settings" />
+                    </materialDesigh:PopupBox.ToggleContent>
+                    <StackPanel>
+                        <MenuItem Header="Themes" />
+                        <MenuItem Header="Icons" />
+                        <MenuItem Command="{Binding OpenSettingDialogCommand}" Header="Settings" />
+                    </StackPanel>
+                </materialDesigh:PopupBox>
+            </DockPanel>
+        </Grid>
 
-    <Grid Width="60" Background="#173763">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <ListView
+        <!--<Grid
             Grid.Row="0"
-            ItemsSource="{Binding SidebarItem}"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            SelectedIndex="{Binding CurrentSideBarItemIndex, Mode=Default}"
-            SelectedValue="{Binding CurrentSidebarItem, Mode=Default}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Viewbox
-                        Width="25"
-                        Height="25"
-                        Margin="6"
-                        Stretch="UniformToFill">
-                        <Path Data="{Binding Icon.Path.Data}" Fill="#FF1368" />
-                    </Viewbox>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <DockPanel Grid.Row="1" Dock="Bottom">
-            <materialDesigh:PopupBox
-                Height="60"
-                IsPopupOpen="False"
-                PlacementMode="TopAndAlignRightEdges"
-                StaysOpen="True">
-                <materialDesigh:PopupBox.ToggleContent>
-                    <materialDesigh:PackIcon
-                        Width="25"
-                        Height="25"
-                        Margin="16,0"
-                        Foreground="#FF1368"
-                        Kind="Settings" />
-                </materialDesigh:PopupBox.ToggleContent>
-                <StackPanel>
-                    <MenuItem Header="Themes" />
-                    <MenuItem Header="Icons" />
-                    <MenuItem Command="{Binding OpenSettingDialogCommand}" Header="Settings" />
-                </StackPanel>
-            </materialDesigh:PopupBox>
-        </DockPanel>
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Width="{Binding SidebarContentWidth, Mode=TwoWay}"
+            Background="#F3F2F2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <ContentControl
+                Grid.Row="0"
+                Height="25"
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="{Binding IconHideSidebar.Data}"
+                Foreground="Gray">
+                <ContentControl.Template>
+                    <DynamicResource ResourceKey="CustomButtonTemplate" />
+                </ContentControl.Template>
+                <ContentControl.Style>
+                    <DynamicResource ResourceKey="CustomButtonStyles" />
+                </ContentControl.Style>
+                <ContentControl.InputBindings>
+                    <MouseBinding Command="{Binding HideSidebarCommand}" Gesture="LeftClick" />
+                </ContentControl.InputBindings>
+                <ContentControl.ToolTip>
+                    <ToolTip Content="Collapse sidebar" />
+                </ContentControl.ToolTip>
+            </ContentControl>
+            <Border Grid.Row="1" Background="#FFF3F2F2">
+                <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
+            </Border>
+        </Grid>-->
+
     </Grid>
 </UserControl>

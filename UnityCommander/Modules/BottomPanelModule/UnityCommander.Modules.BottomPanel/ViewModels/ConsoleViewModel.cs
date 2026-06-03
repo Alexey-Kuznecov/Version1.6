@@ -39,7 +39,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IConsoleAutoComplete _autoComplete;
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
-        private bool _autoCompleteEnabled = false;
+        private bool _autoCompleteEnabled = true;
         private string _lastTokenValue;
         private InputToken _lastInputToken;
 
@@ -96,7 +96,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             ConsoleCommandDispatcher dispatcher,
             IServiceProvider services,
             ConsoleApplicationLifetime lifetime,
-            IEventAggregator ea, 
+            IEventAggregator ea,
             IConsoleCommandProvider consoleCommandProvider,
             IPluginProvider pluginProvider,
             ICompletionEngine completionEngine,
@@ -136,12 +136,22 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 Application.Current.Dispatcher.Invoke(() => AppendLine(text));
             });
 
+            ea.GetEvent<ConsoleClearEvent>().Subscribe(() =>
+            {
+                Application.Current.Dispatcher.Invoke(() => Clear());
+            });
+
             SendCommand = new DelegateCommand(SendInput);
 
             InputText = string.Empty;
             CaretIndex = 1;
             Task.Run(MainLoop);
             _pluginProvider = pluginProvider;
+        }
+
+        private void Clear()
+        {
+            _lines.Clear();
         }
 
         private void AppendLine(string text)
@@ -183,12 +193,15 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             var caret = Math.Max(0, CaretIndex);
             var inputStatus = _cliInputAnalyzer.Analyze(InputText, caret);
+
+            inputStatus.Logger = _logger;
+
             var parseState = _parseStateBuilder.Build(inputStatus);
             var state = new InputState(InputText, caret);
-            //if (parseState.IsEditingToken)
-            //    return;
+            if (parseState.IsEditingToken)
+                return;
             var result = _completionEngine.GetCompletions(state, parseState);
-            //var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
+            var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
 
             _completions.Clear();
 
@@ -200,8 +213,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             foreach (var item in result.Items)
                 _completions.Add(item);
             SelectedIndex = result.DefaultSelectedIndex;
-            //CaretIndex = CaretIndex < InputText.Length ? InputText.Length : CaretIndex;
-            //RaisePropertyChanged(nameof(CaretIndex));
+            CaretIndex = CaretIndex < InputText.Length ? InputText.Length : CaretIndex;
+            RaisePropertyChanged(nameof(CaretIndex));
         }
 
         private bool CanAccept() =>

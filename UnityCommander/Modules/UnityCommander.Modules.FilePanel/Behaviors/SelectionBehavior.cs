@@ -1,5 +1,6 @@
 ﻿
 using Prism.Ioc;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -52,13 +53,13 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
                 Service.Register(tabId, manager);
 
-                //manager.SelectionChanged += () =>
-                //{
-                //    Application.Current.Dispatcher.Invoke(() =>
-                //    {
-                //        SyncFromManager(list, manager);
-                //    });
-                //};
+                manager.SelectionChanged += () =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SyncFromManager(list, manager);
+                    });
+                };
             }
         }
 
@@ -92,45 +93,49 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
         private static void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //var list = (ListView)sender;
-            //var container = list.ContainerFromElement((DependencyObject)e.OriginalSource) as ListViewItem;
-            //if (container == null)
-            //    return;
+            var list = (ListView)sender;
+            var container = list.ContainerFromElement((DependencyObject)e.OriginalSource) as ListViewItem;
+            if (container == null)
+            {
+                GetManager(list).Clear();
+                list.SelectedItems.Clear();
+                return;
+            }
 
-            //int index = list.ItemContainerGenerator.IndexFromContainer(container);
-            //var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
-            //var manager = GetManager(list); // через AttachedProperty
-            //if (ctx == null || manager == null)
-            //    return;
+            int index = list.ItemContainerGenerator.IndexFromContainer(container);
+            var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
+            var manager = GetManager(list); // через AttachedProperty
+            if (ctx == null || manager == null)
+                return;
 
-            //if (list.SelectedItem is ISelectableItem select)
-            //{
-            //    manager.FocusedItem = select;
-            //}
+            if (list.SelectedItem is ISelectableItem select)
+            {
+                manager.FocusedItem = select;
+            }
 
-            //bool ctrl =
-            //    Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            bool ctrl =
+                Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
-            //bool shift =
-            //    Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
-            
-            //var action = new SelectionAction
-            //{
-            //    Type = SelectionActionType.CtrlClick,
-            //    TargetIndex = index
-            //};
+            bool shift =
+                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
 
-            //if (shift)
-            //    action.Type = SelectionActionType.ShiftClick;
-            //else if (ctrl)
-            //    action.Type = SelectionActionType.CtrlClick;
-            //else
-            //    action.Type = SelectionActionType.SingleClick;
+            var action = new SelectionAction
+            {
+                Type = SelectionActionType.CtrlClick,
+                TargetIndex = index
+            };
 
-            ////logger.Debug($" Action: {action.Type}");
+            if (shift)
+                action.Type = SelectionActionType.ShiftClick;
+            else if (ctrl)
+                action.Type = SelectionActionType.CtrlClick;
+            else
+                action.Type = SelectionActionType.SingleClick;
 
-            //e.Handled = true;
-            ////manager.Handle(ctx, action);
+            //logger.Debug($" Action: {action.Type}");
+
+            e.Handled = true;
+            manager.Handle(ctx, action);
         }
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)

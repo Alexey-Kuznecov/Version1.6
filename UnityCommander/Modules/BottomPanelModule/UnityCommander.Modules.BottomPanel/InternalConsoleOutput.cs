@@ -40,7 +40,7 @@ namespace UnityCommander.Modules.BottomPanel
 
         public void Clear()
         {
-            Console.Clear();
+            _ea.GetEvent<ConsoleClearEvent>().Publish();
         }
     }
 }

@@ -483,7 +483,26 @@ namespace UnityCommander.Core.DragDrop
 
         private static void DropTargetOnDragEnter(object sender, DragEventArgs e)
         {
-            DropTargetOnDragOver(sender, e, EventType.Bubbled);
+            var dragInfo = m_DragInfo;
+
+            var dropInfo =
+                new DropInfo(
+                    sender,
+                    e,
+                    dragInfo,
+                    EventType.Bubbled);
+
+            var dropHandler =
+                TryGetDropHandler(
+                    dropInfo,
+                    sender as UIElement);
+
+            dropHandler?.DragEnter(dropInfo);
+
+            DropTargetOnDragOver(
+                sender,
+                e,
+                EventType.Bubbled);
         }
 
         private static void DropTargetOnPreviewDragEnter(object sender, DragEventArgs e)
@@ -491,8 +510,24 @@ namespace UnityCommander.Core.DragDrop
             DropTargetOnDragOver(sender, e, EventType.Tunneled);
         }
 
-        private static void DropTargetOnDragLeave(object sender, DragEventArgs e)
+        private static void DropTargetOnDragLeave( object sender, DragEventArgs e)
         {
+            var dragInfo = m_DragInfo;
+
+            var dropInfo =
+                new DropInfo(
+                    sender,
+                    e,
+                    dragInfo,
+                    EventType.Bubbled);
+
+            var dropHandler =
+                TryGetDropHandler(
+                    dropInfo,
+                    sender as UIElement);
+
+            dropHandler?.DragLeave(dropInfo);
+
             DragAdorner = null;
             EffectAdorner = null;
             DropTargetAdorner = null;

@@ -1,15 +1,17 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using UnityCommander.Commands.UtilProcess;
-using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Integration;
-using System.Diagnostics;
-using UnityCommander.Native;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Integration;
+using UnityCommander.Commands.Parsing;
+using UnityCommander.Commands.Services;
+using UnityCommander.Commands.UtilProcess;
+using UnityCommander.Native;
 
 
 namespace UnityCommander.Commands
@@ -18,73 +20,35 @@ namespace UnityCommander.Commands
     public class ProcessOpenFilesCommand : IConsoleCommand
     {
         private IConsoleOutput _output;
+
         public string Name => "proc-openfiles";
 
         public string Description => "Выводит список открытых файлов указанного процесса по имени.";
         public IEnumerable<string> Aliases => ["procof"];
 
-        public async Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken)
+        private IProcessOpenFilesService _service;
+        private ICommandArgumentParser _parser;
+
+        public ProcessOpenFilesCommand(
+            IProcessOpenFilesService service,
+            ICommandArgumentParser parser)
         {
-            var args = context.Arguments;
-            _output = context.Output;
-
-            if (args.Length < 2 || args[0] != "--name")
-            {
-                _output.WriteLine("Использование: proc-openfiles --name <имя_процесса>");
-                return;
-            }
-
-            string processName = args[1];
-
-            try
-            {
-                _output.Clear();
-                // Ожидание с отменой задачи
-                await ProcessMonitorTest.StartAsync(processName, _output, cancellationToken);
-            }
-            catch (TaskCanceledException)
-            {
-                // Задача была отменена, корректно завершаем выполнение
-                _output.Clear();
-                _output.WriteLine("Операция завешена.");
-            }
+            _service = service;
+            _parser = parser;
         }
 
-        public void ProcessTest(string processName, CancellationToken cancellationToken)
+        public Task ExecuteAsync(
+            IConsoleCommandContext context,
+            CancellationToken cancellationToken)
         {
-            var process = Process.GetProcessesByName(processName).FirstOrDefault();
+            var args =
+                _parser.Parse(
+                    context.Arguments);
 
-            if (process == null)
-            {
-                _output.WriteLine($"Процесс с именем '{processName}' не найден.");
-                return;
-            }
-
-            _output.WriteLine($"Открытые файлы процесса: {processName} (PID: {process.Id})");
-            List<FileSystemInfo> infos = new();
-
-            try
-            {
-                using var enumerator = ProcessUtility.GetOpenFilesEnumerator(process.Id);
-                while (enumerator.MoveNext())
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
-
-                    infos.Add(enumerator.Current);
-                }
-            }
-            catch (Exception ex)
-            {
-                _output.WriteLine($"Ошибка при получении открытых файлов: {ex.Message}");
-                return;
-            }
-
-            var sorted = infos.OrderBy(f => f.FullName, StringComparer.OrdinalIgnoreCase);
-            foreach (var file in sorted)
-            {
-                _output.WriteLine(file.FullName);
-            }
+            return _service.RunAsync(
+                context.Output,
+                args,
+                cancellationToken);
         }
 
         public Task FinalizeAsync()

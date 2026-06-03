@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Controllers;
+using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services.Interfaces;
 
@@ -17,17 +19,20 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly ContextMenuController _menu;
         private readonly ISelectionManager _selection;
         private readonly ICommandUIService _commands;
+        private readonly IDropTarget _dropTarget;
 
         public NodeContextFactory(
             NavigationManager navigation,
             ContextMenuController menu,
             ISelectionManager selection,
-            ICommandUIService commands)
+            ICommandUIService commands,
+            GongDropAdapter dropTarget)
         {
             _navigation = navigation;
             _menu = menu;
             _selection = selection;
             _commands = commands;
+            _dropTarget = dropTarget;
         }
 
         public FolderNodeContext CreateFolderNode()
@@ -52,7 +57,9 @@ namespace UnityCommander.Modules.FilePanel.Services
                 ShowContextMenuCommand = new DelegateCommand<object>(x =>
                 {
                     _menu.Show(ctx, x);
-                })
+                }),
+
+                DropTarget = _dropTarget
             };
 
             return ctx;
@@ -69,7 +76,9 @@ namespace UnityCommander.Modules.FilePanel.Services
                 ShowContextMenuCommand = new DelegateCommand<object>(x =>
                 {
                     _menu.Show(ctx, x);
-                })
+                }),
+
+                DropTarget = _dropTarget
             };
 
             return ctx;

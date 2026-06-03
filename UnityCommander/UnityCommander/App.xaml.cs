@@ -11,19 +11,28 @@ using Prism.Modularity;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.AI.ImageSearch;
 using UnityCommander.Autocomplete.Context.Descriptors;
 using UnityCommander.Autocomplete.Infrastructure.Analyze;
+using UnityCommander.Bootstrap;
+using UnityCommander.CLI.Bootstrap;
 using UnityCommander.Commands;
+using UnityCommander.Commands.Parsing;
+using UnityCommander.Commands.Performance;
+using UnityCommander.Commands.Rendering;
+using UnityCommander.Commands.Services;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Layout;
 using UnityCommander.Common.Selection;
+using UnityCommander.Common.Styling;
 using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Core.Theming;
 using UnityCommander.Integration.Plugins;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Abstractions;
@@ -68,11 +77,19 @@ namespace UnityCommander
     {
         protected override Window CreateShell()
         {
-            foreach (var dictionary in SharedDictionaryManager.SharedDictionary)
+            var catalog = new ThemeCatalog();
+
+            ThemeManager.Initialize(catalog, "Material");
+
+            var resources =
+                ThemeManager.GetResourceUris()
+                    .Concat(ModuleResources.ResourceUris);
+
+            foreach (var dictionary in SharedDictionaryManager.Load(resources))
             {
-                this.Resources.MergedDictionaries.Add(dictionary);
+                Resources.MergedDictionaries.Add(dictionary);
             }
-            
+
             return this.Container.Resolve<MainWindow>();
         }
 
@@ -132,10 +149,10 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<ITabRegistry, TabRegistry>();
             containerRegistry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
             containerRegistry.RegisterSingleton<ITabContextAccessor, TabContextAccessor>();
+
             containerRegistry.RegisterSingleton<IDockingService, DockingService>();
             containerRegistry.RegisterSingleton<IDockingSyncService, DockingSyncService>();
             containerRegistry.RegisterSingleton<DockingSyncContext>();
-            containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
             containerRegistry.RegisterSingleton<LogHub>();
 
@@ -348,15 +365,35 @@ namespace UnityCommander
             containerRegistry.RegisterSingleton<IPluginProvider, PluginProvider>();
 
             // Команды
-            containerRegistry.Register<IConsoleCommandBase, EchoCommand>();
-            containerRegistry.Register<IConsoleCommandBase, SysStatCommand>();
-            containerRegistry.Register<IConsoleCommandBase, TestCommand>();
-            containerRegistry.Register<IConsoleCommandBase, ProcessControlCommand>();
-            containerRegistry.Register<IConsoleCommandBase, SelectFilesCommand>();
-            containerRegistry.Register<IConsoleCommandBase, FindSimilarCommand>();
-            containerRegistry.Register<IConsoleCommandBase, FileUnlockCommand>();
-            containerRegistry.Register<IConsoleCommandBase, TestFlashCommand>();
-            containerRegistry.Register<IConsoleCommandBase, PluginConsoleCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, EchoCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, SysStatCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, TestCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, ProcessControlCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, SelectFilesCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, FindSimilarCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, FileUnlockCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, TestFlashCommand>();
+            //containerRegistry.Register<IConsoleCommandBase, PluginConsoleCommand>();
+
+            containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
+            containerRegistry.RegisterSingleton<ISysStatService, SysStatService>();
+            containerRegistry.RegisterSingleton<IProcessOpenFilesService, ProcessOpenFilesService>();
+            containerRegistry.RegisterSingleton<ICommandArgumentParser, CommandArgumentParser>();
+            containerRegistry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
+            containerRegistry.RegisterSingleton<
+             IConsoleRenderer<SystemStats>,
+             SystemStatsRenderer>();
+
+            var commands =
+                ConsoleCommandDiscovery.Discover(
+                    typeof(EchoCommand).Assembly);
+
+            foreach (var type in commands)
+            {
+                containerRegistry.Register(
+                    typeof(IConsoleCommandBase),
+                    type);
+            }
 
             // Навигационный контекст, нужен один на всё приложение
             containerRegistry.RegisterSingleton<NavigationContextDirectory>();

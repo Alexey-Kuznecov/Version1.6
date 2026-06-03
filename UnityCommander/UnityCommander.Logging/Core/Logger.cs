@@ -68,12 +68,14 @@ namespace UnityCommander.Logging.Core
         public void Debug(string m) => LogInternal(LogLevel.Debug, m);
         public void Warning(string m) => LogInternal(LogLevel.Warning, m);
         public void Trace(string m) => LogInternal(LogLevel.Trace, m);
+        
         public void ObjectInfo(string message, object obj, Func<bool>? condition = null) 
             => LogInternal(
                 LogLevel.Debug, 
                 message, 
                 payload: obj,
                 condition: condition);
+        
         public void CollectionInfo(string message, IEnumerable collection, Func<bool>? condition = null)
              => LogInternal(
                  LogLevel.Debug, 

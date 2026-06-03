@@ -5,6 +5,8 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
     {
         None,
         Editing,    // активный токен
+        Valid,
+        Invalid,
         Completed
     }
 }

@@ -91,6 +91,13 @@ namespace UnityCommander.Modules.FilePanel.Services
 
                     case TabOperationType.Remove:
                         _panelRegistry.RemoveTab(op.TabId);
+
+                        if (op.FromPanelId is Guid panelId)
+                        {
+                            if (_panelRegistry.IsEmpty(panelId))
+                                _panelRegistry.RemovePanel(panelId);
+                        }
+
                         break;
 
                     case TabOperationType.Move:

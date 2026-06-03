@@ -3,7 +3,7 @@ namespace UnityCommander.Common.Module
 {
     using System;
 
-    public interface ITabPanelContent : IDisposable
+    public interface ITabPanelContent : IViewAttachAware, IDisposable
     {
         event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;

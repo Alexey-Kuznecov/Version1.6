@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
+using UnityCommander.Core;
+using UnityCommander.Core.Performance;
 
 namespace UnityCommander.Modules.FilePanel.Selectors
 {
@@ -10,21 +12,21 @@ namespace UnityCommander.Modules.FilePanel.Selectors
     {
         public DataTemplate DirectoryTreeTemplate { get; set; }
 
-        public DataTemplate DirectoryTableTemplate =>
-            (DataTemplate)Application.Current.TryFindResource("DirectoryContentViewDataTemplate");
+        public DataTemplate DirectoryTableTemplate
+            => ResourceManager.Get<DataTemplate>("DirectoryContentViewDataTemplate");
 
         public DataTemplate DirectoryTilesTemplate { get; set; }
 
-        public DataTemplate FileTableTemplate =>
-            (DataTemplate)Application.Current.TryFindResource("FileContentViewDataTemplate");
+        public DataTemplate FileTableTemplate 
+            => ResourceManager.Get<DataTemplate>("FileContentViewDataTemplate");
 
         public DataTemplate FileThumbnailTemplate { get; set; }
 
-        public DataTemplate HeaderTemplate =>
-          (DataTemplate)Application.Current.TryFindResource("HeaderContentDataTemplate");
+        public DataTemplate HeaderTemplate
+            => ResourceManager.Get<DataTemplate>("HeaderContentDataTemplate");
 
-        public DataTemplate DashboardTemplate =>
-            (DataTemplate) Application.Current.TryFindResource("DashboardContentViewDataTemplate");
+        public DataTemplate DashboardTemplate
+             => ResourceManager.Get<DataTemplate>("DriveContentViewDataTemplate");
 
         public override DataTemplate SelectTemplate(
             object item,

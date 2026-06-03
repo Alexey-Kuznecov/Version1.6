@@ -12,13 +12,11 @@ using System.Linq;
 namespace UnityCommander.ViewModels
 {
     using AlexeyKuznecov.Library.Mvvm.Base;
-    using CefSharp.DevTools.CSS;
     using MaterialDesignThemes.Wpf;
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
-    using System;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
@@ -139,15 +137,24 @@ namespace UnityCommander.ViewModels
             _ribbonManager = ribbonManager;
             this.StateCommand = command;
             this.globalCommandManager = globalCommand.GetCommandManager();
-            this.StateCommand.SaveCommand.RegisterCommand(this.CloseWindowCommand);
+            
+            this.StateCommand
+                .SaveCommand
+                .RegisterCommand(this.CloseWindowCommand);
 
             exchange.GetEvent<MessageSendEvent>().Subscribe(this.SetSidebarViewModel);
 
             var settings = settingsProviderService.GetAppConfig();
-            this.SidebarContentWidth = settings.SidebarDisplayContent ? 250 : 0;
+            
+            this.SidebarContentWidth 
+                = settings.SidebarDisplayContent ? 250 : 0;
+           
             this.IsRibbonExpanded = false;
-            this.IconHideSidebar = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+            this.IconHideSidebar 
+                = iconProviderService.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+            
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
+            
             _ribbonManager.TabCollapsed += RibbonManager_TabCollapsed;
             _ribbonManager.TabExpanded += RibbonManager_TabExpanded;
         }

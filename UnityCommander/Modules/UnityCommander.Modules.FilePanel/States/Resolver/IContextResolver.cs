@@ -2,7 +2,7 @@
 
 namespace UnityCommander.Modules.FilePanel.States.Resolver
 {
-    public interface IContextResolver
+    public interface IContextMenuResolver
     {
         bool CanResolve(object context);
 

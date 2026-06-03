@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="UcMenuItemStyle" TargetType="MenuItem" />
+    
+    <Style x:Key="UcConextMenuStyle" TargetType="{x:Type ContextMenu}">
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+    
+</ResourceDictionary>

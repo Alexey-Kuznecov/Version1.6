@@ -66,5 +66,15 @@ namespace UnityCommander.Modules.Viewer.ViewModels
         {
             throw new NotImplementedException();
         }
+
+        public void OnViewAttached(object view)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnViewDetached()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -13,7 +13,6 @@ using Prism.Commands;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,7 +21,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
@@ -30,7 +28,6 @@ using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Module;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
-using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
@@ -41,6 +38,7 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
+using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
@@ -54,7 +52,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
     /// Реализует обработку навигации, команд, drag & drop и интеграцию плагинных колонок.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
+    public class SplitPanelViewModel : RegionViewModelBase, IDirectoryPanel
     {
         #region Поля и зависимости
 
@@ -83,6 +81,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IColumnStateManager columnStateManager;
         private readonly ColumnRegistry columnRegistry;
         private readonly ISettingsStore settings;
+        private readonly GongDropAdapter _dropTarget;
         private readonly TabState _state;
         public event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;
@@ -139,7 +138,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               LoggerCreator loggerCreator,
               CommandService commandService, 
               ICommandUIService commandUIService,
-              ContextMenuController contextMenuController)
+              ContextMenuController contextMenuController,
+              GongDropAdapter dropTarget)
             : base(regionManager)
         {
             _state = new TabState();
@@ -188,7 +188,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 _navigationService, 
                 _contextMenuController, 
                 _selectionManager, 
-                _commandUIService);
+                _commandUIService,
+                dropTarget);
 
             var contentFactory = new ContentNodeFactory(contextFactory);
 
@@ -298,116 +299,118 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Обработка Drag-and-Drop
 
-        /// <summary>
-        /// Обрабатывает событие DragOver, устанавливая визуальные эффекты для корректного отображения adorner.
-        /// </summary>
-        /// <param name="dropInfo">Информация о событии перетаскивания.</param>
-        void IDropTarget.DragOver(IDropInfo dropInfo)
-        {
-            // Проверяем, есть ли реально выбранные элементы
-            bool hasElements = false;
+        ///// <summary>
+        ///// Обрабатывает событие DragOver, устанавливая визуальные эффекты для корректного отображения adorner.
+        ///// </summary>
+        ///// <param name="dropInfo">Информация о событии перетаскивания.</param>
+        //void IDropTarget.DragOver(IDropInfo dropInfo)
+        //{
+        //    // Проверяем, есть ли реально выбранные элементы
+        //    bool hasElements = false;
 
-            if (dropInfo.Data is BaseDirectory)
-                hasElements = true;
-            else if (dropInfo.Data is IList list && list.Count > 0)
-                hasElements = true;
+        //    if (dropInfo.Data is BaseDirectory)
+        //        hasElements = true;
+        //    else if (dropInfo.Data is IList list && list.Count > 0)
+        //        hasElements = true;
 
-            // Если драг начат с пустого места (нет элементов) — блокируем драг
-            if (!hasElements)
-            {
-                dropInfo.Effects = DragDropEffects.None;
-                dropInfo.DropTargetAdorner = null;
-                return;
-            }
+        //    // Если драг начат с пустого места (нет элементов) — блокируем драг
+        //    if (!hasElements)
+        //    {
+        //        dropInfo.Effects = DragDropEffects.None;
+        //        dropInfo.DropTargetAdorner = null;
+        //        return;
+        //    }
 
-            // Если драг идёт по элементу — разрешаем
-            bool isMultiSelect = dropInfo.Data is List<object> && dropInfo.TargetItem is ListBox or BaseDirectory;
-            bool isSingleSelect = dropInfo.Data is BaseDirectory && dropInfo.TargetItem is ListBox or BaseDirectory;
+        //    // Если драг идёт по элементу — разрешаем
+        //    bool isMultiSelect = dropInfo.Data is List<object> && dropInfo.TargetItem is ListBox or BaseDirectory;
+        //    bool isSingleSelect = dropInfo.Data is BaseDirectory && dropInfo.TargetItem is ListBox or BaseDirectory;
 
-            var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
-            if (adorner == null)
-                this.CreateAdornerLayer(dropInfo.VisualTarget);
+        //    var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
+        //    if (adorner == null)
+        //        this.CreateAdornerLayer(dropInfo.VisualTarget);
 
-            if (isMultiSelect || isSingleSelect)
-                dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+        //    if (isMultiSelect || isSingleSelect)
+        //        dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
 
-            dropInfo.Effects = DragDropEffects.Copy;
-        }
+        //    dropInfo.Effects = DragDropEffects.Copy;
+        //}
 
-        /// <summary>
-        /// Обрабатывает событие Drop, инициируя диалог копирования и передачу параметров.
-        /// </summary>
-        /// <param name="dropInfo">Информация о событии Drop.</param>
-        void IDropTarget.Drop(IDropInfo dropInfo)
-        {
-            var visualTarget = dropInfo.VisualTarget as ListBox;
-            var splitPanelViewModel = visualTarget?.DataContext as SplitPanelViewModel;
+        ///// <summary>
+        ///// Обрабатывает событие Drop, инициируя диалог копирования и передачу параметров.
+        ///// </summary>
+        ///// <param name="dropInfo">Информация о событии Drop.</param>
+        //void IDropTarget.Drop(IDropInfo dropInfo)
+        //{
+        //    var visualTarget = dropInfo.VisualTarget as ListBox;
+        //    var splitPanelViewModel = visualTarget?.DataContext as SplitPanelViewModel;
 
-            string targetPath = null;
-            var targetItem = dropInfo.TargetItem as BaseDirectory;
+        //    string targetPath = null;
+        //    var targetItem = dropInfo.TargetItem as BaseDirectory;
 
-            // Определяем путь назначения
-            if (targetItem == null)
-            {
-                var firstItem = visualTarget?.SelectedItem as BaseDirectory;
-                if (firstItem != null)
-                {
-                    var pathParts = firstItem.Path.Split('\\');
-                    targetPath = System.IO.Path.Combine(pathParts.Take(pathParts.Length - 1).ToArray());
-                }
-                else
-                {
-                    targetPath = _state.CurrentPath;
-                }
-            }
-            else
-            {
-                targetPath = targetItem.Path;
-            }
+        //    // Определяем путь назначения
+        //    if (targetItem == null)
+        //    {
+        //        var firstItem = visualTarget?.SelectedItem as BaseDirectory;
+        //        if (firstItem != null)
+        //        {
+        //            var pathParts = firstItem.Path.Split('\\');
+        //            targetPath = System.IO.Path.Combine(pathParts.Take(pathParts.Length - 1).ToArray());
+        //        }
+        //        else
+        //        {
+        //            targetPath = _state.CurrentPath;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        targetPath = targetItem.Path;
+        //    }
 
-            // Собираем список исходных элементов
-            List<string> sourcePaths = new();
-            if (dropInfo.Data is BaseDirectory single)
-            {
-                sourcePaths.Add(single.Path);
-            }
-            else if (dropInfo.Data is IList list)
-            {
-                foreach (var item in list)
-                {
-                    if (item is BaseDirectory dir)
-                        sourcePaths.Add(dir.Path);
-                }
-            }
+        //    // Собираем список исходных элементов
+        //    List<string> sourcePaths = new();
+        //    if (dropInfo.Data is BaseDirectory single)
+        //    {
+        //        sourcePaths.Add(single.Path);
+        //    }
+        //    else if (dropInfo.Data is IList list)
+        //    {
+        //        foreach (var item in list)
+        //        {
+        //            if (item is BaseDirectory dir)
+        //                sourcePaths.Add(dir.Path);
+        //        }
+        //    }
 
-            // Отправляем **в одно окно** все исходные пути
-            this.dialogService.ShowDialog("CopyDialog",
-                new OverrideDialogParameters(new CopyParameters
-                {
-                    ManySource = sourcePaths,
-                    Target = targetPath
-                }), r => { });
-        }
+        //    // Отправляем **в одно окно** все исходные пути
+        //    this.dialogService.ShowDialog("CopyDialog",
+        //        new OverrideDialogParameters(new CopyParameters
+        //        {
+        //            ManySource = sourcePaths,
+        //            Target = targetPath
+        //        }), r => { });
+        //}
 
-        /// <summary>
-        /// Создаёт слой adorner для указанного элемента, если он отсутствует.
-        /// </summary>
-        /// <param name="element">UI-элемент, для которого создаётся adorner.</param>
-        private void CreateAdornerLayer(UIElement element)
-        {
-            if (element is ListBox listBox && listBox.Parent is Grid parent)
-            {
-                parent.Children.Remove(listBox);
-                var decorator = new AdornerDecorator { Child = listBox };
-                parent.Children.Add(decorator);
-            }
-        }
+        ///// <summary>
+        ///// Создаёт слой adorner для указанного элемента, если он отсутствует.
+        ///// </summary>
+        ///// <param name="element">UI-элемент, для которого создаётся adorner.</param>
+        //private void CreateAdornerLayer(UIElement element)
+        //{
+        //    if (element is ListBox listBox && listBox.Parent is Grid parent)
+        //    {
+        //        parent.Children.Remove(listBox);
+        //        var decorator = new AdornerDecorator { Child = listBox };
+        //        parent.Children.Add(decorator);
+        //    }
+        //}
 
         #endregion
 
+       
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
-            _state.CurrentPath = path;
+            SetInternalCurrentPath(path);
+
             if (token == Guid.Empty)
                 token = Guid.NewGuid();
 
@@ -563,7 +566,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private void OnPathChanged(string path)
         {
-            _state.CurrentPath = path;
+            SetInternalCurrentPath(path);
+
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             var token = _cts.Token;
@@ -605,7 +609,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
                 Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    await RefreshPanelAsync(_state.CurrentPath, _cts.Token);
+                    await RefreshPanelAsync(_state.CurrentPath, CancellationToken.None);
                 });
             });
         }
@@ -622,6 +626,24 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             //columnSync.ColumnChanged -= OnColumnChanged;
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
             base.Destroy();
+        }
+
+        private void SetInternalCurrentPath(string path)
+        {
+            _state.CurrentPath = path;
+            _fileNodeContext.Current = _state.CurrentPath;
+            _folderNodeContext.Current = _state.CurrentPath;
+        }
+
+        public void OnViewAttached(object view)
+        {
+            _navigationService.CurrentChanged -= OnPathChanged;
+            _navigationService.CurrentChanged += OnPathChanged;
+        }
+
+        public void OnViewDetached()
+        {
+            _navigationService.CurrentChanged -= OnPathChanged;
         }
 
         ~SplitPanelViewModel()

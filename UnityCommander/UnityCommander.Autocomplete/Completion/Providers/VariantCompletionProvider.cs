@@ -11,6 +11,7 @@ namespace UnityCommander.Autocomplete.Completion.Providers
 
         public IEnumerable<CompletionItem> GetCompletions(CliParseState ctx)
         {
+            
             // фильтруем команды по тому, что уже введено
             var partial = ctx.PartialValue ?? "";
             var command = ctx.Command ?? throw new ArgumentNullException();

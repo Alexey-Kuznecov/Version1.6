@@ -31,8 +31,12 @@ namespace UnityCommander.Services.Interfaces
 
         void RemoveTab(Guid tabId);
 
+        void RemovePanel(Guid panelId);
+        
         bool SetActiveTab(Guid panelId, Guid tabId);
 
         void EnsurePanel(Guid panelId);
+        
+        bool IsEmpty(Guid panelId);
     }
 }

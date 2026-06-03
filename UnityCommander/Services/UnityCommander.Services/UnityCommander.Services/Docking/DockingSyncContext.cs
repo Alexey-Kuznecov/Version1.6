@@ -1,8 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Services.Docking
@@ -11,6 +9,7 @@ namespace UnityCommander.Services.Docking
     {
         private readonly Dictionary<LayoutDocument, Guid> _tabs = new();
         private readonly Dictionary<LayoutDocumentPane, Guid> _panes = new();
+        private readonly Dictionary<LayoutDocumentFloatingWindow, Guid> _floating = new();
 
         public void Register(LayoutDocument doc, Guid id)
         {
@@ -22,14 +21,49 @@ namespace UnityCommander.Services.Docking
             _panes[pane] = id;
         }
 
+        public void Register(LayoutDocumentFloatingWindow window, Guid id)
+        {
+            _floating[window] = id;
+        }
+
         public Guid GetTabId(LayoutDocument doc) => _tabs[doc];
-        
-        public Guid GetPaneId(LayoutDocumentPane pane)
+      
+        public Guid GetOrCreatePaneId(LayoutDocumentPane pane)
         {
             if (_panes.TryGetValue(pane, out var id))
-                return id; // без create вообще
+                return id;
 
-            throw new InvalidOperationException();
+            id = Guid.NewGuid();
+            _panes[pane] = id;
+
+            return id;
+        }
+
+        public Guid EnsurePaneForFloatingWindow(LayoutDocumentFloatingWindow window)
+        {
+            if (_floating.TryGetValue(window, out var id))
+                return id;
+
+            id = Guid.NewGuid();
+            _floating[window] = id;
+
+            return id;
+        }
+
+        public Guid GetOrCreateWindowId(LayoutDocumentFloatingWindow window)
+        {
+            if (!_floating.TryGetValue(window, out var id))
+            {
+                if (!Guid.TryParse(window.RootDocument.ContentId, out id))
+                {
+                    id = Guid.NewGuid();
+                    window.RootDocument.ContentId = id.ToString(); // 💥 ВАЖНО
+                }
+
+                _floating[window] = id;
+            }
+
+            return id;
         }
 
         public Guid GetOrCreateTabId(LayoutDocument doc)
@@ -46,6 +80,14 @@ namespace UnityCommander.Services.Docking
             }
 
             return id;
+        }
+
+        public void Remove(LayoutDocumentPane pane)
+        {
+            if (!_panes.TryGetValue(pane, out var id))
+             return;
+
+            _panes.Remove(pane); 
         }
     }
 }

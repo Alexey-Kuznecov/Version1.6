@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
@@ -20,6 +22,10 @@ namespace UnityCommander.Core.DragDrop
             this.IsHitTestVisible = false;
             this.AllowDrop = false;
             this.SnapsToDevicePixels = true;
+
+            Debug.WriteLine(dropInfo.VisualTarget?.GetType());
+            Debug.WriteLine(dropInfo.VisualTargetItem?.GetType());
+            Debug.WriteLine(dropInfo.TargetItem?.GetType());
             this.m_AdornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             this.m_AdornerLayer.Add(this);
         }
@@ -46,5 +52,15 @@ namespace UnityCommander.Core.DragDrop
         }
 
         private readonly AdornerLayer m_AdornerLayer;
+
+        private void CreateAdornerLayer(UIElement element)
+        {
+            if (element is ListBox listBox && listBox.Parent is Grid parent)
+            {
+                parent.Children.Remove(listBox);
+                var decorator = new AdornerDecorator { Child = listBox };
+                parent.Children.Add(decorator);
+            }
+        }
     }
 }

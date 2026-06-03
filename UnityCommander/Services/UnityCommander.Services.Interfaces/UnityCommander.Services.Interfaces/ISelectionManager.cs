@@ -11,6 +11,9 @@ namespace UnityCommander.Services.Interfaces
         public ISelectableItem FocusedItem { get; set; }
 
         IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
+        
         void Handle(ISelectionContext ctx, SelectionAction action);
+        
+        void Clear();
     }
 }

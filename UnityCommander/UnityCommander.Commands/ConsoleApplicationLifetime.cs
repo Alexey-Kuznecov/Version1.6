@@ -3,32 +3,32 @@ using System;
 
 namespace UnityCommander.Commands
 {
-    [Obsolete]
-    public class ConsoleApplicationLifetime
-    {
-        private bool _isRunning = true;
+    //[Obsolete]
+    //public class ConsoleApplicationLifetime
+    //{
+    //    private bool _isRunning = true;
 
-        public bool IsRunning => _isRunning;
+    //    public bool IsRunning => _isRunning;
 
-        // События
-        public event Action? ApplicationStopping;
-        public event Action? ApplicationStopped;
+    //    // События
+    //    public event Action? ApplicationStopping;
+    //    public event Action? ApplicationStopped;
 
-        public void Stop()
-        {
-            if (!_isRunning)
-                return;
+    //    public void Stop()
+    //    {
+    //        if (!_isRunning)
+    //            return;
 
-            _isRunning = false;
+    //        _isRunning = false;
 
-            // Сначала уведомляем, что приложение будет останавливаться
-            ApplicationStopping?.Invoke();
-        }
+    //        // Сначала уведомляем, что приложение будет останавливаться
+    //        ApplicationStopping?.Invoke();
+    //    }
 
-        // Можно вызвать отдельно в конце работы программы
-        public void NotifyStopped()
-        {
-            ApplicationStopped?.Invoke();
-        }
-    }
+    //    // Можно вызвать отдельно в конце работы программы
+    //    public void NotifyStopped()
+    //    {
+    //        ApplicationStopped?.Invoke();
+    //    }
+    //}
 }

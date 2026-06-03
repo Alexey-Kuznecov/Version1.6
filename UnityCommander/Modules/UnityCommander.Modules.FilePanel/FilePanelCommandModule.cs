@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityCommander.Common.Commands;
 using UnityCommander.Core.Commands;
+using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services;
 
 namespace UnityCommander.Modules.FilePanel
@@ -43,7 +44,7 @@ namespace UnityCommander.Modules.FilePanel
 
             commandService.RegisterUndoable(
                 CommandFactory.Create(CommandNames.File.Delete, ExecuteDeleteAsync,
-                contextTypes: typeof(FilePanelContext)));
+                contextTypes: typeof(FilePanelContextMenu)));
         }
 
         private Task<UndoToken> ExecuteDeleteAsync(CommandContext ctx)

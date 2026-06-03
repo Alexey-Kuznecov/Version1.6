@@ -10,6 +10,7 @@ namespace UnityCommander.Common.Docking
         public Guid TabId { get; init; }
 
         public Guid? FromPanelId { get; init; }
+
         public Guid? ToPanelId { get; init; }
 
         public string? Path { get; init; } // если нужно при создании
