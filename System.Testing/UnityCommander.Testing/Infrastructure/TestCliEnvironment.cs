@@ -1,6 +1,7 @@
 ﻿
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Infrastructure;
+using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Testing.Fake;
 
 namespace UnityCommander.Testing.Infrastructure
@@ -22,9 +23,9 @@ namespace UnityCommander.Testing.Infrastructure
                 new CommandCatalog(commands));
 
             // Анализатор
-            catalog.RegisterSingleton<ICliInputAnalyzer>(c =>
-                    new DefaultCliInputAnalyzer(
-                    c.Resolve<ICommandCatalog>()));
+            //catalog.RegisterSingleton<ICliInputAnalyzer>(c =>
+            //        new DefaultCliInputAnalyzer(
+            //        c.Resolve<ICommandCatalog>()));
              return catalog;
         }
     }

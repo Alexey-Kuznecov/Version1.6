@@ -1,5 +1,9 @@
-﻿using Prism.Commands;
+﻿
+using Prism.Commands;
 using Prism.Mvvm;
+using System;
+using System.Text.RegularExpressions;
+using UnityCommander.Common.State;
 using UnityCommander.Services;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
@@ -17,7 +21,21 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         public BottomPanelViewModel(LoggingSinkService loggingService)
         {
             _loggingService = loggingService;
-            Message = "View A from your Prism Module";
+            
+            SaveStateCommand =
+                 new DelegateCommand<AppSessionState>(Capture);
+        }
+
+        public DelegateCommand<AppSessionState> SaveStateCommand { get; }
+
+        internal void Capture(AppSessionState state)
+        {
+        }
+
+        internal void Restore(AppSessionState state)
+        {
+            //throw new NotImplementedException();
         }
     }
 }
+ 

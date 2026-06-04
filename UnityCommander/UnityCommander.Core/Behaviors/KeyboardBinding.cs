@@ -74,11 +74,11 @@ namespace UnityCommander.Core.Behaviors
             Grid grid = d as Grid;
             InputGesture inputGesture = new KeyGesture(Key.R, ModifierKeys.Control);
             KeyBinding binding = new KeyBinding();
-            InputBinding input = new InputBinding(new DelegateCommand(Command1), inputGesture);
+            InputBinding input = new InputBinding(new DelegateCommand(Command), inputGesture);
             grid?.InputBindings.Add(input);
         }
 
-        public static void Command1()
+        public static void Command()
         {
         }
     }

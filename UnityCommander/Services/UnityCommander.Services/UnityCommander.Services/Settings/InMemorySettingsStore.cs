@@ -4,7 +4,7 @@ using UnityCommander.Services.Interfaces.Settings;
 
 namespace UnityCommander.Services.Settings
 {
-    public class InMemorySettingsStore : ISettingsStore
+    public class InMemoryColumnSettingsStore : IColumnSettingsStore
     {
         private readonly Dictionary<string, double> columnWidths = new();
         private readonly Dictionary<string, List<string>> columnOrders = new();

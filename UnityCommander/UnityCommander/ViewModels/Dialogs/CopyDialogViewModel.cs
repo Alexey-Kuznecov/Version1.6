@@ -10,11 +10,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UnityCommander.Common.Commands;
 using UnityCommander.Core;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Operation;
-using UnityCommander.Services.Interfaces;
 using UnityCommander.Views.CopyDialogs;
 using UnityCommander.Views.Dialogs;
 
@@ -29,7 +27,6 @@ namespace UnityCommander.ViewModels.Dialogs
         #region Declaration Fields
 
         private readonly IDirectoryChangeNotifier notifier;
-        private readonly IGlobalCommandManager globalCommandManager;
         private readonly CopyOperationController copyOperationController;
         private bool closeTrigger;
         private string source;
@@ -43,11 +40,8 @@ namespace UnityCommander.ViewModels.Dialogs
 
         #endregion
 
-        public CopyDialogViewModel(IGlobalCommandService globalCommandService, CopyOperationController copyOperationController)
+        public CopyDialogViewModel(CopyOperationController copyOperationController)
         {
-            //this.notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
-            this.globalCommandManager = globalCommandService.GetCommandManager();
-            this.globalCommandManager.RegisterCommand("CloseCopyFileDialogCommand", this.CloseDialogCommand);
             this.copyOperationController = copyOperationController;
             this.CloseDialogAfterCopyingComplete = true;
             this.CopyOnlyFolderContent = false;
@@ -132,8 +126,8 @@ namespace UnityCommander.ViewModels.Dialogs
 
         public ICommand MoveCommand => new DelegateCommand(() =>
         {
-            var cmdMove = this.globalCommandManager.GetCommand("Move");
-            cmdMove.Command.Execute(new object[] { this.Source, this.Target });
+            //var cmdMove = this.globalCommandManager.GetCommand("Move");
+            //cmdMove.Command.Execute(new object[] { this.Source, this.Target });
         });
 
         #endregion

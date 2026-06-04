@@ -5,9 +5,11 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Commands;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
+    using System;
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Shapes;
+    using UnityCommander.Common.State;
     using UnityCommander.Integration.Plugins;
     using UnityCommander.Modules.ToolBar.Commands;
     using UnityCommander.Ribbon.Core.Models;
@@ -25,7 +27,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         #region Dependency Injection Fields
 
         private readonly IDialogService dialogService;
-        private readonly IPluginLoaderService pluginLoader;
         private readonly IIconProviderService iconProvider;
         private readonly ISettingsProviderService configService;
         private readonly CommandService _commandService;
@@ -34,25 +35,24 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
         private ICommand minimizeCommand;
         private Path icon;
-        private UserControl userControls;
-        private DelegateCommand showDialogCommand;
         private string message;
+
         public IRibbonManager RibbonManager { get; }
+       
+     
 
         public ToolBarViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
-            IPluginLoaderService pluginLoaderService,
-            IGlobalCommandService globalCommandService,
             ISettingsProviderService configService,
             IRibbonManager ribbonManager, CommandService commandService)
          {
             _commandService = commandService;
             RibbonManager = ribbonManager;
             this.configService = configService;
-            this.pluginLoader = pluginLoaderService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
+
 
             var ribbon = new RibbonBuilder()
                        .AddTab(
@@ -205,6 +205,15 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                       ).Build();
 
             RibbonManager.SetModel(ribbon);
+        }
+
+
+        internal void Capture(AppSessionState state)
+        {
+        }
+
+        internal void Restore(AppSessionState state)
+        {
         }
     }
 }

@@ -11,6 +11,7 @@ using UnityCommander.Services;
 
 namespace UnityCommander.Modules.FilePanel
 {
+    [ModuleDependency(nameof(FilePanelModule))]
     public class FilePanelCommandModule : IModule
     {
         private readonly IContainerProvider _container;

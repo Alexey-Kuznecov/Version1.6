@@ -3,7 +3,6 @@ using Prism.Modularity;
 using Prism.Regions;
 using UnityCommander.Core;
 using UnityCommander.Modules.Viewer.ViewModels;
-using UnityCommander.Modules.Viewer.Views;
 
 namespace UnityCommander.Modules.Viewer
 {

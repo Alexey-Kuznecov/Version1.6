@@ -4,6 +4,7 @@ using System.Windows;
 using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Services;
+using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 
@@ -33,6 +34,7 @@ namespace UnityCommander.Views
         {
             this.InitializeComponent();
 
+         
             var dockingService = ContainerLocator.Container.Resolve<IDockingService>() as DockingService;
             dockingService?.SetDockingManager(this.DockManager);
             this.RegisterCommands();

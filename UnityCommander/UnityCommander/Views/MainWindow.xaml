@@ -46,10 +46,10 @@
 
     <Grid inputBinding:KeyboardBinding.IsEnable="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="69" MaxWidth="60" />
+            <ColumnDefinition Width="200" MaxWidth="60" />
             <ColumnDefinition Width="Auto" MaxWidth="250" />
-            <ColumnDefinition Width="0" />
-            <ColumnDefinition Width="69*" MinWidth="800" />
+            <ColumnDefinition Width="3" />
+            <!--<ColumnDefinition Width="69*" MinWidth="800" />-->
             <ColumnDefinition Width="571*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -72,54 +72,14 @@
         <!--
             Grid splitter.
         -->
-        <GridSplitter
+        <!--<GridSplitter
             Grid.Row="1"
             Grid.Column="2"
             Width="10"
             HorizontalAlignment="Center"
             DragIncrement="1"
             ResizeDirection="Columns"
-            ShowsPreview="False" />
-        <!--
-            The content display region of ​​the left sidebar.
-        -->
-        <Grid
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
-            Width="{Binding SidebarContentWidth, Mode=TwoWay}"
-            Background="#F3F2F2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <ContentControl
-                Grid.Row="0"
-                Height="25"
-                Margin="0,0,10,10"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="{Binding IconHideSidebar.Data}"
-                Foreground="Gray">
-                <ContentControl.Template>
-                    <DynamicResource ResourceKey="CustomButtonTemplate" />
-                </ContentControl.Template>
-                <ContentControl.Style>
-                    <DynamicResource ResourceKey="CustomButtonStyles" />
-                </ContentControl.Style>
-                <ContentControl.InputBindings>
-                    <MouseBinding Command="{Binding HideSidebarCommand}" Gesture="LeftClick" />
-                </ContentControl.InputBindings>
-                <ContentControl.ToolTip>
-                    <ToolTip Content="Collapse sidebar" />
-                </ContentControl.ToolTip>
-            </ContentControl>
-            <Border Grid.Row="1" Background="#FFF3F2F2">
-                <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
-            </Border>
-        </Grid>
-
+            ShowsPreview="False" />-->
         <!--
             Functional selection region on the left side panel.
         -->
@@ -127,6 +87,7 @@
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0"
+            Grid.ColumnSpan="2"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
         <!--
             File panel region.

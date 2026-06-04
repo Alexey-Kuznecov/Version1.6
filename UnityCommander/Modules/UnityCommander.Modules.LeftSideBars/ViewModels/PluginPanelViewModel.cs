@@ -25,11 +25,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         private readonly IDialogService dialogService;
 
         /// <summary>
-        /// Служба для загрузки плагинов.
-        /// </summary>
-        private readonly IPluginLoaderService pluginLoaders;
-
-        /// <summary>
         /// The plugin descriptors.
         /// </summary>
         private IEnumerable<IPluginDescriptor> pluginDescriptors;
@@ -38,11 +33,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The selected descriptor.
         /// </summary>
         private IPluginDescriptor selectedDescriptor;
-
-        /// <summary>
-        /// The common state service.
-        /// </summary>
-        private readonly IGlobalCommandService globalCommandService;
 
         /// <summary>
         /// The icon.
@@ -81,15 +71,13 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         public PluginPanelViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
-            IPluginLoaderService pluginLoaders,
-            IGlobalCommandService globalCommandService)
+            IPluginProvider pluginLoader)
         {
-            this.globalCommandService = globalCommandService;
-            this.PluginDescriptors = pluginLoaders.GetPluginDescriptors();
-            this.pluginLoaders = pluginLoaders;
+            //this.PluginDescriptors = pluginLoaders.GetPluginDescriptors();
+ 
             this.dialogService = dialogService;
             this.Icon = iconProvider.GetIcon("Settings").GetIconPath();
-            this.OptionRender ??= this.pluginLoaders.GetPluginContext().GetOption(null);
+            //this.OptionRender ??= this.pluginLoaders.GetPluginContext().GetOption(null);
         }
 
         /// <summary>
@@ -102,9 +90,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             {
                 this.SetProperty(ref this.selectedDescriptor, value);
                 //this.OptionRender = this.pluginLoaders.GetPluginContext().GetOption(value);
-                var command = this.globalCommandService.GetCommandManager().GetCommand("DisplayViewerContent").Command;
+                //var command = this.globalCommandService.GetCommandManager().GetCommand("DisplayViewerContent").Command;
 
-                command.Execute(SelectedDescriptor);
+                //command.Execute(SelectedDescriptor);
             }
         }
 

@@ -10,17 +10,13 @@ namespace UnityCommander.ViewModels
 
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Integration.Plugins;
+    using UnityCommander.Services.Interfaces;
 
     /// <summary>
     /// The dialog plugin config vm.
     /// </summary>
     internal class DialogPluginConfigVm : BindableBase, IDialogAware
     {
-        /// <summary>
-        /// The plugin loader.
-        /// </summary>
-        private IPluginLoaderService pluginLoader;
-
         /// <summary>
         /// The close dialog command.
         /// </summary>
@@ -31,13 +27,15 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private UserControl control;
 
+        private IPluginProvider pluginLoader;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogPluginConfigVm"/> class.
         /// </summary>
         /// <param name="pluginLoader">
         /// The plugin loader.
         /// </param>
-        public DialogPluginConfigVm(IPluginLoaderService pluginLoader)
+        public DialogPluginConfigVm(IPluginProvider pluginLoader)
         {
             this.pluginLoader = pluginLoader;
         }

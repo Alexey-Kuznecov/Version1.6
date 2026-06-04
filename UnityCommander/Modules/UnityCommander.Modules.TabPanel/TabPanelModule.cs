@@ -40,16 +40,6 @@ namespace UnityCommander.Modules.TabPanel
         /// </param>
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            //    this.regionManager.RequestNavigate(RegionNames.TabPanelRegion, nameof(TabPanelView));
-            //    this.regionManager.RequestNavigate(NestedRegionNames.LeftFilePanelRegion, nameof(LeftPanelContentView), this.NavigationCallback);
-            //    this.regionManager.RequestNavigate(NestedRegionNames.RightFilePanelRegion, nameof(RightPanelContentView), this.NavigationCallback);
-            //var dockingService = containerProvider.Resolve<IDockingService>();
-            //var leftPanel = containerProvider.Resolve<LeftPanelContentView>();
-            //var rightPanel = containerProvider.Resolve<RightPanelContentView>();
-            //dockingService.AddDocumentTab("FilePanel 1", new SplitPanelView());
-            //dockingService.AddDocumentTab("FilePanel 2", new SplitPanelView());
-            //dockingService.AddDocumentTab("FilePanel 3", new SplitPanelView());
-            //dockingService.AddDocumentTab("FilePanel 4", new SplitPanelView());
         }
 
         /// <summary>
@@ -60,9 +50,6 @@ namespace UnityCommander.Modules.TabPanel
         /// </param>
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            //containerRegistry.RegisterForNavigation<TabPanelView>();
-            //containerRegistry.RegisterForNavigation<LeftPanelContentView>();
-            //containerRegistry.RegisterForNavigation<RightPanelContentView>();
             containerRegistry.RegisterForNavigation<SplitPanelView>();
         }
 

@@ -13,175 +13,158 @@ using Prism.Commands;
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     using CommandSystem.Abstractions;
+    using MaterialDesignThemes.Wpf;
     using Prism.Events;
+    using Prism.Mvvm;
     using Prism.Services.Dialogs;
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows.Controls;
-    using UnityCommander.Common.Commands;
+    using System.Windows.Shapes;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Core;
+    using UnityCommander.Common.State;
     using UnityCommander.Integration.Plugins;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Interfaces.Bootstrap;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
-    public class SidebarViewModel
+    public class SidebarViewModel : BindableBase
     {
-        /// <summary>
-        /// The view model message.
-        /// </summary>
-        private readonly IEventAggregator mainViewModelExchange;
-        private readonly IGuiCommandExecutor _guiCommandExecutor;
-
-        /// <summary>
-        /// The pack icon.
-        /// </summary>
-        private readonly ObservableCollection<IIcon> packIcon;
-
-        /// <summary>
-        /// Служба получения диалоговых окон для использования их в VM.
-        /// </summary>
         private readonly IDialogService dialogService;
 
-        /// <summary>
-        /// The content control register.
-        /// </summary>
-        private readonly Dictionary<string, UserControl> contentControlRegister = new Dictionary<string, UserControl>
-        {
-            { "TableColumn",  new ColumnsOptionControl() },
-            { "FileTree", new FolderTreeOverviewControl() },
-            { "Comment", new CommentControl() },
-            { "Tag", new TagControlPanel() },
-            { "Plugin", new PluginControlPanel() },
-        };
+        private readonly ObservableCollection<IIcon> packIcon;
 
-        /// <summary>
-        /// The data context register.
-        /// </summary>
-        private readonly Dictionary<string, object> dataContextRegister = new Dictionary<string, object>()
-        {
-            { "TableColumn", null },
-            { "FileTree", null },
-            { "Comment", null },
-            { "Tag", null }
-        };
+        private readonly Dictionary<string, UserControl> contentControlRegister =
+            new()
+            {
+                ["TableColumn"] = new ColumnsOptionControl(),
+                ["FileTree"] = new FolderTreeOverviewControl(),
+                ["Comment"] = new CommentControl(),
+                ["Tag"] = new TagControlPanel(),
+                ["Plugin"] = new PluginControlPanel()
+            };
 
-        /// <summary>
-        /// The current element of the sidebar.
-        /// </summary>
+        private readonly Dictionary<string, object> dataContextRegister =
+            new();
+
+        private DelegateCommand hideSidebarCommand;
+        private DelegateCommand openSettingDialogCommand;
+
+        private Path iconHideSidebar;
+        private UserControl sidebarContent;
+        private int sidebarContentWidth;
         private SidebarItem currentSidebarItem;
 
-        /// <summary>
-        /// The current index of the sidebar element.
-        /// </summary>
-        private byte currentSideBarItemIndex;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SidebarViewModel"/> class.
-        /// This the signature of the constructor needed for communication with another a view models.
-        /// </summary>
-        /// <param name="dialogService">
-        /// The service to show window dialogs from the view model.
-        /// </param>
-        /// <param name="mainViewModelExchange">
-        /// Parameter to link to the main view model. 
-        /// </param>
-        /// <param name="iconProvider">
-        /// The service provides icons for the view model.
-        /// </param>
-        /// <param name="pluginLoader">
-        /// The service to load all detected plugin interfaces.
-        /// </param>
         public SidebarViewModel(
             IDialogService dialogService,
-            IEventAggregator mainViewModelExchange,
             IIconProviderService iconProvider,
-            IPluginLoaderService pluginLoader,
-            IGlobalCommandService globalCommandService,
-            IGuiCommandExecutor guiCommandExecutor)
+            IPluginProvider pluginLoader,
+            IMultiCommandService command, 
+            ISessionService sessionService)
         {
             this.dialogService = dialogService;
-            this.dataContextRegister.Add("Plugin", new PluginPanelViewModel(dialogService, iconProvider, pluginLoader, globalCommandService));
-            this.mainViewModelExchange = mainViewModelExchange;
-            _guiCommandExecutor = guiCommandExecutor;
-            this.packIcon = iconProvider.GetIcons();
-            this.CreateSidebarElement();
+
+            var session  = sessionService.Load();
+
+
+            packIcon = iconProvider.GetIcons();
+
+            IconHideSidebar =
+                iconProvider.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+
+            dataContextRegister["TableColumn"] = null;
+            dataContextRegister["FileTree"] = null;
+            dataContextRegister["Comment"] = null;
+            dataContextRegister["Tag"] = null;
+            dataContextRegister["Plugin"] =
+                new PluginPanelViewModel(
+                    dialogService,
+                    iconProvider,
+                    pluginLoader);
+
+            CreateSidebarElement();
         }
 
-        /// <summary>
-        /// Gets or sets the sidebar content.
-        /// </summary>
+        public ObservableCollection<SidebarItem> SidebarItem { get; } = new();
+
+        public Path IconHideSidebar
+        {
+            get => iconHideSidebar;
+            set => SetProperty(ref iconHideSidebar, value);
+        }
+
+        public UserControl SidebarContent
+        {
+            get => sidebarContent;
+            set => SetProperty(ref sidebarContent, value);
+        }
+
+        public int SidebarContentWidth
+        {
+            get => sidebarContentWidth;
+            set => SetProperty(ref sidebarContentWidth, value);
+        }
+
         public SidebarItem CurrentSidebarItem
         {
-            get => this.currentSidebarItem;
+            get => currentSidebarItem;
             set
             {
-                //var curr = _guiCommandExecutor.Execute(CommandNames.Panel.GetCurrentPath).Result;
-                this.currentSidebarItem = value;
-                this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(value);
+                if (!SetProperty(ref currentSidebarItem, value))
+                    return;
+
+                SidebarContent = value?.Content;
+                SidebarContentWidth = 250;
             }
         }
 
-        /// <summary>
-        /// Gets or sets the sidebar element.
-        /// </summary>
-        public ObservableCollection<SidebarItem> SidebarItem { get; set; } = new ObservableCollection<SidebarItem>();
+        public DelegateCommand HideSidebarCommand =>
+            hideSidebarCommand ??= new DelegateCommand(
+                () => {
+                    SidebarContentWidth = 0;
+                    //CurrentSidebarItem = null;
+                    //SidebarContent = null;
+                });
 
-        private DelegateCommand openSettingDialogCommand;
-        public DelegateCommand OpenSettingDialogCommand => openSettingDialogCommand ??= new DelegateCommand(OpenDialogCommand);
+        public DelegateCommand OpenSettingDialogCommand =>
+            openSettingDialogCommand ??=
+                new DelegateCommand(OpenDialogCommand);
 
-        void OpenDialogCommand()
+        internal void Capture(AppSessionState state)
         {
-            this.dialogService.ShowDialog("AppConfigDialog");
+            //state.Sidebar.IsOpen = IsOpen;
         }
 
-        /// <summary>
-        /// Gets or sets the index of the sidebar item is selected.
-        /// The current index of the sidebar element that will be passed to the main view model
-        /// to indicate which content should be displayed.
-        /// </summary>
-        public byte CurrentSideBarItemIndex
+        internal void Restore(AppSessionState state)
         {
-            get => this.currentSideBarItemIndex;
-            set
-            {
-                this.currentSideBarItemIndex = value;
-                this.mainViewModelExchange.GetEvent<MessageSendEvent>().Publish(this.CurrentSideBarItemIndex);
-            }
+            //throw new NotImplementedException();
         }
 
-        public PluginPanelViewModel PluginPanelViewModel1
+        private void OpenDialogCommand()
         {
-            get => default;
-            set
-            {
-            }
+            dialogService.ShowDialog("AppConfigDialog");
         }
 
-        /// <summary>
-        /// Create sidebar element on based .
-        /// </summary>
         private void CreateSidebarElement()
         {
-            foreach (var content in this.contentControlRegister)
+            foreach (var (key, control) in contentControlRegister)
             {
-                var icon = this.packIcon.Single(i => ((Icon)i).Category == content.Key);
-                var userControl = content.Value;
-                userControl.DataContext = this.dataContextRegister[content.Key];
+                control.DataContext = dataContextRegister[key];
 
-                var sidebarItem = new SidebarItem
-                {
-                    Content = userControl,
-                    Icon = icon
-                };
-
-                this.SidebarItem.Add(sidebarItem);
+                SidebarItem.Add(
+                    new SidebarItem
+                    {
+                        Content = control,
+                        Icon = packIcon.Single(
+                            i => ((Common.Models.Icons.Icon)i).Category == key)
+                    });
             }
         }
     }

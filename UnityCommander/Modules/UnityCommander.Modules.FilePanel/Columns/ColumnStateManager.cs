@@ -8,9 +8,9 @@ namespace UnityCommander.Modules.FilePanel.Columns
     // Lightweight implementation using existing ISettingsStore
     public class ColumnStateManager : IColumnStateManager
     {
-        private readonly ISettingsStore _settings;
+        private readonly IColumnSettingsStore _settings;
 
-        public ColumnStateManager(ISettingsStore settings)
+        public ColumnStateManager(IColumnSettingsStore settings)
         {
             _settings = settings;
         }

@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace UnityCommander.Modules.FilePanel.Columns
@@ -12,7 +11,6 @@ namespace UnityCommander.Modules.FilePanel.Columns
         public ColumnRegistry(IEnumerable<IColumnProvider> providers)
         {
             this.providers = providers.ToList();
-            Debug.WriteLine("Providers count: " + this.providers.Count);
         }
         public IEnumerable<ColumnModel> GetColumns(PanelType panelType)
            => providers.SelectMany(p => p.GetColumnDefinitions(panelType))

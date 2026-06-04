@@ -20,7 +20,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using UnityCommander.Controls.TabPanel;
     using UnityCommander.Modules.TabPanel.Behaviors;
     using UnityCommander.Common.Commands;
-    using UnityCommander.Integration.Commands;
     using System.Collections.Generic;
     using UnityCommander.Logging;
     using NLog;
@@ -45,16 +44,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// The region manager.
         /// </summary>
         private readonly IAppConfigService appConfigService;
-
-        /// <summary>
-        /// Содержит ссылку на менеджер для регистрации или выполнения глобальных команд.
-        /// </summary>
-        private readonly IGlobalCommandManager globalCommandManager;
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly ModuleLogger logger;
 
         /// <summary>
         /// The navigationCommand class instance.
@@ -131,19 +120,16 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         public TabPanelViewModel(
             IRegionManager regionManager,
             IMultiCommandService commandService,
-            IAppConfigService configService,
-            IGlobalCommandService globalCommandService,
-            ModuleLogger logger)
+            IAppConfigService configService)
         {
-            this.logger = logger;
-            GlobalCommandExecute.GlobalCommandExecuteChanged += OnGlobalCommandExecuteChanged;
+            //GlobalCommandExecute.GlobalCommandExecuteChanged += OnGlobalCommandExecuteChanged;
             
             // Регистрация глобальных комманд
-            this.globalCommandManager = globalCommandService.GetCommandManager();
-            globalCommandManager.CreateCommandByAttribute(this);
-            globalCommandManager.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
-            globalCommandManager.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
-            globalCommandManager.CreateCommand(this, GlobalCommandSelection.SingleFirst);
+            //this.globalCommandManager = globalCommandService.GetCommandManager();
+            //globalCommandManager.CreateCommandByAttribute(this);
+            //globalCommandManager.CreateSingletonCommand(nameof(DisplayContent), null, DisplayContent);
+            //globalCommandManager.CreateSingletonCommand(nameof(DisplayViewerContent), null, DisplayViewerContent);
+            //globalCommandManager.CreateCommand(this, GlobalCommandSelection.SingleFirst);
 
             this.regionManager = regionManager;
             //this.commandManager = manager;
@@ -229,7 +215,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                  obj =>
                     {
 #if (Nlog)
-                        this.logger.Log(LogLevel.Info, "Инициализация команды (добавить новую вкладку).");
+                        //this.logger.Log(LogLevel.Info, "Инициализация команды (добавить новую вкладку).");
 
 #endif
                         if (obj is not TabPanel tabPanel) return;
@@ -240,7 +226,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                         string path = null;
 #if (Nlog)
                         if (this.activePanel == null)
-                            this.logger.Log(LogLevel.Error, "Текущая панель была не обнаружена");
+                            //this.logger.Log(LogLevel.Error, "Текущая панель была не обнаружена");
 #endif
                         if (this.activePanel is { DataContext: IDirectoryPanel panel })
                         {
@@ -266,11 +252,11 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             new DelegateCommand<object>(
                 token =>
                 {
-                    this.logger.Log(LogLevel.Info, "Инициализация команды (выбрать активную вкладку).");
+                    //this.logger.Log(LogLevel.Info, "Инициализация команды (выбрать активную вкладку).");
                     //this.navigationCommand = (NavigationInvoker)this.commandManager.GetCommand((Guid)token);
                     this.ActivateFilePanel((Guid)token);
 #if (Nlog)
-                    this.logger.Log(LogLevel.Info, $"Текущий путь: '{this.ActiveTabPanelContent?.GetCurrentPath()}'");
+                    //this.logger.Log(LogLevel.Info, $"Текущий путь: '{this.ActiveTabPanelContent?.GetCurrentPath()}'");
 #endif
                 });
 
@@ -393,8 +379,8 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 }
             }
 
-            var cmd = this.globalCommandManager.GetGlobalCommand("CloseCopyFileDialogCommand");
-            cmd.Command?.Execute(null);
+            //var cmd = this.globalCommandManager.GetGlobalCommand("CloseCopyFileDialogCommand");
+            //cmd.Command?.Execute(null);
         }
 
         /// <summary>

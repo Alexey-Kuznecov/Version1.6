@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Integration.Plugins
 {
+    using System;
     using System.Collections.Generic;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Dialog;
@@ -8,6 +9,7 @@ namespace UnityCommander.Integration.Plugins
     /// <summary>
     /// Plugin provider service interface.
     /// </summary>
+    [Obsolete]
     public interface IPluginLoaderService
     {
         /// <summary>

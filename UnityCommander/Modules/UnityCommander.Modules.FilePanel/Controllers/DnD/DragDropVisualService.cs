@@ -28,7 +28,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 var value = DragDropVisual.GetIsDropTarget(border);
                 if (value)
                 {
-                    Debug.WriteLine(value.ToString());
+                    //Debug.WriteLine(value.ToString());
                 }
             }
         }

@@ -25,7 +25,16 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <Grid Width="60" Background="#173763">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <Grid
+            Grid.Column="0"
+            Width="60"
+            Background="#173763">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -35,8 +44,7 @@
                 ItemsSource="{Binding SidebarItem}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                SelectedIndex="{Binding CurrentSideBarItemIndex, Mode=Default}"
-                SelectedValue="{Binding CurrentSidebarItem, Mode=Default}">
+                SelectedItem="{Binding CurrentSidebarItem, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Viewbox
@@ -72,11 +80,10 @@
             </DockPanel>
         </Grid>
 
-        <!--<Grid
+        <Grid
             Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="1"
-            Grid.ColumnSpan="2"
             Width="{Binding SidebarContentWidth, Mode=TwoWay}"
             Background="#F3F2F2">
             <Grid.RowDefinitions>
@@ -105,9 +112,8 @@
                 </ContentControl.ToolTip>
             </ContentControl>
             <Border Grid.Row="1" Background="#FFF3F2F2">
-                <ContentControl Content="{Binding SidebarContent, Mode=TwoWay}" />
+                <ContentControl Content="{Binding SidebarContent}" />
             </Border>
-        </Grid>-->
-
+        </Grid>
     </Grid>
 </UserControl>

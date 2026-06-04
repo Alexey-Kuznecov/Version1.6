@@ -6,12 +6,12 @@ using UnityCommander.Services.Interfaces.Settings;
 
 namespace UnityCommander.Services.Settings
 {
-    public class JsonFileSettingsStore : ISettingsStore
+    public class JsonColumnSettingsStore : IColumnSettingsStore
     {
         private readonly string _path;
         private SettingsFile _cache;
 
-        public JsonFileSettingsStore(string path)
+        public JsonColumnSettingsStore(string path)
         {
             _path = path;
             LoadFromDisk();

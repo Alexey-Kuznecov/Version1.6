@@ -138,50 +138,6 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_, __);
         }
 
-        //public void Initialize(List<PanelSessionState> panels)
-        //{
-        //    foreach (var doc in _manager.Layout.Descendents().OfType<LayoutDocument>())
-        //    {
-        //        if (string.IsNullOrEmpty(doc.ContentId))
-        //            continue;
-
-        //        _dockingSyncContext.GetOrCreateTabId(doc);
-        //    }
-
-        //    var panes = _manager.Layout.Descendents().OfType<LayoutDocumentPane>().ToList();
-
-
-        //    foreach (var pane in panes)
-        //    {
-        //        var state = FindPanelStateForPane(pane, panels);
-
-        //        if (state == null)
-        //            continue;
-
-        //        _panelRegistry.EnsurePanel(state.PanelId);
-
-        //        _dockingSyncContext.Register(pane, state.PanelId);
-
-        //        foreach (var tab in state.Tabs)
-        //        {
-        //            _panelRegistry.AddTab(state.PanelId, tab.TabId);
-        //        }
-
-        //        var firstTab = state.Tabs.FirstOrDefault();
-        //        if (firstTab.TabId != Guid.Empty)
-        //        {
-        //            _panelRegistry.SetActiveTab(state.PanelId, firstTab.TabId);
-        //            _panelRegistry.SetActivePanel(state.PanelId);
-        //        }
-        //    }
-
-        //    _previous = _builder.Build();
-
-        //    _initialized = true;
-
-        //    _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_,__);
-        //}
-
         private PanelSessionState FindPanelStateForPane(
             LayoutDocumentPane pane,
             List<PanelSessionState> states)

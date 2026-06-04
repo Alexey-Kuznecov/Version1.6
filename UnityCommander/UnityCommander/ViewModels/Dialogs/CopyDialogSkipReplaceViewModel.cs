@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,11 +11,7 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Core;
 using UnityCommander.Core.IO.Operations;
 using UnityCommander.Core.Mvvm;
-using UnityCommander.Integration.Commands;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Views.CopyDialogs;
-using UnityCommander.Views.Dialogs;
-
 namespace UnityCommander.ViewModels.Dialogs
 {
     /// <summary>
@@ -31,11 +26,6 @@ namespace UnityCommander.ViewModels.Dialogs
         /// The view model message.
         /// </summary>
         private readonly IEventAggregator viewModelMessage;
-
-        /// <summary>
-        /// Содержит ссылку на менеджер для регистрации или выполнения глобальных команд.
-        /// </summary>
-        private readonly IGlobalCommandManager globalCommandManager;
 
         /// <summary>
         /// 
@@ -64,9 +54,8 @@ namespace UnityCommander.ViewModels.Dialogs
         /// This the signature of the constructor needed for communication with another a view models.
         /// </summary>
         /// <param name="viewModelMessage"> Communication parameter of the view models. </param>
-        public CopyDialogSkipReplaceViewModel(IEventAggregator viewModelMessage, IGlobalCommandService globalCommandService)
+        public CopyDialogSkipReplaceViewModel(IEventAggregator viewModelMessage)
         {
-            this.globalCommandManager = globalCommandService.GetCommandManager();
             //messenger = viewModelMessage.GetEvent<MessageSendEvent>();
             //messenger.Subscribe(this.SetupCopyFiles);
             //this.globalCommandManager.RegisterCommand("CloseCopyFileDialogCommand", this.CloseDialogCommand);

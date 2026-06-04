@@ -1,4 +1,5 @@
-﻿using UnityCommander.Logging.Coloring;
+﻿
+using UnityCommander.Logging.Coloring;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;

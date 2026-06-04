@@ -3,7 +3,7 @@ using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Context.Descriptors
 {
-    public sealed class SimpleCommandDescriptor : ICommandDescriptor
+    public class SimpleCommandDescriptor : ICommandDescriptor
     {
         public string Name { get; }
         public IReadOnlyList<ICommandVariant> Variants { get; }

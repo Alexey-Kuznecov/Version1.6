@@ -35,6 +35,13 @@ namespace UnityCommander.Core
                 });
         }
 
+        public static T Find<T>(string key)
+        {
+            var resource =
+                Application.Current.TryFindResource(key);
+            return (T)resource;
+        }
+
         public static bool Contains(string key)
         {
             return _registry.Contains(key);

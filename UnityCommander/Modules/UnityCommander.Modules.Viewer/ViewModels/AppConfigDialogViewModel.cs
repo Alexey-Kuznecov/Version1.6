@@ -10,7 +10,7 @@ namespace UnityCommander.ViewModels.Dialogs
     {
         private IDialogService _dialogService; 
 
-        public AppConfigDialogViewModel(IPluginLoaderService pluginService, IGlobalCommandService globalCommandService)
+        public AppConfigDialogViewModel()
         {
             //_dialogService = dialogService;
         }

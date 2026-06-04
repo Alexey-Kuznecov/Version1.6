@@ -22,7 +22,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
         private static ITabContextAccessor _tabContextAccessor => ContainerLocator.Container.Resolve<ITabContextAccessor>();
 
-        private static LoggerCreator logCreat = ContainerLocator.Container.Resolve<LoggerCreator>();
+        //private static LoggerCreator logCreat = ContainerLocator.Container.Resolve<LoggerCreator>();
         
         private static ILogger logger;
            
@@ -84,10 +84,10 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
                 list.PreviewMouseLeftButtonDown += OnMouseDown;
 
-                logger = logCreat.Create(
-                    category: LogCategory.UserAction,
-                    scope: LogScope.UserAction
-                    );
+                //logger = logCreat.Create(
+                //    category: LogCategory.UserAction,
+                //    scope: LogScope.UserAction
+                //    );
             }
         }
 

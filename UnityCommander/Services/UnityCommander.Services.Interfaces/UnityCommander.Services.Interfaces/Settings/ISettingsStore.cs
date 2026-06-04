@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UnityCommander.Services.Interfaces.Settings
 {
-    public interface ISettingsStore
+    public interface IColumnSettingsStore
     {
         void SaveColumnWidth(string columnId, double width);
         double? LoadColumnWidth(string columnId);

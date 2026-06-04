@@ -10,7 +10,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
     {
         // Sync groups -> list of subscribers (panelId + column id)
         private static readonly ConcurrentDictionary<string, List<Action<double>>> _groupHandlers = new();
-        private static readonly IColumnStateManager _stateManager = new ColumnStateManager(new InMemorySettingsStore());
+        private static readonly IColumnStateManager _stateManager = new ColumnStateManager(new InMemoryColumnSettingsStore());
 
         public static void RegisterHandler(string syncGroup, Action<double> handler)
         {

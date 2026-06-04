@@ -80,7 +80,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private readonly IColumnStateManager columnStateManager;
         private readonly ColumnRegistry columnRegistry;
-        private readonly ISettingsStore settings;
+        private readonly IColumnSettingsStore settings;
         private readonly GongDropAdapter _dropTarget;
         private readonly TabState _state;
         public event Action<string> PathChanged;
@@ -120,8 +120,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ISettingsProviderService settingsService,
               IDataProviderService dataService,
               IMultiCommandService multiCommandService,
-              IPluginLoaderService pluginService,
-              IGlobalCommandService globalCommandService,
               IIconProviderService iconProvider,
               IAppConfigService configService,
               IDirectoryChangeNotifier directoryChangeNotifier,
@@ -133,7 +131,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               CommandManager manager,
               IColumnProvider columnProvider,
               IColumnStateManager columnStateManager,
-              ISettingsStore settingsStore,
+              IColumnSettingsStore settingsStore,
               ColumnRegistry columnRegistry,
               LoggerCreator loggerCreator,
               CommandService commandService, 
@@ -153,6 +151,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 TabTitleChanged?.Invoke(title);
             };
 
+            // ЛОГЕР
             this._logger = loggerCreator.Create(
                 category: LogCategory.UserAction,
                 scope: LogScope.UserAction
@@ -416,7 +415,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             _state.TabId = token;
 
-            NavigationContextDirectory.Instance.Register(_state.TabId, _navigationService);
+            //NavigationContextDirectory.Instance.Register(_state.TabId, _navigationService);
 
             _navigationService.CurrentChanged += OnPathChanged;
             

@@ -1,6 +1,4 @@
 ﻿
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -20,27 +18,27 @@ namespace UnityCommander.Core.Performance
             ResourceDictionary dictionary,
             HashSet<ResourceDictionary> visited)
         {
-            if (!visited.Add(dictionary))
-                return;
+            //if (!visited.Add(dictionary))
+            //    return;
 
-            foreach (DictionaryEntry entry in dictionary)
-            {
-                if (entry.Key is null)
-                    continue;
+            //foreach (DictionaryEntry entry in dictionary)
+            //{
+            //    if (entry.Key is null)
+            //        continue;
 
-                _resources[entry.Key] = new ResourceInfo
-                {
-                    Key = entry.Key,
-                    DictionarySource =
-                        dictionary.Source?.ToString()
-                        ?? "<memory>"
-                };
-            }
+            //    //_resources[entry.Key] = new ResourceInfo
+            //    //{
+            //    //    Key = entry.Key,
+            //    //    DictionarySource =
+            //    //        dictionary.Source?.ToString()
+            //    //        ?? "<memory>"
+            //    //};
+            //}
 
-            foreach (var merged in dictionary.MergedDictionaries)
-            {
-                Traverse(merged, visited);
-            }
+            //foreach (var merged in dictionary.MergedDictionaries)
+            //{
+            //    Traverse(merged, visited);
+            //}
         }
 
         public bool Contains(object key)
