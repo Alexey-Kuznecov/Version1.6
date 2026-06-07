@@ -1,5 +1,5 @@
 ﻿
-using Prism.Services.Dialogs;
+using Prism.Dialogs;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFramework>net9.0-windows</TargetFramework>
+	  <TargetFramework>net10.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -11,19 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Core\CommandSystem.Core.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Infrastructure\CommandSystem.Infrastructure.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="CommandSystem.Abstractions">
-      <HintPath>..\..\..\_builds\CommandSystem.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandSystem.Core">
-      <HintPath>..\..\..\_builds\CommandSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandSystem.Infrastructure">
-      <HintPath>..\..\..\_builds\CommandSystem.Infrastructure.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

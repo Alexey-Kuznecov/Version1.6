@@ -2,16 +2,13 @@
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
     using System.Windows.Shapes;
 
     using Prism.Commands;
+    using Prism.Dialogs;
     using Prism.Mvvm;
-    using Prism.Services.Dialogs;
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
-    using UnityCommander.Integration.Plugins;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
@@ -19,9 +19,10 @@
     <None Remove="Views\SplitPanelControl.xaml.cs~RF441d883d.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\..\UnityCommander.CommandSurface\UnityCommander.CommandSurface.csproj" />
@@ -34,15 +35,6 @@
     <ProjectReference Include="..\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CommandSystem.Abstractions">
-      <HintPath>..\..\..\..\_builds\CommandSystem.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandSystem.Core">
-      <HintPath>..\..\..\..\_builds\CommandSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandSystem.Gui">
-      <HintPath>..\..\..\..\_builds\CommandSystem.Gui.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\..\..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
     </Reference>

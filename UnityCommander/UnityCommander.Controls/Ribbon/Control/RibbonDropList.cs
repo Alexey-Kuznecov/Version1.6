@@ -7,10 +7,10 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Data;
-    using AlexeyKuznecov.Library.Mvvm.Base;
 
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Mvvm;
 
     public class RibbonDropListBuilder
     {

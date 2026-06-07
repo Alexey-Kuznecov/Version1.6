@@ -2,7 +2,7 @@
 namespace UnityCommander.Core.Mvvm
 {
     using Prism.Common;
-    using Prism.Services.Dialogs;
+    using Prism.Dialogs;
 
     /// <summary>
     /// The dialog parameters.

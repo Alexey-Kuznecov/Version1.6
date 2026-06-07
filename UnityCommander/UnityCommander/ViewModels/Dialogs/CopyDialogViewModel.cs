@@ -1,11 +1,8 @@
 ﻿
 using Prism.Commands;
-using Prism.Events;
+using Prism.Dialogs;
 using Prism.Mvvm;
-using Prism.Services.Dialogs;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,8 +33,7 @@ namespace UnityCommander.ViewModels.Dialogs
         private bool сloseDialogAfterCopyingComplete;
         private DelegateCommand closeDialogCommand;
         private UserControl control;
-        public event Action<IDialogResult> RequestClose;
-
+        
         #endregion
 
         public CopyDialogViewModel(CopyOperationController copyOperationController)
@@ -60,6 +56,9 @@ namespace UnityCommander.ViewModels.Dialogs
 
         public string Title => "Копирование файлов";
         public DelegateCommand CloseDialogCommand => this.closeDialogCommand ??= new DelegateCommand(this.ExecuteCloseDialogCommand);
+
+        public DialogCloseListener RequestClose { get; private set; }
+
         public UserControl CopyStateView
         {
             get => this.control;
@@ -162,7 +161,7 @@ namespace UnityCommander.ViewModels.Dialogs
             {
                 if (this.CloseDialogAfterCopyingComplete)
                 {
-                    this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
                 }
             });
         }
@@ -173,7 +172,7 @@ namespace UnityCommander.ViewModels.Dialogs
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
                 });
             }
         }

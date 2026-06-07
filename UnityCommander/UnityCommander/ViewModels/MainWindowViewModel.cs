@@ -11,11 +11,10 @@ using System.Linq;
 
 namespace UnityCommander.ViewModels
 {
-    using AlexeyKuznecov.Library.Mvvm.Base;
     using Prism.Commands;
     using Prism.Events;
     using Prism.Mvvm;
-    using Prism.Services.Dialogs;
+    using System;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;

@@ -9,7 +9,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using System.Windows.Media;
     using Prism.Commands;
     using Prism.Mvvm;
-    using Prism.Regions;
 
     using Modules.FilePanel.Views;
     using Modules.Viewer.Views;
@@ -19,12 +18,10 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using UnityCommander.Common.Module;
     using UnityCommander.Controls.TabPanel;
     using UnityCommander.Modules.TabPanel.Behaviors;
-    using UnityCommander.Common.Commands;
     using System.Collections.Generic;
-    using UnityCommander.Logging;
-    using NLog;
     using TabControl = Controls.TabPanel.TabControl;
     using UnityCommander.Services.Interfaces.Settings;
+    using Prism.Navigation.Regions;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
     {

@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath Condition="'$(TargetFramework)' == 'net9.0-windows'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net9.0-windows\plugins\W3Manager</OutputPath>
+    <OutputPath Condition="'$(TargetFramework)' == 'net9.0-windows;net10.0-windows'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net9.0-windows;net10.0-windows\plugins\W3Manager</OutputPath>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>

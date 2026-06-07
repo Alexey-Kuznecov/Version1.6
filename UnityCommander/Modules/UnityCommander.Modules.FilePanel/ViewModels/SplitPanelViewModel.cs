@@ -10,8 +10,8 @@
 
 using CommandSystem.Abstractions;
 using Prism.Commands;
-using Prism.Regions;
-using Prism.Services.Dialogs;
+using Prism.Dialogs;
+using Prism.Navigation.Regions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,7 +31,6 @@ using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
-using UnityCommander.Integration.Plugins;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -690,7 +689,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public DelegateCommand<object> UpdateDirectoryPanelCommand =>
             new DelegateCommand<object>(obj =>
             {
-                _commandService.Execute(CommandNames.Panel.Refresh);
+                _commandService.ExecuteAsync(CommandNames.Panel.Refresh);
             });
 
         #endregion

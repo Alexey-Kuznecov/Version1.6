@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.ToolBar</AssemblyName>
@@ -12,7 +12,7 @@
     <None Remove="Views\ViewA.xaml~RF43b94118.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
@@ -23,9 +23,6 @@
     <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CommandSystem.Abstractions">
-      <HintPath>..\..\..\..\_builds\CommandSystem.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="UnityCommander.Ribbon.Core">
       <HintPath>..\..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
     </Reference>

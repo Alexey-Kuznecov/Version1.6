@@ -1,6 +1,5 @@
 ﻿
 using Prism.Ioc;
-using Prism.Services.Dialogs;
 
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Layout;

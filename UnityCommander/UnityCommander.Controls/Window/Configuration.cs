@@ -3,8 +3,9 @@ namespace UnityCommander.Controls.Window
 {
     using System.Windows;
     using System.Windows.Input;
-
-    using AlexeyKuznecov.Library.Mvvm.Base;
+    using UnityCommander.Mvvm;
+    using 
+        UnityCommander.Mvvm.Base;
 
     /// <summary>
     /// The View Model for the custom flat window
@@ -55,14 +56,6 @@ namespace UnityCommander.Controls.Window
             };
 
             this.CloseCommand = new RelayCommand(obj => { this.Window.Close(); });
-            
-            this.CollapseRibbonCommand = new RelayCommand(
-                obj =>
-                    {
-                        this.GridRowShadow = this.GridRowShadow == 0 ? 10 : 0;
-                        this.CollapseContent = this.CollapseContent == "Max" ? "Mix" : "Max";
-                        UnityCommander.Controls.Ribbon.Ribbon.MinimizeCommand.Execute(null);
-                    });
 
             // Fix window resize issue
             var resizer = new WindowResizer(this.Window);
@@ -105,7 +98,7 @@ namespace UnityCommander.Controls.Window
             get => this.resizeBorderThickness; 
             set
             {
-                this.resizeBorderThickness = new Thickness(this.ResizeBorder + this.OuterMarginSize + 100);
+                //this.resizeBorderThickness = new Thickness(this.ResizeBorder + this.OuterMarginSize + 100);
                 this.OnPropertyChanged("ResizeBorderThickness");
             }
         }

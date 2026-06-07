@@ -5,7 +5,7 @@ namespace UnityCommander.Modules.LeftSideBars
 {
     using Prism.Ioc;
     using Prism.Modularity;
-    using Prism.Regions;
+    using Prism.Navigation.Regions;
     using UnityCommander.Core;
     using UnityCommander.Modules.LeftSideBars.ViewModels;
     using UnityCommander.Modules.LeftSideBars.Views;

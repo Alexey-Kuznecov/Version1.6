@@ -407,7 +407,7 @@
             // Перебираем все доступные каталоги плагинов
             foreach (var pluginDir in Directory.GetDirectories(pluginsDirectory))
             {
-                string potentialDllPath = Path.Combine(pluginDir, "net9.0-windows", nameDll);
+                string potentialDllPath = Path.Combine(pluginDir, "net10.0-windows", nameDll);
 
                 if (File.Exists(potentialDllPath))
                 {

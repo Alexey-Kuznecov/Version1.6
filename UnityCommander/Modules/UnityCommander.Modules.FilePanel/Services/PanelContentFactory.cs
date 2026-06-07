@@ -1,5 +1,5 @@
 ﻿
-using Prism.Regions;
+using Prism.Navigation.Regions;
 using System;
 using System.Linq;
 using System.Windows.Controls;
@@ -37,7 +37,8 @@ namespace UnityCommander.Modules.FilePanel.Services
 
             _regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
             {
-                if (result.Result != true) return;
+                if (!result.Success)
+                    return;
 
                 var view = result.Context.NavigationService.Region.ActiveViews
                     .FirstOrDefault() as SplitPanelView;

@@ -1,5 +1,5 @@
 ﻿
-using Prism.Services.Dialogs;
+using Prism.Dialogs;
 using System.Windows;
 using UnityCommander.Core.IO.Operations;
 using UnityCommander.Core.Mvvm;

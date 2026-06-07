@@ -1,5 +1,5 @@
 ﻿using Prism.Mvvm;
-using Prism.Regions;
+using Prism.Navigation.Regions;
 using System;
 using System.Linq;
 using System.Windows;

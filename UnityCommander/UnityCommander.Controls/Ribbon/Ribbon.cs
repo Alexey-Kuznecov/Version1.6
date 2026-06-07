@@ -4,8 +4,7 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-
-    using AlexeyKuznecov.Library.Mvvm.Base;
+    using UnityCommander.Mvvm;
 
     public class Ribbon : Panel
     {

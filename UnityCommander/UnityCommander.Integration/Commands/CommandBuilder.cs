@@ -7,12 +7,11 @@ namespace UnityCommander.Integration.Commands
     using System.Reflection;
     using System.Windows.Input;
 
-    using AlexeyKuznecov.Library.Mvvm.Base;
 
     using UnityCommander.Common.Commands;
     using UnityCommander.Common;
-    using AlexeyKuznecov;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Mvvm;
 
     /// <summary>
     /// Построитель команд подключаемых модулей.

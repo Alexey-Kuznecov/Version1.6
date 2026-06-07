@@ -1,8 +1,6 @@
-﻿using Prism.Mvvm;
-using Prism.Services.Dialogs;
+﻿using Prism.Dialogs;
+using Prism.Mvvm;
 using System;
-using UnityCommander.Integration.Plugins;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.ViewModels.Dialogs
 {
@@ -17,7 +15,7 @@ namespace UnityCommander.ViewModels.Dialogs
 
         public string Title => "AppConfig";
 
-        public event Action<IDialogResult> RequestClose;
+        public DialogCloseListener RequestClose { get; private set; }
 
         public bool CanCloseDialog()
         {

@@ -5,11 +5,10 @@ namespace UnityCommander.ViewModels
     using System.Windows.Controls;
 
     using Prism.Commands;
+    using Prism.Dialogs;
     using Prism.Mvvm;
-    using Prism.Services.Dialogs;
 
     using UnityCommander.Core.Mvvm;
-    using UnityCommander.Integration.Plugins;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
@@ -43,7 +42,7 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// The request close.
         /// </summary>
-        public event Action<IDialogResult> RequestClose;
+        public DialogCloseListener RequestClose { get; private set; }
 
         /// <summary>
         /// The close dialog command.
@@ -104,7 +103,7 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private void ExecuteCloseDialogCommand()
         {
-            this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+            RequestClose.Invoke(new DialogResult(ButtonResult.OK));
         }
 
         /// <summary>

@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-	  <TargetFramework>net9.0-windows</TargetFramework>
+	  <TargetFramework>net10.0-windows</TargetFramework>
 	  <OutputPath>..\..\plugins\</OutputPath>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <OutputPath Condition="'$(TargetFramework)' == 'net9.0-windows'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net9.0-windows\plugins\MultiColumns</OutputPath>
+	  <OutputPath Condition="'$(TargetFramework)' == 'net9.0-windows;net10.0-windows'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net9.0-windows;net10.0-windows\plugins\MultiColumns</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">

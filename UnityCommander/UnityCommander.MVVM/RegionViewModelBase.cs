@@ -2,7 +2,7 @@
 namespace UnityCommander.Core.Mvvm
 {
     using System;
-    using Prism.Regions;
+    using Prism.Navigation.Regions;
 
     /// <summary>
     /// The region view model base.

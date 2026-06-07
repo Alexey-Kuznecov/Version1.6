@@ -1,5 +1,5 @@
 ﻿
-using NLog.Layouts;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,6 @@ using UnityCommander.Common.State;
 using UnityCommander.Modules.FilePanel.Docking.Builders;
 using UnityCommander.Modules.FilePanel.Docking.Diff;
 using UnityCommander.Modules.FilePanel.Docking.Snapshot;
-using UnityCommander.Services;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 using Xceed.Wpf.AvalonDock;
@@ -26,6 +25,8 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
         private DockingManager _manager;
         private DockingSnapshot _previous;
         public event Action<DiffResult> OnDiff;
+        public event Action<object> OnDocumentClose;
+        public event Action<object> OnFloatingWindow;
 
         private bool _initialized;
 
@@ -136,6 +137,20 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             _initialized = true;
 
             _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_, __);
+            _manager.DocumentClosed += (_, __) => HandleDocumentClosed(_, __);
+            _manager.LayoutFloatingWindowControlCollectionChanged += (_, __) => HandleFloatingWindowControlCollectionChanged(_);
+        }
+
+        private void HandleFloatingWindowControlCollectionChanged(object _)
+        {
+            OnFloatingWindow.Invoke(_);
+        }
+
+        private void HandleDocumentClosed(
+            object? sender,
+            DocumentClosedEventArgs e)
+        {
+            OnDocumentClose?.Invoke(sender);
         }
 
         private PanelSessionState FindPanelStateForPane(
@@ -166,6 +181,14 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             }
 
             _previous = current;
+        }
+
+        public bool HasMeaningfulChanges(DiffResult diff)
+        {
+            return diff.Operations.Any(op =>
+                op.Type == TabOperationType.Add ||
+                op.Type == TabOperationType.Remove ||
+                op.Type == TabOperationType.Move);
         }
 
         private bool HasChanges(DiffResult diff)

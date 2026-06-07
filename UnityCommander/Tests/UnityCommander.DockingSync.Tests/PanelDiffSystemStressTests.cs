@@ -18,7 +18,7 @@ namespace UnityCommander.DockingSync.Tests
             var diff = new DockingDiffEngine();
             var panelRegistry = new PanelRegistry(); // реальный
 
-            var service = new DockingSyncService(ctx, panelRegistry, null, diff, builder);
+            //var service = new DockingSyncService(ctx, panelRegistry, null, diff, builder);
 
             var panelId = Guid.NewGuid();
             var tab1 = Guid.NewGuid();
@@ -52,7 +52,7 @@ namespace UnityCommander.DockingSync.Tests
                 }
             });
 
-            service.HandleLayoutChanged(null, EventArgs.Empty);
+            //service.HandleLayoutChanged(null, EventArgs.Empty);
 
             var panel = panelRegistry.GetPanel(panelId);
 

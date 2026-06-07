@@ -184,7 +184,7 @@ namespace UnityCommander.Integration.Plugins
         private string GetPluginDllPath(string pluginDirectory)
         {
             string dirName = Path.GetFileName(pluginDirectory);
-            return Path.Combine(pluginDirectory, "net9.0-windows", $"{dirName}.dll");
+            return Path.Combine(pluginDirectory, "net10.0-windows", $"{dirName}.dll");
         }
 
         #endregion

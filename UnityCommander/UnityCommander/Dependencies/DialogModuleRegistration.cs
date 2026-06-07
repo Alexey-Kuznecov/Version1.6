@@ -1,6 +1,6 @@
 ﻿
+using Prism.Dialogs;
 using Prism.Ioc;
-using Prism.Services.Dialogs;
 using UnityCommander.Bootstrap;
 using UnityCommander.Modules.Viewer.Views;
 using UnityCommander.ViewModels;

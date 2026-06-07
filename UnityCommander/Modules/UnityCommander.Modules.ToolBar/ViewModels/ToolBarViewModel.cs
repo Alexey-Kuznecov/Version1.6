@@ -4,7 +4,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 {
     using Prism.Commands;
     using Prism.Mvvm;
-    using Prism.Services.Dialogs;
+    using System.Threading.Tasks;
     using System;
     using System.Windows.Controls;
     using System.Windows.Input;

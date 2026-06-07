@@ -1,4 +1,4 @@
-﻿using AlexeyKuznecov.Library.Mvvm.Base;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +8,6 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models;
 using UnityCommander.Common.Module;
 using UnityCommander.Core.Commands;
-using UnityCommander.Integration.Attributes;
-using UnityCommander.Integration.Options;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.Viewer.ViewModels

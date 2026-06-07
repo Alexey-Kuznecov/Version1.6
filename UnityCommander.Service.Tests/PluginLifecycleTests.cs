@@ -18,7 +18,7 @@
 
 //    public class PluginLifecycleTests
 //    {
-//        private readonly string _pluginDirectory = "F:\\UnityCommander\\Version3.9.7\\UnityCommander\\UnityCommander\\bin\\Debug\\net9.0-windows\\plugins";
+//        private readonly string _pluginDirectory = "F:\\UnityCommander\\Version3.9.7\\UnityCommander\\UnityCommander\\bin\\Debug\\net9.0-windows;net10.0-windows\\plugins";
 //        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
 //        /// <summary>
@@ -35,7 +35,7 @@
 //        /// <created>Дата создания: 2025-04-05</created>
 //        /// <test>
 //        /// Arrange:
-//        /// - Создается папка InvalidPlugin/net9.0-windows.
+//        /// - Создается папка InvalidPlugin/net9.0-windows;net10.0-windows.
 //        /// - В неё помещается текстовый файл с расширением .dll.
 //        /// Act:
 //        /// - Вызывается метод LoadPlugins.
@@ -73,7 +73,7 @@
 //            var pluginDirectory = Path.Combine(_pluginDirectory, "MultiColumns");
 //            //Directory.CreateDirectory(pluginDirectory);
 
-//            var netFolder = Path.Combine(pluginDirectory, "net9.0-windows");
+//            var netFolder = Path.Combine(pluginDirectory, "net9.0-windows;net10.0-windows");
 //            //Directory.CreateDirectory(netFolder);
 
 //            var validPluginPath = Path.Combine(netFolder, "MultiColumns.dll");
@@ -102,7 +102,7 @@
 //            var pluginDirectory = _pluginDirectory;
 //            Directory.CreateDirectory(pluginDirectory);
 
-//            var netFolder = Path.Combine(pluginDirectory, $"{pluginName}\\net9.0-windows");
+//            var netFolder = Path.Combine(pluginDirectory, $"{pluginName}\\net9.0-windows;net10.0-windows");
 //            Directory.CreateDirectory(netFolder);
 
 //            var pluginFilePath = Path.Combine(netFolder, $"{pluginName}.{extension}");
