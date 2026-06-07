@@ -47,19 +47,7 @@
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Background="#7C9BCC"
-                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
-                        <ToggleButton.Resources>
-                            <!--  Checked thumb foreground  -->
-                            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#673AB7" />
-                            <!--  Unchecked thumb foreground  -->
-                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#C2C3C9" />
-
-                            <!--  Checked track color: There will be an opacity of 0.26 applied to it  -->
-                            <!--  Setting this will also affect the color of the ripple when the thumb is clicked  -->
-                            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#C2C3C9" />
-                            <!--  Unchecked track color: Hard coded to be black with 0.26 opacity  -->
-                        </ToggleButton.Resources>
-                    </ToggleButton>
+                        Style="{StaticResource UcToggleButton}" />
                 </Grid>
                 <Grid Margin="20,15,0,15">
                     <Grid.ColumnDefinitions>
@@ -76,19 +64,7 @@
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Background="#7C9BCC"
-                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
-                        <ToggleButton.Resources>
-                            <!--  Checked thumb foreground  -->
-                            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#673AB7" />
-                            <!--  Unchecked thumb foreground  -->
-                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#C2C3C9" />
-
-                            <!--  Checked track color: There will be an opacity of 0.26 applied to it  -->
-                            <!--  Setting this will also affect the color of the ripple when the thumb is clicked  -->
-                            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#C2C3C9" />
-                            <!--  Unchecked track color: Hard coded to be black with 0.26 opacity  -->
-                        </ToggleButton.Resources>
-                    </ToggleButton>
+                        Style="{StaticResource UcToggleButton}" />
                 </Grid>
                 <Grid Margin="20,15,0,15">
                     <Grid.ColumnDefinitions>
@@ -105,19 +81,7 @@
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         Background="#7C9BCC"
-                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
-                        <ToggleButton.Resources>
-                            <!--  Checked thumb foreground  -->
-                            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#673AB7" />
-                            <!--  Unchecked thumb foreground  -->
-                            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#C2C3C9" />
-
-                            <!--  Checked track color: There will be an opacity of 0.26 applied to it  -->
-                            <!--  Setting this will also affect the color of the ripple when the thumb is clicked  -->
-                            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#C2C3C9" />
-                            <!--  Unchecked track color: Hard coded to be black with 0.26 opacity  -->
-                        </ToggleButton.Resources>
-                    </ToggleButton>
+                        Style="{StaticResource UcToggleButton}" />
                 </Grid>
             </StackPanel>
 

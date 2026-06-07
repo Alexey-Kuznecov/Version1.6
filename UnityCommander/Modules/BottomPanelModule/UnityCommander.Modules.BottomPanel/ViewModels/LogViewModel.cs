@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Core;
 using UnityCommander.Mvvm;
@@ -13,7 +12,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
     public class LogViewModel : BindableBase
     {
         private readonly StringBuilder _builder = new();
-        private ILogHighlighter _highlighter = new DefaultLogHighlighter();
+        private ILogHighlighter _highlighter = new AutoLogHighlighter();
         public ObservableCollection<LogEntryViewModel> Logs { get; } = new();
         
         private string _logText = "";

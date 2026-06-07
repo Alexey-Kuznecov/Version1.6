@@ -44,7 +44,6 @@
             Padding="0"
             Background="#1E1E1E"
             BorderThickness="0"
-
             ItemsSource="{Binding Logs}"
             Loaded="OnLoaded"
             ScrollViewer.CanContentScroll="True"
@@ -80,9 +79,10 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock
+                                    Background="{Binding Background}"
                                     FontFamily="Consolas"
                                     FontSize="12"
-                                    Foreground="{Binding Color}"
+                                    Foreground="{Binding Foreground}"
                                     Text="{Binding Text}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

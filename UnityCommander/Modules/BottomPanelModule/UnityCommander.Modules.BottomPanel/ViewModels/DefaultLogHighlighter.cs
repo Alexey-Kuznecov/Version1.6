@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using UnityCommander.Logging.Core;
+using UnityCommander.Modules.BottomPanel.Highlighting;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
@@ -14,16 +15,16 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         {
             var list = new List<LogInline>
             {
-                new($"[{entry.Scope}] ", Brushes.Gray),
-                new($"[{entry.Category}] ", Brushes.DodgerBlue),
-                new($"[{entry.Level}] ", Brushes.LightGray)
+                new($"[{entry.Scope}] ", new HighlightStyle(Brushes.Gray)),
+                new($"[{entry.Category}] ", new HighlightStyle(Brushes.DodgerBlue)),
+                new($"[{entry.Level}] ", new HighlightStyle(Brushes.LightGray))
             };
 
             BuildMessage(entry.Message, list);
 
             if (entry.Payload != null)
             {
-                list.Add(new($"[{entry.Payload}] ", Brushes.RosyBrown));
+                list.Add(new($"[{entry.Payload}] ", new HighlightStyle(Brushes.RosyBrown)));
             }
             return list;
         }
@@ -35,14 +36,14 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             foreach (Match m in PathRegex.Matches(text))
             {
                 if (m.Index > last)
-                    list.Add(new LogInline(text[last..m.Index], Brushes.White));
+                    list.Add(new LogInline(text[last..m.Index], HighlightStyles.Default));
 
-                list.Add(new LogInline(m.Value, Brushes.DeepSkyBlue));
+                list.Add(new LogInline(m.Value, new HighlightStyle(Brushes.DeepSkyBlue)));
                 last = m.Index + m.Length;
             }
 
             if (last < text.Length)
-                list.Add(new LogInline(text[last..], Brushes.White));
+                list.Add(new LogInline(text[last..], HighlightStyles.Default));
         }
     }
 }
