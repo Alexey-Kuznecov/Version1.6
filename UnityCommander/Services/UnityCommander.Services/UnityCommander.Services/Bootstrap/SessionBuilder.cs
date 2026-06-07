@@ -20,36 +20,34 @@ namespace UnityCommander.Services.Bootstrap
             _tabRegistry = tabRegistry;
         }
 
-        public AppSessionState Build()
+        public void Build(AppSessionState state)
         {
             var panels = _panelRegistry.GetAllPanels();
 
-            return new AppSessionState
+            state.Panels.Clear();
+            state.Panels = panels.Select(panel =>
             {
-                Panels = panels.Select(panel =>
+                return new PanelSessionState
                 {
-                    return new PanelSessionState
-                    {
-                        PanelId = panel.PanelId,
+                    PanelId = panel.PanelId,
 
-                        Tabs = panel.Tabs
-                            .Select(tabId =>
+                    Tabs = panel.Tabs
+                        .Select(tabId =>
+                        {
+                            var tab = _tabRegistry.GetTab(tabId);
+
+                            return new TabSessionState
                             {
-                                var tab = _tabRegistry.GetTab(tabId);
+                                Title = tab?.GetCurrentPath(),
+                                TabId = tabId,
+                                Path = tab?.GetCurrentPath()
+                            };
+                        })
+                        .ToList(),
 
-                                return new TabSessionState
-                                {
-                                    Title = tab?.GetCurrentPath(),
-                                    TabId = tabId,
-                                    Path = tab?.GetCurrentPath()
-                                };
-                            })
-                            .ToList(),
-
-                        ActiveTabId = panel.ActiveTabId ?? Guid.Empty
-                    };
-                }).ToList()
-            };
+                    ActiveTabId = panel.ActiveTabId ?? Guid.Empty
+                };
+            }).ToList();
         }
     }
 }

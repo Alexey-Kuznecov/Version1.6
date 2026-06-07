@@ -117,7 +117,7 @@ namespace UnityCommander.Services.Bootstrap
 
             var root = new LayoutRoot();
             var panel = new LayoutPanel { Orientation = Orientation.Horizontal };
-
+            
             root.RootPanel = panel;
 
             foreach (var panelState in _session.Panels)
@@ -128,11 +128,26 @@ namespace UnityCommander.Services.Bootstrap
 
                 foreach (var tab in panelState.Tabs)
                 {
+                    var content = new ContentControl();
+
                     var doc = new LayoutDocument
                     {
                         Title = tab.Path,
-                        ContentId = panelState.PanelId.ToString()
+                        ContentId = tab.TabId.ToString()
                     };
+
+                    if (doc is LayoutContent layout) 
+                    {
+                        _factory.Create(content, tab.TabId, tab.Path, vm =>
+                        {
+                            vm.TabTitleChanged += formatPath =>
+                            {
+                                doc.Title = formatPath;
+                            };
+                        });
+
+                        layout.Content = content;
+                    }
 
                     docPane.Children.Add(doc);
                 }

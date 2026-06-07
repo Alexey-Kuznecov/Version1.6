@@ -5,6 +5,6 @@ namespace UnityCommander.Services.Interfaces.Bootstrap
 {
     public interface ISessionBuilder
     {
-        AppSessionState Build();
+        void Build(AppSessionState state);
     }
 }

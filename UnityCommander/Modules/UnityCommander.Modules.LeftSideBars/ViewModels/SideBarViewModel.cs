@@ -12,49 +12,36 @@ using Prism.Commands;
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
-    using CommandSystem.Abstractions;
     using MaterialDesignThemes.Wpf;
-    using Prism.Events;
     using Prism.Mvvm;
     using Prism.Services.Dialogs;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Reflection;
     using System.Windows.Controls;
     using System.Windows.Shapes;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Common.State;
-    using UnityCommander.Integration.Plugins;
-    using UnityCommander.Modules.LeftSideBars.Content;
-    using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Bootstrap;
+    using UnityCommander.Services.Interfaces.Sidebar;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
     public class SidebarViewModel : BindableBase
     {
-        private readonly IDialogService dialogService;
+        private readonly IDialogService _dialogService;
+
+        private readonly SidebarService _sidebarService;
 
         private readonly ObservableCollection<IIcon> packIcon;
 
-        private readonly Dictionary<string, UserControl> contentControlRegister =
-            new()
-            {
-                ["TableColumn"] = new ColumnsOptionControl(),
-                ["FileTree"] = new FolderTreeOverviewControl(),
-                ["Comment"] = new CommentControl(),
-                ["Tag"] = new TagControlPanel(),
-                ["Plugin"] = new PluginControlPanel()
-            };
-
-        private readonly Dictionary<string, object> dataContextRegister =
-            new();
-
         private DelegateCommand hideSidebarCommand;
+
         private DelegateCommand openSettingDialogCommand;
 
         private Path iconHideSidebar;
@@ -66,30 +53,20 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IDialogService dialogService,
             IIconProviderService iconProvider,
             IPluginProvider pluginLoader,
-            IMultiCommandService command, 
-            ISessionService sessionService)
+            IMultiCommandService command,
+            ISessionService sessionService,
+            SidebarService sidebarService)
         {
-            this.dialogService = dialogService;
+            _dialogService = dialogService;
 
-            var session  = sessionService.Load();
+            _sidebarService = sidebarService;
 
+            var session = sessionService.Load();
 
             packIcon = iconProvider.GetIcons();
 
             IconHideSidebar =
                 iconProvider.GetIcon(PackIconKind.ArrowBack).GetIconPath();
-
-            dataContextRegister["TableColumn"] = null;
-            dataContextRegister["FileTree"] = null;
-            dataContextRegister["Comment"] = null;
-            dataContextRegister["Tag"] = null;
-            dataContextRegister["Plugin"] =
-                new PluginPanelViewModel(
-                    dialogService,
-                    iconProvider,
-                    pluginLoader);
-
-            CreateSidebarElement();
         }
 
         public ObservableCollection<SidebarItem> SidebarItem { get; } = new();
@@ -112,58 +89,94 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             set => SetProperty(ref sidebarContentWidth, value);
         }
 
+        private bool isSidebarOpen;
+
+        public bool IsSidebarOpen
+        {
+            get => isSidebarOpen;
+            set
+            {
+                if (!SetProperty(ref isSidebarOpen, value))
+                    return;
+
+                if (value)
+                {
+                    SidebarContentWidth = 250;
+                    SidebarContent = CurrentSidebarItem?.Content;
+                }
+                else
+                {
+                    SidebarContentWidth = 0;
+                    SidebarContent = null;
+                    CurrentSidebarItem = null;
+                }
+            }
+        }
+
         public SidebarItem CurrentSidebarItem
         {
             get => currentSidebarItem;
             set
             {
+                if (ReferenceEquals(currentSidebarItem, value))
+                {
+                    IsSidebarOpen = false;
+                    return;
+                }
+
                 if (!SetProperty(ref currentSidebarItem, value))
                     return;
 
                 SidebarContent = value?.Content;
-                SidebarContentWidth = 250;
+                IsSidebarOpen = value != null;
             }
         }
 
         public DelegateCommand HideSidebarCommand =>
-            hideSidebarCommand ??= new DelegateCommand(
-                () => {
-                    SidebarContentWidth = 0;
-                    //CurrentSidebarItem = null;
-                    //SidebarContent = null;
-                });
+            hideSidebarCommand ??=
+                new DelegateCommand(() =>
+                    IsSidebarOpen = false);
 
         public DelegateCommand OpenSettingDialogCommand =>
             openSettingDialogCommand ??=
                 new DelegateCommand(OpenDialogCommand);
 
+        private void OpenDialogCommand()
+        {
+            _dialogService.ShowDialog("AppConfigDialog");
+        }
+
         internal void Capture(AppSessionState state)
         {
-            //state.Sidebar.IsOpen = IsOpen;
+            state.Sidebar.IsOpen = IsSidebarOpen;
+            state.Sidebar.ActiveSectionId = CurrentSidebarItem.Id;
         }
 
         internal void Restore(AppSessionState state)
         {
-            //throw new NotImplementedException();
+            IsSidebarOpen = state.Sidebar.IsOpen;
+
+            var item = SidebarItem
+             .FirstOrDefault(x => x.Id == state.Sidebar.ActiveSectionId)
+                ?? SidebarItem.FirstOrDefault();
+
+            SidebarContent = item?.Content;
+            CurrentSidebarItem = item;
         }
 
-        private void OpenDialogCommand()
+        internal void Initialize()
         {
-            dialogService.ShowDialog("AppConfigDialog");
-        }
-
-        private void CreateSidebarElement()
-        {
-            foreach (var (key, control) in contentControlRegister)
+            foreach (var item in _sidebarService.GetAll().ToList())
             {
-                control.DataContext = dataContextRegister[key];
+                item.View.DataContext = item?.ViewModel;
 
                 SidebarItem.Add(
                     new SidebarItem
                     {
-                        Content = control,
+                        Id = item.Id,
+                        Content = item.View,
                         Icon = packIcon.Single(
-                            i => ((Common.Models.Icons.Icon)i).Category == key)
+                            i => ((Common.Models.Icons.Icon)i).Category == item.IconKey)
                     });
             }
         }

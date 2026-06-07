@@ -11,10 +11,13 @@ namespace UnityCommander.Common.State
 
         public bool IsConsoleOpen { get; set; }
 
-        public SidebarSessionState Sidebar { get; set; }
-
-        public BottomPanelSessionState BottomPanel { get; set; }
-
-        public RibbonSessionState Ribbon { get; set; }
+        public SidebarSessionState Sidebar { get; set; } 
+            = new SidebarSessionState();
+        
+        public BottomPanelSessionState BottomPanel { get; set; } 
+            = new BottomPanelSessionState();
+        
+        public RibbonSessionState Ribbon { get; set; } 
+            = new RibbonSessionState();
     }
 }

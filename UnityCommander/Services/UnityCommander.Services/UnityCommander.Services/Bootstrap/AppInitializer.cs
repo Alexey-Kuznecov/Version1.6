@@ -2,6 +2,7 @@
 using Prism.Commands;
 using Prism.Ioc;
 using UnityCommander.Common.Docking;
+using UnityCommander.Common.State;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 
@@ -9,6 +10,7 @@ namespace UnityCommander.Services.Bootstrap
 {
     public class AppInitializer
     {
+        private AppSessionState _state;
         private readonly ISessionService _session;
         private readonly ILayoutService _layout;
         private readonly IPanelService _panel;
@@ -38,26 +40,26 @@ namespace UnityCommander.Services.Bootstrap
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
         () =>
         {
-            var state = _builder.Build();   // 💥 СОБИРАЕМ
+            _builder.Build(_state);   // 💥 СОБИРАЕМ
 
-            _sessionAggregator.Capture(state);
+            _sessionAggregator.Capture(_state);
 
-            _session.Save(state);
+            _session.Save(_state);
 
             _layout.Save();
         });
 
         public void Initialize()
         {
-            var session = _session.Load();
+            _state = _session.Load();
 
-            _layout.Load(session);
+            _layout.Load(_state);
 
             _panel.Initialize();
 
-            _dockingSync.Initialize(session.Panels);
+            _dockingSync.Initialize(_state.Panels);
 
-            _sessionAggregator.Restore(session);
+            _sessionAggregator.Restore(_state);
         }
     }
 }

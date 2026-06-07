@@ -1,5 +1,6 @@
 ﻿
 
+using Prism.Navigation.Regions;
 using System;
 using System.Linq;
 using System.Windows.Controls;
@@ -10,7 +11,6 @@ using UnityCommander.Common.Module;
 using UnityCommander.Common.Panels;
 using UnityCommander.Core.Helper;
 using UnityCommander.Logging.Configuration;
-using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Views;
@@ -19,6 +19,7 @@ using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
+using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -48,6 +49,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                category: LogCategory.UserAction,
                scope: LogScope.Runtime
             );
+
             _regionManager = regionManager;
             _dockingService = dockingService;
             _tabRegistry = tabRegistry;
@@ -62,18 +64,23 @@ namespace UnityCommander.Modules.FilePanel.Services
             manager.MouseDoubleClick += Manager_MouseDoubleClick;
             manager.ActiveContentChanged += Manager_ActiveContentChanged;
             _dockingSyncService.OnDiff += _dockingSyncService_OnDiff;
-            _panelRegistry.TabAdded += _panelRegistry_TabAdded;
-            _panelRegistry.TabRemoved += _panelRegistry_TabRemoved;
+            _dockingSyncService.OnDocumentClose += _dockingSyncService_OnDocumentClose;
+            _dockingSyncService.OnFloatingWindow += _dockingSyncService_OnFloatingWindow; ;
             _tabDoubleClick = new DoubleClickHandlerHelper(_logger);
         }
 
-        private void _panelRegistry_TabAdded(TabAddedEvent panel)
+        private void _dockingSyncService_OnFloatingWindow(object obj)
         {
+            //throw new NotImplementedException();
         }
 
-        private void _panelRegistry_TabRemoved(TabActionEvent panel)
+        private void _dockingSyncService_OnDocumentClose(object obj)
         {
-            _tabRegistry.Unregister(panel.TabId);
+            foreach (var item in _tabRegistry.GetAllTabs())
+            {
+                if (!_panelRegistry.Contains(item.TabId))
+                    _tabRegistry.Unregister(item.TabId);
+            }
         }
 
         private void _dockingSyncService_OnDiff(DiffResult result)
@@ -86,11 +93,34 @@ namespace UnityCommander.Modules.FilePanel.Services
                 switch (op.Type)
                 {
                     case TabOperationType.Add:
+                        
+                        var before = _panelRegistry.GetDebugState();
+
+                        var activeTab = _tabRegistry.ActiveTab;
+
                         _panelRegistry.AddTab(op.ToPanelId.Value, op.TabId);
+
+                        var state = _panelRegistry.GetDebugState();
+
+                        _logger.Debug($"REMOVE: {op.TabId} => {activeTab.TabId}");
+                        _logger.Debug($"Panels: {before.PanelCount} => {state.PanelCount}");
+                        _logger.Debug($"Tabs: {before.TabCount} => {state.TabCount}");
+
                         break;
 
                     case TabOperationType.Remove:
+                        
+                        before = _panelRegistry.GetDebugState();
+
+                        activeTab = _tabRegistry.ActiveTab;
+
                         _panelRegistry.RemoveTab(op.TabId);
+
+                        state = _panelRegistry.GetDebugState();
+
+                        _logger.Debug($"REMOVE: {op.TabId} => {activeTab.TabId}");
+                        _logger.Debug($"Panels: {before.PanelCount} => {state.PanelCount}");
+                        _logger.Debug($"Tabs: {before.TabCount} => {state.TabCount}");
 
                         if (op.FromPanelId is Guid panelId)
                         {
@@ -101,7 +131,13 @@ namespace UnityCommander.Modules.FilePanel.Services
                         break;
 
                     case TabOperationType.Move:
-                        _panelRegistry.MoveTab(op.ToPanelId.Value, op.TabId);
+
+                        //foreach (var item in _tabRegistry.GetAllTabs())
+                        //{
+                        //    if (!_panelRegistry.Contains(item.TabId))
+                        //        _tabRegistry.Unregister(item.TabId);
+                        //}
+
                         break;
 
                     case TabOperationType.Activate:
@@ -110,6 +146,17 @@ namespace UnityCommander.Modules.FilePanel.Services
                 }
             }
         }
+
+        private void SynchronizeTabs()
+         {
+             foreach (var tab in _tabRegistry.GetAllTabs())
+             {
+                 if (!_panelRegistry.Contains(tab.TabId))
+                 {
+                     _tabRegistry.Unregister(tab.TabId);
+                 }
+             }
+         }
 
         private void Manager_ActiveContentChanged(object sender, EventArgs e)
         {
@@ -143,6 +190,11 @@ namespace UnityCommander.Modules.FilePanel.Services
 
             _panelRegistry.SetActiveTab(panelId, tabId);
             _tabRegistry.SetActive(tabId);
+
+            _logger.Debug($"Total tabs: {_tabRegistry.GetAllTabs().Count}");
+            _logger.Debug($"Total panels: {_panelRegistry.GetAllPanels().Count}");
+            _logger.Debug($"Activate tab: {_tabRegistry.ActiveTab.GetCurrentPath()}");
+            _logger.Debug($"Token: {_tabRegistry.ActiveTab.TabId}");
         }
 
         private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -184,7 +236,8 @@ namespace UnityCommander.Modules.FilePanel.Services
 
             _regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
             {
-                if (result.Result != true) return;
+                if (!result.Success)
+                    return;
 
                 var view = result.Context.NavigationService.Region.ActiveViews
                                .FirstOrDefault() as SplitPanelView;

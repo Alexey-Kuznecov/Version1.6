@@ -5,19 +5,16 @@ namespace UnityCommander.Common.Models
 
     using UnityCommander.Common.Models.Icons;
 
-    /// <summary>
-    /// The sidebar item.
-    /// </summary>
     public class SidebarItem
     {
-        /// <summary>
-        /// Gets or sets the content.
-        /// </summary>
+        public string Id { get; set; } = default!;   // git.status
+
+        public string Owner { get; set; } = default!; // git
+
         public UserControl Content { get; set; }
 
-        /// <summary>
-        /// Gets or sets the icon.
-        /// </summary>
         public IIcon Icon { get; set; }
+
+        public string? Title { get; set; }
     }
 }
