@@ -7,6 +7,8 @@ namespace UnityCommander.Core.Theming
     {
         public string Name { get; set; }
 
+        public int Priority { get; init; }
+
         public IReadOnlyList<string> ResourceUris { get; set; }
     }
 }

@@ -82,11 +82,11 @@ namespace UnityCommander
 
             ThemeManager.Initialize(catalog, "Material");
 
-            var resources =
-                ThemeManager.GetResourceUris()
-                    .Concat(ModuleResources.ResourceUris);
+            //var resources =
+            //    ThemeManager.GetResourceUris()
+            //        .Concat(ModuleResources.ResourceUris);
 
-            foreach (var dictionary in SharedDictionaryManager.Load(resources))
+            foreach (var dictionary in SharedDictionaryManager.Load(ModuleResources.ResourceUris))
             {
                 Resources.MergedDictionaries.Add(dictionary);
             }

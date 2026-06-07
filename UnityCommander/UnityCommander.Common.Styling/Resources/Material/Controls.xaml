@@ -3,6 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Material/Controls/MenuItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Material/Controls/Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Material/Controls/ToggleButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

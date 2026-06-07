@@ -72,9 +72,12 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.ContextMenu>
-                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
+                    <ContextMenu
+                        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                        ItemsSource="{Binding Context.ContextMenuItems}"
+                        Style="{StaticResource UcContextMenu}">
                         <ContextMenu.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource UcMenuItemStyle}" TargetType="MenuItem">
+                            <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Title}" />
                                 <Setter Property="Command" Value="{Binding Command}" />
                                 <Setter Property="ItemsSource" Value="{Binding Children}" />

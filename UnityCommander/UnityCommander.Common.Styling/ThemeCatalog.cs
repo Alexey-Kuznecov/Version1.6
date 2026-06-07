@@ -15,10 +15,10 @@ namespace UnityCommander.Common.Styling
         {
             Default = new ThemeDefinition
             {
-                Name = "Default",
+                Name = "Material",
                 ResourceUris =
-                [
-                    "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml"
+                [  
+                    "/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml",
                 ]
             };
 
@@ -27,10 +27,10 @@ namespace UnityCommander.Common.Styling
             Register(
                 new ThemeDefinition
                 {
-                    Name = "Material",
+                    Name = "Default",
                     ResourceUris =
                     [
-                        "/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml"
+                        "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml",
                     ]
                 });
         }

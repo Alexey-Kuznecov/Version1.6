@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
+using System.Windows;
 
 namespace UnityCommander.Core.Theming
 {
@@ -47,9 +47,32 @@ namespace UnityCommander.Core.Theming
                         : CurrentTheme.ResourceUris);
         }
 
-        private static void ApplyTheme(
-            ThemeDefinition theme)
+        private static void ApplyTheme(ThemeDefinition theme)
         {
+            //var appResources = Application.Current.Resources.MergedDictionaries;
+
+            //// 1. Убираем старые theme dictionaries (но не base/framework)
+            //var toRemove = appResources
+            //    .Where(d => IsThemeDictionary(d))
+            //    .ToList();
+
+            //foreach (var dict in toRemove)
+            //    appResources.Remove(dict);
+
+            //// 2. Добавляем новый theme в конец (highest priority)
+            //foreach (var uri in theme.ResourceUris)
+            //{
+            //    appResources.Add(new ResourceDictionary
+            //    {
+            //        Source = new Uri(uri, UriKind.RelativeOrAbsolute)
+            //    });
+            //}
+        }
+
+        private static bool IsThemeDictionary(ResourceDictionary dict)
+        {
+            return dict.Source != null &&
+                   dict.Source.OriginalString.Contains("Themes");
         }
     }
 }

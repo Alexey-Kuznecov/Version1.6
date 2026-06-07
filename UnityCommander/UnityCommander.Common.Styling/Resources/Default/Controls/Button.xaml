@@ -1,8 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style
-        x:Key="UcButton"
-        TargetType="{x:Type Button}">
+    <Style x:Key="UcButton" TargetType="{x:Type Button}">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Background" Value="{x:Null}" />
@@ -15,10 +13,5 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-    <Style
-        x:Key="UcToggleButton"
-        BasedOn="{StaticResource MaterialDesignRaisedButton}"
-        TargetType="{x:Type ToggleButton}" />
 
 </ResourceDictionary>

@@ -36,7 +36,7 @@
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Style.BasedOn>
-                <StaticResource ResourceKey="UcMenuItemStyle" />
+                <StaticResource ResourceKey="UcContextMenuItem" />
             </Style.BasedOn>
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Height" Value="50" />
