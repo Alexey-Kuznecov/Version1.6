@@ -12,27 +12,31 @@ using System.Linq;
 namespace UnityCommander.ViewModels
 {
     using Prism.Commands;
+    using Prism.Dialogs;
     using Prism.Events;
     using Prism.Mvvm;
     using System;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Input;
     using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Window;
     using UnityCommander.Core.Behaviors;
+    using UnityCommander.Mvvm;
     using UnityCommander.Ribbon.Core.Services;
-    using UnityCommander.Services.Bootstrap;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Settings;
+    using UnityCommander.Services.Layout;
 
     /// <summary>
     /// The main window view model.
     /// </summary>
     public class MainWindowViewModel : BindableBase, IKeyBinding
     {
-        private readonly IRibbonManager _ribbonManager;
+        private CommandService _commandService;
+
+        private IShellLayoutManager _shellLayoutManager;
 
         private IMultiCommandService stateCommands;
 
@@ -40,18 +44,24 @@ namespace UnityCommander.ViewModels
 
         private string icon;
 
-        private double ribbonContainerSize;
+        private double _ribbonHeight = 0;
 
-        private Visibility toolBarVisibility;
+        private double _bottomHeight = 0;
 
         public MainWindowViewModel(
             IDialogService dialogService,
             IEventAggregator exchange,
             ISettingsProviderService settingsProviderService,
             IIconProviderService iconProviderService,
-            IMultiCommandService command, IRibbonManager ribbonManager)
+            IMultiCommandService command,
+            IShellLayoutManager shellLayoutManager,
+            IRibbonManager ribbonManager,
+            CommandService commandService)
         {
-            _ribbonManager = ribbonManager;
+            _commandService = commandService;
+            _shellLayoutManager = shellLayoutManager;
+            _shellLayoutManager.AreaChanged += OnAreaChanged;
+
             this.StateCommand = command;
             
             this.StateCommand
@@ -59,29 +69,41 @@ namespace UnityCommander.ViewModels
                 .RegisterCommand(this.CloseWindowCommand);
 
             var settings = settingsProviderService.GetAppConfig();
-            
-            this.IsRibbonExpanded = false;
-          
+                      
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
-            
-            _ribbonManager.TabCollapsed += RibbonManager_TabCollapsed;
-            _ribbonManager.TabExpanded += RibbonManager_TabExpanded;
-        }
-
-        private void RibbonManager_TabExpanded(object sender, RibbonTabEventArgs e)
-        {
-            RibbonContainerSize = 180;
-        }
-
-        private void RibbonManager_TabCollapsed(object sender, RibbonTabEventArgs e)
-        {
-            RibbonContainerSize = 38;
         }
 
         public string Icon
         {
             get => this.icon;
             set => this.SetProperty(ref this.icon, value);
+        }
+
+        public double RibbonHeight
+        {
+            get => _ribbonHeight;
+            set => SetProperty(ref _ribbonHeight, value);
+        }
+
+        public double BottomHeight
+        {
+            get => _bottomHeight;
+            set => SetProperty(ref _bottomHeight, value);
+            
+        }
+
+        private void OnAreaChanged(object? sender, ShellAreaChangedEventArgs e)
+        {
+            switch (e.Area)
+            {
+                case ShellArea.Ribbon:
+                    RibbonHeight = e.State.Size;
+                    break;
+
+                case ShellArea.BottomPanel:
+                    BottomHeight = e.State.Size;
+                    break;
+            }
         }
 
         public CustomViewModel ImportCustomWindow
@@ -96,7 +118,7 @@ namespace UnityCommander.ViewModels
                     this.importCustomWindow.CollapseRibbonCommand = new RelayCommand(obj =>
                     {
                         this.importCustomWindow.CollapseContent = (this.importCustomWindow.CollapseContent as string) == "Max" ? "Mix" : "Max";
-                        IsRibbonExpanded = !IsRibbonExpanded;
+                        _commandService.ExecuteAsync(CommandNames.UI.ToggleRibbon);
                     });
                 }
             }
@@ -113,33 +135,6 @@ namespace UnityCommander.ViewModels
             {
                 Application.Current.Shutdown();
             });
-
-        public double RibbonContainerSize
-        {
-            get => this.ribbonContainerSize;
-            set => this.SetProperty(ref this.ribbonContainerSize, value);
-        }
-
-        public Visibility ToolBarVisibility
-        {
-            get => this.toolBarVisibility;
-            set => this.SetProperty(ref this.toolBarVisibility, value);
-        }
-
-        private bool _isRibbonExpanded;
-
-        public bool IsRibbonExpanded
-        {
-            get => _isRibbonExpanded;
-            set
-            {
-                if (!SetProperty(ref _isRibbonExpanded, value))
-                    return;
-
-                RibbonContainerSize = value ? 180 : 0;
-                ToolBarVisibility = value ? Visibility.Visible : Visibility.Hidden;
-            }
-        }
 
         public void SetBinding(object dependencyObject, KeyboardManager manager)
         {

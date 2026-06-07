@@ -11,7 +11,13 @@
     d:DataContext="{d:DesignInstance vm:ToolBarViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
-    <Grid>
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+    </UserControl.Resources>
+
+    <Grid Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
         <ribbon:Ribbon Manager="{Binding DataContext.RibbonManager, RelativeSource={RelativeSource AncestorType=UserControl}}" />
     </Grid>
 </UserControl>

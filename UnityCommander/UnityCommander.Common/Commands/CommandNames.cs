@@ -109,6 +109,8 @@ namespace UnityCommander.Common.Commands
             public const string ShowDialog = "ui.show-dialog";
             public const string ShowMessage = "ui.show-message";
             public const string ToggleBottomPanel = "ui.toggle.bottom.panel";
+            public const string ToggleRibbon = "ui.toggle.ribbon";
+            public const string ToggleSidebar = "ui.toggle.sidebar";
         }
     }
 }

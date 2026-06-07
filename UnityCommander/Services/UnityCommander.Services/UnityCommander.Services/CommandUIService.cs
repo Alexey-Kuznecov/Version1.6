@@ -32,7 +32,7 @@ namespace UnityCommander.Services
                 Icon = _icons.GetIcon(id),
 
                 Command = new DelegateCommand(
-                    () => _commands.Execute(id),
+                    () => _commands.ExecuteAsync(id),
                     () => _commands.CanExecute(id))
             };
         }

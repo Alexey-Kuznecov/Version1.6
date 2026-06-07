@@ -46,16 +46,14 @@
 
     <Grid inputBinding:KeyboardBinding.IsEnable="True">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" MaxWidth="60" />
-            <ColumnDefinition Width="Auto" MaxWidth="250" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="3" />
-            <!--<ColumnDefinition Width="69*" MinWidth="800" />-->
             <ColumnDefinition Width="571*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding RibbonContainerSize}" />
+            <RowDefinition Height="{Binding RibbonHeight}" />
             <RowDefinition Height="1*" />
-            <RowDefinition at:Collapsible.IsCollapsed="{Binding IsBottomPanelVisible, RelativeSource={RelativeSource AncestorType=Window}}" />
+            <RowDefinition Height="{Binding BottomHeight}" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <!--
@@ -66,8 +64,7 @@
             Grid.Row="0"
             Grid.Column="3"
             Grid.ColumnSpan="3"
-            prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}"
-            Visibility="{Binding ToolBarVisibility}" />
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}" />
 
         <!--
             Grid splitter.
@@ -87,23 +84,22 @@
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="1"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
         <!--
             File panel region.
         -->
         <Grid
             Grid.Row="1"
-            Grid.Column="3"
+            Grid.Column="2"
             Grid.ColumnSpan="2"
             Background="#F3F2F2">
             <xcad:DockingManager x:Name="DockManager" x:FieldModifier="public" />
         </Grid>
         <Border
             Grid.Row="2"
-            Grid.Column="3"
-            Grid.ColumnSpan="3"
-            Height="230">
+            Grid.Column="2"
+            Grid.ColumnSpan="2">
             <ContentControl
                 prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}"
                 Background="#F3F2F2"

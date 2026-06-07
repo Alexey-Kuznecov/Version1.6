@@ -41,7 +41,7 @@
             </Grid.RowDefinitions>
             <ListView
                 Grid.Row="0"
-                ItemsSource="{Binding SidebarItem}"
+                ItemsSource="{Binding SidebarItems}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
                 SelectedItem="{Binding CurrentSidebarItem, Mode=TwoWay}">

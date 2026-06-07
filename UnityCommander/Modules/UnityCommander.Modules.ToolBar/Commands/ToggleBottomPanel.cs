@@ -20,7 +20,7 @@ namespace UnityCommander.Modules.ToolBar.Commands
 
         public void Execute()
         {
-            _commandService.Execute(CommandNames.UI.ToggleBottomPanel);
+            _commandService.ExecuteAsync(CommandNames.UI.ToggleBottomPanel);
         }
     }
 }

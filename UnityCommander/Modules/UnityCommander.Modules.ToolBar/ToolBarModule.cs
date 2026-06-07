@@ -4,10 +4,11 @@ namespace UnityCommander.Modules.ToolBar
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Navigation.Regions;
-
+    using UnityCommander.Common;
     using UnityCommander.Core;
     using UnityCommander.Modules.ToolBar.ViewModels;
     using UnityCommander.Modules.ToolBar.Views;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
 
     public class ToolBarModule : IModule
@@ -25,11 +26,16 @@ namespace UnityCommander.Modules.ToolBar
 
             var coordinator = 
                 containerProvider.Resolve<ISessionAggregator>();
-            var vm =
-                containerProvider.Resolve<ToolBarViewModel>();
+            
+            var vm = RegionViewModelHelper.GetViewModel<ToolBarViewModel>(
+                  regionManager,
+                  RegionNames.ToolBarRegion);
 
-            coordinator.RegisterCapture(vm.Capture);
-            coordinator.RegisterRestore(vm.Restore);
+            if (vm != null)
+            {
+                coordinator.RegisterCapture(vm.Capture);
+                coordinator.RegisterRestore(vm.Restore);
+            }
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

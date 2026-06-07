@@ -1,13 +1,8 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
-using Prism.Regions;
-using UnityCommander.Autocomplete.Completion;
-using UnityCommander.Autocomplete.Completion.Providers;
-using UnityCommander.Autocomplete.Tokenization;
-using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Integration;
-using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
+using Prism.Navigation.Regions;
+using UnityCommander.Common;
 using UnityCommander.Core;
 using UnityCommander.Modules.BottomPanel.ViewModels;
 using UnityCommander.Modules.BottomPanel.Views;
@@ -33,13 +28,17 @@ namespace UnityCommander.Modules.BottomPanel
 
             var coordinator =
                 containerProvider.Resolve<ISessionAggregator>();
-            var vm =
-                containerProvider.Resolve<BottomPanelViewModel>();
 
-            coordinator.RegisterCapture(vm.Capture);
-            coordinator.RegisterRestore(vm.Restore);
+            var vm = RegionViewModelHelper.GetViewModel<BottomPanelViewModel>(
+                regionManager,
+                RegionNames.BottomPanelRegion);
+
+            if (vm != null)
+            {
+                coordinator.RegisterCapture(vm.Capture);
+                coordinator.RegisterRestore(vm.Restore);
+            }
         }
-
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {

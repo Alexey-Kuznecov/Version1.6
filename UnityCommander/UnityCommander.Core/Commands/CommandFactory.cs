@@ -9,7 +9,7 @@ using UnityCommander.Core.Helper;
 
 namespace UnityCommander.Core.Commands
 {
-    public static class CommandFactory
+    public static class CommandFactoryExtensions
     {
         public static CommandDefinition Create(
             string id,

@@ -54,17 +54,17 @@ namespace UnityCommander.Services
             return _executor.ExecuteAsync(commandName, ctx);
         }
 
-        public CommandContext Execute(string commandName, object args = null)
-        {
-            var ctx = new CommandContext(commandName, args);
-            return _executor.Execute(commandName, args, ctx);
-        }
+        //public CommandContext Execute(string commandName, object args = null)
+        //{
+        //    var ctx = new CommandContext(commandName, args);
+        //    return _executor.Execute(commandName, args, ctx);
+        //}
 
-        public CommandContext Execute(string commandName, CommandArguments args)
-        {
-            var ctx = new CommandContext(commandName, args);
-            return _executor.Execute(commandName, args, ctx);
-        }
+        //public CommandContext Execute(string commandName, CommandArguments args)
+        //{
+        //    var ctx = new CommandContext(commandName, args);
+        //    return _executor.Execute(commandName, args, ctx);
+        //}
 
         public IRegisteredCommand Get(string commandName) => _provider.Get(commandName);
         

@@ -16,7 +16,7 @@ namespace UnityCommander.Commands
 
         public Action<CommandContext> ToggleBottomPanel => ctx =>
         {
-            _shell.IsBottomPanelVisible = !_shell.IsBottomPanelVisible;
+            //_shell.IsBottomPanelVisible = !_shell.IsBottomPanelVisible;
         };
     }
 }
