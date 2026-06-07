@@ -1,27 +1,51 @@
-﻿using System.IO;
-using UnityCommander.Common;
-using UnityCommander.Core.Commands;
-
+﻿
 namespace UnityCommander.Core.IO.Operations
 {
+    using System.IO;
+    using UnityCommander.Common.Commands;
+
+    /// <summary>
+    /// The file manager.
+    /// </summary>
     public class FileManager
     {
-        [UCCommand("FileSelMove")]
+        /// <summary>
+        /// The move.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="target">
+        /// The target.
+        /// </param>
         public void Move(string source, string target)
         {
+            if (source == null && target == null) return;
+
             if (File.Exists(source))
             {
-                FileInfo fileInfo = new FileInfo(source);
+                var fileInfo = new FileInfo(source);
                 File.Move(source, Path.Combine(target, fileInfo.Name));
             }
             else
             {
-                DirectoryInfo directoryInfo = new DirectoryInfo(source);
+                var directoryInfo = new DirectoryInfo(source);
                 Directory.Move(source, Path.Combine(target, directoryInfo.Name));
             }
+
+            GlobalCommandExecute.OnGlobalCommandExecuteChanged(null);
         }
 
-        public void MoveEach(string source, string target)
+        /// <summary>
+        /// The move each.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        /// <param name="target">
+        /// The target.
+        /// </param>
+        public virtual void MoveEach(string source, string target)
         {
             foreach (var dir in Directory.GetDirectories(source))
             {
@@ -33,32 +57,61 @@ namespace UnityCommander.Core.IO.Operations
             {
                 file.MoveTo(Path.Combine(target, file.Name));
             }
+
+            Delete(source);
         }
 
-        [UCCommand("FileSelDel")]
+        /// <summary>
+        /// The delete.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
         public void Delete(string source)
         {
+            if (source == null) return;
+
             if (File.Exists(source))
-            {
                 File.Delete(source);
-            }
             else
-            {
                 Directory.Delete(source, true);
-            }
+
+            GlobalCommandExecute.OnGlobalCommandExecuteChanged(null);
         }
 
-        public void Create(string dirPath)
+        /// <summary>
+        /// The create.
+        /// </summary>
+        /// <param name="dirName">
+        /// The dir path.
+        /// </param>
+        public void Create(string dirName)
         {
-            Directory.CreateDirectory(dirPath);
+            //if (dirName != null)
+            //    Directory.CreateDirectory(dirName);
         }
 
-        public void Create(string filePath, string extension)
+        /// <summary>
+        /// The create.
+        /// </summary>
+        /// <param name="filePath">
+        /// The file path.
+        /// </param>
+        /// <param name="extension">
+        /// The extension.
+        /// </param>
+        public virtual void Create(string filePath, string extension)
         {
             File.Create(filePath);
         }
 
-        public void GetProperties(string source)
+        /// <summary>
+        /// The get properties.
+        /// </summary>
+        /// <param name="source">
+        /// The source.
+        /// </param>
+        public virtual void GetProperties(string source)
         {
         }
     }

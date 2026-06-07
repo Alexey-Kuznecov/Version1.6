@@ -5,23 +5,17 @@ namespace UnityCommander.ViewModels
     using System.Windows.Controls;
 
     using Prism.Commands;
+    using Prism.Dialogs;
     using Prism.Mvvm;
-    using Prism.Services.Dialogs;
 
     using UnityCommander.Core.Mvvm;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
 
     /// <summary>
     /// The dialog plugin config vm.
     /// </summary>
     internal class DialogPluginConfigVm : BindableBase, IDialogAware
     {
-        /// <summary>
-        /// The plugin loader.
-        /// </summary>
-        private IPluginLoaderService pluginLoader;
-
         /// <summary>
         /// The close dialog command.
         /// </summary>
@@ -32,13 +26,15 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private UserControl control;
 
+        private IPluginProvider pluginLoader;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogPluginConfigVm"/> class.
         /// </summary>
         /// <param name="pluginLoader">
         /// The plugin loader.
         /// </param>
-        public DialogPluginConfigVm(IPluginLoaderService pluginLoader)
+        public DialogPluginConfigVm(IPluginProvider pluginLoader)
         {
             this.pluginLoader = pluginLoader;
         }
@@ -46,7 +42,7 @@ namespace UnityCommander.ViewModels
         /// <summary>
         /// The request close.
         /// </summary>
-        public event Action<IDialogResult> RequestClose;
+        public DialogCloseListener RequestClose { get; private set; }
 
         /// <summary>
         /// The close dialog command.
@@ -107,7 +103,7 @@ namespace UnityCommander.ViewModels
         /// </summary>
         private void ExecuteCloseDialogCommand()
         {
-            this.RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+            RequestClose.Invoke(new DialogResult(ButtonResult.OK));
         }
 
         /// <summary>

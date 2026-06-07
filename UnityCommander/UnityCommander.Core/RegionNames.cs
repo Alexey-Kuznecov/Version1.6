@@ -6,25 +6,18 @@ namespace UnityCommander.Core
     /// </summary>
     public static class RegionNames
     {
-        /// <summary>
-        /// The file panel region.
-        /// </summary>
         public const string FilePanelRegion = nameof(FilePanelRegion);
-
-        /// <summary>
-        /// The left side bar region.
-        /// </summary>
         public const string LeftSideBarRegion = nameof(LeftSideBarRegion);
-
-        /// <summary>
-        /// The left side bar region.
-        /// </summary>
         public const string ToolBarRegion = nameof(ToolBarRegion);
-
-
-        /// <summary>
-        /// The left side bar region.
-        /// </summary>
         public const string TabPanelRegion = nameof(TabPanelRegion);
+        public const string ViewerRegion = nameof(ViewerRegion);
+        public const string SettingsPanelRegion = nameof(SettingsPanelRegion);
+        public const string WebBrowserRegion = nameof(WebBrowserRegion);
+        public const string BottomPanelRegion = nameof(BottomPanelRegion);
+
+        // BottomPanelRegion SubRegions
+        public const string ConsoleTabRegion = nameof(ConsoleTabRegion);
+        public const string LogTabRegion = nameof(LogTabRegion);
+        public const string PreviewRegion = nameof(PreviewRegion);
     }
 }

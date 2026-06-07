@@ -271,10 +271,8 @@ namespace UnityCommander.Modules.FilePanel.Controls
                     Content = panel.parsePath[counter],
                     Command = panel.NavigateCommand
                 };
-                
-                navButton.CommandParameter = panel.parseParams[counter].Substring(
-                    0,
-                    panel.parseParams[counter].LastIndexOf('\\'));
+                var path = panel.parseParams[counter].Substring(0, panel.parseParams[counter].LastIndexOf('\\'));
+                navButton.CommandParameter = Normalize(path);
 
                 var grid = CreateGridNavigationItem(navButton, popButton);
                 popButton.CommandParameter = new PopupParameters { CurrentItem = grid, Panel = panel, CurrentPath = panel.parseParams[counter] };
@@ -287,6 +285,28 @@ namespace UnityCommander.Modules.FilePanel.Controls
         #endregion
 
         #region Helper methods
+
+        private static string Normalize(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return path;
+
+            path = path.Trim();
+
+            // E → E:\
+            if (path.Length == 1 && char.IsLetter(path[0]))
+                return path + @":\";
+
+            // E: → E:\
+            if (path.Length == 2 && path[1] == ':' && char.IsLetter(path[0]))
+                return path + @"\";
+
+            // Убираем двойные слеши
+            while (path.Contains(@"\\"))
+                path = path.Replace(@"\\", @"\");
+
+            return path;
+        }
 
         /// <summary>
         /// Creates a pop-up menu for each item in the navigation bar.
@@ -309,10 +329,13 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 Popup popupBox = new Popup();
                 Point location = navItem.PointToScreen(new Point(0, 0));
                 popupBox.Child = popupControl;
-                popupBox.IsOpen = true;
-                popupBox.PlacementRectangle = new Rect(location.X + 440, location.Y - 5, 0, 0);
+                //popupBox.IsOpen = true;
+                popupBox.PlacementRectangle = new Rect(location.X, location.Y - 5, 0, 0);
                 popupBox.Placement = PlacementMode.Top;
                 popupBox.StaysOpen = false;
+
+                Binding bind = new Binding("PopupIsOpen") { Mode = BindingMode.TwoWay, Source = popupViewModel };
+                BindingOperations.SetBinding(popupBox, Popup.IsOpenProperty, bind);
             }
         }
 
@@ -410,6 +433,8 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// </summary>
             private bool popButtonIsEnabled;
 
+            private bool popupIsOpen;
+
             /// <summary>
             /// The list directories.
             /// </summary>
@@ -421,6 +446,7 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// <param name="parameters"> The external arguments for pop-up menu. </param>
             public PopupViewModel(PopupParameters parameters)
             {
+                this.popupIsOpen = true;
                 this.currentPanel = parameters.Panel;
 
                 this.DirectoryList = new ObservableCollection<PopupParameters>();
@@ -453,13 +479,22 @@ namespace UnityCommander.Modules.FilePanel.Controls
             /// <summary>
             /// Sets the selected directory path.
             /// </summary>
-            public PopupParameters SelectItem
+            public bool PopupIsOpen
             {
+                get => this.popupIsOpen;
                 set
                 {
-                    this.currentPanel.NavigateCommand.Execute(value.SelectedPath);
-                    this.PopButtonIsEnabled = false;
-                }
+                    this.SetProperty(ref this.popupIsOpen, value);
+                    this.PopButtonIsEnabled = !this.popupIsOpen;
+                } 
+            }
+
+            /// <summary>
+            /// Sets the selected directory path.
+            /// </summary>
+            public PopupParameters SelectItem
+            {
+                set => this.currentPanel.NavigateCommand.Execute(value.SelectedPath);
             }
 
             /// <summary>

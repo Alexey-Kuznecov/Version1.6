@@ -6,13 +6,15 @@ namespace MultiColumns.DateTime
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Columns;
+    using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The plugin configuration.
     /// </summary>
-    public class PluginConfiguration : IPluginFactory
+    public class PluginConfiguration : IPluginFactory, ICommandFactory
     {
         /// <summary>
         /// The category column.
@@ -35,14 +37,27 @@ namespace MultiColumns.DateTime
         }
 
         /// <summary>
-        /// The render register.
+        /// The command factory.
         /// </summary>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        public object RenderRegister()
+        /// <param name="command">
+        /// The command.
+        /// </param>
+        public void CommandFactory(CommandBuilder command)
         {
-            throw new NotImplementedException();
+            command.Register<IOOverrideCommand2, IOCommands>();
+            command.RegisterWithArgument<IPluginSettings, DateTimeColumn>(this.dateTimeColumn, new DateTimeSettings());
+        }
+
+
+        /// <summary>
+        /// The set associated types.
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types register.
+        /// </param>
+        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
+        {
+            typesRegister.RegisterSettings<DateTimeSettings>(this.dateTimeColumn);
         }
 
         /// <summary>
@@ -57,6 +72,14 @@ namespace MultiColumns.DateTime
         private DateTimeColumn DateTimeFactory(IServiceProvider service)
         {
             return this.dateTimeColumn;
+        }
+
+        /// <summary>
+        /// Set token
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void SetToken(string token)
+        {
         }
     }
 }

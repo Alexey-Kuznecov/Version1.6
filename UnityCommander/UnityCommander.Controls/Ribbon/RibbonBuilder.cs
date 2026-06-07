@@ -6,39 +6,15 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using UnityCommander.Integration.Mvvm.Base;
+    using UnityCommander.Mvvm;
 
-    /// <summary>
-    /// This class is responsible for creating a ribbon of tools and tabs.
-    /// </summary>
     public class RibbonBuilder
     {
-        /// <summary>
-        /// The ribbon builder.
-        /// </summary>
         private static Grid sectionContainer;
-
-        /// <summary>
-        /// The ribbon.
-        /// </summary>
         private readonly Ribbon ribbon = new ();
-
-        /// <summary>
-        /// The ribbon section.
-        /// </summary>
         private readonly RibbonSection ribbonSection;
-
-        /// <summary>
-        /// The ribbon tab.
-        /// </summary>
         private readonly RibbonTab ribbonTab;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RibbonBuilder"/> class.
-        /// </summary>
-        /// <param name="tabHeader">
-        /// The tab Header.
-        /// </param>
         public RibbonBuilder(string tabHeader)
         {
             this.ribbonSection = new RibbonSection();
@@ -58,35 +34,12 @@ namespace UnityCommander.Controls.Ribbon
             FirstTab ??= button;
         }
 
-        /// <summary>
-        /// Gets or sets the tabs.
-        /// </summary>
         public static HashSet<ContentControl> Tabs { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets the current tab.
-        /// </summary>
         public Button CurrentTab { get; set; }
-
-        /// <summary>
-        /// Gets or sets the first tab.
-        /// </summary>
         public static Button FirstTab { get; set; }
-
-        /// <summary>
-        /// Gets or sets the groups.
-        /// </summary>
         public HashSet<RibbonGroupAdorner> AdornerGroups { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets the tab.
-        /// Todo: Why was the collection named first?
-        /// </summary>
         public static HashSet<RibbonGroupAdorner> FirstAdornerGroup { get; set; }
 
-        /// <summary>
-        /// Gets or sets a command that set a section and makes the current button unavailable.
-        /// </summary>
         public ICommand TabCommand => new RelayCommand((obj) => 
             {
                 if (obj is not RibbonBuilder section) return;
@@ -118,12 +71,8 @@ namespace UnityCommander.Controls.Ribbon
                 }
             });
 
-        /// <summary>
-        /// The get section.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Ribbon"/>.
-        /// </returns>
+        private int ZIndex;
+
         public Ribbon Build()
         {
             this.GridBuild();
@@ -138,17 +87,11 @@ namespace UnityCommander.Controls.Ribbon
             sectionContainer.Children.Add(this.ribbonSection);
             Grid.SetRow(this.ribbonTab, 0);
             Grid.SetRow(this.ribbonSection, 1);
-
+            
             this.ribbon.Children.Add(sectionContainer);
             return this.ribbon;
         }
 
-        /// <summary>
-        /// The get section.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Ribbon"/>.
-        /// </returns>
         public Grid BuildGrid()
         {
             this.GridBuild();
@@ -165,16 +108,6 @@ namespace UnityCommander.Controls.Ribbon
             Grid.SetRow(this.ribbonSection, 1);
             return sectionContainer;
         }
-
-        /// <summary>
-        /// The add section.
-        /// </summary>
-        /// <param name="controlGroupBuilder">
-        /// The section Builder.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
         public RibbonBuilder SetSection(RibbonControlGroupBuilder controlGroupBuilder)
         {
             this.AdornerGroups.Add(controlGroupBuilder.GetAdorner);
@@ -182,9 +115,6 @@ namespace UnityCommander.Controls.Ribbon
             return this;
         }
 
-        /// <summary>
-        /// The create tab.
-        /// </summary>
         private void TabBuild()
         {
             Grid grid = new Grid();
@@ -203,9 +133,6 @@ namespace UnityCommander.Controls.Ribbon
             this.ribbonTab.Children.Add(grid);
         }
 
-        /// <summary>
-        /// The create grid.
-        /// </summary>
         private void GridBuild()
         {
             Grid dynamicGrid = new Grid();

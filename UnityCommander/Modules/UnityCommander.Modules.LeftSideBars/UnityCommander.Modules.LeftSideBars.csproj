@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>UnityCommander.Modules.LeftSideBars</AssemblyName>
   </PropertyGroup>
@@ -10,11 +10,20 @@
     <None Remove="ViewModels\SidebarViewModel.cs~RF220cb962.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CommandSystem.Core">
+      <HintPath>..\..\..\..\_builds\CommandSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandSystem.Gui">
+      <HintPath>..\..\..\..\_builds\CommandSystem.Gui.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

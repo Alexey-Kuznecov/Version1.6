@@ -5,13 +5,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using System.Windows.Shapes;
 
     using Prism.Commands;
+    using Prism.Dialogs;
     using Prism.Mvvm;
-    using Prism.Services.Dialogs;
-    
     using UnityCommander.Integration.Contracts;
     using UnityCommander.Integration.Options;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Plugins;
 
     /// <summary>
     /// The plugin panel view model.
@@ -19,14 +17,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     public class PluginPanelViewModel : BindableBase
     {
         /// <summary>
-        /// The dialog service.
+        /// Служба для получения и управления диалоговыми окнами приложения.
         /// </summary>
         private readonly IDialogService dialogService;
-
-        /// <summary>
-        /// The plugin loaders.
-        /// </summary>
-        private readonly IPluginLoaderService pluginLoaders;
 
         /// <summary>
         /// The plugin descriptors.
@@ -37,7 +30,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         /// The selected descriptor.
         /// </summary>
         private IPluginDescriptor selectedDescriptor;
-        
+
         /// <summary>
         /// The icon.
         /// </summary>
@@ -75,13 +68,13 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         public PluginPanelViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
-            IPluginLoaderService pluginLoaders)
+            IPluginProvider pluginLoader)
         {
-            this.PluginDescriptors = pluginLoaders.GetPluginDescriptors();
-            this.pluginLoaders = pluginLoaders;
+            //this.PluginDescriptors = pluginLoaders.GetPluginDescriptors();
+ 
             this.dialogService = dialogService;
             this.Icon = iconProvider.GetIcon("Settings").GetIconPath();
-            this.OptionRender ??= this.pluginLoaders.GetPluginContext().GetOption(null);
+            //this.OptionRender ??= this.pluginLoaders.GetPluginContext().GetOption(null);
         }
 
         /// <summary>
@@ -93,9 +86,14 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             set
             {
                 this.SetProperty(ref this.selectedDescriptor, value);
-                this.OptionRender = this.pluginLoaders.GetPluginContext().GetOption(value);
-            } 
+                //this.OptionRender = this.pluginLoaders.GetPluginContext().GetOption(value);
+                //var command = this.globalCommandService.GetCommandManager().GetCommand("DisplayViewerContent").Command;
+
+                //command.Execute(SelectedDescriptor);
+            }
         }
+
+
 
         /// <summary>
         /// Gets or sets details for plugins provided by the plugin developer.

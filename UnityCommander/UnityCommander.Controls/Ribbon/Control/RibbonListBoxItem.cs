@@ -2,7 +2,7 @@
 namespace UnityCommander.Controls.Ribbon.Control
 {
     using System.Windows.Input;
-
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Models.Icons;
 
     /// <summary>
@@ -22,7 +22,7 @@ namespace UnityCommander.Controls.Ribbon.Control
         /// <param name="listBoxItemCommand">
         /// The list box item command.
         /// </param>
-        public RibbonListBoxItem(string listBoxItemName, IIcon listBoxItemIcon, ICommand listBoxItemCommand)
+        public RibbonListBoxItem(string listBoxItemName, IIcon listBoxItemIcon, RibbonCommand listBoxItemCommand)
             : base(
                 listBoxItemName,
                 listBoxItemIcon,

@@ -8,12 +8,13 @@ namespace MultiColumns.Sized
     using System.Windows;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The game category column.
     /// </summary>
-    public class SizedColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor
+    public class SizedColumn : IColumnBuilder, IOptionBuilder, IPluginDescriptor, IPluginSettings
     {
         /// <summary>
         /// The option render.
@@ -28,20 +29,22 @@ namespace MultiColumns.Sized
         private ColumnManager.UpdateColumnValue updateColumn;
 
         /// <summary>
+        /// The settings.
+        /// </summary>
+        private SizeSettings settings;
+
+        /// <summary>
+        /// The settings.
+        /// </summary>
+        private ColumnManager manager;
+
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SizedColumn"/> class.
         /// </summary>
         public SizedColumn()
         {
             this.sizedUnit = "Auto";
-
-            this.SizedUnit = new List<object>
-            {
-                "Auto",
-                "In bytes",
-                "In kbyte",
-                "In mbyte",
-                "In gbyte"
-            }; 
         }
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace MultiColumns.Sized
         /// </param>
         public void UpdateColumnValue(ColumnManager columnManager)
         {
-            this.updateColumn = columnManager.Update;
+            this.manager = columnManager;
         }
 
         /// <summary>
@@ -105,7 +108,7 @@ namespace MultiColumns.Sized
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public object ColumnValueHandler(string path)
+        public object ColumnValueHandler(string columnName, string path, DirectoryItemType directoryItem)
         {
             if (File.Exists(path))
             {
@@ -129,6 +132,20 @@ namespace MultiColumns.Sized
             return null;
         }
 
+        public void OnSettingsChanged(SettingsBase settings)
+        {
+            if (!(settings is SizeSettings myBase)) return;
+
+            this.settings = myBase;
+
+            if (this.settings.GetSizedUnit() != null)
+            {
+                this.sizedUnit = this.settings.GetSizedUnit();
+            }
+
+            this.manager.Update();
+        }
+
         /// <summary>
         /// The column value render.
         /// </summary>
@@ -137,7 +154,7 @@ namespace MultiColumns.Sized
         /// </returns>
         public OptionRender ColumnValueRender()
         {
-            this.optionRender = OptionRender.TextBlock;
+            //this.optionRender = OptionRender.TextBlock;
             return this.optionRender;
         }
 
@@ -149,7 +166,7 @@ namespace MultiColumns.Sized
         /// </param>
         public void OptionBuild(OptionBuilder optionBuilder)
         {
-            optionBuilder.Add("Unformation unit:", this.SizedUnit, this.sizedUnit, this.SeizedUnitHandler, OptionRender.DropBox);
+            //optionBuilder.Add("Unformation unit:", this.SizedUnit, this.sizedUnit, this.SeizedUnitHandler, OptionRender.DropBox);
         }
 
         /// <summary>

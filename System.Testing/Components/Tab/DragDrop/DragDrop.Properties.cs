@@ -5,7 +5,7 @@ namespace Components.Tab.DragDrop
 {
     public static partial class DragDrop
     {
-        #region IsDragSourceProperty
+        #region KeyboardContextIsEnable
 
         /// <summary>
         /// Gets or Sets whether the control can be used as drag source.

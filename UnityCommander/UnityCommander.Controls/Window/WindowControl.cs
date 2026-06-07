@@ -97,7 +97,7 @@ namespace UnityCommander.Controls.Window
                 mainWindow = (Window)e.NewValue;
                 SetViewModel(mainWindow, new CustomViewModel(mainWindow));
 
-                var template = (ControlTemplate)Application.Current.FindResource("ControlTemplate");
+                var template = (ControlTemplate)Application.Current.TryFindResource("ControlTemplate");
 
                 if (template != null)
                 {

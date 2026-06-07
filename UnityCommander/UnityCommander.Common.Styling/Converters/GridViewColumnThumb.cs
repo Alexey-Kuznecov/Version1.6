@@ -5,12 +5,19 @@ namespace UnityCommander.Common.Styling.Converters
     using System.Windows.Input;
 
     /// <summary>
-    /// The grid view column thumb.
+    /// Специализированный Thumb-элемент для изменения ширины столбцов GridView.
+    /// Используется как "ползунок" между колонками, позволяя
+    /// пользователю перетаскивать границу столбца, чтобы изменить его ширину.
+    /// 
+    /// Основная логика:
+    /// - При нажатии ЛКМ курсор меняется на горизонтальный ресайзер (SizeWE)
+    /// - При отпускании ЛКМ курсор возвращается в нормальное состояние
     /// </summary>
     internal class GridViewColumnThumb : Thumb
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GridViewColumnThumb"/> class.
+        /// Конструктор — ничего дополнительного не делает,
+        /// просто инициализирует базовый Thumb.
         /// </summary>
         public GridViewColumnThumb()
             : base()
@@ -18,27 +25,24 @@ namespace UnityCommander.Common.Styling.Converters
         }
 
         /// <summary>
-        /// The on mouse left button down.
+        /// Вызывается при нажатии левой кнопки мыши.
+        /// Устанавливает курсор в режим горизонтального изменения размера (SizeWE),
+        /// чтобы визуально показать, что элемент можно тянуть влево/вправо.
         /// </summary>
-        /// <param name="e">
-        /// The e.
-        /// </param>
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.SizeWE;
-            base.OnMouseLeftButtonDown(e);
+            Mouse.OverrideCursor = Cursors.SizeWE; // курсор "↔"
+            base.OnMouseLeftButtonDown(e);         // стандартная логика Thumb
         }
 
         /// <summary>
-        /// The on mouse left button up.
+        /// Вызывается при отпускании левой кнопки мыши.
+        /// Возвращает курсор мыши обратно в нормальное состояние.
         /// </summary>
-        /// <param name="e">
-        /// The e.
-        /// </param>
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            base.OnMouseLeftButtonUp(e);
-            Mouse.OverrideCursor = null;
+            base.OnMouseLeftButtonUp(e); // стандартная логика Thumb
+            Mouse.OverrideCursor = null; // восстановить курсор по умолчанию
         }
     }
 }

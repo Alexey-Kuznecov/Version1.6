@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace UnityCommander.Integration.Contracts
 {
-    public interface IPluginDescriptor
+    /// <summary>
+    /// The PluginDescriptor interface.
+    /// </summary>
+    public interface IPluginDescriptor : IPluginService
     { 
         /// <summary>
         /// Gets or sets plugin name.

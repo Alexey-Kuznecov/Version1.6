@@ -1,20 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.4" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\UnityCommander\Library\AlexeyKuznecov.Library\AlexeyKuznecov.Library.csproj" />
     <ProjectReference Include="..\..\UnityCommander\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\..\UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Page Update="Tab\AddTabControlStyles.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -33,5 +28,4 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
 </Project>

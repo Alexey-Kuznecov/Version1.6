@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
+    using global::UnityCommander.Common.Models.Directory;
     using System;
     using System.Windows;
     using System.Windows.Controls;
@@ -8,51 +9,25 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
     using System.Windows.Interactivity;
     using System.Windows.Media;
 
-    using UnityCommander.Common.Models.Directory;
-
-    /// <summary>
-    /// The multi selection directory items behavior.
-    /// </summary>
     public class MultiSelectionBehavior : Behavior<ListBox>
     {
-        /// <summary>
-        /// The selected items property.
-        /// </summary>
         private static readonly DependencyProperty SelectedItemsProperty =
             DependencyProperty.Register("SelectedItems", typeof(BaseDirectory), typeof(MultiSelectionBehavior), new UIPropertyMetadata(null));
-
-        /// <summary>
-        /// Gets or sets the selected items.
-        /// </summary>
         public BaseDirectory SelectedItems
         {
             get => (BaseDirectory)this.GetValue(SelectedItemsProperty);
             set => this.SetValue(SelectedItemsProperty, value);
         }
-
-        /// <summary>
-        /// The on attached.
-        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
             this.AssociatedObject.PreviewMouseDown += this.AssociatedObjectPreviewMouseDown;
         }
-
-        /// <summary>
-        /// The on detaching.
-        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
             this.AssociatedObject.PreviewMouseDown -= this.AssociatedObjectPreviewMouseDown;
         }
-
-        /// <summary>
-        /// The associated object preview mouse down.
-        /// </summary>
-        /// <param name="sender"> The sender. </param>
-        /// <param name="e"> The e. </param>
         private void AssociatedObjectPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             ListBox lb = (ListBox)sender;
@@ -73,14 +48,6 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 }
             }
         }
-
-        /// <summary>
-        /// The select list box item.
-        /// </summary>
-        /// <typeparam name="T"> Object dependency </typeparam>
-        /// <param name="lb"> The container. </param>
-        /// <param name="e"> The e.  </param>
-        /// <returns> The <see cref="bool"/>. </returns>
         private T GetContainer<T>(Control lb, MouseEventArgs e) where T : DependencyObject
         {
             var point = e.GetPosition(lb);

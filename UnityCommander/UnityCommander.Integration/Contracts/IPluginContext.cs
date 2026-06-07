@@ -5,6 +5,9 @@ namespace UnityCommander.Integration.Contracts
 
     using Columns;
 
+    using UnityCommander.Common.Commands;
+    using UnityCommander.Integration.Commands;
+    using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
     /// <summary>
@@ -27,5 +30,29 @@ namespace UnityCommander.Integration.Contracts
         /// List of the <see cref="OptionBuilder"/>.
         /// </returns>
         IEnumerable<IOption> GetOptions();
+
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<BaseCommand> GetCommands();
+
+        /// <summary>
+        /// The get plugin commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<ICommandBase> GetPluginCommands();
+
+        /// <summary>
+        /// The get commands.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public AssociatedTypes GetAssociatedTypes();
     }
 }

@@ -1,20 +1,13 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon
 {
-
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using UnityCommander.Integration.Mvvm.Base;
+    using UnityCommander.Mvvm;
 
-    /// <summary>
-    /// The ribbon.
-    /// </summary>
     public class Ribbon : Panel
     {
-        /// <summary>
-        /// The ribbon initial items.
-        /// </summary>
         public static readonly DependencyProperty RibbonManagerProperty =
             DependencyProperty.Register(
                 "RibbonManager",
@@ -22,79 +15,52 @@ namespace UnityCommander.Controls.Ribbon
                 typeof(Ribbon), 
                 new PropertyMetadata(OnRibbonManagerChangedCallback));
 
-        /// <summary>
-        /// The ribbon width.
-        /// </summary>
-        private static double ribbonWidth;
-
-        /// <summary>
-        /// The ribbon.
-        /// </summary>
+        private static double ribbonWidth; 
         private static Ribbon ribbon;
-
-        /// <summary>
-        /// Gets or sets the tab command.
-        /// </summary>
-        public static ICommand MinimizeCommand = new RelayCommand(
+        public static ICommand MinimizeCommand
+            = new RelayCommand(
             obj =>
                 {
-                    var parent = ribbon.Parent as FrameworkElement;
-
-                    while (parent?.Name != "RibbonExpandButtonHere")
-                    {
-                        parent = parent?.Parent as FrameworkElement;
-
-                        if (parent?.Name == "CollapseHere")
-                        {
-                            parent.Visibility = parent.IsVisible ? Visibility.Hidden : Visibility.Visible;
-                        }
-                    }
+                    HideRibbon();
                 });
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Ribbon"/> class.
-        /// </summary>
+        private RibbonConfig ribbonConfig;
         public Ribbon()
         {
+            this.ribbonConfig = new RibbonConfig();
         }
 
-        /// <summary>
-        /// Gets or sets the ribbon initial items property.
-        /// </summary>
         public IRibbonManager RibbonManager
         {
             get => (IRibbonManager)this.GetValue(RibbonManagerProperty);
             set => this.SetValue(RibbonManagerProperty, value);
         }
 
-        /// <summary>
-        /// The on ribbon manager changed callback.
-        /// </summary>
-        /// <param name="d">
-        /// The d.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
         private static void OnRibbonManagerChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var manager = e.NewValue as IRibbonManager;
             ribbon = (Ribbon)d;
             manager?.Collapse(MinimizeCommand);
             manager?.Initial(ribbon);
+            manager?.Configure(ribbon.ribbonConfig);
+        }
+
+        private static void HideRibbon()
+        {
+            var parent = ribbon.Parent as FrameworkElement;
+
+            while (parent?.Name != "RibbonExpandButtonHere")
+            {
+                parent = parent?.Parent as FrameworkElement;
+
+                if (parent?.Name == "CollapseHere")
+                {
+                    parent.Visibility = parent.IsVisible ? Visibility.Hidden : Visibility.Visible;
+                }
+            }
         }
 
         #region Override methods
 
-        /// <summary>
-        /// The arrange override.
-        /// </summary>
-        /// <param name="finalSize">
-        /// The arrange bounds.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             double margin = 0;
@@ -105,18 +71,12 @@ namespace UnityCommander.Controls.Ribbon
                 margin += child.DesiredSize.Width;
             }
 
+            if (!ribbon.ribbonConfig.Visibility)
+                HideRibbon();
+
             return finalSize;
         }
 
-        /// <summary>
-        /// The measure override.
-        /// </summary>
-        /// <param name="availableSize">
-        /// The available size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             double height = 0;
@@ -134,12 +94,6 @@ namespace UnityCommander.Controls.Ribbon
 
         #endregion
 
-        /// <summary>
-        /// The get window.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Window"/>.
-        /// </returns>
         private Window GetWindow()
         {
             FrameworkElement parent = this.Parent as FrameworkElement;

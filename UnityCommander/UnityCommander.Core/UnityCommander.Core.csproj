@@ -1,12 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-      <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Core</AssemblyName>
+    <BaseOutputPath>bin\</BaseOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Modules\**" />
+    <EmbeddedResource Remove="Modules\**" />
+    <None Remove="Modules\**" />
+    <Page Remove="Modules\**" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="Behaviors\DragDrop\Drag.cs" />
     <Compile Remove="Behaviors\DragDrop\Drop.cs" />
@@ -20,20 +26,25 @@
     <None Remove="RegionNames.cs~RF22523a1b.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.4" />
-    <PackageReference Include="NLog.Config" Version="4.7.4" />
-    <PackageReference Include="NLog.Schema" Version="4.7.4" />
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.14" />
+    <PackageReference Include="System.Reactive" Version="6.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
-    <ProjectReference Include="..\UnityCommander.Controls\UnityCommander.Controls.csproj" />
-    <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj">
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Update="C:\Users\Alexey\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

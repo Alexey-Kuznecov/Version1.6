@@ -7,61 +7,22 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows;
     using System.Windows.Controls;
 
-    /// <summary>
-    /// TODO The table.
-    /// </summary>
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     [SuppressMessage("ReSharper", "CommentTypo")]
     [SuppressMessage("ReSharper", "StyleCop.SA1503")]
     public class Table : Panel
     {
-        /// <summary>
-        /// The rows.
-        /// </summary>
         private double[] rows;
-
-        /// <summary>
-        /// The columns.
-        /// </summary>
         private double[] columns;
-
-        /// <summary>
-        /// The real columns.
-        /// </summary>
         private int realColumns;
-
-        /// <summary>
-        /// The real rows.
-        /// </summary>
         private int realRows;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Table"/> class.
-        /// </summary>
         public Table()
             : base()
         {
         }
-
-        /// <summary>
-        /// Gets or sets the columns number.
-        /// </summary>
         public int ColumnsNumber { get; set; }
-
-        /// <summary>
-        /// Gets or sets the rows number.
-        /// </summary>
         public int RowsNumber { get; set; }
 
-        /// <summary>
-        /// The measure override.
-        /// </summary>
-        /// <param name="availableSize">
-        /// The available size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             CalculateColumns();
@@ -106,15 +67,6 @@ namespace UnityCommander.Controls.Ribbon
             return new Size(panelHeight, panelWidth);
         }
 
-        /// <summary>
-        /// The arrange override.
-        /// </summary>
-        /// <param name="arrangeSize">
-        /// The arrange size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Size"/>.
-        /// </returns>
         protected override Size ArrangeOverride(Size arrangeSize)
         {
             double cellWidth;
@@ -152,9 +104,6 @@ namespace UnityCommander.Controls.Ribbon
             return arrangeSize;
         }
 
-        /// <summary>
-        /// TODO The calculate columns.
-        /// </summary>
         private void CalculateColumns()
         {
             // Подсчет элементов

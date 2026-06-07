@@ -1,55 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-	<UseWPF>true</UseWPF>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="HDDCounter.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Program.cs~RF5d4019b0.TMP" />
     <None Remove="Program.cs~RF5da5fe39.TMP" />
     <None Remove="TestStart\CommandArch.cs~RF6d9db964.TMP" />
     <None Remove="TestStart\CopyWatchTest.cs~RF70806a.TMP" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.4" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+	  <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.3" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\UnityCommander\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\UnityCommander\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
     <ProjectReference Include="..\..\UnityCommander\UnityCommander.Native\UnityCommander.Native.csproj" />
   </ItemGroup>
-
-<Choose>
-  <When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <ItemGroup>
-      <PackageReference Include="System.Management.Automation">
-        <Version>7.0.3</Version>
-      </PackageReference>
-    </ItemGroup>
-  </When>
-  <When Condition="'$(TargetFramework)' == 'net472'">
-    <ItemGroup>
-      <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
-    </ItemGroup>
-  </When>
-  <When Condition="'$(TargetFramework)' == 'net48'">
-    <ItemGroup>
-      <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
-    </ItemGroup>
-  </When>
-</Choose>
- 
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+      <ItemGroup>
+        <PackageReference Include="System.Management.Automation">
+          <Version>7.0.3</Version>
+        </PackageReference>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'net472'" />
+    <When Condition="'$(TargetFramework)' == 'net48'">
+      <ItemGroup>
+        <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>

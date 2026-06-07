@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>Nlog;DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Behavior\**" />
@@ -24,16 +26,56 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Config.Net" Version="4.15.0" />
-    <PackageReference Include="Prism.DryIoc" Version="8.0.0.1909" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
+    <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Library\WindowCustomizer\WindowCustomizer.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\Modules\BottomPanelModule\UnityCommander.Modules.BottomPanel\UnityCommander.Modules.BottomPanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
-    <ProjectReference Include="..\Modules\UnityCommander.Modules.Tabs\UnityCommander.Modules.Tabs.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.SettingsPanel\UnityCommander.Modules.SettingsPanel.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.TabPanel\UnityCommander.Modules.TabPanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.WebBrowser\UnityCommander.Modules.WebBrowser.csproj" />
+    <ProjectReference Include="..\UnityCommander.AI.ImageSearch\UnityCommander.AI.ImageSearch.csproj" />
+    <ProjectReference Include="..\UnityCommander.Commands\UnityCommander.Commands.csproj" />
+    <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CommandSystem.Core">
+      <HintPath>..\..\..\_builds\CommandSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandSystem.Gui">
+      <HintPath>..\..\..\_builds\CommandSystem.Gui.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandSystem.Infrastructure">
+      <HintPath>..\..\..\_builds\CommandSystem.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginSystem.Abstractions">
+      <HintPath>..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginSystem.Runtime">
+      <HintPath>..\..\..\_builds\PluginSystem.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Core">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.DefaultIcons">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.DefaultIcons.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Resources">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Services">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Wpf">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Update="App.xaml">

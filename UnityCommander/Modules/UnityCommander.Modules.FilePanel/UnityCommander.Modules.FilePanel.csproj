@@ -1,19 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <AssemblyName>UnityCommander.Modules.FilePanel</AssemblyName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DefineConstants>Nlog;DEBUG</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <None Remove="Models\**" />
-    <Page Remove="Models\**" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>Nlog;DEBUG</DefineConstants>
+	</PropertyGroup>
   <ItemGroup>
     <Compile Remove="NavigationHistory.cs" />
   </ItemGroup>
@@ -25,32 +19,37 @@
     <None Remove="Views\SplitPanelControl.xaml.cs~RF441d883d.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
-    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.CommandSurface\UnityCommander.CommandSurface.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Controls\UnityCommander.Controls.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
+    <ProjectReference Include="..\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\..\..\packages\System.Windows.Interactivity\System.Windows.Interactivity.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-	<Choose>
-		<When Condition="'$(TargetFramework)' == 'net472'">
-			<ItemGroup>
-				<PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
-				</PackageReference>
-			</ItemGroup>
-		</When>
-		<When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-			<ItemGroup>
-				<Reference Include="System.Windows.Interactivity" Version="4.0.0.0" />
-			</ItemGroup>
-		</When>
-	</Choose>
-
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net472'">
+      <ItemGroup>
+        <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525">
+        </PackageReference>
+      </ItemGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+      <ItemGroup>
+        <Reference Include="System.Windows.Interactivity" Version="4.0.0.0" />
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>

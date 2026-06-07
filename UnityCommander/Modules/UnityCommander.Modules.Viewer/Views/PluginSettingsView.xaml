@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.Viewer.Views.PluginSettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:be="clr-namespace:UnityCommander.Modules.Viewer.Behaviors"
+    xmlns:converter="clr-namespace:UnityCommander.Modules.Viewer.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:vm="clr-namespace:UnityCommander.Modules.Viewer.ViewModels"
+    d:DataContext="{d:DesignInstance vm:PluginSettingsViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="880"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converter:OptionRenderConverter x:Key="OptionRenderConverter" />
+        <DataTemplate x:Key="ComboBoxSettings">
+            <StackPanel Margin="10">
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontWeight="Bold"
+                    Text="{Binding Category, StringFormat={}{0}:}" />
+                <TextBlock Margin="0,0,0,10" Text="{Binding Description}" />
+                <ContentControl
+                    Width="250"
+                    HorizontalAlignment="Left"
+                    Content="{Binding Options, Converter={converter:OptionRenderConverter}}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style x:Key="ListSettingsStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="#E7E7E7" />
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="#E7E7E7" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ContentControl Grid.Row="0" Template="{DynamicResource ContentDirectoryPanelTemplate}" />
+        <ListBox
+            Grid.Row="1"
+            ItemTemplate="{StaticResource ComboBoxSettings}"
+            ItemsSource="{Binding PluginSettingsModels}"
+            SelectedIndex="{Binding SelectIndexOption}"
+            SelectedItem="{Binding SelectOption}"
+            Style="{StaticResource ListSettingsStyle}">
+            <!--<i:Interaction.Behaviors>
+                <be:MultiSelectionBehavior SelectedItems="1" />
+            </i:Interaction.Behaviors>-->
+        </ListBox>
+    </Grid>
+</UserControl>

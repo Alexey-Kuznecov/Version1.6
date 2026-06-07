@@ -7,6 +7,7 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Width="450">
             <Grid.RowDefinitions>
@@ -36,18 +37,30 @@
                 FontSize="14"
                 Text="{Binding Target}" />
         </Grid>
+
         <WrapPanel Grid.Row="2" Margin="5">
             <Button
                 Margin="10"
                 Command="{Binding CopyCommand}"
                 Content="Copy" />
             <Button
-                Grid.Row="3"
                 Margin="10"
-                Command="{Binding CopyCommand}"
+                Command="{Binding MoveCommand}"
                 Content="Move" />
+            <Button
+                Margin="10"
+                Command="{Binding CloseDialogCommand}"
+                Content="Close" />
         </WrapPanel>
-
-
+        <WrapPanel Grid.Row="3">
+            <CheckBox
+                Margin="2"
+                Content="Копировать только содержимое папки"
+                IsChecked="{Binding CopyOnlyFolderContent}" />
+            <CheckBox
+                Margin="2"
+                Content="Закрыть окно полсе копирования"
+                IsChecked="{Binding CloseDialogAfterCopyingComplete}" />
+        </WrapPanel>
     </Grid>
 </UserControl>

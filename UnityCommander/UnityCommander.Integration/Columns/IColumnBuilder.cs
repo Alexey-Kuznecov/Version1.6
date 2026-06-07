@@ -2,12 +2,13 @@
 namespace UnityCommander.Integration.Columns
 {
     using UnityCommander.Integration.Contracts;
+    using UnityCommander.Integration.Enums;
     using UnityCommander.Integration.Options;
 
     /// <summary>
     /// The ColumnBuilder interface.
     /// </summary>
-    public interface IColumnBuilder
+    public interface IColumnBuilder : IPluginService
     {
         /// <summary>
         /// The column initial.
@@ -45,7 +46,7 @@ namespace UnityCommander.Integration.Columns
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public object ColumnValueHandler(string path);
+        public object ColumnValueHandler(string columnName, string path, DirectoryItemType directoryItemType);
 
         /// <summary>
         /// The update column value.

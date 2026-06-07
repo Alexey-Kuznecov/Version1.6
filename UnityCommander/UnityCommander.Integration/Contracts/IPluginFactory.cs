@@ -3,6 +3,8 @@ namespace UnityCommander.Integration.Contracts
 {
     using Microsoft.Extensions.DependencyInjection;
 
+    using UnityCommander.Integration.Factories;
+
     /// <summary>
     /// The PluginFactory interface.
     /// </summary>
@@ -16,5 +18,21 @@ namespace UnityCommander.Integration.Contracts
         /// The services.
         /// </param>
         void Configure(IServiceCollection services);
+
+        /// <summary>
+        /// The set associated types.
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types Register.
+        /// </param>
+        void SetAssociatedTypes(AssociatedTypesRegister typesRegister);
+
+        /// <summary>
+        /// Устанавливает уникальный идентификатор для каждого плагина (например, GUID).
+        /// </summary>
+        /// <param name="typesRegister">
+        /// The types Register.
+        /// </param>
+        void SetToken(string token);
     }
 }

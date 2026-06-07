@@ -1,35 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-	  <TargetFramework>netcoreapp3.1</TargetFramework>
-	  <UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Remove="Ribbon2\**" />
     <Compile Remove="Window\Styles\**" />
+    <EmbeddedResource Remove="Ribbon2\**" />
     <EmbeddedResource Remove="Window\Styles\**" />
+    <None Remove="Ribbon2\**" />
     <None Remove="Window\Styles\**" />
+    <Page Remove="Ribbon2\**" />
     <Page Remove="Window\Styles\**" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
+    <ProjectReference Include="..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    <Page Update="Taber\AddTabControlStyles.xaml">
+    <Page Update="TabPanel\AddTabControlStyles.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Taber\TabControlStylesExample.xaml">
+    <Page Update="TabPanel\TabControlStylesExample.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
 </Project>

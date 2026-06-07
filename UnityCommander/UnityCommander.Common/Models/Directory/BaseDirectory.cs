@@ -1,57 +1,33 @@
 ﻿
 namespace UnityCommander.Common.Models.Directory
 {
+    using NSwag.Collections;
+    using Prism.Mvvm;
     using System;
     using System.Collections.Generic;
-    using NSwag.Collections;
-
     using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Integration.Contracts;
+    using UnityCommander.Common.Selection;
 
     /// <summary>
     /// The directory base.
     /// </summary>
     [Serializable]
-    public abstract class BaseDirectory
+    public abstract class BaseDirectory : BindableBase, ISelectableItem
     {
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
+        private bool _isSelected;
         public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the path.
-        /// </summary>
         public string Path { get; set; }
-
-        /// <summary>
-        /// Gets or sets the icon.
-        /// </summary>
         public Icon Icon { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date and time the file/folder was created.
-        /// </summary>
         public DateTime CreationTime { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the date and time the file/folder was last accessed.
-        /// </summary>
         public DateTime LastAccessTime { get; set; }
-
-        /// <summary>
-        /// Gets or sets additional columns that are provided by plugin.
-        /// </summary>
         public IDictionary<string, object> Additional { get; set; } = new ObservableDictionary<string, object>();
-
-        /// <summary>
-        /// Gets or sets the directory item's type.
-        /// </summary>
         public TargetPanel TargetPanel { get; set; }
-
-        /// <summary>
-        /// Gets or sets context menu item for a column.
-        /// </summary>
         public List<ContextItem> ContextItems { get; set; }
+        public string Key { get; set; }
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
+        }
     }
 }

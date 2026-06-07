@@ -1,859 +1,696 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SplitPanelViewModel.cs" company="T">
-//   Copyright (p) Alexey Kuznecov. All right reserved.
+//   Copyright (c) Alexei Kuznecov. All rights reserved.
 // </copyright>
 // <summary>
-//   The left panel view model.
+//   Реализация ViewModel для левой панели файлового менеджера. 
+//   Обрабатывает навигацию, перетаскивание (drag & drop), работу с плагинами и обновление колонок.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using CommandSystem.Abstractions;
+using Prism.Commands;
+using Prism.Dialogs;
+using Prism.Navigation.Regions;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using UnityCommander.CommandSurface;
+using UnityCommander.Common.Commands;
+using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.Module;
+using UnityCommander.Controls.Layout;
+using UnityCommander.Core;
+using UnityCommander.Core.Helper;
+using UnityCommander.Core.Mvvm;
+using UnityCommander.Core.Navigation;
+using UnityCommander.Logging.Configuration;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Modules.FilePanel.Controllers;
+using UnityCommander.Modules.FilePanel.Controllers.DnD;
+using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.Services;
+using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Settings;
+
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-
-    using Core.Helper;
-    using Core.Mvvm;
-    
-    using NLog;
-    using Prism.Commands;
-    using Prism.Regions;
-    using Prism.Services.Dialogs;
-    using Services.Interfaces;
-
-    using UnityCommander.Common.Models.Columns;
-    using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Core;
-    using UnityCommander.Core.Commands;
-    using UnityCommander.Core.Modules;
-    using UnityCommander.Integration.Columns;
-    using UnityCommander.Integration.Enums;
-    using UnityCommander.Core.DragDrop;
-    using System.Linq;
-    using UnityCommander.Services;
-    using UnityCommander.Core.IO.Operations;
-    using System.Windows.Input;
-    using CommandManager = Core.Commands.CommandManager;
-    using UnityCommander.Common;
-
     /// <summary>
-    /// The left panel view model.
+    /// Представляет ViewModel левой панели файлового менеджера.
+    /// Реализует обработку навигации, команд, drag & drop и интеграцию плагинных колонок.
     /// </summary>
     [Serializable]
-    public class SplitPanelViewModel : RegionViewModelBase, IDropTarget, IDirectoryPanel
+    public class SplitPanelViewModel : RegionViewModelBase, IDirectoryPanel
     {
-        #region Declaration fields
+        #region Поля и зависимости
 
-        #region Dependencies Injection
-
-        /// <summary>
-        /// The dialog service.
-        /// </summary>
+        // --- Зависимости через DI
         private readonly IDialogService dialogService;
-
-        /// <summary>
-        /// The directory provider.
-        /// </summary>
         private readonly IDataProviderService dataService;
-
-        /// <summary>
-        /// The application settings.
-        /// </summary>
         private readonly ISettings settingsService;
-
-        /// <summary>
-        /// The common state service.
-        /// </summary>
         private readonly IMultiCommandService multiCommandService;
+        //private readonly IAppLogger _appLogger;
+        private readonly NavigationManager _navigationService;
+        private readonly CommandManager commandManager;
+        private readonly ILogger _logger;
+        private readonly ICommandUIService _commandUIService;
+        //private readonly TabState _state;
+        private ITabRegistry _tabRegistry;
+        private TabContentAdapter _adapter;
+        private ISelectionManager _selectionManager;
+        public bool IsActive => _tabRegistry.ActiveTab == this;
 
-        /// <summary>
-        /// The common state service.
-        /// </summary>
-        private readonly IGlobalCommandService globalCommandService;
+        // Поля из дополнительной части (Tools)
+        private bool _refreshScheduled = false;
+        private CommandService _commandService;
+        private CommandPresentationProvider _presentationProvider;
+        private ContextMenuController _contextMenuController;
 
-        /// <summary>
-        /// The plugin loader service.
-        /// </summary>
-        private readonly IPluginLoaderService pluginLoaderService;
-        
-        /// <summary>
-        /// The command manager.
-        /// </summary>
-        private readonly Core.Commands.CommandManager commandManager;
+        private readonly IColumnStateManager columnStateManager;
+        private readonly ColumnRegistry columnRegistry;
+        private readonly IColumnSettingsStore settings;
+        private readonly GongDropAdapter _dropTarget;
+        private readonly TabState _state;
+        public event Action<string> PathChanged;
+        public event Action<string> TabTitleChanged;
 
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly Logger logger;
 
-        /// <summary>
-        /// If true, the plugin was cached and the result will be restored
-        /// from the cache table the next time the program starts.
-        /// </summary>
-        private bool pluginValuesIsCached;
+        private readonly ContentNode _folderNode;
+        private readonly ContentNode _fileNode;
+        private readonly ContentNode _driveNode;
+        private readonly ContentNode _headerNode;
 
-        /// <summary>
-        /// Select base directory.
-        /// </summary>
-        private BaseDirectory selectedBaseDirectory;
-
+        private FileNodeContext _fileNodeContext;
+        private DriveNodeContext _driveNodeContext;
+        private FolderNodeContext _folderNodeContext;
+        private NavigationNodeContext _navigationContext;
         #endregion
 
-        #region Collections
+        #region Конструктор
 
         /// <summary>
-        /// The file list.
+        /// Инициализирует новый экземпляр <see cref="SplitPanelViewModel"/>.
         /// </summary>
-        private ObservableCollection<FileModel> fileList;
-
-        /// <summary>
-        /// The directory list.
-        /// </summary>
-        private ObservableCollection<FolderModel> directoryList;
-
-        /// <summary>
-        /// The drive list.
-        /// </summary>
-        private ObservableCollection<DriveModel> driveList;
-
-        #endregion
-
-        /// <summary>
-        /// The navigation command.
-        /// </summary>
-        private NavigationInvoker navigationCommand;
-        
-        /// <summary>
-        /// Control template for panel items.
-        /// </summary>
-        private ControlTemplate directoryPanelTemplate;
-        
-        /// <summary>
-        /// Indicates the current directory.
-        /// </summary>
-        private string currentDirectory;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SplitPanelViewModel"/> class.
-        /// </summary>
-        /// <param name="dialogService">
-        /// The dialog service.
-        /// </param>
-        /// <param name="regionManager">
-        /// The region manager is Prism implementation.
-        /// </param>
-        /// <param name="settingsService">
-        /// Gets interface to configure of application.
-        /// </param>
-        /// <param name="dataService">
-        /// The service that provides the info of the file system items.
-        /// </param>
-        /// <param name="multiCommandService">
-        /// The service that respond for composite commands.
-        /// </param>
-        /// <param name="pluginService">
-        /// Service for loading all detected plugin interfaces.
-        /// </param>
-        /// <param name="manager">
-        /// Command manager
-        /// </param>
-        /// <param name="logger">
-        /// Log manager.
-        /// </param>
+        /// <param name="dialogService">Сервис для отображения диалоговых окон.</param>
+        /// <param name="regionManager">Менеджер регионов Prism.</param>
+        /// <param name="settingsService">Сервис для доступа к настройкам приложения.</param>
+        /// <param name="dataService">Сервис для получения данных о файловой системе.</param>
+        /// <param name="multiCommandService">Сервис для работы с составными командами.</param>
+        /// <param name="pluginService">Сервис загрузки плагинов.</param>
+        /// <param name="globalCommandService">Сервис глобальных команд.</param>
+        /// <param name="iconProvider">Сервис для получения иконок.</param>
+        /// <param name="configService">Сервис конфигурации приложения.</param>
+        /// <param name="manager">Менеджер команд.</param>
+        /// <param name="logger">Логгер для записи событий.</param>
         public SplitPanelViewModel(
-            IDialogService dialogService,
-            IRegionManager regionManager,
-            ISettingsProviderService settingsService,
-            IDataProviderService dataService,
-            IMultiCommandService multiCommandService,
-            IGlobalCommandService globalCommandService,
-            IPluginLoaderService pluginService,
-            CommandManager manager,
-            ModuleLogger logger)
+              IDialogService dialogService,
+              IRegionManager regionManager,
+              ISettingsProviderService settingsService,
+              IDataProviderService dataService,
+              IMultiCommandService multiCommandService,
+              IIconProviderService iconProvider,
+              IAppConfigService configService,
+              IDirectoryChangeNotifier directoryChangeNotifier,
+              ISelectionManager selectionManager,
+              ITabRegistry tabRegistry,
+              CommandSurfaceEngine surface,
+              CommandPresentationProvider presentationProvider,
+              IGuiCommandExecutor guiCommandExecutor,
+              CommandManager manager,
+              IColumnProvider columnProvider,
+              IColumnStateManager columnStateManager,
+              IColumnSettingsStore settingsStore,
+              ColumnRegistry columnRegistry,
+              LoggerCreator loggerCreator,
+              CommandService commandService, 
+              ICommandUIService commandUIService,
+              ContextMenuController contextMenuController,
+              GongDropAdapter dropTarget)
             : base(regionManager)
         {
+            _state = new TabState();
+            _state.CurrentPathChanged += path =>
+            {
+                RaisePropertyChanged(nameof(CurrentDirectory));
+                PathChanged?.Invoke(path);
+                
+                var title = PathTitleHelper.GetTabTitle(path);
+
+                TabTitleChanged?.Invoke(title);
+            };
+
+            // ЛОГЕР
+            this._logger = loggerCreator.Create(
+                category: LogCategory.UserAction,
+                scope: LogScope.UserAction
+                );
+
+            this._contextMenuController = contextMenuController;
+            this._commandService = commandService;
+            this._commandUIService = commandUIService;
+
+            this._presentationProvider = presentationProvider;
+            this._selectionManager = selectionManager;
             this.dialogService = dialogService;
             this.commandManager = manager;
-            this.logger = logger.GetLogger();
-            this.pluginLoaderService = pluginService;
+        
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();
-
-            this.globalCommandService = globalCommandService;
-            this.globalCommandService.SetCommand<FileManager>();
-            this.TestCommand = this.globalCommandService.GetCommand<FileManager>(CommandNames.FileMove).Command;
-            
-            // Composite command
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
+            this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
+
+            this._navigationService = new NavigationManager(null);;
+
+            directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
+
+            this.columnStateManager = columnStateManager ?? throw new ArgumentNullException(nameof(columnStateManager)); ;
+            this.settings = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
+            this.columnRegistry = columnRegistry ?? throw new ArgumentNullException(nameof(settingsStore));
+
+            //_fileColumnController = new ColumnController<FileModel>(_state, columnRegistry, columnStateManager);
+            //_folderColumnController = new ColumnController<FolderModel>(_state, columnRegistry, columnStateManager);
+
+            var contextFactory = new NodeContextFactory(
+                _navigationService, 
+                _contextMenuController, 
+                _selectionManager, 
+                _commandUIService,
+                dropTarget);
+
+            var contentFactory = new ContentNodeFactory(contextFactory);
+
+            _folderNode = contentFactory.CreateFolderNode();
+            _fileNode = contentFactory.CreateFileNode();
+            _driveNode = contentFactory.CreateDriveNode();
+            _headerNode = contentFactory.CreateHeaderNode();
+
+            _folderNodeContext = (FolderNodeContext)_folderNode.Context;
+            _fileNodeContext = (FileNodeContext)_fileNode.Context;
+            _driveNodeContext = (DriveNodeContext)_driveNode.Context;
+            _navigationContext = (NavigationNodeContext)_headerNode.Context;
+
+            _workspace = new Workspace(
+                _headerRegion,
+                _mainRegion,
+                _secondaryRegion);
+
+            _workspaceController =
+                new WorkspaceController(_workspace);
+
+            LayoutRoot = BuildLayout();
         }
 
-        #endregion
-
-        #region Commands
-
-        /// <summary>
-        /// Goes to the selected directory.
-        /// </summary>
-        public ICommand TestCommand { get; set; }
-
-        /// <summary>
-        /// Goes to the selected directory.
-        /// </summary>
-        public DelegateCommand<FolderModel> NavigateDirectoryCommand => new DelegateCommand<FolderModel>(
-            dir =>
-            {
-                if (dir != null)
-                {
-#if (Nlog)
-                    this.logger.Info("File Panel: '{0}'", dir.Path);
-#endif
-                    this.navigationCommand.Execute(this.UpdateFilePanel, dir.Path);
-                }
-            });
-
-        /// <summary>
-        /// Goes to the selected disk.
-        /// </summary>
-        public DelegateCommand<DriveModel> GotoDiskCommand => new DelegateCommand<DriveModel>(
-            dir =>
-            {
-                if (dir != null)
-                {
-#if (Nlog)
-                    this.logger.Info("Driv Panel: '{0}'", dir.Letter);
-#endif
-                    this.navigationCommand.Execute(this.UpdateFilePanel, dir.Letter);
-                }
-            });
-
-        /// <summary>
-        /// Gets or sets a navigate command.
-        /// </summary>
-        public DelegateCommand<object> UpdateCommand => new DelegateCommand<object>(
-            dir =>
-            {
-                if (dir != null)
-                {
-#if (Nlog)
-                    this.logger.Info("Navi Panel: '{0}'", dir);
-#endif
-                    this.navigationCommand.Execute(this.UpdateFilePanel, dir);
-                }
-            });
-
-        /// <summary>
-        /// The command serializes the state of the file panel after the program is closed
-        /// to restore it to its original state the next time it starts. <see cref="SetLastPanelState"/>
-        /// </summary>
-        public DelegateCommand SavePanelStateCommand => new DelegateCommand(
-            () =>
-            {
-                if (settingsService.IsSessionSaved)
-                {
-                }
-            });
+        private Workspace _workspace;
+        private WorkspaceController _workspaceController;
 
         #endregion
 
-        #region Delaration properties
+        public LayoutNode LayoutRoot { get; }
 
-        /// <summary>
-        /// Gets or sets the current directory.
-        /// </summary>
+        public string GetCurrentPath() => _state.CurrentPath;
+
+        public string GetCurrentFilePath() => _fileNodeContext.CurrentPath;
+
+        public void SetCurrentPath(string value) => _state.CurrentPath = value;
+
+        public IReadOnlyList<BaseDirectory> GetFiles() => _fileNodeContext.Files;
+        
+        public ISelectionManager SelectionManager => _folderNodeContext.SelectionManager;
+
+        public Guid GetPanelToken() => _state.TabId;
+
         public string CurrentDirectory
         {
-            get => this.currentDirectory;
-            set => this.SetProperty(ref this.currentDirectory, value);
+            get => _state.CurrentPath;
+            set => _state.CurrentPath = value;
         }
 
-        /// <summary>
-        /// Gets or sets grid view for file panel.
-        /// </summary>
-        public ContextMenu ContextMenu { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets grid view for file panel.
-        /// </summary>
-        public GridView FilePanelContainer { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets grid view for folder panel.
-        /// </summary>
-        public GridView FolderPanelContainer { get; set; } = new ();
-
-        /// <summary>
-        /// Gets or sets grid view for folder panel.
-        /// </summary>
-        public GridView DrivePanelContainer { get; set; } = new ();
-
-        #region Collection Data
-
-        /// <summary>
-        /// Gets or sets the directory list.
-        /// </summary>
-        public ObservableCollection<FolderModel> DirectoryList
+        public DelegateCommand SavePanelStateCommand => new DelegateCommand(() =>
         {
-            get => this.directoryList;
-            set => this.SetProperty(ref this.directoryList, value);
+            if (settingsService.IsSessionSaved)
+            {
+                // Логика сохранения состояния панели
+            }
+        });
+
+        private readonly RegionNode _headerRegion =
+            new();
+
+        private readonly RegionNode _mainRegion =
+            new();
+
+        private readonly RegionNode _secondaryRegion =
+            new();
+
+
+        private LayoutNode BuildLayout()
+        {
+            return new StackNode
+            {
+                Orientation = Orientation.Horizontal,
+
+                Children =
+                {
+                    new FixedNode
+                    {
+                        Size = 25,
+                        Content = _headerRegion
+                    },
+
+                    new SplitNode
+                    {
+                        Orientation = Orientation.Vertical,
+
+                        Ratio = 0.5,
+
+                        First = _mainRegion,
+
+                        Second = _secondaryRegion
+                    }
+                }
+            };
         }
 
-        /// <summary>
-        /// Gets or sets the file list.
-        /// </summary>
-        public ObservableCollection<FileModel> FileList
-        {
-            get => this.fileList;
-            set => this.SetProperty(ref this.fileList, value);
-        }
+        public DelegateCommand<object> UpdateCommand =>
+          new DelegateCommand<object>(dir =>
+          {
+              if (dir != null)
+              {
+#if (Nlog)
+                  _logger.Info($"Текущая папка изменена на ({dir})");
+#endif
+                  _navigationService.TryNavigateTo(dir.ToString(), true);
+              }
+          });
 
-        /// <summary>
-        /// Gets or sets the file list.
-        /// </summary>
-        public ObservableCollection<DriveModel> DriveList
-        {
-            get => this.driveList;
-            set => this.SetProperty(ref this.driveList, value);
-        }
+        #region Обработка Drag-and-Drop
+
+        ///// <summary>
+        ///// Обрабатывает событие DragOver, устанавливая визуальные эффекты для корректного отображения adorner.
+        ///// </summary>
+        ///// <param name="dropInfo">Информация о событии перетаскивания.</param>
+        //void IDropTarget.DragOver(IDropInfo dropInfo)
+        //{
+        //    // Проверяем, есть ли реально выбранные элементы
+        //    bool hasElements = false;
+
+        //    if (dropInfo.Data is BaseDirectory)
+        //        hasElements = true;
+        //    else if (dropInfo.Data is IList list && list.Count > 0)
+        //        hasElements = true;
+
+        //    // Если драг начат с пустого места (нет элементов) — блокируем драг
+        //    if (!hasElements)
+        //    {
+        //        dropInfo.Effects = DragDropEffects.None;
+        //        dropInfo.DropTargetAdorner = null;
+        //        return;
+        //    }
+
+        //    // Если драг идёт по элементу — разрешаем
+        //    bool isMultiSelect = dropInfo.Data is List<object> && dropInfo.TargetItem is ListBox or BaseDirectory;
+        //    bool isSingleSelect = dropInfo.Data is BaseDirectory && dropInfo.TargetItem is ListBox or BaseDirectory;
+
+        //    var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
+        //    if (adorner == null)
+        //        this.CreateAdornerLayer(dropInfo.VisualTarget);
+
+        //    if (isMultiSelect || isSingleSelect)
+        //        dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+
+        //    dropInfo.Effects = DragDropEffects.Copy;
+        //}
+
+        ///// <summary>
+        ///// Обрабатывает событие Drop, инициируя диалог копирования и передачу параметров.
+        ///// </summary>
+        ///// <param name="dropInfo">Информация о событии Drop.</param>
+        //void IDropTarget.Drop(IDropInfo dropInfo)
+        //{
+        //    var visualTarget = dropInfo.VisualTarget as ListBox;
+        //    var splitPanelViewModel = visualTarget?.DataContext as SplitPanelViewModel;
+
+        //    string targetPath = null;
+        //    var targetItem = dropInfo.TargetItem as BaseDirectory;
+
+        //    // Определяем путь назначения
+        //    if (targetItem == null)
+        //    {
+        //        var firstItem = visualTarget?.SelectedItem as BaseDirectory;
+        //        if (firstItem != null)
+        //        {
+        //            var pathParts = firstItem.Path.Split('\\');
+        //            targetPath = System.IO.Path.Combine(pathParts.Take(pathParts.Length - 1).ToArray());
+        //        }
+        //        else
+        //        {
+        //            targetPath = _state.CurrentPath;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        targetPath = targetItem.Path;
+        //    }
+
+        //    // Собираем список исходных элементов
+        //    List<string> sourcePaths = new();
+        //    if (dropInfo.Data is BaseDirectory single)
+        //    {
+        //        sourcePaths.Add(single.Path);
+        //    }
+        //    else if (dropInfo.Data is IList list)
+        //    {
+        //        foreach (var item in list)
+        //        {
+        //            if (item is BaseDirectory dir)
+        //                sourcePaths.Add(dir.Path);
+        //        }
+        //    }
+
+        //    // Отправляем **в одно окно** все исходные пути
+        //    this.dialogService.ShowDialog("CopyDialog",
+        //        new OverrideDialogParameters(new CopyParameters
+        //        {
+        //            ManySource = sourcePaths,
+        //            Target = targetPath
+        //        }), r => { });
+        //}
+
+        ///// <summary>
+        ///// Создаёт слой adorner для указанного элемента, если он отсутствует.
+        ///// </summary>
+        ///// <param name="element">UI-элемент, для которого создаётся adorner.</param>
+        //private void CreateAdornerLayer(UIElement element)
+        //{
+        //    if (element is ListBox listBox && listBox.Parent is Grid parent)
+        //    {
+        //        parent.Children.Remove(listBox);
+        //        var decorator = new AdornerDecorator { Child = listBox };
+        //        parent.Children.Add(decorator);
+        //    }
+        //}
 
         #endregion
 
-        /// <summary>
-        /// Gets or sets the template for panel items.
-        /// </summary>
-        public ControlTemplate DirectoryPanelTemplate
+       
+        public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
-            get => this.directoryPanelTemplate;
-            set => this.SetProperty(ref this.directoryPanelTemplate, value);
-        }
+            SetInternalCurrentPath(path);
 
-        /// <summary>
-        /// Sets the selected directory.
-        /// </summary>
-        public BaseDirectory SelectedBaseDirectory
-        {
-            set
-            {
-                if (value != null)
-                {
-                    this.SelectedDirectories.Add(value);
-                }
-            }
-        }
+            if (token == Guid.Empty)
+                token = Guid.NewGuid();
 
-        /// <summary>
-        /// Sets the selected directory.
-        /// </summary>
-        public BaseDirectory CurrentFile
-        {
-            get => this.selectedBaseDirectory;
-            set => this.selectedBaseDirectory = value;
-        }
+            _state.TabId = token;
 
-        /// <summary>
-        /// Gets or sets the selected directory.
-        /// </summary>
-        public List<BaseDirectory> SelectedDirectories { get; set; } = new ();
+            //NavigationContextDirectory.Instance.Register(_state.TabId, _navigationService);
 
-        /// <summary>
-        /// Gets or sets the token.
-        /// </summary>
-        public Guid Token { get; set; }
+            _navigationService.CurrentChanged += OnPathChanged;
+            
+            _ = this.SetLastPanelState();
 
-        /// <summary>
-        /// The initial panel.
-        /// </summary>
-        /// <param name="token">
-        /// The token.
-        /// </param>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IDirectoryPanel"/>.
-        /// </returns>
-        public IDirectoryPanel InitializedViewModel(Guid token, string path)
-        {
-#if (Nlog)
-            this.logger.Info("Token: {0} Path: {1}", token, path);
-#endif
-            this.CurrentDirectory = path;
-            this.Token = token;
-            this.navigationCommand = (NavigationInvoker)this.commandManager.CommandRegister(token, new NavigationInvoker());
-            this.SetLastPanelState();
-            this.SetCommands(path);
+            //_adapter = new TabContentAdapter(this);
+            //_tabRegistry.Register(_adapter);
+
+            _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
             return this;
         }
 
-        /// <summary>
-        /// The get panel token.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public Guid GetPanelToken() => this.Token;
+        #region Новая система колонок
 
-        /// <summary>
-        /// The get panel token.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public string GetCurrentPath() => this.CurrentDirectory;
-
-        #endregion
-
-        #region Other
-        
-        /// <summary>
-        /// Finalization of objects when unloading a module.
-        /// </summary>
-        public override void Destroy()
+        private async Task UpdateColumnValuesAsync()
         {
-            base.Destroy();
+            var fileColumns = columnRegistry.GetColumns(PanelType.Files).ToList();
+            var folderColumns = columnRegistry.GetColumns(PanelType.Folders).ToList();
 
-            // Detaching a command to avoid memory leaks.
-            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
-        }
+            var folderUpdates = new List<(FolderModel folder, string columnId, object value)>();
+            var fileUpdates = new List<(FileModel file, string columnId, object value)>();
 
-        #endregion
-
-        #region Drag And Drop Handlers
-
-        /// <summary>
-        /// The drag over.
-        /// </summary>
-        /// <param name="dropInfo">
-        /// The drop-over event handler.
-        /// </param>
-        void IDropTarget.DragOver(IDropInfo dropInfo)
-        {
-            bool isMultiSelect = dropInfo.Data is List<object>
-                                 & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
-            bool isSingleSelect = dropInfo.Data is BaseDirectory
-                                  & (dropInfo.TargetItem is ListBox || dropInfo.TargetItem is BaseDirectory);
-
-            var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
-
-            if (adorner == null)
+            await Task.Run(() =>
             {
-                this.CreateAdornerLayer(dropInfo.VisualTarget);
-            }
+                foreach (var folder in _folderNodeContext.Folders)
+                    foreach (var column in folderColumns)
+                        folderUpdates.Add((folder, column.Id, column.ColumnValueHandler(folder)));
 
+                foreach (var file in _fileNodeContext.Files)
+                    foreach (var column in fileColumns)
+                        fileUpdates.Add((file, column.Id, column.ColumnValueHandler(file)));
+            });
 
-            if (isMultiSelect || isSingleSelect)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                // var list = dropInfo.VisualTarget as ListView;
-                // var template = Application.Current.FindResource("DragAdorner");
-                // list?.SetValue(DragDrop.DragAdornerTemplateProperty, template);
-                dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
-                
-            }
-
-            if (dropInfo.Data is BaseDirectory & dropInfo.VisualTarget is ListBox & dropInfo.TargetItem == null)
-            {
-                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-            }
-
-            dropInfo.Effects = DragDropEffects.Copy;
-        }
-
-        /// <summary>
-        /// The drop.
-        /// </summary>
-        /// <param name="dropInfo">
-        /// The drop event handler.
-        /// </param>
-        /// [DebuggerStepThrough]
-        void IDropTarget.Drop(IDropInfo dropInfo)
-        {
-            BaseDirectory sourceItem = dropInfo.Data as BaseDirectory;
-            BaseDirectory targetItem = dropInfo.TargetItem as BaseDirectory;
-            string targetPath = null;
-
-            if (targetItem is null)
-            {
-                var firstItem = (dropInfo.VisualTarget as ListBox).SelectedItem as BaseDirectory;
-
-                if (firstItem != null)
-                {
-                    var path = firstItem.Path.Split('\\');
-                    targetPath = Path.Combine(path.Take(path.Length - 1).ToArray());
-                }
-                else
-                {
-                    targetPath = this.CurrentDirectory;
-                }
-            }
-
-            targetPath = (dropInfo.TargetItem as BaseDirectory)?.Path ?? targetPath;
-
-            // targetItem.Add(sourceItem);
-            var copyParameters = new CopyParameters()
-            {
-                Source = (dropInfo.Data as BaseDirectory)?.Path,
-                Target = targetPath
-            };
-
-            this.dialogService.ShowDialog("CopyDialog", new OverrideDialogParameters(copyParameters), r => { });
-        }
-
-        /// <summary>
-        /// The create adorner layer.
-        /// </summary>
-        /// <param name="element">
-        /// The element.
-        /// </param>
-        private void CreateAdornerLayer(UIElement element)
-        {
-            var listBox = element as ListBox;
-            var ad = new AdornerDecorator();
-
-            if (listBox?.Parent is Grid parent)
-            {
-                parent.Children.Remove(listBox);
-                ad.Child = listBox;
-                parent.Children.Add(ad);
-            }
-        }
-
-        #endregion
-
-        #region Initial the folder/file panel.
-
-        /// <summary>
-        /// The set columns.
-        /// </summary>
-        private void InitializeColumns()
-        {
-            this.AddFileColumns();
-            this.AddFolderColumns();
-            this.AddDriveColumns();
-            this.AddPluginColumns();
-        }
-
-        /// <summary>
-        /// Adds columns in the folder panel.
-        /// </summary>
-        private void AddFolderColumns()
-        {
-            new FolderColumnModel().GetColumn(
-                (items, error) =>
-                {
-                    foreach (var column in items)
-                    {
-                        this.FolderPanelContainer.Columns.Add((GridViewColumn)column.Template);
-                        this.ContextMenuBuild(column);
-                    }
-                });
-        }
-
-        /// <summary>
-        /// Adds columns in the file panel.
-        /// </summary>
-        private void AddFileColumns()
-        {
-            new FileColumnModel().GetColumn((items, error) =>
-            {
-                foreach (var column in items)
-                {
-                    this.FilePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    //this.ContextMenuBuild(column);
-                }
+                foreach (var u in folderUpdates)
+                    u.folder.Additional[u.columnId] = u.value;
+                foreach (var u in fileUpdates)
+                    u.file.Additional[u.columnId] = u.value;
             });
         }
 
-        /// <summary>
-        /// Adds columns for devices or drives.
-        /// </summary>
-        private void AddDriveColumns()
+        private void RefreshFileList(IEnumerable<FileModel> files)
         {
-            new DriveContainerModel().GetColumn(
-                (columns, error) =>
-                {
-                    foreach (var column in columns)
-                    {
-                        this.DrivePanelContainer.Columns.Add((GridViewColumn)column.Template);
-                    }
-                });
-        }
+            var set = files.Select(f => f.Path).ToHashSet();
 
-        #region Initial Plugin Columns
-
-        /// <summary>
-        /// Adds an additional columns that are provided by plugins.
-        /// </summary>
-        private void AddPluginColumns()
-        {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
+            for (int i = _fileNodeContext.Files.Count - 1; i >= 0; i--)
             {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    column.ColumnManager.SetUpdateCommand(this.UpdateColumnsCommand);
-                    column.ColumnBuilder.UpdateColumnValue(column.ColumnManager);
+                if (!set.Contains(_fileNodeContext.Files[i].Path))
+                    _fileNodeContext.Files.RemoveAt(i);
+            }
 
-                    if (this.InitialFolderColumnValues(column))
-                    {
-                        var columnNew = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            DisplayMemberBinding = new Binding($"Additional[{column.Header}]")
-                        };
+            var existing = _fileNodeContext.Files.Select(f => f.Path).ToHashSet();
 
-                        this.FolderPanelContainer.Columns.Add(columnNew);
-                    }
-
-                    if (this.InitialFileColumnValues(column))
-                    {
-                        var columnNew = new GridViewColumn
-                        {
-                            Header = column.Header ?? "Error",
-                            Width = column.Width,
-                            CellTemplate = (DataTemplate)Application.Current.FindResource("ColumnTextDataTemplate")
-                        };
-
-                        this.FilePanelContainer.Columns.Add(columnNew);
-                    }
-
-                    this.PluginContextMenuBuild(column);
-                }
+            foreach (var file in files)
+            {
+                if (!existing.Contains(file.Path))
+                    _fileNodeContext.Files.Add(file);
             }
         }
 
-        /// <summary>
-        /// PluginContextMenuBuild
-        /// </summary>
-        private void PluginContextMenuBuild(IColumn column)
+        private void RefreshDirectoryList(IEnumerable<FolderModel> dirs)
         {
-            if (column.ContextItems == null) return;
+            var set = dirs.Select(d => d.Path).ToHashSet();
 
-            foreach (var item in column.ContextItems)
+            for (int i = _folderNodeContext.Folders.Count - 1; i >= 0; i--)
             {
-                var menu = new MenuItem();
-                menu.Header = item.Name;
+                if (!set.Contains(_folderNodeContext.Folders[i].Path))
+                    _folderNodeContext.Folders.RemoveAt(i);
+            }
 
-                this.globalCommandService.SetCommand(new ()
-                {
-                    Command = item.Command,
-                    ControlItem = menu,
-                    XParamModel = new XParamModel(this, "CurrentDirectory")
-                });
+            var existing = _folderNodeContext.Folders.Select(d => d.Path).ToHashSet();
 
-                this.ContextMenu.Items.Add(menu);
+            foreach (var dir in dirs)
+            {
+                if (!existing.Contains(dir.Path))
+                    _folderNodeContext.Folders.Add(dir);
             }
         }
 
-        /// <summary>
-        /// ContextMenuBuild
-        /// </summary>
-        private void ContextMenuBuild(IColumn column)
+        private async Task RefreshPanelAsync(string dirPath, CancellationToken token)
         {
-            if (column.ContextItems == null) return;
+            var dirsTask = dataService.GetDirectoriesAsync(dirPath, token);
+            var filesTask = dataService.GetFilesAsync(dirPath, token);
 
-            foreach (var item in column.ContextItems)
-            {
-                var menu = new MenuItem();
-                menu.Header = item.Name;
+            var dirs = await dirsTask;
+            var files = await filesTask;
 
-                this.globalCommandService.SetCommand<FileManager>(item.CommandName, new ()
-                {
-                    ControlItem = menu,
-                    XParamModelList = new List<XParamModel>()
-                    {
-                        new XParamModel(this, "CurrentDirectory"),
-                        new XParamModel(this, "CurrentDirectory")
-                    }
-                });
+            if (token.IsCancellationRequested)
+                return; // ❌ устарело — убиваем
 
-                this.ContextMenu.Items.Add(menu);
-            }
-        }
+            RefreshDirectoryList(dirs);
+            RefreshFileList(files);
 
-        /// <summary>
-        /// Updates additional columns that are provided by plugins.
-        /// </summary>
-        private void UpdatePluginColumns()
-        {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
-            {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    //this.AddPluginColumns();
-                    this.InitialFolderColumnValues(column);
-                    this.InitialFileColumnValues(column);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Plugins uses this method to update columns.
-        /// </summary>
-        private void UpdateColumnsCommand()
-        {
-            foreach (var pluginContext in this.pluginLoaderService.GetPluginContext())
-            {
-                foreach (var column in pluginContext.GetColumns())
-                {
-                    foreach (var folder in this.DirectoryList)
-                    {
-                        var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-
-                        if (columnValue != null)
-                        {
-                            folder.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-                        }
-                    }
-
-                    foreach (var file in this.FileList)
-                    {
-                        var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
-
-                        if (columnValue != null)
-                        {
-                            file.Additional[column.Header] = column.ColumnBuilder.ColumnValueHandler(file.Path);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Initializes folder columns with values provided by plugins.
-        /// </summary>
-        /// <param name="column">
-        /// Object implements contract of <see cref="IColumn"/>.
-        /// </param>
-        /// <returns>
-        /// True if the ColumnValueHandler method returned all non-NULL values.
-        /// <para> 
-        /// The idea is to show the column where needed. In this way,
-        /// you can independently implement the columns for folders and files.
-        /// </para>
-        /// </returns>
-        private bool InitialFolderColumnValues(IColumn column)
-        {
-            var isAllEqNull = true;
-
-            foreach (var folder in this.DirectoryList)
-            {
-                var columnValue = column.ColumnBuilder.ColumnValueHandler(folder.Path);
-
-                if (!folder.Additional.ContainsKey(column.Header))
-                {
-                    folder.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(folder.Path));
-                    //folder.ContextItems = column.ContextItems;                   
-                }
-            }
-
-            return isAllEqNull;
-        }
-
-        /// <summary>
-        /// Initializes file columns with values provided by plugins.
-        /// </summary>
-        /// <param name="column">
-        /// Object implements contract of <see cref="IColumn"/>.
-        /// </param>
-        /// <returns>
-        /// True if the ColumnValueHandler method returned all non-NULL values.
-        /// The idea is to show the column where needed. In this way,
-        /// you can independently implement the columns for folders and files.
-        /// </returns>
-        private bool InitialFileColumnValues(IColumn column)
-        {
-            var isAllEqNull = true;
-
-            foreach (var file in this.FileList)
-            {
-                var columnValue = column.ColumnBuilder.ColumnValueHandler(file.Path);
-
-                if (!file.Additional.ContainsKey(column.Header))
-                {
-                    file.Additional.Add(column.Header, column.ColumnBuilder.ColumnValueHandler(file.Path));
-                }
-            }
-
-            return isAllEqNull;
+            await UpdateColumnValuesAsync();
         }
 
         #endregion
 
+        #region Управление ресурсами и навигация
+
+        private async Task SetLastPanelState()
+        {
+            try
+            {
+                if (_state.CurrentPath != VirtualPaths.MyComputer)
+                {
+                    var sw = Stopwatch.StartNew();
+
+                    var files = await dataService.GetFilesAsync(_state.CurrentPath, CancellationToken.None);
+                    var dirs = await dataService.GetDirectoriesAsync(_state.CurrentPath, CancellationToken.None);
+
+                    foreach (var f in files) _fileNodeContext.Files.Add(f);
+                    foreach (var d in dirs) _folderNodeContext.Folders.Add(d);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Ошибка загрузки: " + ex);
+            }
+
+            var defsFiles = columnRegistry.GetColumns(PanelType.Files).ToList();
+            var defsFolders = columnRegistry.GetColumns(PanelType.Folders).ToList();
+            var defsDrives = columnRegistry.GetColumns(PanelType.Drives).ToList();
+
+            _fileNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Files", PanelType.Files, defsFiles);
+            _folderNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Folders", PanelType.Folders, defsFolders);
+            _driveNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Drives", PanelType.Drives, defsDrives);
+
+            await UpdateColumnValuesAsync();
+        }
+
+        private async Task GoDrivePanel()
+        {
+            // 1. Загружаем диски
+            var drives = await dataService.GetDrivesAsync();
+            _driveNodeContext.Drives.Clear();
+            foreach (var d in drives)
+                _driveNodeContext.Drives.Add(d);
+        }
+
         #endregion
 
-        #region Helper Methods
+        #region Обработка событий и очистка ресурсов
 
-        /// <summary>
-        /// This method will try to restore the original state of the file panel 
-        /// after the last time the program is closed, otherwise it will retry the database request.
-        /// <see cref="SavePanelStateCommand"/>
-        /// </summary>
-        private void SetLastPanelState()
+        private CancellationTokenSource _cts;
+
+        private void OnPathChanged(string path)
         {
-            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
-            this.FileList = this.dataService.GetFiles(this.CurrentDirectory);
-            this.DirectoryList = this.dataService.GetDirectories(this.CurrentDirectory);
-            this.InitializeColumns();
-        }
+            SetInternalCurrentPath(path);
 
-        /// <summary>
-        /// Updates the file pane and sets the appropriate template.
-        /// </summary>
-        /// <param name="dirPath"> Expected the path to the directory. </param>
-        private void UpdateFilePanel(object dirPath)
-        {
-            var template = (ControlTemplate)Application.Current.FindResource("DirectoryListViewTemplate");
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
 
-            if (!this.DirectoryPanelTemplate.Equals(template))
+            if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
             {
-                this.DirectoryPanelTemplate = template;
+                _ = this.GoDrivePanel();
+                _workspaceController.ShowMyComputerMode(_headerNode, _driveNode);
             }
-
-            var path = Directory.Exists(dirPath.ToString()) ? (string)dirPath.ToString() : Directory.GetDirectoryRoot(dirPath.ToString());
-            this.DirectoryList = this.dataService.GetDirectories(path);
-            this.FileList = this.dataService.GetFiles(path);
-            this.CurrentDirectory = path;
-            this.UpdatePluginColumns();
-        }
-
-        /// <summary>
-        /// Goes to the drive panel and sets the appropriate template..
-        /// </summary>
-        /// <param name="root">
-        /// The root.
-        /// </param>
-        private void GoDrivePanel(object root)
-        {
-            this.DirectoryPanelTemplate = (ControlTemplate)Application.Current.FindResource("DriveListViewTemplate");
-            this.DriveList = this.dataService.GetDrives();
-            this.CurrentDirectory = (string)root;
-        }
-
-        /// <summary>
-        /// Pre-registers commands to the command execution history.
-        /// </summary>
-        /// <param name="dirPath"> Expected the path to the directory. </param>
-        private void SetCommands(string dirPath)
-        {
-            string[] paths = HelperFunctions.ParsePath(dirPath);
-
-            this.navigationCommand.AddCommand(this.GoDrivePanel, "Root:C:\\");
-
-            foreach (var path in paths)
+            else
             {
-                this.navigationCommand.AddCommand(this.UpdateFilePanel, path);
+                _ = RefreshPanelAsync(path, _cts.Token);
+                _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
             }
         }
+
+        #endregion
+
+        #region Методы для обновления панели файлов
+
+        private void OnDirectoryChanged(string changedPath)
+        {
+            if (!ShouldRefresh(changedPath, _state.CurrentPath))
+                return;
+
+            ScheduleLightRefresh(changedPath);
+        }
+
+        private void ScheduleLightRefresh(string changedPath)
+        {
+            if (_refreshScheduled)
+                return;
+
+            _refreshScheduled = true;
+
+            Task.Delay(150).ContinueWith(_ =>
+            {
+                _refreshScheduled = false;
+
+                Application.Current.Dispatcher.Invoke(async () =>
+                {
+                    await RefreshPanelAsync(_state.CurrentPath, CancellationToken.None);
+                });
+            });
+        }
+
+        private bool ShouldRefresh(string changedPath, string panelCurrentPath)
+        {
+            return changedPath.StartsWith(panelCurrentPath, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public void Dispose()
+        {
+            _navigationService.CurrentChanged -= OnPathChanged;
+            //_tabRegistry.Unregister(_adapter.TabId);
+            //columnSync.ColumnChanged -= OnColumnChanged;
+            this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+            base.Destroy();
+        }
+
+        private void SetInternalCurrentPath(string path)
+        {
+            _state.CurrentPath = path;
+            _fileNodeContext.Current = _state.CurrentPath;
+            _folderNodeContext.Current = _state.CurrentPath;
+        }
+
+        public void OnViewAttached(object view)
+        {
+            _navigationService.CurrentChanged -= OnPathChanged;
+            _navigationService.CurrentChanged += OnPathChanged;
+        }
+
+        public void OnViewDetached()
+        {
+            _navigationService.CurrentChanged -= OnPathChanged;
+        }
+
+        ~SplitPanelViewModel()
+        {
+            Debug.WriteLine($"FINALIZER {_state.TabId}");
+        }
+
+        #endregion
+
+        #region Команды из Tools
+
+        public DelegateCommand<object> GoBackDirectoryPanelCommand =>
+            new DelegateCommand<object>(obj =>
+            {
+                if (_navigationService.CanGoBack) _navigationService.GoBack(); 
+                else
+                {
+                    if (_state.CurrentPath != VirtualPaths.MyComputer)
+                    {
+                        _state.CurrentPath = VirtualPaths.MyComputer;
+                        _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true);
+                    }
+                }
+
+#if (Nlog)
+                _logger.Info($"Возврат в папку ({_state.CurrentPath})");
+#endif
+            });
+
+        public DelegateCommand<object> GoDrivePanelCommand =>
+            new DelegateCommand<object>(obj =>
+            {
+                _state.CurrentPath = VirtualPaths.MyComputer;
+                _navigationService.TryNavigateTo(VirtualPaths.MyComputer, true);
+
+                if (_state.CurrentPath == VirtualPaths.MyComputer)
+                {
+#if (Nlog)
+                    _logger.Info($"Открыт Мой компьютер ({_state.CurrentPath})");
+#endif
+                    _ = GoDrivePanel();
+                }
+            });
+
+        public DelegateCommand<object> UpdateDirectoryPanelCommand =>
+            new DelegateCommand<object>(obj =>
+            {
+                _commandService.ExecuteAsync(CommandNames.Panel.Refresh);
+            });
 
         #endregion
     }

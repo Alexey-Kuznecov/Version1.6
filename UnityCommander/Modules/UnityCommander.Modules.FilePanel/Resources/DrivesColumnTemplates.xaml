@@ -1,0 +1,55 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:UnityCommander.Modules.FilePanel.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
+    mc:Ignorable="d">
+    <converter:IconConverter x:Key="IconConverter" />
+    <converter:DataSizeConverter x:Key="DataSizeConverter" />
+    <DataTemplate x:Key="ColumnLetterDataTemplate" DataType="{x:Type models:DriveModel}">
+        <StackPanel Orientation="Horizontal">
+            <AdornerDecorator>
+                <ContentPresenter>
+                    <ContentPresenter.Content>
+                        <converter:BindableParameter
+                            Binding="{Binding Icon}"
+                            Converter="{StaticResource IconConverter}"
+                            ConverterParameter="{Binding TargetPanel}" />
+                    </ContentPresenter.Content>
+                </ContentPresenter>
+            </AdornerDecorator>
+            <TextBlock
+                x:Name="Cell"
+                VerticalAlignment="Center"
+                Foreground="BlueViolet"
+                Text="{Binding Letter}" />
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnFreeSpaceDataTemplate" DataType="{x:Type models:DriveModel}">
+        <Grid>
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="BlueViolet"
+                Text="{Binding FreeSpace, Converter={StaticResource DataSizeConverter}}" />
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnUsedSpaceDataTemplate" DataType="{x:Type models:DriveModel}">
+        <Grid>
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="BlueViolet"
+                Text="{Binding UsedSpace, Converter={StaticResource DataSizeConverter}}" />
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnTotalSpaceDataTemplate" DataType="{x:Type models:DriveModel}">
+        <Grid>
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="BlueViolet"
+                Text="{Binding TotalAmount, Converter={StaticResource DataSizeConverter}}" />
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

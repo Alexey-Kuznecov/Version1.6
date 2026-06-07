@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using JetBrains.Annotations;
 
 namespace UnityCommander.Core.DragDrop
 {
@@ -282,6 +281,16 @@ namespace UnityCommander.Core.DragDrop
             {
                 return target is IList;
             }
+        }
+
+        public void DragLeave(IDropInfo dropInfo)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void DragEnter(IDropInfo dropInfo)
+        {
+            //throw new NotImplementedException();
         }
     }
 }

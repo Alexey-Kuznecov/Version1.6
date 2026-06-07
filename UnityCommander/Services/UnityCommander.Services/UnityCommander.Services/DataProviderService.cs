@@ -1,102 +1,113 @@
 ﻿
 namespace UnityCommander.Services
 {
-    using System.Collections.ObjectModel;
+    using Newtonsoft.Json.Linq;
+    using System.Collections.Generic;
     using System.IO;
-
-    using AlexeyKuznecov.Library.Converters;
-
+    using System.Threading;
+    using System.Threading.Tasks;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
- 
+
     /// <summary>
-    /// The files provider.
+    /// Сервис получения данных с диска — формирует готовые модели для приложения.
     /// </summary>
     public class DataProviderService : IDataProviderService
     {
         /// <summary>
-        /// Gets files list of the specific location.
+        /// Получить файлы в директории.
         /// </summary>
-        /// <param name="path"> The path to the directory where the files are located. </param>
-        /// <returns> The files collection. </returns>
-        public ObservableCollection<FileModel> GetFiles(string path)
+        public async Task<List<FileModel>> GetFilesAsync(string path, CancellationToken cancellation)
         {
-            ObservableCollection<FileModel> models = new ObservableCollection<FileModel>();
-            DirectoryInfo dir = new DirectoryInfo(path + "\\");
-
-            foreach (var file in dir.GetFiles())
+            return await Task.Run(() =>
             {
-                if ((file.Attributes & FileAttributes.Hidden) == 0)
-                {
-                    models.Add(new FileModel
-                    {
-                        Name = Path.GetFileNameWithoutExtension(file.Name),
-                        Path = file.FullName,
-                        Extension = file.Extension,
-                        CreationTime = file.CreationTime,
-                        LastAccessTime = file.LastAccessTime,
-                        TargetPanel = TargetPanel.Files
-                    });
-                }
-            }
+                var dir = new DirectoryInfo(path);
+                var files = new List<FileModel>();
 
-            return models;
+                foreach (var file in dir.GetFiles())
+                {
+                    if (cancellation.IsCancellationRequested)
+                        return files;
+
+                    if ((file.Attributes & FileAttributes.Hidden) == 0)
+                    {
+                        files.Add(new FileModel
+                        {
+                            Name = Path.GetFileNameWithoutExtension(file.Name),
+                            Path = file.FullName,
+                            Extension = file.Extension,
+                            CreationTime = file.CreationTime,
+                            LastAccessTime = file.LastAccessTime,
+                            TargetPanel = TargetPanel.Files,
+                            Key = file.FullName,
+                            Size = file.Length,
+                        });
+                    }
+                }
+
+                return files;
+            });
         }
 
         /// <summary>
-        /// Gets directories list of the specific location.
+        /// Получить папки в директории.
         /// </summary>
-        /// <param name="path"> The path to the directory where the directories are located. </param>
-        /// <returns> The directories collection. </returns>
-        public ObservableCollection<FolderModel> GetDirectories(string path)
+        public async Task<List<FolderModel>> GetDirectoriesAsync(string path, CancellationToken cancellation)
         {
-            ObservableCollection<FolderModel> models = new ObservableCollection<FolderModel>();
-            DirectoryInfo dir = new DirectoryInfo(path + "\\");
-
-            foreach (var item in dir.GetDirectories())
+            return await Task.Run(() =>
             {
-                if ((item.Attributes & FileAttributes.Hidden) == 0)
-                {
-                    models.Add(new FolderModel
-                    {
-                        Name = item.Name,
-                        Path = item.FullName,
-                        CreationTime = item.CreationTime,
-                        LastAccessTime = item.LastAccessTime,
-                        TargetPanel = TargetPanel.Folders
-                    }); 
-                }
-            }
+                var dir = new DirectoryInfo(path);
+                var folders = new List<FolderModel>();
 
-            return models;
+                foreach (var folder in dir.GetDirectories())
+                {
+                    if (cancellation.IsCancellationRequested)
+                        return folders;
+
+                    if ((folder.Attributes & FileAttributes.Hidden) == 0)
+                    {
+                        folders.Add(new FolderModel
+                        {
+                            Name = folder.Name,
+                            Path = folder.FullName,
+                            CreationTime = folder.CreationTime,
+                            LastAccessTime = folder.LastAccessTime,
+                            TargetPanel = TargetPanel.Folders,
+                            Key = folder.FullName
+                        });
+                    }
+                }
+
+                return folders;
+            });
         }
 
         /// <summary>
-        /// Gets directories list of the specific location.
+        /// Получить локальные диски.
         /// </summary>
-        /// <returns> The directories collection. </returns>
-        public ObservableCollection<DriveModel> GetDrives()
+        public async Task<List<DriveModel>> GetDrivesAsync()
         {
-            ObservableCollection<DriveModel> models = new ObservableCollection<DriveModel>();
-            
-            foreach (var drive in DriveInfo.GetDrives())
+            return await Task.Run(() =>
             {
-                if (drive.DriveType == DriveType.Network) continue;
+                var drives = new List<DriveModel>();
 
-                if (drive.IsReady)
+                foreach (var drive in DriveInfo.GetDrives())
                 {
-                    models.Add(new DriveModel
+                    if (!drive.IsReady) continue;
+                    if (drive.DriveType == DriveType.Network) continue;
+
+                    drives.Add(new DriveModel
                     {
                         Letter = drive.Name,
-                        FreeSpace = ConverterBytes.AutoConvertFormatBytes(drive.AvailableFreeSpace),
-                        UsedSpace = ConverterBytes.AutoConvertFormatBytes(drive.TotalSize - drive.AvailableFreeSpace),
-                        TotalAmount = ConverterBytes.AutoConvertFormatBytes(drive.TotalSize),
+                        FreeSpace = drive.AvailableFreeSpace,   // сырые байты
+                        UsedSpace = drive.TotalSize - drive.AvailableFreeSpace, // сырые байты
+                        TotalAmount = drive.TotalSize,          // сырые байты
                         TargetPanel = TargetPanel.LocalDisk
                     });
                 }
-            }
 
-            return models;
+                return drives;
+            });
         }
     }
 }

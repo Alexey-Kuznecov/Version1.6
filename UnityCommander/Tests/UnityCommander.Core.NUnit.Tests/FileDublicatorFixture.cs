@@ -35,7 +35,7 @@ namespace UnityCommander.Core.NUnit.Tests
         /// <summary>
         /// The instance of the <see cref="FileDublicator"/> class.
         /// </summary>
-        private FileDublicator dublicator;
+        //private FileDublicator dublicator;
 
         /// <summary>
         /// The current step of the copying file.
@@ -65,10 +65,10 @@ namespace UnityCommander.Core.NUnit.Tests
         [SetUp]
         public void Setup()
         {
-            this.source = new DirectoryInfo("h:\\Works\\UnitTests\\Source");
-            this.target = new DirectoryInfo("h:\\Works\\UnitTests\\Target");
-            this.dublicator = new FileDublicator();
-            FileDublicator.CopyingEvent += this.FileDublicator_CopyingEvent;
+            //this.source = new DirectoryInfo("h:\\Works\\UnitTests\\Source");
+            //this.target = new DirectoryInfo("h:\\Works\\UnitTests\\Target");
+            //this.dublicator = new FileDublicator();
+            //FileDublicator.CopyingEvent += this.FileDublicator_CopyingEvent;
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace UnityCommander.Core.NUnit.Tests
                 {
                     this.currentFileSource = oldFile;
                     string currentFileTarget = Path.Combine(newDir, new DirectoryInfo(oldFile).Name);
-                    this.dublicator.CopyFileByte(oldFile, currentFileTarget);
+                    //this.dublicator.CopyFileByte(oldFile, currentFileTarget);
                 }
             }
 

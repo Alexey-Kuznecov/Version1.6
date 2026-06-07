@@ -13,5 +13,7 @@ namespace UnityCommander.Common.Models.Directory
         /// Gets or sets the extension.
         /// </summary>
         public string Extension { get; set; }
+
+        public float Size { get; set; }
     }
 }

@@ -1,61 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-	<UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="ExtensionMethod.cs" />
-    <Compile Remove="HelperMethods.cs" />
-    <Compile Remove="Models\DirectoryPathModel.cs" />
-    <Compile Remove="Models\Directory\MetaModel.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Models\DirectoryPathModel.cs~RF86a07a.TMP" />
-    <None Remove="Models\IconModel.cs~RF55d2a94.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
-  </ItemGroup>
-
-  <!--<ItemGroup>
-    <Folder Include="Logger\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="D:\Works\WPF Projects\UnityCommander\Version2.6\nlogconfig" Link="NLog.config">
-      <Private>True</Private>
-      <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <NuGetItemType>None</NuGetItemType>
-      <TargetPath>NLog.config</TargetPath>
-      <NuGetPackageId>NLog.Config</NuGetPackageId>
-    </None>
-    <None Include="D:\Works\WPF Projects\UnityCommander\Version2.6\nlogconfig" Link="NLog.xsd">
-      <Private>False</Private>
-      <NuGetPackageVersion>4.7.4</NuGetPackageVersion>
-      <NuGetItemType>None</NuGetItemType>
-      <NuGetPackageId>NLog.Schema</NuGetPackageId>
-    </None>
-  </ItemGroup>-->
-
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.ComponentModel.Composition.dll</HintPath>
-      <SpecificVersion>false</SpecificVersion>
-      <Private>false</Private>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<LangVersion>9.0</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="NSwag.Core" Version="14.7.1" />
+		<PackageReference Include="Prism.Core" Version="9.0.537" />
+	</ItemGroup>
 </Project>

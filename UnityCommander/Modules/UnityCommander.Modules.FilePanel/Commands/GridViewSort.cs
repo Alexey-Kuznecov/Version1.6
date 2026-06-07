@@ -88,17 +88,6 @@ namespace UnityCommander.Modules.FilePanel.Commands
 
         #region Helper methods
 
-        /// <summary>
-        /// The get ancestor.
-        /// </summary>
-        /// <param name="reference">
-        /// The reference.
-        /// </param>
-        /// <typeparam name="T">
-        /// </typeparam>
-        /// <returns>
-        /// The <see cref="T"/>.
-        /// </returns>
         public static T GetAncestor<T>(DependencyObject reference) where T : DependencyObject
         {
             DependencyObject parent = VisualTreeHelper.GetParent(reference);
@@ -110,15 +99,6 @@ namespace UnityCommander.Modules.FilePanel.Commands
             return (T)parent;
         }
 
-        /// <summary>
-        /// The apply sort.
-        /// </summary>
-        /// <param name="view">
-        /// The view.
-        /// </param>
-        /// <param name="propertyName">
-        /// The property name.
-        /// </param>
         public static void ApplySort(ICollectionView view, string propertyName)
         {
             ListSortDirection direction = ListSortDirection.Ascending;
@@ -139,58 +119,21 @@ namespace UnityCommander.Modules.FilePanel.Commands
 
         #endregion
 
-        /// <summary>
-        /// The get command.
-        /// </summary>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ICommand"/>.
-        /// </returns>
         public static ICommand GetCommand(DependencyObject command)
         {
             return (ICommand)command.GetValue(CommandProperty);
         }
 
-        /// <summary>
-        /// Sets a custom command to sort the list into the object's command property,
-        /// the object is a column from the file panel in our case.
-        /// </summary>
-        /// <param name="dependencyObject">
-        /// Expected a column of the file panel.
-        /// </param>
-        /// <param name="command">
-        /// The custom command is usually declared in the view model class.
-        /// </param>
         public static void SetCommand(DependencyObject dependencyObject, ICommand command)
         {
             dependencyObject.SetValue(CommandProperty, command);
         }
 
-        /// <summary>
-        /// The get auto sort.
-        /// </summary>
-        /// <param name="dependencyObject">
-        /// The dependencyObject.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public static bool GetAutoSort(DependencyObject dependencyObject)
         {
             return (bool)dependencyObject.GetValue(AutoSortProperty);
         }
 
-        /// <summary>
-        /// The set auto sort.
-        /// </summary>
-        /// <param name="dependencyObject">
-        /// The dependencyObject.
-        /// </param>
-        /// <param name="value">
-        /// The value.
-        /// </param>
         public static void SetAutoSort(DependencyObject dependencyObject, bool value)
         {
             dependencyObject.SetValue(AutoSortProperty, value);
@@ -200,15 +143,6 @@ namespace UnityCommander.Modules.FilePanel.Commands
 
         #region Column header click event handler
 
-        /// <summary>
-        /// The column header click.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
         private static void ColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is GridViewColumnHeader headerClicked)

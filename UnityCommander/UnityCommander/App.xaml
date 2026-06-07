@@ -2,4 +2,8 @@
     x:Class="UnityCommander.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:prism="http://prismlibrary.com/" />
+    xmlns:prism="http://prismlibrary.com/">
+    <prism:PrismApplication.Resources>
+        <!--<Style BasedOn="UcContextMenuItem" x:Key="MaterialDesignMenuItem" TargetType="StaticResourceExtension" />-->
+    </prism:PrismApplication.Resources>
+</prism:PrismApplication>

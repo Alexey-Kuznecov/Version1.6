@@ -43,9 +43,14 @@ namespace UnityCommander.Integration.Converters
                             var grid = this.CreateGrid();
                             var label = this.CreateTitle(opt);
                             var comboBox = this.CreateComboBox(opt);
-                            grid.AppendChild(comboBox); 
-                            grid.AppendChild(label);
-                            cellTemplate.VisualTree = grid;
+
+                            if (comboBox != null)
+                            {
+                                grid.AppendChild(comboBox);
+                                grid.AppendChild(label);
+                                cellTemplate.VisualTree = grid;
+                            }
+
                             return cellTemplate;
                         }
                     case OptionRender.TextField:

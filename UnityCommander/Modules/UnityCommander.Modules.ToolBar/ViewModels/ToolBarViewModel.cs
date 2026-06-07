@@ -2,297 +2,277 @@
 
 namespace UnityCommander.Modules.ToolBar.ViewModels
 {
-    using System.Windows;
-    using System.Windows.Controls;
+    using CommandSystem.Abstractions;
+    using CommandSystem.Core.Factory;
+    using Prism.Dialogs;
+    using Prism.Mvvm;
+    using System.Threading.Tasks;
     using System.Windows.Input;
     using System.Windows.Shapes;
-
-    using AlexeyKuznecov.Library.Mvvm.Base;
-
-    using MaterialDesignThemes.Wpf;
-
-    using Prism.Commands;
-    using Prism.Mvvm;
-    using Prism.Services.Dialogs;
-    
-    using UnityCommander.Controls.Ribbon;
-    using UnityCommander.Controls.Ribbon.Control;
-    using UnityCommander.Core.Mvvm;
-    using UnityCommander.Modules.ToolBar.Views;
+    using UnityCommander.Common.Commands;
+    using UnityCommander.Common.State;
+    using UnityCommander.Modules.ToolBar.Commands;
+    using UnityCommander.Ribbon.Core.Models;
+    using UnityCommander.Ribbon.Core.Models.Controls;
+    using UnityCommander.Ribbon.Core.Services;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Interfaces.Settings;
+    using UnityCommander.Services.Layout;
+    using UnityCommander.Core.Commands;
+    using System;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
-    public class ToolBarViewModel : BindableBase, IRibbonManager
+    public class ToolBarViewModel : BindableBase
     {
         #region Dependency Injection Fields
 
-        /// <summary>
-        /// The dialog service.
-        /// </summary>
         private readonly IDialogService dialogService;
-
-        /// <summary>
-        /// The plugin loader service.
-        /// </summary>
-        private readonly IPluginLoaderService pluginLoader;
-
-        /// <summary>
-        /// The plugin loader service.
-        /// </summary>
         private readonly IIconProviderService iconProvider;
+        private readonly ISettingsProviderService configService;
+        private readonly CommandService _commandService;
+        private IShellLayoutManager _shellLayoutManager;
 
         #endregion
 
-        /// <summary>
-        /// Gets or sets the minimize command.
-        /// </summary>
-        private ICommand minimizeCommand;
-
-        /// <summary>
-        /// The icon.
-        /// </summary>
         private Path icon;
-
-        /// <summary>
-        /// The user controls.
-        /// </summary>
-        private UserControl userControls;
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
-        private DelegateCommand showDialogCommand;
-
-        /// <summary>
-        /// The message.
-        /// </summary>
         private string message;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ToolBarViewModel"/> class.
-        /// </summary>
-        /// <param name="dialogService">
-        /// The dialog Service.
-        /// </param>
-        /// <param name="iconProvider">
-        /// The icon Provider.
-        /// </param>
-        /// <param name="pluginLoaderService">
-        /// The plugin Loader Service.
-        /// </param>
-        public ToolBarViewModel(IDialogService dialogService, IIconProviderService iconProvider, IPluginLoaderService pluginLoaderService)
+        public IRibbonManager RibbonManager { get; }
+
+        public ToolBarViewModel(
+            IDialogService dialogService,
+            IIconProviderService iconProvider,
+            ISettingsProviderService configService,
+            IRibbonManager ribbonManager,
+            IShellLayoutManager shellLayoutManager,
+            CommandService commandService)
         {
-            this.pluginLoader = pluginLoaderService;
+            _shellLayoutManager = shellLayoutManager;
+            _commandService = commandService;
+            RibbonManager = ribbonManager;
+            this.configService = configService;
             this.dialogService = dialogService;
             this.iconProvider = iconProvider;
-            this.Message = "This Toolbar View";
-            this.UserControls = new MainTabControl();
-            this.Icon = iconProvider.GetIcon("Tag").GetIconPath();
-        }
+            IsExpanded = true;
 
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the icon.
-        /// </summary>
-        public Path Icon
-        {
-            get => this.icon;
-            set => this.SetProperty(ref this.icon, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the user controls.
-        /// </summary>
-        public UserControl UserControls
-        {
-            get => this.userControls;
-            set => this.SetProperty(ref this.userControls, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the message.
-        /// </summary>
-        public string Message
-        {
-            get => this.message;
-            set => this.SetProperty(ref this.message, value);
-        }
-
-        /// <summary>
-        /// The show dialog command.
-        /// </summary>
-        public DelegateCommand ShowDialogCommand =>
-            this.showDialogCommand ?? new DelegateCommand(this.ExecuteShowDialogCommand);
-
-        #endregion
-        
-        /// <summary>
-        /// Gets or sets the minimize command.
-        /// </summary>
-        public ICommand MinimizeCommand =>
-            new RelayCommand(
-                obj =>
-                    {
-                        this.minimizeCommand.Execute(null);
-                    });
-
-        /// <summary>
-        /// The maximize.
-        /// </summary>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        void IRibbonManager.Collapse(ICommand command)
-        {
-            this.minimizeCommand = command;
-        }
-
-        /// <summary>
-        /// The initial.
-        /// </summary>
-        /// <param name="ribbon">
-        /// The ribbon.
-        /// </param>
-        void IRibbonManager.Initial(Ribbon ribbon)
-        {
-            ribbon.Children.Add(RibbonBuilderExtension.SetSection(this.RibbonFileSectionBuilder())
-                .SetSection(this.RibbonViewSectionBuilder())
-                .SetSection(this.RibbonLaunchSectionBuilder())
-                .BuildGrid());
-        }
-
-        #region Ribbon File Section
-
-        /// <summary>
-        /// The ribbon build.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
-        private RibbonBuilder RibbonFileSectionBuilder()
-        {
-            return RibbonBuilderExtension.Initial("File").SetGroup(
-                "File Operation",
-                builder =>
-                    {
-                        builder.AddButton("Home", this.iconProvider.GetIcon(PackIconKind.Home), this.ShowDialogCommand);
-                        builder.AddButton("Folder Shared", this.iconProvider.GetIcon(PackIconKind.FolderShared), this.ShowDialogCommand);
-                        builder.AddButton("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), this.ShowDialogCommand);
-                        builder.AddButton("Access alarms", this.iconProvider.GetIcon(PackIconKind.AccessAlarms), this.ShowDialogCommand);
-                        builder.AddList(
-                            list =>
-                                {
-                                    list.AddItem(new RibbonListBoxItem("Box cutter", this.iconProvider.GetIcon(PackIconKind.BoxCutter), this.ShowDialogCommand));
-                                    list.AddComboBoxItem(
-                                        box =>
-                                            {
-                                                box.AddItem("1 Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), null);
-                                                box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
-                                                box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
-                                                box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
-                                                box.AddItem("Bug", this.iconProvider.GetIcon(PackIconKind.Bug), null);
-                                            });
-                                    list.AddComboBoxItem(
-                                        box =>
-                                            {
-                                                box.AddItem("Gamepad", this.iconProvider.GetIcon(PackIconKind.Gamepad), this.ShowDialogCommand);
-                                                box.AddItem("Funnel", this.iconProvider.GetIcon(PackIconKind.Funnel), null);
-                                                box.AddItem("Vkontakte", this.iconProvider.GetIcon(PackIconKind.Vkontakte), null);
-                                                box.AddItem("About Circle", this.iconProvider.GetIcon(PackIconKind.AboutCircle), null);
-                                            });
-                                });
-                        builder.AddList(
-                            list =>
-                                {
-                                    list.AddItem(new RibbonListBoxItem("Abc", this.iconProvider.GetIcon(PackIconKind.Abc), this.ShowDialogCommand));
-                                    list.AddComboBoxItem(
-                                        box =>
-                                            {
-                                                box.AddItem("2 Account Plus", this.iconProvider.GetIcon(PackIconKind.AccountPlus), this.ShowDialogCommand);
-                                                box.AddItem("Zend", this.iconProvider.GetIcon(PackIconKind.Zend), null);
-                                                box.AddItem("Ghost", this.iconProvider.GetIcon(PackIconKind.Ghost), null);
-                                                box.AddItem("Tab Plus", this.iconProvider.GetIcon(PackIconKind.TabPlus), null);
-                                                box.AddItem("Bug", this.iconProvider.GetIcon(PackIconKind.Bug), null);
-                                            });
-                                    list.AddItem(new RibbonListBoxItem("Facebook", this.iconProvider.GetIcon(PackIconKind.Facebook), null));
-                                });
-                    }).SetGroup(
-                "View Group",
-                builder =>
-                    {
-                        builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-                        builder.AddButton("Table", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-                    }).Build();
-        }
-
-        #endregion
-
-        #region Ribbon View Section
-
-        /// <summary>
-        /// The ribbon view build.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
-        private RibbonBuilder RibbonLaunchSectionBuilder()
-        {
-            return RibbonBuilderExtension.Initial("Launch").SetGroup(
-                    "Game Launch",
-                    builder =>
+            var ribbon = new RibbonBuilder()
+                .AddTab(
+                    new RibbonTabBuilder("tab1", "Главная")
+                    .AddGroup(new RibbonGroupBuilder("grp1", "Large")
+                    .AddSection(sec => sec
+                    .WithLayout(RibbonGroupLayout.Inline)
+                        .AddButton("btn1", "Команда 1", new ToggleBottomPanel(_commandService, "btn1"), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn2", "Команда 2", new FileRemoveCommand(_commandService, "btn2"), RibbonItemCategory.FileOpen, "file.delete")
+                        .AddButton("btn2", "Команда 3", new UndoCommand(_commandService, "btn3"), RibbonItemCategory.FileOpen, "edit.undo")
+                        .AddItem(new RibbonCheckBoxModel()
                         {
-                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-                            builder.AddButton("Settings", this.iconProvider.GetIcon("Settings"), this.ShowDialogCommand);
-                            builder.AddButton("File tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-                        }).Build();
+                            Id = "chk1",
+                            Text = "Флажок 1",
+                            Command = new DemoCommands()
+                        })
+                    ).AddSection(sec => sec
+                    .WithLayout(RibbonGroupLayout.Large)
+                        .AddButton("btn3", "Команда 3", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn4", "Команда 4", new DemoCommands(), RibbonItemCategory.FileOpen, "edit.delete")
+                        .AddButton("btn5", "Команда 5", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn6", "Команда 6", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        .AddItem(new RibbonCheckBoxModel()
+                        {
+                            Id = "chk1",
+                            Text = "Флажок 1",
+                            Command = new DemoCommands()
+                        })
+                        .AddComboBox(cb => cb
+                            .AddItem("1", "A _____", "file.add", new DemoCommands())
+                            .AddItem("2", "B _____", "clock", new DemoCommands())
+                            .WithSelected("1")
+                        )
+                    ))
+                    .AddGroup(new RibbonGroupBuilder("grp1", "Medium")
+                        .AddSection(sec => sec
+                        .WithLayout(RibbonGroupLayout.Medium)
+                            .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn3", "Команда 3", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddItem(new RibbonCheckBoxModel()
+                            {
+                                Id = "chk1",
+                                Text = "Флажок 1",
+                                Command = new DemoCommands()
+                            })
+                            .AddItem(new RibbonCheckBoxModel()
+                            {
+                                Id = "chk2",
+                                Text = "Флажок 2",
+                                Command = new DemoCommands()
+                            })
+                            .AddItem(new RibbonCheckBoxModel()
+                            {
+                                Id = "chk3",
+                                Text = "Флажок 3",
+                                Command = new DemoCommands()
+                            })
+                        )
+                        .AddSection(sec => sec
+                        .WithLayout(RibbonGroupLayout.Small)
+                            .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn3", "Команда 3", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn4", "Команда 4", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn5", "Команда 5", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        )
+                    ).AddGroup(
+                        new RibbonGroupBuilder("grp2", "Small")
+                            .AddSection(sec => sec
+                                .WithLayout(RibbonGroupLayout.Small)
+                                .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                                .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                                .AddButton("btn3", "Команда 3", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                                .AddButton("btn4", "Команда 4", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                                )
+                    )
+                    .AddGroup(new RibbonGroupBuilder("grp3", "(Medium)")
+                        .AddSection(sec => sec
+                            .WithLayout(RibbonGroupLayout.Medium)
+                            .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddComboBox(builder =>
+                            {
+                                builder.AddItem("cmb1", "Вариант 1", "file.add", new DemoCommands());
+                                builder.AddItem("cmb2", "Вариант 2", "", new DemoCommands());
+                                builder.AddItem("cmb3", "Вариант 3", "edit.delete", new DemoCommands());
+                                builder.AddItem("cmb4", "Вариант 4", "", new DemoCommands());
+                                builder.WithSelected("cmb2");
+                                return builder;
+                            })
+                            )).Build())
+                .AddTab(new RibbonTabBuilder("tab2", "Вид")
+                    .AddGroup(new RibbonGroupBuilder("grp1", "Настройки")
+                        .AddSection(sec => sec
+                            .WithLayout(RibbonGroupLayout.Large)
+                            .WithCategory(RibbonItemCategory.Default)
+                            .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        )
+                    )
+                    .AddGroup(new RibbonGroupBuilder("grp2", "Настройки 2")
+                        .AddSection(sec => sec
+                            .WithLayout(RibbonGroupLayout.Medium)
+                            .AddComboBox(builder =>
+                            {
+                                builder.AddItem("cmb1", "Вариант 1", "", new DemoCommands());
+                                builder.AddItem("cmb2", "Вариант 2", "", new DemoCommands());
+                                builder.AddItem("cmb3", "Вариант 3", "", new DemoCommands());
+                                builder.AddItem("cmb4", "Вариант 4", "", new DemoCommands());
+                                builder.WithSelected("cmb2");
+                                return builder;
+                            }).AddItem(new RibbonCheckBoxModel()
+                            {
+                                Id = "chk1",
+                                Text = "Флажок 10",
+                                Command = new DemoCommands()
+                            })
+                        )
+                    )
+                    .AddGroup(new RibbonGroupBuilder("grp3", "Настройки")
+                        .AddSection(sec => sec
+                            .WithLayout(RibbonGroupLayout.Small)
+                            .AddButton("btn1", "Команда 1", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn2", "Команда 2", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                            .AddButton("btn3", "Команда 3", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        )
+                        .AddSection(sec => sec
+                            .WithLayout(RibbonGroupLayout.Large)
+                            .AddComboBox(cb => cb
+                                .AddItem("1", "A", "", new DemoCommands())
+                                .AddItem("2", "B", "", new DemoCommands())
+                                .WithSelected("1")
+                            )
+                        )
+                        ).Build())
+                .AddTab(new RibbonTabBuilder("tab3", "Справка")
+                    .AddGroup(new RibbonGroupBuilder("grp1", "Информация")
+                        .AddSection(sec => sec
+                            .WithLayout(RibbonGroupLayout.Large)
+                            .AddButton("btn4", "О программе", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        )
+                    ).Build()
+                ).Build();
+
+            RibbonManager.SetModel(ribbon);
+
+            RibbonManager.TabCollapsed += RibbonManager_TabCollapsed;
+            RibbonManager.TabExpanded += RibbonManager_TabExpanded;
+
+            commandService.Register(CommandFactoryExtensions.Create(
+                 CommandNames.UI.ToggleRibbon,
+                 ToggleRibbon
+             ));
         }
 
-        #endregion
-
-        #region Ribbon View Section
-
-        /// <summary>
-        /// The ribbon view build.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="RibbonBuilder"/>.
-        /// </returns>
-        private RibbonBuilder RibbonViewSectionBuilder()
+        private void RibbonManager_TabCollapsed(object sender, RibbonTabEventArgs e)
         {
-            return RibbonBuilderExtension.Initial("View").SetGroup(
-                    "View Group",
-                builder =>
-                        {
-                            builder.AddButton("Comment", this.iconProvider.GetIcon("Comment"), this.ShowDialogCommand);
-                            builder.AddButton("File Tree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-                            builder.AddButton("FileTree", this.iconProvider.GetIcon("FileTree"), this.ShowDialogCommand);
-                        }).SetGroup(
-                    "Shared Group",
-                    builder =>
-                        {
-                            builder.AddButton("Plugin", this.iconProvider.GetIcon("Plugin"), this.ShowDialogCommand);
-                            builder.AddButton("Table column", this.iconProvider.GetIcon("TableColumn"), this.ShowDialogCommand);
-                            builder.AddButton("Tag", this.iconProvider.GetIcon("Tag"), this.ShowDialogCommand);
-                        }).Build();
+            _shellLayoutManager.SetState(
+                ShellArea.Ribbon,
+                new ShellAreaState
+                {
+                    Size = 38
+                });
         }
 
-        #endregion
-
-        /// <summary>
-        /// The execute show dialog command.
-        /// </summary>
-        private void ExecuteShowDialogCommand()
+        private void RibbonManager_TabExpanded(object sender, RibbonTabEventArgs e)
         {
-            var dialogs = this.pluginLoader.GetDialogService();
+            _shellLayoutManager.SetState(
+                 ShellArea.Ribbon,
+                 new ShellAreaState
+                 {
+                     Size = 180
+                 });
+        }
 
-            foreach (var dialog in dialogs)
+        private bool _isRibbonExpanded;
+
+        public bool IsExpanded
+        {
+            get => _isRibbonExpanded;
+            set
             {
-                this.dialogService.ShowDialog("DialogPlugin", new OverrideDialogParameters(dialog), r => { });
+                if (!SetProperty(ref _isRibbonExpanded, value))
+                    return;
             }
+        }
+
+        public Task ToggleRibbon(CommandContext ctx)
+        {
+            IsExpanded = !IsExpanded;
+
+            UpdateLayout();
+
+            return Task.CompletedTask;
+        }
+
+        internal void Capture(AppSessionState state)
+        {
+            state.Ribbon.IsExpanded = IsExpanded;
+        }
+
+        internal void Restore(AppSessionState state)
+        {
+            IsExpanded = state.Ribbon.IsExpanded;
+
+            UpdateLayout();
+        }
+
+        private void UpdateLayout()
+        {
+            _shellLayoutManager.SetState(
+                ShellArea.Ribbon,
+                new ShellAreaState
+                {
+                    Size = IsExpanded ? 180 : 0
+                });
         }
     }
 }
