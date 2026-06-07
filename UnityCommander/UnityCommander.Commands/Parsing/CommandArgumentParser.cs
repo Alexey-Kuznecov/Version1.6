@@ -10,26 +10,35 @@ namespace UnityCommander.Commands.Parsing
         public IArgumentCollection Parse(
             IEnumerable<string> arguments)
         {
-            var dict =
+            var named =
                 new Dictionary<string, string>(
                     StringComparer.OrdinalIgnoreCase);
 
+            var positional =
+                new List<string>();
+
             foreach (var arg in arguments)
             {
-                if (!arg.StartsWith("--"))
-                    continue;
+                if (arg.StartsWith("--"))
+                {
+                    var parts =
+                        arg.Substring(2)
+                            .Split('=', 2);
 
-                var parts =
-                    arg.Substring(2)
-                        .Split('=', 2);
-
-                dict[parts[0]] =
-                    parts.Length > 1
-                        ? parts[1]
-                        : "true";
+                    named[parts[0]] =
+                        parts.Length > 1
+                            ? parts[1]
+                            : "true";
+                }
+                else
+                {
+                    positional.Add(arg);
+                }
             }
 
-            return new ArgumentCollection(dict);
+            return new ArgumentCollection(
+                named,
+                positional);
         }
     }
 }

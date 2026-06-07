@@ -1,5 +1,6 @@
 ﻿
 using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Mode;
 
 namespace UnityCommander.CLI.Integration
 {
@@ -13,7 +14,10 @@ namespace UnityCommander.CLI.Integration
         }
 
         public string Name => _metadata.Name;
+
         public string Description => _metadata.Description ?? string.Empty;
+
+        public CommandExecutionMode Mode => CommandExecutionMode.Blocking;
 
         public async Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken = default)
         {

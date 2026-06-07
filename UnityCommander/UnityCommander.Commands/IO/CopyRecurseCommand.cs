@@ -1,12 +1,13 @@
-﻿using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Integration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
-using System.IO;
+using System.Threading.Tasks;
+using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Mode;
 
 namespace UnityCommander.Commands.IO
 {
@@ -23,6 +24,9 @@ namespace UnityCommander.Commands.IO
         public string Name => "copyr";
         public string Description => "Рекурсивно копирует все файлы и папки из одной папки в другую.";
         public IEnumerable<string> Aliases => ["copyr", "cr"];
+
+        public CommandExecutionMode Mode => CommandExecutionMode.Background;
+
         public void Execute(IConsoleCommandContext context)
         {
             throw new NotImplementedException();

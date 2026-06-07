@@ -1,8 +1,10 @@
-﻿using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
-using UnityCommander.Common.Commands;
+﻿using CommandSystem.Abstractions;
 using CommandSystem.Infrastructure.Lifecycle;
-using CommandSystem.Abstractions;
+using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Lifecicle;
+using UnityCommander.CLI.Mode;
+using UnityCommander.Common.Commands;
 
 namespace UnityCommander.CLI.Integration
 {
@@ -11,15 +13,18 @@ namespace UnityCommander.CLI.Integration
         private readonly IConsoleCommandRegistry _registry;
         private readonly IConsoleCommandInvoker _invoker;
         private readonly ConsoleCommandFactory _factory;
+        private readonly CommandProcessManager _processManager;
 
         public ConsoleCommandDispatcher(
             IConsoleCommandRegistry registry,
             IConsoleCommandInvoker invoker,
+            CommandProcessManager processManager,
             ConsoleCommandFactory factory)
         {
             _registry = registry;
             _invoker = invoker;
             _factory = factory;
+            _processManager = processManager;
         }
 
         // Регистрирует команду
@@ -38,19 +43,38 @@ namespace UnityCommander.CLI.Integration
         }
 
         // Выполняет команду
-        public async Task ExecuteCommandAsync(string commandName, IConsoleCommandContext context, CancellationToken cancellationToken = default)
+        public async Task ExecuteCommandAsync(
+             string commandName,
+             IConsoleCommandContext context,
+             CancellationToken cancellationToken = default)
         {
             var output = context.Output;
+
             try
             {
                 var command = _registry.Find(commandName);
 
                 if (command == null)
-                {
                     throw new InvalidOperationException($"Command '{commandName}' not found.");
+
+                if (command.Mode == CommandExecutionMode.Background)
+                {
+                    var id = _processManager.Start(commandName, async ct =>
+                    {
+                        var ctx = new ConsoleCommandContext(
+                            context.Services,
+                            context.Output,
+                            context.Arguments,
+                            context.Input);
+
+                        await command.ExecuteAsync(ctx, ct);
+                    });
+
+                    output.WriteLine($"Started background process: {id}");
+                    return;
                 }
 
-                await _invoker.InvokeAsync(commandName, context, cancellationToken);
+                await command.ExecuteAsync(context, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -102,9 +126,6 @@ namespace UnityCommander.CLI.Integration
             }
         }
 
-        public IEnumerable<IConsoleCommand> GetAvailableCommands()
-                => _registry.GetAllCommands();
-
         public bool TryGetCommand(string cmdName, out object cmd)
         {
             var found = _registry.Find(cmdName);
@@ -116,5 +137,8 @@ namespace UnityCommander.CLI.Integration
             cmd = null!;
             return false;
         }
+
+        public IEnumerable<IConsoleCommand> GetAvailableCommands()
+              => _registry.GetAllCommands();
     }
 }

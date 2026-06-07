@@ -1,12 +1,13 @@
 ﻿
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityCommander.Commands.IO;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Mode;
+using UnityCommander.Commands.IO;
 
 
 namespace UnityCommander.Commands
@@ -17,7 +18,9 @@ namespace UnityCommander.Commands
         private IConsoleOutput _output = new ConsoleOutput();
 
         public string Name => "fileunlock";
+
         public string Description => "Разблокирует файл занятый процессом";
+
         public IEnumerable<string> Aliases => ["fun", "unlk"];
 
         public async Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken)

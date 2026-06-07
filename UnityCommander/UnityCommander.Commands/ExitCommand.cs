@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Lifecicle;
+using UnityCommander.CLI.Mode;
 
 namespace UnityCommander.Commands
 {
@@ -15,7 +16,9 @@ namespace UnityCommander.Commands
     {
         private readonly ConsoleApplicationLifetime _lifetime;
         public string Name => "exit";
+
         public IEnumerable<string> Aliases => [ "e", "ex" ];
+
         public string Description => "Выходит из консоли.";
 
         public ExitCommand(ConsoleApplicationLifetime lifetime)
@@ -25,13 +28,10 @@ namespace UnityCommander.Commands
 
         public Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken = default)
         {
-            Application.Current.Dispatcher.Invoke(() => 
+            if (_lifetime != null)
             {
-                if (_lifetime != null)
-                {
-                    _lifetime.Stop();
-                }
-            });
+                _lifetime.Stop();
+            }
 
             return Task.CompletedTask;
         }

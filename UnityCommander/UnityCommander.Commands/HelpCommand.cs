@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Mode;
 
 namespace UnityCommander.Commands
 {
@@ -14,11 +15,16 @@ namespace UnityCommander.Commands
     public class HelpCommand : IConsoleCommand
     {
         private ConsoleCommandCatalog _catalog;
+
         private IServiceProvider _service;
 
         public string Name => "help";
+
         public string Description => "Показывает все доступные команды и их описания.";
+
         public IEnumerable<string> Aliases => ["?", "h"];
+
+        public CommandExecutionMode Mode => CommandExecutionMode.Blocking;
 
         public HelpCommand(IServiceProvider service, ConsoleCommandCatalog catalog)
         {

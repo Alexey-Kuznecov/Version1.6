@@ -1,10 +1,10 @@
 ﻿
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Mode;
 using UnityCommander.Commands.Parsing;
 using UnityCommander.Commands.Services;
 
@@ -13,13 +13,15 @@ namespace UnityCommander.Commands
     [ConsoleCommand("sysstat", "Выводит статистику производительности системы.", "sst")]
     public class SysStatCommand : IConsoleCommand
     {
-        private IConsoleOutput _output;
         public string Name => "sysstat";
         public string Description => "Выводит статистику производительности системы.";
         public IEnumerable<string> Aliases => ["sst"];
         
         private readonly ISysStatService _service;
+
         private readonly ICommandArgumentParser _parser;
+
+        public CommandExecutionMode Mode => CommandExecutionMode.Background;
 
         public SysStatCommand(
             ISysStatService service,

@@ -3,7 +3,7 @@ using Prism.Ioc;
 
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Layout;
-using UnityCommander.Core;
+using UnityCommander.Common.Sidebar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Ribbon.Core.Services;
@@ -13,6 +13,8 @@ using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Settings;
+using UnityCommander.Services.Interfaces.Sidebar;
+using UnityCommander.Services.Layout;
 using UnityCommander.Services.Settings;
 
 namespace UnityCommander.Dependencies
@@ -49,9 +51,16 @@ namespace UnityCommander.Dependencies
 
             // UI-лента (Ribbon): управление кнопками/командами верхнего меню
             registry.RegisterSingleton<IRibbonManager, RibbonManager>();
+            
+            registry.RegisterSingleton<ISidebarSectionFactory, SidebarSectionFactory>();
+            registry.RegisterSingleton<IViewResolver, ViewResolver> ();
+            registry.RegisterSingleton<SidebarService>();
 
             // Ресурсы интерфейса: поставка иконок и визуальных элементов
             registry.RegisterSingleton<IIconProviderService, PackIconProvider>();
+
+            // Менеджер лейаута оболочки: отвечает за общую структуру интерфейса, области и их наполнение
+            registry.RegisterSingleton<IShellLayoutManager, ShellLayoutManager>();
 
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();

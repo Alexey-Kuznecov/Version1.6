@@ -1,4 +1,4 @@
-﻿using UnityCommander.CLI.Commands;
+﻿
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 
@@ -21,15 +21,8 @@ namespace UnityCommander.CLI.Integration
             {
                 throw new InvalidOperationException($"Command '{commandName}' not found.");
             }
-
-            if (command is DelegateConsoleCommand delegateCommand)
-            {
-                //await delegateCommand.Handler(context, cancellationToken);
-            }
-            else
-            {
-                await command.ExecuteAsync(context, cancellationToken);
-            }
+                
+            await command.ExecuteAsync(context, cancellationToken);
         }
     }
 }

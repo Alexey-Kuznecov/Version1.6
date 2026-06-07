@@ -4,11 +4,8 @@ using UnityCommander.CLI.Bootstrap;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Lifecicle;
 using UnityCommander.Commands;
-using UnityCommander.Commands.Parsing;
-using UnityCommander.Commands.Performance;
-using UnityCommander.Commands.Rendering;
-using UnityCommander.Commands.Services;
 using UnityCommander.Common.Commands;
 using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Services;
@@ -27,21 +24,17 @@ namespace UnityCommander.Dependencies
             // Основные компоненты системы выполнения команд
             registry.RegisterSingleton<ConsoleCommandDispatcher>();
             registry.RegisterSingleton<ConsoleCommandFactory>();
+            registry.RegisterSingleton<ConsoleApplicationLifetime>();
+            registry.RegisterSingleton<CommandProcessManager>();
             registry.RegisterSingleton<IConsoleCommandRegistry, ConsoleCommandRegistry>();
             registry.RegisterSingleton<IConsoleCommandInvoker, ConsoleCommandInvoker>();
 
             // Сервисы, предоставляющие команды приложению
             registry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
-            // Сервисы, используемые командами внутренней консоли
-            registry.RegisterSingleton<ISysStatService, SysStatService>();
-            registry.RegisterSingleton<IProcessOpenFilesService, ProcessOpenFilesService>();
+            DiagnosticRegistration.Register(registry);
 
-            // Вспомогательные компоненты инфраструктуры команд
-            registry.RegisterSingleton<ICommandArgumentParser, CommandArgumentParser>();
-            registry.RegisterSingleton<IConsoleRenderer<SystemStats>, SystemStatsRenderer>();
-
-            var commands =
+             var commands =
                 ConsoleCommandDiscovery.Discover(
                     typeof(EchoCommand).Assembly);
 

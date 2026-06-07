@@ -1,16 +1,24 @@
 ﻿
-
-namespace UnityCommander.CLI.Commands
+namespace UnityCommander.CLI.Lifecicle
 {
-    public class ConsoleApplicationLifetime
+    public sealed class ConsoleApplicationLifetime
     {
         private bool _isRunning = true;
+        private CommandProcessManager _processManager;
+
+        private readonly CancellationTokenSource _cts = new();
 
         public bool IsRunning => _isRunning;
 
-        // События
+        public CancellationToken Token => _cts.Token;
+
         public event Action? ApplicationStopping;
         public event Action? ApplicationStopped;
+
+        public ConsoleApplicationLifetime(CommandProcessManager processManager)
+        {
+            _processManager = processManager;
+        }
 
         public void Stop()
         {
@@ -19,11 +27,12 @@ namespace UnityCommander.CLI.Commands
 
             _isRunning = false;
 
-            // Сначала уведомляем, что приложение будет останавливаться
             ApplicationStopping?.Invoke();
+
+            _cts.Cancel();
+            _processManager.StopAll();
         }
 
-        // Можно вызвать отдельно в конце работы программы
         public void NotifyStopped()
         {
             ApplicationStopped?.Invoke();

@@ -11,8 +11,6 @@ namespace UnityCommander.Commands.Parsing
             string name, 
             int defaultValue = 0);
 
-        //double GetDouble(
-        //    string name, 
-        //    double defaultValue = 0);
+        string GetAt(int index);
     }
 }

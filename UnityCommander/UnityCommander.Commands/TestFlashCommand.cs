@@ -1,11 +1,12 @@
 ﻿
-using UnityCommander.Commands.Performance;
-using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Integration;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Mode;
+using UnityCommander.Commands.Performance;
 
 namespace UnityCommander.Commands
 {

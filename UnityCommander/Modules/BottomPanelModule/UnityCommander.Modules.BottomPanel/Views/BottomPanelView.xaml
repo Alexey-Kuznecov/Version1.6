@@ -16,17 +16,10 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <ContentControl Grid.Column="0" prism:RegionManager.RegionName="{x:Static core:RegionNames.ConsoleTabRegion}" />
         <!--  Левая вкладка: консоль / логи  -->
-        <!--<TabControl Grid.Column="0" SelectedIndex="0">
-            <TabItem Header="Console">
-                <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.ConsoleTabRegion}" />
-            </TabItem>
-            <TabItem Header="Log">
-                --><!--<ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.LogTabRegion}" />--><!--
-            </TabItem>
-        </TabControl>-->
 
+        <ContentControl Grid.Column="0" prism:RegionManager.RegionName="{x:Static core:RegionNames.ConsoleTabRegion}" />
+       
         <!--  Правая вкладка: предпросмотр файлов  -->
         <Border
             Grid.Column="1"

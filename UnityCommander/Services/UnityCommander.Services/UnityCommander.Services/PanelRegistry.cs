@@ -1,13 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Common.Debug;
+using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Panels;
 using UnityCommander.Services.Interfaces;
 
+#nullable enable
+
 namespace UnityCommander.Services
 {
-    public class PanelRegistry : IPanelRegistry
+    public class PanelRegistry :  IPanelRegistry, IDebuggable<DebugPanelState>, IDiagnosticSource
     {
         private readonly Dictionary<Guid, IPanel> _panels = new();
         
@@ -15,9 +18,9 @@ namespace UnityCommander.Services
 
         private Guid? _activePanelId;
 
-        public event Action<TabAddedEvent> TabAdded;
+        public event Action<TabAddedEvent>? TabAdded;
 
-        public event Action<TabActionEvent> TabRemoved;
+        public event Action<TabActionEvent>? TabRemoved;
 
         public Guid? ActivePanelId 
         {
@@ -45,13 +48,16 @@ namespace UnityCommander.Services
 
         public IPanel GetActivePanel()
         {
+            Guid active;
             lock (_lock)
             {
                 if (_activePanelId == null)
                     throw new InvalidOperationException("Active panel is not set");
 
-                return GetPanel(_activePanelId.Value);
+                active = _activePanelId.Value;
             }
+
+            return GetPanel(active);
         }
 
         public void RegisterPanel(Guid panelId)
@@ -147,6 +153,10 @@ namespace UnityCommander.Services
             lock (_lock)
             {
                 GetPanel(panelId).AddTab(tabId);
+
+                if (TabAdded == null)
+                    return;
+
                 TabAdded(new TabAddedEvent() 
                 { 
                     PanelId = panelId,
@@ -164,6 +174,9 @@ namespace UnityCommander.Services
                     if (panel.Tabs.Contains(tabId))
                     {
                         panel.RemoveTab(tabId);
+
+                        if (TabRemoved == null)
+                            continue;
 
                         TabRemoved(new TabActionEvent()
                         {
@@ -218,5 +231,51 @@ namespace UnityCommander.Services
 
             return true;
         }
+
+        public bool Contains(Guid tabId)
+            => _panels.Values.Any(panel 
+                => panel.Tabs.Contains(tabId));
+
+
+        #region DEBUG AND DIAGNOSTICS
+
+        public string Name => "panel";
+
+        public IReadOnlyDictionary<string, object?> GetState()
+        {
+            lock (_lock)
+            {
+                return new Dictionary<string, object?>
+                {
+                    ["PanelCount"] = _panels.Count,
+                    ["TabCount"] = _panels.Values.Sum(panel => panel.Tabs.Count),
+                    ["ActivePanel"] = _activePanelId ?? Guid.Empty,
+                };
+            }
+        }
+
+        public DebugPanelState GetDebugState()
+        {
+            lock (_lock)
+            {
+                return new DebugPanelState()
+                {
+                    PanelCount = _panels.Count,
+                    TabCount = _panels.Values.Sum(panel => panel.Tabs.Count),
+                    ActivePanel = _activePanelId ?? Guid.Empty,
+                };
+            }
+        }
+
+        public string Describe()
+        {
+            return new string(
+                "Panel registry diagnostics.\n" +
+                "PanelCount  - number of panels\n" +
+                "TabCount    - total tab count\n" +
+                "ActivePanel   - current active panel");
+        }
+
+        #endregion
     }
 }

@@ -1,12 +1,12 @@
 ﻿
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityCommander.Commands.IO;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
+using UnityCommander.Commands.IO;
 
 namespace UnityCommander.Commands
 {
@@ -14,8 +14,8 @@ namespace UnityCommander.Commands
     public class PluginDirectoryMonitorCommand : IConsoleCommand, IDisposable
     {
         private IConsoleOutput _output = new ConsoleOutput();
-        private DirectoryWatcher _directoryWatcher;
 
+        private DirectoryWatcher _directoryWatcher;
         public string Name => "dirwatch";
         public string Description => "Мониторит изменения в указанной директории";
         public IEnumerable<string> Aliases => ["dw", "watcher"];

@@ -1,5 +1,6 @@
 ﻿
 using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Mode;
 
 namespace UnityCommander.CLI.Commands
 {
@@ -9,8 +10,12 @@ namespace UnityCommander.CLI.Commands
         private Action<ConsoleCommandContext, IConsoleOutput> _handler;
 
         public string Name { get; }
+
         public string Description { get; }
+
         public IEnumerable<string> Aliases { get; }
+
+        public CommandExecutionMode Mode => CommandExecutionMode.Blocking;
 
         public DelegateConsoleCommand(
             string name,

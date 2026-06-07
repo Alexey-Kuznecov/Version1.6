@@ -1,7 +1,7 @@
 ﻿
 namespace UnityCommander.Commands.Services
 {
-    internal class CacheStatisticsService
+    public interface ISysStatService : IConsoleCommandService
     {
     }
 }

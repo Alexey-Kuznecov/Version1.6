@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
-using UnityCommander.Services.Interfaces;
+using UnityCommander.CLI.Mode;
 using UnityCommander.Common.Selection;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Commands
 {
@@ -20,6 +21,7 @@ namespace UnityCommander.Commands
         public IEnumerable<string> Aliases => new[] { "sel", "pick" };
 
         private readonly ITabContextAccessor _tabContextAccessor;
+
         private readonly ISelectionService _selectionService;
 
         public SelectFilesCommand(ITabContextAccessor tabContextAccessor, ISelectionService selectionService)

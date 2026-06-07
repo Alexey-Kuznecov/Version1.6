@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using PluginSystem.Abstractions.Plugin;
+﻿
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -69,8 +67,8 @@ namespace UnityCommander.Commands
         {
             if (args.Contains("--all"))
             {
-                var loaded = _pluginProvider.LoadAll();
-                context.Output.WriteLine($"Загружено плагинов: {loaded.Count()}");
+                //var loaded = _pluginProvider.LoadAll();
+                //context.Output.WriteLine($"Загружено плагинов: {loaded.Count()}");
                 return Task.CompletedTask;
             }
 
@@ -96,9 +94,9 @@ namespace UnityCommander.Commands
 
             if (args.Contains("--all"))
             {
-                var plugins = _pluginProvider.GetAll().ToList();
-                foreach (var plugin in plugins)
-                    _pluginProvider.Unload(plugin.PluginInfo.Name);
+                //var plugins = _pluginProvider.GetAll().ToList();
+                //foreach (var plugin in plugins)
+                //    _pluginProvider.Unload(plugin.PluginInfo.Name);
 
                 context.Output.WriteLine("Все плагины выгружены.");
                 return Task.CompletedTask;
@@ -142,42 +140,42 @@ namespace UnityCommander.Commands
 
         private Task List(IConsoleCommandContext context)
         {
-            var plugins = _pluginProvider.GetAll().ToList();
+            //var plugins = _pluginProvider.GetAll().ToList();
 
-            if (plugins.Count == 0)
-            {
-                context.Output.WriteLine("Плагины не загружены.");
-                return Task.CompletedTask;
-            }
+            //if (plugins.Count == 0)
+            //{
+            //    context.Output.WriteLine("Плагины не загружены.");
+            //    return Task.CompletedTask;
+            //}
 
-            foreach (var plugin in plugins)
-            {
-                context.Output.WriteLine(
-                    $"{plugin.PluginInfo.Name} | v{plugin.PluginInfo.Version} | {plugin.PluginInfo.Description}");
-            }
+            //foreach (var plugin in plugins)
+            //{
+            //    context.Output.WriteLine(
+            //        $"{plugin.PluginInfo.Name} | v{plugin.PluginInfo.Version} | {plugin.PluginInfo.Description}");
+            //}
 
             return Task.CompletedTask;
         }
 
         private Task Info(IConsoleCommandContext context, string[] args)
         {
-            if (args.Length == 0)
-            {
-                context.Output.WriteError("Укажите имя плагина.");
-                return Task.CompletedTask;
-            }
+            //if (args.Length == 0)
+            //{
+            //    context.Output.WriteError("Укажите имя плагина.");
+            //    return Task.CompletedTask;
+            //}
 
-            var info = _pluginProvider.GetInfo(args[0]);
+            //var info = _pluginProvider.GetInfo(args[0]);
 
-            if (info == null)
-            {
-                context.Output.WriteError("Плагин не найден.");
-                return Task.CompletedTask;
-            }
+            //if (info == null)
+            //{
+            //    context.Output.WriteError("Плагин не найден.");
+            //    return Task.CompletedTask;
+            //}
 
-            context.Output.WriteLine($"Имя: {info.Name}");
-            context.Output.WriteLine($"Версия: {info.Version}");
-            context.Output.WriteLine($"Описание: {info.Description}");
+            //context.Output.WriteLine($"Имя: {info.Name}");
+            //context.Output.WriteLine($"Версия: {info.Version}");
+            //context.Output.WriteLine($"Описание: {info.Description}");
 
             return Task.CompletedTask;
         }

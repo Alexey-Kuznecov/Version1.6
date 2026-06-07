@@ -1,11 +1,12 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using UnityCommander.Common.Debug;
 using UnityCommander.Common.Panels;
 
 namespace UnityCommander.Services.Interfaces
 {
-    public interface IPanelRegistry
+    public interface IPanelRegistry : IDebuggable<DebugPanelState>
     {
         event Action<TabAddedEvent> TabAdded;
 
@@ -34,6 +35,8 @@ namespace UnityCommander.Services.Interfaces
         void RemovePanel(Guid panelId);
         
         bool SetActiveTab(Guid panelId, Guid tabId);
+
+        bool Contains(Guid tabId);
 
         void EnsurePanel(Guid panelId);
         

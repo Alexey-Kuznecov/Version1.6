@@ -12,11 +12,11 @@ using System.Windows.Threading;
 using UnityCommander.Autocomplete.Completion;
 using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Autocomplete.Input;
-using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
 
 using UnityCommander.CLI.Integration;
+using UnityCommander.CLI.Lifecicle;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
@@ -39,7 +39,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IConsoleAutoComplete _autoComplete;
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
-        private bool _autoCompleteEnabled = true;
+        private bool _autoCompleteEnabled = false;
         private string _lastTokenValue;
         private InputToken _lastInputToken;
 
@@ -172,7 +172,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             while (_lifetime.IsRunning)
             {
-                var line = await _input.ReadLineAsync(CancellationToken.None);
+                var line = await _input.ReadLineAsync(_lifetime.Token);
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
@@ -180,9 +180,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 var name = parts[0];
                 var args = parts.Skip(1).ToArray();
 
-                var ctx = new ConsoleCommandContext(_services, _output, args);
+                var ctx = new ConsoleCommandContext(_services, _output, args, _inputText);
 
-                await _dispatcher.ExecuteCommandAsync(name, ctx, CancellationToken.None);
+                var commandCts = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+
+                await _dispatcher.ExecuteCommandAsync(name, ctx, commandCts.Token);
             }
         }
 

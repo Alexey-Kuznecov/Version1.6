@@ -4,15 +4,17 @@ using System.Collections.Generic;
 
 namespace UnityCommander.Commands.Parsing
 {
-    public sealed class ArgumentCollection
-      : IArgumentCollection
+    public sealed class ArgumentCollection : IArgumentCollection
     {
         private readonly Dictionary<string, string> _arguments;
+        private readonly IReadOnlyList<string> _positional;
 
         public ArgumentCollection(
-            Dictionary<string, string> arguments)
+            Dictionary<string, string> arguments,
+            IReadOnlyList<string> positional)
         {
             _arguments = arguments;
+            _positional = positional;
         }
 
         public bool HasFlag(string name)
@@ -36,6 +38,13 @@ namespace UnityCommander.Commands.Parsing
                 out var result)
                 ? result
                 : defaultValue;
+        }
+
+        public string? GetAt(int index)
+        {
+            return index >= 0 && index < _positional.Count
+                ? _positional[index]
+                : null;
         }
     }
 }

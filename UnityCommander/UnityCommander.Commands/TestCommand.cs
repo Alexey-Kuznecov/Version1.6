@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.CLI.Core;
@@ -7,13 +6,11 @@ using UnityCommander.CLI.Integration;
 
 namespace UnityCommander.Commands
 {
-    [ConsoleCommand("test", "Команда для тестирования кода", "t")]
+    [ConsoleCommand("test", "Команда для тестирования кода")]
     public class TestCommand : IConsoleCommand
     {
-        private IConsoleOutput _output;
         public string Name => "test";
         public string Description => "Команда для тестирования кода";
-        public IEnumerable<string> Aliases => ["t"];
 
         public async Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken)
         {

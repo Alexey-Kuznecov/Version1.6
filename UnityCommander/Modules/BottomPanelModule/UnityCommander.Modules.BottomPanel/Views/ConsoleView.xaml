@@ -26,6 +26,8 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock
+                            Height="15"
+                            Margin="5,2"
                             FontFamily="Consolas"
                             Foreground="#dcdcdc"
                             Text="{Binding}"

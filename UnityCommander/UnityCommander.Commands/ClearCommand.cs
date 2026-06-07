@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityCommander.CLI.Commands;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 
@@ -11,7 +11,9 @@ namespace UnityCommander.Commands
     public class ClearCommand : IConsoleCommand
     {
         public string Name => "clear";
+
         public IEnumerable<string> Aliases => [ "cls" ];
+
         public string Description => "Очищает консоль.";
 
         public Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken = default)

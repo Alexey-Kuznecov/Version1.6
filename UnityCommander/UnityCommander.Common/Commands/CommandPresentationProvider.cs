@@ -8,9 +8,15 @@ namespace UnityCommander.Common.Commands
         private static readonly Dictionary<string, CommandPresentation> _map =
             new()
             {
+                // Layout commands
                 [CommandNames.UI.ToggleBottomPanel] = new(
                     "Переключить нижнюю панель",
                     "Скрывает/показывает нижнюю панель"
+                ),
+
+                [CommandNames.UI.ToggleRibbon] = new(
+                    "Переключить ленту",
+                    "Скрывает/показывает ленту инструментов"
                 ),
 
                 // Panel commands
