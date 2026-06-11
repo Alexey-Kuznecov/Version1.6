@@ -34,7 +34,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IGuiCommandExecutor, GuiCommandExecuter>();
             registry.RegisterSingleton<IGuiCommandProvider, GuiCommandProvider>();
             registry.RegisterSingleton<CommandPresentationProvider>();
-            registry.RegisterSingleton<CommandService>();
+            registry.RegisterSingleton<CommandExecutionService>();
+            registry.RegisterSingleton<CommandRegistryService>();
 
             registry.RegisterSingleton<IMultiCommandService, MultiCommandService>();
             registry.RegisterSingleton<ICommandUIService, CommandUIService>();

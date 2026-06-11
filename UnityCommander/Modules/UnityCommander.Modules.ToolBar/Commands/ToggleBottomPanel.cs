@@ -7,8 +7,9 @@ namespace UnityCommander.Modules.ToolBar.Commands
 {
     public class ToggleBottomPanel : IRibbonCommand
     {
-        private CommandService _commandService;
-        public ToggleBottomPanel(CommandService commandService, string id) 
+        private CommandExecutionService _commandService;
+        
+        public ToggleBottomPanel(CommandExecutionService commandService, string id) 
         {
             _commandService = commandService;
             Id = id;

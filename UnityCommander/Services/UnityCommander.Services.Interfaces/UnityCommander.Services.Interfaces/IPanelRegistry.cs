@@ -1,7 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using UnityCommander.Common.Debug;
+using UnityCommander.Common.Debugger;
 using UnityCommander.Common.Panels;
 
 namespace UnityCommander.Services.Interfaces

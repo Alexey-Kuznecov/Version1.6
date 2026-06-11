@@ -3,14 +3,14 @@
 namespace UnityCommander.Modules.ToolBar.ViewModels
 {
     using CommandSystem.Abstractions;
-    using CommandSystem.Core.Factory;
     using Prism.Dialogs;
     using Prism.Mvvm;
     using System.Threading.Tasks;
-    using System.Windows.Input;
     using System.Windows.Shapes;
     using UnityCommander.Common.Commands;
+    using UnityCommander.Common.Dialog;
     using UnityCommander.Common.State;
+    using UnityCommander.Core.Commands;
     using UnityCommander.Modules.ToolBar.Commands;
     using UnityCommander.Ribbon.Core.Models;
     using UnityCommander.Ribbon.Core.Models.Controls;
@@ -19,8 +19,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Layout;
-    using UnityCommander.Core.Commands;
-    using System;
 
     /// <summary>
     /// The view a view model.
@@ -32,8 +30,10 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private readonly IDialogService dialogService;
         private readonly IIconProviderService iconProvider;
         private readonly ISettingsProviderService configService;
-        private readonly CommandService _commandService;
+        private readonly CommandExecutionService _commandExecution;
+        private readonly CommandRegistryService _commandRegistry;
         private IShellLayoutManager _shellLayoutManager;
+        private IWindowManager _windowManager;
 
         #endregion
 
@@ -48,10 +48,14 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             ISettingsProviderService configService,
             IRibbonManager ribbonManager,
             IShellLayoutManager shellLayoutManager,
-            CommandService commandService)
+            CommandExecutionService commandExecution, 
+            CommandRegistryService commandRegistry, 
+            IWindowManager windowManager)
         {
+            _windowManager = windowManager;
             _shellLayoutManager = shellLayoutManager;
-            _commandService = commandService;
+            _commandExecution = commandExecution;
+            _commandRegistry = commandRegistry;
             RibbonManager = ribbonManager;
             this.configService = configService;
             this.dialogService = dialogService;
@@ -64,9 +68,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                     .AddGroup(new RibbonGroupBuilder("grp1", "Large")
                     .AddSection(sec => sec
                     .WithLayout(RibbonGroupLayout.Inline)
-                        .AddButton("btn1", "Команда 1", new ToggleBottomPanel(_commandService, "btn1"), RibbonItemCategory.FileOpen, "file.add")
-                        .AddButton("btn2", "Команда 2", new FileRemoveCommand(_commandService, "btn2"), RibbonItemCategory.FileOpen, "file.delete")
-                        .AddButton("btn2", "Команда 3", new UndoCommand(_commandService, "btn3"), RibbonItemCategory.FileOpen, "edit.undo")
+                        .AddButton("btn1", "Команда 1", new ToggleBottomPanel(_commandExecution, "btn1"), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn2", "Команда 2", new FileRemoveCommand(_commandExecution, "btn2"), RibbonItemCategory.FileOpen, "file.delete")
+                        .AddButton("btn2", "Команда 3", new UndoCommand(_commandExecution, "btn3"), RibbonItemCategory.FileOpen, "edit.undo")
                         .AddItem(new RibbonCheckBoxModel()
                         {
                             Id = "chk1",
@@ -75,7 +79,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                         })
                     ).AddSection(sec => sec
                     .WithLayout(RibbonGroupLayout.Large)
-                        .AddButton("btn3", "Команда 3", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn3", "Команда 3", new ShowDialogCommand(_windowManager), RibbonItemCategory.FileOpen, "file.add")
                         .AddButton("btn4", "Команда 4", new DemoCommands(), RibbonItemCategory.FileOpen, "edit.delete")
                         .AddButton("btn5", "Команда 5", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
                         .AddButton("btn6", "Команда 6", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
@@ -206,7 +210,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             RibbonManager.TabCollapsed += RibbonManager_TabCollapsed;
             RibbonManager.TabExpanded += RibbonManager_TabExpanded;
 
-            commandService.Register(CommandFactoryExtensions.Create(
+            commandRegistry.Register(CommandFactoryExtensions.Create(
                  CommandNames.UI.ToggleRibbon,
                  ToggleRibbon
              ));

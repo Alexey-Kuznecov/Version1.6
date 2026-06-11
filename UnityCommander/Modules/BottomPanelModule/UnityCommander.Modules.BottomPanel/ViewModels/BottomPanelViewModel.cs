@@ -18,11 +18,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         public BottomPanelViewModel(
             IShellLayoutManager shellLayoutManager,
-            CommandService commandService)
+           CommandRegistryService commandRegistry)
         {
             _shellLayoutManager = shellLayoutManager;
 
-            commandService.Register(CommandFactoryExtensions.Create(
+            commandRegistry.Register(CommandFactoryExtensions.Create(
                  CommandNames.UI.ToggleBottomPanel,
                  ToggleBottom
             ));

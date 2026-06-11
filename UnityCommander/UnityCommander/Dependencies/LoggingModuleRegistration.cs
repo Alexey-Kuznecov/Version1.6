@@ -1,7 +1,6 @@
 ﻿
 using Prism.Ioc;
 using System.Collections.Generic;
-using UnityCommander.Logging;
 using UnityCommander.Logging.Abstractions;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;

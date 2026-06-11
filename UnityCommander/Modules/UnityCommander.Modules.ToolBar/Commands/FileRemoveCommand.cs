@@ -7,10 +7,10 @@ namespace UnityCommander.Modules.ToolBar.Commands
 {
     public class FileRemoveCommand : IRibbonCommand
     {
-        private CommandService _commandService;
-        public FileRemoveCommand(CommandService commandService, string id)
+        private CommandExecutionService _commandExecutionService;
+        public FileRemoveCommand(CommandExecutionService commandService, string id)
         {
-            _commandService = commandService;
+            _commandExecutionService = commandService;
             Id = id;
         }
 
@@ -20,7 +20,7 @@ namespace UnityCommander.Modules.ToolBar.Commands
 
         public void Execute()
         {
-            _commandService.ExecuteAsync(CommandNames.File.Delete);
+            _commandExecutionService.ExecuteAsync(CommandNames.File.Delete);
         }
     }
 }

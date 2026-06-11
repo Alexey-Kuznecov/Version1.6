@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityCommander.Common.Debug;
+using UnityCommander.Common.Debugger;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Panels;
 using UnityCommander.Services.Interfaces;
@@ -176,7 +176,7 @@ namespace UnityCommander.Services
                         panel.RemoveTab(tabId);
 
                         if (TabRemoved == null)
-                            continue;
+                            return;
 
                         TabRemoved(new TabActionEvent()
                         {
@@ -241,7 +241,7 @@ namespace UnityCommander.Services
 
         public string Name => "panel";
 
-        public IReadOnlyDictionary<string, object?> GetState()
+        public object GetState()
         {
             lock (_lock)
             {
@@ -250,6 +250,9 @@ namespace UnityCommander.Services
                     ["PanelCount"] = _panels.Count,
                     ["TabCount"] = _panels.Values.Sum(panel => panel.Tabs.Count),
                     ["ActivePanel"] = _activePanelId ?? Guid.Empty,
+                    ["Panels"] = _panels.ToDictionary(
+                        pair => pair.Key.ToString(),
+                        pair => (object)pair.Value.Tabs.Select(tabId => tabId.ToString()).ToList())
                 };
             }
         }

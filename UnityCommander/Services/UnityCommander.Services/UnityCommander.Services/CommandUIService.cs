@@ -1,7 +1,6 @@
 ﻿
 using Prism.Commands;
 using System;
-using System.Windows.Input;
 using UnityCommander.Common.Commands;
 using UnityCommander.Services.Interfaces;
 
@@ -9,10 +8,10 @@ namespace UnityCommander.Services
 {
     public class CommandUIService : ICommandUIService
     {
-        private readonly CommandService _commands;
+        private readonly CommandExecutionService _commands;
         private readonly IIconProviderService _icons;
 
-        public CommandUIService(IIconProviderService icons, CommandService commands)
+        public CommandUIService(IIconProviderService icons, CommandExecutionService commands)
         {
             _commands = commands;
             _icons = icons;

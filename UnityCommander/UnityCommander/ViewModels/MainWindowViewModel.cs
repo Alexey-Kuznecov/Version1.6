@@ -34,7 +34,7 @@ namespace UnityCommander.ViewModels
     /// </summary>
     public class MainWindowViewModel : BindableBase, IKeyBinding
     {
-        private CommandService _commandService;
+        private CommandExecutionService _commandExecutionService;
 
         private IShellLayoutManager _shellLayoutManager;
 
@@ -56,9 +56,9 @@ namespace UnityCommander.ViewModels
             IMultiCommandService command,
             IShellLayoutManager shellLayoutManager,
             IRibbonManager ribbonManager,
-            CommandService commandService)
+            CommandExecutionService commandService)
         {
-            _commandService = commandService;
+            _commandExecutionService = commandService;
             _shellLayoutManager = shellLayoutManager;
             _shellLayoutManager.AreaChanged += OnAreaChanged;
 
@@ -118,7 +118,7 @@ namespace UnityCommander.ViewModels
                     this.importCustomWindow.CollapseRibbonCommand = new RelayCommand(obj =>
                     {
                         this.importCustomWindow.CollapseContent = (this.importCustomWindow.CollapseContent as string) == "Max" ? "Mix" : "Max";
-                        _commandService.ExecuteAsync(CommandNames.UI.ToggleRibbon);
+                        _commandExecutionService.ExecuteAsync(CommandNames.UI.ToggleRibbon);
                     });
                 }
             }
