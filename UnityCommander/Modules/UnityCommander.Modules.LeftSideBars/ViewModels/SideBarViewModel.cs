@@ -19,12 +19,14 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using System.Linq;
     using System.Windows.Controls;
     using System.Windows.Shapes;
+    using UnityCommander.Common.Helper;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Common.State;
     using UnityCommander.Common.States;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Bootstrap;
+    using UnityCommander.Services.Interfaces.Plugins;
     using UnityCommander.Services.Interfaces.Sidebar;
 
     /// <summary>
@@ -32,9 +34,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     /// </summary>
     public class SidebarViewModel : BindableBase
     {
+        private readonly IViewResolver _viewResolver;
+
         private readonly IDialogService _dialogService;
 
-        private readonly SidebarService _sidebarService;
+        private readonly ISidebarService _sidebarService;
 
         private readonly ObservableCollection<IIcon> packIcon;
 
@@ -45,18 +49,24 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         private SidebarSessionState _state;
 
         private Path iconHideSidebar;
+
         private UserControl sidebarContent;
+
         private int sidebarContentWidth;
+
         private SidebarItem currentSidebarItem;
 
         public SidebarViewModel(
             IDialogService dialogService,
             IIconProviderService iconProvider,
-            IPluginProvider pluginLoader,
+            IPluginInfoProvider pluginLoader,
             IMultiCommandService command,
             ISessionService sessionService,
-            SidebarService sidebarService)
+            IViewResolver viewResolver,
+            ISidebarService sidebarService)
         {
+            _viewResolver = viewResolver;
+
             _dialogService = dialogService;
 
             _sidebarService = sidebarService;
@@ -130,13 +140,15 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         {
             foreach (var item in _sidebarService.GetAll().ToList())
             {
-                item.View.DataContext = item?.ViewModel;
+                var view = (UserControl)_viewResolver.Resolve(item.ViewType);
+
+                view.DataContext = _viewResolver.Resolve(item.ViewModel);
 
                 SidebarItems.Add(
                     new SidebarItem
                     {
                         Id = item.Id,
-                        Content = item.View,
+                        Content = view,
                         Icon = packIcon.Single(
                             i => ((Common.Models.Icons.Icon)i).Category == item.IconKey)
                     });
@@ -149,7 +161,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                 .FirstOrDefault(x => x.Id == _state.ActiveSectionId);
 
             SidebarContent = _state.IsOpen ? item?.Content : null;
-            SidebarContentWidth = _state.IsOpen ? 250 : 0;
+            SidebarContentWidth = _state.IsOpen ? 300 : 0;
         }
 
         public DelegateCommand HideSidebarCommand =>

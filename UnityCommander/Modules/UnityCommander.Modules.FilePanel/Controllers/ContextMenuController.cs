@@ -1,10 +1,9 @@
 ﻿
+using CommandSystem.Infrastructure.Execution;
 using Prism.Commands;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.CommandSurface;
-using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services;
@@ -14,17 +13,20 @@ namespace UnityCommander.Modules.FilePanel.Controllers
     public class ContextMenuController
     {
         private readonly CommandSurfaceEngine _surface;
-        private readonly CommandService _commandService;
+        private readonly CommandExecutionService _commandExecution;
+        private readonly CommandRegistryService _commandRegistry;
         private readonly ContextResolverDispatcher _resolver;
 
 
         public ContextMenuController(
             CommandSurfaceEngine surface,
-            CommandService commandService,
+            CommandExecutionService commandExecution,
+            CommandRegistryService commandRegistry,
             ContextResolverDispatcher resolver)
         {
             _surface = surface;
-            _commandService = commandService;
+            _commandExecution = commandExecution;
+            _commandRegistry = commandRegistry;
             _resolver = resolver;
         }
 
@@ -32,7 +34,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         {
             var ctx = _resolver.Resolve(state, parameter);
 
-            var commands = _commandService
+            var commands = _commandRegistry
                 .GetAll()
                 .Select(x => x.Metadata)
                 .ToList();
@@ -63,7 +65,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
                 {
                     item.Command = new DelegateCommand(() =>
                     {
-                        _commandService.ExecuteAsync(node.CommandName);
+                        _commandExecution.ExecuteAsync(node.CommandName);
                     });
                 }
 

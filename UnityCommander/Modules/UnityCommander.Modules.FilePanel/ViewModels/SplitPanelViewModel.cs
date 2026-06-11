@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.CommandSurface;
+using UnityCommander.Common.Columns;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Module;
@@ -60,27 +61,21 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDataProviderService dataService;
         private readonly ISettings settingsService;
         private readonly IMultiCommandService multiCommandService;
-        //private readonly IAppLogger _appLogger;
         private readonly NavigationManager _navigationService;
-        private readonly CommandManager commandManager;
         private readonly ILogger _logger;
         private readonly ICommandUIService _commandUIService;
-        //private readonly TabState _state;
         private ITabRegistry _tabRegistry;
-        private TabContentAdapter _adapter;
         private ISelectionManager _selectionManager;
         public bool IsActive => _tabRegistry.ActiveTab == this;
-
-        // Поля из дополнительной части (Tools)
         private bool _refreshScheduled = false;
-        private CommandService _commandService;
+        
+        private CommandExecutionService _commandService;
         private CommandPresentationProvider _presentationProvider;
         private ContextMenuController _contextMenuController;
 
         private readonly IColumnStateManager columnStateManager;
-        private readonly ColumnRegistry columnRegistry;
+        private readonly IColumnRegistry columnRegistry;
         private readonly IColumnSettingsStore settings;
-        private readonly GongDropAdapter _dropTarget;
         private readonly TabState _state;
         public event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;
@@ -95,6 +90,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private DriveNodeContext _driveNodeContext;
         private FolderNodeContext _folderNodeContext;
         private NavigationNodeContext _navigationContext;
+        
         #endregion
 
         #region Конструктор
@@ -131,9 +127,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IColumnProvider columnProvider,
               IColumnStateManager columnStateManager,
               IColumnSettingsStore settingsStore,
-              ColumnRegistry columnRegistry,
+              IColumnRegistry columnRegistry,
               LoggerCreator loggerCreator,
-              CommandService commandService, 
+              CommandExecutionService commandService, 
               ICommandUIService commandUIService,
               ContextMenuController contextMenuController,
               GongDropAdapter dropTarget)
@@ -163,7 +159,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this._presentationProvider = presentationProvider;
             this._selectionManager = selectionManager;
             this.dialogService = dialogService;
-            this.commandManager = manager;
         
             this.dataService = dataService;
             this.settingsService = settingsService.GetAppConfig();

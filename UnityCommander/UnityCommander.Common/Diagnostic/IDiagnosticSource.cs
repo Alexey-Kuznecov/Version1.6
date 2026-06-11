@@ -7,7 +7,7 @@ namespace UnityCommander.Common.Diagnostic
     {
         string Name { get; }
 
-        IReadOnlyDictionary<string, object?> GetState();
+        object GetState();
 
         string Describe();
     }

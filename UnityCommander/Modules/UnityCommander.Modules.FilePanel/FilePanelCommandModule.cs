@@ -28,21 +28,21 @@ namespace UnityCommander.Modules.FilePanel
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            var commandService = containerProvider.Resolve<CommandService>();
+            var commandRegistry = containerProvider.Resolve<CommandRegistryService>();
             var filePanelProvider = containerProvider.Resolve<FilePanelCommandProvider>();
 
 
-            commandService.Register(CommandFactoryExtensions.Create(
+            commandRegistry.Register(CommandFactoryExtensions.Create(
                 CommandNames.Panel.GetCurrentPath,
                 filePanelProvider.GetCurrentPath
             ));
 
-            commandService.Register(CommandFactoryExtensions.Create(
+            commandRegistry.Register(CommandFactoryExtensions.Create(
                 CommandNames.Panel.SetCurrentPath,
                 filePanelProvider.SetCurrentPath
             ));
 
-            commandService.RegisterUndoable(
+            commandRegistry.RegisterUndoable(
                 CommandFactoryExtensions.Create(CommandNames.File.Delete, ExecuteDeleteAsync,
                 contextTypes: typeof(FilePanelContextMenu)));
         }

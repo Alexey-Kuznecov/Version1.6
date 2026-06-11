@@ -7,7 +7,6 @@ namespace AIconBrowser
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
     using UnityCommander.Integration.Factories;
 
     /// <summary>
@@ -42,8 +41,8 @@ namespace AIconBrowser
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            services.AddSingleton<IDialogService, IconBrowserControl>();
-            services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
+            //services.AddSingleton<IDialogService, IconBrowserControl>();
+            //services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
         }
 
         /// <summary>

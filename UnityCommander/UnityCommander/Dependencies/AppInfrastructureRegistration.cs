@@ -2,6 +2,7 @@
 using Prism.Ioc;
 
 using UnityCommander.Common.Docking;
+using UnityCommander.Common.Helper;
 using UnityCommander.Common.Layout;
 using UnityCommander.Common.Sidebar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
@@ -12,6 +13,7 @@ using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
+using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.Services.Interfaces.Settings;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
@@ -54,7 +56,7 @@ namespace UnityCommander.Dependencies
             
             registry.RegisterSingleton<ISidebarSectionFactory, SidebarSectionFactory>();
             registry.RegisterSingleton<IViewResolver, ViewResolver> ();
-            registry.RegisterSingleton<SidebarService>();
+            registry.RegisterSingleton<ISidebarService, SidebarService>();
 
             // Ресурсы интерфейса: поставка иконок и визуальных элементов
             registry.RegisterSingleton<IIconProviderService, PackIconProvider>();

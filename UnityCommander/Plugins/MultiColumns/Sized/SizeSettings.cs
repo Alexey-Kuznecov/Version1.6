@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MultiColumns.DateTime;
+﻿
 using UnityCommander.Integration.Attributes;
 using UnityCommander.Integration.Options;
 
@@ -11,9 +8,6 @@ namespace MultiColumns.Sized
     {
         private string sizedUnit;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DateTimeSettings"/> class.
-        /// </summary>
         public SizeSettings()
         {
             this.sizedUnit = "Auto";
@@ -28,9 +22,6 @@ namespace MultiColumns.Sized
             };
         }
 
-        /// <summary>
-        /// Gets or sets the path with game the Witcher 3.
-        /// </summary>
         [Option(
             "Формат даты и времени",
             "В каком формате будет отображаться дата и время последнего изменения папки или файла",

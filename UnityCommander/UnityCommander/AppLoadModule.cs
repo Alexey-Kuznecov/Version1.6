@@ -33,8 +33,10 @@ namespace UnityCommander
             var diagnostics = containerRegistry.Resolve<IDiagnosticRegistry>();
 
             var pan = containerRegistry.Resolve<IPanelRegistry>();
+            var tab = containerRegistry.Resolve<ITabRegistry>();
 
             diagnostics.Register(pan as IDiagnosticSource);
+            diagnostics.Register(tab as IDiagnosticSource);
         }
     }
 }

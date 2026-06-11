@@ -29,7 +29,7 @@ namespace UnityCommander.Modules.LeftSideBars
         {
             this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, nameof(Sidebar));
            
-            var sidebarService = containerProvider.Resolve<SidebarService>();
+            var sidebarService = containerProvider.Resolve<ISidebarService>();
             var coordinator =
                 containerProvider.Resolve<ISessionAggregator>();
 
@@ -47,8 +47,8 @@ namespace UnityCommander.Modules.LeftSideBars
                 new SidebarSection(
                     "core.column",
                     "TableColumn",
-                    new ColumnsOptionControl(),
-                    new ColumnOptionViewModel()
+                    typeof(ColumnsOptionControl),
+                    typeof(ColumnOptionViewModel)
                 ));
 
             sidebarService.Register(
@@ -56,8 +56,8 @@ namespace UnityCommander.Modules.LeftSideBars
                 (
                    "core.plugins",
                    "Plugin",
-                    new PluginControlPanel(),
-                    new PluginPanelViewModel()
+                    typeof(PluginControlPanel),
+                    typeof(PluginPanelViewModel)
                 ));
 
             sidebarService.Register(
@@ -65,7 +65,7 @@ namespace UnityCommander.Modules.LeftSideBars
                (
                   "core.commnet",
                   "Comment",
-                   new CommentControl(),
+                   typeof(CommentControl),
                    null
                ));
 
@@ -74,7 +74,7 @@ namespace UnityCommander.Modules.LeftSideBars
                (
                   "core.foldertree",
                   "FileTree",
-                   new FolderTreeOverviewControl(),
+                   typeof(FolderTreeOverviewControl),
                    null
                ));
 
@@ -83,7 +83,7 @@ namespace UnityCommander.Modules.LeftSideBars
                (
                   "core.tag",
                   "Tag",
-                  new TagControlPanel(),
+                  typeof(TagControlPanel),
                    null
                ));
 

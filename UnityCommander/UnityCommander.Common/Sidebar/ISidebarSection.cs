@@ -1,6 +1,6 @@
 ﻿
 
-using System.Windows.Controls;
+using System;
 
 namespace UnityCommander.Common.Sidebar
 {
@@ -12,9 +12,9 @@ namespace UnityCommander.Common.Sidebar
 
         ISidebarDefinition Definition { get; }
 
-        UserControl View { get; }
+        Type ViewType { get; }
 
-        object? ViewModel { get; }
+        Type ViewModel { get; }
 
         void Activate();
 

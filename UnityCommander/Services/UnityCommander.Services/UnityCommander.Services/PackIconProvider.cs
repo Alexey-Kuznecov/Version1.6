@@ -29,6 +29,8 @@ namespace UnityCommander.Services
             this.materialDesignIcons.Add("Comment", PackIconKind.Comment);
             this.materialDesignIcons.Add("Plugin", PackIconKind.Plugin);
             this.materialDesignIcons.Add("Settings", PackIconKind.Settings);
+            this.materialDesignIcons.Add("Git", PackIconKind.Git);
+            this.materialDesignIcons.Add("Sack", PackIconKind.Sack);
             this.materialDesignIcons.Add(CommandNames.Navigation.Drives, PackIconKind.LaptopWindows);
             this.materialDesignIcons.Add(CommandNames.Navigation.Goto, PackIconKind.Arrow);
             this.materialDesignIcons.Add(CommandNames.Navigation.Refresh, PackIconKind.Refresh);

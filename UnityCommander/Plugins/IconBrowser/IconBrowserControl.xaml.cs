@@ -3,13 +3,10 @@ namespace AIconBrowser
 {
     using System.Windows.Controls;
 
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
-
     /// <summary>
     /// The icon browser control.
     /// </summary>
-    public partial class IconBrowserControl : UserControl, IDialogService, IPluginDescriptor
+    public partial class IconBrowserControl : UserControl //IDialogService, IPluginDescriptor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IconBrowserControl"/> class.

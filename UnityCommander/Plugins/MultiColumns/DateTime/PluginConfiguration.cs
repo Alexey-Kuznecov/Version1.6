@@ -11,22 +11,10 @@ namespace MultiColumns.DateTime
     using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
-    /// <summary>
-    /// The plugin configuration.
-    /// </summary>
     public class PluginConfiguration : IPluginFactory, ICommandFactory
     {
-        /// <summary>
-        /// The category column.
-        /// </summary>
         private DateTimeColumn dateTimeColumn;
 
-        /// <summary>
-        /// The configure.
-        /// </summary>
-        /// <param name="services">
-        /// The services.
-        /// </param>
         public void Configure(IServiceCollection services)
         {
             this.dateTimeColumn = new DateTimeColumn();
@@ -36,48 +24,22 @@ namespace MultiColumns.DateTime
             services.AddSingleton<IPluginDescriptor>(this.DateTimeFactory);
         }
 
-        /// <summary>
-        /// The command factory.
-        /// </summary>
-        /// <param name="command">
-        /// The command.
-        /// </param>
         public void CommandFactory(CommandBuilder command)
         {
             command.Register<IOOverrideCommand2, IOCommands>();
             command.RegisterWithArgument<IPluginSettings, DateTimeColumn>(this.dateTimeColumn, new DateTimeSettings());
         }
 
-
-        /// <summary>
-        /// The set associated types.
-        /// </summary>
-        /// <param name="typesRegister">
-        /// The types register.
-        /// </param>
         public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
         {
             typesRegister.RegisterSettings<DateTimeSettings>(this.dateTimeColumn);
         }
 
-        /// <summary>
-        /// The implementation factory.
-        /// </summary>
-        /// <param name="service">
-        /// The service.
-        /// </param>
-        /// <returns>
-        /// The <see cref="DateTimeColumn"/>.
-        /// </returns>
         private DateTimeColumn DateTimeFactory(IServiceProvider service)
         {
             return this.dateTimeColumn;
         }
 
-        /// <summary>
-        /// Set token
-        /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         public void SetToken(string token)
         {
         }

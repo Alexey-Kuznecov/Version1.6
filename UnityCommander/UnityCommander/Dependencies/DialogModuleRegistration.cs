@@ -2,6 +2,7 @@
 using Prism.Dialogs;
 using Prism.Ioc;
 using UnityCommander.Bootstrap;
+using UnityCommander.Common.Dialog;
 using UnityCommander.Modules.Viewer.Views;
 using UnityCommander.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
@@ -26,6 +27,8 @@ namespace UnityCommander.Dependencies
             //registry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig"); // пока закомментирован
             
             registry.RegisterSingleton<IDialogService, OverrideDialogService>();
+            registry.RegisterSingleton<IDialogRegistry, DialogRegistry>();
+            registry.RegisterSingleton<IWindowManager, WindowManager>();
         }
     }
 }

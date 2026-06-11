@@ -16,12 +16,14 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Dialog\" />
     <Folder Include="Mvvm\" />
   </ItemGroup>
 </Project>

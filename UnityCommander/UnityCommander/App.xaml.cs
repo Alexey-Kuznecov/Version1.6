@@ -1,7 +1,6 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
-using System.Linq;
 using System.Windows;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Styling;
@@ -64,6 +63,9 @@ namespace UnityCommander
    
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
+            // Инициализация до загрузки всех модулей
+            moduleCatalog.AddModule<EarlyLoadModule>();
+
             // Модули 
             moduleCatalog.AddModule<FilePanelModule>();       
             moduleCatalog.AddModule<LeftSideBarsModule>();

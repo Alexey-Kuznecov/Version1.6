@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using UnityCommander.Common.Columns;
 using UnityCommander.Services.Settings;
 
 namespace UnityCommander.Modules.FilePanel.Columns

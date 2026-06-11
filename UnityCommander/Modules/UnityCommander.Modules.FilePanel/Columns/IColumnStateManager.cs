@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using UnityCommander.Common.Columns;
 
 namespace UnityCommander.Modules.FilePanel.Columns
 {

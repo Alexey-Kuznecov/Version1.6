@@ -1,15 +1,14 @@
 ﻿
-
 using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using UnityCommander.Common.Columns;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
 using UnityCommander.Logging.Contracts;
-using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;

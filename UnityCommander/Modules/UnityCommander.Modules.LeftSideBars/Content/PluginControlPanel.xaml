@@ -34,41 +34,65 @@
             SelectedItem="{Binding SelectedDescriptor}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Margin="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="50" />
+                        </Grid.ColumnDefinitions>
+
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="30" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
+
+                        <!--  Заголовок  -->
+                        <StackPanel
                             Grid.Row="0"
                             Grid.Column="0"
-                            FontWeight="Medium"
-                            Text="{Binding DisplayName}" />
+                            Orientation="Horizontal">
+
+                            <TextBlock
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Text="{Binding DisplayName}" />
+
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="Gray"
+                                Text="{Binding Version}" />
+                        </StackPanel>
+
+                        <!--  Описание  -->
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="0"
-                            Width="240"
+                            MaxHeight="42"
+                            Margin="0,4,0,0"
                             Text="{Binding Description}"
                             TextTrimming="WordEllipsis"
                             TextWrapping="Wrap" />
+
+                        <!--  Кнопка  -->
                         <ContentControl
                             Grid.Row="0"
                             Grid.Column="1"
-                            Height="14"
-                            DataContext="{Binding DataContext, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type UserControl}}}"
-                            Foreground="#E4E4E4"
+                            Height="25"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Content="{Binding Icon.Path.Data}"
+                            Foreground="Red"
                             Style="{DynamicResource CustomButtonStyles}"
                             Template="{DynamicResource CustomButtonTemplate}">
+
                             <ContentControl.InputBindings>
                                 <MouseBinding
-                                    Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.ShowDialogCommand}"
+                                    Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.OpenSettingDialogCommand}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}, Path=SelectedItem}"
                                     Gesture="LeftClick" />
                             </ContentControl.InputBindings>
+
                         </ContentControl>
                     </Grid>
                 </DataTemplate>

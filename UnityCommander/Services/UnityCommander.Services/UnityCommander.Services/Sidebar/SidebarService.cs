@@ -5,7 +5,7 @@ using UnityCommander.Common.Sidebar;
 
 namespace UnityCommander.Services.Interfaces.Sidebar
 {
-    public class SidebarService
+    public class SidebarService : ISidebarService
     {
         private readonly ISidebarSectionFactory _factory;
 

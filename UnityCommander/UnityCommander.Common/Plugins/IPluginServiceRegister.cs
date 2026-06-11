@@ -1,6 +1,7 @@
 ﻿
 namespace UnityCommander.Common.Plugins
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -15,6 +16,7 @@ namespace UnityCommander.Common.Plugins
     /// <para>С помощью этого интерфейса можно регистрировать как одиночные сервисы, так и коллекции 
     /// экземпляров, что полезно для организации плагинов и модулей в приложении.</para>
     /// </remarks>
+    [Obsolete]
     public interface IPluginServicesRegister
     {
         /// <summary>

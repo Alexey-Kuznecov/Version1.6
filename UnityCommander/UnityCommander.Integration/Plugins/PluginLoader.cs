@@ -15,7 +15,6 @@
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
     using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
@@ -51,7 +50,7 @@
         /// Коллекция зарегистрированных сервисов диалоговых окон, 
         /// предоставляемых плагинами.
         /// </summary>
-        private IEnumerable<IDialogService> dialogService;
+        //private IEnumerable<IDialogService> dialogService;
 
         /// <summary>
         /// Коллекция дескрипторов загруженных плагинов, 
@@ -134,7 +133,7 @@
         /// реализованных в загруженных плагинах.
         /// </summary>
         /// <returns>Коллекция сервисов <see cref="IDialogService"/>.</returns>
-        public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
+        //public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
 
         /// <summary>
         /// Получает коллекцию команд, относящихся к конкретным плагинам,
@@ -255,13 +254,13 @@
         private void RegisterPluginServices()
         {
             // Получаем все сервисы диалогов из контейнера зависимостей
-            this.dialogService = this.serviceProvider.GetServices<IDialogService>();
+            //this.dialogService = this.serviceProvider.GetServices<IDialogService>();
 
             // Получаем все дескрипторы плагинов из контейнера зависимостей
             this.pluginDescriptors = this.serviceProvider.GetServices<IPluginDescriptor>();
 
             // Регистрируем различные сервисы плагинов в систему, связывая их с базовым интерфейсом IPluginService
-            this.Register<IDialogService, IPluginService>(this.dialogService);
+            //this.Register<IDialogService, IPluginService>(this.dialogService);
             this.Register<IPluginDescriptor, IPluginService>(this.pluginDescriptors);
             this.Register<IPluginSettings, IPluginService>(this.serviceProvider.GetServices<IPluginSettings>());
             this.Register<IColumnBuilder, IPluginService>(this.serviceProvider.GetServices<IColumnBuilder>());
@@ -315,7 +314,7 @@
 
             // Обнуляем ссылки на дескрипторы плагинов и сервисы
             this.pluginDescriptors = null;
-            this.dialogService = null;
+            //this.dialogService = null;
             this.alc = null;
 
             // Удаляем ресурсы плагина из глобального словаря ресурсов приложения, если они существуют

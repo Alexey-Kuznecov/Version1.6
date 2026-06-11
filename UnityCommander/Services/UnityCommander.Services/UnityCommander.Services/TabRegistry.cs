@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Common.Diagnostic;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
-    public class TabRegistry : ITabRegistry
+    public class TabRegistry : ITabRegistry, IDiagnosticSource
     {
         private readonly Dictionary<Guid, ITabContentAdapter> _map = new();
         
@@ -138,5 +139,25 @@ namespace UnityCommander.Services
 
         public bool Contains(Guid tabId)
             => _map.ContainsKey(tabId);
+
+        public string Name => "tab";
+
+        public object GetState()
+        {
+            return new Dictionary<string, object>
+            {
+                ["TabCount"] = _map.Count,
+                ["ActiveTabId"] = _activeTabId,
+                ["Path"] = _activeTab.GetCurrentPath()
+            };
+        }
+
+        public string Describe()
+        {
+            return new string(
+                "Tab registry diagnostics.\n" +
+                $"Tab count: {_map.Count}\n" +
+                $"Active tab: {_activeTabId}\n");
+        }
     }
 }

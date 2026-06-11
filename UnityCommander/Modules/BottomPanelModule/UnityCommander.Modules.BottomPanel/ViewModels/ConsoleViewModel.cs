@@ -21,6 +21,7 @@ using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Plugins;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
@@ -35,7 +36,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IServiceProvider _services;
         private readonly ConsoleApplicationLifetime _lifetime;
         private readonly IConsoleCommandProvider _consoleCommandProvider;
-        private readonly IPluginProvider _pluginProvider;
+        private readonly IPluginInfoProvider _pluginProvider;
         private readonly IConsoleAutoComplete _autoComplete;
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
@@ -98,7 +99,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             ConsoleApplicationLifetime lifetime,
             IEventAggregator ea,
             IConsoleCommandProvider consoleCommandProvider,
-            IPluginProvider pluginProvider,
+            IPluginInfoProvider pluginProvider,
             ICompletionEngine completionEngine,
             LoggerCreator loggerCreator,
             ICliInputAnalyzer cliInputAnalyzer,

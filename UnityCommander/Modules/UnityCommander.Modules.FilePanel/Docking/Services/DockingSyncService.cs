@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Threading;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
 using UnityCommander.Modules.FilePanel.Docking.Builders;
@@ -29,6 +31,8 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
         public event Action<object> OnFloatingWindow;
 
         private bool _initialized;
+        private bool _syncPending;
+        private bool _syncRequested;
 
         public DockingSyncService(
             DockingSyncContext syncContext,
@@ -137,14 +141,10 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
             _initialized = true;
 
             _manager.ActiveContentChanged += (_, __) => HandleLayoutChanged(_, __);
-            _manager.DocumentClosed += (_, __) => HandleDocumentClosed(_, __);
-            _manager.LayoutFloatingWindowControlCollectionChanged += (_, __) => HandleFloatingWindowControlCollectionChanged(_);
         }
 
-        private void HandleFloatingWindowControlCollectionChanged(object _)
-        {
-            OnFloatingWindow.Invoke(_);
-        }
+        private void HandleLayoutChanged(object sender, EventArgs e)
+            => RequestSync();
 
         private void HandleDocumentClosed(
             object? sender,
@@ -166,21 +166,42 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
                 state.Tabs.Any(t => paneTabs.Contains(t.TabId)));
         }
 
-        public void HandleLayoutChanged(object sender, EventArgs e)
+        private void RequestSync()
         {
-            if (!_initialized)
+            if (!_initialized) return;
+
+            _syncRequested = true;
+
+            if (_syncPending)
                 return;
 
-            var current = _builder.Build();
+            _syncPending = true;
 
-            var diff = _diff.Diff(_previous, current);
+            Dispatcher.CurrentDispatcher.BeginInvoke(() => ProcessSync());
+        }
 
-            if (HasChanges(diff))
+        private void ProcessSync()
+        {
+            try
             {
-                OnDiff?.Invoke(diff);
-            }
+                while (_syncRequested)
+                {
+                    _syncRequested = false;
 
-            _previous = current;
+                    var current = _builder.Build();
+
+                    var diff = _diff.Diff(_previous, current);
+
+                    if (HasChanges(diff))
+                        OnDiff?.Invoke(diff);
+
+                    _previous = current;
+                }
+            }
+            finally
+            {
+                _syncPending = false;
+            }
         }
 
         public bool HasMeaningfulChanges(DiffResult diff)

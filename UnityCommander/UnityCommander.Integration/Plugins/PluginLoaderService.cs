@@ -12,7 +12,6 @@ namespace UnityCommander.Integration.Plugins
     using System.Reflection;
     using System.Runtime.Loader;
     using Integration.Contracts;
-    using Integration.Dialog;
 
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Factories;
@@ -325,8 +324,8 @@ namespace UnityCommander.Integration.Plugins
         /// <returns>
         /// Список реализаций интерфейса <see cref="IDialogService"/>.
         /// </returns>
-        public IEnumerable<IDialogService> GetDialogService()
-            => PluginLoaders.SelectMany(loader => loader.GetDialogs());
+        //public IEnumerable<IDialogService> GetDialogService()
+        //    => PluginLoaders.SelectMany(loader => loader.GetDialogs());
 
         /// <summary>
         /// Получает интерфейсы для конфигурации плагинов.

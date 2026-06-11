@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Common.Columns;
 using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Modules.FilePanel.Columns
@@ -15,7 +16,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 {
                     new ColumnModel
                     {
-                        Id = "Name",
+                        Id = "core.name",
                         Header = "Name",
                         //DisplayMemberPath = "Name",
                         CellTemplateResourceKey = "ColumnNameDataTemplate",
@@ -26,7 +27,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "CreationTime",
+                        Id = "core.creationTime",
                         Header = "Created",
                         //DisplayMemberPath = "CreationTime",
                         CellTemplateResourceKey = "ColumnCreationDateDataTemplate",
@@ -37,7 +38,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "LastAccessTime",
+                        Id = "core.lastAccessTime",
                         Header = "Last Access",
                         //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
@@ -48,7 +49,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "Extension",
+                        Id = "core.extension",
                         Header = "Ext",
                         //DisplayMemberPath = "Extension",
                         CellTemplateResourceKey = "ColumnExtensionDataTemplate",
@@ -59,7 +60,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "Size",
+                        Id = "core.size",
                         Header = "Size",
                         //DisplayMemberPath = "Extension",
                         CellTemplateResourceKey = "ColumnFileSizeDataTemplate",
@@ -77,7 +78,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 {
                     new ColumnModel
                     {
-                        Id = "Name",
+                        Id = "core.name",
                         Header = "Name",
                         //DisplayMemberPath = "Name",
                         CellTemplateResourceKey = "ColumnNameDataTemplate",
@@ -88,7 +89,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "CreationTime",
+                        Id = "core.creationTime",
                         Header = "Created",
                         //DisplayMemberPath = "CreationTime",
                         CellTemplateResourceKey = "ColumnCreationDateDataTemplate",
@@ -99,7 +100,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "LastAccessTime",
+                        Id = "core.lastAccessTime",
                         Header = "Last Access",
                         //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
@@ -117,7 +118,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 {
                     new ColumnModel
                     {
-                        Id = "Letter",
+                        Id = "core.letter",
                         Header = "Letter",
                         CellTemplateResourceKey = "ColumnLetterDataTemplate",
                         Width = 100,
@@ -127,7 +128,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "Free Space",
+                        Id = "core.freeSpace",
                         Header = "Free Space",
                         CellTemplateResourceKey = "ColumnFreeSpaceDataTemplate",
                         Width = 100,
@@ -137,7 +138,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "Used Space",
+                        Id = "core.usedSpace",
                         Header = "Used Space",
                         CellTemplateResourceKey = "ColumnUsedSpaceDataTemplate",
                         Width = 100,
@@ -147,7 +148,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "Total Space",
+                        Id = "core.totalSpace",
                         Header = "Total Space",
                         CellTemplateResourceKey = "ColumnTotalSpaceDataTemplate",
                         Width = 100,

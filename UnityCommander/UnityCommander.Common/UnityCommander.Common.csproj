@@ -10,4 +10,7 @@
 		<PackageReference Include="NSwag.Core" Version="14.7.1" />
 		<PackageReference Include="Prism.Core" Version="9.0.537" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
+	</ItemGroup>
 </Project>

@@ -8,6 +8,8 @@
 	  <OutputPath Condition="'$(TargetFramework)' == 'net9.0-windows;net10.0-windows'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net9.0-windows;net10.0-windows\plugins\MultiColumns</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
       <Private>False</Private>
@@ -23,4 +25,7 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\UnityCommander\UnityCommander\bin\Debug\net10.0-windows\plugins\MultiColumns\&quot;" />
+	</Target>
 </Project>

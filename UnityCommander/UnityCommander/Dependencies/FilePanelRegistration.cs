@@ -1,5 +1,6 @@
 ﻿
 using Prism.Ioc;
+using UnityCommander.Common.Columns;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
@@ -46,7 +47,7 @@ namespace UnityCommander.Dependencies
             registry.Register<IColumnSettingsStore, InMemoryColumnSettingsStore>(); // глобально
             registry.RegisterSingleton<IColumnProvider, DefaultColumnProvider>();
             registry.Register<IColumnStateManager, ColumnStateManager>(); // по панели
-            registry.Register<ColumnRegistry>(); // зависит от задач
+            registry.RegisterSingleton<IColumnRegistry, ColumnRegistry>(); // зависит от задач
         }
     }
 }
