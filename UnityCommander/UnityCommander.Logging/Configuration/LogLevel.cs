@@ -7,6 +7,7 @@
         Info,
         Warning,
         Error,
-        Fatal
+        Fatal,
+        Profile
     }
 }

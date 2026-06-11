@@ -2,6 +2,8 @@
 {
     public readonly struct LogScope
     {
+        public string OperationId { get; }
+
         public string Value { get; }
 
         private LogScope(string value)

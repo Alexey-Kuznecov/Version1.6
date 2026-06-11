@@ -15,6 +15,9 @@ namespace UnityCommander.Logging.Core
         public string Category { get; init; } = "";
         public object? Payload { get; init; }
 
+        public double? DurationMs { get; set; }
+        public double? DeltaMs { get; set; }
+
         // 👇 вот тут всё сходится
         public LogColor? Color { get; set; }
         public Func<bool>? Condition { get; init; }

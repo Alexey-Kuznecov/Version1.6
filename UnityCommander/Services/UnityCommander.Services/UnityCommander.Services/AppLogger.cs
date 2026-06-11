@@ -1,5 +1,5 @@
 ﻿
-using System;
+
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Services.Interfaces;

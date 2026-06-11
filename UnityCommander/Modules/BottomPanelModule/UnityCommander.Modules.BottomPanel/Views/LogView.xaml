@@ -27,6 +27,8 @@
         <!--  Лог: TextBox  -->
         <TextBox
             x:Name="TextLog"
+            Margin="0"
+            Padding="0"
             AcceptsReturn="True"
             Background="#1E1E1E"
             FontFamily="Consolas"
@@ -41,6 +43,7 @@
         <!--  Лог: ListBox с подсветкой  -->
         <ListBox
             x:Name="LogList"
+            Margin="0"
             Padding="0"
             Background="#1E1E1E"
             BorderThickness="0"

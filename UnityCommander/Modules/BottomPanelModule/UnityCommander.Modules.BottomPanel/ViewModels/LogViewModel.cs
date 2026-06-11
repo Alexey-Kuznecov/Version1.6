@@ -12,6 +12,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
     public class LogViewModel : BindableBase
     {
         private readonly StringBuilder _builder = new();
+        
         private ILogHighlighter _highlighter = new AutoLogHighlighter();
         public ObservableCollection<LogEntryViewModel> Logs { get; } = new();
         
@@ -24,11 +25,13 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         public LogViewModel(LogHub hub)
         {
-            hub.LogReceived += OnLog;
+            hub.Subscribe(OnLog);
         }
+
         public string EditModeText => IsHighlightMode ? "Highlight" : "Edit";
 
         private bool _isHighlightMode = true;
+        
         public bool IsHighlightMode
         {
             get => _isHighlightMode;
@@ -42,6 +45,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         public ICommand ClearCommand => new RelayCommand(() =>
         {
             LogText = "";
+            _builder.Clear();
             Logs.Clear();
         });
 
@@ -64,13 +68,19 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private string FormatEntry(LogEntry e)
         {
+            var timeInfo = e.DurationMs.HasValue
+                ? $" {e.DurationMs.Value:0.##} ms"
+                : "";
+
+            var payload = e.Payload == null ? "" : $" {e.Payload}";
             return
-            $"[{e.Scope}] " +
-            $"[{e.Category}] " +
-            $"[{e.Level}] " +
-            $"{(string.IsNullOrWhiteSpace(e.Source) ? "" : $"[{e.Source}] ")}" +
-            $"{e.Message}" +
-            $"{(e.Payload == null ? "" : $"{e.Payload}")}";
+                $"[{e.Scope}] " +
+                $"[{e.Category}] " +
+                $"[{e.Level}]" +
+                $"{(string.IsNullOrWhiteSpace(e.Source) ? "" : $"[{e.Source}] ")}" +
+                $"{e.Message} " +
+                 $"{timeInfo} " +
+                $"{payload} ";
         }
     }
 }

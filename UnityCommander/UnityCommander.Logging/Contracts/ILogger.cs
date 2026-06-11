@@ -7,7 +7,9 @@ namespace UnityCommander.Logging.Contracts
         void Trace(string message);
         
         void Debug(string message);
-       
+
+        void Error(string message);
+
         void Debug(string message, Func<bool>? condition = null);
         
         void Info(string message);
@@ -29,8 +31,8 @@ namespace UnityCommander.Logging.Contracts
         
         void Warning(string message);
         
-        void Error(string message, Exception? ex = null);
+        void Error(string message, Exception? ex);
         
-        void Fatal(string message, Exception? ex = null);
+        void Fatal(string message, Exception? ex);
     }
 }

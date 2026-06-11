@@ -8,6 +8,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
     public sealed class AutoLogHighlighter : ILogHighlighter
     {
+        private LogStyleResolver _resolver = new();
+
         private readonly ILogHighlightRule[] _rules =
         [
              new GuidHighlightRule(),
@@ -20,7 +22,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             {
                 new($"[{entry.Scope}] ", new HighlightStyle(Brushes.Gray)),
                 new($"[{entry.Category}] ", new HighlightStyle(Brushes.DodgerBlue)),
-                new($"[{entry.Level}] ", new HighlightStyle(Brushes.LightGray))
+                new($"[{entry.Level}] ", _resolver.Resolve(entry))
             };
 
             BuildMessage(entry.Message, list);
@@ -30,6 +32,12 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 list.Add(new($"[{entry.Payload}] ", 
                     new HighlightStyle(Brushes.RosyBrown)));
             }
+
+            if (entry.DurationMs != null)
+            {
+                list.Add(new($" {entry.DurationMs.Value:0.#} ms ", new HighlightStyle(Brushes.LightGray)));
+            }
+         
             return list;
         }
 
