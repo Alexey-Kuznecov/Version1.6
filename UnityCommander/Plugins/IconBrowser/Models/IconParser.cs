@@ -1,8 +1,7 @@
 ﻿
 using System.IO;
-using System.Windows.Media.Media3D;
 
-namespace AIconBrowser.Models
+namespace IconBrowser.Models
 {
     public class IconParser
     {

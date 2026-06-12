@@ -1,8 +1,8 @@
 ﻿using System.Windows;
-using AIconBrowser.Contracts;
+using IconBrowser.Contracts;
 using Microsoft.Win32;
 
-namespace AIconBrowser.Services
+namespace IconBrowser.Services
 {
     public class DefaultDialogService : IDialogService
     {

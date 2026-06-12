@@ -1,5 +1,5 @@
 ﻿
-namespace AIconBrowser.Models
+namespace IconBrowser.Models
 {
     /// <summary>
     /// Names of icon collection.

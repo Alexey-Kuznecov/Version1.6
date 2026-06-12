@@ -79,8 +79,8 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                         })
                     ).AddSection(sec => sec
                     .WithLayout(RibbonGroupLayout.Large)
-                        .AddButton("btn3", "Команда 3", new ShowDialogCommand(_windowManager), RibbonItemCategory.FileOpen, "file.add")
-                        .AddButton("btn4", "Команда 4", new DemoCommands(), RibbonItemCategory.FileOpen, "edit.delete")
+                        .AddButton("btn3", "Команда 3", new ShowDialogCommand("icon_maker-1.0", _windowManager), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn4", "Команда 4", new ShowDialogCommand("icon_maker-1.0-new", _windowManager), RibbonItemCategory.FileOpen, "edit.delete")
                         .AddButton("btn5", "Команда 5", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
                         .AddButton("btn6", "Команда 6", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
                         .AddItem(new RibbonCheckBoxModel()

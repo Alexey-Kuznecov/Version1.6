@@ -1,4 +1,4 @@
-﻿namespace AIconBrowser.Contracts
+﻿namespace IconBrowser.Contracts
 {
     public interface IDialogService
     {

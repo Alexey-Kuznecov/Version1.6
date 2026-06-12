@@ -4,10 +4,11 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using AIconBrowser.Models;
+using IconBrowser.Models;
+using IconMaker.Core.Models;
 using static System.Windows.Media.ColorConverter;
 
-namespace AIconBrowser.Converters
+namespace IconBrowser.Converters
 {
     public class ColorConverterSolidColor : BaseConverter<ColorConverterSolidColor>
     {
@@ -24,6 +25,7 @@ namespace AIconBrowser.Converters
             return null;
         }
     }
+
     public class ScaleConverter : BaseConverter<ScaleConverter>
     {
         public double Scale { get; set; } = 12;

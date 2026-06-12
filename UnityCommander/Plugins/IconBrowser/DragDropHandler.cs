@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace AIconBrowser
+namespace IconBrowser
 {
     /// <summary>
     /// The drag drop.

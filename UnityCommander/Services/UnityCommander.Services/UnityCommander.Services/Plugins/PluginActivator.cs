@@ -25,7 +25,7 @@ namespace UnityCommander.Services.Plugins
         public PluginActivator(
             IPluginManager manager, 
             IServiceProvider serviceProvider,
-           IPluginResourceManager resources,
+            IPluginResourceManager resources,
             LoggerCreator logger)
         {
             _resources = resources;

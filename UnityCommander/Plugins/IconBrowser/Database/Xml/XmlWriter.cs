@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace AIconBrowser.Database.Xml
+namespace IconBrowser.Database.Xml
 {
     public class XmlWriter : XmlParser
     {

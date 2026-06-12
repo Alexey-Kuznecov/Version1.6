@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using AIconBrowser.Mvvm.Base;
+using IconBrowser.Mvvm.Base;
 
-namespace AIconBrowser.Components.InputBox
+namespace IconBrowser.Components.InputBox
 {
     /// <summary>
     /// View model for the input window.

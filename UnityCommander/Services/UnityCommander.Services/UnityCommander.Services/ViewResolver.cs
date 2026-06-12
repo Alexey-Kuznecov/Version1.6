@@ -7,6 +7,7 @@ using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Plugins;
 
 namespace UnityCommander.Services
 {
@@ -14,13 +15,11 @@ namespace UnityCommander.Services
     {
         private readonly IContainerProvider _container;
         private readonly IPluginProvider _pluginProvider;
-        private readonly IViewFactory _factory;
         private readonly ILogger _logger;
 
         public ViewResolver(
             IContainerProvider container,
             IPluginProvider pluginProvider,
-            IViewFactory factory,
             LoggerCreator? logger)
         {
             _logger = logger?.For<ViewResolver>(
@@ -29,7 +28,6 @@ namespace UnityCommander.Services
 
             _container = container;
             _pluginProvider = pluginProvider;
-            _factory = factory;
         }
 
         public object Resolve(Type type)
@@ -45,7 +43,9 @@ namespace UnityCommander.Services
             }
             catch
             {
-                var view = (UserControl)Activator.CreateInstance(type);
+                var container = _pluginProvider.GetContainer("");
+               
+                var view = container.LoadedAssembly.CreateInstance(type.FullName); // (UserControl)Activator.CreateInstance(type);
                 return view;
             }
         }

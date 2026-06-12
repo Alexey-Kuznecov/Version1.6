@@ -1,14 +1,14 @@
 ﻿
-namespace AIconBrowser.Models
+namespace IconBrowser.Models
 {
+    using IconMaker.Core.Helper;
+    using IconMaker.Core.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Media;
     using System.Windows.Shapes;
     using System.Xml.Linq;
-
-    using AIconBrowser.Help;
 
     /// <summary>
     /// The icons data reader.
@@ -75,6 +75,8 @@ namespace AIconBrowser.Models
             paths.Data = Geometry.Parse(str);
             return paths;
         }
+
+      
 
         /// <summary>
         /// Extract icon attribute values from an xml file.

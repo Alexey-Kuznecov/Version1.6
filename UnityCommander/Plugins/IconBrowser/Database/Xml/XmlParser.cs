@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace AIconBrowser.Database.Xml
+namespace IconBrowser.Database.Xml
 {
     /// <summary>
     /// The xml parser.

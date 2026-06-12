@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AIconBrowser.Components.InputBox;
-using AIconBrowser.Models;
-using AIconBrowser.Mvvm.Base;
+using IconBrowser.Components.InputBox;
+using IconBrowser.Models;
+using IconBrowser.Mvvm.Base;
 
-namespace AIconBrowser
+namespace IconBrowser
 {
     /// <summary>
     /// Class of model that responsible to way display icons collection.

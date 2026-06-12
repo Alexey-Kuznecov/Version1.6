@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Linq;
 
-namespace AIconBrowser.Services
+namespace IconBrowser.Services
 {
     /// <summary>
     /// The serialization.

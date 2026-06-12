@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AIconBrowser.Components.InputBox
+namespace IconBrowser.Components.InputBox
 {
     class ActionsDictionary
     {

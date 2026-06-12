@@ -6,16 +6,18 @@ namespace UnityCommander.Modules.ToolBar.Commands
 {
     public class ShowDialogCommand : RibbonCommand
     {
+        private string _id;
         private IWindowManager _manager;
 
-        public ShowDialogCommand(IWindowManager manager) : base("test") 
+        public ShowDialogCommand(string id, IWindowManager manager) : base("test") 
         {
             _manager = manager;
+            _id = id;
         }
 
         public override void Execute()
         {
-            _manager.ShowModalDialog("icon_maker-1.0");
+            _manager.ShowModalDialog(_id);
         }
 
         public override bool CanExecute() => true;

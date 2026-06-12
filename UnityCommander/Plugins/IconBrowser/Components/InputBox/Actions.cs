@@ -1,4 +1,4 @@
-﻿namespace AIconBrowser.Components.InputBox
+﻿namespace IconBrowser.Components.InputBox
 {
     public enum Actions
     {

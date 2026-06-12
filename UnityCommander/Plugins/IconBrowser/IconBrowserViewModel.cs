@@ -7,15 +7,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
-using AIconBrowser.Components.InputBox;
-using AIconBrowser.Contracts;
-using AIconBrowser.Help;
-using AIconBrowser.Models;
-using AIconBrowser.Mvvm.Base;
-using AIconBrowser.Services;
+using IconBrowser.Components.InputBox;
+using IconBrowser.Contracts;
+using IconMaker.Core.Models;
+using IconMaker.Core.Helper;
+using IconBrowser.Models;
+using IconBrowser.Mvvm.Base;
+using IconBrowser.Services;
 using IconBrowser.Converter;
 
-namespace AIconBrowser
+namespace IconBrowser
 {
     /// <summary>
     /// The icon browser view model.
@@ -236,7 +237,7 @@ namespace AIconBrowser
                 var path = this._fileService.Open(this._dialogService.FilePath);
 
                 // filename and extract geometry path of xaml file and .
-                string name = Help.HelperFunctions.ClearExtension(this._dialogService.FileShortName);
+                string name = HelperFunctions.ClearExtension(this._dialogService.FileShortName);
                 List<Path> paths = ConverterForeignPlugins.XamlExport64PathArray(path as Viewbox);
 
                 // Icon data packing to saving.
@@ -257,7 +258,7 @@ namespace AIconBrowser
         /// <summary>
         /// Command assign new name for icon.
         /// </summary>
-        private ICommand RemaneIconCommand => new Mvvm.Base.RelayCommand(name =>
+        private ICommand RemaneIconCommand => new RelayCommand(name =>
         {
             string newName = (string)name;
 

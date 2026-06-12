@@ -1,7 +1,7 @@
 ﻿
 using PluginSystem.Abstractions.Plugin;
 
-namespace AIconBrowser
+namespace IconBrowser
 {
     internal class IconPluginFactory : IPluginFactory
     {

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace AIconBrowser.Mvvm.Base
+namespace IconBrowser.Mvvm.Base
 {
     public class PropertiesChanged : INotifyPropertyChanged
     {

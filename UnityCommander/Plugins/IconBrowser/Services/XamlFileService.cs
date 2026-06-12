@@ -2,9 +2,9 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Markup;
-using AIconBrowser.Contracts;
+using IconBrowser.Contracts;
 
-namespace AIconBrowser.Services
+namespace IconBrowser.Services
 {
     public class XamlFileService : IFileService
     {

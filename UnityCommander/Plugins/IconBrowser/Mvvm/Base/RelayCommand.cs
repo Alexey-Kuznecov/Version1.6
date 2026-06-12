@@ -1,39 +1,36 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace AIconBrowser.Mvvm.Base
+namespace IconBrowser.Mvvm.Base
 {
     public class RelayCommand : ICommand
     {
-        private readonly Action _command;
-        private readonly Action<object> _execute;
-        private readonly Predicate<object> _canExecute;
+        private readonly Action<object?> _execute;
+        private readonly Func<object?, bool>? _canExecute;
+
         public event EventHandler CanExecuteChanged;
 
-        public RelayCommand(Action command, Func<bool> canExecute = null)
+        // без параметров (старый стиль)
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
-            _command = command ?? throw new ArgumentNullException(nameof(command));
+            _execute = _ => execute();
+            _canExecute = canExecute is null ? null : _ => canExecute();
         }
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+
+        // с параметрами (новый стиль)
+        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute(parameter);
-        }
-        public void Execute(object parameter)
-        {
-            _execute.Invoke(parameter);
-        }
-        public void Execute()
-        {
-            _command.Invoke();
-        }
+
+        public bool CanExecute(object? parameter)
+            => _canExecute?.Invoke(parameter) ?? true;
+
+        public void Execute(object? parameter)
+            => _execute(parameter);
+
         public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
+            => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

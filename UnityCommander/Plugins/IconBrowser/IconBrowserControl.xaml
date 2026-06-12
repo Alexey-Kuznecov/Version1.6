@@ -1,8 +1,8 @@
 ﻿<UserControl
-    x:Class="AIconBrowser.IconBrowserControl"
+    x:Class="IconBrowser.IconBrowserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:aIconBrowser="clr-namespace:AIconBrowser"
+    xmlns:IconBrowser="clr-namespace:IconBrowser"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="UserControl"
@@ -10,12 +10,12 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/AIconBrowser;component/General.xaml" />
+                <ResourceDictionary Source="/IconBrowser;component/General.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.DataContext>
-        <aIconBrowser:IconBrowserViewModel />
+        <IconBrowser:IconBrowserViewModel />
     </UserControl.DataContext>
     <Grid Background="{Binding Background, ElementName=UserControl}">
         <Grid.ColumnDefinitions>
@@ -83,11 +83,11 @@
                                 AllowDrop="True"
                                 ContextMenu="{Binding CollectionContextMenu}"
                                 Cursor="Hand"
-                                DragEnter="{x:Static aIconBrowser:DragDropHandler.DragEnterHandler}"
-                                DragLeave="{x:Static aIconBrowser:DragDropHandler.DragLeaveHandler}"
-                                DragOver="{x:Static aIconBrowser:DragDropHandler.DragOverHandler}"
-                                Drop="{x:Static aIconBrowser:DragDropHandler.DropHandler}"
-                                MouseMove="{x:Static aIconBrowser:DragDropHandler.MouseMoveHandler}"
+                                DragEnter="{x:Static IconBrowser:DragDropHandler.DragEnterHandler}"
+                                DragLeave="{x:Static IconBrowser:DragDropHandler.DragLeaveHandler}"
+                                DragOver="{x:Static IconBrowser:DragDropHandler.DragOverHandler}"
+                                Drop="{x:Static IconBrowser:DragDropHandler.DropHandler}"
+                                MouseMove="{x:Static IconBrowser:DragDropHandler.MouseMoveHandler}"
                                 Text="{Binding CollectionName}" />
                         </Grid>
                     </ItemsControl>
@@ -122,8 +122,8 @@
                                 x:Name="d"
                                 Uid="{Binding CollectionName}"
                                 Content="{Binding Brush}"
-                                GiveFeedback="{x:Static aIconBrowser:DragDropHandler.GiveFeedbackHandler}"
-                                MouseMove="{x:Static aIconBrowser:DragDropHandler.MouseMoveHandler}"
+                                GiveFeedback="{x:Static IconBrowser:DragDropHandler.GiveFeedbackHandler}"
+                                MouseMove="{x:Static IconBrowser:DragDropHandler.MouseMoveHandler}"
                                 Style="{Binding Style}"
                                 Tag="{Binding Id}"
                                 Template="{Binding Template}">

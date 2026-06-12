@@ -1,5 +1,5 @@
 ﻿
-namespace AIconBrowser
+namespace IconBrowser
 {
     using System.Reflection;
     using System.Runtime.Loader;

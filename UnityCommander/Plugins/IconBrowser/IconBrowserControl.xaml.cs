@@ -1,5 +1,5 @@
 ﻿
-namespace AIconBrowser
+namespace IconBrowser
 {
     using System.Windows.Controls;
 

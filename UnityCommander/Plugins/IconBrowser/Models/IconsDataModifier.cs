@@ -1,5 +1,5 @@
 ﻿
-namespace AIconBrowser.Models
+namespace IconBrowser.Models
 {
     using System;
     using System.Linq;

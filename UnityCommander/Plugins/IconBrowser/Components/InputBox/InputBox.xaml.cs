@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace AIconBrowser.Components.InputBox
+namespace IconBrowser.Components.InputBox
 {
     /// <summary>
     /// Логика взаимодействия для InputBox.xaml
