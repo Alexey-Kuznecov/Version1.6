@@ -8,9 +8,14 @@ namespace IconMaker.Core.Services
     {
         private readonly IIconThemeStore _store;
 
+        public event Action<string> ThemeChanged;
+
+        public IconTheme CurrentTheme { get; private set; }
+
         public IconThemeService(IIconThemeStore store)
         {
             _store = store;
+            CreateTheme("Default");
         }
 
         public IconTheme GetTheme(string id)
@@ -29,10 +34,12 @@ namespace IconMaker.Core.Services
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
-                Scale = 1.0,
-                IsMonochrome = false
+                Scale = 64,
+                IsMonochrome = false,
+                MonochromeColor = "#FF3676AE"
             };
 
+            CurrentTheme = theme;
             _store.Add(theme);
         }
 
@@ -84,6 +91,11 @@ namespace IconMaker.Core.Services
         public void SaveAll()
         {
             _store.SaveAll();
+        }
+
+        public void SetCurrentTheme(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

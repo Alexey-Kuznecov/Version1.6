@@ -8,7 +8,7 @@ namespace IconMaker.Core.Storage
 
         IReadOnlyCollection<IconPack> GetLoadedPacks();
 
-        public IEnumerable<string> GetPackIds();
+        IEnumerable<(string Id, string Name)> GetPackHeaders();
 
         void AddPack(IconPack pack);
 

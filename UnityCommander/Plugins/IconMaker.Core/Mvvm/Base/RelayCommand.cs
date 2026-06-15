@@ -1,7 +1,7 @@
-﻿using System;
+﻿
 using System.Windows.Input;
 
-namespace IconBrowser.Mvvm.Base
+namespace IconMaker.Core.Mvvm.Base
 {
     public class RelayCommand : ICommand
     {

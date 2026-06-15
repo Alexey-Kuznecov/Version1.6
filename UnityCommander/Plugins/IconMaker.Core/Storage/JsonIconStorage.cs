@@ -2,6 +2,7 @@
 using IconMaker.Core.ImportExport;
 using IconMaker.Core.Models;
 using System.IO;
+using System.Text.Json;
 
 namespace IconMaker.Core.Storage
 {
@@ -12,11 +13,11 @@ namespace IconMaker.Core.Storage
         private string _rootPath;
 
         public JsonIconStorage(
-             string packSource,
+             IconPaths iconPaths,
              FileSystem file,
              IIconSerializer serializer)
         {
-            _rootPath = packSource;
+            _rootPath = iconPaths.RootPath;
             _serializer = serializer;
             _file = file;
         }
@@ -36,6 +37,20 @@ namespace IconMaker.Core.Storage
             foreach (var file in Directory.GetFiles(_rootPath, "*.json"))
             {
                 yield return Path.GetFileNameWithoutExtension(file);
+            }
+        }
+
+        public IEnumerable<(string Id, string Name)> GetPackHeaders()
+        {
+            foreach (var file in Directory.GetFiles(_rootPath, "*.json"))
+            {
+                using var stream = File.OpenRead(file);
+                using var doc = JsonDocument.Parse(stream);
+
+                var name = doc.RootElement.GetProperty("Name").GetString();
+                var id = Path.GetFileNameWithoutExtension(file);
+
+                yield return (id, name);
             }
         }
 

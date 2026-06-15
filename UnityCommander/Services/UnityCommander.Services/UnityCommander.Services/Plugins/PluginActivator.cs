@@ -1,6 +1,9 @@
 ﻿
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PluginSystem.Abstractions.Plugin;
 using PluginSystem.Runtime;
+using Prism.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -51,15 +54,52 @@ namespace UnityCommander.Services.Plugins
             var registrar = new PluginRegistrar();
             var initContext = new PluginInitContext(registrar);
 
-            plugin.Initialize(initContext);
+            using (var init = new PluginInitContext(registrar))
+            {
+                plugin.Initialize(init);
+            }
 
             registrar.Apply(_serviceProvider);
 
-            var context = new PluginContext(_serviceProvider, container.PluginID, logger);
+            var pluginProvider =
+              BuildPluginProvider(
+                  registrar,
+                  _serviceProvider);
+
+            var pluginService = new PluginServices(pluginProvider);
+            var context = new PluginContext(pluginService, container.PluginID);
 
             container.Context = context;
+            container.Services = pluginProvider;
 
             container.Activate(plugin);
+        }
+
+        private IServiceProvider BuildPluginProvider(
+            PluginRegistrar registrar,
+            IServiceProvider rootProvider)
+        {
+            var services = new ServiceCollection();
+
+            RegisterHostServices(services, rootProvider);
+
+            foreach (var descriptor in registrar.Services)
+            {
+                services.Add(descriptor);
+            }
+
+            return services.BuildServiceProvider();
+        }
+
+        private void RegisterHostServices(
+            IServiceCollection services,
+            IServiceProvider rootProvider)
+        {
+            services.AddSingleton(
+                rootProvider.GetRequiredService<LoggerCreator>());
+
+            services.AddSingleton(
+                rootProvider.GetRequiredService<IDialogService>());
         }
 
         public void ActivateStartupPlugins()

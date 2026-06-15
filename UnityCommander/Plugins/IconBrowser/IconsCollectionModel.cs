@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using IconBrowser.Components.InputBox;
 using IconBrowser.Models;
-using IconBrowser.Mvvm.Base;
+using IconMaker.Core.Mvvm.Base;
 
 namespace IconBrowser
 {
@@ -32,7 +32,7 @@ namespace IconBrowser
         /// <summary>
         /// Command to add new icons.
         /// </summary>
-        public static ICommand AddNewCollection => new Mvvm.Base.RelayCommand(name =>
+        public static ICommand AddNewCollection => new RelayCommand(name =>
         {
             using (IconsDataWriter dataWriter = new IconsDataWriter())
             {
@@ -97,9 +97,9 @@ namespace IconBrowser
         {
             this.CollectionContextMenu = new ContextMenu();
             this.ContextMenu = new ContextMenu();
-            this.ContextMenu.Items.Add(new MenuItem { Header = "Add category", Command = new Mvvm.Base.RelayCommand(obj => InputBox.Show(AddNewCollection, Actions.Add))});
-            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Rename", Command = new Mvvm.Base.RelayCommand(obj => InputBox.Show(this.RenameCollection, Components.InputBox.Actions.Change, this.CollectionName))});
-            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Remove", Command = new Mvvm.Base.RelayCommand(RemoveCollection) });
+            this.ContextMenu.Items.Add(new MenuItem { Header = "Add category", Command = new RelayCommand(obj => InputBox.Show(AddNewCollection, Actions.Add))});
+            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Rename", Command = new RelayCommand(obj => InputBox.Show(this.RenameCollection, Components.InputBox.Actions.Change, this.CollectionName))});
+            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Remove", Command = new RelayCommand(RemoveCollection) });
         }
     }
 

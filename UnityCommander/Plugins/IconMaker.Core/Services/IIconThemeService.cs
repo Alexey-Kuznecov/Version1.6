@@ -1,11 +1,17 @@
 ﻿
 using IconMaker.Core.Models;
-using System.Windows.Media;
 
 namespace IconMaker.Core.Services
 {
     public interface IIconThemeService
     {
+        IconTheme CurrentTheme { get; }
+
+        void SetCurrentTheme(string id);
+
+
+        event Action<string> ThemeChanged;
+
         IconTheme GetTheme(string id);
 
         IReadOnlyCollection<IconTheme> GetThemes();

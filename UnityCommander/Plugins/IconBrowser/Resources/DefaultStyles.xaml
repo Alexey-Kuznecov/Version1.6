@@ -8,7 +8,7 @@
         <Setter Property="FontWeight" Value="Bold" />
     </Style>-->
 
-    <ControlTemplate x:Key="ComboBoxItemTemplate" TargetType="ComboBoxItem">
+    <DataTemplate x:Key="ComboBoxItemTemplate">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10*" />
@@ -42,7 +42,7 @@
                 Padding="5"
                 Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
         </Grid>
-    </ControlTemplate>
+    </DataTemplate>
 
     <!--  СТИЛИ ДЛЯ ИКОНОК РЕДАКТОРА ИКОНОК  -->
 

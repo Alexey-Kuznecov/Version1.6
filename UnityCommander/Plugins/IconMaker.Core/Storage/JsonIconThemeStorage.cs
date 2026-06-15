@@ -6,22 +6,19 @@ namespace IconMaker.Core.Storage
 {
     public sealed class JsonIconThemeStorage : IIconThemeStorage
     {
-        private readonly IFileReader _reader;
-        private readonly IFileWriter _writer;
+        private readonly FileSystem _file;
+
         private readonly IThemeSerializer _serializer;
 
         private readonly string _directory;
 
         public JsonIconThemeStorage(
-            string directory,
-            IFileReader reader,
-            IFileWriter writer,
+            IconPaths iconPaths,
+            FileSystem file,
             IThemeSerializer serializer)
         {
-            _directory = directory;
-
-            _reader = reader;
-            _writer = writer;
+            _directory = iconPaths.RootPath;
+            _file = file;
             _serializer = serializer;
         }
 
@@ -29,7 +26,7 @@ namespace IconMaker.Core.Storage
         {
             var path = GetPath(id);
 
-            var data = _reader.Read(path);
+            var data = _file.Read(path);
 
             return _serializer.Deserialize(data);
         }
@@ -40,7 +37,7 @@ namespace IconMaker.Core.Storage
 
             var data = _serializer.Serialize(theme);
 
-            _writer.Write(path, data);
+            _file.Write(path, data);
         }
 
         public void Delete(string id)

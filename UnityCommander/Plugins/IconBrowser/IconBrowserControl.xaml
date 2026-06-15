@@ -190,7 +190,7 @@
                     VerticalAlignment="Bottom"
                     Content="{Binding ElementName=S, Path=Value}" />
             </Grid>
-            <ComboBox
+            <!--<ComboBox
                 x:Name="ComboBox"
                 Grid.Row="1"
                 Grid.Column="0"
@@ -217,7 +217,7 @@
                 <ComboBoxItem Content="#FF028d5b" Template="{StaticResource ComboBoxItemTemplate}" />
                 <ComboBoxItem Content="#FF009FE3" Template="{StaticResource ComboBoxItemTemplate}" />
                 <ComboBoxItem Content="#FF672f8f" Template="{StaticResource ComboBoxItemTemplate}" />
-            </ComboBox>
+            </ComboBox>-->
             <Grid Grid.Row="1" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40*" />

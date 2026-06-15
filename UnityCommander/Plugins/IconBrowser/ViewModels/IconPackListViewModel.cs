@@ -1,6 +1,6 @@
 ﻿
 using IconBrowser.Models;
-using IconBrowser.Mvvm.Base;
+using IconMaker.Core.Mvvm.Base;
 using IconMaker.Core.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -26,12 +26,12 @@ namespace IconBrowser.ViewModels
 
             Packs = new ObservableCollection<IconPackInfo>();
 
-            foreach (var item in _service.GetPackIds())
+            foreach (var (id, name) in _service.GetPackHeaders())
             {
-                Packs.Add(new IconPackInfo()
+                Packs.Add(new IconPackInfo
                 {
-                    Id = item,
-                    Name = item,
+                    Id = id,
+                    Name = name
                 });
             }
         }

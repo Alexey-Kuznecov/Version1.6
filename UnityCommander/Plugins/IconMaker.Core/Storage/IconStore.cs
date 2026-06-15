@@ -42,12 +42,9 @@ namespace IconMaker.Core.Storage
         }
 
         // IconStore
-        public IEnumerable<string> GetPackIds()
+        public IEnumerable<(string Id, string Name)> GetPackHeaders()
         {
-            foreach (var id in _storage.GetPackIds())
-            {
-                yield return id;
-            }
+            return _storage.GetPackHeaders();
         }
 
         // =========================

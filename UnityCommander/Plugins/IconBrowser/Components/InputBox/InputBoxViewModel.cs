@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using IconMaker.Core.Mvvm.Base;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using IconBrowser.Mvvm.Base;
 
 namespace IconBrowser.Components.InputBox
 {

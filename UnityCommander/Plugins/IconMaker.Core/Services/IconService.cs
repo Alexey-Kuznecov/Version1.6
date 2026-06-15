@@ -34,10 +34,9 @@ namespace IconMaker.Core.Services
             return _store.GetLoadedPacks().ToList();
         }
 
-        // IIconService
-        public IEnumerable<string> GetPackIds()
-        {
-            return _store.GetPackIds();
+        public IEnumerable<(string Id, string Name)> GetPackHeaders() 
+        { 
+            return _store.GetPackHeaders(); 
         }
 
         public void ImportPack(IconPack pack)

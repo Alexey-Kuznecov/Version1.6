@@ -7,6 +7,8 @@ namespace IconMaker.Core.Storage
     {
         IEnumerable<string> GetPackIds();
 
+        IEnumerable<(string Id, string Name)> GetPackHeaders();
+
         IconPack Load(string name);
 
         void Save(IconPack pack);

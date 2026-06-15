@@ -12,9 +12,9 @@ using IconBrowser.Contracts;
 using IconMaker.Core.Models;
 using IconMaker.Core.Helper;
 using IconBrowser.Models;
-using IconBrowser.Mvvm.Base;
 using IconBrowser.Services;
 using IconBrowser.Converter;
+using IconMaker.Core.Mvvm.Base;
 
 namespace IconBrowser
 {
@@ -203,7 +203,7 @@ namespace IconBrowser
         /// <summary>
         /// The command sets the brush color, background color, and name for the icon.
         /// </summary>
-        public ICommand SelectIconCommand => new Mvvm.Base.RelayCommand(obj =>
+        public ICommand SelectIconCommand => new RelayCommand(obj =>
         {
             ButtonExtension bt = obj as ButtonExtension;
             IconModel iconModel = new IconModel
@@ -221,7 +221,7 @@ namespace IconBrowser
         /// <summary>
         /// Close icon editor.
         /// </summary>
-        public ICommand ShutdownCommand => new Mvvm.Base.RelayCommand(obj =>
+        public ICommand ShutdownCommand => new RelayCommand(obj =>
         {
             Application app = Application.Current;
             app.Shutdown();
@@ -230,7 +230,7 @@ namespace IconBrowser
         /// <summary>
         /// Loads an xaml format icon from a computer and writes it to an xml file.
         /// </summary>
-        public ICommand AddNewIconCommand => new Mvvm.Base.RelayCommand(obj =>
+        public ICommand AddNewIconCommand => new RelayCommand(obj =>
         {
             if (this._dialogService.OpenFileDialog())
             {
@@ -336,17 +336,17 @@ namespace IconBrowser
             foreach (var bt in buttons)
             {
                 bt.CommandParameter = bt;
-                bt.RemoveIcon = new Mvvm.Base.RelayCommand(obj =>
+                bt.RemoveIcon = new RelayCommand(obj =>
                 {
                     IconsDataModifier.Remove(bt.Id, bt.CollectionName);
                     this.Icons.Remove(obj as ButtonExtension);
                 });
-                bt.RenameIcon = new Mvvm.Base.RelayCommand(obj =>
+                bt.RenameIcon = new RelayCommand(obj =>
                 {
                     _buttonExtension = obj as ButtonExtension;
                     InputBox.Show(this.RemaneIconCommand, Actions.Change, (obj as ButtonExtension)?.IconName);
                 });
-                bt.ReplaceIcon = new Mvvm.Base.RelayCommand(obj =>
+                bt.ReplaceIcon = new RelayCommand(obj =>
                 {
                     IconsDataWriter.IconReplace(((ButtonExtension)obj).Id, "Неподшитые", "Игры");
                     this.Icons.Remove((ButtonExtension)obj);

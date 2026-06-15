@@ -15,7 +15,7 @@ namespace IconMaker.Core.Services
 
         IReadOnlyList<IconPack> GetAllPacks();
 
-        public IEnumerable<string> GetPackIds();
+        IEnumerable<(string Id, string Name)> GetPackHeaders();
 
         void CreatePack(string id, string name);
 

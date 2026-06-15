@@ -1,8 +1,8 @@
-﻿using System;
+﻿
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace IconBrowser.Mvvm.Base
+namespace IconMaker.Core.Mvvm.Base
 {
     public class PropertiesChanged : INotifyPropertyChanged
     {
