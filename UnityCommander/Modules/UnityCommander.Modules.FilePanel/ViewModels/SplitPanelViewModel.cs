@@ -278,6 +278,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             };
         }
 
+        private void OnPluginUnloaded(string pluginId)
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var defsFiles = columnRegistry.GetColumns(PanelType.Files).ToList();
+                var defsFolders = columnRegistry.GetColumns(PanelType.Folders).ToList();
+                var defsDrives = columnRegistry.GetColumns(PanelType.Drives).ToList();
+
+                _fileNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Files", PanelType.Files, defsFiles);
+                _folderNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Folders", PanelType.Folders, defsFolders);
+                _driveNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Drives", PanelType.Drives, defsDrives);
+            }));
+        }
+
         public DelegateCommand<object> UpdateCommand =>
           new DelegateCommand<object>(dir =>
           {

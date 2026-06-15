@@ -1,8 +1,10 @@
 ﻿
 
+using UnityCommander.Common.Plugins;
+
 namespace UnityCommander.Common.Sidebar
 {
-    public interface ISidebarDefinition
+    public interface ISidebarDefinition : IPluginOwned
     {
         string Id { get; }
 

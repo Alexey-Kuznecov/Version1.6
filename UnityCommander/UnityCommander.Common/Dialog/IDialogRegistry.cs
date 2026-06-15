@@ -13,5 +13,7 @@ namespace UnityCommander.Common.Dialog
         bool TryGet(string id, out IDialogDefinition registration);
 
         IReadOnlyCollection<IDialogDefinition> GetAll();
+
+        void Cleanup(string pluginId);
     }
 }

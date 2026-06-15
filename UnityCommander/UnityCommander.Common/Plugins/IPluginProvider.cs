@@ -2,11 +2,8 @@
 using PluginSystem.Runtime;
 using System.Collections.Generic;
 
-namespace UnityCommander.Services.Interfaces
+namespace UnityCommander.Common.Plugins
 {
-    /// <summary>
-    /// The PluginProvider interface.
-    /// </summary>
     public interface IPluginProvider
     {
         PluginContainer GetContainer(string pluginId);

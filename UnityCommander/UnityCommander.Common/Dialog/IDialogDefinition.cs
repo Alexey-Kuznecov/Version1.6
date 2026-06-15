@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 
 namespace UnityCommander.Common.Dialog
 {
@@ -11,5 +12,7 @@ namespace UnityCommander.Common.Dialog
         Type ViewModelType { get; }
 
         DialogOptions Options { get; }
+
+        string OwnerId { get; }
     }
 }

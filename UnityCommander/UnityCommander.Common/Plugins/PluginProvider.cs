@@ -2,9 +2,8 @@
 using PluginSystem.Abstractions.Plugin;
 using PluginSystem.Runtime;
 using System.Collections.Generic;
-using UnityCommander.Services.Interfaces;
 
-namespace UnityCommander.Services.Plugins
+namespace UnityCommander.Common.Plugins
 {
     public class PluginProvider : IPluginProvider
     {

@@ -15,8 +15,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using MaterialDesignThemes.Wpf;
     using Prism.Dialogs;
     using Prism.Mvvm;
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Shapes;
     using UnityCommander.Common.Helper;
@@ -28,6 +30,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Services.Interfaces.Bootstrap;
     using UnityCommander.Services.Interfaces.Plugins;
     using UnityCommander.Services.Interfaces.Sidebar;
+    using static UnityCommander.Common.Commands.CommandNames;
 
     /// <summary>
     /// The view a view model.
@@ -75,6 +78,23 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
             IconHideSidebar =
                 iconProvider.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+
+            sidebarService.PluginUnloaded += SidebarService_PluginUnloaded;
+        }
+
+        private void SidebarService_PluginUnloaded(string pluginId)
+        {
+            var itemsToRemove = SidebarItems
+                .Where(x => x.Owner == pluginId)
+                .ToList();
+
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                foreach (var item in itemsToRemove)
+                {
+                    SidebarItems.Remove(item);
+                }
+            });
         }
 
         public ObservableCollection<SidebarItem> SidebarItems { get; } = new();
@@ -138,6 +158,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         internal void Initialize()
         {
+            SidebarItems.Clear();
+
             foreach (var item in _sidebarService.GetAll().ToList())
             {
                 var view = (UserControl)_viewResolver.Resolve(item.ViewType);
@@ -149,6 +171,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                     {
                         Id = item.Id,
                         Content = view,
+                        Owner = item.PluginId,
                         Icon = packIcon.Single(
                             i => ((Common.Models.Icons.Icon)i).Category == item.IconKey)
                     });

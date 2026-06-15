@@ -38,7 +38,6 @@ namespace MultiColumns
 
         public void Stop()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -39,6 +39,8 @@ namespace UnityCommander.Services.Plugins
 
         public void Activate(string pluginId)
         {
+            _manager.Prepare(pluginId);
+
             var container = _manager.GetContainerById(pluginId);
             
             if (container.IsActivated)
@@ -47,13 +49,10 @@ namespace UnityCommander.Services.Plugins
             //_resources.Load(container);
             GetPluginResources(container.LoadedAssembly);
 
-            var logger = _logger.ForPlugin($"PluginActivator:{container.PluginID}");
-
             var plugin = (IPlugin)Activator.CreateInstance(container.PluginType);
 
-            var registrar = new PluginRegistrar();
-            var initContext = new PluginInitContext(registrar);
-
+            var registrar = new PluginRegistrar(container.PluginID);
+            
             using (var init = new PluginInitContext(registrar))
             {
                 plugin.Initialize(init);

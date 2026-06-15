@@ -22,5 +22,12 @@ namespace UnityCommander.Integration
             Dialog = dialog;
             Columns = registry;
         }
+
+        public void Cleanup(string id)
+        {
+            Dialog.Cleanup(id);
+            Columns.Cleanup(id);
+            Sidebar.Cleanup(id);
+        }
     }
 }

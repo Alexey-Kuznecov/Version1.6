@@ -1,6 +1,7 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
+using UnityCommander.Common.Plugins;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 

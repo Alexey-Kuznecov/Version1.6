@@ -2,20 +2,21 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
+using UnityCommander.Common.Plugins;
 
 namespace UnityCommander.Common.Dialog
 {
     public sealed class WindowManager : IWindowManager
     {
         private readonly IDialogRegistry _registry;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IPluginProvider _provider;
 
         public WindowManager(
             IDialogRegistry registry,
-            IServiceProvider serviceProvider)
+            IPluginProvider provider)
         {
+            _provider = provider;
             _registry = registry;
-            _serviceProvider = serviceProvider;
         }
 
         public bool ShowDialog(string id)
@@ -42,16 +43,18 @@ namespace UnityCommander.Common.Dialog
 
         private Window CreateWindow(IDialogDefinition registration)
         {
+            var container = _provider.GetContainer(registration.OwnerId);
+
             var options = registration.Options ?? new DialogOptions();
 
             var view =
                 (FrameworkElement)ActivatorUtilities.CreateInstance(
-                    _serviceProvider,
+                    container.Services,
                     registration.ViewType);
 
             var viewModel =
                 ActivatorUtilities.CreateInstance(
-                    _serviceProvider,
+                     container.Services,
                     registration.ViewModelType);
 
             view.DataContext = viewModel;

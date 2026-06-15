@@ -14,5 +14,7 @@ namespace UnityCommander.Integration
         IColumnRegistry Columns { get; }
 
         //IConsoleCommandRegistry Console { get; }
+
+        void Cleanup(string id);
     }
 }

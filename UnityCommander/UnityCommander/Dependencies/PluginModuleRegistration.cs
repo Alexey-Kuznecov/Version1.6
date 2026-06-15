@@ -5,8 +5,8 @@ using PluginSystem.Runtime;
 using Prism.Ioc;
 using System;
 using System.IO;
+using UnityCommander.Common.Plugins;
 using UnityCommander.Integration;
-using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.Services.Plugins;
 

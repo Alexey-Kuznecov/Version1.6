@@ -5,6 +5,8 @@ namespace UnityCommander.Common.Sidebar
 {
     public class SidebarSection : ISidebarSection
     {
+        public string PluginId { get; set; }
+
         public string Id { get; }
 
         public ISidebarDefinition Definition { get; }
@@ -14,8 +16,10 @@ namespace UnityCommander.Common.Sidebar
         public Type ViewModel { get; }
 
         public string IconKey { get; }
-
+        
         private bool _isActive;
+
+        public string OwnerId => PluginId;
 
         public SidebarSection(
            ISidebarDefinition def,
