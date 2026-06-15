@@ -26,7 +26,7 @@ namespace UnityCommander.Logging.Infrastructure
             return Create(typeof(T).Name, scope);
         }
 
-        public ILogger ForPlugin(string pluginId)
-            => Create("Plugin", LogScope.Plugin(pluginId));
+        public ILogger ForPlugin()
+            => Create("Plugin", LogScope.Plugin());
     }
 }

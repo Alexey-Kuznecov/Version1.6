@@ -1,10 +1,12 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
+using System.Threading;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.ToolBar;
+using UnityCommander.Services.Background;
 using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Interfaces;
 
@@ -20,6 +22,9 @@ namespace UnityCommander
         {
             RegisterDiagnostics(containerProvider);
             var initializer = containerProvider.Resolve<AppInitializer>();
+            var refreshService = containerProvider.Resolve<IBackgroundService>();
+            var token = new CancellationToken();
+            _ = refreshService.RunAsync(token);
             initializer.Initialize();
         }
 

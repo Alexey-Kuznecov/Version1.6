@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using UnityCommander.Common.Columns;
 
@@ -6,8 +7,16 @@ namespace UnityCommander.Modules.FilePanel.Columns
 {
     public interface IColumnRegistry
     {
-        public void RegisterProvider(IColumnProvider provider);
+        event Action<string>? PluginUnloaded;
 
-        public IEnumerable<ColumnModel> GetColumns(PanelType panelType);
+        void RegisterSystemProvider(IColumnProvider provider);
+
+        void RegisterPluginProvider(string pluginId, IColumnProvider provider);
+
+        IEnumerable<ColumnModel> GetColumns(PanelType panelType);
+
+        void Unregister(IColumnProvider provider);
+
+        void Cleanup(string pluginId);
     }
 }

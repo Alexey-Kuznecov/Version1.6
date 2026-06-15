@@ -11,37 +11,37 @@ namespace MultiColumns.DateTime
     using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
-    public class PluginConfiguration : IPluginFactory, ICommandFactory
-    {
-        private DateTimeColumn dateTimeColumn;
+    //public class PluginConfiguration : IPluginFactory, ICommandFactory
+    //{
+    //    private DateTimeColumn dateTimeColumn;
 
-        public void Configure(IServiceCollection services)
-        {
-            this.dateTimeColumn = new DateTimeColumn();
+    //    public void Configure(IServiceCollection services)
+    //    {
+    //        this.dateTimeColumn = new DateTimeColumn();
 
-            services.AddSingleton<IColumnBuilder>(this.DateTimeFactory);
-            services.AddSingleton<IOptionBuilder>(this.DateTimeFactory);
-            services.AddSingleton<IPluginDescriptor>(this.DateTimeFactory);
-        }
+    //        services.AddSingleton<IColumnBuilder>(this.DateTimeFactory);
+    //        services.AddSingleton<IOptionBuilder>(this.DateTimeFactory);
+    //        services.AddSingleton<IPluginDescriptor>(this.DateTimeFactory);
+    //    }
 
-        public void CommandFactory(CommandBuilder command)
-        {
-            command.Register<IOOverrideCommand2, IOCommands>();
-            command.RegisterWithArgument<IPluginSettings, DateTimeColumn>(this.dateTimeColumn, new DateTimeSettings());
-        }
+    //    public void CommandFactory(CommandBuilder command)
+    //    {
+    //        command.Register<IOOverrideCommand2, IOCommands>();
+    //        command.RegisterWithArgument<IPluginSettings, DateTimeColumn>(this.dateTimeColumn, new DateTimeSettings());
+    //    }
 
-        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
-        {
-            typesRegister.RegisterSettings<DateTimeSettings>(this.dateTimeColumn);
-        }
+    //    public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
+    //    {
+    //        typesRegister.RegisterSettings<DateTimeSettings>(this.dateTimeColumn);
+    //    }
 
-        private DateTimeColumn DateTimeFactory(IServiceProvider service)
-        {
-            return this.dateTimeColumn;
-        }
+    //    private DateTimeColumn DateTimeFactory(IServiceProvider service)
+    //    {
+    //        return this.dateTimeColumn;
+    //    }
 
-        public void SetToken(string token)
-        {
-        }
-    }
+    //    public void SetToken(string token)
+    //    {
+    //    }
+    //}
 }

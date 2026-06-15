@@ -22,7 +22,7 @@ namespace MultiColumns
         public void Initialize(IPluginInitContext init)
         {
             init.RegisterColumn<IColumnProvider, DateTimeColumnProvider>();
-            init.RegisterView<MultiColumn, MultiColumnViewModel>();
+            //init.RegisterView<MultiColumn, MultiColumnViewModel>();
         }
 
         public void Start(IPluginContext context)
@@ -32,7 +32,7 @@ namespace MultiColumns
 
         public void Stop()
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
     }
 }

@@ -1,0 +1,79 @@
+﻿
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using UnityCommander.Modules.FilePanel.Services;
+
+namespace UnityCommander.Modules.FilePanel.Behaviors
+{
+    public static class ScrollBehavior
+    {
+        public static readonly DependencyProperty EnableProperty =
+            DependencyProperty.RegisterAttached(
+                "Enable",
+                typeof(bool),
+                typeof(ScrollBehavior),
+                new PropertyMetadata(false, OnEnableChanged));
+
+        public static void SetEnable(DependencyObject obj, bool value)
+            => obj.SetValue(EnableProperty, value);
+
+
+        public static readonly DependencyProperty ViewportTargetProperty =
+            DependencyProperty.RegisterAttached(
+                "ViewportTarget",
+                typeof(object),
+                typeof(ScrollBehavior),
+                new PropertyMetadata(null));
+
+        public static void SetViewportTarget(DependencyObject obj, IViewportHost value)
+            => obj.SetValue(ViewportTargetProperty, value);
+
+        public static IViewportHost GetViewportTarget(DependencyObject obj)
+            => (IViewportHost)obj.GetValue(ViewportTargetProperty);
+
+        private static void OnEnableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not ListView listView)
+                return;
+
+            listView.Loaded += (_, __) =>
+            {
+                var sv = GetScrollViewer(listView);
+                if (sv == null)
+                    return;
+
+                var target = GetViewportTarget(listView);
+
+                if (target == null)
+                    return;
+
+                sv.ScrollChanged += (s, args) =>
+                {
+                    target.Mapper.Update(
+                        sv.VerticalOffset,
+                        sv.ViewportHeight);
+                };
+            };
+        }
+
+        public static ScrollViewer GetScrollViewer(DependencyObject obj)
+        {
+            if (obj is ScrollViewer sv)
+                return sv;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+                var result = GetScrollViewer(child);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        public static event Action<int, int>? ScrollChanged;
+    }
+}

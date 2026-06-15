@@ -16,8 +16,8 @@
         public static readonly LogScope UI = new("UI");
         public static readonly LogScope UserAction = new("UserAction");
 
-        public static LogScope Plugin(string id)
-            => new($"Plugin:{id}");
+        public static LogScope Plugin()
+            => new($"Plugin");
 
         public override string ToString() => Value;
     }

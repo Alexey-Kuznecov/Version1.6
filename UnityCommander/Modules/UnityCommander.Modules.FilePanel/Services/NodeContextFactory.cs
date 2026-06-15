@@ -1,11 +1,11 @@
 ﻿
 using Prism.Commands;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.States;
@@ -20,66 +20,50 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly ISelectionManager _selection;
         private readonly ICommandUIService _commands;
         private readonly IDropTarget _dropTarget;
+        private readonly NodeContextRegistry _contextRegistry;
+        private ViewportMapper _scrollMapper;
 
         public NodeContextFactory(
             NavigationManager navigation,
             ContextMenuController menu,
             ISelectionManager selection,
             ICommandUIService commands,
-            GongDropAdapter dropTarget)
+            GongDropAdapter dropTarget, 
+            NodeContextRegistry nodeContext, 
+            ViewportMapper scrollMapper)
         {
             _navigation = navigation;
             _menu = menu;
             _selection = selection;
             _commands = commands;
             _dropTarget = dropTarget;
+            _contextRegistry = nodeContext;
+            _scrollMapper = scrollMapper;
         }
 
         public FolderNodeContext CreateFolderNode()
         {
-            FolderNodeContext ctx = null;
+            var ctx = new FolderNodeContext(
+               _selection,
+               _dropTarget,
+               _menu,
+               _navigation,
+               _scrollMapper);
 
-            ctx = new FolderNodeContext()
-            {
-                SelectionManager = _selection,
-
-                NavigateCommand = new DelegateCommand<FolderModel>(dir =>
-                {
-                    var sw = Stopwatch.StartNew();
-                 
-                    if (dir != null)
-                        _navigation.TryNavigateTo(dir.Path);
-                    sw.Stop();
-
-                    Debug.WriteLine($"NavigateTo: {sw.ElapsedMilliseconds} ms");
-                }),
-
-                ShowContextMenuCommand = new DelegateCommand<object>(x =>
-                {
-                    _menu.Show(ctx, x);
-                }),
-
-                DropTarget = _dropTarget
-            };
+            _contextRegistry.Register(ctx);
 
             return ctx;
         }
 
         public FileNodeContext CreateFileNode()
         {
-            FileNodeContext ctx = null;
+            var ctx = new FileNodeContext(
+                _selection,
+                _dropTarget,
+                _menu,
+                _scrollMapper);
 
-            ctx = new FileNodeContext()
-            {
-                SelectionManager = _selection,
-
-                ShowContextMenuCommand = new DelegateCommand<object>(x =>
-                {
-                    _menu.Show(ctx, x);
-                }),
-
-                DropTarget = _dropTarget
-            };
+            _contextRegistry.Register(ctx);
 
             return ctx;
         }

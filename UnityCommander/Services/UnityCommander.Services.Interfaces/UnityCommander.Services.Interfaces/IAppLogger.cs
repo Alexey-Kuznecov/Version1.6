@@ -7,6 +7,6 @@ namespace UnityCommander.Services.Interfaces
     {
         ILogger Create(string category, LogScope scope);
         ILogger For<T>(LogScope scope = default);
-        ILogger ForPlugin(string pluginId);
+        ILogger ForPlugin();
     }
 }

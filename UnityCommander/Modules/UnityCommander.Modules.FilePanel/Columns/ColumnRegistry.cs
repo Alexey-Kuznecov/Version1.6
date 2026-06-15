@@ -2,29 +2,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Common.Column;
 using UnityCommander.Common.Columns;
 
 namespace UnityCommander.Modules.FilePanel.Columns
 {
     public class ColumnRegistry : IColumnRegistry
     {
-        private readonly List<IColumnProvider> providers = new();
-        
-        public ColumnRegistry(IEnumerable<IColumnProvider> providers)
+        private readonly List<ColumnProviderEntry> _entries = new();
+
+        private Dictionary<PanelType, List<ColumnModel>> _cache = new();
+        private Dictionary<PanelType, int> _version = new();
+
+        public event Action<string>? PluginUnloaded;
+
+        public ColumnRegistry(IEnumerable<IColumnProvider> systemProviders)
         {
-            this.providers = providers.ToList();
+            foreach (var provider in systemProviders)
+            {
+                RegisterSystemProvider(provider);
+            }
         }
 
-        public void RegisterProvider(IColumnProvider provider)
+        public void RegisterSystemProvider(IColumnProvider provider)
         {
-            if (!providers.Contains(provider))
-                providers.Add(provider);
+            _entries.Add(new ColumnProviderEntry(null, provider));
+        }
+
+        public void RegisterPluginProvider(string pluginId, IColumnProvider provider)
+        {
+            _entries.Add(new ColumnProviderEntry(pluginId, provider));
         }
 
         public IEnumerable<ColumnModel> GetColumns(PanelType panelType)
         {
-            var columns = providers
-                .SelectMany(p => p.GetColumnDefinitions(panelType))
+            var columns = _entries
+                .SelectMany(e => e.Provider.GetColumnDefinitions(panelType))
                 .ToList();
 
             var duplicates = columns
@@ -33,17 +46,22 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 .ToList();
 
             if (duplicates.Any())
-            {
                 throw new InvalidOperationException(
                     $"Duplicate column ids: {string.Join(", ", duplicates.Select(x => x.Key))}");
-            }
 
             return columns.OrderBy(c => c.Order);
         }
 
-        internal object GetColumns(object panelType)
+        public void Unregister(IColumnProvider provider)
         {
-            throw new NotImplementedException();
+            _entries.RemoveAll(e => e.Provider == provider);
+        }
+
+        public void Cleanup(string pluginId)
+        {
+            _entries.RemoveAll(e => e.PluginId == pluginId);
+
+            PluginUnloaded?.Invoke(pluginId);
         }
     }
 }

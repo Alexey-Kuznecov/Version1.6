@@ -1,6 +1,8 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Common.Column;
 using UnityCommander.Common.Columns;
 using UnityCommander.Common.Models.Directory;
 
@@ -16,14 +18,37 @@ namespace MultiColumns.DateTime
                 {
                     new ColumnModel
                     {
-                        Id = "multi.name",
-                        Header = "Name",
+                        Id = "debug.progress",
+                        Header = "Debug",
                         //DisplayMemberPath = "Name",
-                        CellTemplateResourceKey = "ColumnNameDataTemplate",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        UpdatePriority = ColumnUpdatePriority.Realtime,
                         Width = 200,
                         Order = 1,
-                        SyncGroup = "Name",
-                        ColumnValueHandler = f => ((BaseDirectory)f).Name
+                        SyncGroup = "Name2",
+                        IsDynamic = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var r = Random.Shared.Next(0, 100);
+                            return $"{r}%";
+                        }
+                    },
+                    new ColumnModel
+                    {
+                        Id = "debug.progress2",
+                        Header = "Debug2",
+                        //DisplayMemberPath = "Name",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        UpdatePriority = ColumnUpdatePriority.Normal,
+                        Width = 200,
+                        Order = 1,
+                        SyncGroup = "Name2",
+                        IsDynamic = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var r = Random.Shared.Next(100, 200);
+                            return $"{r}%";
+                        }
                     }
                 };
             }
@@ -36,11 +61,17 @@ namespace MultiColumns.DateTime
                         Id = "multi.lastAccessTime",
                         Header = "Last Access",
                         //DisplayMemberPath = "LastAccessTime",
-                        CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        UpdatePriority = ColumnUpdatePriority.Background,
                         Width = 100,
                         Order = 3,
                         SyncGroup = "LastAccess",
-                        ColumnValueHandler = f => ((BaseDirectory)f).LastAccessTime
+                        IsDynamic = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var r = Random.Shared.Next(0, 100);
+                            return $"{r}%";
+                        }
                     }
                 };
             }

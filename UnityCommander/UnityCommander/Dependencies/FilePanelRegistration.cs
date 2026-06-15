@@ -6,8 +6,10 @@ using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Operation;
 using UnityCommander.Services;
+using UnityCommander.Services.Background;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Settings;
 using UnityCommander.Services.Selection;
@@ -48,6 +50,11 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IColumnProvider, DefaultColumnProvider>();
             registry.Register<IColumnStateManager, ColumnStateManager>(); // по панели
             registry.RegisterSingleton<IColumnRegistry, ColumnRegistry>(); // зависит от задач
+
+            /// Background Services
+            registry.RegisterSingleton<NodeContextRegistry>();
+            registry.RegisterSingleton<ViewportMapper>();
+            registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
         }
     }
 }

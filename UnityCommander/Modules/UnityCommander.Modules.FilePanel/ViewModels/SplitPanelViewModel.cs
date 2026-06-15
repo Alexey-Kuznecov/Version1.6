@@ -76,6 +76,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IColumnStateManager columnStateManager;
         private readonly IColumnRegistry columnRegistry;
         private readonly IColumnSettingsStore settings;
+        private readonly NodeContextRegistry _contextRegistry;
         private readonly TabState _state;
         public event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;
@@ -132,9 +133,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               CommandExecutionService commandService, 
               ICommandUIService commandUIService,
               ContextMenuController contextMenuController,
-              GongDropAdapter dropTarget)
+              GongDropAdapter dropTarget, 
+              NodeContextRegistry contextRegistry, 
+              ViewportMapper scrollMapper)
             : base(regionManager)
         {
+            _contextRegistry = contextRegistry;
+
             _state = new TabState();
             _state.CurrentPathChanged += path =>
             {
@@ -174,15 +179,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.settings = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
             this.columnRegistry = columnRegistry ?? throw new ArgumentNullException(nameof(settingsStore));
 
-            //_fileColumnController = new ColumnController<FileModel>(_state, columnRegistry, columnStateManager);
-            //_folderColumnController = new ColumnController<FolderModel>(_state, columnRegistry, columnStateManager);
+            columnRegistry.PluginUnloaded += OnPluginUnloaded;
 
             var contextFactory = new NodeContextFactory(
                 _navigationService, 
                 _contextMenuController, 
                 _selectionManager, 
                 _commandUIService,
-                dropTarget);
+                dropTarget,
+                _contextRegistry, 
+                scrollMapper);
 
             var contentFactory = new ContentNodeFactory(contextFactory);
 
@@ -304,116 +310,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               }
           });
 
-        #region Обработка Drag-and-Drop
-
-        ///// <summary>
-        ///// Обрабатывает событие DragOver, устанавливая визуальные эффекты для корректного отображения adorner.
-        ///// </summary>
-        ///// <param name="dropInfo">Информация о событии перетаскивания.</param>
-        //void IDropTarget.DragOver(IDropInfo dropInfo)
-        //{
-        //    // Проверяем, есть ли реально выбранные элементы
-        //    bool hasElements = false;
-
-        //    if (dropInfo.Data is BaseDirectory)
-        //        hasElements = true;
-        //    else if (dropInfo.Data is IList list && list.Count > 0)
-        //        hasElements = true;
-
-        //    // Если драг начат с пустого места (нет элементов) — блокируем драг
-        //    if (!hasElements)
-        //    {
-        //        dropInfo.Effects = DragDropEffects.None;
-        //        dropInfo.DropTargetAdorner = null;
-        //        return;
-        //    }
-
-        //    // Если драг идёт по элементу — разрешаем
-        //    bool isMultiSelect = dropInfo.Data is List<object> && dropInfo.TargetItem is ListBox or BaseDirectory;
-        //    bool isSingleSelect = dropInfo.Data is BaseDirectory && dropInfo.TargetItem is ListBox or BaseDirectory;
-
-        //    var adorner = AdornerLayer.GetAdornerLayer(dropInfo.VisualTarget);
-        //    if (adorner == null)
-        //        this.CreateAdornerLayer(dropInfo.VisualTarget);
-
-        //    if (isMultiSelect || isSingleSelect)
-        //        dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
-
-        //    dropInfo.Effects = DragDropEffects.Copy;
-        //}
-
-        ///// <summary>
-        ///// Обрабатывает событие Drop, инициируя диалог копирования и передачу параметров.
-        ///// </summary>
-        ///// <param name="dropInfo">Информация о событии Drop.</param>
-        //void IDropTarget.Drop(IDropInfo dropInfo)
-        //{
-        //    var visualTarget = dropInfo.VisualTarget as ListBox;
-        //    var splitPanelViewModel = visualTarget?.DataContext as SplitPanelViewModel;
-
-        //    string targetPath = null;
-        //    var targetItem = dropInfo.TargetItem as BaseDirectory;
-
-        //    // Определяем путь назначения
-        //    if (targetItem == null)
-        //    {
-        //        var firstItem = visualTarget?.SelectedItem as BaseDirectory;
-        //        if (firstItem != null)
-        //        {
-        //            var pathParts = firstItem.Path.Split('\\');
-        //            targetPath = System.IO.Path.Combine(pathParts.Take(pathParts.Length - 1).ToArray());
-        //        }
-        //        else
-        //        {
-        //            targetPath = _state.CurrentPath;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        targetPath = targetItem.Path;
-        //    }
-
-        //    // Собираем список исходных элементов
-        //    List<string> sourcePaths = new();
-        //    if (dropInfo.Data is BaseDirectory single)
-        //    {
-        //        sourcePaths.Add(single.Path);
-        //    }
-        //    else if (dropInfo.Data is IList list)
-        //    {
-        //        foreach (var item in list)
-        //        {
-        //            if (item is BaseDirectory dir)
-        //                sourcePaths.Add(dir.Path);
-        //        }
-        //    }
-
-        //    // Отправляем **в одно окно** все исходные пути
-        //    this.dialogService.ShowDialog("CopyDialog",
-        //        new OverrideDialogParameters(new CopyParameters
-        //        {
-        //            ManySource = sourcePaths,
-        //            Target = targetPath
-        //        }), r => { });
-        //}
-
-        ///// <summary>
-        ///// Создаёт слой adorner для указанного элемента, если он отсутствует.
-        ///// </summary>
-        ///// <param name="element">UI-элемент, для которого создаётся adorner.</param>
-        //private void CreateAdornerLayer(UIElement element)
-        //{
-        //    if (element is ListBox listBox && listBox.Parent is Grid parent)
-        //    {
-        //        parent.Children.Remove(listBox);
-        //        var decorator = new AdornerDecorator { Child = listBox };
-        //        parent.Children.Add(decorator);
-        //    }
-        //}
-
-        #endregion
-
-       
         public ITabPanelContent InitializedViewModel(ref Guid token, string path)
         {
             SetInternalCurrentPath(path);
@@ -436,36 +332,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             return this;
         }
 
-        #region Новая система колонок
-
-        private async Task UpdateColumnValuesAsync()
-        {
-            var fileColumns = columnRegistry.GetColumns(PanelType.Files).ToList();
-            var folderColumns = columnRegistry.GetColumns(PanelType.Folders).ToList();
-
-            var folderUpdates = new List<(FolderModel folder, string columnId, object value)>();
-            var fileUpdates = new List<(FileModel file, string columnId, object value)>();
-
-            await Task.Run(() =>
-            {
-                foreach (var folder in _folderNodeContext.Folders)
-                    foreach (var column in folderColumns)
-                        folderUpdates.Add((folder, column.Id, column.ColumnValueHandler(folder)));
-
-                foreach (var file in _fileNodeContext.Files)
-                    foreach (var column in fileColumns)
-                        fileUpdates.Add((file, column.Id, column.ColumnValueHandler(file)));
-            });
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (var u in folderUpdates)
-                    u.folder.Additional[u.columnId] = u.value;
-                foreach (var u in fileUpdates)
-                    u.file.Additional[u.columnId] = u.value;
-            });
-        }
-
         private void RefreshFileList(IEnumerable<FileModel> files)
         {
             var set = files.Select(f => f.Path).ToHashSet();
@@ -481,7 +347,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             foreach (var file in files)
             {
                 if (!existing.Contains(file.Path))
+                {
                     _fileNodeContext.Files.Add(file);
+                }
             }
         }
 
@@ -500,7 +368,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             foreach (var dir in dirs)
             {
                 if (!existing.Contains(dir.Path))
+                {
                     _folderNodeContext.Folders.Add(dir);
+                }
             }
         }
 
@@ -518,10 +388,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             RefreshDirectoryList(dirs);
             RefreshFileList(files);
 
-            await UpdateColumnValuesAsync();
+            //await UpdateColumnValuesAsync();
         }
-
-        #endregion
 
         #region Управление ресурсами и навигация
 
@@ -553,7 +421,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _folderNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Folders", PanelType.Folders, defsFolders);
             _driveNodeContext.Columns = columnStateManager.LoadState("LeftPanel.Drives", PanelType.Drives, defsDrives);
 
-            await UpdateColumnValuesAsync();
+            //await UpdateColumnValuesAsync();
         }
 
         private async Task GoDrivePanel()
@@ -629,9 +497,16 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void Dispose()
         {
             _navigationService.CurrentChanged -= OnPathChanged;
-            //_tabRegistry.Unregister(_adapter.TabId);
-            //columnSync.ColumnChanged -= OnColumnChanged;
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
+
+            (_navigationContext as IDisposable).Dispose();
+            (_driveNodeContext as IDisposable).Dispose();
+            (_folderNodeContext as IDisposable).Dispose();
+            (_fileNodeContext as IDisposable).Dispose();
+
+            _contextRegistry.TryUnregister(_fileNodeContext);
+            _contextRegistry.TryUnregister(_folderNodeContext);
+
             base.Destroy();
         }
 
@@ -651,11 +526,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void OnViewDetached()
         {
             _navigationService.CurrentChanged -= OnPathChanged;
-        }
-
-        ~SplitPanelViewModel()
-        {
-            Debug.WriteLine($"FINALIZER {_state.TabId}");
         }
 
         #endregion

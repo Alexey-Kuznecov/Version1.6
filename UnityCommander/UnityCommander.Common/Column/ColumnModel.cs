@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using UnityCommander.Common.Column;
 
 namespace UnityCommander.Common.Columns
 {
@@ -24,6 +25,13 @@ namespace UnityCommander.Common.Columns
             }
         }
 
+        public bool IsDynamic { get; init; }
+
+        public int? RefreshInterval { get; set; } // дефолт
+
+        public ColumnUpdatePriority UpdatePriority { get; set; }
+            = ColumnUpdatePriority.Ignore;
+
         private bool _isVisible = true;
         public bool IsVisible
         {
@@ -46,7 +54,8 @@ namespace UnityCommander.Common.Columns
 
         // Optional: small value-provider when you don't want DataTemplate
         public Func<object, object> ColumnValueHandler { get; set; }
-        
+     
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

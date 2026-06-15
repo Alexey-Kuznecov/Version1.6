@@ -6,9 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
-using UnityCommander.Logging.Configuration;
-using UnityCommander.Logging.Core;
-using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
 

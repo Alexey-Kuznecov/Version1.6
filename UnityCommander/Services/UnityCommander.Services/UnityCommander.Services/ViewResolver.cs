@@ -1,13 +1,13 @@
 ﻿
 using Prism.Ioc;
+
 using System;
-using System.Windows.Controls;
 using UnityCommander.Common.Helper;
+using UnityCommander.Common.Plugins;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Plugins;
 
 namespace UnityCommander.Services
 {
