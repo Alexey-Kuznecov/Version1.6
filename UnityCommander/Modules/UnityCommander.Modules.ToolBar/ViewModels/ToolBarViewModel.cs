@@ -7,6 +7,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using Prism.Mvvm;
     using System.Threading.Tasks;
     using System.Windows.Shapes;
+    using UnityCommander.Abstractions.Dialog;
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.Dialog;
     using UnityCommander.Common.State;

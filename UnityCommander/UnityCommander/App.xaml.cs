@@ -53,6 +53,7 @@ namespace UnityCommander
             LoggingModuleRegistration.Register(containerRegistry);
             PluginModuleRegistration.Register(containerRegistry);
             AutocompleteRegistration.Register(containerRegistry);
+            CopyModuleRegistration.Register(containerRegistry);
             //AiRegistration.Register(containerRegistry);
         }
 

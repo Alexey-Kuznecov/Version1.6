@@ -79,7 +79,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IconHideSidebar =
                 iconProvider.GetIcon(PackIconKind.ArrowBack).GetIconPath();
 
-            sidebarService.PluginUnloaded += SidebarService_PluginUnloaded;
+            sidebarService.OnCleanup += SidebarService_PluginUnloaded;
         }
 
         private void SidebarService_PluginUnloaded(string pluginId)
@@ -171,7 +171,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                     {
                         Id = item.Id,
                         Content = view,
-                        Owner = item.PluginId,
+                        Owner = item.OwnerId,
                         Icon = packIcon.Single(
                             i => ((Common.Models.Icons.Icon)i).Category == item.IconKey)
                     });

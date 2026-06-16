@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityCommander.Common.Column;
-using UnityCommander.Common.Columns;
+using UnityCommander.Abstractions.Columns;
 
 namespace UnityCommander.Modules.FilePanel.Columns
 {

@@ -1,4 +1,4 @@
-﻿using AlexeyKuznetsov.Logger;
+﻿
 using System.Reactive.Subjects;
 using UnityCommander.Copying.Category;
 using UnityCommander.Copying.Core;

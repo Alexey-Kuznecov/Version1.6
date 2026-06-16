@@ -22,8 +22,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using UnityCommander.Abstractions.Columns;
 using UnityCommander.CommandSurface;
-using UnityCommander.Common.Columns;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Module;
@@ -499,8 +499,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _navigationService.CurrentChanged -= OnPathChanged;
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
 
-            (_navigationContext as IDisposable).Dispose();
-            (_driveNodeContext as IDisposable).Dispose();
+            //(_navigationContext as IDisposable).Dispose();
+            //(_driveNodeContext as IDisposable).Dispose();
             (_folderNodeContext as IDisposable).Dispose();
             (_fileNodeContext as IDisposable).Dispose();
 

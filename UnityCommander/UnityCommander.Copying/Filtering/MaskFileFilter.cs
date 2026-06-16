@@ -1,4 +1,5 @@
 ﻿
+using System.IO;
 using UnityCommander.Copying.Core;
 
 namespace UnityCommander.Copying.Filtering

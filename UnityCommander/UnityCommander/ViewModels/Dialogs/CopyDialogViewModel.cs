@@ -1,31 +1,27 @@
 ﻿
 using Prism.Commands;
-using Prism.Dialogs;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UnityCommander.Core;
-using UnityCommander.Core.Mvvm;
+using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Common.Override.Engine;
 using UnityCommander.Operation;
 using UnityCommander.Views.CopyDialogs;
-using UnityCommander.Views.Dialogs;
 
 namespace UnityCommander.ViewModels.Dialogs
 {
     /// <summary>
     /// The dialog view model.
     /// </summary>
-    public class CopyDialogViewModel : BindableBase, IDialogAware
+    public class CopyDialogViewModel : BindableBase, IDialogAware<CopyDialogResult>
     {
         
         #region Declaration Fields
 
-        private readonly IDirectoryChangeNotifier notifier;
         private readonly CopyOperationController copyOperationController;
-        private bool closeTrigger;
         private string source;
         private string target;
         public List<string> manySource;
@@ -41,23 +37,14 @@ namespace UnityCommander.ViewModels.Dialogs
             this.copyOperationController = copyOperationController;
             this.CloseDialogAfterCopyingComplete = true;
             this.CopyOnlyFolderContent = false;
-            //var filters = selectedTemplate switch
-            //{
-            //    "Только изображения" => new string[] { "*.jpg", "*.png", "*.bmp" },
-            //    "Только документы" => new string[] { "*.docx", "*.pdf", "*.txt" },
-            //    _ => new string[] { "*.*" }
-            //};
-
-            // Подписка на завершение копирования
             this.copyOperationController.Completed += OnCopyCompleted;
         }
 
         #region Свойства
 
         public string Title => "Копирование файлов";
-        public DelegateCommand CloseDialogCommand => this.closeDialogCommand ??= new DelegateCommand(this.ExecuteCloseDialogCommand);
 
-        public DialogCloseListener RequestClose { get; private set; }
+        public DelegateCommand CloseDialogCommand => this.closeDialogCommand ??= new DelegateCommand(this.ExecuteCloseDialogCommand);
 
         public UserControl CopyStateView
         {
@@ -77,57 +64,52 @@ namespace UnityCommander.ViewModels.Dialogs
             set => this.SetProperty(ref this.target, value);
         }
 
-        /// <summary>
-        /// Данная опция отвечает за копирования содержимого папки. 
-        /// Если опция равна истине то будет скопированно только содержимое 
-        /// папки иначе будет скопированна вся папка. 
-        /// </summary>
         public bool CopyOnlyFolderContent
         {
             get => this.copyOnlyFolderContent;
             set => this.SetProperty(ref this.copyOnlyFolderContent, value);
         }
 
-        /// <summary>
-        /// Данная опция отвечает за закрытие окна после копирования. 
-        /// Если данная опция включена то после завершения копирования (файлов/попок),
-        /// окно операции над файломи будет закрыто.
-        /// </summary>
         public bool CloseDialogAfterCopyingComplete
         {
             get => this.сloseDialogAfterCopyingComplete;
             set => this.SetProperty(ref this.сloseDialogAfterCopyingComplete, value);
         }
 
-        #endregion
-
-        #region Команды
-
-        /// <summary>
-        /// Gets the command to copy files or folders from one panel to another.
-        /// </summary>
         public ICommand CopyCommand => new DelegateCommand(async () =>
         {
-            this.CopyStateView = new CopyProcessView();
+            Result = new CopyDialogResult
+            {
+                Accepted = true,
+                Request = BuildRequest()
+            };
 
-            if (manySource != null && manySource.Any())
-            {
-                // Запускаем одну общую операцию для всех источников
-                await this.copyOperationController.StartCopyManyAsync(manySource, this.Target);
-            }
-            else
-            {
-                var source = this.Source;
-                var dest = this.Target;
-                await this.copyOperationController.StartCopyManyAsync(new[] { source }, dest);
-            }
+            RequestClose?.Invoke();
         });
+
+        private FileOperationRequest BuildRequest()
+        {
+            var request = new FileOperationRequest();
+
+            foreach (var source in this.manySource)
+            {
+                request.Sources.Add(source);
+            }
+
+            request.Target = this.Target;
+
+            return request;
+        }
 
         public ICommand MoveCommand => new DelegateCommand(() =>
         {
             //var cmdMove = this.globalCommandManager.GetCommand("Move");
             //cmdMove.Command.Execute(new object[] { this.Source, this.Target });
         });
+
+        public CopyDialogResult Result { get; set; }
+
+        public Action RequestClose { get ; set ; }
 
         #endregion
 
@@ -138,30 +120,27 @@ namespace UnityCommander.ViewModels.Dialogs
 
         public void OnDialogClosed()
         {  
-            // Отписываемся от события
             this.copyOperationController.Completed -= OnCopyCompleted;
         }
 
-        public void OnDialogOpened(IDialogParameters parameters)
+        public void OnDialogOpened(object? parameters)
         {
-            this.CopyStateView = new CopyDialogControl();
-            var param = parameters as OverrideDialogParameters;
-
-            if (param?.Package is CopyParameters copyParameters)
+            if (parameters is FileOperationRequest request)
             {
-                this.Source = copyParameters.Source;
-                this.Target = copyParameters.Target;
-                this.manySource = copyParameters.ManySource;
+                this.CopyStateView = new CopyDialogControl();
+                this.Source = request.Sources[0];
+                this.Target = request.Target;
+                this.manySource = request.Sources;
             }
         }
 
-        private void OnCopyCompleted()
+        private void OnCopyCompleted(CopyOperationResult copyOperation)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (this.CloseDialogAfterCopyingComplete)
                 {
-                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+                    RequestClose?.Invoke();
                 }
             });
         }
@@ -172,7 +151,7 @@ namespace UnityCommander.ViewModels.Dialogs
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+                    RequestClose?.Invoke();
                 });
             }
         }

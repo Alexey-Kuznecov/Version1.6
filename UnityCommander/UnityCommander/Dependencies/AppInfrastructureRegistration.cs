@@ -1,9 +1,12 @@
 ﻿
 using Prism.Ioc;
-
+using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Common;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Helper;
 using UnityCommander.Common.Layout;
+using UnityCommander.Common.Overrides;
 using UnityCommander.Common.Sidebar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
@@ -57,12 +60,18 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ISidebarSectionFactory, SidebarSectionFactory>();
             registry.RegisterSingleton<IViewResolver, ViewResolver> ();
             registry.RegisterSingleton<ISidebarService, SidebarService>();
+            registry.RegisterSingleton<ISidebarRegistry, SidebarRegistry>();
+            registry.RegisterSingleton<ISidebarSectionFactory, SidebarSectionFactory>();
 
             // Ресурсы интерфейса: поставка иконок и визуальных элементов
             registry.RegisterSingleton<IIconProviderService, PackIconProvider>();
 
             // Менеджер лейаута оболочки: отвечает за общую структуру интерфейса, области и их наполнение
             registry.RegisterSingleton<IShellLayoutManager, ShellLayoutManager>();
+
+            registry.RegisterSingleton<IServiceScopeResolver, ServiceScopeResolver>();
+            registry.RegisterSingleton<IServiceOverrideRegistry, ServiceOverrideRegistry>();
+            registry.RegisterSingleton<ServiceOverrideResolver>();
 
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();

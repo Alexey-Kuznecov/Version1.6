@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using UnityCommander.Common.Columns;
+using UnityCommander.Abstractions.Columns;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;

@@ -1,5 +1,5 @@
 ﻿
-using UnityCommander.Common.Dialog;
+using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Ribbon.Core.Commands;
 
 namespace UnityCommander.Modules.ToolBar.Commands

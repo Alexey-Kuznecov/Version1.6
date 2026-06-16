@@ -5,10 +5,14 @@ using PluginSystem.Runtime;
 using Prism.Ioc;
 using System;
 using System.IO;
+using UnityCommander.Abstractions;
 using UnityCommander.Common.Plugins;
+using UnityCommander.Common.Plugins.UnityCommander.Common.Plugins;
 using UnityCommander.Integration;
+using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.Services.Plugins;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Dependencies
 {
@@ -35,7 +39,6 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IPluginActivator, PluginActivator>();
             registry.RegisterSingleton<IRuntimeServices, RuntimeServices>();
             registry.RegisterSingleton<IResourceLoader, BamlResourceLoader>();
-            registry.RegisterSingleton<IPluginResourceManager, PluginResourceManager>();
         }
     }
 }

@@ -1,19 +1,20 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using UnityCommander.Common.Sidebar;
+using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Services.Interfaces.Sidebar
 {
     public interface ISidebarService
     {
-        public event Action<string>? PluginUnloaded;
+        event Action<string> OnCleanup;
 
-        public void Register(ISidebarDefinition def);
-        public void Register(ISidebarSection section);
-        public ISidebarSection? Get(string id);
+        event Action Changed;
+
+        void Register(ISidebarSection section);
+
+        void Register(ISidebarDefinition definition);
+
         public IEnumerable<ISidebarSection>? GetAll();
-        void Unregister(string id);
-
-        void Cleanup(string pluginId);
     }
 }

@@ -3,16 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions;
 using UnityCommander.CLI.Autocomplete;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
-using UnityCommander.Common.Plugins;
-using UnityCommander.Integration;
+using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
-using UnityCommander.SystemMetrics;
 
 namespace UnityCommander.Commands
 {
@@ -102,7 +100,7 @@ namespace UnityCommander.Commands
         {
             var pluginsRoot = Path.Combine(AppContext.BaseDirectory, "Plugins");
             var name = args[0];
-            var container = _pluginProvider.GetContainer(name);
+            //var container = _pluginProvider.GetContainer(name);
 
             if (args.Contains("--all"))
             {
@@ -120,33 +118,33 @@ namespace UnityCommander.Commands
 
             _runtime.Cleanup(name);
 
-            var alcContext = container?.LoadContext as AssemblyLoadContext;
+            //var alcContext = container?.LoadContext as AssemblyLoadContext;
 
-            if (alcContext == null)
-                return Task.CompletedTask;
+            //if (alcContext == null)
+            //    return Task.CompletedTask;
 
-            PluginUnloadDebugger.MonitorUnload(
-              alcContext,
-              name);
+            //PluginUnloadDebugger.MonitorUnload(
+            //  alcContext,
+            //  name);
            
-            container = null;
-            alcContext = null;
+            //container = null;
+            //alcContext = null;
 
-            if (_pluginProvider.Unload(name))
-            {
-                Task.Delay(5000);
+            //if (_pluginProvider.Unload(name))
+            //{
+            //    Task.Delay(5000);
 
-                if (PluginUnloadDebugger.IsUnloaded(name))
-                {
-                    context.Output.WriteLine(
-                        $"Плагин полностью выгружен: {name}");
-                }
-                else
-                {
-                    context.Output.WriteLine(
-                        $"Плагин всё ещё удерживается в памяти: {name}");
-                }
-            }
+            //    if (PluginUnloadDebugger.IsUnloaded(name))
+            //    {
+            //        context.Output.WriteLine(
+            //            $"Плагин полностью выгружен: {name}");
+            //    }
+            //    else
+            //    {
+            //        context.Output.WriteLine(
+            //            $"Плагин всё ещё удерживается в памяти: {name}");
+            //    }
+            //}
 
             return Task.CompletedTask;
         }

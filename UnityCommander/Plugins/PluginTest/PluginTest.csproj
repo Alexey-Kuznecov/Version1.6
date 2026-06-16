@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
   </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\UnityCommander\UnityCommander\bin\Debug\net10.0-windows\plugins\PluginTest\&quot;" />

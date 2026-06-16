@@ -1,13 +1,12 @@
 ﻿
 using Prism.Ioc;
-using UnityCommander.Common.Columns;
+using UnityCommander.Abstractions.Columns;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Services;
-using UnityCommander.Operation;
 using UnityCommander.Services;
 using UnityCommander.Services.Background;
 using UnityCommander.Services.Interfaces;
@@ -30,12 +29,6 @@ namespace UnityCommander.Dependencies
             // Навигационный контекст, нужен один на всё приложение
             registry.RegisterSingleton<NavigationContextDirectory>();
             registry.RegisterSingleton<NavigationManager>();
-
-            // Калькуляторы и контроллеры для копирования файлов
-            registry.RegisterSingleton<CopyProgressCalculator>();
-            registry.RegisterSingleton<CopyReportCollector>();
-            registry.RegisterSingleton<CopyConflictResolver>();
-            registry.RegisterSingleton<CopyOperationController>();
 
             //// Службы для управления выделением в файловых панелях
             registry.RegisterSingleton<ISelectionStrategy, SingleClickSelectionStrategy>();

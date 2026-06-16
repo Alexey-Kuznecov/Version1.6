@@ -1,12 +1,11 @@
 ﻿
 using System;
+using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Common.Sidebar
 {
     public class SidebarSection : ISidebarSection
     {
-        public string PluginId { get; set; }
-
         public string Id { get; }
 
         public ISidebarDefinition Definition { get; }
@@ -19,7 +18,7 @@ namespace UnityCommander.Common.Sidebar
         
         private bool _isActive;
 
-        public string OwnerId => PluginId;
+        public string OwnerId { get; set; }
 
         public SidebarSection(
            ISidebarDefinition def,

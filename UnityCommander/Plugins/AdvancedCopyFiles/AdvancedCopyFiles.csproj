@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+	  <UseWPF>true</UseWPF>
+	  <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Copying\UnityCommander.Copying.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
+  </ItemGroup>
+
+</Project>

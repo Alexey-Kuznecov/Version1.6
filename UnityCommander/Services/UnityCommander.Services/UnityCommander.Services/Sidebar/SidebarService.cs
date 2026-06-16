@@ -1,68 +1,50 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityCommander.Common.Sidebar;
+using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Services.Interfaces.Sidebar
 {
-    public class SidebarService : ISidebarService
+    public sealed class SidebarService : ISidebarService
     {
+        private readonly ISidebarRegistry _registry;
+
         private readonly ISidebarSectionFactory _factory;
 
-        private readonly List<ISidebarSection> _sections = new();
+        public event Action<string>? OnCleanup;
 
-        public event Action Changed;
+        public event Action? Changed;
 
-        public event Action<string> PluginUnloaded;
-
-        public IReadOnlyList<ISidebarSection> Sections => _sections;
-
-        public SidebarService(ISidebarSectionFactory factory)
+        public SidebarService(
+            ISidebarRegistry registry,
+            ISidebarSectionFactory factory)
         {
+            _registry = registry;
             _factory = factory;
+
+            registry.OwnerUnload += OwnerUnload;
         }
 
-        private void NotifyChanged()
+        private void OwnerUnload(string ownerId)
         {
             Changed?.Invoke();
-        }
 
-        public void Register(ISidebarDefinition def)
-        {
-            var section = _factory.Create(def);
-            _sections.Add(section);
+            OnCleanup?.Invoke(ownerId);
         }
 
         public void Register(ISidebarSection section)
-        {
-            _sections.Add(section);
-        }
+           => _registry.Register(section);
 
-        public ISidebarSection? Get(string id)
-            => _sections.FirstOrDefault(x => x.Id == id);
+        public void Register(ISidebarDefinition definition)
+        {
+            var section = _factory.Create(definition);
+
+            _registry.Register(section);
+
+            Changed?.Invoke();
+        }
 
         public IEnumerable<ISidebarSection>? GetAll()
-            => _sections;
-
-        public void Unregister(string id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Cleanup(string pluginId)
-        {
-            var section = _sections
-               .Where(x => x.PluginId == pluginId)
-               .Select(x => x)
-               .ToList();
-
-            foreach (var id in section)
-            {
-                _sections.Remove(id);
-            }
-
-            PluginUnloaded?.Invoke(pluginId);
-        }
+            => _registry.GetAll();
     }
 }

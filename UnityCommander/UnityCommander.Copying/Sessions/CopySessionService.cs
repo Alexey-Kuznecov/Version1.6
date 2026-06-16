@@ -1,5 +1,4 @@
 ﻿
-using CommandSystem.Gui.MVVM;
 using UnityCommander.Copying.Core;
 using UnityCommander.Copying.Helper;
 using UnityCommander.Copying.Reporting;

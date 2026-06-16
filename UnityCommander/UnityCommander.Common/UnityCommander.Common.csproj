@@ -11,11 +11,10 @@
 		<PackageReference Include="Prism.Core" Version="9.0.537" />
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\UnityCommander.Abstractions\UnityCommander.Abstractions.csproj" />
 	  <ProjectReference Include="..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Reference Include="PluginSystem.Abstractions">
-	    <HintPath>..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
-	  </Reference>
+	  <Folder Include="Column\" />
 	</ItemGroup>
 </Project>

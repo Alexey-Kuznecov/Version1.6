@@ -2,7 +2,7 @@
 using MultiColumns.DateTime;
 using PluginSystem.Abstractions.Plugin;
 using PluginSystem.Runtime;
-using UnityCommander.Common.Columns;
+using UnityCommander.Abstractions.Columns;
 
 [assembly: PluginInfo(
     name: "Multi Column Plugin",

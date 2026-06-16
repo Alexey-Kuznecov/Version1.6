@@ -1,17 +1,17 @@
 ﻿
 using System;
-using UnityCommander.Common.Plugins;
+using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Dialog;
 
 namespace UnityCommander.Common.Dialog
 {
-    public class DialogDefinition : IDialogDefinition, IPluginOwned
+    public class DialogDefinition : IDialogDefinition, IOwned
     {
         public string Id { get; }
         public Type ViewType { get; }
         public Type ViewModelType { get; }
         public DialogOptions Options { get; }
-        public string PluginId { get; set; }
-        public string OwnerId => PluginId;
+        public string OwnerId { get; set; }
 
         public DialogDefinition(
             string id, 

@@ -1,4 +1,5 @@
 ﻿
+using System.IO;
 using System.Runtime.CompilerServices;
 using UnityCommander.Copying.Category;
 using UnityCommander.Copying.Core;

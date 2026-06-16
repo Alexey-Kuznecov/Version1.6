@@ -11,7 +11,6 @@
     using Microsoft.Extensions.DependencyInjection;
 
     using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Plugins;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
@@ -28,7 +27,7 @@
     /// <para>Плагины должны соответствовать стандартной структуре: быть DLL-файлом и реализовывать 
     /// интерфейс <see cref="IPlugin"/>.</para>
     /// </remarks>
-    public class PluginLoader : IPluginLoader, IPluginServicesRegister
+    public class PluginLoader : IPluginLoader
     {
         #region Поля и Свойства
 
@@ -358,7 +357,7 @@
         private void GetPluginResources(Assembly assembly)
         {
             // Получаем ресурсы из менеджера ресурсов плагинов
-            this.pluginResources = PluginResourceManager.GetResourceDictionary(assembly);
+            //this.pluginResources = PluginResourceManager.GetResourceDictionary(assembly);
 
             // Если ресурсы присутствуют, добавляем их в глобальные ресурсы приложения
             if (this.pluginResources?.Count != 0 && this.pluginResources != null)

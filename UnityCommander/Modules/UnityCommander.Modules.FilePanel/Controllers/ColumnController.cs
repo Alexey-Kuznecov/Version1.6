@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityCommander.Common.Columns;
+using UnityCommander.Abstractions.Columns;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States;

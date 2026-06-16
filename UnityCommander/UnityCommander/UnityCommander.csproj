@@ -31,6 +31,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Core\CommandSystem.Core.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Infrastructure\CommandSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
     <ProjectReference Include="..\Modules\BottomPanelModule\UnityCommander.Modules.BottomPanel\UnityCommander.Modules.BottomPanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
@@ -46,21 +51,6 @@
     <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CommandSystem.Core">
-      <HintPath>..\..\..\_builds\CommandSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandSystem.Gui">
-      <HintPath>..\..\..\_builds\CommandSystem.Gui.dll</HintPath>
-    </Reference>
-    <Reference Include="CommandSystem.Infrastructure">
-      <HintPath>..\..\..\_builds\CommandSystem.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="PluginSystem.Abstractions">
-      <HintPath>..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="PluginSystem.Runtime">
-      <HintPath>..\..\..\_builds\PluginSystem.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="UnityCommander.Ribbon.Core">
       <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
     </Reference>

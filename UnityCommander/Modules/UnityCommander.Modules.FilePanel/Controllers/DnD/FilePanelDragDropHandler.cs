@@ -1,5 +1,4 @@
 ﻿
-using Prism.Dialogs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,22 +6,24 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.Override.Engine;
+using UnityCommander.Common.Overrides;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core.Behaviors;
 using UnityCommander.Core.DragDrop;
-using UnityCommander.Core.Mvvm;
 using UnityCommander.Modules.FilePanel.States;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
     public sealed class FilePanelDragDropHandler
-     : IDragDropHandler
+        : IDragDropHandler
     {
-        private readonly IDialogService _dialogService;
+        private IFileOperationService _fileOperationService;
 
-        public FilePanelDragDropHandler(IDialogService dialogService)
+        public FilePanelDragDropHandler(
+            ServiceOverrideResolver overrideResolver)
         {
-            _dialogService = dialogService;
+            _fileOperationService = overrideResolver.Resolve<IFileOperationService>();
         }
 
         public bool CanHandle(IDropContext context)
@@ -74,15 +75,12 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             if (string.IsNullOrWhiteSpace(targetPath))
                 return Task.CompletedTask;
 
-            _dialogService.ShowDialog(
-                "CopyDialog",
-                new OverrideDialogParameters(
-                    new CopyParameters
-                    {
-                        ManySource = sourcePaths,
-                        Target = targetPath
-                    }),
-                _ => { });
+            _fileOperationService.CopyAsync(new FileOperationRequest
+            {
+                Sources = sourcePaths,
+                Target = targetPath,
+                ShowDialog = true
+            });
 
             return Task.CompletedTask;
         }

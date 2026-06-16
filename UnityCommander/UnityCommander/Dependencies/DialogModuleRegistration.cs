@@ -1,9 +1,11 @@
 ﻿
 using Prism.Dialogs;
 using Prism.Ioc;
+using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Modules.Viewer.Views;
+using UnityCommander.Services;
 using UnityCommander.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views;
@@ -20,7 +22,7 @@ namespace UnityCommander.Dependencies
             // -------------------------------
             // Каждый диалог регистрируется с View и ViewModel
             registry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
-            registry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
+            //registry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
             registry.RegisterDialog<CopyDialogSkipReplace, CopyDialogSkipReplaceViewModel>("CopyDialogSkipReplace");
             registry.RegisterDialog<AppConfigDialogControl, AppConfigDialogViewModel>("AppConfigDialog");
 

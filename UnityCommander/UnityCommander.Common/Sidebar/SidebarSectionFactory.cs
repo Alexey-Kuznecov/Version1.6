@@ -1,4 +1,5 @@
 ﻿
+using UnityCommander.Abstractions.Sidebar;
 using UnityCommander.Common.Helper;
 
 namespace UnityCommander.Common.Sidebar

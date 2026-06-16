@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using UnityCommander.Common.Columns;
+using UnityCommander.Abstractions.Columns;
 using UnityCommander.Modules.FilePanel.Columns;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors

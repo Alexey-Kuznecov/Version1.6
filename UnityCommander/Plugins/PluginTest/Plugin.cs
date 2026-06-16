@@ -3,7 +3,6 @@
 using PluginSystem.Abstractions.Plugin;
 using PluginSystem.Runtime;
 using UnityCommander.Common.Sidebar;
-
 [assembly: PluginInfo(
     name: "PluginTest",
     developerId: "plugin-test-1.0",

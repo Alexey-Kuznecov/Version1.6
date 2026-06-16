@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\CommandSystem\UnityCommander.SystemMetrics\UnityCommander.SystemMetrics.csproj" />
-    <ProjectReference Include="..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\UnityCommander.AI.ImageSearch\UnityCommander.AI.ImageSearch.csproj" />
     <ProjectReference Include="..\UnityCommander.CLI\UnityCommander.CLI.csproj" />

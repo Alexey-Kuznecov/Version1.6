@@ -21,7 +21,7 @@ namespace UnityCommander.Operation
         public event Action<ProgressModel> ProgressChanged;
         public event Action<CopyInfoModel> FileCopied;
         public event Action<CopyInfoModel> FileSkipped;
-        public event Action Completed;
+        public event Action<CopyOperationResult>? Completed;
 
         // агрегатор состояния при множественных источниках
         private long _totalBytesAll = 0;
@@ -29,6 +29,7 @@ namespace UnityCommander.Operation
         private long _currentSourceTotalBytes = 0; // for info if needed
         private int _completedSources = 0;
         private int _totalSources = 0;
+        
         public CopyOperationController(
             IDirectoryChangeNotifier notifier,
             CopyManager copyManager,
@@ -111,7 +112,10 @@ namespace UnityCommander.Operation
             }
 
             // всё завершено
-            Completed?.Invoke();
+            Completed?.Invoke(new CopyOperationResult
+            {
+                Success = true
+            });
         }
 
         // События CopyManager
@@ -145,7 +149,10 @@ namespace UnityCommander.Operation
             _completedSources++;
             if (_completedSources == _totalSources)
             {
-                Completed?.Invoke();
+                Completed?.Invoke(new CopyOperationResult
+                {
+                    Success = true
+                });
             }
         }
 

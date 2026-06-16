@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityCommander.Common.Column;
-using UnityCommander.Common.Columns;
-using UnityCommander.Common.Models.Directory;
+using UnityCommander.Abstractions.Columns;
 
 namespace MultiColumns.DateTime
 {
@@ -33,23 +31,23 @@ namespace MultiColumns.DateTime
                             return $"{r}%";
                         }
                     },
-                    new ColumnModel
-                    {
-                        Id = "debug.progress2",
-                        Header = "Debug2",
-                        //DisplayMemberPath = "Name",
-                        CellTemplateResourceKey = "ColumnTextDataTemplate",
-                        UpdatePriority = ColumnUpdatePriority.Normal,
-                        Width = 200,
-                        Order = 1,
-                        SyncGroup = "Name2",
-                        IsDynamic = true,
-                        ColumnValueHandler = f =>
-                        {
-                            var r = Random.Shared.Next(100, 200);
-                            return $"{r}%";
-                        }
-                    }
+                    //new ColumnModel
+                    //{
+                    //    Id = "debug.progress2",
+                    //    Header = "Debug2",
+                    //    //DisplayMemberPath = "Name",
+                    //    CellTemplateResourceKey = "ColumnTextDataTemplate",
+                    //    UpdatePriority = ColumnUpdatePriority.Normal,
+                    //    Width = 200,
+                    //    Order = 1,
+                    //    SyncGroup = "Name2",
+                    //    IsDynamic = true,
+                    //    ColumnValueHandler = f =>
+                    //    {
+                    //        var r = Random.Shared.Next(100, 200);
+                    //        return $"{r}%";
+                    //    }
+                    //}
                 };
             }
             if (panelType == PanelType.Folders)
