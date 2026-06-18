@@ -10,6 +10,8 @@ namespace UnityCommander.Abstractions.Dialog
 
         bool TryGet(string id, out IDialogDefinition registration);
 
+        bool TryGet<TDialog>(out IDialogDefinition registration);
+
         IReadOnlyCollection<IDialogDefinition> GetAll();
     }
 }

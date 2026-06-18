@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<Window
     x:Class="AdvancedCopyFiles.Views.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,45 +7,40 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:AdvancedCopyFiles.Views"
     xmlns:vm="clr-namespace:AdvancedCopyFiles.ViewModels"
-    Width="1000"
-    Height="800"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    Width="1050"
+    Height="900"
+    d:DesignHeight="1050"
+    d:DesignWidth="900"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
-    <!--<UserControl.DataContext>
-        <vm:CopyWindowViewModel />
-    </UserControl.DataContext>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="200" />
             <RowDefinition Height="150" />
-            --><!--  Верх: Progress + кнопки  --><!--
             <RowDefinition Height="*" />
-            --><!--  Вкладки  --><!--
         </Grid.RowDefinitions>
 
-        --><!--  Верхняя панель прогресса  --><!--
-        <views:ProgressView Grid.Row="0" DataContext="{Binding ProgressVM}" />
-        --><!--  График скорости  --><!--
-        <views:SpeedGraph Grid.Row="1" DataContext="{Binding SpeedGraphVM}" />
-        --><!--  Нижние вкладки  --><!--
+        <ContentControl x:Name="ProgressVM" Grid.Row="0" />
+
+        <ContentControl x:Name="SpeedGraphVM" Grid.Row="1" />
+
         <TabControl Grid.Row="2">
             <TabItem Header="Список файлов">
-                <views:FileListView DataContext="{Binding FileListVM}" />
+                <ContentControl x:Name="FileListVM" />
             </TabItem>
             <TabItem Header="Настройки">
-                <views:SettingsView DataContext="{Binding SettingsVM}" />
+                <ContentControl x:Name="SettingsVM" />
             </TabItem>
             <TabItem Header="Журнал">
-                <views:LogView DataContext="{Binding LogVM}" />
+                <ContentControl x:Name="LogVM" />
             </TabItem>
             <TabItem Header="История">
-                <views:HistoryView DataContext="{Binding HistoryVM}" />
+                <ContentControl x:Name="HistoryVM" />
             </TabItem>
-            --><!--<TabItem Header="METRIC">
-           <views:MetricView DataContext="{Binding MetricVM}" />
-       </TabItem>--><!--
-        </TabControl>-->
-    <!--</Grid>-->
-</UserControl>
+            <TabItem Header="METRIC">
+                <ContentControl x:Name="MetricVM" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

@@ -10,6 +10,8 @@ namespace UnityCommander.Abstractions.Dialog
 
         bool? ShowModalDialog(string id);
 
+        bool? ShowDialog<TDialog>(object? parameter = null);
+
         TDialogResult? ShowModalDialog<TDialogResult>(
            string key,
            object? parameter = null)

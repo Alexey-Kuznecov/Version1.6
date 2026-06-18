@@ -1,8 +1,9 @@
 ﻿
-using CommandSystem.Gui.MVVM;
 using AdvancedCopyFiles.Services;
+using CommandSystem.Gui.MVVM;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using UnityCommander.Copying.Reporting;
 using UnityCommander.Copying.Sessions;
 
 namespace AdvancedCopyFiles.ViewModels
@@ -22,30 +23,33 @@ namespace AdvancedCopyFiles.ViewModels
         private bool _pendingRefresh = false;
         private readonly DispatcherTimer _refreshTimer;
 
-        public FileListViewModel(CopyFileReporter reporter)
+        public FileListViewModel(ICopyReporter reporter)
         {
-            //_fileReporter = reporter;
-            //_fileReporter.FilesChanged += () => _pendingRefresh = true;
+            if (reporter is CopyFileReporter copyFile)
+            {
+                _fileReporter = copyFile;
+                _fileReporter.FilesChanged += () => _pendingRefresh = true;
 
-            //FilteredFiles = new ObservableCollection<FileCopyItem>(_filteredFiles);
+                FilteredFiles = new ObservableCollection<FileCopyItem>(_filteredFiles);
 
-            //_refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
-            //_refreshTimer.Tick += (s, e) => RefreshFilter();
-            //_refreshTimer.Start();
+                _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
+                _refreshTimer.Tick += (s, e) => RefreshFilter();
+                _refreshTimer.Start();
+            }
         }
 
         private void RefreshFilter()
         {
-            //if (!_pendingRefresh) return;
-            //_pendingRefresh = false;
+            if (!_pendingRefresh) return;
+            _pendingRefresh = false;
 
-            //_filteredFiles.Clear();
+            _filteredFiles.Clear();
 
-            //FilteredFiles = _fileReporter.Files;
-            //foreach (var item in _fileReporter.Files)
-            //{
-            //    if (PassesFilter(item)) _filteredFiles.Add(item);
-            //}
+            FilteredFiles = _fileReporter.Files;
+            foreach (var item in _fileReporter.Files)
+            {
+                if (PassesFilter(item)) _filteredFiles.Add(item);
+            }
         }
 
         private bool PassesFilter(FileCopyItem item)

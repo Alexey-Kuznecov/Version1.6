@@ -1,10 +1,11 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Services.Interfaces;
 
-namespace UnityCommander.Common.Overrides
+namespace UnityCommander.Services
 {
     public sealed class ServiceOverrideResolver
     {
@@ -17,15 +18,17 @@ namespace UnityCommander.Common.Overrides
         public ServiceOverrideResolver(
             IServiceProvider serviceProvider, 
             IPluginProvider plugins, 
-            IServiceOverrideRegistry registry)
+            IServiceOverrideRegistry registry, 
+            IRuntimeServices runtimeServices)
         {
+            var dd = runtimeServices;
             _overrideRegistry = registry;
             _pluginProvider = plugins;
             _host = serviceProvider;
         }
 
         public T Resolve<T>()
-        {
+       {
             var type = typeof(T);
 
             if (_overrideRegistry.TryGet(type, out var entry))

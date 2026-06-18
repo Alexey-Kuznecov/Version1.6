@@ -1,7 +1,9 @@
 ﻿
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Abstractions
@@ -14,18 +16,26 @@ namespace UnityCommander.Abstractions
 
         public IColumnRegistry Columns { get; }
 
-        public IServiceOverrideRegistry OverrideRegistry { get; }
+        public IServiceOverrideRegistry Overrides { get; }
+
+        public ICompositionRegistry Composition { get; }
+
+        public IPluginCommandRegistry Commands { get; }
 
         public RuntimeServices(
             ISidebarRegistry sidebar, 
             IDialogRegistry dialog,
             IColumnRegistry registry,
-            IServiceOverrideRegistry overrideRegistry)
+            IServiceOverrideRegistry overrideRegistry,
+            ICompositionRegistry compositionRegistry,
+            IPluginCommandRegistry command)
         {
             Sidebar = sidebar;
             Dialog = dialog;
             Columns = registry;
-            OverrideRegistry = overrideRegistry;
+            Overrides = overrideRegistry;
+            Composition = compositionRegistry;
+            Commands = command;
         }
 
         public void Cleanup(string id)
@@ -33,7 +43,7 @@ namespace UnityCommander.Abstractions
             Dialog.Cleanup(id);
             Columns.Cleanup(id);
             Sidebar.Cleanup(id);
-            OverrideRegistry.Cleanup(id);
+            Overrides.Cleanup(id);
         }
     }
 }

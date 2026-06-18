@@ -9,9 +9,9 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using System.Windows.Shapes;
     using UnityCommander.Abstractions.Dialog;
     using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Dialog;
     using UnityCommander.Common.State;
     using UnityCommander.Core.Commands;
+    using UnityCommander.Core.Plugin;
     using UnityCommander.Modules.ToolBar.Commands;
     using UnityCommander.Ribbon.Core.Models;
     using UnityCommander.Ribbon.Core.Models.Controls;
@@ -35,6 +35,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         private readonly CommandRegistryService _commandRegistry;
         private IShellLayoutManager _shellLayoutManager;
         private IWindowManager _windowManager;
+        private IPluginCommandDispatcher _dispatcher;
 
         #endregion
 
@@ -51,8 +52,10 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             IShellLayoutManager shellLayoutManager,
             CommandExecutionService commandExecution, 
             CommandRegistryService commandRegistry, 
-            IWindowManager windowManager)
+            IWindowManager windowManager, 
+            IPluginCommandDispatcher dispatcher)
         {
+            _dispatcher = dispatcher;
             _windowManager = windowManager;
             _shellLayoutManager = shellLayoutManager;
             _commandExecution = commandExecution;
@@ -82,8 +85,8 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                     .WithLayout(RibbonGroupLayout.Large)
                         .AddButton("btn3", "Команда 3", new ShowDialogCommand("icon_maker-1.0", _windowManager), RibbonItemCategory.FileOpen, "file.add")
                         .AddButton("btn4", "Команда 4", new ShowDialogCommand("icon_maker-1.0-new", _windowManager), RibbonItemCategory.FileOpen, "edit.delete")
-                        .AddButton("btn5", "Команда 5", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
-                        .AddButton("btn6", "Команда 6", new DemoCommands(), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn5", "Команда 5", new TestCommand("open-copy-advanced", dispatcher), RibbonItemCategory.FileOpen, "file.add")
+                        .AddButton("btn6", "Команда 6", new TestCommand("open-old-copy-advanced", dispatcher), RibbonItemCategory.FileOpen, "file.add")
                         .AddItem(new RibbonCheckBoxModel()
                         {
                             Id = "chk1",

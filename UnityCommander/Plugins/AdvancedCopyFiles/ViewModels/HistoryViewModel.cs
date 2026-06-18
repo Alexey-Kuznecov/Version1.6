@@ -7,9 +7,9 @@ namespace CommandSystem.CopyTester.ViewModels
     {
         private readonly CopyManager _copyManager;
 
-        public HistoryViewModel(CopyManager copyManager)
+        public HistoryViewModel()
         {
-            _copyManager = copyManager;
+            //_copyManager = copyManager;
         }
     }
 }

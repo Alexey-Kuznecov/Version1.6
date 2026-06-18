@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace UnityCommander.Common.Dialog
+namespace UnityCommander.Core.Dialog
 {
     public sealed record DialogRegistration(
          string Id,

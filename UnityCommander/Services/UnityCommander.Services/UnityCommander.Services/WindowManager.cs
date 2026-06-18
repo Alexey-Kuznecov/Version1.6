@@ -1,7 +1,12 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Windows;
+using System.Windows.Controls;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Plugin;
+using UnityCommander.Abstractions.Plugins;
+using UnityCommander.Core.Plugin;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
@@ -9,14 +14,23 @@ namespace UnityCommander.Services
     public sealed class WindowManager : IWindowManager
     {
         private readonly IDialogRegistry _registry;
+        private readonly CompositionEngine _engine;
         private readonly IServiceScopeResolver _resolver;
+        private readonly ICompositionRegistry _composition;
+        private PluginHost _host;
 
         public WindowManager(
             IDialogRegistry registry,
-            IServiceScopeResolver resolver)
+            IServiceScopeResolver resolver, 
+            ICompositionRegistry composition,
+            CompositionEngine compositionEngine,
+             PluginHost host)
         {
             _resolver = resolver;
             _registry = registry;
+            _engine = compositionEngine;
+            _composition = composition;
+            _host = host;
         }
 
         public bool ShowDialog(string id)
@@ -29,6 +43,57 @@ namespace UnityCommander.Services
             window.Show();
 
             return true;
+        }
+
+        #nullable enable
+        public bool? ShowDialog<TDialog>(object? paramerter = null)
+        {
+            var type = typeof(TDialog);
+
+            // Сначала ищем композит
+            if (_composition.TryGet(type, out var composition))
+            {
+                var plugin = _host.Get(composition.OwnerId);
+
+                var obj = _engine.Create(typeof(TDialog),
+                    new PluginCompositionContext()
+                    {
+                        PluginId = plugin.PluginId,
+                        Services = plugin.Services
+                    }, paramerter);
+
+                if (obj is UserControl)
+                {
+                    var window = new Window
+                    {
+                        Content = obj,
+
+                        Owner = Application.Current.MainWindow,
+
+                        WindowStartupLocation =
+                        WindowStartupLocation.CenterOwner,
+                    };
+
+                    window.Show();
+                }
+
+                if (obj is Window customWindow)
+                {
+                    customWindow.Show();
+
+                    customWindow.Owner = Application.Current.MainWindow;
+                }
+            }
+
+            // Потом обычный диалог
+            if (_registry.TryGet<TDialog>(out var dialog))
+            {
+                var (window, viewModel) = CreateWindow(dialog);
+
+                return window.ShowDialog();
+            }
+
+            return false;
         }
 
         public bool? ShowModalDialog(string id)

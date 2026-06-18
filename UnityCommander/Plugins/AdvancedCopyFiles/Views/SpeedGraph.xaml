@@ -5,7 +5,6 @@
     xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib"
     xmlns:converters="clr-namespace:AdvancedCopyFiles.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:graph="clr-namespace:UnityGraph.WPF;assembly=UnityGraph.WPF"
     xmlns:local="clr-namespace:AdvancedCopyFiles.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:AdvancedCopyFiles.ViewModels"
@@ -36,11 +35,11 @@
 
     <!--  Сетка и поверхность графика  -->
     <Grid>
-        <vm:WpfGraphControl
+        <!--<vm:WpfGraphControl
             x:Name="graph"
             Height="100"
             Controller="{Binding Controller}"
-            DisplayToolTip="{Binding DisplayToolTip}" />
+            DisplayToolTip="{Binding DisplayToolTip}" />-->
         <!--<vm:WpfGraphControl
             x:Name="graph"
             Controller="{Binding Controller}" />-->

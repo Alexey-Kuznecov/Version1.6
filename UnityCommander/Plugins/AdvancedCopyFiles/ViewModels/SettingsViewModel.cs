@@ -1,10 +1,17 @@
 ﻿
+using AdvancedCopyFiles.Core;
 using CommandSystem.Gui.MVVM;
+using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Plugins;
+using UnityCommander.Copying.Sessions;
 
 namespace AdvancedCopyFiles.ViewModels
 {
-    public class SettingsViewModel : ObservableObject
+    public class SettingsViewModel : ObservableObject, IInitializable
     {
+        private CopySessionManager _copySessionManager;
+        private ICopySettingsBuilder _builder;
+
         private string _sourcePath = string.Empty;
         private string _destinationPath = string.Empty;
 
@@ -16,10 +23,41 @@ namespace AdvancedCopyFiles.ViewModels
         private bool _сopyAllToOneFolder;
         private bool _flattenStructure;
 
-        public SettingsViewModel()
+        public SettingsViewModel(IMessageBus message, ICopySettingsBuilder copySettings, CopySessionManager manager)
         {
-            SourcePath = "E:\\Projects\\03._Tests\\CopyFileTest\\Source";
-            DestinationPath = "E:\\Projects\\03._Tests\\CopyFileTest\\Target";
+            _builder = copySettings;
+            _copySessionManager = manager;
+         
+            message.Subscribe<StartRequestedMessage>(OnStartRequested);
+        }
+
+        private ValueTask OnStartRequested(StartRequestedMessage message)
+        {
+            var ctx = message.Context;
+
+            if (ctx == null)
+                return ValueTask.CompletedTask;
+
+            ctx.Source = _sourcePath;
+            ctx.Destination = _destinationPath;
+
+            ctx.Session = _copySessionManager.CreateSession(
+                SourcePath,
+                DestinationPath);
+
+            ctx.Settings = _builder.Build(this, ctx.Session);
+
+            return ValueTask.CompletedTask;
+        }
+
+        public void Initialize(object parameter)
+        {
+            if (parameter is not FileOperationRequest request)
+                return;
+
+            SourcePath = request.Sources[0];
+            DestinationPath = request.Target;
+       
             UseMultiThreading = false;
             MaxConcurrentTasks = 2;
         }

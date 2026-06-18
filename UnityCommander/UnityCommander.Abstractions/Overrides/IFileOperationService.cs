@@ -1,7 +1,4 @@
-﻿
-using System.Threading.Tasks;
-
-namespace UnityCommander.Common.Override.Engine
+﻿namespace UnityCommander.Abstractions.Overrides
 {
     public interface IFileOperationService
     {

@@ -3,6 +3,7 @@ using CommandSystem.Gui.MVVM;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Copying;
 using UnityCommander.Copying.Core;
 using UnityCommander.Copying.Progress;
@@ -12,6 +13,7 @@ namespace AdvancedCopyFiles.ViewModels
 {
     public class ProgressViewModel : ObservableObject, IDisposable
     {
+        private readonly IMessageBus _messageBus;
         private readonly OpenManager _copyManager;
         private readonly CopySessionManager _sessionManager;
         private readonly HumanReadableTimeCalculator _humanCalculator = new();
@@ -34,21 +36,39 @@ namespace AdvancedCopyFiles.ViewModels
 
         public event Func<Task>? StartRequested = null;
 
-        public ProgressViewModel(OpenManager copyManager, CopySessionManager copySessionManager)
+        public ProgressViewModel(
+            OpenManager copyManager, 
+            CopySessionManager copySessionManager,
+            IMessageBus messageBus)
         {
+            _messageBus = messageBus;
             _copyManager = copyManager ?? throw new ArgumentNullException(nameof(copyManager));
             _sessionManager = copySessionManager ?? throw new ArgumentNullException(nameof(copySessionManager));
 
-            StartCommand = new RelayCommand(async _ => await StartRequested.Invoke(), _ => State == SessionState.Idle);
+            StartCommand = new RelayCommand(
+                async _ =>
+                {
+                    var message = new StartRequestedMessage();
+
+                    await _messageBus.PublishAsync(message);
+
+                    await _copyManager.StartCopyAsync(
+                        message.Context.Source,
+                        message.Context.Destination,
+                        message.Context.Session,
+                        message.Context.Settings);
+                },
+                _ => State == SessionState.Idle);
+
             PauseCommand = new RelayCommand(_ => _sessionManager.CurrentSession?.Pause(), _ => State == SessionState.Running);
             ResumeCommand = new RelayCommand(_ => _sessionManager.CurrentSession?.Resume(), _ => State == SessionState.Paused);
             CancelCommand = new RelayCommand(_ => _sessionManager.CurrentSession?.Cancel(), _ => State == SessionState.Running || State == SessionState.Paused);
 
             // Подписка на поток прогресса
             SubscribeToProgress();
-
             // Подписка на изменение состояния сессии
             _sessionManager.CurrentSessionStateChanged += (s, state) => State = state;
+            _messageBus = messageBus;
         }
 
         #region Dependency Properties

@@ -2,9 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Collections.Concurrent;
 using System.Windows.Threading;
-using System.Windows;
 using UnityCommander.Copying.Reporting;
 using UnityCommander.Copying.Sessions;
+using System.Windows;
 
 namespace AdvancedCopyFiles.Services
 {
@@ -22,44 +22,44 @@ namespace AdvancedCopyFiles.Services
 
         public CopyFileReporter()
         {
-            //Files = new ObservableCollection<FileCopyItem>(_files);
-            //_dispatcher = Application.Current.Dispatcher;
+            Files = new ObservableCollection<FileCopyItem>(_files);
+            _dispatcher = Application.Current.Dispatcher;
 
-            //_updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
-            //_updateTimer.Tick += (s, e) => ProcessPendingUpdates();
-            //_updateTimer.Start();
+            _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+            _updateTimer.Tick += (s, e) => ProcessPendingUpdates();
+            _updateTimer.Start();
         }
 
         // Предзагрузка всех файлов
         public void PrepareFileList(IEnumerable<(string source, string destination, long size)> files)
         {
-            //foreach (var f in files)
-            //{
-            //    var item = new FileCopyItem(f.source, f.destination, f.size);
-            //    _files.Add(item);
-            //    _fileMap[f.source] = item;
-            //}
-            //FilesChanged?.Invoke();
+            foreach (var f in files)
+            {
+                var item = new FileCopyItem(f.source, f.destination, f.size);
+                _files.Add(item);
+                _fileMap[f.source] = item;
+            }
+            FilesChanged?.Invoke();
         }
 
         public void OnFileProgress(string source, long bytesCopied)
         {
-            //if (_fileMap.TryGetValue(source, out var item))
-            //{
-            //    item.BytesCopied += bytesCopied;
-            //    item.Status = FileCopyStatus.InProgress;
-            //    _updateQueue.Enqueue(item); // обновление батчами через Dispatcher
-            //}
+            if (_fileMap.TryGetValue(source, out var item))
+            {
+                item.BytesCopied += bytesCopied;
+                item.Status = FileCopyStatus.InProgress;
+                _updateQueue.Enqueue(item); // обновление батчами через Dispatcher
+            }
         }
 
         public void OnFileCompleted(string source, bool success)
         {
-            //if (_fileMap.TryGetValue(source, out var item))
-            //{
-            //    item.BytesCopied = item.Size;
-            //    item.Status = success ? FileCopyStatus.Completed : FileCopyStatus.Failed;
-            //    _updateQueue.Enqueue(item);
-            //}
+            if (_fileMap.TryGetValue(source, out var item))
+            {
+                item.BytesCopied = item.Size;
+                item.Status = success ? FileCopyStatus.Completed : FileCopyStatus.Failed;
+                _updateQueue.Enqueue(item);
+            }
         }
 
         private void ProcessPendingUpdates()

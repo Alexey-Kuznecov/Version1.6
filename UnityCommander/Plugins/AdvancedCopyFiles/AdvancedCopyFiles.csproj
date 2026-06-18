@@ -11,8 +11,24 @@
     <ProjectReference Include="..\..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
-    <ProjectReference Include="..\..\UnityCommander.Copying\UnityCommander.Copying.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="UnityCommander.Copying">
+      <HintPath>..\..\..\..\_builds\UnityCommander.Copying.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.SystemMetrics">
+      <HintPath>..\..\..\..\_builds\UnityCommander.SystemMetrics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\MainViewOld.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\UnityCommander\UnityCommander\bin\Debug\net10.0-windows\plugins\AdvancedCopyFiles\&quot;" />
+	</Target>
 </Project>

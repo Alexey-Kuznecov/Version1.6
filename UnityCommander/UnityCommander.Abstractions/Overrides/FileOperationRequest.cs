@@ -1,7 +1,5 @@
 ﻿
-using System.Collections.Generic;
-
-namespace UnityCommander.Common.Override.Engine
+namespace UnityCommander.Abstractions.Overrides
 {
     public class FileOperationRequest
     {

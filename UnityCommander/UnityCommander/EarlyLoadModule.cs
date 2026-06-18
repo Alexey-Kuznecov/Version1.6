@@ -26,6 +26,7 @@ namespace UnityCommander
             _activator.Activate("sidebar-ex-1.0");
             //_activator.Activate("w3Manager-1.0");
             _activator.Activate("plugin-test-1.0");
+            _activator.Activate("advance-copy-1.0");
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

@@ -6,8 +6,12 @@ using PluginSystem.Runtime;
 using Prism.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Reflection;
 using System.Windows;
+using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Plugin;
+using UnityCommander.Core.Plugin;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.WPF;
@@ -18,20 +22,20 @@ namespace UnityCommander.Services.Plugins
     {
         private HashSet<ResourceDictionary> pluginResources = new();
 
-        private LoggerCreator _logger;
-
         private IPluginManager _manager;
 
         private IServiceProvider _serviceProvider;
-       
+
+        private PluginHost _host;
+
         public PluginActivator(
             IPluginManager manager, 
             IServiceProvider serviceProvider,
-            LoggerCreator logger)
+            PluginHost host)
         {
             _serviceProvider = serviceProvider;
-            _logger = logger;
             _manager = manager;
+            _host = host;
         }
 
         public void Activate(string pluginId)
@@ -64,6 +68,13 @@ namespace UnityCommander.Services.Plugins
 
             var pluginService = new PluginServices(pluginProvider);
             var context = new PluginContext(pluginService, container.PluginID);
+            
+            var instance = new PluginInstance(
+                pluginId,
+                pluginProvider, 
+                context);
+
+            _host.Register(instance);
 
             container.Context = context;
             container.Services = pluginProvider;
@@ -96,6 +107,9 @@ namespace UnityCommander.Services.Plugins
 
             services.AddSingleton(
                 rootProvider.GetRequiredService<IDialogService>());
+
+            services.AddSingleton(
+                rootProvider.GetRequiredService<IWindowManager>());
         }
 
         public void ActivateStartupPlugins()

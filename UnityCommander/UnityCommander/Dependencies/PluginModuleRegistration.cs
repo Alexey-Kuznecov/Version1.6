@@ -6,8 +6,12 @@ using Prism.Ioc;
 using System;
 using System.IO;
 using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Command;
+using UnityCommander.Abstractions.Plugin;
+using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Common.Plugins;
 using UnityCommander.Common.Plugins.UnityCommander.Common.Plugins;
+using UnityCommander.Core.Plugin;
 using UnityCommander.Integration;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
@@ -39,6 +43,12 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IPluginActivator, PluginActivator>();
             registry.RegisterSingleton<IRuntimeServices, RuntimeServices>();
             registry.RegisterSingleton<IResourceLoader, BamlResourceLoader>();
+            
+            registry.RegisterSingleton<PluginHost>();
+            registry.RegisterSingleton<ICompositionRegistry, CompositionRegistry>();
+            registry.RegisterSingleton<IPluginCommandRegistry, PluginCommandRegistry>();
+            registry.RegisterSingleton<IPluginCommandDispatcher, PluginCommandDispatcher>();
+            registry.RegisterSingleton<CompositionEngine>();
         }
     }
 }
