@@ -4,7 +4,7 @@ using Prism.Ioc;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Dialog;
-using UnityCommander.Core.Dialog;
+using UnityCommander.Core.Registrar;
 using UnityCommander.Modules.Viewer.Views;
 using UnityCommander.Services;
 using UnityCommander.ViewModels;

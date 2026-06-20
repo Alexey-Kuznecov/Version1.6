@@ -47,6 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
-    <Folder Include="Overrides\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

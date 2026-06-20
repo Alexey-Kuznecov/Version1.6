@@ -19,10 +19,10 @@ using UnityCommander.Copying.Progress;
 using UnityCommander.Copying.Reporting;
 using UnityCommander.Copying.Sessions;
 using UnityCommander.Copying.Strategies;
-using UnityCommander.Core.IO.Operations;
 using UnityCommander.Core.Plugin;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Ribbon.Abstractions.Models;
 
 [assembly: PluginInfo(
     name: "Advanced Copy",
@@ -53,6 +53,27 @@ namespace AdvancedCopyFiles
             {
                 Id = "open-old-copy-advanced",
                 CommandType = typeof(OpenCopyDialog),
+            });
+
+            init.ConfigureRibbon(r =>
+            {
+                r.Tab("home", "Главная")
+                    .Group("clipboard", "Буфер")
+                        .Section("main", RibbonGroupLayout.Large)
+                            .Button("open-copy-advanced")
+                            .Button("open-old-copy-advanced")
+                            .Button("delete")
+                        .EndSection()
+                    .EndGroup()
+                    .Group("tools", "Инструменты")
+                        .Section("plugins", RibbonGroupLayout.Inline)
+                            .Button("advanced-copy");
+
+                r.Tab("view", "Вид")
+                    .Group("panels", "Панели")
+                        .Section("main", RibbonGroupLayout.Medium)
+                            .Button("toggle-sidebar")
+                            .Button("toggle-console");
             });
 
             init.RegisterSingleton<IProgressCalculator, ProgressCalculator>();

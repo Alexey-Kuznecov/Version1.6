@@ -18,6 +18,9 @@
     <Reference Include="UnityCommander.Copying">
       <HintPath>..\..\..\..\_builds\UnityCommander.Copying.dll</HintPath>
     </Reference>
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="UnityCommander.SystemMetrics">
       <HintPath>..\..\..\..\_builds\UnityCommander.SystemMetrics.dll</HintPath>
     </Reference>

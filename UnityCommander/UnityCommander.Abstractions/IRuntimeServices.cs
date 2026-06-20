@@ -4,6 +4,7 @@ using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
+using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Abstractions
@@ -21,6 +22,8 @@ namespace UnityCommander.Abstractions
         IServiceOverrideRegistry Overrides { get; }
 
         ICompositionRegistry Composition { get; }
+
+        IRibbonRegistry Ribbon { get; }
 
         //IConsoleCommandRegistry Console { get; }
 

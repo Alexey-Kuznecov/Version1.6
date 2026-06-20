@@ -5,8 +5,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using Prism.Dialogs;
     using Prism.Mvvm;
     using System.Collections.Generic;
+    using UnityCommander.Abstractions.Resources;
     using UnityCommander.Common.Plugins;
-    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Logging.Infrastructure;
     using UnityCommander.Services.Interfaces.Plugins;
 
     public class PluginPanelViewModel : BindableBase
@@ -21,12 +22,16 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         public PluginPanelViewModel(
             IDialogService dialogService,
-            IIconProviderService iconProvider,
-            IPluginCatalog catalog)
+            CompositeIconResolver iconProvider,
+            IPluginCatalog catalog, 
+            LoggerCreator loggerCreator)
         {
-            var descriptors = new List<PluginDescriptor>();
-            var icon = iconProvider.GetIcon("Settings");
+            var logger = loggerCreator.For<PluginPanelViewModel>();
 
+            var descriptors = new List<PluginDescriptor>();
+
+            if (!iconProvider.TryResolve("Settings", out var icon))
+                logger.Warning("Иконка с именем Settings не найдена!");
 
             foreach (var pluginInfo in catalog.GetAll())
             {

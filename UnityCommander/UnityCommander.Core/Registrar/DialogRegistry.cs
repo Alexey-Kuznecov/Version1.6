@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.Dialog;
 
-namespace UnityCommander.Core.Dialog
+namespace UnityCommander.Core.Registrar
 {
     public sealed class DialogRegistry : IDialogRegistry
     {

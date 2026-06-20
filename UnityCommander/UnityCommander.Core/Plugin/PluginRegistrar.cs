@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using PluginSystem.Abstractions;
-using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -12,6 +11,7 @@ using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugin;
 using UnityCommander.Abstractions.Plugins;
+using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Core.Plugin
@@ -36,11 +36,15 @@ namespace UnityCommander.Core.Plugin
 
         private readonly List<ServiceOverrideEntry> _serviceOverrideEntry = new();
 
+        private RibbonContribution _ribbonContribution;
+
         public PluginRegistrar(string pluginId)
             => _pluginId = pluginId;
 
         public Dictionary<Type, Type> Views { get; } = new();
+
         public List<UserControl> ViewInstance { get; } = new();
+
         public IReadOnlyList<ServiceDescriptor> Services => _services;
 
         public void RegisterDisposable(IDisposable disposable) => _disposables.Add(disposable);
@@ -83,7 +87,24 @@ namespace UnityCommander.Core.Plugin
 
         public void RegisterSingleton<T>() where T : class
         {
-            _services.Add(ServiceDescriptor.Singleton(typeof(T), typeof(T)));
+            _services.Add(
+                ServiceDescriptor.Singleton(
+                    typeof(T), typeof(T)));
+        }
+
+        public void ConfigureRibbon(
+            Action<RibbonBuilder> configure)
+        {
+            var ribbon = new RibbonDefinition();
+
+            var builder = new RibbonBuilder(ribbon);
+
+            configure(builder);
+
+            _ribbonContribution =
+                new RibbonContribution(
+                    _pluginId,
+                    ribbon);
         }
 
         public void RegisterCommand(ICommandDefinition command)
@@ -103,7 +124,6 @@ namespace UnityCommander.Core.Plugin
             if (handler == null) throw new ArgumentNullException(nameof(handler));
         }
 
-        // Unregistering Event Handlers
         public void UnregisterEventHandler(Delegate handler)
         {
             if (handler == null) throw new ArgumentNullException(nameof(handler));
@@ -191,6 +211,9 @@ namespace UnityCommander.Core.Plugin
             {
                 runtime.Commands.Register(command);
             }
+
+            if (_ribbonContribution != null)
+                runtime.Ribbon.Register(_ribbonContribution);
 
             RegisterInfrastructureServices();
         }

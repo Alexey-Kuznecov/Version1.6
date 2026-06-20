@@ -116,7 +116,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ISettingsProviderService settingsService,
               IDataProviderService dataService,
               IMultiCommandService multiCommandService,
-              IIconProviderService iconProvider,
               IAppConfigService configService,
               IDirectoryChangeNotifier directoryChangeNotifier,
               ISelectionManager selectionManager,

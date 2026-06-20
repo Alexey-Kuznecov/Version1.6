@@ -23,7 +23,6 @@ namespace UnityCommander.ViewModels
     using UnityCommander.Controls.Window;
     using UnityCommander.Core.Behaviors;
     using UnityCommander.Mvvm;
-    using UnityCommander.Ribbon.Core.Services;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Settings;
@@ -52,10 +51,8 @@ namespace UnityCommander.ViewModels
             IDialogService dialogService,
             IEventAggregator exchange,
             ISettingsProviderService settingsProviderService,
-            IIconProviderService iconProviderService,
             IMultiCommandService command,
             IShellLayoutManager shellLayoutManager,
-            IRibbonManager ribbonManager,
             CommandExecutionService commandService)
         {
             _commandExecutionService = commandService;

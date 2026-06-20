@@ -1,6 +1,7 @@
 ﻿
 using Prism.Commands;
 using System;
+using UnityCommander.Abstractions.Resources;
 using UnityCommander.Common.Commands;
 using UnityCommander.Services.Interfaces;
 
@@ -9,12 +10,12 @@ namespace UnityCommander.Services
     public class CommandUIService : ICommandUIService
     {
         private readonly CommandExecutionService _commands;
-        private readonly IIconProviderService _icons;
+        private readonly CompositeIconResolver _iconResolver;
 
-        public CommandUIService(IIconProviderService icons, CommandExecutionService commands)
+        public CommandUIService(CompositeIconResolver iconResolver, CommandExecutionService commands)
         {
             _commands = commands;
-            _icons = icons;
+            _iconResolver = iconResolver;
         }
 
         public UICommand Create(string id)
@@ -28,7 +29,7 @@ namespace UnityCommander.Services
                 Title = meta.DisplayName,
                 Description = meta.Description,
 
-                Icon = _icons.GetIcon(id),
+                Icon = _iconResolver.Resolve(id),
 
                 Command = new DelegateCommand(
                     () => _commands.ExecuteAsync(id),
@@ -48,7 +49,7 @@ namespace UnityCommander.Services
                 Id = id,
                 Title = meta.DisplayName,
                 Description = meta.Description,
-                Icon = _icons.GetIcon(id),
+                Icon = _iconResolver.Resolve(id),
                 Command = command,
                 CanExecute = canExecute
             };

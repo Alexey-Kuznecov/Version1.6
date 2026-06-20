@@ -1,12 +1,15 @@
 ﻿
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
+using UnityCommander.Abstractions.Resources;
+using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
 
-namespace UnityCommander.Abstractions
+namespace UnityCommander.Core.Registrar
 {
     public class RuntimeServices : IRuntimeServices
     {
@@ -21,6 +24,10 @@ namespace UnityCommander.Abstractions
         public ICompositionRegistry Composition { get; }
 
         public IPluginCommandRegistry Commands { get; }
+        
+        public IIconSourceRegistry Icons { get; }
+
+        public IRibbonRegistry Ribbon { get; }
 
         public RuntimeServices(
             ISidebarRegistry sidebar, 
@@ -28,7 +35,9 @@ namespace UnityCommander.Abstractions
             IColumnRegistry registry,
             IServiceOverrideRegistry overrideRegistry,
             ICompositionRegistry compositionRegistry,
-            IPluginCommandRegistry command)
+            IPluginCommandRegistry command,
+            IRibbonRegistry ribbon,
+            IIconSourceRegistry iconSource)
         {
             Sidebar = sidebar;
             Dialog = dialog;
@@ -36,6 +45,8 @@ namespace UnityCommander.Abstractions
             Overrides = overrideRegistry;
             Composition = compositionRegistry;
             Commands = command;
+            Ribbon = ribbon;
+            Icons = iconSource;
         }
 
         public void Cleanup(string id)
@@ -44,6 +55,9 @@ namespace UnityCommander.Abstractions
             Columns.Cleanup(id);
             Sidebar.Cleanup(id);
             Overrides.Cleanup(id);
+            Composition.Cleanup(id);
+            Commands.Cleanup(id);
+            //Ribbon.Cleanup(id);
         }
     }
 }

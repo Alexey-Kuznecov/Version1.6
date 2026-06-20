@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Core">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

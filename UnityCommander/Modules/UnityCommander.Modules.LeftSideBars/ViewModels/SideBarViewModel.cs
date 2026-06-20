@@ -15,17 +15,18 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using MaterialDesignThemes.Wpf;
     using Prism.Dialogs;
     using Prism.Mvvm;
-    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Shapes;
+    using UnityCommander.Abstractions.Resources;
     using UnityCommander.Common.Helper;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.Models.Icons;
     using UnityCommander.Common.State;
     using UnityCommander.Common.States;
+    using UnityCommander.Core.Resources;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Bootstrap;
     using UnityCommander.Services.Interfaces.Plugins;
@@ -43,7 +44,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         private readonly ISidebarService _sidebarService;
 
-        private readonly ObservableCollection<IIcon> packIcon;
+        private readonly CompositeIconResolver _iconResolver;
 
         private DelegateCommand hideSidebarCommand;
 
@@ -61,7 +62,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         public SidebarViewModel(
             IDialogService dialogService,
-            IIconProviderService iconProvider,
+            CompositeIconResolver iconResolver,
             IPluginInfoProvider pluginLoader,
             IMultiCommandService command,
             ISessionService sessionService,
@@ -70,14 +71,14 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         {
             _viewResolver = viewResolver;
 
+            _iconResolver = iconResolver;
+
             _dialogService = dialogService;
 
             _sidebarService = sidebarService;
 
-            packIcon = iconProvider.GetIcons();
-
-            IconHideSidebar =
-                iconProvider.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+            if (iconResolver.TryResolve(Navigation.Back, out var icon))
+                IconHideSidebar = icon.GetIconPath();
 
             sidebarService.OnCleanup += SidebarService_PluginUnloaded;
         }
@@ -172,8 +173,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                         Id = item.Id,
                         Content = view,
                         Owner = item.OwnerId,
-                        Icon = packIcon.Single(
-                            i => ((Common.Models.Icons.Icon)i).Category == item.IconKey)
+                        Icon = _iconResolver.Resolve(item.IconKey)
                     });
             }
         }
