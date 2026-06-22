@@ -73,7 +73,7 @@ namespace UnityCommander.Integration.Plugins
         /// Получает коллекцию команд, доступных в загруженных плагинах.
         /// </summary>
         /// <returns>Коллекция команд <see cref="ICommandBase"/>.</returns>
-        IEnumerable<ICommandBase> GetPluginCommands();
+        //IEnumerable<ICommandBase> GetPluginCommands();
 
         /// <summary>
         /// Получает коллекцию базовых команд, доступных в плагинах.

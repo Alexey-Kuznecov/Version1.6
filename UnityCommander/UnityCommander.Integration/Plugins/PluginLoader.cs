@@ -10,7 +10,6 @@
     using System.Windows;
     using Microsoft.Extensions.DependencyInjection;
 
-    using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
@@ -73,7 +72,7 @@
         /// Коллекция команд, относящихся к конкретным плагинам.
         /// Позволяет расширять функциональность через команды, реализованные в плагинах.
         /// </summary>
-        private IEnumerable<ICommandBase> pluginCommandsBuilder = new List<ICommandBase>();
+        //private IEnumerable<ICommandBase> pluginCommandsBuilder = new List<ICommandBase>();
 
         #endregion
 
@@ -139,7 +138,7 @@
         /// и предназначенных для расширения их функциональности.
         /// </summary>
         /// <returns>Коллекция объектов <see cref="ICommandBase"/>.</returns>
-        public IEnumerable<ICommandBase> GetPluginCommands() => this.pluginCommandsBuilder;
+        //public IEnumerable<ICommandBase> GetPluginCommands() => this.pluginCommandsBuilder;
 
         /// <summary>
         /// Получает коллекцию глобальных команд,
@@ -231,7 +230,7 @@
                         var command = (ICommandFactory)plugin;
                         command?.CommandFactory(commandBuilder);
                         this.commandBuilders = commandBuilder.GetCommands();
-                        this.pluginCommandsBuilder = commandBuilder.GetPluginCommands();
+                        //this.pluginCommandsBuilder = commandBuilder.GetPluginCommands();
                     }
                 }
             }
