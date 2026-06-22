@@ -1,83 +1,68 @@
 ﻿
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Input;
+using UnityCommander.Abstractions.Keyboard;
 
 namespace UnityCommander.WPF.Behaviors
 {
     public static class KeyboardBinding
     {
-        #region IsSortcutEnabledProperty
+        private static IShortcutContextService? _context;
 
-        /// <summary>
-        /// Gets or Sets whether the control can be used as drag source.
-        /// </summary>
-        public static readonly DependencyProperty IsEnableProperty
-            = DependencyProperty.RegisterAttached("IsEnable",
-                                                  typeof(bool),
-                                                  typeof(KeyboardBinding),
-                                                  new UIPropertyMetadata(IsEnableChanged));
+        public static readonly DependencyProperty ScopeProperty =
+            DependencyProperty.RegisterAttached(
+                "Scope",
+                typeof(ShortcutScope),
+                typeof(KeyboardBinding),
+                new PropertyMetadata(default(ShortcutScope), OnScopeChanged));
 
-        /// <summary>
-        /// Gets whether the control can be used as drag source.
-        /// </summary>
-        public static bool GetIsEnable(UIElement target)
+        public static ShortcutScope GetScope(DependencyObject obj)
         {
-            return (bool)target.GetValue(IsEnableProperty);
+            return (ShortcutScope)obj.GetValue(ScopeProperty);
         }
 
-        /// <summary>
-        /// Sets whether the control can be used as drag source.
-        /// </summary>
-        public static void SetIsEnable(UIElement target, bool value)
+        public static void SetScope(DependencyObject obj, ShortcutScope value)
         {
-            target.SetValue(IsEnableProperty, value);
+            obj.SetValue(ScopeProperty, value);
         }
 
-        private static void IsEnableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnScopeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Grid grid = d as Grid;
-            var vm = grid?.DataContext as IKeyBinding;
-            vm?.SetBinding(d, new KeyboardManager());
+            if (d is not FrameworkElement element)
+                return;
+
+            element.Focusable = true;
+
+            element.AddHandler(
+                UIElement.GotKeyboardFocusEvent,
+                new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus),
+                true);
+
+            element.AddHandler(
+                UIElement.LostKeyboardFocusEvent,
+                new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus),
+                true);
         }
 
-        #endregion
+        private static void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var element = (FrameworkElement)sender;
 
-        ///// <summary>
-        ///// Gets or Sets whether the control can be used as drag source.
-        ///// </summary>
-        //public static readonly DependencyProperty KeyProperty
-        //    = DependencyProperty.RegisterAttached("Key",
-        //                                          typeof(GlobalCommand),
-        //                                          typeof(KeyboardBinding),
-        //                                          new UIPropertyMetadata(null, KeyChanged));
+            var scope = GetScope(element);
 
-        ///// <summary>
-        ///// Gets whether the control can be used as drag source.
-        ///// </summary>
-        //public static GlobalCommand GetKey(UIElement target)
-        //{
-        //    return (GlobalCommand)target.GetValue(KeyProperty);
-        //}
+            _context?.Push(element, scope);
+        }
 
-        ///// <summary>
-        ///// Sets whether the control can be used as drag source.
-        ///// </summary>
-        //public static void SetKey(UIElement target, GlobalCommand value)
-        //{
-        //    target.SetValue(KeyProperty, value);
-        //}
+        private static void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var element = (FrameworkElement)sender;
 
-        //private static void KeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    Grid grid = d as Grid;
-        //    InputGesture inputGesture = new KeyGesture(Key.R, ModifierKeys.Control);
-        //    KeyBinding binding = new KeyBinding();
-        //    InputBinding input = new InputBinding(new DelegateCommand(Command), inputGesture);
-        //    grid?.InputBindings.Add(input);
-        //}
+            _context?.Pop(element);
+        }
 
-        //public static void Command()
-        //{
-        //}
+        public static void Initialize(IShortcutContextService context)
+        {
+            _context = context;
+        }
     }
 }

@@ -16,6 +16,6 @@
 	  <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Column\" />
+	  <Folder Include="Keyboard\" />
 	</ItemGroup>
 </Project>

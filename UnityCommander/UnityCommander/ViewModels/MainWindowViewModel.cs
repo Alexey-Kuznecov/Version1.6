@@ -15,7 +15,6 @@ namespace UnityCommander.ViewModels
     using Prism.Dialogs;
     using Prism.Events;
     using Prism.Mvvm;
-    using System;
     using System.IO;
     using System.Windows;
     using System.Windows.Controls;
@@ -31,7 +30,7 @@ namespace UnityCommander.ViewModels
     /// <summary>
     /// The main window view model.
     /// </summary>
-    public class MainWindowViewModel : BindableBase, IKeyBinding
+    public class MainWindowViewModel : BindableBase
     {
         private CommandExecutionService _commandExecutionService;
 
@@ -132,15 +131,5 @@ namespace UnityCommander.ViewModels
             {
                 Application.Current.Shutdown();
             });
-
-        public void SetBinding(object dependencyObject, KeyboardManager manager)
-        {
-            Grid grid = dependencyObject as Grid;
-
-            //foreach (var globalCommand in this.globalCommandManager.GetCommands().Where(globalCommand => globalCommand?.ShortcutKey != null))
-            //{
-            //    grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
-            //}
-        }
     }
 }

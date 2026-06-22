@@ -12,24 +12,30 @@ using Prism.Commands;
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
+    using CommandSystem.Abstractions;
+    using CommandSystem.Infrastructure.Lifecycle;
     using MaterialDesignThemes.Wpf;
     using Prism.Dialogs;
     using Prism.Mvvm;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Shapes;
-    using UnityCommander.Abstractions.Resources;
+    using UnityCommander.Common.Commands;
     using UnityCommander.Common.Helper;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.State;
     using UnityCommander.Common.States;
+    using UnityCommander.Core.Commands;
     using UnityCommander.Rendering.Icons;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Bootstrap;
     using UnityCommander.Services.Interfaces.Plugins;
     using UnityCommander.Services.Interfaces.Sidebar;
+    using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
     using static UnityCommander.Common.Commands.CommandNames;
 
     /// <summary>
@@ -66,7 +72,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IMultiCommandService command,
             ISessionService sessionService,
             IViewResolver viewResolver,
-            ISidebarService sidebarService)
+            ISidebarService sidebarService, 
+            CommandRegistryService commandRegistry)
         {
             _viewResolver = viewResolver;
 
@@ -79,6 +86,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             IconHideSidebar = iconResolver.GetPath(Navigation.Back);
 
             sidebarService.OnCleanup += SidebarService_PluginUnloaded;
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              UI.ToggleSidebar,
+              ToggleSidebar
+          ));
         }
 
         private void SidebarService_PluginUnloaded(string pluginId)
@@ -126,6 +138,16 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                 SetProperty(ref currentSidebarItem, value);
                 Open(currentSidebarItem);
             }
+        }
+
+        public Task ToggleSidebar(CommandContext ctx)
+        {
+            _state.IsOpen = !_state.IsOpen;
+            _state.ActiveSectionId = _state.IsOpen ? currentSidebarItem?.Id : null;
+
+            Apply();
+
+            return Task.CompletedTask;
         }
 
         public void Open(SidebarItem item)

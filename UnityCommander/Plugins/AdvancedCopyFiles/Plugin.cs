@@ -62,8 +62,8 @@ namespace AdvancedCopyFiles
                 r.Tab("home", "Главная")
                     .Group("clipboard", "Буфер")
                         .Section("main", RibbonGroupLayout.Large)
-                            .Button("open-copy-advanced", "core.file")
-                            .Button("open-old-copy-advanced", "core.file");
+                            .Button("open-copy-advanced", "git")
+                            .Button("open-old-copy-advanced", "git");
                     //    .EndSection()
                     //.EndGroup()
                     //.Group("tools", "Инструменты")

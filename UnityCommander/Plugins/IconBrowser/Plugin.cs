@@ -77,7 +77,7 @@ namespace IconBrowser
                 r.Tab("home", "Главная")
                     .Group("tools", "Инструменты")
                         .Section("main", RibbonGroupLayout.Inline)
-                            .Button("open-icon-maker", "core.file");
+                            .Button("open-icon-maker", "git");
             });
 
             //init.RegisterDialog(

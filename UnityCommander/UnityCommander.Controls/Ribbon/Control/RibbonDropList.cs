@@ -42,17 +42,17 @@ namespace UnityCommander.Controls.Ribbon.Control
             this.DropListItem = popButton;
         }
         
-        public void AddItem(string text, IIcon icon, IGlobalCommand command)
-        {
-            var listBoxItem = new DropListPopupModel 
-            { 
-                Content = text, 
-                Command = command?.Command, 
-                Icon = icon.GetIconPath()
-            };
+        //public void AddItem(string text, IIcon icon, IGlobalCommand command)
+        //{
+        //    var listBoxItem = new DropListPopupModel 
+        //    { 
+        //        Content = text, 
+        //        Command = command?.Command, 
+        //        Icon = icon.GetIconPath()
+        //    };
 
-            this.dropListPopupModel.Add(listBoxItem);
-        }
+        //    this.dropListPopupModel.Add(listBoxItem);
+        //}
 
         private void SetPopupNavigation(object button)
         {

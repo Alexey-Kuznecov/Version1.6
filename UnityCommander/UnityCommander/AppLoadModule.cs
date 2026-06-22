@@ -3,6 +3,8 @@ using Prism.Ioc;
 using Prism.Modularity;
 using System.Threading;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Keyboard;
+using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Modules.FilePanel;
@@ -25,6 +27,7 @@ namespace UnityCommander
         public void OnInitialized(IContainerProvider containerProvider)
         {
             RegisterDiagnostics(containerProvider);
+            RegisterBinding(containerProvider);
             RegisterDiaglog(containerProvider);
             var initializer = containerProvider.Resolve<AppInitializer>();
             var refreshService = containerProvider.Resolve<IBackgroundService>();
@@ -35,7 +38,6 @@ namespace UnityCommander
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-          
         }
 
         private static void RegisterDiagnostics(IContainerProvider containerRegistry)
@@ -78,6 +80,35 @@ namespace UnityCommander
                          Title = "Копирование файлов"
                      }
                  ));
+        }
+
+        private static void RegisterBinding(IContainerProvider containerRegistry)
+        {
+            var shortcut = containerRegistry.Resolve<IShortcutRegistry>();
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.UI.ToggleBottomPanel,
+                Key = ShortcutKey.Oem3,
+                Modifiers = ShortcutModifiers.Ctrl,
+                Scope = ShortcutScope.Global
+            });
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.UI.ToggleRibbon,
+                Key = ShortcutKey.T,
+                Modifiers = ShortcutModifiers.Ctrl,
+                Scope = ShortcutScope.Global
+            });
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.UI.ToggleSidebar,
+                Key = ShortcutKey.B,
+                Modifiers = ShortcutModifiers.Ctrl,
+                Scope = ShortcutScope.Global
+            });
         }
     }
 }

@@ -1,29 +1,28 @@
 ﻿
 using CommandSystem.Abstractions;
 using CommandSystem.Gui;
-using UnityCommander.Ribbon.Services;
-using UnityCommander.Services;
+using UnityCommander.Core.Commands;
 using UnityCommander.Services.Interfaces.Plugins;
 using ICommand = System.Windows.Input.ICommand;
 
-namespace UnityCommander.Core.Commands
+namespace UnityCommander.Services
 {
-    public class RibbonCommandResolver : IRibbonCommandResolver
+    public class CommandFactory
     {
         private IPluginCommandProvider _pluginCommand;
         private CommandRegistryService _commandRegistry;
 
-        public RibbonCommandResolver(
-            IPluginCommandProvider pluginCommand, 
+        public CommandFactory(
+            IPluginCommandProvider pluginCommand,
             CommandRegistryService commandRegistry)
         {
             _pluginCommand = pluginCommand;
             _commandRegistry = commandRegistry;
         }
 
-        public ICommand Resolve(string commandId)
+        public ICommand Create(string commandId)
         {
-            if (_commandRegistry.Get(commandId) != null) 
+            if (_commandRegistry.Get(commandId) != null)
             {
                 var asyncCommand = _commandRegistry.Get(commandId).Command as IAsyncCommand;
 

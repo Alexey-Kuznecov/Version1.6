@@ -25,7 +25,7 @@ namespace UnityCommander.Common.Models.Directory
             = new NSwag.Collections.ObservableDictionary<string, object>();
 
         public TargetPanel TargetPanel { get; set; }
-        public List<ContextItem> ContextItems { get; set; }
+        //public List<ContextItem> ContextItems { get; set; }
         
         public Dictionary<string, DateTime> LastUpdate { get; }
           = new();

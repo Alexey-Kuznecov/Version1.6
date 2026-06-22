@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
+using System.Windows.Input;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Theming;
@@ -14,11 +15,14 @@ using UnityCommander.Modules.ToolBar;
 using UnityCommander.Modules.Viewer;
 using UnityCommander.Modules.WebBrowser;
 using UnityCommander.Views;
+using UnityCommander.WPF.Behaviors;
 
 namespace UnityCommander
 {
     public partial class App
     {
+        private IInputService _input;
+
         protected override Window CreateShell()
         {
             var catalog = new ThemeCatalog();
@@ -39,6 +43,11 @@ namespace UnityCommander
 
         protected override void InitializeShell(Window shell)
         {
+            var input = this.Container.Resolve<IInputService>();
+
+            _input = input;
+
+            shell.PreviewKeyDown += OnPreviewKeyDown;
             base.InitializeShell(shell);
         }
 
@@ -83,6 +92,11 @@ namespace UnityCommander
 
             // Инициализация после загрузки все модулей
             moduleCatalog.AddModule<AppLoadModule>();
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            _input.Process(e);
         }
     }
 }

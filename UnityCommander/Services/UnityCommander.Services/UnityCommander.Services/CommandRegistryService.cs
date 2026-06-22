@@ -1,9 +1,7 @@
 ﻿
 using CommandSystem.Abstractions;
 using CommandSystem.Gui.Integraion;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace UnityCommander.Services
 {
@@ -19,21 +17,6 @@ namespace UnityCommander.Services
         {
             _register = register;
             _provider = commandProvider;
-        }
-
-        public void Register(CommandMetadata metadata, Action<CommandContext> handler)
-        {
-            _register.Register(metadata, handler);
-        }
-
-        public void Register(CommandMetadata metadata, Func<CommandContext, Task<UndoToken>> handler)
-        {
-            _register.Register(metadata, handler);
-        }
-
-        public void Register(CommandMetadata metadata, Func<CommandContext, Task> handler)
-        {
-            _register.Register(metadata, handler);
         }
 
         public void Register(CommandDefinition commandDefinition)

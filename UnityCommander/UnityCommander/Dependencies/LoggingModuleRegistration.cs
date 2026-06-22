@@ -44,7 +44,6 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<LoggerCreator>();
             registry.RegisterSingleton<LoggingSinkService>();
-
         }
     }
 }

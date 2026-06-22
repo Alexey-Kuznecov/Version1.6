@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:UnityCommander.WPF.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:inputBinding="clr-namespace:UnityCommander.WPF.Behaviors;assembly=UnityCommander.WPF"
     xmlns:layout="clr-namespace:UnityCommander.Controls.Layout;assembly=UnityCommander.Controls"
     xmlns:localControl="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -36,9 +37,7 @@
             </ItemsControl>
         </DataTemplate>
         <DataTemplate DataType="{x:Type layout:RegionNode}">
-            <ContentControl
-                Content="{Binding Content}"
-                ContentTemplateSelector="{StaticResource ContentTemplateSelector}" />
+            <ContentControl Content="{Binding Content}" ContentTemplateSelector="{StaticResource ContentTemplateSelector}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type layout:SplitNode}">
             <Grid>
@@ -48,8 +47,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <ContentControl
-                    Content="{Binding First}" />
+                <ContentControl Content="{Binding First}" />
 
                 <GridSplitter
                     Grid.Row="1"
@@ -58,13 +56,11 @@
                     VerticalAlignment="Center"
                     ResizeDirection="Rows" />
 
-                <ContentControl
-                    Grid.Row="2"
-                    Content="{Binding Second}" />
+                <ContentControl Grid.Row="2" Content="{Binding Second}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    <Grid>
+    <Grid inputBinding:KeyboardBinding.Scope="FilePanel">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" MinHeight="400" />
             <RowDefinition Height="50" />
