@@ -6,9 +6,9 @@ namespace UnityCommander.Controls.Ribbon
     using System.Windows.Controls;
     using System.Windows.Media;
 
-    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Controls.Ribbon.Subgroup;
+    using UnityCommander.Rendering.Icons;
 
     public class RibbonControlGroupBuilder
     {

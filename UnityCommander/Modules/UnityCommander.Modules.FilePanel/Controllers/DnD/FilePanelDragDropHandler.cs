@@ -8,8 +8,7 @@ using System.Windows;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Controls.Layout;
-using UnityCommander.Core.Behaviors;
-using UnityCommander.Core.DragDrop;
+using UnityCommander.WPF.DragDrop;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 

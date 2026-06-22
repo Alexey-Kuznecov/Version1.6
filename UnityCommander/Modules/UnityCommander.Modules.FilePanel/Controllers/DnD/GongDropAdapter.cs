@@ -1,4 +1,5 @@
-﻿using UnityCommander.Core.DragDrop;
+﻿
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {

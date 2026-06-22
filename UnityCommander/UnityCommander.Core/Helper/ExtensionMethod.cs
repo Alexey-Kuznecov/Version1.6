@@ -6,7 +6,7 @@ namespace UnityCommander.Core.Helper
     using System.Reflection.Emit;
 
     using UnityCommander.Common.Models.Directory;
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     /// <summary>
     /// The extension method.

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 using System.Windows.Input;
 using System.Windows.Shapes;
-using UnityCommander.Common.Models.Icons;
 
 namespace UnityCommander.Controls.Ribbon.Control
 {

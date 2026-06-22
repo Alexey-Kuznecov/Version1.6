@@ -7,7 +7,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     public class RibbonComboBox : ComboBox, IDisposable
     {

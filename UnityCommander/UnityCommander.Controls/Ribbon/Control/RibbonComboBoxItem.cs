@@ -1,7 +1,7 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon.Control
 {
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     public class RibbonComboBoxItem : RibbonControl
     {

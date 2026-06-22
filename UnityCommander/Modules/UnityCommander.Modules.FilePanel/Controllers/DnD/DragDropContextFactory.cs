@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core.Behaviors;
-using UnityCommander.Core.DragDrop;
+using UnityCommander.WPF.DragDrop;
 using UnityCommander.Modules.FilePanel.States;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD

@@ -1,8 +1,8 @@
 ﻿
+using UnityCommander.Rendering.Icons;
+
 namespace UnityCommander.Controls.Ribbon.Control
 {
-    using UnityCommander.Common.Models.Icons;
-
     public class RibbonButton : RibbonControl
     {
         public RibbonButton(string buttonName, IIcon buttonIcon, RibbonCommand buttonCommand)

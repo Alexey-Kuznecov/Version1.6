@@ -1,6 +1,6 @@
 ﻿
 using System.Collections.Generic;
-using UnityCommander.Abstractions.Resources;
+using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Core.Registrar
 {

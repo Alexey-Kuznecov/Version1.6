@@ -9,8 +9,8 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Windows.Data;
 
     using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Mvvm;
+    using UnityCommander.Rendering.Icons;
 
     public class RibbonDropListBuilder
     {

@@ -4,8 +4,7 @@ namespace UnityCommander.Controls.Ribbon.Control
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-    using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     /// <summary>
     /// All controls inherit the necessary functionality from this type.

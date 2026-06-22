@@ -4,12 +4,11 @@ namespace UnityCommander.Controls.Ribbon
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
-    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Controls.Ribbon.Control;
     using UnityCommander.Controls.Ribbon.Subgroup;
+    using UnityCommander.Rendering.Icons;
 
     [SuppressMessage("ReSharper", "ConvertToUsingDeclaration")]
     public class RibbonControlListBuilder : IDisposable

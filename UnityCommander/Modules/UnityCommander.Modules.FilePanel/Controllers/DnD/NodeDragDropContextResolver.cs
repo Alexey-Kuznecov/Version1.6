@@ -1,7 +1,8 @@
 ﻿
+
 using System.Windows.Controls;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Core.Behaviors;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {

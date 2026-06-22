@@ -1,11 +1,10 @@
 ﻿
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using UnityCommander.Core.Behaviors;
 using UnityCommander.Modules.FilePanel.Controllers.DnD.Adorders;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {

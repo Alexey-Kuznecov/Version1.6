@@ -1,9 +1,7 @@
 ﻿
 namespace UnityCommander.Controls.Ribbon.Control
 {
-    using System.Windows.Input;
-    using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     /// <summary>
     /// The data model to bind to the control.
