@@ -2,7 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Core.DragDrop;
+using UnityCommander.WPF.DragDrop;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services.Interfaces;

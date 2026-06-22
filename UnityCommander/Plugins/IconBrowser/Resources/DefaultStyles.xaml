@@ -35,12 +35,12 @@
                 FontSize="12"
                 Foreground="DimGray"
                 Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
-            <Label
+            <!--<Label
                 Grid.Column="1"
                 Width="10"
                 Height="10"
                 Padding="5"
-                Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
+                Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />-->
         </Grid>
     </DataTemplate>
 
@@ -49,7 +49,6 @@
     <Style x:Key="IconStylesEditor" TargetType="ContentControl">
         <Setter Property="Foreground" Value="{Binding SelectedItem.Content, ElementName=ComboBox}" />
         <Setter Property="Margin" Value="5" />
-        <Setter Property="Height" Value="{Binding ElementName=S, Path=Value}" />
         <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Height}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Background" Value="#F3F3F3" />
@@ -90,7 +89,6 @@
     <Style x:Key="IconStylesEditorColor" TargetType="ContentControl">
         <Setter Property="Foreground" Value="{x:Null}" />
         <Setter Property="BorderBrush" Value="{x:Null}" />
-        <Setter Property="Height" Value="{Binding ElementName=S, Path=Value}" />
         <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path=Height}" />
         <Setter Property="Margin" Value="5" />
         <Setter Property="Cursor" Value="Hand" />

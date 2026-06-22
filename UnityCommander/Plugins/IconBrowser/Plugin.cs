@@ -1,16 +1,21 @@
 ﻿
+using IconBrowser.Commands;
+using IconBrowser.Services.Search;
 using IconBrowser.ViewModels;
 using IconBrowser.Views;
 using IconMaker.Core.ImportExport;
 using IconMaker.Core.Services;
 using IconMaker.Core.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using PluginSystem.Abstractions.Plugin;
 using PluginSystem.Runtime;
 using System;
 using System.IO;
+using UnityCommander.Abstractions.Command;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Ribbon.Abstractions.Models;
 
 [assembly: PluginInfo(
     name: "Icon Maker Plugin",
@@ -49,12 +54,38 @@ namespace IconBrowser
             init.RegisterSingleton<IIconThemeService, IconThemeService>();
             init.RegisterSingleton<IThemeSerializer, JsonIconThemeSerializer>();
 
-            init.RegisterDialog(
-                new DialogDefinition(
-                    "icon_maker-1.0",
-                    typeof(IconBrowserControl), 
-                    typeof(IconBrowserViewModel)
-            ));
+            init.RegisterSingleton<IconIndexBuilder>();
+            init.RegisterSingleton<IconSearchIndex>();
+
+            init.RegisterSingleton<IIconSearchService>(sp =>
+            {
+                var builder = sp.GetRequiredService<IconIndexBuilder>();
+                var search = sp.GetRequiredService<IconSearchIndex>();
+
+                return new IconSearchService(search, builder, path);
+            });
+
+            init.RegisterCommand(new CommandDefinition()
+            {
+                Id = "open-icon-maker",
+                IconKey = "core.file",
+                CommandType = typeof(OpenIconMakerWindowCommand),
+            });
+
+            init.ConfigureRibbon(r =>
+            {
+                r.Tab("home", "Главная")
+                    .Group("tools", "Инструменты")
+                        .Section("main", RibbonGroupLayout.Inline)
+                            .Button("open-icon-maker", "core.file");
+            });
+
+            //init.RegisterDialog(
+            //    new DialogDefinition(
+            //        "icon_maker-1.0",
+            //        typeof(IconBrowserControl), 
+            //        typeof(IconBrowserViewModel)
+            //));
 
             init.RegisterDialog(
                  new DialogDefinition(

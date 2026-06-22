@@ -5,6 +5,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using CommandSystem.Abstractions;
     using Prism.Dialogs;
     using Prism.Mvvm;
+    using System;
     using System.Threading.Tasks;
     using System.Windows.Shapes;
     using UnityCommander.Abstractions.Command;
@@ -15,6 +16,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using UnityCommander.Core.Commands;
     using UnityCommander.Core.Plugin;
     using UnityCommander.Modules.ToolBar.Builder;
+    using UnityCommander.Ribbon.Abstractions.Models;
     using UnityCommander.Ribbon.Services;
     using UnityCommander.Ribbon.Services.Wpf;
     using UnityCommander.Services;
@@ -29,6 +31,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         #region Dependency Injection Fields
 
         private IShellLayoutManager _shellLayoutManager;
+        private IRibbonRegistry _ribbonRegistry;
 
         #endregion
 
@@ -36,6 +39,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
 
         public ToolBarViewModel(
             ISettingsProviderService configService,
+            IRibbonRegistry ribbonRegistry,
             IRibbonManager ribbonManager,
             IShellLayoutManager shellLayoutManager,
             CommandExecutionService commandExecution, 
@@ -45,18 +49,15 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             IRibbonModelFactory modelFactory,
             IRibbonCommandResolver resolver)
         {
+            _ribbonRegistry = ribbonRegistry;
             _shellLayoutManager = shellLayoutManager;
             RibbonManager = ribbonManager;
             IsExpanded = true;
-
-            var ribbon = modelFactory.Create();
 
             RibbonManager.Configure(new RibbonServices()
             {
                 Commands = resolver
             });
-
-            RibbonManager.SetModel(ribbon);
 
             RibbonManager.TabCollapsed += RibbonManager_TabCollapsed;
             RibbonManager.TabExpanded += RibbonManager_TabExpanded;
@@ -65,6 +66,35 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                  CommandNames.UI.ToggleRibbon,
                  ToggleRibbon
              ));
+
+            ConfigureRibbon(r =>
+            {
+                r.Tab("home", "Главная")
+                    .Group("tools", "Инструменты")
+                        .Section("main", RibbonGroupLayout.Large)
+                            .Button(CommandNames.UI.ToggleBottomPanel, "core.drive");
+            });
+
+            var ribbon = modelFactory.Create();
+
+            RibbonManager.SetModel(ribbon);
+        }
+
+        public void ConfigureRibbon(
+          Action<RibbonBuilder> configure)
+        {
+            var ribbon = new RibbonDefinition();
+
+            var builder = new RibbonBuilder(ribbon);
+
+            configure(builder);
+
+            _ribbonContribution =
+                new RibbonContribution(
+                    "core.owner",
+                    ribbon);
+
+            _ribbonRegistry.Register(_ribbonContribution);
         }
 
         private void RibbonManager_TabCollapsed(object sender, RibbonTabEventArgs e)
@@ -88,6 +118,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         }
 
         private bool _isRibbonExpanded;
+        private RibbonContribution _ribbonContribution;
 
         public bool IsExpanded
         {

@@ -21,12 +21,12 @@ namespace UnityCommander.ViewModels
     using System.Windows.Controls;
     using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Window;
-    using UnityCommander.Core.Behaviors;
     using UnityCommander.Mvvm;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Layout;
+    using UnityCommander.WPF.Behaviors;
 
     /// <summary>
     /// The main window view model.

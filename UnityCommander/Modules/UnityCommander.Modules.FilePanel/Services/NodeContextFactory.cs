@@ -3,7 +3,7 @@ using Prism.Commands;
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Core.DragDrop;
+using UnityCommander.WPF.DragDrop;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;

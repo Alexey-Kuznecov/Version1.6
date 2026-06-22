@@ -23,7 +23,7 @@ namespace PluginTest
             init.RegisterSidebarItem(
                 new SidebarSection(
                     "plugin-test-1.0",
-                    "Sack",
+                    "core.sack",
                     typeof(SidebarSectionTreeView),
                     typeof(SidebarSectionTree)));
         }

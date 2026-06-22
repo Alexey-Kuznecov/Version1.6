@@ -30,6 +30,7 @@ namespace UnityCommander.Common.Styling
                     Name = "Default",
                     ResourceUris =
                     [
+                        "/UnityCommander.Rendering;component/Icons/Generic.xaml",
                         "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml",
                     ]
                 });

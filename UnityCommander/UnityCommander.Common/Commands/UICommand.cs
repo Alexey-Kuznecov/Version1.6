@@ -2,7 +2,7 @@
 using Prism.Mvvm;
 using System;
 using System.Windows.Input;
-using UnityCommander.Common.Models.Icons;
+using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Common.Commands
 {
@@ -17,6 +17,8 @@ namespace UnityCommander.Common.Commands
         public string Description { get; init; }
 
         public IIcon Icon { get; init; }
+
+        public string IconKey { get; init; }
 
         public Func<bool>? CanExecute { get; init; }
 

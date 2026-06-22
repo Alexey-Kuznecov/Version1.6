@@ -3,9 +3,9 @@
     <!--<Style
         x:Key="UcContextMenuItem"
         BasedOn="{StaticResource MaterialDesignMenuItem}"
-        TargetType="MenuItem" />
+        TargetType="MenuItem" />-->
 
-    <Style BasedOn="{StaticResource MaterialDesignContextMenu}" TargetType="{x:Type ContextMenu}">
+    <!--<Style BasedOn="{StaticResource MaterialDesignContextMenu}" TargetType="{x:Type ContextMenu}">
         <Setter Property="FontSize" Value="13" />
     </Style>-->
 

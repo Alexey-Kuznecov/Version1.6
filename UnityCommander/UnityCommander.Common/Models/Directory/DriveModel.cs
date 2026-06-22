@@ -1,7 +1,7 @@
 ﻿
 namespace UnityCommander.Common.Models.Directory
 {
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     public class DriveModel
     {

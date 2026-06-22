@@ -6,7 +6,7 @@ namespace UnityCommander.Services.Interfaces
 
     using MaterialDesignThemes.Wpf;
 
-    using UnityCommander.Common.Models.Icons;
+    using UnityCommander.Rendering.Icons;
 
     /// <summary>
     /// The service consists of methods that provide icons.

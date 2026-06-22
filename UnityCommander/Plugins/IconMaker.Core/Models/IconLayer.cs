@@ -1,6 +1,4 @@
 ﻿
-using System.Drawing;
-
 namespace IconMaker.Core.Models
 {
     public sealed class IconLayer

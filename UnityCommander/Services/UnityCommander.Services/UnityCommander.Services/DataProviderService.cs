@@ -40,7 +40,7 @@ namespace UnityCommander.Services
                             TargetPanel = TargetPanel.Files,
                             Key = file.FullName,
                             Size = file.Length,
-                            IconKey = nameof(file),
+                            IconKey = "core.file",
                         });
                     }
                 }
@@ -74,7 +74,7 @@ namespace UnityCommander.Services
                             LastAccessTime = folder.LastAccessTime,
                             TargetPanel = TargetPanel.Folders,
                             Key = folder.FullName,
-                            IconKey = nameof(folder),
+                            IconKey = "core.folder",
                         });
                     }
                 }
@@ -104,7 +104,7 @@ namespace UnityCommander.Services
                         UsedSpace = drive.TotalSize - drive.AvailableFreeSpace, // сырые байты
                         TotalAmount = drive.TotalSize,          // сырые байты
                         TargetPanel = TargetPanel.LocalDisk,
-                        IconKey = nameof(drive),
+                        IconKey = "core.drive",
                     });
                 }
 

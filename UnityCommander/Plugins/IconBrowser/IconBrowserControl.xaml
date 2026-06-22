@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="UserControl"
     mc:Ignorable="d">
-    <UserControl.Resources>
+    <!--<UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/IconBrowser;component/General.xaml" />
@@ -182,14 +182,14 @@
                 <RowDefinition Height="30" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid Grid.ColumnSpan="3" Background="#FFFFFF">
+            <--><!--Grid Grid.ColumnSpan="3" Background="#FFFFFF">
                 <Label
                     Width="50"
                     Margin="720,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
                     Content="{Binding ElementName=S, Path=Value}" />
-            </Grid>
+            </Grid>-->
             <!--<ComboBox
                 x:Name="ComboBox"
                 Grid.Row="1"
@@ -217,7 +217,7 @@
                 <ComboBoxItem Content="#FF028d5b" Template="{StaticResource ComboBoxItemTemplate}" />
                 <ComboBoxItem Content="#FF009FE3" Template="{StaticResource ComboBoxItemTemplate}" />
                 <ComboBoxItem Content="#FF672f8f" Template="{StaticResource ComboBoxItemTemplate}" />
-            </ComboBox>-->
+            </ComboBox>--><!--
             <Grid Grid.Row="1" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40*" />
@@ -252,5 +252,5 @@
                 Grid.Column="2"
                 AllowDrop="True" />
         </Grid>
-    </Grid>
+    </Grid>-->
 </UserControl>

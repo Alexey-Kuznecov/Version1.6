@@ -1,9 +1,11 @@
 ﻿
-using System.Windows.Input;
+using CommandSystem.Abstractions;
+using CommandSystem.Gui;
 using UnityCommander.Modules.ToolBar.Commands;
 using UnityCommander.Ribbon.Services;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces.Plugins;
+using ICommand = System.Windows.Input.ICommand;
 
 namespace UnityCommander.Core.Commands
 {
@@ -22,10 +24,11 @@ namespace UnityCommander.Core.Commands
 
         public ICommand Resolve(string commandId)
         {
-
             if (_commandRegistry.Get(commandId) != null) 
             {
-                return _commandRegistry.Get(commandId).Command as ICommand;
+                var asyncCommand = _commandRegistry.Get(commandId).Command as IAsyncCommand;
+
+                return new AsyncCommandAdapter(asyncCommand);
             }
 
             if (_pluginCommand.TryGet(commandId, out var result))

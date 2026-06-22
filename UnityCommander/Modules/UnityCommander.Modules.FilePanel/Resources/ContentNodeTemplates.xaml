@@ -5,7 +5,7 @@
     xmlns:be="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
-    xmlns:dd="clr-namespace:UnityCommander.Core.DragDrop;assembly=UnityCommander.Core"
+    xmlns:dd="clr-namespace:UnityCommander.WPF.DragDrop;assembly=UnityCommander.WPF.DragDrop"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:layout="clr-namespace:UnityCommander.Controls.Layout;assembly=UnityCommander.Controls"
     xmlns:models="clr-namespace:UnityCommander.Common.Commands;assembly=UnityCommander.Common"
@@ -79,9 +79,9 @@
                     <ContextMenu
                         DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
                         ItemsSource="{Binding Context.ContextMenuItems}"
-                        Style="{StaticResource UcContextMenu}">
+                        Style="{StaticResource MaterialDesignMenu}">
                         <ContextMenu.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
+                            <Style BasedOn="{StaticResource MaterialDesignMenuItem}" TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Title}" />
                                 <Setter Property="Command" Value="{Binding Command}" />
                                 <Setter Property="ItemsSource" Value="{Binding Children}" />

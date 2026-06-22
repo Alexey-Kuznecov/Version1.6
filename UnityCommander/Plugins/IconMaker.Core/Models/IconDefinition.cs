@@ -1,6 +1,4 @@
 ﻿
-using System.Windows.Media;
-
 namespace IconMaker.Core.Models
 {
     public class IconDefinition

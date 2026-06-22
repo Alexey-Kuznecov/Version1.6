@@ -1,7 +1,7 @@
 ﻿
 using CommandSystem.Gui.MVVM;
 using System.IO;
-using System.Reactive.Linq;
+//using System.Reactive.Linq;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Copying;
@@ -185,9 +185,9 @@ namespace AdvancedCopyFiles.ViewModels
         private void SubscribeToProgress()
         {
             // ⚠️ убрали Throttle — теперь работает через AggregatedProgressReporter
-            _subscription = _copyManager.ProgressStream
-                .ObserveOn(SynchronizationContext.Current!) // гарантированно UI поток
-                .Subscribe(UpdateProgress);
+            //_subscription = _copyManager.ProgressStream
+            //    .ObserveOn(SynchronizationContext.Current!) // гарантированно UI поток
+            //    .Subscribe(UpdateProgress);
         }
         public void Dispose() => _subscription?.Dispose();
     }

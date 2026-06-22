@@ -1,5 +1,6 @@
 ﻿
-namespace UnityCommander.Common.Models.Icons
+
+namespace UnityCommander.Rendering.Icons
 {
     using System.Windows.Shapes;
 

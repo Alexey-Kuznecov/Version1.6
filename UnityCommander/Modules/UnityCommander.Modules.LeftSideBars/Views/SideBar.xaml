@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.Views"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -47,13 +48,17 @@
                 SelectedItem="{Binding CurrentSidebarItem, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Viewbox
-                            Width="25"
-                            Height="25"
-                            Margin="6"
-                            Stretch="UniformToFill">
-                            <Path Data="{Binding Icon.Path.Data}" Fill="#FF1368" />
-                        </Viewbox>
+                        <Grid
+                            Width="45"
+                            Height="45"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Cursor="Hand">
+                            <icon:IconRender
+                                Key="{Binding IconKey}"
+                                Width="25"
+                                Height="25" />
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

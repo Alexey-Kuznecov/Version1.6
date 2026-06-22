@@ -1,8 +1,9 @@
 ﻿
 using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
-using UnityCommander.Abstractions.Resources;
 using UnityCommander.Common.Commands;
+using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Common.Styling
 {
@@ -12,16 +13,21 @@ namespace UnityCommander.Common.Styling
         private readonly Dictionary<string, PackIconKind> _icons
             = new();
 
+        public int Priority => 0;
+
         public MaterialIconSource()
         {
-            _icons.Add("FileTree", PackIconKind.FileTree);
-            _icons.Add("TableColumn", PackIconKind.TableColumn);
-            _icons.Add("Tag", PackIconKind.Tag);
-            _icons.Add("Comment", PackIconKind.Comment);
-            _icons.Add("Plugin", PackIconKind.Plugin);
-            _icons.Add("Settings", PackIconKind.Settings);
-            _icons.Add("Git", PackIconKind.Git);
-            _icons.Add("Sack", PackIconKind.Sack);
+            _icons.Add("core.foldertree", PackIconKind.FileTree);
+            _icons.Add("core.column", PackIconKind.TableColumn);
+            _icons.Add("core.tag", PackIconKind.Tag);
+            _icons.Add("core.commnet", PackIconKind.Comment);
+            _icons.Add("core.plugins", PackIconKind.Plugin);
+            _icons.Add("Settings", PackIconKind.Cog);
+            _icons.Add("core.git", PackIconKind.Git);
+            _icons.Add("core.sack", PackIconKind.Sack);
+            _icons.Add("core.drive", PackIconKind.Scanner);
+            _icons.Add("core.file", PackIconKind.File);
+            _icons.Add("core.folder", PackIconKind.Folder);
 
             _icons.Add(
                 CommandNames.Navigation.Drives,
@@ -46,7 +52,7 @@ namespace UnityCommander.Common.Styling
 
         public bool TryGet(
             string key,
-            out IconDefinition icon)
+            out RuntimeIcon icon)
         {
             if (!_icons.TryGetValue(key, out var kind))
             {
@@ -54,12 +60,11 @@ namespace UnityCommander.Common.Styling
                 return false;
             }
 
-            icon = CreateIcon(kind);
-
+            icon = CreateIcon(key, kind);
             return true;
         }
 
-        private static IconDefinition CreateIcon(
+        private static RuntimeIcon CreateIcon(string key,
             PackIconKind kind)
         {
             var packIcon = new PackIcon
@@ -67,9 +72,11 @@ namespace UnityCommander.Common.Styling
                 Kind = kind
             };
 
-            return new IconDefinition
+            //var results = Export();
+
+            return new RuntimeIcon
             {
-                Key = kind.ToString(),
+                Key = key,
                 Data = packIcon.Data
             };
         }

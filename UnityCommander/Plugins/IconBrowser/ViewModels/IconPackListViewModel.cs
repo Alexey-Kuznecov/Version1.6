@@ -4,6 +4,7 @@ using IconMaker.Core.Mvvm.Base;
 using IconMaker.Core.Services;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace IconBrowser.ViewModels
@@ -18,7 +19,7 @@ namespace IconBrowser.ViewModels
 
         public ICommand SelectPackCommand { get; }
 
-        public event Action<string>? PackSelected;
+        public event Func<string, Task>? PackSelected;
 
         public IconPackListViewModel(IIconService iconService)
         {

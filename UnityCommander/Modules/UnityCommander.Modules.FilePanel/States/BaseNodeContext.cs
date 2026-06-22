@@ -7,13 +7,13 @@ using System.Linq;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Core.DragDrop;
 using UnityCommander.Core.Helper;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.States
 {

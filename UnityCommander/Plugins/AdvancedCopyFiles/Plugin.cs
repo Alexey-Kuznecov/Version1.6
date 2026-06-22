@@ -46,12 +46,14 @@ namespace AdvancedCopyFiles
             init.RegisterCommand(new CommandDefinition()
             {
                 Id = "open-copy-advanced",
+                IconKey = "core.file",
                 CommandType = typeof(OpenCopyWindowCommand),
             });
 
             init.RegisterCommand(new CommandDefinition()
             {
                 Id = "open-old-copy-advanced",
+                IconKey = "core.file",
                 CommandType = typeof(OpenCopyDialog),
             });
 
@@ -60,20 +62,19 @@ namespace AdvancedCopyFiles
                 r.Tab("home", "Главная")
                     .Group("clipboard", "Буфер")
                         .Section("main", RibbonGroupLayout.Large)
-                            .Button("open-copy-advanced")
-                            .Button("open-old-copy-advanced")
-                            .Button("delete")
-                        .EndSection()
-                    .EndGroup()
-                    .Group("tools", "Инструменты")
-                        .Section("plugins", RibbonGroupLayout.Inline)
-                            .Button("advanced-copy");
+                            .Button("open-copy-advanced", "core.file")
+                            .Button("open-old-copy-advanced", "core.file");
+                    //    .EndSection()
+                    //.EndGroup()
+                    //.Group("tools", "Инструменты")
+                    //    .Section("plugins", RibbonGroupLayout.Inline)
+                    //        .Button("advanced-copy", "advanced-copy");
 
-                r.Tab("view", "Вид")
-                    .Group("panels", "Панели")
-                        .Section("main", RibbonGroupLayout.Medium)
-                            .Button("toggle-sidebar")
-                            .Button("toggle-console");
+                //r.Tab("view", "Вид")
+                //    .Group("panels", "Панели")
+                //        .Section("main", RibbonGroupLayout.Medium)
+                //            .Button("toggle-sidebar", "toggle-sidebar")
+                //            .Button("toggle-console", "toggle-console");
             });
 
             init.RegisterSingleton<IProgressCalculator, ProgressCalculator>();

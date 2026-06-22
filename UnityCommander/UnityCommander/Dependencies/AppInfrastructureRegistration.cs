@@ -12,6 +12,7 @@ using UnityCommander.Core.Registrar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.ToolBar.Builder;
+using UnityCommander.Rendering.Icons;
 using UnityCommander.Ribbon.Services;
 using UnityCommander.Services;
 using UnityCommander.Services.Bootstrap;
@@ -66,7 +67,8 @@ namespace UnityCommander.Dependencies
 
             // Ресурсы интерфейса: поставка иконок и визуальных элементов
             registry.RegisterSingleton<IIconSourceRegistry, IconSourceRegistry>();
-            registry.RegisterSingleton<CompositeIconResolver>();
+            registry.RegisterSingleton<IIconRenderService, IconRenderService>();
+            registry.RegisterSingleton<IIconResolver, CompositeIconResolver>();
 
             // Менеджер лейаута оболочки: отвечает за общую структуру интерфейса, области и их наполнение
             registry.RegisterSingleton<IShellLayoutManager, ShellLayoutManager>();

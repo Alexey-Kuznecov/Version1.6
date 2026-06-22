@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using UnityCommander.Logging.Contracts;
 
 namespace IconBrowser.ViewModels
 {
@@ -32,7 +33,8 @@ namespace IconBrowser.ViewModels
             IconDefinition icon,
             Func<IconTheme> themeProvider,
             Action<Guid> remove,
-            Action<Guid, string> rename)
+            Action<Guid, string> rename, 
+            ILogger logger)
         {
             Icon = icon;
             Style = (Style)Application.Current.FindResource("IconStylesEditorColor");

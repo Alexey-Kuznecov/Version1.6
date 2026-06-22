@@ -9,9 +9,7 @@ namespace IconMaker.Core.Models
 
         public List<IconDefinition> Icons { get; set; } = [];
 
-        public IconPack()
-        {
-        }
+        public IconPack() {}
 
         public IconPack(string id, string name, IEnumerable<IconDefinition>? icons = null)
         {

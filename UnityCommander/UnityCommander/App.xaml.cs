@@ -70,11 +70,13 @@ namespace UnityCommander
             // Модули 
             moduleCatalog.AddModule<FilePanelModule>();       
             moduleCatalog.AddModule<LeftSideBarsModule>();
+            moduleCatalog.AddModule<BottomPanelModule>();
+            // ВАЖНО: Ribbon инициализируется после нижней панели и после всех модулей, которые регистрируют свои команды в конструкторе.
+            // Это необходимо для того, чтобы Ribbon успел построиться и корректно разрешить команды, предоставляемые модулями.
             moduleCatalog.AddModule<ToolBarModule>();
             moduleCatalog.AddModule<ViewerModule>();
             moduleCatalog.AddModule<SettingsPanelModule>();
             moduleCatalog.AddModule<WebBrowserModule>();
-            moduleCatalog.AddModule<BottomPanelModule>();
 
             // Регистрация команд модулей
             moduleCatalog.AddModule<FilePanelCommandModule>(); // Команды

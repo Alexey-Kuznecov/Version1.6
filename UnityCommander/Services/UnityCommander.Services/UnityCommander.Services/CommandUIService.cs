@@ -29,7 +29,7 @@ namespace UnityCommander.Services
                 Title = meta.DisplayName,
                 Description = meta.Description,
 
-                Icon = _iconResolver.Resolve(id),
+                IconKey = _iconResolver.Resolve(id).Key,
 
                 Command = new DelegateCommand(
                     () => _commands.ExecuteAsync(id),
@@ -49,7 +49,7 @@ namespace UnityCommander.Services
                 Id = id,
                 Title = meta.DisplayName,
                 Description = meta.Description,
-                Icon = _iconResolver.Resolve(id),
+                IconKey = _iconResolver.Resolve(id).Key,
                 Command = command,
                 CanExecute = canExecute
             };

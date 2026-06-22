@@ -17,6 +17,7 @@ namespace UnityCommander.Abstractions.Ribbon
 
         public RibbonSectionBuilder Button(
             string commandId,
+            string iconKey,
             int order = 0)
         {
             _section.Items.Add(
@@ -24,6 +25,7 @@ namespace UnityCommander.Abstractions.Ribbon
                 {
                     CommandId = commandId,
                     SectionId = _section.Id,
+                    IconKey = iconKey,
                     Order = order
                 });
 

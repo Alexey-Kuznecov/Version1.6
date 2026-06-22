@@ -1,50 +1,51 @@
 ﻿
 using System.Collections.Generic;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using UnityCommander.Common.Models.Icons;
-using UnityCommander.Core.Resources;
+using System.Linq;
+using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Abstractions.Resources
 {
-    public sealed class CompositeIconResolver
-     : IIconResolver
+    public sealed class CompositeIconResolver : IIconResolver
     {
-        private readonly Dictionary<string, IIcon> _cache = new();
+        private readonly Dictionary<string, RuntimeIcon> _cache = new();
+
+        private readonly HashSet<string> _missing = new();
 
         private readonly IIconSourceRegistry _registry;
 
-        private IIcon _missingIcon;
+        private RuntimeIcon _missingIcon = new RuntimeIcon();
 
         public CompositeIconResolver(IIconSourceRegistry iconSource)
         {
             _registry = iconSource;
         }
 
-        public bool TryResolve(string key, out IIcon icon)
+        public bool TryResolve(string key, out RuntimeIcon icon)
         {
             if (_cache.TryGetValue(key, out icon))
                 return true;
 
-            foreach (var source in _registry.Sources)
+            if (_missing.Contains(key))
             {
-                if (!source.TryGet(key, out var definition))
+                icon = default!;
+                return false;
+            }
+
+            foreach (var source in _registry.Sources.OrderByDescending(x => x.Priority))
+            {
+                if (!source.TryGet(key, out icon))
                     continue;
 
-                icon = Convert(definition);
-
                 _cache[key] = icon;
-
                 return true;
             }
 
-            icon = _missingIcon;
-            _cache[key] = icon;
-
+            _missing.Add(key);
+            icon = default!;
             return false;
         }
 
-        public IIcon Resolve(string key)
+        public RuntimeIcon Resolve(string key)
         {
             if (_cache.TryGetValue(key, out var icon))
                 return icon;
@@ -53,19 +54,6 @@ namespace UnityCommander.Abstractions.Resources
                 return icon;
 
             return _missingIcon;
-        }
-
-        private IIcon Convert(
-            IconDefinition definition)
-        {
-            return new Icon
-            {
-                Path = new Path
-                {
-                    Data = Geometry.Parse(
-                        definition.Data)
-                }
-            };
         }
     }
 }

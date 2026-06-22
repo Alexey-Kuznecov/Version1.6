@@ -30,15 +30,15 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
             var descriptors = new List<PluginDescriptor>();
 
-            if (!iconProvider.TryResolve("Settings", out var icon))
-                logger.Warning("Иконка с именем Settings не найдена!");
+            //if (!iconProvider.TryResolve("Coin", out var icon))
+            //    logger.Warning("Иконка с именем Settings не найдена!");
 
             foreach (var pluginInfo in catalog.GetAll())
             {
                 descriptors.Add(new PluginDescriptor()
                 {
                     Author = pluginInfo.Author,
-                    Icon = icon,
+                    IconKey = "Cog",
                     Description = pluginInfo.GetDescription("ru"),
                     Id = pluginInfo.DeveloperID,
                     DisplayName = pluginInfo.Name,

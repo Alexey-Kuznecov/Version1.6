@@ -1,6 +1,7 @@
 ﻿
 
-using UnityCommander.Common.Models.Icons;
+using System.Windows.Media;
+using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Common.Plugins
 {
@@ -8,7 +9,9 @@ namespace UnityCommander.Common.Plugins
     {
         public string Id { get; init; }
 
-        public IIcon Icon { get; init; }
+        public Geometry Icon { get; init; }
+
+        public string IconKey { get; init; }
 
         public string DisplayName { get; init; }
 

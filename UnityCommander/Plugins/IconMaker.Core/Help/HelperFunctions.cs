@@ -37,14 +37,14 @@ namespace IconMaker.Core.Helper
         /// </summary>
         /// <param name="value">Шестнадцатеричное значение.</param>
         /// <returns>Возращает цвет кисти.</returns>  
-        [DebuggerStepThrough]  
+        [DebuggerStepThrough]
         public static SolidColorBrush StringFormatToSolidColor(this string value)
         {
-            BrushConverter converter = new BrushConverter();          
-            SolidColorBrush solid = (SolidColorBrush)converter.ConvertFromString(value);
-            return solid;
+            var converter = new BrushConverter();
+            return converter.ConvertFromString(value) as SolidColorBrush
+                   ?? throw new FormatException($"Invalid brush: {value}");
         }
-        
+
         /// <summary>
         /// Решает проблему: Указанный элемент уже является логическим дочерним для другого элемента. Сначала отсоедините его.
         /// </summary>

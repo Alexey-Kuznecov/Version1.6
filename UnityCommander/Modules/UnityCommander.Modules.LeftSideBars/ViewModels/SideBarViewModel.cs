@@ -23,10 +23,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Abstractions.Resources;
     using UnityCommander.Common.Helper;
     using UnityCommander.Common.Models;
-    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Common.State;
     using UnityCommander.Common.States;
-    using UnityCommander.Core.Resources;
+    using UnityCommander.Rendering.Icons;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Bootstrap;
     using UnityCommander.Services.Interfaces.Plugins;
@@ -44,7 +43,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         private readonly ISidebarService _sidebarService;
 
-        private readonly CompositeIconResolver _iconResolver;
+        private readonly IIconRenderService _iconResolver;
 
         private DelegateCommand hideSidebarCommand;
 
@@ -62,7 +61,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         public SidebarViewModel(
             IDialogService dialogService,
-            CompositeIconResolver iconResolver,
+            IIconRenderService iconResolver,
             IPluginInfoProvider pluginLoader,
             IMultiCommandService command,
             ISessionService sessionService,
@@ -77,8 +76,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
             _sidebarService = sidebarService;
 
-            if (iconResolver.TryResolve(Navigation.Back, out var icon))
-                IconHideSidebar = icon.GetIconPath();
+            IconHideSidebar = iconResolver.GetPath(Navigation.Back);
 
             sidebarService.OnCleanup += SidebarService_PluginUnloaded;
         }
@@ -173,7 +171,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                         Id = item.Id,
                         Content = view,
                         Owner = item.OwnerId,
-                        Icon = _iconResolver.Resolve(item.IconKey)
+                        IconKey = item.IconKey
                     });
             }
         }

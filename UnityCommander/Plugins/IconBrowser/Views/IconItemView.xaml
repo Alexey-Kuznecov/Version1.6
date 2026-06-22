@@ -41,9 +41,9 @@
                 </ToolTip>
             </ContentControl.ToolTip>
 
-            <ContentControl.InputBindings>
-                <MouseBinding Command="{Binding SelectCommand}" Gesture="LeftClick" />
-            </ContentControl.InputBindings>
+            <!--<ContentControl.InputBindings>
+                <MouseBinding Command="{Binding SelectPackCommand}" Gesture="LeftClick" />
+            </ContentControl.InputBindings>-->
 
         </ContentControl>
     </Grid>

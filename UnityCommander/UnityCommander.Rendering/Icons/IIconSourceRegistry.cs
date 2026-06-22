@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Abstractions.Resources
+namespace UnityCommander.Rendering.Icons
 {
     public interface IIconSourceRegistry
     {

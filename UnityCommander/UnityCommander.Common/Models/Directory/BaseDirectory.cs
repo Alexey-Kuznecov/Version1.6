@@ -4,9 +4,8 @@ namespace UnityCommander.Common.Models.Directory
     using Prism.Mvvm;
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Common.Selection;
+    using UnityCommander.Rendering.Icons;
 
     /// <summary>
     /// The directory base.

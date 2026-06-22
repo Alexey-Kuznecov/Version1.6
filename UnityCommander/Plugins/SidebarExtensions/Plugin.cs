@@ -24,7 +24,7 @@ namespace MultiColumns
             init.RegisterSidebarItem(
                 new SidebarSection(
                     "sidebar-ex-1.0",
-                    "Git",
+                    "core.git",
                     typeof(SidebarGitView), 
                     typeof(SidebarGitViewModel)));
 

@@ -4,6 +4,8 @@ using Prism.Modularity;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Common.Plugins;
 using UnityCommander.Common.Styling;
+using UnityCommander.Core.Bootstrap;
+using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 
@@ -22,16 +24,20 @@ namespace UnityCommander
             _provider = provider.Resolve<IPluginProvider>();
             _activator = provider.Resolve<IPluginActivator>();
             _iconSource = provider.Resolve<IIconSourceRegistry>();
+            var iconRender = provider.Resolve<IIconRenderService>();
+
+            IconHub.Initialize(iconRender);
 
             _providerInfo.LoadMetadata();
 
             _activator.Activate("icon-maker-1.0");
-            _activator.Activate("multi-column-1.0");
-            _activator.Activate("sidebar-ex-1.0");
-            _activator.Activate("plugin-test-1.0");
-            _activator.Activate("advance-copy-1.0");
+            //_activator.Activate("multi-column-1.0");
+            //_activator.Activate("sidebar-ex-1.0");
+            //_activator.Activate("plugin-test-1.0");
+            //_activator.Activate("advance-copy-1.0");
 
             _iconSource.Register(new MaterialIconSource());
+            _iconSource.Register(new FileIconSource("G:\\material.iconpack"));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

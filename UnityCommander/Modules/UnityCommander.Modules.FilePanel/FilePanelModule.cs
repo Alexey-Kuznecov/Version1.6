@@ -19,6 +19,7 @@ namespace UnityCommander.Modules.FilePanel
     using UnityCommander.Modules.FilePanel.Controllers.DnD;
     using UnityCommander.Modules.FilePanel.States.Resolver;
     using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.WPF.DragDrop;
 
     public class FilePanelModule : IModule
     {

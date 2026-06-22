@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Core.DragDrop;
+using UnityCommander.WPF.DragDrop;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;

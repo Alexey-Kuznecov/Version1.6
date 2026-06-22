@@ -4,6 +4,7 @@
     xmlns:converter="clr-namespace:UnityCommander.Modules.FilePanel.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
     mc:Ignorable="d">
@@ -13,15 +14,28 @@
     <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
     <converter:DataSizeConverter x:Key="DataSizeConverter" />
 
+    <!--<DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
+        <Grid>
+            <AdornerDecorator>
+                <ContentPresenter>
+                    <converter:BindableParameter
+                        Binding="{Binding Icon}"
+                        Converter="{StaticResource IconConverter}"
+                        ConverterParameter="{Binding TargetPanel}" />
+                </ContentPresenter>
+            </AdornerDecorator>
+        </Grid>
+    </DataTemplate>-->
+
     <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
             <AdornerDecorator>
                 <ContentPresenter>
                     <ContentPresenter.Content>
-                        <converter:BindableParameter
-                            Binding="{Binding Icon}"
-                            Converter="{StaticResource IconConverter}"
-                            ConverterParameter="{Binding TargetPanel}" />
+                        <icon:IconRender
+                         Key="{Binding IconKey}"
+                         Width="12"
+                         Height="12" />
                     </ContentPresenter.Content>
                 </ContentPresenter>
             </AdornerDecorator>
@@ -53,10 +67,10 @@
             <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
             <ContentPresenter Grid.Column="0">
                 <ContentPresenter.Content>
-                    <converter:BindableParameter
-                        Binding="{Binding Icon}"
-                        Converter="{StaticResource IconConverter}"
-                        ConverterParameter="{Binding TargetPanel}" />
+                    <icon:IconRender
+                        Key="{Binding IconKey}"
+                        Width="12"
+                        Height="12" />
                 </ContentPresenter.Content>
             </ContentPresenter>
         </Grid>
