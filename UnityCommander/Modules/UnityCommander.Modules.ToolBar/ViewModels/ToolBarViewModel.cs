@@ -1,26 +1,20 @@
 ﻿
-
 namespace UnityCommander.Modules.ToolBar.ViewModels
 {
     using CommandSystem.Abstractions;
-    using Prism.Dialogs;
     using Prism.Mvvm;
     using System;
     using System.Threading.Tasks;
-    using System.Windows.Shapes;
     using UnityCommander.Abstractions.Command;
-    using UnityCommander.Abstractions.Dialog;
     using UnityCommander.Abstractions.Ribbon;
     using UnityCommander.Common.Commands;
     using UnityCommander.Common.State;
     using UnityCommander.Core.Commands;
-    using UnityCommander.Core.Plugin;
     using UnityCommander.Modules.ToolBar.Builder;
     using UnityCommander.Ribbon.Abstractions.Models;
     using UnityCommander.Ribbon.Services;
     using UnityCommander.Ribbon.Services.Wpf;
     using UnityCommander.Services;
-    using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Layout;
 
     /// <summary>
@@ -38,7 +32,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
         public IRibbonManager RibbonManager { get; }
 
         public ToolBarViewModel(
-            ISettingsProviderService configService,
             IRibbonRegistry ribbonRegistry,
             IRibbonManager ribbonManager,
             IShellLayoutManager shellLayoutManager,

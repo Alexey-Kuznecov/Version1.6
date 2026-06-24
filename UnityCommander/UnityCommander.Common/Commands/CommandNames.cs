@@ -107,6 +107,7 @@ namespace UnityCommander.Common.Commands
         {
             public const string ShowContextMenu = "ui.show-context-menu";
             public const string ShowDialog = "ui.show-dialog";
+            public const string ShowSettings = "ui.show-settings";
             public const string ShowMessage = "ui.show-message";
             public const string ToggleBottomPanel = "ui.toggle.bottom.panel";
             public const string ToggleRibbon = "ui.toggle.ribbon";

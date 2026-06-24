@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Settings\" />
   </ItemGroup>
 
 </Project>

@@ -38,11 +38,6 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         private readonly IRegionManager regionManager;
 
         /// <summary>
-        /// The region manager.
-        /// </summary>
-        private readonly IAppConfigService appConfigService;
-
-        /// <summary>
         /// The navigationCommand class instance.
         /// </summary>
         //private NavigationInvoker navigationCommand;

@@ -1,6 +1,6 @@
 ﻿
 using Prism.Commands;
-using Prism.Ioc;
+using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
 using UnityCommander.Logging.Contracts;
@@ -21,7 +21,10 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ISessionBuilder _builder;
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
-        
+
+        private readonly IShortcutOverrideStore _shortcutStore;
+        private readonly JsonShortcutOverrideStorage _shotcutStorage;
+
         private LogHub _hub;
         private readonly ILogger _logger;
 
@@ -33,8 +36,11 @@ namespace UnityCommander.Services.Bootstrap
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
             IMultiCommandService multiCommand, 
+            IShortcutOverrideStore shortcutStore,
+            JsonShortcutOverrideStorage shotcutStorage,
             LogHub hub, // Profiled as AppInitializer, but it is not a hot path, so we can ignore it for now
-            LoggerCreator logger) 
+            LoggerCreator logger
+            ) 
         {
             _logger = logger.For<AppInitializer>(
                scope: LogScope.Startup
@@ -47,6 +53,9 @@ namespace UnityCommander.Services.Bootstrap
             _builder = builder;
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
+
+            _shortcutStore = shortcutStore;
+            _shotcutStorage = shotcutStorage;
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -61,6 +70,8 @@ namespace UnityCommander.Services.Bootstrap
             _session.Save(_state);
 
             _layout.Save();
+
+            _shotcutStorage.Save(_shortcutStore.GetSnapshot());
         });
 
         public void Initialize()

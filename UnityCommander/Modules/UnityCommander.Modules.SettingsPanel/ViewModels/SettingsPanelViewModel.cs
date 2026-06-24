@@ -1,25 +1,26 @@
-﻿using Prism.Commands;
+﻿
 using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using UnityCommander.Modules.SettingsPanel.Services;
 
 namespace UnityCommander.Modules.SettingsPanel.ViewModels
 {
     public class SettingsPanelViewModel : BindableBase
     {
-        private string message;
-        public string Message
+        public ObservableCollection<SettingsPageViewModel> Pages { get; }
+
+        private SettingsPageViewModel? _selectedPage;
+
+        public SettingsPageViewModel? SelectedPage
         {
-            get => message;
-            set => SetProperty(ref message, value);
+            get => _selectedPage;
+            set => SetProperty(ref _selectedPage, value);
         }
 
-        public SettingsPanelViewModel()
+        public SettingsPanelViewModel(ISettingsViewModelBuilder builder)
         {
-            Message = "Здесь будет настройки приложения и плагинов";
+            Pages = new ObservableCollection<SettingsPageViewModel>(
+                builder.Build());
         }
     }
 }

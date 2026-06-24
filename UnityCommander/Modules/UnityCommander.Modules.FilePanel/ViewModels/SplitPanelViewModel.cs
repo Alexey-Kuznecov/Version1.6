@@ -43,7 +43,6 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Interfaces.Settings;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -59,7 +58,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         // --- Зависимости через DI
         private readonly IDialogService dialogService;
         private readonly IDataProviderService dataService;
-        private readonly ISettings settingsService;
         private readonly IMultiCommandService multiCommandService;
         private readonly NavigationManager _navigationService;
         private readonly ILogger _logger;
@@ -75,7 +73,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private readonly IColumnStateManager columnStateManager;
         private readonly IColumnRegistry columnRegistry;
-        private readonly IColumnSettingsStore settings;
         private readonly NodeContextRegistry _contextRegistry;
         private readonly TabState _state;
         public event Action<string> PathChanged;
@@ -113,10 +110,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public SplitPanelViewModel(
               IDialogService dialogService,
               IRegionManager regionManager,
-              ISettingsProviderService settingsService,
               IDataProviderService dataService,
               IMultiCommandService multiCommandService,
-              IAppConfigService configService,
               IDirectoryChangeNotifier directoryChangeNotifier,
               ISelectionManager selectionManager,
               ITabRegistry tabRegistry,
@@ -126,7 +121,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               CommandManager manager,
               IColumnProvider columnProvider,
               IColumnStateManager columnStateManager,
-              IColumnSettingsStore settingsStore,
               IColumnRegistry columnRegistry,
               LoggerCreator loggerCreator,
               CommandExecutionService commandService, 
@@ -165,7 +159,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.dialogService = dialogService;
         
             this.dataService = dataService;
-            this.settingsService = settingsService.GetAppConfig();
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
             this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
@@ -175,8 +168,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
 
             this.columnStateManager = columnStateManager ?? throw new ArgumentNullException(nameof(columnStateManager)); ;
-            this.settings = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
-            this.columnRegistry = columnRegistry ?? throw new ArgumentNullException(nameof(settingsStore));
+        
+            this.columnRegistry = columnRegistry;
 
             columnRegistry.PluginUnloaded += OnPluginUnloaded;
 
@@ -239,10 +232,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(() =>
         {
-            if (settingsService.IsSessionSaved)
-            {
-                // Логика сохранения состояния панели
-            }
+            //if (settingsService.IsSessionSaved)
+            //{
+            //    // Логика сохранения состояния панели
+            //}
         });
 
         private readonly RegionNode _headerRegion =

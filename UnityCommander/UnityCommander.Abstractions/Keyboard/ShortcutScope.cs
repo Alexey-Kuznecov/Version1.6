@@ -1,18 +1,23 @@
 ﻿
 namespace UnityCommander.Abstractions.Keyboard
 {
+    [Flags]
     public enum ShortcutScope
     {
-        Global,
+        None = 0,
 
-        FilePanel,
-        Sidebar,
-        Console,
+        Global = 1 << 0,
 
-        TextEditor,
-        CodeEditor,
-        ImageEditor,
+        MainWindow = 1 << 1,
 
-        Dialog
+        FilePanel = 1 << 2,
+        Sidebar = 1 << 3,
+        Ribbon = 1 << 4,
+        Console = 1 << 5,
+
+        Dialog = 1 << 6,
+
+        TextEditor = 1 << 7,
+        CodeEditor = 1 << 8,
     }
 }

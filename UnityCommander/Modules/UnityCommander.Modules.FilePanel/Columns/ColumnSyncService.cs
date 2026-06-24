@@ -3,7 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityCommander.Abstractions.Columns;
-using UnityCommander.Services.Settings;
+using UnityCommander.Settings;
 
 namespace UnityCommander.Modules.FilePanel.Columns
 {

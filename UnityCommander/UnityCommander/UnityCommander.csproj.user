@@ -15,9 +15,6 @@
     <Compile Update="Views\CopyDialogs\CopyDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\DialogPluginConfigView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\DialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -33,9 +30,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\CopyDialogs\CopyProcessView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\DialogPluginConfigView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\DialogView.xaml">

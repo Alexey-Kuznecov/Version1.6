@@ -9,6 +9,6 @@ namespace UnityCommander.Abstractions.Keyboard
 
         public ShortcutModifiers Modifiers { get; init; }
 
-        public ShortcutScope Scope { get; init; }
+        public ShortcutScope Scopes { get; init; }
     }
 }

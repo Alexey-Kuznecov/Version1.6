@@ -27,6 +27,9 @@ namespace UnityCommander.WPF.Behaviors
             var (key, mods) =
                 WpfShortcutConverter.FromKeyGesture(e.Key, Keyboard.Modifiers);
 
+            if (!ShortcutKeyValidator.IsValid(e.Key))
+                return;
+
             if (!_resolver.TryResolve(key, mods, _context.Current, out var commandId))
                 return;
 

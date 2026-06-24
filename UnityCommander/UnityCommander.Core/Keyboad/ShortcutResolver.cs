@@ -6,10 +6,14 @@ namespace UnityCommander.Core.Keyboad
     public class ShortcutResolver : IShortcutResolver
     {
         private readonly IShortcutRegistry _registry;
+        private readonly IShortcutMapProvider _map;
 
-        public ShortcutResolver(IShortcutRegistry shortcut)
+        public ShortcutResolver(
+            IShortcutRegistry shortcut,
+            IShortcutMapProvider provider)
         {
             _registry = shortcut;
+            _map = provider;
         }
 
         public bool TryResolve(
@@ -18,30 +22,22 @@ namespace UnityCommander.Core.Keyboad
             ShortcutScope scope,
             out string commandId)
         {
-            foreach (var kv in _registry.GetAll())
-            {
-                if (kv.Key == key &&
-                    kv.Modifiers == mods &&
-                    kv.Scope == scope)
-                {
-                    commandId = kv.CommandId;
-                    return true;
-                }
-            }
-
-            foreach (var kv in _registry.GetAll())
-            {
-                if (kv.Key == key &&
-                    kv.Modifiers == mods &&
-                    kv.Scope == ShortcutScope.Global)
-                {
-                    commandId = kv.CommandId;
-                    return true;
-                }
-            }
-
             commandId = null;
-            return false;
+
+            if (!_map.TryGet(
+                    new ShortcutGesture(key, mods),
+                    out var shortcut))
+            {
+                return false;
+            }
+
+            if ((shortcut.Scopes & scope) == 0)
+            {
+                return false;
+            }
+
+            commandId = shortcut.CommandId;
+            return true;
         }
     }
 }

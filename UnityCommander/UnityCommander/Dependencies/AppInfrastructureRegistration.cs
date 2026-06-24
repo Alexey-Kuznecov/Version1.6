@@ -1,6 +1,5 @@
 ﻿
 using Prism.Ioc;
-using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
@@ -9,7 +8,6 @@ using UnityCommander.Common.Docking;
 using UnityCommander.Common.Helper;
 using UnityCommander.Common.Layout;
 using UnityCommander.Common.Sidebar;
-using UnityCommander.Core.Keyboad;
 using UnityCommander.Core.Registrar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
@@ -18,15 +16,13 @@ using UnityCommander.Rendering.Icons;
 using UnityCommander.Ribbon.Services;
 using UnityCommander.Services;
 using UnityCommander.Services.Bootstrap;
-using UnityCommander.Services.Command;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
-using UnityCommander.Services.Interfaces.Settings;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
-using UnityCommander.Services.Settings;
 using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Dialog;
 
 namespace UnityCommander.Dependencies
 {
@@ -57,8 +53,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<DockingSyncContext>();
 
             // Настройки приложения: конфиги и пользовательские настройки
-            registry.RegisterSingleton<IAppConfigService, AppConfigService>();
-            registry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
+            //registry.RegisterSingleton<IAppConfigService, AppConfigService>();
+            //registry.RegisterSingleton<ISettingsProviderService, SettingsProviderService>();
 
             // UI-лента (Ribbon): управление кнопками/командами верхнего меню
             registry.RegisterSingleton<IRibbonManager, RibbonManager>();
@@ -84,11 +80,12 @@ namespace UnityCommander.Dependencies
             // Ribbon
             registry.RegisterSingleton<IRibbonModelFactory, RibbonModelFactory>();
             registry.RegisterSingleton<IRibbonRegistry, RibbonRegistry>();
-
-            registry.RegisterSingleton<IShortcutContextService, ShortcutContextService>();
-            registry.RegisterSingleton<IShortcutResolver, ShortcutResolver>();
-            registry.RegisterSingleton<IShortcutRegistry, ShortcutRegistry>();
-            registry.RegisterSingleton<IInputService, InputService>();
+            
+            
+            registry.RegisterSingleton<IInputCaptureManager, InputCaptureManager>();
+            registry.RegisterSingleton<IInputContextService, InputContextService>();
+            registry.RegisterSingleton<IInputRouter, InputRouter>();
+            //registry.RegisterSingleton<WindowInputHook>();
 
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();

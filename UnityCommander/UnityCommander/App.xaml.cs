@@ -1,8 +1,10 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
+using System;
 using System.Windows;
 using System.Windows.Input;
+using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Theming;
@@ -15,13 +17,15 @@ using UnityCommander.Modules.ToolBar;
 using UnityCommander.Modules.Viewer;
 using UnityCommander.Modules.WebBrowser;
 using UnityCommander.Views;
-using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Dialog;
 
 namespace UnityCommander
 {
     public partial class App
     {
-        private IInputService _input;
+        private WindowInputManager _windowInput;
+
+        private Window? _activeWindow;
 
         protected override Window CreateShell()
         {
@@ -43,11 +47,10 @@ namespace UnityCommander
 
         protected override void InitializeShell(Window shell)
         {
-            var input = this.Container.Resolve<IInputService>();
+            _windowInput = this.Container.Resolve<WindowInputManager>();
 
-            _input = input;
+            _windowInput.Attach(shell, ShortcutScope.MainWindow);
 
-            shell.PreviewKeyDown += OnPreviewKeyDown;
             base.InitializeShell(shell);
         }
 
@@ -63,6 +66,7 @@ namespace UnityCommander
             PluginModuleRegistration.Register(containerRegistry);
             AutocompleteRegistration.Register(containerRegistry);
             CopyModuleRegistration.Register(containerRegistry);
+            SettingsRegistration.Register(containerRegistry);
             //AiRegistration.Register(containerRegistry);
         }
 
@@ -70,7 +74,7 @@ namespace UnityCommander
         {
             base.ConfigureViewModelLocator();
         }
-   
+
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             // Инициализация до загрузки всех модулей
@@ -92,11 +96,6 @@ namespace UnityCommander
 
             // Инициализация после загрузки все модулей
             moduleCatalog.AddModule<AppLoadModule>();
-        }
-
-        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            _input.Process(e);
         }
     }
 }

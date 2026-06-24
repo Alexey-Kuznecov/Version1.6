@@ -10,16 +10,13 @@ using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Plugin;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
-using UnityCommander.Common.Plugins;
 using UnityCommander.Common.Plugins.UnityCommander.Common.Plugins;
 using UnityCommander.Core.Plugin;
 using UnityCommander.Core.Registrar;
-using UnityCommander.Integration;
 using UnityCommander.Ribbon.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.Services.Plugins;
-using UnityCommander.WPF;
 
 namespace UnityCommander.Dependencies
 {

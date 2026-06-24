@@ -10,6 +10,9 @@ namespace UnityCommander.Core.Registrar
         private readonly Dictionary<string, ShortcutDefinition> _map =
             new(StringComparer.OrdinalIgnoreCase);
 
+        private readonly Dictionary<string, ShortcutOverride> _overrides =
+            new(StringComparer.OrdinalIgnoreCase);
+
         public IReadOnlyCollection<ShortcutDefinition> GetAll()
             => _map.Values;
 

@@ -11,6 +11,7 @@ using UnityCommander.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views;
 using UnityCommander.Views.CopyDialogs;
+using UnityCommander.WPF.Dialog;
 
 namespace UnityCommander.Dependencies
 {
@@ -28,10 +29,11 @@ namespace UnityCommander.Dependencies
             registry.RegisterDialog<AppConfigDialogControl, AppConfigDialogViewModel>("AppConfigDialog");
 
             //registry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig"); // пока закомментирован
-            
+
             registry.RegisterSingleton<IDialogService, OverrideDialogService>();
             registry.RegisterSingleton<IDialogRegistry, DialogRegistry>();
             registry.RegisterSingleton<IWindowManager, WindowManager>();
+            registry.RegisterSingleton<WindowInputManager>();
         }
     }
 }

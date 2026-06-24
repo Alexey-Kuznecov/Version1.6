@@ -44,7 +44,7 @@
         <conv:BoolToBrushConverter x:Key="BoolToBrushConverter" />
     </Window.Resources>
 
-    <Grid inputBinding:KeyboardBinding.Scope="Global">
+    <Grid inputBinding:KeyboardBinding.Scope="MainWindow">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="3" />

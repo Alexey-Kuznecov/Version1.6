@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using Prism.Ioc;
 using Prism.Modularity;
 using UnityCommander.Abstractions.Keyboard;
@@ -6,9 +7,12 @@ using UnityCommander.Abstractions.Resources;
 using UnityCommander.Common.Plugins;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
+using UnityCommander.Core.Settings;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
+using UnityCommander.Settings.Abstactions;
+using UnityCommander.Settings.Core;
 using UnityCommander.WPF.Behaviors;
 
 namespace UnityCommander
@@ -28,7 +32,7 @@ namespace UnityCommander
             _iconSource = provider.Resolve<IIconSourceRegistry>();
             var iconRender = provider.Resolve<IIconRenderService>();
             var context = provider.Resolve<IShortcutContextService>();
-
+         
             IconHub.Initialize(iconRender);
             KeyboardBinding.Initialize(context);
 

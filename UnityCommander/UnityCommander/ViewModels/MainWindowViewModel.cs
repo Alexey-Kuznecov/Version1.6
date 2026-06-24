@@ -5,9 +5,6 @@
 // <summary>
 //   Defines the MainWindowViewModel type.
 // </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-using System.Linq;
 
 namespace UnityCommander.ViewModels
 {
@@ -17,15 +14,12 @@ namespace UnityCommander.ViewModels
     using Prism.Mvvm;
     using System.IO;
     using System.Windows;
-    using System.Windows.Controls;
     using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Window;
     using UnityCommander.Mvvm;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Layout;
-    using UnityCommander.WPF.Behaviors;
 
     /// <summary>
     /// The main window view model.
@@ -49,7 +43,6 @@ namespace UnityCommander.ViewModels
         public MainWindowViewModel(
             IDialogService dialogService,
             IEventAggregator exchange,
-            ISettingsProviderService settingsProviderService,
             IMultiCommandService command,
             IShellLayoutManager shellLayoutManager,
             CommandExecutionService commandService)
@@ -64,8 +57,6 @@ namespace UnityCommander.ViewModels
                 .SaveCommand
                 .RegisterCommand(this.CloseWindowCommand);
 
-            var settings = settingsProviderService.GetAppConfig();
-                      
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
         }
 

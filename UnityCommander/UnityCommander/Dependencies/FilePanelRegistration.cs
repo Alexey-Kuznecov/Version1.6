@@ -10,9 +10,8 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services;
 using UnityCommander.Services.Background;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Interfaces.Settings;
 using UnityCommander.Services.Selection;
-using UnityCommander.Services.Settings;
+using UnityCommander.Settings;
 
 namespace UnityCommander.Dependencies
 {

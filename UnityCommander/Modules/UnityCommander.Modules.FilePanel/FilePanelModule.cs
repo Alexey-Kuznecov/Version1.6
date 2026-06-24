@@ -14,7 +14,6 @@ namespace UnityCommander.Modules.FilePanel
     
     using Prism.Modularity;
     using Prism.Navigation.Regions;
-    using UnityCommander.Core.Behaviors;
     using UnityCommander.Modules.FilePanel.Controllers;
     using UnityCommander.Modules.FilePanel.Controllers.DnD;
     using UnityCommander.Modules.FilePanel.States.Resolver;

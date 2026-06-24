@@ -1,6 +1,5 @@
 ﻿using Prism.Dialogs;
 using Prism.Mvvm;
-using System;
 
 namespace UnityCommander.ViewModels.Dialogs
 {

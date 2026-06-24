@@ -60,7 +60,7 @@
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    <Grid inputBinding:KeyboardBinding.Scope="FilePanel">
+    <Grid inputBinding:KeyboardBinding.Scope="FilePanel,MainWindow">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" MinHeight="400" />
             <RowDefinition Height="50" />
