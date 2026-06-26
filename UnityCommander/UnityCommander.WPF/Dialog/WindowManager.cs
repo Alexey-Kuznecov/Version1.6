@@ -86,7 +86,7 @@ namespace UnityCommander.Services
                 {
                     customWindow.Show();
 
-                    _windowInput.Attach(customWindow, ShortcutScope.Global);
+                    //_windowInput.Attach(customWindow, ShortcutScope.Global);
 
                     customWindow.Owner = Application.Current.MainWindow;
                 }

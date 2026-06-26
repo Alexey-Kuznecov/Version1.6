@@ -40,6 +40,7 @@ namespace UnityCommander.Dependencies
             });
 
             registry.RegisterSingleton<ISettingsProvider, ShortcutSettingsProvider>();
+            registry.RegisterSingleton<ISettingsProvider, UiSettingsProvider>();
 
             registry.RegisterSingleton<ISettingsViewModelBuilder, SettingsViewModelBuilder>();
             registry.RegisterSingleton<ISettingsEditorFactory, SettingsEditorFactory>();

@@ -1,18 +1,23 @@
-﻿using UnityCommander.Abstractions.Keyboard;
+﻿
 using UnityCommander.Settings.Core;
 
 namespace UnityCommander.Core.Settings
 {
-    internal class ShotcutBindingFactory
+    internal class SettingDefinitionFactory
     {
-        internal static SettingDefinition<T> Create<T>(string name, T defaultValue)
+        internal static SettingDefinition<T> Create<T>(
+            string key,
+            string displayName,
+            string description,
+            string category,
+            T defaultValue)
         {
-            return new SettingDefinition<T>()
+            return new()
             {
-                Category = "Shortcuts",
-                DisplayName = name,
-                Description = "Переопределние горячих клавиш",
-                Key = name,
+                Key = key,
+                DisplayName = displayName,
+                Description = description,
+                Category = category,
                 ValueType = typeof(T),
                 DefaultValue = defaultValue
             };

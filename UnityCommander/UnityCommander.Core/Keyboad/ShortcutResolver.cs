@@ -5,14 +5,10 @@ namespace UnityCommander.Core.Keyboad
 {
     public class ShortcutResolver : IShortcutResolver
     {
-        private readonly IShortcutRegistry _registry;
         private readonly IShortcutMapProvider _map;
 
-        public ShortcutResolver(
-            IShortcutRegistry shortcut,
-            IShortcutMapProvider provider)
+        public ShortcutResolver(IShortcutMapProvider provider)
         {
-            _registry = shortcut;
             _map = provider;
         }
 

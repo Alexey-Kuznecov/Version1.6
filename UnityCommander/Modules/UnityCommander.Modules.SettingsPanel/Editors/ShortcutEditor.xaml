@@ -9,37 +9,155 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <UserControl.Resources>
+        <Style x:Key="ModernButton" TargetType="Button">
 
+            <Setter Property="Background" Value="#FCFCFC" />
+            <Setter Property="Foreground" Value="#595959" />
+            <Setter Property="BorderBrush" Value="#DBDBDB" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6">
+
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="BorderBrush" Value="DodgerBlue" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.8" />
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+
+    <Grid Margin="5">
+
+        <!--  EDITOR AREA  -->
         <Border
             Grid.Column="0"
-            Height="32"
-            Padding="8,0"
-            VerticalAlignment="Center">
+            Height="60"
+            Padding="10,6"
+            BorderThickness="1"
+            CornerRadius="4">
 
-            <TextBlock VerticalAlignment="Center">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Text" Value="{Binding Display}" />
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="#E0E0E0" />
+                    <Setter Property="Background" Value="Transparent" />
 
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsRecording}" Value="True">
-                                <Setter Property="Text" Value="Нажмите комбинацию..." />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                    <Style.Triggers>
+
+                        <!--  Hover  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="#BBBBBB" />
+                            <Setter Property="Background" Value="#FFFFFF" />
+                        </Trigger>
+
+                        <!--  Recording state  -->
+                        <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                            <Setter Property="BorderBrush" Value="#FFCAEE" />
+                            <Setter Property="Background" Value="#FFF3FB" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+
+                <!--  DESCRIPTION  -->
+                <TextBlock
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
+                    Foreground="LightSlateGray"
+                    Text="{Binding Description}" />
+
+                <!--  SHORTCUT DISPLAY  -->
+                <TextBlock
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Foreground="#888">
+
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding Display}" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                                    <Setter Property="Text" Value="Нажмите комбинацию..." />
+                                    <Setter Property="Foreground" Value="#FFAA00" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+
+                </TextBlock>
+
+                <!--  BUTTON  -->
+                <Button
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Width="90"
+                    Height="30"
+                    Command="{Binding BeginCaptureCommand}"
+                    Content="Изменить"
+                    Style="{DynamicResource ModernButton}">
+
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#E4E4E4" />
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#DBDBDB" />
+                                </Trigger>
+
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
         </Border>
-
-        <Button
-            Grid.Column="1"
-            Margin="8,0,0,0"
-            Command="{Binding BeginCaptureCommand}"
-            Content="Изменить" />
     </Grid>
 </UserControl>

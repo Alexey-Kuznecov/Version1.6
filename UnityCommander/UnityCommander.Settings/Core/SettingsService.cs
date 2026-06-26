@@ -1,4 +1,5 @@
 ﻿
+using System.Text.Json;
 using UnityCommander.Abstractions.Settings;
 using UnityCommander.Settings.Abstactions;
 
@@ -18,17 +19,11 @@ namespace UnityCommander.Settings.Core
         {
             _store = store;
 
-            _values = _store.Load();
-
             _definitions = providers
                 .SelectMany(p => p.GetDefinitions())
                 .ToDictionary(x => x.Key.Value);
 
-            foreach (var def in _definitions)
-            {
-                if (!_values.ContainsKey(def.Key))
-                    _values[def.Key] = def.Value.DefaultValue;
-            }
+            _values = _store.Load(_definitions);
         }
 
         public IEnumerable<SettingDefinition> GetDefinitions()

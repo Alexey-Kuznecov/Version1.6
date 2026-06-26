@@ -4,12 +4,15 @@ using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Modules.SettingsPanel.Services;
 using UnityCommander.Mvvm.Base;
 using UnityCommander.Settings.Abstactions;
+using UnityCommander.Settings.Core;
 using UnityCommander.WPF.Behaviors;
 
-namespace UnityCommander.Modules.SettingsPanel.ViewModels
+namespace UnityCommander.Modules.SettingsPanel.Editors
 {
     public sealed class ShortcutEditorViewModel : PropertiesChanged
     {
+        public SettingDefinition Definition { get; set; }
+
         private ShortcutOverride _value;
 
         private IInputCaptureManager _captureManager;
@@ -17,10 +20,10 @@ namespace UnityCommander.Modules.SettingsPanel.ViewModels
         private ISettingsService _settingsService;
 
         public ShortcutEditorViewModel(
-            IInputCaptureManager inputCapture,
+            IInputCaptureManager captureManager,
             ISettingsService settingsService)
         {
-            _captureManager = inputCapture;
+            _captureManager = captureManager;
             _settingsService = settingsService;
 
             BeginCaptureCommand =
@@ -32,7 +35,10 @@ namespace UnityCommander.Modules.SettingsPanel.ViewModels
         public ShortcutOverride Value
         {
             get => _value;
-            set => SetProperty(ref _value, value);
+            set
+            {
+                SetProperty(ref _value, value);
+            }
         }
 
         private bool _isRecording;
@@ -45,6 +51,7 @@ namespace UnityCommander.Modules.SettingsPanel.ViewModels
         public string Display =>
             $"{Value.Modifiers}+{Value.Key}";
 
+        public string Description => Definition.Description;
 
         private void BeginCapture()
         {
@@ -74,7 +81,8 @@ namespace UnityCommander.Modules.SettingsPanel.ViewModels
         private void SetShortcut(ShortcutOverride newShortcut)
         {
             Value = newShortcut;
-            //_settingsService.Set(newShortcut, _value);
+
+            _settingsService.Set(Definition, newShortcut);
         }
     }
 }

@@ -17,9 +17,15 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
         <Border
+            Grid.Row="1"
             Grid.Column="0"
-            BorderBrush="DarkSlateGray"
+            BorderBrush="#E0E0E0"
             BorderThickness="0,0,1,0">
             <ListBox ItemsSource="{Binding Pages}" SelectedItem="{Binding SelectedPage}">
                 <ListBox.ItemTemplate>
@@ -31,7 +37,10 @@
 
         </Border>
 
-        <ItemsControl Grid.Column="1" ItemsSource="{Binding SelectedPage.Items}">
+        <ItemsControl
+            Grid.Row="1"
+            Grid.Column="1"
+            ItemsSource="{Binding SelectedPage.Items}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ContentControl Content="{Binding Editor}" />

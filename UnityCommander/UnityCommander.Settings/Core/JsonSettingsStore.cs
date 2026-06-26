@@ -14,15 +14,31 @@ namespace UnityCommander.Settings.Core
             _path = path;
         }
 
-        public Dictionary<string, object?> Load()
+        public Dictionary<string, object?> Load(
+            Dictionary<string, SettingDefinition> definitions)
         {
             if (!File.Exists(_path))
                 return new();
 
             var json = File.ReadAllText(_path);
 
-            return JsonSerializer.Deserialize<Dictionary<string, object?>>(json)
-                   ?? new();
+            var values =
+                JsonSerializer.Deserialize<Dictionary<string, object?>>(json)
+                ?? new();
+
+            foreach (var definition in definitions.Values)
+            {
+                if (values.TryGetValue(definition.Key, out var value) &&
+                    value is JsonElement element)
+                {
+                    values[definition.Key] =
+                        JsonSerializer.Deserialize(
+                            element.GetRawText(),
+                            definition.ValueType);
+                }
+            }
+
+            return values;
         }
 
         public void Save(Dictionary<string, object?> values)

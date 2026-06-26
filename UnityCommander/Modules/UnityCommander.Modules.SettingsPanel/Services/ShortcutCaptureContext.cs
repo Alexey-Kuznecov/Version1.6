@@ -21,14 +21,25 @@ namespace UnityCommander.Modules.SettingsPanel.Services
 
         public bool Handle(InputEvent input)
         {
-            var (key, mod) = WpfShortcutConverter.FromKeyGesture(input.Key, input.Modifiers);
+            if (input.Key == Key.Escape)
+            {
+                _exit();
+                return true;
+            }
+
+            var (key, mod) =
+                WpfShortcutConverter.FromKeyGesture(
+                    input.Key,
+                    input.Modifiers);
+
+            if (input.Modifiers == ModifierKeys.None)
+                return false;
 
             if (!ShortcutKeyValidator.IsValid(input.Key))
                 return true;
 
             _onCaptured(new ShortcutOverride
             {
-                CommandId = "",
                 Key = key,
                 Modifiers = mod
             });

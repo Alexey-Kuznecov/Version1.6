@@ -77,7 +77,7 @@ namespace UnityCommander
                 new DialogOptions()
                 {
                     Height = 800,
-                    Width = 1200,
+                    Width = 1000,
                     IsResizable = false,
                     Title = "Открыть диалог настроек"
                 }
@@ -132,6 +132,7 @@ namespace UnityCommander
             shortcut.Register(new ShortcutDefinition()
             {
                 CommandId = CommandNames.UI.ShowSettings,
+                Description = CommandPresentationProvider.Get(CommandNames.UI.ShowSettings).Description,
                 Key = ShortcutKey.F12,
                 Modifiers = ShortcutModifiers.None,
                 Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
@@ -140,6 +141,7 @@ namespace UnityCommander
             shortcut.Register(new ShortcutDefinition()
             {
                 CommandId = CommandNames.UI.ToggleBottomPanel,
+                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleBottomPanel).Description,
                 Key = ShortcutKey.Oem3,
                 Modifiers = ShortcutModifiers.Ctrl,
                 Scopes = ShortcutScope.Console | ShortcutScope.MainWindow,
@@ -148,6 +150,7 @@ namespace UnityCommander
             shortcut.Register(new ShortcutDefinition()
             {
                 CommandId = CommandNames.UI.ToggleRibbon,
+                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleRibbon).Description,
                 Key = ShortcutKey.T,
                 Modifiers = ShortcutModifiers.Ctrl,
                 Scopes = ShortcutScope.MainWindow,
@@ -156,6 +159,7 @@ namespace UnityCommander
             shortcut.Register(new ShortcutDefinition()
             {
                 CommandId = CommandNames.UI.ToggleSidebar,
+                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleSidebar).Description,
                 Key = ShortcutKey.B,
                 Modifiers = ShortcutModifiers.Ctrl,
                 Scopes = ShortcutScope.Sidebar | ShortcutScope.MainWindow,

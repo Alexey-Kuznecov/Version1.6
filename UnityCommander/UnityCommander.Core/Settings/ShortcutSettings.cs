@@ -9,8 +9,11 @@ namespace UnityCommander.Core.Settings
     {
         public static readonly SettingDefinition<ShortcutOverride>
             ShowSettings =
-                ShotcutBindingFactory.Create(
+                SettingDefinitionFactory.Create(
                     "shortcuts.showSettings",
+                    "Показать настройки",
+                    "Открыть диалоговое окно настроек",
+                    "Shortcuts",
                     new ShortcutOverride
                     {
                         CommandId = CommandNames.UI.ShowSettings,
@@ -20,8 +23,11 @@ namespace UnityCommander.Core.Settings
 
         public static readonly SettingDefinition<ShortcutOverride>
             ToggleSidebar =
-                ShotcutBindingFactory.Create(
+                SettingDefinitionFactory.Create(
                     "shortcuts.toggleSidebar",
+                    "Переключить сайдбар",
+                    "Показывает или скрывает боковою панель",
+                    "Shortcuts",
                     new ShortcutOverride
                     { 
                         CommandId = CommandNames.UI.ToggleSidebar,
@@ -31,8 +37,11 @@ namespace UnityCommander.Core.Settings
 
         public static readonly SettingDefinition<ShortcutOverride>
             ToggleRibbon =
-                ShotcutBindingFactory.Create(
+                SettingDefinitionFactory.Create(
                     "shortcuts.toggleRibbon",
+                    "Переключить ленту",
+                    "Показывает или скрывает ленту",
+                    "Shortcuts",
                     new ShortcutOverride
                     {
                         CommandId = CommandNames.UI.ToggleRibbon,
@@ -42,8 +51,11 @@ namespace UnityCommander.Core.Settings
 
         public static readonly SettingDefinition<ShortcutOverride>
             ToggleConsole =
-                ShotcutBindingFactory.Create(
+                SettingDefinitionFactory.Create(
                     "shortcuts.toggleConsole",
+                    "Скрыть\\Показать консоль",
+                    "Показывает или скрывает консоль",
+                    "Shortcuts",
                       new ShortcutOverride
                       {
                           CommandId = CommandNames.UI.ToggleBottomPanel,

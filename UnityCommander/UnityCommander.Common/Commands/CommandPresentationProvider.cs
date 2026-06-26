@@ -19,6 +19,16 @@ namespace UnityCommander.Common.Commands
                     "Скрывает/показывает ленту инструментов"
                 ),
 
+                [CommandNames.UI.ShowSettings] = new(
+                    "Открыть настройки",
+                    "Открывает окно настроек приложения"
+                ),
+
+                [CommandNames.UI.ToggleSidebar] = new(
+                    "Переключить боковую панель",
+                    "Показывает или скрывает боковую панель (Sidebar)"
+                ),
+
                 // Panel commands
                 [CommandNames.Panel.Refresh] = new(
                     "Update directory",

@@ -9,7 +9,7 @@ namespace UnityCommander.Core.Settings
     {
         public IEnumerable<SettingDefinition> GetDefinitions()
         {
-            yield return UiSettings.SidebarPosition;
+            yield return GeneralSettings.ShowHiddenFiles;
         }
     }
 }

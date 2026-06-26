@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Modules.SettingsPanel.Editors;
+using UnityCommander.Modules.SettingsPanel.Models;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
 using UnityCommander.Settings.Core;
 
@@ -37,11 +38,13 @@ namespace UnityCommander.Modules.SettingsPanel.Services
         private SettingItemViewModel CreateShortcut(SettingDefinition def, ShortcutOverride value)
         {
             var vm = ActivatorUtilities.CreateInstance<ShortcutEditorViewModel>(_sp);
-
+            
+            vm.Definition = def;
             vm.Value = value;
 
             return new SettingItemViewModel
             {
+                Definition = def,
                 Key = def.Key,
                 Title = def.DisplayName,
                 Category = def.Category,
@@ -70,8 +73,15 @@ namespace UnityCommander.Modules.SettingsPanel.Services
             };
         }
 
-        private SettingItemViewModel CreateBool(SettingDefinition def, bool value)
+        private SettingItemViewModel CreateBool(
+            SettingDefinition def,
+            bool value)
         {
+            var vm = ActivatorUtilities.CreateInstance<BoolEditorViewModel>(_sp);
+
+            vm.Entry = new SettingEntry<bool>(def, value);
+            vm.Value = value;
+
             return new SettingItemViewModel
             {
                 Key = def.Key,
@@ -81,7 +91,7 @@ namespace UnityCommander.Modules.SettingsPanel.Services
                 Value = value,
                 Editor = new BoolEditor
                 {
-                    DataContext = value
+                    DataContext = vm
                 }
             };
         }
