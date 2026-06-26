@@ -1,5 +1,4 @@
 ﻿
-using System.Windows.Input;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.Keyboad;
@@ -22,20 +21,17 @@ namespace UnityCommander.WPF.Behaviors
             _executer = executer;
         }
 
-        public void Process(KeyEventArgs e)
+        public bool Process(InputEvent input)
         {
-            var (key, mods) =
-                WpfShortcutConverter.FromKeyGesture(e.Key, Keyboard.Modifiers);
+            if (!ShortcutKeyValidator.IsValid(input.Key, input.Modifiers))
+                return false;
 
-            if (!ShortcutKeyValidator.IsValid(e.Key))
-                return;
-
-            if (!_resolver.TryResolve(key, mods, _context.Current, out var commandId))
-                return;
+            if (!_resolver.TryResolve(input.Key, input.Modifiers, _context.Current, out var commandId))
+                return false;
 
             _executer.Execute(commandId);
 
-            e.Handled = true;
+            return true;
         }
     }
 }

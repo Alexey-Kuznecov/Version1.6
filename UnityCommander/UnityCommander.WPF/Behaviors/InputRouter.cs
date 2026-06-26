@@ -1,7 +1,6 @@
 ﻿
 using System.Windows;
 using System.Windows.Input;
-using UnityCommander.Abstractions.Keyboard;
 
 namespace UnityCommander.WPF.Behaviors
 {
@@ -9,18 +8,15 @@ namespace UnityCommander.WPF.Behaviors
     {
         private readonly IInputService _inputService;
         private readonly IInputCaptureManager _captureManager;
-        private readonly IShortcutContextService _context;
         private readonly IInputContextService _inputContext;
 
         public InputRouter(
             IInputService inputService,
             IInputCaptureManager captureManager, 
-            IShortcutContextService context, 
             IInputContextService inputContext)
         {
             _inputService = inputService;
             _captureManager = captureManager;
-            _context = context;
             _inputContext = inputContext;
         }
 
@@ -29,10 +25,12 @@ namespace UnityCommander.WPF.Behaviors
             if (source != _inputContext.ActiveWindow)
                 return;
 
+            var (key, mod) = WpfShortcutConverter.FromKeyGesture(e, Keyboard.Modifiers);
+
             var input = new InputEvent
             {
-                Key = e.Key,
-                Modifiers = Keyboard.Modifiers
+                Key = key,
+                Modifiers = mod
             };
 
             if (_captureManager.TryHandle(input))
@@ -41,8 +39,10 @@ namespace UnityCommander.WPF.Behaviors
                 return;
             }
 
-            // 2. иначе обычные горячие клавиши
-            _inputService.Process(e);
+            if (_inputService.Process(input))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

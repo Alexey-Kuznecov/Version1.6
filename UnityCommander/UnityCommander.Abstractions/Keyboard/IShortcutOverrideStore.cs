@@ -7,6 +7,8 @@ namespace UnityCommander.Abstractions.Keyboard
 
         public Dictionary<string, ShortcutOverride> GetSnapshot();
 
+        bool TryGet(string commandId, out ShortcutOverride value);
+
         void Set(ShortcutOverride value);
 
         bool TrySet(ShortcutOverride value);

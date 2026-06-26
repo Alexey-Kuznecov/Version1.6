@@ -14,6 +14,12 @@ namespace UnityCommander.Settings.Core
         public string? Description { get; init; }
 
         public string? DisplayName { get; set; }
+
+        public bool CanPinToRibbon { get; }
+
+        public bool CanPinToSidebar { get; }
+
+        public bool CanFavorite { get; }
     }
 
     public sealed class SettingDefinition<T>

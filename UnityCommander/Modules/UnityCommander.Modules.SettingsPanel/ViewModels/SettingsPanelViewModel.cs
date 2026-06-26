@@ -19,8 +19,12 @@ namespace UnityCommander.Modules.SettingsPanel.ViewModels
 
         public SettingsPanelViewModel(ISettingsViewModelBuilder builder)
         {
+
+
             Pages = new ObservableCollection<SettingsPageViewModel>(
                 builder.Build());
+
+            SelectedPage = Pages[0];
         }
     }
 }

@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-//using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,6 +31,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Core.Settings;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -43,6 +43,7 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Settings.Abstactions;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
@@ -128,9 +129,13 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ContextMenuController contextMenuController,
               GongDropAdapter dropTarget, 
               NodeContextRegistry contextRegistry, 
-              ViewportMapper scrollMapper)
+              ViewportMapper scrollMapper, 
+              ISettingsService settingsService)
             : base(regionManager)
         {
+
+            var setting = settingsService.Get(GeneralSettings.ShowHiddenFiles);
+
             _contextRegistry = contextRegistry;
 
             _state = new TabState();

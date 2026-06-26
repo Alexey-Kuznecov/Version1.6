@@ -111,6 +111,9 @@ namespace UnityCommander.WPF.Behaviors
             //[ShortcutKey.OemTilde] = Key.OemTilde,
 
             [ShortcutKey.System] = Key.System,
+            [ShortcutKey.LWin] = Key.LWin,
+            [ShortcutKey.RWin] = Key.RWin,
+            [ShortcutKey.None] = Key.None,
         };
 
         private static readonly Dictionary<Key, ShortcutKey> ReverseMap =
@@ -124,11 +127,15 @@ namespace UnityCommander.WPF.Behaviors
         }
 
         // reverse (правильный вариант)
-        public static (ShortcutKey key, ShortcutModifiers modifiers) FromKeyGesture(Key key, ModifierKeys mods)
+        public static (ShortcutKey key, ShortcutModifiers modifiers) FromKeyGesture(KeyEventArgs ev, ModifierKeys mods)
         {
-            var shortcutKey = ReverseMap.TryGetValue(key, out var k)
+            var normalkey = ev.Key == Key.System
+                ? ev.SystemKey
+                : ev.Key;
+
+            var shortcutKey = ReverseMap.TryGetValue(normalkey, out var k)
                 ? k
-                : throw new NotSupportedException($"Key not mapped: {key}");
+                : throw new NotSupportedException($"Key not mapped: {normalkey}");
 
             return (shortcutKey, Convert(mods));
         }

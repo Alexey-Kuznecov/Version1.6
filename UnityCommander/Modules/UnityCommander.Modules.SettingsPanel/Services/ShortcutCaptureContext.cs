@@ -8,11 +8,11 @@ namespace UnityCommander.Modules.SettingsPanel.Services
 {
     public class ShortcutCaptureContext : IInputContext
     {
-        private readonly Action<ShortcutOverride> _onCaptured;
+        private readonly Action<InputEvent> _onCaptured;
         private readonly Action _exit;
 
         public ShortcutCaptureContext(
-            Action<ShortcutOverride> onCaptured,
+            Action<InputEvent> onCaptured,
             Action exit)
         {
             _onCaptured = onCaptured;
@@ -21,30 +21,18 @@ namespace UnityCommander.Modules.SettingsPanel.Services
 
         public bool Handle(InputEvent input)
         {
-            if (input.Key == Key.Escape)
+            if (input.Key == ShortcutKey.Escape)
             {
                 _exit();
                 return true;
             }
 
-            var (key, mod) =
-                WpfShortcutConverter.FromKeyGesture(
-                    input.Key,
-                    input.Modifiers);
-
-            if (input.Modifiers == ModifierKeys.None)
-                return false;
-
-            if (!ShortcutKeyValidator.IsValid(input.Key))
+            if (!ShortcutKeyValidator.IsValid(input.Key, input.Modifiers))
                 return true;
 
-            _onCaptured(new ShortcutOverride
-            {
-                Key = key,
-                Modifiers = mod
-            });
+            _onCaptured(input);
 
-            _exit(); // pop
+            _exit();
             return true;
         }
     }

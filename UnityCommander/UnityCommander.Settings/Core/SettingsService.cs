@@ -1,5 +1,4 @@
 ﻿
-using System.Text.Json;
 using UnityCommander.Abstractions.Settings;
 using UnityCommander.Settings.Abstactions;
 

@@ -1,47 +1,26 @@
 ﻿
 using System.Collections.Generic;
-using System.Linq;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
-using UnityCommander.Settings.Abstactions;
 
 namespace UnityCommander.Modules.SettingsPanel.Services
 {
     public class SettingsViewModelBuilder : ISettingsViewModelBuilder
     {
-        private readonly ISettingsService _settings;
-        private readonly ISettingsEditorFactory _factory;
+        private readonly IEnumerable<ISettingsSectionProvider> _section;
 
-        public SettingsViewModelBuilder(
-            ISettingsService settings,
-            ISettingsEditorFactory factory)
+        public SettingsViewModelBuilder(IEnumerable<ISettingsSectionProvider> section)
         {
-            _settings = settings;
-            _factory = factory;
+            _section = section;
         }
 
         public IEnumerable<SettingsPageViewModel> Build()
         {
-            var groups = _settings
-                .GetDefinitions()
-                .GroupBy(x => x.Category ?? "General");
-
-            foreach (var group in groups)
+            foreach (var section in _section)
             {
-                var page = new SettingsPageViewModel
+                foreach (var page in section.BuildPages())
                 {
-                    Title = group.Key
-                };
-
-                foreach (var def in group)
-                {
-                    var value = _settings.Get(def);
-
-                    var item = _factory.Create(def, value);
-
-                    page.Items.Add(item);
+                    yield return page;
                 }
-
-                yield return page;
             }
         }
     }

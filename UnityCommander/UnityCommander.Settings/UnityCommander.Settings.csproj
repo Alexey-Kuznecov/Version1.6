@@ -13,4 +13,8 @@
     <Folder Include="Storage\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Abstractions\UnityCommander.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

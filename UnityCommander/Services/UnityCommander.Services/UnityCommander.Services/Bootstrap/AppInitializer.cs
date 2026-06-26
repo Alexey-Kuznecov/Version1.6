@@ -22,9 +22,6 @@ namespace UnityCommander.Services.Bootstrap
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
 
-        private readonly IShortcutOverrideStore _shortcutStore;
-        private readonly JsonShortcutOverrideStorage _shotcutStorage;
-
         private LogHub _hub;
         private readonly ILogger _logger;
 
@@ -36,8 +33,6 @@ namespace UnityCommander.Services.Bootstrap
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
             IMultiCommandService multiCommand, 
-            IShortcutOverrideStore shortcutStore,
-            JsonShortcutOverrideStorage shotcutStorage,
             LogHub hub, // Profiled as AppInitializer, but it is not a hot path, so we can ignore it for now
             LoggerCreator logger
             ) 
@@ -54,8 +49,7 @@ namespace UnityCommander.Services.Bootstrap
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
 
-            _shortcutStore = shortcutStore;
-            _shotcutStorage = shotcutStorage;
+
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -70,8 +64,6 @@ namespace UnityCommander.Services.Bootstrap
             _session.Save(_state);
 
             _layout.Save();
-
-            _shotcutStorage.Save(_shortcutStore.GetSnapshot());
         });
 
         public void Initialize()

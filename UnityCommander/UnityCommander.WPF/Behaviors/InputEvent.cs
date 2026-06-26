@@ -1,11 +1,11 @@
 ﻿
-using System.Windows.Input;
+using UnityCommander.Abstractions.Keyboard;
 
 namespace UnityCommander.WPF.Behaviors
 {
     public readonly struct InputEvent
     {
-        public Key Key { get; init; }
-        public ModifierKeys Modifiers { get; init; }
+        public ShortcutKey Key { get; init; }
+        public ShortcutModifiers Modifiers { get; init; }
     }
 }

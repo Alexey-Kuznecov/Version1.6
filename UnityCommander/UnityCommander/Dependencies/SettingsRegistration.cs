@@ -39,10 +39,12 @@ namespace UnityCommander.Dependencies
                 return new JsonSettingsStore(path);
             });
 
-            registry.RegisterSingleton<ISettingsProvider, ShortcutSettingsProvider>();
+            //registry.RegisterSingleton<ISettingsProvider, ShortcutSettingsProvider>();
             registry.RegisterSingleton<ISettingsProvider, UiSettingsProvider>();
 
             registry.RegisterSingleton<ISettingsViewModelBuilder, SettingsViewModelBuilder>();
+            registry.RegisterSingleton<ISettingsSectionProvider, SettingsSectionProvider>();
+            registry.RegisterSingleton<ISettingsSectionProvider, SortcutSectionProvider>();
             registry.RegisterSingleton<ISettingsEditorFactory, SettingsEditorFactory>();
         }
     }

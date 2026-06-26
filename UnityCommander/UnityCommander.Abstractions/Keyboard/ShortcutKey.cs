@@ -92,5 +92,8 @@ namespace UnityCommander.Abstractions.Keyboard
         Oem1, Oem2, Oem3, Oem4, Oem5, Oem6, Oem7, Oem8, Oem9,
 
         System,
+        LWin,
+        RWin,
+        None,
     }
 }

@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Modules.SettingsPanel.Editors;
 using UnityCommander.Modules.SettingsPanel.Models;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
@@ -28,32 +27,7 @@ namespace UnityCommander.Modules.SettingsPanel.Services
                 var t when t == typeof(string)
                     => CreateString(def, (string)value),
 
-                var t when t == typeof(ShortcutOverride)
-                    => CreateShortcut(def, (ShortcutOverride)value),
-
                 _ => throw new Exception("Unknown editor")
-            };
-        }
-
-        private SettingItemViewModel CreateShortcut(SettingDefinition def, ShortcutOverride value)
-        {
-            var vm = ActivatorUtilities.CreateInstance<ShortcutEditorViewModel>(_sp);
-            
-            vm.Definition = def;
-            vm.Value = value;
-
-            return new SettingItemViewModel
-            {
-                Definition = def,
-                Key = def.Key,
-                Title = def.DisplayName,
-                Category = def.Category,
-                Description = def.Description,
-                Value = value,
-                Editor = new ShortcutEditor
-                {
-                    DataContext = vm
-                }
             };
         }
 

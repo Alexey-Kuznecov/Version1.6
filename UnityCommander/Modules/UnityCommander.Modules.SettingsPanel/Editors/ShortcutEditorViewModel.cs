@@ -4,27 +4,35 @@ using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Modules.SettingsPanel.Services;
 using UnityCommander.Mvvm.Base;
 using UnityCommander.Settings.Abstactions;
-using UnityCommander.Settings.Core;
 using UnityCommander.WPF.Behaviors;
 
 namespace UnityCommander.Modules.SettingsPanel.Editors
 {
     public sealed class ShortcutEditorViewModel : PropertiesChanged
     {
-        public SettingDefinition Definition { get; set; }
+        public ShortcutDefinition Definition { get; set; }
 
         private ShortcutOverride _value;
 
         private IInputCaptureManager _captureManager;
 
-        private ISettingsService _settingsService;
+        private readonly IShortcutOverrideStore _shortcutStore;
+
+        private readonly JsonShortcutOverrideStorage _shotcutStorage;
+        
+        private readonly IShortcutMapProvider _shortcutMap;
 
         public ShortcutEditorViewModel(
             IInputCaptureManager captureManager,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IShortcutOverrideStore shortcutStore,
+            IShortcutMapProvider shortcutMap,
+            JsonShortcutOverrideStorage shotcutStorage)
         {
             _captureManager = captureManager;
-            _settingsService = settingsService;
+            _shortcutMap = shortcutMap;
+            _shortcutStore = shortcutStore;
+            _shotcutStorage = shotcutStorage;
 
             BeginCaptureCommand =
                 new DelegateCommand(BeginCapture);
@@ -37,7 +45,10 @@ namespace UnityCommander.Modules.SettingsPanel.Editors
             get => _value;
             set
             {
-                SetProperty(ref _value, value);
+                if (SetProperty(ref _value, value))
+                {
+                    OnPropertyChanged(nameof(Display));
+                }
             }
         }
 
@@ -48,8 +59,14 @@ namespace UnityCommander.Modules.SettingsPanel.Editors
             set => SetProperty(ref _isRecording, value);
         }
 
+        private ShortcutKey CurrentKey =>
+            Value?.Key ?? Definition.Key;
+
+        private ShortcutModifiers CurrentModifiers =>
+            Value?.Modifiers ?? Definition.Modifiers;
+
         public string Display =>
-            $"{Value.Modifiers}+{Value.Key}";
+            $"{(CurrentModifiers == ShortcutModifiers.None ? "" : $"{CurrentModifiers}+")}{CurrentKey}";
 
         public string Description => Definition.Description;
 
@@ -62,9 +79,9 @@ namespace UnityCommander.Modules.SettingsPanel.Editors
 
             _captureManager.Push(
                 new ShortcutCaptureContext(
-                    shortcut =>
+                    result =>
                     {
-                        SetShortcut(shortcut);
+                        SetShortcut(result);
 
                         IsRecording = false;
 
@@ -78,11 +95,34 @@ namespace UnityCommander.Modules.SettingsPanel.Editors
                     }));
         }
 
-        private void SetShortcut(ShortcutOverride newShortcut)
+        private void SetShortcut(InputEvent input)
         {
+            var newShortcut = new ShortcutOverride()
+            {
+                CommandId = Definition.CommandId,
+                Key = input.Key,
+                Modifiers = input.Modifiers,
+            };
+
             Value = newShortcut;
 
-            _settingsService.Set(Definition, newShortcut);
+            if (_shortcutStore.TryGet(newShortcut?.CommandId, out var @override))
+            {
+                if (newShortcut.Key == Definition.Key &&
+                    newShortcut.Modifiers == Definition.Modifiers)
+                {
+                    _shortcutStore.Remove(Definition.CommandId);
+                }
+                else
+                {
+                    _shortcutStore.Set(newShortcut);
+                }
+            }
+            else
+                _shortcutStore.TrySet(newShortcut);
+
+            _shotcutStorage.Save(_shortcutStore.GetSnapshot());
+            _shortcutMap.Rebuild();
         }
     }
 }
