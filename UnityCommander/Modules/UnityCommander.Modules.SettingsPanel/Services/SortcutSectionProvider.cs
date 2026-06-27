@@ -28,6 +28,7 @@ namespace UnityCommander.Modules.SettingsPanel.Services
         {
             var page = new SettingsPageViewModel
             {
+                IconKey = "KeyboardOutline",
                 Title = "Shortcuts"
             };
 

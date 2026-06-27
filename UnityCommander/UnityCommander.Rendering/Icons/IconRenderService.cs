@@ -1,19 +1,23 @@
 ﻿
 using System.Windows.Media;
 using System.Windows.Shapes;
+using UnityCommander.Abstractions.Icons;
 
 namespace UnityCommander.Rendering.Icons
 {
     public class IconRenderService : IIconRenderService
     {
         private readonly IIconResolver _resolver;
+        private readonly IIconColorResolver _colorResolver;
+
         private readonly Dictionary<string, IconRenderResult?> _cache = new();
 
         private readonly Dictionary<string, Brush> _brushCache = new();
 
-        public IconRenderService(IIconResolver resolver)
+        public IconRenderService(IIconResolver resolver, IIconColorResolver colorResolver)
         {
             _resolver = resolver;
+            _colorResolver = colorResolver;
         }
 
         public bool TryGet(string key, out IconRenderResult result)

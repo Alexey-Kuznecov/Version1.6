@@ -4,7 +4,6 @@
     xmlns:be="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:behaviors="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:core="clr-namespace:UnityCommander.WPF.DragDrop;assembly=UnityCommander.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <ResourceDictionary.MergedDictionaries>

@@ -114,13 +114,13 @@
                             <StackPanel Orientation="Horizontal">
 
                                 <Grid
-                                    Width="45"
-                                    Height="45"
+                                    Width="20"
+                                    Height="20"
+                                    Margin="5"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Cursor="Hand">
+                                    VerticalAlignment="Center">
                                     <icon:IconRender
-                                        Key="git"
+                                        Key="{Binding IconKey}"
                                         Width="15"
                                         Height="15" />
                                 </Grid>

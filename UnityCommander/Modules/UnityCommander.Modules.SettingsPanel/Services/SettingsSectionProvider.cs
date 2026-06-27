@@ -29,6 +29,7 @@ namespace UnityCommander.Modules.SettingsPanel.Services
             {
                 var page = new SettingsPageViewModel
                 {
+                    IconKey = group.Key,
                     Title = group.Key
                 };
 

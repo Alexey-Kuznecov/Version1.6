@@ -33,6 +33,12 @@ namespace UnityCommander.Rendering.Icons
                 typeof(Brush),
                 typeof(IconRender));
 
+        //public static readonly DependencyProperty HoverBrushProperty =
+        //    DependencyProperty.Register(
+        //        nameof(HoverBrush),
+        //        typeof(Brush),
+        //        typeof(IconRender));
+
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(
                 nameof(Command),
@@ -45,6 +51,27 @@ namespace UnityCommander.Rendering.Icons
                 typeof(object),
                 typeof(IconRender));
 
+        public static readonly DependencyProperty ToneProperty =
+            DependencyProperty.Register(
+                nameof(Tone),
+                typeof(IconTone),
+                typeof(IconRender),
+                new PropertyMetadata(IconTone.Default));
+
+        public static readonly DependencyProperty StateProperty =
+            DependencyProperty.Register(
+                nameof(State),
+                typeof(VisualState),
+                typeof(IconRender),
+                new PropertyMetadata(VisualState.Normal));
+
+        public static readonly DependencyProperty RoleProperty =
+            DependencyProperty.Register(
+                nameof(Role),
+                typeof(IconRole),
+                typeof(IconRender),
+                new PropertyMetadata(IconRole.Generic));
+
         public ICommand? Command
         {
             get => (ICommand?)GetValue(CommandProperty);
@@ -55,6 +82,24 @@ namespace UnityCommander.Rendering.Icons
         {
             get => (object?)GetValue(CommandParameterProperty);
             set => SetValue(CommandParameterProperty, value);
+        }
+
+        public IconTone Tone
+        {
+            get => (IconTone)GetValue(ToneProperty);
+            set => SetValue(ToneProperty, value);
+        }
+
+        public VisualState State
+        {
+            get => (VisualState)GetValue(StateProperty);
+            set => SetValue(StateProperty, value);
+        }
+
+        public IconRole Role
+        {
+            get => (IconRole)GetValue(RoleProperty);
+            set => SetValue(RoleProperty, value);
         }
 
         public string Key
@@ -80,6 +125,12 @@ namespace UnityCommander.Rendering.Icons
             get => (Brush)GetValue(DefaultBrushProperty);
             set => SetValue(DefaultBrushProperty, value);
         }
+
+        //public Brush HoverBrush
+        //{
+        //    get => (Brush)GetValue(HoverBrushProperty);
+        //    set => SetValue(HoverBrushProperty, value);
+        //}
 
         static IconRender()
         {
@@ -110,7 +161,26 @@ namespace UnityCommander.Rendering.Icons
                 return;
 
             control.Data = result.Geometry;
-            control.DefaultBrush = result.Brush;
+            control.DefaultBrush = IconHub.Resolve(control.Role, control.Tone, control.State);
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            if (Tone != IconTone.Interactive)
+                return;
+
+            //SetCurrentValue(BrushProperty, HoverBrush);
+        }
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+
+            if (Tone != IconTone.Interactive)
+                return;
+
+            //SetCurrentValue(BrushProperty, DefaultBrush);
         }
     }
 }

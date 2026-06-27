@@ -1,13 +1,11 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
-using System;
+using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Styling;
-using UnityCommander.Core.Theming;
 using UnityCommander.Dependencies;
 using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.FilePanel;
@@ -16,6 +14,7 @@ using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.ToolBar;
 using UnityCommander.Modules.Viewer;
 using UnityCommander.Modules.WebBrowser;
+using UnityCommander.Theme;
 using UnityCommander.Views;
 using UnityCommander.WPF.Dialog;
 
@@ -25,19 +24,18 @@ namespace UnityCommander
     {
         private WindowInputManager _windowInput;
 
-        private Window? _activeWindow;
-
         protected override Window CreateShell()
         {
             var catalog = new ThemeCatalog();
 
-            ThemeManager.Initialize(catalog, "Material");
+            //ThemeManager.Initialize(catalog, "Material");
+            ThemeManager.Initialize(catalog, "Default");
 
-            //var resources =
-            //    ThemeManager.GetResourceUris()
-            //        .Concat(ModuleResources.ResourceUris);
+            var resources =
+                ThemeManager.GetResourceUris()
+                    .Concat(ModuleResources.ResourceUris);
 
-            foreach (var dictionary in SharedDictionaryManager.Load(ModuleResources.ResourceUris))
+            foreach (var dictionary in SharedDictionaryManager.Load(resources))
             {
                 Resources.MergedDictionaries.Add(dictionary);
             }

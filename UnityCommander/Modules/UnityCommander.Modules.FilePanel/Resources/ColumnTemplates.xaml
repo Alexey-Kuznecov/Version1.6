@@ -33,9 +33,10 @@
                 <ContentPresenter>
                     <ContentPresenter.Content>
                         <icon:IconRender
-                         Key="{Binding IconKey}"
-                         Width="12"
-                         Height="12" />
+                            Key="{Binding IconKey}"
+                            Width="12"
+                            Height="12"
+                            Brush="SteelBlue" />
                     </ContentPresenter.Content>
                 </ContentPresenter>
             </AdornerDecorator>
@@ -70,7 +71,8 @@
                     <icon:IconRender
                         Key="{Binding IconKey}"
                         Width="12"
-                        Height="12" />
+                        Height="12"
+                        Brush="Orange" />
                 </ContentPresenter.Content>
             </ContentPresenter>
         </Grid>

@@ -15,25 +15,63 @@ namespace UnityCommander.Common.Styling
         {
             Default = new ThemeDefinition
             {
-                Name = "Material",
+                Priority = 0,
+                Name = "Default",
                 ResourceUris =
-                [  
-                    "/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml",
-                ]
+                    [
+                        "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml",
+                    ],
+                Palette = new ThemePalette
+                {
+                    Accent = "Theme.Accent",
+                    Background = "Theme.Background",
+                    Foreground = "Theme.Foreground",
+
+                    Icons = new IconPalette
+                    {
+                        Default = "IconDefaultBrush",
+                        Muted = "IconMutedBrush",
+                        Disabled = "IconDisabledBrush",
+                        Accent = "IconAccentBrush",
+                        Hover = "IconHoverBrush",
+                        Selected = "IconSelectedBrush",
+                        Success = "IconSuccessBrush",
+                        Warning = "IconWarningBrush",
+                        Error = "IconErrorBrush",
+                    }
+                }
             };
 
             Register(Default);
 
-            Register(
-                new ThemeDefinition
+            Register(new ThemeDefinition
+            {
+                Priority = 0,
+                Name = "Material",
+                ResourceUris =
+                [
+                    "/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml",
+                ],
+                Palette = new ThemePalette
                 {
-                    Name = "Default",
-                    ResourceUris =
-                    [
-                        "/UnityCommander.Rendering;component/Icons/Generic.xaml",
-                        "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml",
-                    ]
-                });
+                    Accent = "Theme.Accent",
+                    Background = "Theme.Background",
+                    Foreground = "Theme.Foreground",
+
+                    Icons = new IconPalette
+                    {
+                        Default = "IconDefaultBrush",
+                        Muted = "IconMutedBrush",
+                        Disabled = "IconDisabledBrush",
+                        Accent = "IconAccentBrush",
+                        Hover = "IconHoverBrush",
+                        Selected = "IconSelectedBrush",
+                        Success = "IconSuccessBrush",
+                        Warning = "IconWarningBrush",
+                        Error = "IconErrorBrush",
+                    }
+                }
+            });
         }
 
         public ThemeDefinition Default { get; }

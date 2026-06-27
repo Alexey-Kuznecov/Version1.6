@@ -1,6 +1,7 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
@@ -25,15 +26,16 @@ namespace UnityCommander
             _activator = provider.Resolve<IPluginActivator>();
             _iconSource = provider.Resolve<IIconSourceRegistry>();
             var iconRender = provider.Resolve<IIconRenderService>();
+            var iconColor = provider.Resolve<IIconColorResolver>();
             var context = provider.Resolve<IShortcutContextService>();
          
-            IconHub.Initialize(iconRender);
+            IconHub.Initialize(iconRender, iconColor);
             KeyboardBinding.Initialize(context);
 
             _providerInfo.LoadMetadata();
 
             _activator.Activate("icon-maker-1.0");
-            //_activator.Activate("multi-column-1.0");
+            _activator.Activate("multi-column-1.0");
             //_activator.Activate("sidebar-ex-1.0");
             //_activator.Activate("plugin-test-1.0");
             _activator.Activate("advance-copy-1.0");

@@ -31,17 +31,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-
         <Grid
             Grid.Column="0"
             Width="60"
-            Background="#173763">
+            Background="{StaticResource UcBackgroundPrimary}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ListView
                 Grid.Row="0"
+                Background="{StaticResource UcBackgroundPrimary}"
+                BorderBrush="{x:Null}"
+                ItemContainerStyle="{StaticResource UcListViewItemNormal}"
                 ItemsSource="{Binding SidebarItems}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -52,12 +54,12 @@
                             Width="45"
                             Height="45"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Cursor="Hand">
+                            VerticalAlignment="Center">
                             <icon:IconRender
                                 Key="{Binding IconKey}"
                                 Width="25"
-                                Height="25" />
+                                Height="25"
+                                Brush="#FF1368" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
