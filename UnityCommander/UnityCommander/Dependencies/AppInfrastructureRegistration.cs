@@ -1,12 +1,12 @@
 ﻿
 using Prism.Ioc;
+using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
 using UnityCommander.Common.Docking;
-using UnityCommander.Common.Helper;
-using UnityCommander.Common.Layout;
 using UnityCommander.Common.Sidebar;
 using UnityCommander.Core.Registrar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
@@ -21,8 +21,8 @@ using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
+using UnityCommander.WPF;
 using UnityCommander.WPF.Behaviors;
-using UnityCommander.WPF.Dialog;
 
 namespace UnityCommander.Dependencies
 {
@@ -69,6 +69,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IIconSourceRegistry, IconSourceRegistry>();
             registry.RegisterSingleton<IIconRenderService, IconRenderService>();
             registry.RegisterSingleton<IIconResolver, CompositeIconResolver>();
+            registry.RegisterSingleton<IIconColorResolver, IconColorResolver>();
 
             // Менеджер лейаута оболочки: отвечает за общую структуру интерфейса, области и их наполнение
             registry.RegisterSingleton<IShellLayoutManager, ShellLayoutManager>();

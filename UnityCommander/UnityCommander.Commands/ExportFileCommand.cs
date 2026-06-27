@@ -9,12 +9,12 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Mode;
 using UnityCommander.Commands.Parsing;
 using UnityCommander.Core.Binary;
-using UnityCommander.Rendering.Icons;
 
 
 namespace UnityCommander.Commands

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
-using UnityCommander.Common.Layout;
 using UnityCommander.Common.State;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -12,6 +11,7 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
+using UnityCommander.WPF;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 

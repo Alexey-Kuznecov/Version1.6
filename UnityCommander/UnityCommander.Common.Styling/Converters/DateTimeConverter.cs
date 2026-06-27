@@ -3,7 +3,7 @@ namespace UnityCommander.Common.Styling.Converters
 {
     using System;
     using System.Globalization;
-    using UnityCommander.Common;
+    using UnityCommander.WPF;
 
     /// <summary>
     /// The date time converter.

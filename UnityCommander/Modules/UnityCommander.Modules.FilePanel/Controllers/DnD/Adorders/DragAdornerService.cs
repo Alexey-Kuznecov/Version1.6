@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using UnityCommander.Core;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Adorders
 {

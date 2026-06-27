@@ -17,6 +17,7 @@ using UnityCommander.Ribbon.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.Services.Plugins;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Dependencies
 {
@@ -51,6 +52,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IPluginCommandDispatcher, PluginCommandDispatcher>();
             registry.RegisterSingleton<IPluginCommandProvider, PluginCommandProvider>();
             registry.RegisterSingleton<IRibbonCommandResolver, Core.Commands.RibbonCommandResolver>();
+            
+            registry.RegisterSingleton<IRegionInjector, WpfRegionInjector>();
             registry.RegisterSingleton<CompositionEngine>();
         }
     }

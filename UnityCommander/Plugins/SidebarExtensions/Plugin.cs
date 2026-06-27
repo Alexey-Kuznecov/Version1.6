@@ -28,7 +28,7 @@ namespace MultiColumns
                     typeof(SidebarGitView), 
                     typeof(SidebarGitViewModel)));
 
-            init.RegisterView<SidebarGitView, SidebarGitViewModel>();
+            //init.RegisterView<SidebarGitView, SidebarGitViewModel>();
         }
 
         public void Start(IPluginContext context)

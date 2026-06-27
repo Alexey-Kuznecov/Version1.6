@@ -3,11 +3,11 @@ using Prism.Navigation.Regions;
 using System;
 using System.Linq;
 using System.Windows.Controls;
-using UnityCommander.Common.Layout;
 using UnityCommander.Common.Module;
 using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -15,7 +15,6 @@ namespace UnityCommander.Modules.FilePanel.Services
     {
         private readonly IRegionManager _regionManager;
         private readonly ITabRegistry _tabRegistry;
-        private readonly IPanelRegistry _panelRegistry;
         private TabContentAdapter _adapter;
 
         public PanelContentFactory(
@@ -25,7 +24,6 @@ namespace UnityCommander.Modules.FilePanel.Services
         {
             _regionManager = regionManager;
             _tabRegistry = tabRegistry;
-            _panelRegistry = panelRegistry;
         }
 
         public void Create(ContentControl content, Guid tabId, string path, Action<ITabPanelContent> onReady)

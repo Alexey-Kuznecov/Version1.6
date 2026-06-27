@@ -5,7 +5,6 @@ namespace UnityCommander.Common.Models.Directory
     using System;
     using System.Collections.Generic;
     using UnityCommander.Common.Selection;
-    using UnityCommander.Rendering.Icons;
 
     /// <summary>
     /// The directory base.
@@ -16,7 +15,6 @@ namespace UnityCommander.Common.Models.Directory
         private bool _isSelected;
         public string Name { get; set; }
         public string Path { get; set; }
-        public Icon Icon { get; set; }
         public string IconKey { get; set; }
         public DateTime CreationTime { get; set; }
         public DateTime LastAccessTime { get; set; }

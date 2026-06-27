@@ -8,6 +8,7 @@ namespace UnityCommander.Modules.ToolBar
     using UnityCommander.Core;
     using UnityCommander.Modules.ToolBar.ViewModels;
     using UnityCommander.Modules.ToolBar.Views;
+    using UnityCommander.Mvvm.Helper;
     using UnityCommander.Services.Interfaces;
 
     public class ToolBarModule : IModule

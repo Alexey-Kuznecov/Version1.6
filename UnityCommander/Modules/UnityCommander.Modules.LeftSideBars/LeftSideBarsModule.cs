@@ -1,18 +1,16 @@
 ﻿
-using System;
-
 namespace UnityCommander.Modules.LeftSideBars
 {
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Navigation.Regions;
-    using UnityCommander.Common;
     using UnityCommander.Common.Sidebar;
     using UnityCommander.Core;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Modules.LeftSideBars.ViewModels;
     using UnityCommander.Modules.LeftSideBars.Views;
+    using UnityCommander.Mvvm.Helper;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Sidebar;
 

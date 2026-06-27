@@ -1,9 +1,8 @@
 ﻿
 using MaterialDesignThemes.Wpf;
-using System;
 using System.Collections.Generic;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Common.Commands;
-using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Common.Styling
 {

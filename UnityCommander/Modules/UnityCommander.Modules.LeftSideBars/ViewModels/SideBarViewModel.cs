@@ -23,8 +23,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Shapes;
-    using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Helper;
+    using UnityCommander.Abstractions;
     using UnityCommander.Common.Models;
     using UnityCommander.Common.State;
     using UnityCommander.Common.States;
@@ -35,7 +34,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
     using UnityCommander.Services.Interfaces.Bootstrap;
     using UnityCommander.Services.Interfaces.Plugins;
     using UnityCommander.Services.Interfaces.Sidebar;
-    using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
     using static UnityCommander.Common.Commands.CommandNames;
 
     /// <summary>
@@ -203,7 +201,7 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             var item = SidebarItems
                 .FirstOrDefault(x => x.Id == _state.ActiveSectionId);
 
-            SidebarContent = _state.IsOpen ? item?.Content : null;
+            SidebarContent = _state.IsOpen ? (UserControl)item?.Content : null;
             SidebarContentWidth = _state.IsOpen ? 300 : 0;
         }
 

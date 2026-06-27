@@ -5,8 +5,8 @@ namespace UnityCommander.Modules.FilePanel.Converters
     using System;
     using System.Globalization;
     using System.Windows.Media;
-    using UnityCommander.Common;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.WPF;
 
     /// <summary>
     /// The icon converter.

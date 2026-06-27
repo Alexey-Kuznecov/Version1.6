@@ -1,13 +1,9 @@
 ﻿
 namespace UnityCommander.Common.Models.Directory
 {
-    using UnityCommander.Rendering.Icons;
-
     public class DriveModel
     {
         public string Letter { get; set; }
-
-        public IIcon Icon { get; set; }
 
         public string IconKey { get; set; }
 

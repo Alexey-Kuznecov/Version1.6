@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PluginSystem.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Command;
@@ -43,7 +42,7 @@ namespace UnityCommander.Core.Plugin
 
         public Dictionary<Type, Type> Views { get; } = new();
 
-        public List<UserControl> ViewInstance { get; } = new();
+        //public List<UserControl> ViewInstance { get; } = new();
 
         public IReadOnlyList<ServiceDescriptor> Services => _services;
 
@@ -129,17 +128,17 @@ namespace UnityCommander.Core.Plugin
             if (handler == null) throw new ArgumentNullException(nameof(handler));
         }
 
-        public void RegisterView<TView, TViewModel>()
-            where TView : UserControl
-        {
-            var view = (UserControl)Activator.CreateInstance(typeof(TView))!;
+        //public void RegisterView<TView, TViewModel>()
+        //    where TView : UserControl
+        //{
+        //    var view = (UserControl)Activator.CreateInstance(typeof(TView))!;
 
-            view.DataContext = Activator.CreateInstance(typeof(TViewModel))!;
+        //    view.DataContext = Activator.CreateInstance(typeof(TViewModel))!;
 
-            ViewInstance.Add(view);
+        //    ViewInstance.Add(view);
 
-            Views[typeof(TView)] = typeof(TViewModel);
-        }
+        //    Views[typeof(TView)] = typeof(TViewModel);
+        //}
 
         public void RegisterColumn<TProvider, TImplement>()
             where TProvider : IColumnProvider

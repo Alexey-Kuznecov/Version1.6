@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Abstractions.Icons;
+
 namespace UnityCommander.Rendering.Icons
 {
     public interface IIconResolver

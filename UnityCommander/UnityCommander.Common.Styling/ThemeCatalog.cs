@@ -1,7 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using UnityCommander.Core.Theming;
+using UnityCommander.Theme;
 
 namespace UnityCommander.Common.Styling
 {

@@ -6,6 +6,7 @@ using UnityCommander.Common;
 using UnityCommander.Core;
 using UnityCommander.Modules.BottomPanel.ViewModels;
 using UnityCommander.Modules.BottomPanel.Views;
+using UnityCommander.Mvvm.Helper;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel

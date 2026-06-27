@@ -2,8 +2,7 @@
 using Prism.Ioc;
 
 using System;
-using UnityCommander.Common.Helper;
-using UnityCommander.Common.Plugins;
+using UnityCommander.Abstractions;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;

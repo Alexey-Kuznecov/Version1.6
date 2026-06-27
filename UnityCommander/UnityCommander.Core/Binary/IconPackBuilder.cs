@@ -1,6 +1,6 @@
 ﻿
 using System.Collections.Generic;
-using UnityCommander.Rendering.Icons;
+using UnityCommander.Abstractions.Icons;
 
 namespace UnityCommander.Core.Binary
 {

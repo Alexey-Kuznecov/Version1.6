@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using UnityCommander.Common;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Converters
 {

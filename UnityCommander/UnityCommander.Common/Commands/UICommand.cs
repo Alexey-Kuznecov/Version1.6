@@ -2,7 +2,6 @@
 using Prism.Mvvm;
 using System;
 using System.Windows.Input;
-using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Common.Commands
 {
@@ -15,8 +14,6 @@ namespace UnityCommander.Common.Commands
         public string Title { get; init; }
 
         public string Description { get; init; }
-
-        public IIcon Icon { get; init; }
 
         public string IconKey { get; init; }
 

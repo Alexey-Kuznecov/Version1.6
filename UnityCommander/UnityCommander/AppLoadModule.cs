@@ -9,7 +9,6 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
-using UnityCommander.Core.Settings;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel.ViewModels;

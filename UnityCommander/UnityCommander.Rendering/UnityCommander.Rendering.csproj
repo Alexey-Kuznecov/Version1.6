@@ -10,6 +10,12 @@
   <ItemGroup>
     <Folder Include="Brushes\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Abstractions\UnityCommander.Abstractions.csproj" />
+    <ProjectReference Include="..\UnityCommander.Theme\UnityCommander.Theme.csproj" />
+    <ProjectReference Include="..\UnityCommander.WPF\UnityCommander.WPF.csproj" />
+  </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\_builds\&quot;" />
 	</Target>

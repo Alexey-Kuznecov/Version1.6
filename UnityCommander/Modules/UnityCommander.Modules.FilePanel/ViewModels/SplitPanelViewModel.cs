@@ -31,7 +31,6 @@ using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
-using UnityCommander.Core.Settings;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -43,6 +42,7 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Settings;
 using UnityCommander.Settings.Abstactions;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
@@ -57,7 +57,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Поля и зависимости
 
         // --- Зависимости через DI
-        private readonly IDialogService dialogService;
         private readonly IDataProviderService dataService;
         private readonly IMultiCommandService multiCommandService;
         private readonly NavigationManager _navigationService;
@@ -161,7 +160,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             this._presentationProvider = presentationProvider;
             this._selectionManager = selectionManager;
-            this.dialogService = dialogService;
         
             this.dataService = dataService;
             this.multiCommandService = multiCommandService;

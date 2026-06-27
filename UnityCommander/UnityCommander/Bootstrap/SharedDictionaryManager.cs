@@ -4,7 +4,7 @@ namespace UnityCommander.Bootstrap
     using System;
     using System.Collections.Generic;
     using System.Windows;
-    using UnityCommander.Core;
+    using UnityCommander.WPF;
 
     /// <summary>
     /// The shared dictionary manager.

@@ -3,11 +3,11 @@ using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
-using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Core.Registrar
 {

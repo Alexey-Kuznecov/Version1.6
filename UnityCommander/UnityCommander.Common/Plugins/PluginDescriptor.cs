@@ -1,15 +1,9 @@
 ﻿
-
-using System.Windows.Media;
-using UnityCommander.Rendering.Icons;
-
 namespace UnityCommander.Common.Plugins
 {
     public class PluginDescriptor
     {
         public string Id { get; init; }
-
-        public Geometry Icon { get; init; }
 
         public string IconKey { get; init; }
 

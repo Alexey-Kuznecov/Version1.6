@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using UnityCommander.Rendering.Icons;
+using UnityCommander.Abstractions.Icons;
 
 namespace UnityCommander.Core.Binary
 {
