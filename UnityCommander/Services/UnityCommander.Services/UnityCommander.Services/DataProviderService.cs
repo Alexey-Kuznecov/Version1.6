@@ -5,6 +5,7 @@ namespace UnityCommander.Services
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
+    using UnityCommander.Abstractions;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Services.Interfaces;
 
@@ -41,6 +42,7 @@ namespace UnityCommander.Services
                             Key = file.FullName,
                             Size = file.Length,
                             IconKey = "core.file",
+                            Kind = IconKind.File
                         });
                     }
                 }
@@ -75,6 +77,7 @@ namespace UnityCommander.Services
                             TargetPanel = TargetPanel.Folders,
                             Key = folder.FullName,
                             IconKey = "core.folder",
+                            Kind = IconKind.Folder
                         });
                     }
                 }

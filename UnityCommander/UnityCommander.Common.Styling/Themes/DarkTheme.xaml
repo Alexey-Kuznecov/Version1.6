@@ -1,0 +1,74 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="UcApplicationBackgroundBrush" Color="#191A1B" />
+
+    <SolidColorBrush x:Key="UcForegroundPrimaryBrush" Color="#505052" />
+    <SolidColorBrush x:Key="UcForegroundSecondaryBrush" Color="#808082" />
+    <SolidColorBrush x:Key="UcForegroundTertiaryBrush" Color="#808082" />
+
+    <SolidColorBrush x:Key="UcForegroundDisabledBrush" Color="#BBBBBB" />
+    <SolidColorBrush x:Key="UcForegroundSelectionBrush" Color="#000000" />
+
+    <SolidColorBrush x:Key="UcSurfacePrimaryBrush" Color="#191A1B" />
+    <SolidColorBrush x:Key="UcSurfaceSecondaryBrush" Color="#2F3031" />
+    <SolidColorBrush x:Key="UcSurfaceTertiaryBrush" Color="#373839" />
+
+    <SolidColorBrush x:Key="UcHoverPrimaryBrush" Color="#191A1B" />
+    <SolidColorBrush x:Key="UcHoverSecondaryBrush" Color="#373839" />
+    <SolidColorBrush x:Key="UcHoverTertiaryBrush" Color="#191A1B" />
+
+    <SolidColorBrush x:Key="UcPressedBrush" Color="#191A1B" />
+
+    <SolidColorBrush x:Key="UcSelectionPrimaryBrush" Color="#D5DBD8" />
+    <SolidColorBrush x:Key="UcSelectionSecondaryBrush" Color="#CAD9F5" />
+    <SolidColorBrush x:Key="UcSelectionTertiaryBrush" Color="#28406D" />
+
+    <SolidColorBrush x:Key="UcFocusBrush" Color="#D8ECFF" />
+
+    <SolidColorBrush x:Key="UcBorderPrimaryBrush" Color="#343536" />
+    <SolidColorBrush x:Key="UcBorderSecondaryBrush" Color="#191A1B" />
+    <SolidColorBrush x:Key="UcBorderTertiaryBrush" Color="#191A1B" />
+
+    <SolidColorBrush x:Key="UcAccentPrimaryBrush" Color="#808082" />
+    <SolidColorBrush x:Key="UcAccentSecondaryBrush" Color="#191A1B" />
+    <SolidColorBrush x:Key="UcAccentTertiaryBrush" Color="#FF1368" />
+
+    <!--  Titlebar Brushes  -->
+    <Color x:Key="UcTitleBarShadowColor">#191A1B</Color>
+    <Color x:Key="UcTitleBarCenterShadowColor">#D8ECFF</Color>
+
+    <!--  Special Brushes  -->
+
+    <SolidColorBrush x:Key="UcSuccessBrush" Color="#2E7D32" />
+    <SolidColorBrush x:Key="UcWarningBrush" Color="#F9A825" />
+
+    <SolidColorBrush x:Key="UcErrorBackgroundBrush" Color="#FFD5F2" />
+    <SolidColorBrush x:Key="UcErrorBorderBrush" Color="#FFCAEE" />
+    <SolidColorBrush x:Key="UcErrorForegroundBrush" Color="#D979BB" />
+
+    <SolidColorBrush x:Key="UcInformationBrush" Color="#1565C0" />
+
+    <SolidColorBrush x:Key="UcListView.BackgroundBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListView.ForegroundBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListView.BorderBrush" Color="#202020" />
+
+    <SolidColorBrush x:Key="UcListBoxBackgroundBrush" Color="#373839" />
+    <SolidColorBrush x:Key="UcListBoxForegroundBrush" Color="#808082" />
+    <SolidColorBrush x:Key="UcListBoxBorderBrush" Color="#373839" />
+
+    <SolidColorBrush x:Key="UcListViewItemBackgroundBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewItemForegroundBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewItemBorderBrush" Color="#202020" />
+
+    <SolidColorBrush x:Key="UcListBoxItemBackgroundBrush" Color="#373839" />
+    <SolidColorBrush x:Key="UcListBoxItemForegroundBrush" Color="#808082" />
+    <SolidColorBrush x:Key="UcListBoxItemBorderBrush" Color="#373839" />
+
+    <SolidColorBrush x:Key="UcListViewItemHoverBrush" Color="#373839" />
+    <SolidColorBrush x:Key="UcListViewItemSelectedBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewItemSelectedForegroundBrush" Color="#202020" />
+
+    <SolidColorBrush x:Key="UcListBoxItemHoverBrush" Color="#2B2C2D" />
+    <SolidColorBrush x:Key="UcListBoxItemSelectedBrush" Color="#2B2C2D" />
+    <SolidColorBrush x:Key="UcListBoxItemSelectedForegroundBrush" Color="#505052" />
+</ResourceDictionary>

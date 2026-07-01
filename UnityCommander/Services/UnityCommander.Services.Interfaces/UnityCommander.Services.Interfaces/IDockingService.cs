@@ -1,9 +1,9 @@
 ﻿
+using AvalonDock;
+using AvalonDock.Layout;
 using System;
 using System.Windows.Controls;
 using UnityCommander.Common.Module;
-using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Services.Interfaces
 {

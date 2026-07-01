@@ -34,14 +34,14 @@
         <Grid
             Grid.Column="0"
             Width="60"
-            Background="{StaticResource UcBackgroundPrimary}">
+            Background="{StaticResource UcAccentSecondaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ListView
                 Grid.Row="0"
-                Background="{StaticResource UcBackgroundPrimary}"
+                Background="{StaticResource UcAccentSecondaryBrush}"
                 BorderBrush="{x:Null}"
                 ItemContainerStyle="{StaticResource UcListViewItemNormal}"
                 ItemsSource="{Binding SidebarItems}"
@@ -59,7 +59,7 @@
                                 Key="{Binding IconKey}"
                                 Width="25"
                                 Height="25"
-                                Brush="#FF1368" />
+                                Brush="{StaticResource UcAccentTertiaryBrush}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -75,7 +75,7 @@
                             Width="25"
                             Height="25"
                             Margin="16,0"
-                            Foreground="#FF1368"
+                            Foreground="{StaticResource UcAccentTertiaryBrush}"
                             Kind="Settings" />
                     </materialDesigh:PopupBox.ToggleContent>
                     <StackPanel>
@@ -92,7 +92,7 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             Width="{Binding SidebarContentWidth, Mode=TwoWay}"
-            Background="#F3F2F2">
+            Background="{StaticResource UcSurfaceTertiaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />
@@ -104,7 +104,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Content="{Binding IconHideSidebar.Data}"
-                Foreground="Gray">
+                Foreground="{StaticResource UcForegroundTertiaryBrush}">
                 <ContentControl.Template>
                     <DynamicResource ResourceKey="CustomButtonTemplate" />
                 </ContentControl.Template>
@@ -118,7 +118,7 @@
                     <ToolTip Content="Collapse sidebar" />
                 </ContentControl.ToolTip>
             </ContentControl>
-            <Border Grid.Row="1" Background="#FFF3F2F2">
+            <Border Grid.Row="1">
                 <ContentControl Content="{Binding SidebarContent}" />
             </Border>
         </Grid>

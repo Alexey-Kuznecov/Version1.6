@@ -128,12 +128,9 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.ContextMenu>
-                    <ContextMenu
-                        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                        ItemsSource="{Binding Context.ContextMenuItems}"
-                        Style="{StaticResource UcContextMenu}">
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
                         <ContextMenu.ItemContainerStyle>
-                            <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
+                            <Style TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Title}" />
                                 <Setter Property="Command" Value="{Binding Command}" />
                                 <Setter Property="ItemsSource" Value="{Binding Children}" />
@@ -161,7 +158,9 @@
             be:GridViewColumnsBehavior.PanelId="LeftPanel.Drive"
             commands:GridViewSort.AutoSort="True"
             IsSynchronizedWithCurrentItem="True"
-            ItemsSource="{Binding Context.Drives, Mode=OneWay}">
+            ItemContainerStyle="{StaticResource UcGridItemTemplate}"
+            ItemsSource="{Binding Context.Drives, Mode=OneWay}"
+            Style="{StaticResource UcGridListViewTemplate}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewMouseDoubleClick">
                     <i:InvokeCommandAction
@@ -174,7 +173,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="HeaderContentDataTemplate" DataType="{x:Type layout:ContentNode}">
-        <Grid Background="{StaticResource UcBackgroundPrimary}" Style="{DynamicResource DirectoryPanelHeaderStyle}">
+        <Grid Background="{StaticResource UcAccentSecondaryBrush}" Style="{DynamicResource DirectoryPanelHeaderStyle}">
             <ItemsControl ItemsSource="{Binding Context.Commands}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

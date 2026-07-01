@@ -4,6 +4,7 @@ namespace UnityCommander.Common.Models.Directory
     using Prism.Mvvm;
     using System;
     using System.Collections.Generic;
+    using UnityCommander.Abstractions;
     using UnityCommander.Common.Selection;
 
     /// <summary>
@@ -16,6 +17,7 @@ namespace UnityCommander.Common.Models.Directory
         public string Name { get; set; }
         public string Path { get; set; }
         public string IconKey { get; set; }
+        public IconKind Kind { get; set; }
         public DateTime CreationTime { get; set; }
         public DateTime LastAccessTime { get; set; }
 

@@ -97,19 +97,12 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
         #region Dependency properties
 
-        /// <summary>
-        /// Gets or sets the path to directory that is used to synchronize
-        /// the directories between file pane and navigation pane.
-        /// </summary>
         public string DirectoryPath
         {
             get => (string)GetValue(DirectoryPathProperty);
             set => this.SetValue(DirectoryPathProperty, value);
         }
 
-        /// <summary>
-        /// Gets or sets the command that will be bound to each control in the navigation bar.
-        /// </summary>
         public ICommand NavigateCommand
         {
             get => (ICommand)GetValue(NavigateCommandProperty);
@@ -120,12 +113,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
         #region Override methods
 
-        /// <summary>
-        /// The on render.
-        /// </summary>
-        /// <param name="dc">
-        /// The dc.
-        /// </param>
         protected override void OnRender(DrawingContext dc)
         {
             // SolidColorBrush mySolidColorBrush = "#FFFFFF".StringFormatToSolidColor();
@@ -134,18 +121,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             // dc.DrawRectangle(mySolidColorBrush, myPen, myRect);
         }
 
-        /// <summary>
-        /// When overridden in a derived class, measures the size in layout required
-        /// for child elements and determines a size for the FrameworkElement-derived class.
-        /// </summary>
-        /// <param name="availableSize">
-        /// The available size that this element can give to child elements.
-        /// Infinity can be specified as a value to indicate that the element will
-        /// size to whatever content is available.
-        /// </param>
-        /// <returns>
-        /// The size that this element determines it needs during layout, based on its calculations of child element sizes.
-        /// </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
@@ -160,17 +135,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             return new Size();
         }
 
-        /// <summary>
-        /// When overridden in a derived class, positions child elements and determines
-        /// a size for a FrameworkElement derived class.
-        /// </summary>
-        /// <param name="finalSize">
-        /// The final area within the parent that this
-        /// element should use to arrange itself and its children.
-        /// </param>
-        /// <returns>
-        /// The actual size used.
-        /// </returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             margin = 0;
@@ -197,12 +161,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
         #region Declaration callback functions
 
-        /// <summary>
-        /// Represents the callback that is invoked when the effective
-        /// property value of a dependency property changed.
-        /// </summary>
-        /// <param name="d"> The DependencyObject on which the property has changed value. </param>
-        /// <param name="e"> Event data that is issued by any event that tracks changes to the effective value of this property. </param>
         private static void OnNavigateCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var panel = (NavigationPanel)d;
@@ -218,16 +176,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             }
         }
 
-        /// <summary>
-        /// Provides a template for the method that is called whenever a dependency property
-        /// value is being re-evaluated, or coercion is specifically requested.
-        /// </summary>
-        /// <param name="d">
-        /// The <see langword="object"/> that the property exists on.
-        /// When the callback is invoked, the property system will pass this value.
-        /// </param>
-        /// <param name="baseValue"> The new value of the property, prior to any coercion attempt. </param>
-        /// <returns> The coerced value (with appropriate type). </returns>
         private static object CoerceDirectoryPath(DependencyObject d, object baseValue)
         {
             NavigationPanel panel = (NavigationPanel)d;
@@ -242,12 +190,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             return baseValue;
         }
 
-        /// <summary>
-        /// Represents the callback that is invoked when the effective
-        /// property value of a dependency property changed.
-        /// </summary>
-        /// <param name="d"> The DependencyObject on which the property has changed value. </param>
-        /// <param name="e"> Event data that is issued by any event that tracks changes to the effective value of this property. </param>
         private static void OnDirectoryPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             int counter = 0;
@@ -308,10 +250,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             return path;
         }
 
-        /// <summary>
-        /// Creates a pop-up menu for each item in the navigation bar.
-        /// </summary>
-        /// <param name="parameters"> The external arguments for pop-up menu. </param>
         private static void SetPopupNavigation(PopupParameters parameters)
         {
             Grid navItem = parameters.CurrentItem;
@@ -339,14 +277,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             }
         }
 
-        /// <summary>
-        /// Creates a grid of the navigation button.
-        /// </summary>
-        /// <param name="navButton"> The navigation button. </param>
-        /// <param name="popButton"> The pop-up menu button. </param>
-        /// <returns>
-        /// Returns the button wrapped in grid.
-        /// </returns>
         private static Grid CreateGridNavigationItem(Button navButton, Button popButton)
         {
             Grid grid = new Grid();
@@ -363,11 +293,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
             return grid;
         }
 
-        /// <summary>
-        /// Binds two properties, <see cref="PopupViewModel.PopButtonIsEnabled"/> and <see cref="Button.IsEnabledProperty"/>.
-        /// </summary>
-        /// <param name="popButton"> The pop-up menu button. </param>
-        /// <param name="popupViewModel"> The pop-up menu view model. </param>
         private static void SetBindingPopButton(Button popButton, PopupViewModel popupViewModel)
         {
             Binding bind = new Binding("PopButtonIsEnabled") { Mode = BindingMode.TwoWay, Source = popupViewModel };
@@ -378,11 +303,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
         #region Event handlers
 
-        /// <summary>
-        /// When the navigation bar is resized, this handler updates it.
-        /// </summary>
-        /// <param name="sender"> The current navigation bar. </param>
-        /// <param name="e"> Resize information.. </param>
         private void NavigationPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             NavigationPanel panel = (NavigationPanel)sender;
@@ -392,58 +312,27 @@ namespace UnityCommander.Modules.FilePanel.Controls
 
         #endregion
 
-        /// <summary>
-        /// Serves to transferred parameters from the navigation bar to the pop-up menu.
-        /// </summary>
         internal class PopupParameters
         {
-            /// <summary>
-            /// Gets or sets current item in the navigation panel.
-            /// </summary>
             public Grid CurrentItem { get; set; }
 
-            /// <summary>
-            /// Gets or sets the link to the navigation panel for the current file panel.
-            /// </summary>
             public NavigationPanel Panel { get; set; }
 
-            /// <summary>
-            /// Gets or sets the path to the directory where the pop-up menu will be invoked.
-            /// </summary>
             public string CurrentPath { get; set; }
 
-            /// <summary>
-            /// Gets or sets the selected directory path in the pop-up menu.
-            /// </summary>
             public string SelectedPath { get; set; }
         }
 
-        /// <summary>
-        /// Provides some data to the user control view.
-        /// </summary>
         internal class PopupViewModel : BindableBase
         {
-            /// <summary>
-            /// The reference to the current navigation bar.
-            /// </summary>
             private readonly NavigationPanel currentPanel;
 
-            /// <summary>
-            /// The state of the pop-up menu button.
-            /// </summary>
             private bool popButtonIsEnabled;
 
             private bool popupIsOpen;
 
-            /// <summary>
-            /// The list directories.
-            /// </summary>
             private ObservableCollection<PopupParameters> directoryList;
 
-            /// <summary>
-            /// Initializes a new instance of the <see cref="PopupViewModel"/> class.
-            /// </summary>
-            /// <param name="parameters"> The external arguments for pop-up menu. </param>
             public PopupViewModel(PopupParameters parameters)
             {
                 this.popupIsOpen = true;
@@ -463,9 +352,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 }
             }
 
-            /// <summary>
-            /// Gets or sets a list of the directories.
-            /// </summary>
             public ObservableCollection<PopupParameters> DirectoryList
             {
                 get => this.directoryList;
@@ -476,9 +362,6 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 }
             }
 
-            /// <summary>
-            /// Sets the selected directory path.
-            /// </summary>
             public bool PopupIsOpen
             {
                 get => this.popupIsOpen;
@@ -489,17 +372,11 @@ namespace UnityCommander.Modules.FilePanel.Controls
                 } 
             }
 
-            /// <summary>
-            /// Sets the selected directory path.
-            /// </summary>
             public PopupParameters SelectItem
             {
                 set => this.currentPanel.NavigateCommand.Execute(value.SelectedPath);
             }
 
-            /// <summary>
-            /// Gets or sets a value indicating whether pop-up menu button is enabled.
-            /// </summary>
             public bool PopButtonIsEnabled
             {
                 get => this.popButtonIsEnabled;

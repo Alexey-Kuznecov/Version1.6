@@ -17,11 +17,7 @@
         POP-UP BOX STYLES
     -->
     <Style x:Key="NavigationPopupHeaderStyle" TargetType="{x:Type Grid}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <SolidColorBrush Color="{DynamicResource GeneralHeaderColor}" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Background" Value="{DynamicResource UcAccentPrimaryBrush}" />
     </Style>
 
     <Style x:Key="NavigationPopupContainerStyle" TargetType="{x:Type Border}">
@@ -52,8 +48,8 @@
     <Style x:Key="NavigationBackButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="25" />
         <Setter Property="MinWidth" Value="30" />
-        <Setter Property="Background" Value="{StaticResource PreviewPanelBackgroundColor}" />
-        <Setter Property="Foreground" Value="{StaticResource PreviewPanelForegroundColor}" />
+        <Setter Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -78,12 +74,12 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgMouseOverColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgMouseOverColor}" />
+                            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource UcForegroundTertiaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgPressedColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgPressedColor}" />
+                            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource UcForegroundTertiaryBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -95,8 +91,8 @@
     <Style x:Key="NavigationPopupButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="30" />
         <Setter Property="Height" Value="25" />
-        <Setter Property="Background" Value="{StaticResource PreviewPanelBackgroundColor}" />
-        <Setter Property="Foreground" Value="{StaticResource PreviewPanelForegroundColor}" />
+        <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -134,16 +130,16 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgMouseOverColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgMouseOverColor}" />
+                            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource UcForegroundTertiaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgPressedColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgPressedColor}" />
+                            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource UcForegroundTertiaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" Value="{StaticResource PreviewPanelBgEnabledColor}" />
-                            <Setter Property="Foreground" Value="{StaticResource PreviewPanelFgEnabledColor}" />
+                            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource UcForegroundTertiaryBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

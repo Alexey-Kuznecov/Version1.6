@@ -28,23 +28,16 @@
 
             <Border.Style>
                 <Style TargetType="Border">
-                    <Setter Property="BorderBrush" Value="#E0E0E0" />
+                    <Setter Property="BorderBrush" Value="{StaticResource UcBorderPrimaryBrush}" />
                     <Setter Property="Background" Value="Transparent" />
 
                     <Style.Triggers>
 
                         <!--  Hover  -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="BorderBrush" Value="#BBBBBB" />
-                            <Setter Property="Background" Value="#FFFFFF" />
+                            <Setter Property="BorderBrush" Value="{StaticResource UcHoverSecondaryBrush}" />
                         </Trigger>
-
-                        <!--  Recording state  -->
-                        <DataTrigger Binding="{Binding IsRecording}" Value="True">
-                            <Setter Property="BorderBrush" Value="#FFCAEE" />
-                            <Setter Property="Background" Value="#FFF3FB" />
-                        </DataTrigger>
-
+                        
                     </Style.Triggers>
                 </Style>
             </Border.Style>
@@ -65,7 +58,7 @@
                     Grid.Column="0"
                     FontSize="14"
                     FontWeight="Bold"
-                    Foreground="#3C3C3E"
+                    Foreground="{StaticResource UcForegroundTertiaryBrush}"
                     Text="{Binding DisplayName}" />
 
                 <TextBlock
@@ -73,14 +66,13 @@
                     Grid.Column="0"
                     FontSize="14"
                     FontWeight="Medium"
-                    Foreground="#3C3C3E"
+                    Foreground="{StaticResource UcForegroundTertiaryBrush}"
                     Text="{Binding Description}" />
                 <ToggleButton
-                    VerticalAlignment="Center"
                     Grid.RowSpan="1"
                     Grid.Column="1"
                     HorizontalAlignment="Center"
-                    Background="#7C9BCC"
+                    VerticalAlignment="Center"
                     IsChecked="{Binding Value}"
                     Style="{StaticResource UcToggleButton}" />
             </Grid>

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using UnityCommander.Abstractions;
 
 namespace UnityCommander.Rendering.Icons
 {
@@ -13,7 +14,7 @@ namespace UnityCommander.Rendering.Icons
                 nameof(Key),
                 typeof(string),
                 typeof(IconRender),
-                new PropertyMetadata(null, OnKeyChanged));
+                new PropertyMetadata(null, UpdateIcon));
 
         public static readonly DependencyProperty DataProperty =
             DependencyProperty.Register(
@@ -56,21 +57,28 @@ namespace UnityCommander.Rendering.Icons
                 nameof(Tone),
                 typeof(IconTone),
                 typeof(IconRender),
-                new PropertyMetadata(IconTone.Default));
+                new PropertyMetadata(IconTone.Default, UpdateIcon));
 
         public static readonly DependencyProperty StateProperty =
             DependencyProperty.Register(
                 nameof(State),
                 typeof(VisualState),
                 typeof(IconRender),
-                new PropertyMetadata(VisualState.Normal));
+                new PropertyMetadata(VisualState.Normal, UpdateIcon));
+
+        public static readonly DependencyProperty IconKindProperty =
+            DependencyProperty.Register(
+                nameof(IconKind),
+                typeof(IconKind),
+                typeof(IconRender),
+                new PropertyMetadata(IconKind.Default, UpdateIcon));
 
         public static readonly DependencyProperty RoleProperty =
-            DependencyProperty.Register(
-                nameof(Role),
-                typeof(IconRole),
-                typeof(IconRender),
-                new PropertyMetadata(IconRole.Generic));
+             DependencyProperty.Register(
+                 nameof(Role),
+                 typeof(IconRole),
+                 typeof(IconRender),
+                 new PropertyMetadata(IconRole.Generic, UpdateIcon));
 
         public ICommand? Command
         {
@@ -94,6 +102,12 @@ namespace UnityCommander.Rendering.Icons
         {
             get => (VisualState)GetValue(StateProperty);
             set => SetValue(StateProperty, value);
+        }
+
+        public IconKind IconKind
+        {
+            get => (IconKind)GetValue(IconKindProperty);
+            set => SetValue(IconKindProperty, value);
         }
 
         public IconRole Role
@@ -152,16 +166,34 @@ namespace UnityCommander.Rendering.Icons
                 Command.Execute(CommandParameter);
         }
 
-        private static void OnKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //private static void OnKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    var control = (IconRender)d;
+        //    var key = (string)e.NewValue;
+
+        //    if (!IconHub.TryGet(key, out var result))
+        //        return;
+
+        //    control.Data = result.Geometry;
+        //    control.DefaultBrush = IconHub.Resolve(control.IconKind, control.Role, control.Tone, control.State);
+        //}
+
+        private static void UpdateIcon(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (IconRender)d;
-            var key = (string)e.NewValue;
 
-            if (!IconHub.TryGet(key, out var result))
-                return;
+            if (e.NewValue is string)
+            {
+                var key = (string)e.NewValue;
 
-            control.Data = result.Geometry;
-            control.DefaultBrush = IconHub.Resolve(control.Role, control.Tone, control.State);
+                if (!IconHub.TryGet(key, out var result))
+                    return;
+
+                control.Data = result.Geometry;
+            }
+
+            if (e.NewValue is IconKind || e.NewValue is IconRole)
+                control.DefaultBrush = IconHub.Resolve(control.IconKind, control.Role, control.Tone, control.State);
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

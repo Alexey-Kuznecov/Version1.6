@@ -1,7 +1,7 @@
 ﻿
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
-using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Services.Docking
 {
@@ -54,10 +54,10 @@ namespace UnityCommander.Services.Docking
         {
             if (!_floating.TryGetValue(window, out var id))
             {
-                if (!Guid.TryParse(window.RootDocument.ContentId, out id))
+                if (!Guid.TryParse(window.SinglePane.Root.ActiveContent.ContentId, out id))
                 {
                     id = Guid.NewGuid();
-                    window.RootDocument.ContentId = id.ToString(); // 💥 ВАЖНО
+                    window.SinglePane.Root.ActiveContent.ContentId = id.ToString(); // 💥 ВАЖНО
                 }
 
                 _floating[window] = id;

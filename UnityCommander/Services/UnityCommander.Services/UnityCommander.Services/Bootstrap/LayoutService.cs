@@ -1,4 +1,7 @@
 ﻿
+using AvalonDock.Core;
+using AvalonDock.Layout;
+using AvalonDock.Serializer.Xml;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -12,8 +15,6 @@ using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.WPF;
-using Xceed.Wpf.AvalonDock.Layout;
-using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace UnityCommander.Services.Bootstrap
 {

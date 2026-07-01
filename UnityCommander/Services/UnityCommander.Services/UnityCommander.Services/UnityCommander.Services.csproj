@@ -24,6 +24,15 @@
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AvalonDock">
+      <HintPath>..\..\..\..\..\_builds\AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="AvalonDock.Core">
+      <HintPath>..\..\..\..\..\_builds\AvalonDock.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AvalonDock.Serializer.Xml">
+      <HintPath>..\..\..\..\..\_builds\AvalonDock.Serializer.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="UnityCommander.Ribbon.Abstractions">
       <HintPath>..\..\..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
     </Reference>

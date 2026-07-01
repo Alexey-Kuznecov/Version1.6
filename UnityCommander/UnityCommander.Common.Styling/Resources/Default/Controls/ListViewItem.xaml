@@ -6,9 +6,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
                     <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Background="{DynamicResource UcListViewItemBackgroundBrush}"
+                        BorderBrush="{DynamicResource UcListViewItemBorderBrush}"
+                        BorderThickness="0,1,0,1"
                         SnapsToDevicePixels="true">
                         <Border Name="InnerBorder">
                             <Grid Height="30">
@@ -62,20 +62,13 @@
     </Style>
 
     <Style x:Key="UcListViewItemNormal" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Background" Value="{DynamicResource UcListViewItemBackgroundBrush}" />
-
+        <Setter Property="Background" Value="{DynamicResource UcAccentSecondaryBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource UcListViewItemForegroundBrush}" />
-
         <Setter Property="BorderBrush" Value="{DynamicResource UcListViewItemBorderBrush}" />
-
         <Setter Property="BorderThickness" Value="0" />
-
         <Setter Property="Padding" Value="8" />
-
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-
         <Setter Property="VerticalContentAlignment" Value="Center" />
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -94,11 +87,11 @@
                     <ControlTemplate.Triggers>
 
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#465E8B" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcListViewItemHoverBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#28406D" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcListViewItemSelectedBrush}" />
 
                             <Setter Property="Foreground" Value="{DynamicResource UcListViewItemSelectedForegroundBrush}" />
                         </Trigger>
@@ -112,6 +105,26 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="Selector.IsSelectionActive" Value="True" />
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Background" Value="{DynamicResource UcListBoxItemSelectedBrush}" />
+            </MultiTrigger>
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="Selector.IsSelectionActive" Value="False" />
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Background" Value="{DynamicResource UcListBoxBackgroundBrush}" />
+            </MultiTrigger>
+
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

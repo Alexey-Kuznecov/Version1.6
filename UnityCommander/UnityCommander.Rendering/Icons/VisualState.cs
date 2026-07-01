@@ -5,7 +5,7 @@ namespace UnityCommander.Rendering.Icons
     {
         Normal,
         Hovered,
-        Active,
+        Pressed,
         Disabled,
         Selected
     }

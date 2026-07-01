@@ -44,6 +44,7 @@
     <ProjectReference Include="..\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.WebBrowser\UnityCommander.Modules.WebBrowser.csproj" />
+    <ProjectReference Include="..\Theme\AvalonDock.Themes.Arc\AvalonDock.Themes.Arc.csproj" />
     <ProjectReference Include="..\UnityCommander.AI.ImageSearch\UnityCommander.AI.ImageSearch.csproj" />
     <ProjectReference Include="..\UnityCommander.Commands\UnityCommander.Commands.csproj" />
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
@@ -52,6 +53,15 @@
     <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AvalonDock">
+      <HintPath>..\..\..\_builds\AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="AvalonDock.Core">
+      <HintPath>..\..\..\_builds\AvalonDock.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AvalonDock.Serializer.Xml">
+      <HintPath>..\..\..\_builds\AvalonDock.Serializer.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="UnityCommander.Ribbon.Abstractions">
       <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
     </Reference>

@@ -66,5 +66,10 @@ namespace UnityCommander.WPF
         {
             _cache.Clear();
         }
+
+        public static T Get<T>(object drive)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

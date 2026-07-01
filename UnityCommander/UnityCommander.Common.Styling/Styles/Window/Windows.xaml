@@ -20,7 +20,7 @@
                 <!--  Opacity mask for corners on grid  -->
                 <Border
                     x:Name="Container"
-                    Background="{StaticResource BackgroundLightBrush}"
+                    Background="{DynamicResource UcSurfacePrimaryBrush}"
                     CornerRadius="{Binding ImportCustomWindow.WindowCornerRadius, FallbackValue=10}" />
                 <!--  Window border and drop shadow  -->
                 <Border Background="{Binding ForegroundLightBrush, FallbackValue=White}" CornerRadius="{Binding ImportCustomWindow.WindowCornerRadius, FallbackValue=10}">
@@ -29,7 +29,7 @@
                     </Border.Effect>
                 </Border>
                 <!--  The main window content  -->
-                <Grid>
+                <Grid Background="{DynamicResource UcSurfacePrimaryBrush}">
                     <!--  Corner clipping  -->
                     <Grid.RowDefinitions>
                         <!--  Title Bar  -->
@@ -39,39 +39,54 @@
                         <!--  Window Content  -->
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Menu  -->
+                    <Menu
+                        Grid.RowSpan="2"
+                        VerticalAlignment="Top"
+                        VerticalContentAlignment="Stretch"
+                        FontSize="16"
+                        IsMainMenu="True"
+                        WindowChrome.IsHitTestVisibleInChrome="True">
+                        <MenuItem
+                            Width="60"
+                            Height="60"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            VerticalContentAlignment="Stretch"
+                            Background="{DynamicResource UcAccentTertiaryBrush}"
+                            BorderBrush="{x:Null}"
+                            Foreground="{DynamicResource UcForegroundTertiaryBrush}"
+                            Header="FILE">
+                            <MenuItem Header="Open">
+                                <MenuItem Header="Open" />
+                                <MenuItem Header="Save As" />
+                            </MenuItem>
+                            <MenuItem
+                                Command="{Binding StateCommand.SaveCommand}"
+                                CommandParameter="{Binding ElementName=Window}"
+                                Header="Close" />
+                        </MenuItem>
+                    </Menu>
                     <!--  Title Bar  -->
-                    <Grid>
+                    <Grid
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="1">
                         <Grid.ColumnDefinitions>
                             <!--  Icon  -->
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="50" />
                             <!--  Title  -->
                             <ColumnDefinition Width="*" />
                             <!--  Windows Button  -->
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--  Menu  -->
-                        <Menu
-                            Grid.Row="0"
-                            VerticalAlignment="Top"
-                            VerticalContentAlignment="Stretch"
-                            FontSize="16"
-                            FontWeight="Regular"
-                            IsMainMenu="True"
-                            WindowChrome.IsHitTestVisibleInChrome="True">
-                            <MenuItem
-                                Background="#FF1368"
-                                Foreground="White"
-                                Header="FILE">
-                                <MenuItem Header="Open">
-                                    <MenuItem Header="Open" />
-                                    <MenuItem Header="Save As" />
-                                </MenuItem>
-                                <MenuItem
-                                    Command="{Binding StateCommand.SaveCommand}"
-                                    CommandParameter="{Binding ElementName=Window}"
-                                    Header="Close" />
-                            </MenuItem>
-                        </Menu>
+
                         <!--  Title  -->
                         <Viewbox Grid.Column="1">
                             <TextBlock
@@ -104,14 +119,15 @@
                     <!--  Drop shadow  -->
                     <Border
                         Grid.Row="1"
+                        Grid.Column="1"
                         BorderThickness="0,0.2,0,0"
                         Visibility="Visible">
                         <!--  Underline  -->
                         <Border.BorderBrush>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1, 0">
-                                <GradientStop Offset="0.0" Color="{StaticResource ForegroundLight}" />
-                                <GradientStop Offset="0.5" Color="{StaticResource ForegroundVeryDark}" />
-                                <GradientStop Offset="1.0" Color="{StaticResource ForegroundLight}" />
+                                <GradientStop Offset="0.0" Color="{DynamicResource UcTitleBarShadowColor}" />
+                                <GradientStop Offset="0.5" Color="{DynamicResource UcTitleBarCenterShadowColor}" />
+                                <GradientStop Offset="1.0" Color="{DynamicResource UcTitleBarShadowColor}" />
                             </LinearGradientBrush>
                         </Border.BorderBrush>
                         <!--  Drop shadow  -->
@@ -123,7 +139,10 @@
                         </Border.Background>-->
                     </Border>
                     <!--  Page Content  -->
-                    <Border Grid.Row="2">
+                    <Border
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
                         <ContentPresenter Content="{TemplateBinding Content}" />
                     </Border>
                 </Grid>

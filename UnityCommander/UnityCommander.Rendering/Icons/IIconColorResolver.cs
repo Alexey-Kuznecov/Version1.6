@@ -1,13 +1,15 @@
 ﻿
 using System.Windows.Media;
+using UnityCommander.Abstractions;
 
 namespace UnityCommander.Rendering.Icons
 {
     public interface IIconColorResolver
     {
         Brush Resolve(
-            IconRole role, 
-            IconTone tone, 
-            VisualState state);
+             IconKind kind,
+             IconRole role,
+             IconTone tone,
+             VisualState state);
     }
 }

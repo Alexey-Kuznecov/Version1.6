@@ -20,7 +20,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Width="{Binding SidebarContentWidth, FallbackValue=250}" Background="#FFF3F2F2">
+    <Grid Width="{Binding SidebarContentWidth, FallbackValue=250}">
         <Grid>
             <Grid.DataContext>
                 <vm:ColumnOptionViewModel />
@@ -30,7 +30,7 @@
                     Margin="20"
                     FontSize="14"
                     FontWeight="Bold"
-                    Foreground="#3C3C3E"
+                    Foreground="{StaticResource UcForegroundPrimaryBrush}"
                     Text="Managment Cloums Visibility" />
                 <Grid Margin="20,15,0,15">
                     <Grid.ColumnDefinitions>
@@ -41,7 +41,7 @@
                         Grid.Column="0"
                         FontSize="14"
                         FontWeight="Medium"
-                        Foreground="#3C3C3E"
+                        Foreground="{StaticResource UcForegroundPrimaryBrush}"
                         Text="Attributes" />
                     <ToggleButton
                         Grid.Column="1"
@@ -58,7 +58,7 @@
                         Grid.Column="0"
                         FontSize="14"
                         FontWeight="Medium"
-                        Foreground="#3C3C3E"
+                        Foreground="{StaticResource UcForegroundPrimaryBrush}"
                         Text="Creation Date" />
                     <ToggleButton
                         Grid.Column="1"
@@ -75,7 +75,7 @@
                         Grid.Column="0"
                         FontSize="14"
                         FontWeight="Medium"
-                        Foreground="#3C3C3E"
+                        Foreground="{StaticResource UcForegroundPrimaryBrush}"
                         Text="Last Access Date" />
                     <ToggleButton
                         Grid.Column="1"

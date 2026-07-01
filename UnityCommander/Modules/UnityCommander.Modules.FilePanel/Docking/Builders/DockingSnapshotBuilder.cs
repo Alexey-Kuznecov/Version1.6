@@ -1,11 +1,11 @@
 ﻿
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Modules.FilePanel.Docking.Snapshot;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
-using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Modules.FilePanel.Docking.Builders
 {

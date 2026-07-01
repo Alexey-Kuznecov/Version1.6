@@ -7,8 +7,6 @@ namespace UnityCommander.Rendering.Icons
         Accent,
         Muted,
         Static,
-        Disabled,
-        Interactive,
-        Hover
+        Interactive
     }
 }

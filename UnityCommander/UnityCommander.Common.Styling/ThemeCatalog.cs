@@ -29,6 +29,8 @@ namespace UnityCommander.Common.Styling
 
                     Icons = new IconPalette
                     {
+                        Folder = "IconFolderBrush",
+                        File = "IconFileBrush",
                         Default = "IconDefaultBrush",
                         Muted = "IconMutedBrush",
                         Disabled = "IconDisabledBrush",

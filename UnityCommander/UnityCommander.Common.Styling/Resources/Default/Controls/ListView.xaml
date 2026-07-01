@@ -4,73 +4,29 @@
         <ResourceDictionary Source="ScrollViewer.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <LinearGradientBrush x:Key="&#337;" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="GridViewHeaderBackground" StartPoint="0,0" EndPoint="0,1">
         <LinearGradientBrush.GradientStops>
             <GradientStop Offset="0" Color="#FFFFFF" />
             <GradientStop Offset="1" Color="#FDFDFD" />
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
-    <LinearGradientBrush x:Key="&#338;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FFFFFFFF" />
-            <GradientStop Offset="0.4091" Color="#FFFFFFFF" />
-            <GradientStop Offset="1" Color="#FFF7F8F9" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ListViewBorderBrush" Color="#224C8DFF" />
+    <SolidColorBrush x:Key="ListViewBackground" Color="#224C8DFF" />
+    <SolidColorBrush x:Key="ListViewForeground" Color="DarkSlateGray" />
 
-    <LinearGradientBrush x:Key="&#339;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FFFFFFFF" />
-            <GradientStop Offset="1" Color="#F0F0F0" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="&#340;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FF8DD6F7" />
-            <GradientStop Offset="1" Color="#FF8AD1F5" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="&#343;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FFF1FBFF" />
-            <GradientStop Offset="1" Color="#FFD5F1FE" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="&#344;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FFD9F4FF" />
-            <GradientStop Offset="1" Color="#FF9BDDFB" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="&#345;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FFEAF9FF" />
-            <GradientStop Offset="1" Color="#FFC9EDFD" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="&#346;" StartPoint="0,0" EndPoint="0,1">
-        <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="#FFEEEDED" />
-            <GradientStop Offset="1" Color="#FFDDDDDD" />
-        </LinearGradientBrush.GradientStops>
-    </LinearGradientBrush>
-
-
-    <Style x:Key="&#341;" TargetType="{x:Type Thumb}">
+    <Style x:Key="GridViewHeaderThumbStyle" TargetType="{x:Type Thumb}">
         <Setter Property="Canvas.Right" Value="-9" />
         <Setter Property="Width" Value="18" />
         <Setter Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Background" Value="{StaticResource &#337;}" />
+        <Setter Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <Border
-                        Background="{StaticResource &#337;}"
-                        BorderBrush="#EAEAEA"
+                        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                        BorderBrush="{DynamicResource UcBorderSecondaryBrush}"
                         BorderThickness="0,0,0,2" />
                 </ControlTemplate>
 
@@ -78,15 +34,14 @@
         </Setter>
     </Style>
 
-
     <Style x:Key="{x:Type GridViewColumnHeader}" TargetType="{x:Type GridViewColumnHeader}">
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Background" Value="{StaticResource &#337;}" />
-        <Setter Property="BorderBrush" Value="#EAEAEA" />
+        <Setter Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
         <Setter Property="BorderThickness" Value="0,0,0,2" />
         <Setter Property="Padding" Value="2,0,2,0" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
@@ -94,9 +49,8 @@
                         <Border
                             Name="HeaderBorder"
                             Background="{TemplateBinding Background}"
-                            BorderBrush="#EAEAEA"
-                            BorderThickness="0,0,0,2"
-                            >
+                            BorderBrush="{DynamicResource UcBorderSecondaryBrush}"
+                            BorderThickness="0,0,0,2">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition MaxHeight="7" />
@@ -104,7 +58,7 @@
                                 </Grid.RowDefinitions>
                                 <Rectangle
                                     Name="UpperHighlight"
-                                    Fill="{StaticResource &#337;}"
+                                    Fill="{StaticResource GridViewHeaderBackground}"
                                     Visibility="Collapsed" />
                                 <Border Grid.RowSpan="2" Padding="{TemplateBinding Padding}">
                                     <ContentPresenter
@@ -120,28 +74,28 @@
                         <Border
                             Name="HeaderHoverBorder"
                             Margin="1,1,0,0"
-                            BorderThickness="1,0,1,1" />
+                            BorderThickness="0,0,0,2" />
                         <Border
                             Name="HeaderPressBorder"
                             Margin="1,0,0,1"
-                            BorderThickness="1,1,1,0" />
+                            BorderThickness="0,0,0,2" />
                         <Canvas>
-                            <Thumb x:Name="PART_HeaderGripper" Style="{StaticResource &#341;}" />
+                            <Thumb x:Name="PART_HeaderGripper" Style="{StaticResource GridViewHeaderThumbStyle}" />
                         </Canvas>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource &#337;}" />
+                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource UcHoverSecondaryBrush}" />
                             <!--<Setter TargetName="HeaderHoverBorder" Property="BorderBrush" Value="#FF88CBEB" />
                             <Setter TargetName="UpperHighlight" Property="Visibility" Value="Visible" />-->
                             <Setter TargetName="PART_HeaderGripper" Property="Background" Value="Transparent" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource &#337;}" />
-                            <Setter TargetName="HeaderHoverBorder" Property="BorderBrush" Value="#EAEAEA" />
+                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource UcPressedBrush}" />
+                            <!--<Setter TargetName="HeaderHoverBorder" Property="BorderBrush" Value="#EAEAEA" />
                             <Setter TargetName="HeaderPressBorder" Property="BorderBrush" Value="#FFFFFF" />
                             <Setter TargetName="UpperHighlight" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="UpperHighlight" Property="Fill" Value="#FFFFFF" />
+                            <Setter TargetName="UpperHighlight" Property="Fill" Value="#FFFFFF" />-->
                             <Setter TargetName="PART_HeaderGripper" Property="Visibility" Value="Hidden" />
                             <!--<Setter TargetName="HeaderContent" Property="Margin" Value="1,1,0,0" />-->
                         </Trigger>
@@ -181,7 +135,7 @@
                                 Name="HeaderBorder"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="0,1,0,1" />
+                                BorderThickness="0,0,0,2" />
                             <ControlTemplate.Triggers>
                                 <Trigger Property="Height" Value="Auto">
                                     <Setter Property="MinHeight" Value="20" />
@@ -196,10 +150,10 @@
 
     <!--  GridView Style  -->
     <Style x:Key="UcGridListViewTemplate" TargetType="{x:Type ListView}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-        <Setter Property="BorderBrush" Value="{StaticResource &#322;}" />
+        <Setter Property="Background" Value="{DynamicResource UcSurfacePrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="#FF042271" />
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
@@ -230,7 +184,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="&#342;">
+    <!--<Style x:Key="&#342;">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
@@ -242,6 +196,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
 </ResourceDictionary>

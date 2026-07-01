@@ -20,6 +20,9 @@
     <ProjectReference Include="..\..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AvalonDock">
+      <HintPath>..\..\..\..\..\_builds\AvalonDock.dll</HintPath>
+    </Reference>
     <Reference Include="UnityCommander.Ribbon.Abstractions">
       <HintPath>..\..\..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
     </Reference>

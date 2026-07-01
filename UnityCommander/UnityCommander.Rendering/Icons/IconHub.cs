@@ -1,5 +1,6 @@
 
 using System.Windows.Media;
+using UnityCommander.Abstractions;
 
 namespace UnityCommander.Rendering.Icons
 {
@@ -23,9 +24,13 @@ namespace UnityCommander.Rendering.Icons
                 && _service.TryGet(key, out result);
         }
 
-        public static Brush Resolve(IconRole role, IconTone tone, VisualState state)
+        public static Brush Resolve(
+            IconKind kind,
+            IconRole role,
+            IconTone tone,
+            VisualState state)
         {
-            return _iconColor.Resolve(role, tone, state);
+            return _iconColor.Resolve(kind, role, tone, state);
         }
     }
 }

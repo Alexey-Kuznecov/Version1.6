@@ -1,9 +1,9 @@
 ﻿
-
+using AvalonDock;
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Threading;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
@@ -12,8 +12,6 @@ using UnityCommander.Modules.FilePanel.Docking.Diff;
 using UnityCommander.Modules.FilePanel.Docking.Snapshot;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
-using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Modules.FilePanel.Docking.Services
 {

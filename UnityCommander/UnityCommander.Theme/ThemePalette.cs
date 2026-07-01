@@ -10,6 +10,7 @@ namespace UnityCommander.Theme
         public string? ForegroundSecondary { get; init; }
 
         public string? Accent { get; init; }
+        
         public string? AccentHover { get; init; }
 
         public string? Border { get; init; }

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<RootNamespace>AvalonDock.Themes</RootNamespace>
+		<PackageId>Dirkster.AvalonDock.Themes.Arc</PackageId>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
+		<SignAssembly>true</SignAssembly>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Resource Include="**\*.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="AvalonDock">
+	    <HintPath>..\..\..\..\_builds\AvalonDock.dll</HintPath>
+	  </Reference>
+	  <Reference Include="AvalonDock.Core">
+	    <HintPath>..\..\..\..\_builds\AvalonDock.Core.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+</Project>

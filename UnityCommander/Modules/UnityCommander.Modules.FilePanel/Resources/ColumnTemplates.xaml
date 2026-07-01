@@ -36,7 +36,8 @@
                             Key="{Binding IconKey}"
                             Width="12"
                             Height="12"
-                            Brush="SteelBlue" />
+                            Brush="SteelBlue"
+                            IconKind="{Binding Kind}" />
                     </ContentPresenter.Content>
                 </ContentPresenter>
             </AdornerDecorator>
@@ -72,7 +73,7 @@
                         Key="{Binding IconKey}"
                         Width="12"
                         Height="12"
-                        Brush="Orange" />
+                        IconKind="{Binding Kind}" />
                 </ContentPresenter.Content>
             </ContentPresenter>
         </Grid>
@@ -91,12 +92,12 @@
 
     <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
-            <TextBlock Foreground="Indigo" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />
+            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="ColumnLastAccessDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid d:DataContext="{d:DesignData}">
-            <TextBlock Foreground="Indigo" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}" />
+            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

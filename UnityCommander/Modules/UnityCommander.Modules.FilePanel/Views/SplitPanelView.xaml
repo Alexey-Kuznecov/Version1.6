@@ -15,6 +15,7 @@
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:SplitPanelViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="{DynamicResource UcSurfaceSecondaryBrush}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -54,6 +55,7 @@
                     Height="5"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
+                    Background="{DynamicResource UcSurfacePrimaryBrush}"
                     ResizeDirection="Rows" />
 
                 <ContentControl Grid.Row="2" Content="{Binding Second}" />
@@ -67,7 +69,6 @@
         </Grid.RowDefinitions>
 
         <ContentControl Content="{Binding LayoutRoot}" />
-        <!--<layout:LayoutPresenter Root="{Binding LayoutRoot}" />-->
         <ContentControl Grid.Row="1">
             <localControl:NavigationPanel
                 Margin="10"

@@ -1,4 +1,7 @@
-﻿using Prism.Mvvm;
+﻿
+using AvalonDock;
+using AvalonDock.Layout;
+using Prism.Mvvm;
 using Prism.Navigation.Regions;
 using System;
 using System.Linq;
@@ -6,8 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using UnityCommander.Common.Module;
 using UnityCommander.Services.Interfaces;
-using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UnityCommander.Services.Docking
 {

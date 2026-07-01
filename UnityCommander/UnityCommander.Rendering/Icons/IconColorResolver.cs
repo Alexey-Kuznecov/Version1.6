@@ -1,5 +1,6 @@
 ﻿
 using System.Windows.Media;
+using UnityCommander.Abstractions;
 using UnityCommander.Theme;
 using UnityCommander.WPF;
 
@@ -7,36 +8,91 @@ namespace UnityCommander.Rendering.Icons
 {
     public sealed class IconColorResolver : IIconColorResolver
     {
-        public Brush Resolve(IconRole role, IconTone tone, VisualState state)
+        public Brush Resolve(
+            IconKind kind,
+            IconRole role,
+            IconTone tone,
+            VisualState state)
         {
-            var icons = ThemeManager.CurrentTheme?.Palette.Icons;
-            var palette = ThemeManager.CurrentTheme?.Palette;
+            var palette = ThemeManager.CurrentTheme!.Palette;
+            var icons = palette.Icons;
 
-            if (icons == null)
-                return null;
+            // ----------------------------------------------------
+            // 1. Базовая кисть (ЧТО изображено)
+            // ----------------------------------------------------
 
-            var brush = role switch
+            Brush brush = kind switch
             {
-                IconRole.RibbonAction => ResourceManager.Get<Brush>(palette?.Accent!),
-                IconRole.SidebarItem =>  ResourceManager.Get<Brush>(palette?.Foreground!),
-                IconRole.FilePanel => ResourceManager.Get<Brush>(icons.Default!),
+                IconKind.Folder => ResourceManager.Get<Brush>(icons?.Folder!),
+                IconKind.File => ResourceManager.Get<Brush>(icons?.File!),
+                IconKind.Drive => ResourceManager.Get<Brush>(icons?.Drive!),
+                IconKind.Archive => ResourceManager.Get<Brush>(icons?.Archive!),
+                IconKind.Image => ResourceManager.Get<Brush>(icons?.Image!),
 
-                _ => ResourceManager.Get<Brush>(icons.Default!)
+                _ => ResourceManager.Get<Brush>(icons?.Default!)
             };
 
-            return tone switch
+            // ----------------------------------------------------
+            // 2. Контекст использования (ГДЕ используется)
+            // ----------------------------------------------------
+
+            switch (role)
             {
-                IconTone.Static => ResourceManager.Get<Brush>(icons.Default!),
-                IconTone.Muted => ResourceManager.Get<Brush>(icons.Muted!),
-                IconTone.Disabled => ResourceManager.Get<Brush>(icons.Disabled!),
-                IconTone.Accent => ResourceManager.Get<Brush>(icons.Accent!),
-                IconTone.Hover => ResourceManager.Get<Brush>(icons.Hover!),
-                //IconTone.Selected => icons.Selected!,
-                //IconTone.Error => icons.Error!,
-                //IconTone.Warning => icons.Warning!,
-                //IconTone.Success => icons.Success!,
-                _ => ResourceManager.Get<Brush>(icons.Default!)
-            };
+                case IconRole.RibbonAction:
+                    brush = ResourceManager.Get<Brush>(icons?.Accent!);
+                    break;
+
+                case IconRole.SidebarItem:
+                    brush = ResourceManager.Get<Brush>(palette?.Foreground!);
+                    break;
+
+                case IconRole.Plugin:
+                    brush = ResourceManager.Get<Brush>(icons?.Plugin!);
+                    break;
+
+                    // Generic и FilePanel ничего не переопределяют
+            }
+
+            // ----------------------------------------------------
+            // 3. Тон (режим отображения)
+            // ----------------------------------------------------
+
+            switch (tone)
+            {
+                case IconTone.Accent:
+                    brush = ResourceManager.Get<Brush>(icons?.Accent!);
+                    break;
+
+                case IconTone.Muted:
+                    brush = ResourceManager.Get<Brush>(icons?.Muted!);
+                    break;
+
+                case IconTone.Static:
+                    // Просто запрещает эффекты Hover/Selected
+                    return brush;
+            }
+
+            // ----------------------------------------------------
+            // 4. Состояние (самый высокий приоритет)
+            // ----------------------------------------------------
+
+            switch (state)
+            {
+                case VisualState.Disabled:
+                    return ResourceManager.Get<Brush>(icons?.Disabled!);
+
+                case VisualState.Hovered:
+                    return ResourceManager.Get<Brush>(icons?.Hover!);
+
+                case VisualState.Selected:
+                    return ResourceManager.Get<Brush>(icons?.Selected!);
+
+                case VisualState.Pressed:
+                    return ResourceManager.Get<Brush>(icons?.Pressed!);
+
+                default:
+                    return brush;
+            }
         }
     }
 }
