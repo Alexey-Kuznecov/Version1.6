@@ -35,14 +35,14 @@
     </Window.Background>
     <Window.Resources>
         <Style TargetType="MenuItem">
-            <Setter Property="Foreground" Value="{StaticResource UcForegroundPrimaryBrush}" />
-            <Setter Property="Background" Value="{StaticResource UcSurfaceTertiaryBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource UcForegroundPrimaryBrush}" />
+            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
             <Setter Property="Height" Value="50" />
         </Style>
         <conv:BoolToBrushConverter x:Key="BoolToBrushConverter" />
     </Window.Resources>
 
-    <Grid inputBinding:KeyboardBinding.Scope="MainWindow" Background="{StaticResource UcApplicationBackgroundBrush}">
+    <Grid inputBinding:KeyboardBinding.Scope="MainWindow" Background="{DynamicResource UcApplicationBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="3" />
@@ -98,9 +98,6 @@
                 AutoWindowSizeWhenOpened="True"
                 IsVirtualizingAnchorable="True"
                 IsVirtualizingDocument="True">
-                <DockingManager.Theme>
-                    <ArcDarkTheme />
-                </DockingManager.Theme>
             </DockingManager>
         </Grid>
         <Border

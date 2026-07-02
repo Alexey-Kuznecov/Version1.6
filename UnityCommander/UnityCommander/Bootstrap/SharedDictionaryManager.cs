@@ -22,17 +22,21 @@ namespace UnityCommander.Bootstrap
             if (sharedDictionary == null)
             {
                 sharedDictionary = new ResourceDictionary();
+            }
 
-                foreach (var reference in uris)
-                {
-                    var dict = (ResourceDictionary)
-                        Application.LoadComponent(new Uri(reference, UriKind.Relative));
+            foreach (var reference in uris)
+            {
+                var url = new Uri(reference, UriKind.Relative);
 
-                    sharedDictionary.MergedDictionaries.Add(dict);
-                    ResourceManager.Register(dict);
+                var dict = (ResourceDictionary)
+                    Application.LoadComponent(url);
+                
+                dict.Source = url;
 
-                    yield return dict;
-                }
+                sharedDictionary.MergedDictionaries.Add(dict);
+                ResourceManager.Register(dict);
+
+                yield return dict;
             }
         }
     }

@@ -37,9 +37,9 @@ namespace UnityCommander.Theme
 
         public static IEnumerable<string> GetResourceUris()
         {
-            return _catalog.Default.ResourceUris
+            return _catalog.LightTheme.ResourceUris
                 .Concat(
-                    ReferenceEquals(CurrentTheme, _catalog.Default)
+                    ReferenceEquals(CurrentTheme, _catalog.LightTheme)
                         ? Enumerable.Empty<string>()
                         : CurrentTheme.ResourceUris);
         }

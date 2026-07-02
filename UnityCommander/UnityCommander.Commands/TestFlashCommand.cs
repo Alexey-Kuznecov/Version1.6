@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
-using UnityCommander.CLI.Mode;
 using UnityCommander.Commands.Performance;
 
 namespace UnityCommander.Commands

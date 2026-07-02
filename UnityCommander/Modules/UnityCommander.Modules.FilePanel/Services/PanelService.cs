@@ -1,5 +1,6 @@
 ﻿
-
+using AvalonDock;
+using AvalonDock.Layout;
 using Prism.Navigation.Regions;
 using System;
 using System.Linq;
@@ -15,8 +16,6 @@ using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
-using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Services

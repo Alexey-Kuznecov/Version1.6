@@ -5,6 +5,8 @@ namespace UnityCommander.Theme
     {
         ThemeDefinition Get(string name);
 
-        ThemeDefinition Default { get; }
+        ThemeDefinition LightTheme { get; }
+
+        ThemeDefinition DarkTheme { get; }
     }
 }

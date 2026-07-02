@@ -29,11 +29,13 @@ namespace UnityCommander
             var catalog = new ThemeCatalog();
 
             //ThemeManager.Initialize(catalog, "Material");
-            ThemeManager.Initialize(catalog, "Default");
+            ThemeManager.Initialize(catalog, "Dark");
+            //ThemeManager.Initialize(catalog, "Light");
 
             var resources =
-                ThemeManager.GetResourceUris()
-                    .Concat(ModuleResources.ResourceUris);
+               CoreResources.ResourceUris
+                   .Concat(ThemeManager.GetResourceUris())
+                       .Concat(ModuleResources.ResourceUris);
 
             foreach (var dictionary in SharedDictionaryManager.Load(resources))
             {

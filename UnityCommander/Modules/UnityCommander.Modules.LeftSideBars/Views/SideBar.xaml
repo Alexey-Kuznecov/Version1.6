@@ -34,14 +34,14 @@
         <Grid
             Grid.Column="0"
             Width="60"
-            Background="{StaticResource UcAccentSecondaryBrush}">
+            Background="{DynamicResource UcAccentSecondaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ListView
                 Grid.Row="0"
-                Background="{StaticResource UcAccentSecondaryBrush}"
+                Background="{DynamicResource UcAccentSecondaryBrush}"
                 BorderBrush="{x:Null}"
                 ItemContainerStyle="{StaticResource UcListViewItemNormal}"
                 ItemsSource="{Binding SidebarItems}"
@@ -59,7 +59,7 @@
                                 Key="{Binding IconKey}"
                                 Width="25"
                                 Height="25"
-                                Brush="{StaticResource UcAccentTertiaryBrush}" />
+                                Brush="{DynamicResource UcAccentTertiaryBrush}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -75,7 +75,7 @@
                             Width="25"
                             Height="25"
                             Margin="16,0"
-                            Foreground="{StaticResource UcAccentTertiaryBrush}"
+                            Foreground="{DynamicResource UcAccentTertiaryBrush}"
                             Kind="Settings" />
                     </materialDesigh:PopupBox.ToggleContent>
                     <StackPanel>
@@ -92,7 +92,7 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             Width="{Binding SidebarContentWidth, Mode=TwoWay}"
-            Background="{StaticResource UcSurfaceTertiaryBrush}">
+            Background="{DynamicResource UcSurfaceTertiaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />
@@ -104,7 +104,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Content="{Binding IconHideSidebar.Data}"
-                Foreground="{StaticResource UcForegroundTertiaryBrush}">
+                Foreground="{DynamicResource UcForegroundTertiaryBrush}">
                 <ContentControl.Template>
                     <DynamicResource ResourceKey="CustomButtonTemplate" />
                 </ContentControl.Template>

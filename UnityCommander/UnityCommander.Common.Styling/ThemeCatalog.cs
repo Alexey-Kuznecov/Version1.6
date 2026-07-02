@@ -13,13 +13,15 @@ namespace UnityCommander.Common.Styling
 
         public ThemeCatalog()
         {
-            Default = new ThemeDefinition
+            DarkTheme = new ThemeDefinition
             {
                 Priority = 0,
-                Name = "Default",
+                Name = "Dark",
                 ResourceUris =
                     [
-                        "/UnityCommander.Common.Styling;component/Themes/DefaultTheme.xaml",
+                        "/UnityCommander.Common.Styling;component/Themes/DarkTheme.xaml",
+                        "/UnityCommander.Ribbon.Wpf;component/Themes/DarkTheme.xaml",
+                        "/AvalonDock.Themes.Arc;component/DarkTheme.xaml"
                     ],
                 Palette = new ThemePalette
                 {
@@ -44,24 +46,26 @@ namespace UnityCommander.Common.Styling
                 }
             };
 
-            Register(Default);
-
-            Register(new ThemeDefinition
+            LightTheme = new ThemeDefinition
             {
                 Priority = 0,
-                Name = "Material",
+                Name = "Light",
                 ResourceUris =
                 [
-                    "/UnityCommander.Common.Styling;component/Themes/MaterialTheme.xaml",
+                    "/UnityCommander.Common.Styling;component/Themes/LightTheme.xaml",
+                    "/UnityCommander.Ribbon.Wpf;component/Themes/LightTheme.xaml",
+                    "/AvalonDock.Themes.Arc;component/LightTheme.xaml",
                 ],
                 Palette = new ThemePalette
                 {
                     Accent = "Theme.Accent",
                     Background = "Theme.Background",
                     Foreground = "Theme.Foreground",
-
+                    
                     Icons = new IconPalette
                     {
+                        Folder = "IconFolderBrush",
+                        File = "IconFileBrush",
                         Default = "IconDefaultBrush",
                         Muted = "IconMutedBrush",
                         Disabled = "IconDisabledBrush",
@@ -73,10 +77,15 @@ namespace UnityCommander.Common.Styling
                         Error = "IconErrorBrush",
                     }
                 }
-            });
+            };
+
+            Register(DarkTheme);
+            Register(LightTheme);
         }
 
-        public ThemeDefinition Default { get; }
+        public ThemeDefinition DarkTheme { get; }
+
+        public ThemeDefinition LightTheme { get; }
 
         public IEnumerable<ThemeDefinition> Themes =>
             _themes.Values;

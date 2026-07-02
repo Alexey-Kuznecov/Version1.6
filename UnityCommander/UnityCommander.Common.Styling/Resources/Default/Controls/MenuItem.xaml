@@ -23,12 +23,12 @@
 
 
     <Style TargetType="{x:Type Menu}">
-        <Setter Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource UcMenuBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
         <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}" />
         <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}" />
         <Setter Property="FontWeight" Value="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" />
-        <Setter Property="Foreground" Value="{DynamicResource UcBorderSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource UcMenuBorderBrush}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
@@ -54,8 +54,8 @@
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=SubmenuContent}" TargetType="{x:Type ContentControl}">
         <Border
             Padding="2"
-            Background="{TemplateBinding Menu.Background}"
-            BorderBrush="{TemplateBinding Menu.BorderBrush}"
+            Background="{DynamicResource UcMenuBackgroundBrush}"
+            BorderBrush="{DynamicResource UcMenuBorderBrush}"
             BorderThickness="1">
             <Border Background="{DynamicResource UcSurfaceSecondaryBrush}">
                 <ContentPresenter />
@@ -69,8 +69,8 @@
         ==================================================================
     -->
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
-        <Setter Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
         <Setter Property="MinHeight" Value="1" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="Template">
@@ -132,7 +132,7 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="Background" Value="Red" />
                 <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
@@ -144,8 +144,8 @@
                     <Condition Property="IsHighlighted" Value="True" />
                     <Condition Property="IsEnabled" Value="False" />
                 </MultiTrigger.Conditions>
-                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
-                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="Background" Value="Red" />
+                <Setter TargetName="templateRoot" Property="BorderBrush" Value="Red" />
             </MultiTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -212,11 +212,11 @@
                                         Height="{Binding ElementName=SubMenuBorder, Path=ActualHeight}"
                                         Fill="{Binding ElementName=SubMenuBorder, Path=Background}" />
                                 </Canvas>
-                                <Rectangle
+                                <!--<Rectangle
                                     Width="1"
                                     Margin="29,2,0,2"
                                     HorizontalAlignment="Left"
-                                    Fill="Red" />
+                                    Fill="Red" />-->
                                 <ItemsPresenter
                                     x:Name="ItemsPresenter"
                                     Grid.IsSharedSizeScope="true"
@@ -241,8 +241,8 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
-                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="Background" Value="Red" />
+                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcMenuItemHoverBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
@@ -258,8 +258,8 @@
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
         <Border
             x:Name="templateRoot"
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding BorderBrush}"
+            Background="{DynamicResource UcSurfaceSecondaryBrush}"
+            BorderBrush="{DynamicResource UcBorderSecondaryBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             SnapsToDevicePixels="true">
             <Grid Margin="-1">
@@ -330,11 +330,11 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
-                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcMenuItemHoverBrush}" />
+                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcMenuItemHoverBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
                 <Setter TargetName="Glyph" Property="Fill" Value="Red" />
             </Trigger>
             <MultiTrigger>
@@ -342,8 +342,8 @@
                     <Condition Property="IsHighlighted" Value="True" />
                     <Condition Property="IsEnabled" Value="False" />
                 </MultiTrigger.Conditions>
-                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
-                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="Background" Value="Red" />
+                <Setter TargetName="templateRoot" Property="BorderBrush" Value="Red" />
             </MultiTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -351,8 +351,8 @@
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
         <Border
             x:Name="templateRoot"
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding BorderBrush}"
+            Background="{DynamicResource UcSurfaceSecondaryBrush}"
+            BorderBrush="{DynamicResource UcBorderSecondaryBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
             SnapsToDevicePixels="true">
             <Grid Margin="-1">
@@ -406,6 +406,7 @@
                     Grid.Column="4"
                     Margin="{TemplateBinding MenuItem.Padding}"
                     VerticalAlignment="Center"
+                    Foreground="Red"
                     Opacity="0.7"
                     Text="{TemplateBinding InputGestureText}" />
                 <Path
@@ -444,11 +445,11 @@
                                         Height="{Binding ElementName=SubMenuBorder, Path=ActualHeight}"
                                         Fill="{Binding ElementName=SubMenuBorder, Path=Background}" />
                                 </Canvas>
-                                <Rectangle
+                                <!--<Rectangle
                                     Width="1"
                                     Margin="29,2,0,2"
                                     HorizontalAlignment="Left"
-                                    Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+                                    Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />-->
                                 <ItemsPresenter
                                     x:Name="ItemsPresenter"
                                     Grid.IsSharedSizeScope="true"
@@ -473,11 +474,11 @@
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="templateRoot" Property="Background" Value="Transparent" />
-                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource UcMenuItemHoverBrush}" />
+                <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource UcMenuItemHoverBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
+                <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="Red" />
                 <Setter TargetName="Glyph" Property="Fill" Value="Red" />
                 <Setter TargetName="RightArrow" Property="Fill" Value="Red" />
             </Trigger>
@@ -491,8 +492,8 @@
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="{DynamicResource UcMenuBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource UcMenuBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />

@@ -7,8 +7,7 @@ namespace UnityCommander.Common.Styling
 
             "/UnityCommander.Rendering;component/Icons/Generic.xaml",
             "/UnityCommander.Modules.FilePanel;component/Resources/Generic.xaml",
-            "/UnityCommander.Ribbon.Wpf;component/Themes/Generic.xaml",
-            "/UnityCommander.Ribbon.Resources;component/Styles/RibbonStyles.xaml",
+            "/UnityCommander.Ribbon.Wpf;component/Generic.xaml",
             "/UnityCommander.Controls;component/TabPanel/Generic.xaml",
          };
     }

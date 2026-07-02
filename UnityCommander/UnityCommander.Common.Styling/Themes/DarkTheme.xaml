@@ -56,6 +56,7 @@
     <SolidColorBrush x:Key="UcListBoxForegroundBrush" Color="#808082" />
     <SolidColorBrush x:Key="UcListBoxBorderBrush" Color="#373839" />
 
+    <SolidColorBrush x:Key="UcListViewThumbBackgroundBrush" Color="#202020" />
     <SolidColorBrush x:Key="UcListViewItemBackgroundBrush" Color="#202020" />
     <SolidColorBrush x:Key="UcListViewItemForegroundBrush" Color="#202020" />
     <SolidColorBrush x:Key="UcListViewItemBorderBrush" Color="#202020" />
@@ -71,4 +72,16 @@
     <SolidColorBrush x:Key="UcListBoxItemHoverBrush" Color="#2B2C2D" />
     <SolidColorBrush x:Key="UcListBoxItemSelectedBrush" Color="#2B2C2D" />
     <SolidColorBrush x:Key="UcListBoxItemSelectedForegroundBrush" Color="#505052" />
+
+    <SolidColorBrush x:Key="UcMenuItemHoverBrush" Color="#2B2C2D" />
+    <SolidColorBrush x:Key="UcMenuItemBackgroundBrush" Color="#2B2C2D" />
+    <SolidColorBrush x:Key="UcMenuItemForegroundBrush" Color="#808082" />
+    <SolidColorBrush x:Key="UcMenuItemBorderBrush" Color="#202020" />
+
+    <SolidColorBrush x:Key="UcMenuHoverBrush" Color="#2B2C2D" />
+    <SolidColorBrush x:Key="UcMenuBackgroundBrush" Color="#373839" />
+    <SolidColorBrush x:Key="UcMenuForegroundBrush" Color="#2B2C2D" />
+    <SolidColorBrush x:Key="UcMenuBorderBrush" Color="#202020" />
+
+    <SolidColorBrush x:Key="UcSeparatorBrush" Color="#202020" />
 </ResourceDictionary>

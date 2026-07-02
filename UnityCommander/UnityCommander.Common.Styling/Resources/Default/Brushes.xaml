@@ -25,7 +25,7 @@
     <SolidColorBrush x:Key="IconFileBrush" Color="SteelBlue" />
 
 
-    <SolidColorBrush x:Key="UcBackgroundHover" Color="{DynamicResource UcStateHover}" />
+    <!--<SolidColorBrush x:Key="UcBackgroundHover" Color="{DynamicResource UcStateHover}" />
     <SolidColorBrush x:Key="UcBackgroundPressed" Color="{DynamicResource UcStatePressed}" />
 
     <SolidColorBrush x:Key="UcBackgroundPrimary" Color="{DynamicResource UcStateNormal}" />
@@ -39,7 +39,7 @@
     <SolidColorBrush x:Key="UcBorderBrush" Color="#D8ECFF" />
     <SolidColorBrush x:Key="UcAccentBrush" Color="#D8ECFF" />
 
-    <SolidColorBrush x:Key="BorderDefault" Color="#D8ECFF" />
+    <SolidColorBrush x:Key="BorderDefault" Color="#D8ECFF" />-->
 
 
 </ResourceDictionary>

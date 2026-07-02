@@ -89,6 +89,18 @@
                         <StackPanel ContextMenu="{Binding ContextMenu}" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
+                <ListView.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
+                        <ContextMenu.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Title}" />
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+                            </Style>
+                        </ContextMenu.ItemContainerStyle>
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>
             <Border.Style>
                 <Style TargetType="Border">
@@ -128,12 +140,21 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.ContextMenu>
-                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
+                    <ContextMenu
+                        Padding="0"
+                        Background="{DynamicResource UcMenuBackgroundBrush}"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                        ItemsSource="{Binding Context.ContextMenuItems}">
                         <ContextMenu.ItemContainerStyle>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Header" Value="{Binding Title}" />
+                                <Setter Property="Icon" Value="🙂" />
                                 <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="Height" Value="30" />
                                 <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
                             </Style>
                         </ContextMenu.ItemContainerStyle>
                     </ContextMenu>
@@ -173,7 +194,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="HeaderContentDataTemplate" DataType="{x:Type layout:ContentNode}">
-        <Grid Background="{StaticResource UcAccentSecondaryBrush}" Style="{DynamicResource DirectoryPanelHeaderStyle}">
+        <Grid Background="{DynamicResource UcAccentSecondaryBrush}" Style="{DynamicResource DirectoryPanelHeaderStyle}">
             <ItemsControl ItemsSource="{Binding Context.Commands}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -52,7 +52,7 @@
 
                                             <Border
                                                 Margin="2"
-                                                Background="{DynamicResource UcSurfacePrimaryBrush}"
+                                                Background="{DynamicResource UcListViewThumbBackgroundBrush}"
                                                 CornerRadius="3" />
 
                                         </ControlTemplate>
@@ -137,7 +137,7 @@
 
                                             <Border
                                                 Margin="2"
-                                                Background="{DynamicResource UcSurfacePrimaryBrush}"
+                                                Background="{DynamicResource UcListViewThumbBackgroundBrush}"
                                                 CornerRadius="3" />
 
                                         </ControlTemplate>
