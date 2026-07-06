@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Selection;
 
 namespace UnityCommander.Services.Interfaces

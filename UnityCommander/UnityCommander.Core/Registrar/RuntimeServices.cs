@@ -8,6 +8,8 @@ using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Abstractions.Statusbar;
+using UnityCommander.Modules.StatusBar.Services;
 
 namespace UnityCommander.Core.Registrar
 {
@@ -28,6 +30,8 @@ namespace UnityCommander.Core.Registrar
         public IIconSourceRegistry Icons { get; }
 
         public IRibbonRegistry Ribbon { get; }
+        
+        public IStatusBarRegistry StatusBar { get; }
 
         public RuntimeServices(
             ISidebarRegistry sidebar, 
@@ -37,8 +41,10 @@ namespace UnityCommander.Core.Registrar
             ICompositionRegistry compositionRegistry,
             IPluginCommandRegistry command,
             IRibbonRegistry ribbon,
-            IIconSourceRegistry iconSource)
+            IIconSourceRegistry iconSource,
+            IStatusBarRegistry statusBar)
         {
+            StatusBar = statusBar;
             Sidebar = sidebar;
             Dialog = dialog;
             Columns = registry;
@@ -58,6 +64,7 @@ namespace UnityCommander.Core.Registrar
             Composition.Cleanup(id);
             Commands.Cleanup(id);
             //Ribbon.Cleanup(id);
+            StatusBar.Cleanup(id);
         }
     }
 }

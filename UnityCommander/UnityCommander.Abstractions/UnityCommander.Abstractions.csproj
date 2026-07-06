@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Panel\" />
     <Folder Include="Resources\" />
     <Folder Include="Settings\" />
   </ItemGroup>

@@ -19,9 +19,9 @@ namespace UnityCommander.Common.Models
 
         public IFileState GetState(string path)
         {
-            if (_index.TryGetOperation(path, out var op))
+            if (_index.TryGetItem(path, out var item))
             {
-                if (_state.TryGetValue(op.Id, out var state))
+                if (_state.TryGetValue(item.Id, out var state))
 
                     return state;
             }

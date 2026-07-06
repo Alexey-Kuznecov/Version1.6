@@ -11,6 +11,7 @@ using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel;
+using UnityCommander.Modules.StatusBar;
 using UnityCommander.Modules.ToolBar;
 using UnityCommander.Modules.Viewer;
 using UnityCommander.Modules.WebBrowser;
@@ -88,6 +89,7 @@ namespace UnityCommander
             moduleCatalog.AddModule<ViewerModule>();
             moduleCatalog.AddModule<SettingsPanelModule>();
             moduleCatalog.AddModule<WebBrowserModule>();
+            moduleCatalog.AddModule<StatusBarModule>();
 
             // Регистрация команд модулей
             moduleCatalog.AddModule<FilePanelCommandModule>(); // Команды

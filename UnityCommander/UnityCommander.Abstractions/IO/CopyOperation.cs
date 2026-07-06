@@ -6,7 +6,7 @@ namespace UnityCommander.Abstractions.IO
         public Guid Id { get; set; }
 
         public List<FileTransferItem> Items 
-            = new List<FileTransferItem>();
+            { get; set; } = new List<FileTransferItem>();
 
         public OperationState? State { get; }
     }

@@ -3,10 +3,9 @@ using Prism.Navigation.Regions;
 using System;
 using System.Linq;
 using System.Windows.Controls;
-using UnityCommander.Common.Module;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Services;
-using UnityCommander.Services.Interfaces;
 using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Services

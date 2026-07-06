@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;

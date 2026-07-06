@@ -3,7 +3,9 @@ namespace UnityCommander.Abstractions.IO
 {
     public interface IOperation
     {
-        public Guid Id { get; }
+        Guid Id { get; }
+
+        List<FileTransferItem> Items { get; }
 
         OperationState? State { get; }
     }

@@ -3,8 +3,8 @@ namespace UnityCommander.Modules.Viewer.ViewModels
 {
     using System;
     using Prism.Mvvm;
-
-    using UnityCommander.Common.Module;
+    using UnityCommander.Abstractions.Module;
+    using UnityCommander.Abstractions.Panels;
 
     public class ViewerViewModel : BindableBase, ITabPanelContent, IViewerPanel
     {

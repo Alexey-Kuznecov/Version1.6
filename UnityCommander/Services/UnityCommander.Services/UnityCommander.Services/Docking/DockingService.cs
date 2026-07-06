@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using UnityCommander.Common.Module;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Docking

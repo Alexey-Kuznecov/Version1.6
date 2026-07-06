@@ -3,10 +3,10 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States;
-using UnityCommander.Services.Background;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {

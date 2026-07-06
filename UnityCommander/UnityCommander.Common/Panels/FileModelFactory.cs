@@ -1,6 +1,7 @@
 ﻿
 using System.IO;
 using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Common.Panels

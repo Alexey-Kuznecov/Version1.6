@@ -1,6 +1,6 @@
 ﻿
 using System;
-using UnityCommander.Common.Models.Directory;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Panels;
 using UnityCommander.Services.Interfaces;
 

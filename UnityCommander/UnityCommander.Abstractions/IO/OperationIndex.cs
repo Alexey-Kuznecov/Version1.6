@@ -7,18 +7,20 @@ namespace UnityCommander.Abstractions.IO
     {
         private ConcurrentDictionary<string, Guid> _pathToOp = new();
         private ConcurrentDictionary<Guid, IOperation> _ops = new();
-        private readonly ConcurrentDictionary<Guid, List<string>> _opToPaths = new();
+        private readonly ConcurrentDictionary<Guid, (string Source, string Destination)> _opToPaths = new();
 
         public void Register(IOperation op, IEnumerable<string> paths)
         {
             var list = paths.ToList();
 
-            _ops[op.Id] = op;
-            _opToPaths[op.Id] = list;
-
-            foreach (var path in list)
+            foreach (var item in op.Items)
             {
-                _pathToOp[path] = op.Id;
+                _ops[item.Id] = op;
+
+                _opToPaths[item.Id] = (item.SourcePath, item.DestinationPath);
+
+                _pathToOp[item.SourcePath] = item.Id;
+                _pathToOp[item.DestinationPath] = item.Id;
             }
         }
 
@@ -33,16 +35,27 @@ namespace UnityCommander.Abstractions.IO
             return false;
         }
 
+        public bool TryGetItem(string path, out FileTransferItem item)
+        {
+            if (_pathToOp.TryGetValue(path, out var itemId) &&
+                _ops.TryGetValue(itemId, out var op))
+            {
+                item = op.Items.First(i => i.Id == itemId);
+                return true;
+            }
+
+            item = null;
+            return false;
+        }
+
         public void Unregister(Guid id)
         {
             _ops.TryRemove(id, out _);
 
             if (_opToPaths.TryRemove(id, out var paths))
             {
-                foreach (var path in paths)
-                {
-                    _pathToOp.TryRemove(path, out _);
-                }
+                _pathToOp.TryRemove(paths.Source, out _);
+                _pathToOp.TryRemove(paths.Destination, out _);
             }
         }
     }

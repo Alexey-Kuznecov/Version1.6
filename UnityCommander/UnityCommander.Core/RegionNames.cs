@@ -14,6 +14,7 @@ namespace UnityCommander.Core
         public const string SettingsPanelRegion = nameof(SettingsPanelRegion);
         public const string WebBrowserRegion = nameof(WebBrowserRegion);
         public const string BottomPanelRegion = nameof(BottomPanelRegion);
+        public const string StatusBarRegion = nameof(StatusBarRegion);
 
         // BottomPanelRegion SubRegions
         public const string ConsoleTabRegion = nameof(ConsoleTabRegion);

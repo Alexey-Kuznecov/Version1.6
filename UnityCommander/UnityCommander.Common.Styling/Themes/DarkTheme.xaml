@@ -66,7 +66,7 @@
     <SolidColorBrush x:Key="UcListBoxItemBorderBrush" Color="#373839" />
 
     <SolidColorBrush x:Key="UcListViewItemHoverBrush" Color="#373839" />
-    <SolidColorBrush x:Key="UcListViewItemSelectedBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewItemSelectedBrush" Color="#2A2A2A" />
     <SolidColorBrush x:Key="UcListViewItemSelectedForegroundBrush" Color="#202020" />
 
     <SolidColorBrush x:Key="UcListBoxItemHoverBrush" Color="#2B2C2D" />

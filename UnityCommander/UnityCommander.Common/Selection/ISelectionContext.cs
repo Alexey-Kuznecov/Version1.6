@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using UnityCommander.Abstractions.Selection;
 
 namespace UnityCommander.Common.Selection
 {

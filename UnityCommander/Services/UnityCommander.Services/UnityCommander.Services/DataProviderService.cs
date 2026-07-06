@@ -6,6 +6,7 @@ namespace UnityCommander.Services
     using System.Threading;
     using System.Threading.Tasks;
     using UnityCommander.Abstractions;
+    using UnityCommander.Abstractions.Panels;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Common.Panels;
     using UnityCommander.Services.Interfaces;

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Keyboard;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;

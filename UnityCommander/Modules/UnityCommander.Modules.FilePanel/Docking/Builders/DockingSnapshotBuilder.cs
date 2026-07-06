@@ -3,6 +3,7 @@ using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Modules.FilePanel.Docking.Snapshot;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;

@@ -40,11 +40,10 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         Id = "core.live",
                         Header = "Progess ##",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
-                        UpdatePriority = ColumnUpdatePriority.Normal,
                         Width = 100,
                         Order = 3,
                         SyncGroup = "Live",
-                        RefreshInterval = 300,
+                        RefreshInterval = 2000,
                         IsDynamic = true,
                         ColumnValueHandler = f =>
                         {

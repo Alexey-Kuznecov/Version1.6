@@ -1,7 +1,8 @@
-﻿using Prism.Mvvm;
-using System;
+﻿
+using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Abstractions.Selection;
 
 namespace UnityCommander.Common.Selection
 {

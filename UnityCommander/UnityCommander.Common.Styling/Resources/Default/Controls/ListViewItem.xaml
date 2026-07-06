@@ -30,8 +30,8 @@
                             <Setter TargetName="UpperHighlight" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource UcListViewItemSelectedBrush}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource UcListViewItemSelectedBrush}" />
+                            <Setter TargetName="InnerBorder" Property="Background" Value="{DynamicResource UcListViewItemSelectedBrush}" />
+                            <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource UcListViewItemSelectedBrush}" />
                             <!--<Setter TargetName="InnerBorder" Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />-->
                             <!--<Setter TargetName="UpperHighlight" Property="Visibility" Value="Visible" />
                             <Setter TargetName="UpperHighlight" Property="Fill" Value="{TemplateBinding BorderBrush}" />-->
@@ -41,8 +41,8 @@
                                 <Condition Property="IsSelected" Value="true" />
                                 <Condition Property="Selector.IsSelectionActive" Value="false" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{DynamicResource UcListViewItemSelectedBrush}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource UcListViewItemSelectedBrush}" />
+                            <Setter TargetName="InnerBorder" Property="Background" Value="{DynamicResource UcListViewItemSelectedBrush}" />
+                            <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource UcListViewItemSelectedBrush}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>

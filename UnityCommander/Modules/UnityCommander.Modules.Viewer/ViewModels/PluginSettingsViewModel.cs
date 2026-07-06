@@ -1,14 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityCommander.Common.Commands;
-using UnityCommander.Common.Models;
-using UnityCommander.Common.Module;
-using UnityCommander.Core.Commands;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.Viewer.ViewModels
 {

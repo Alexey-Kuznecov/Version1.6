@@ -49,6 +49,7 @@ namespace UnityCommander.Operation
         public async Task StartAsync(FileOperationRequest request)
         {
             var copyManager = new CopyManager();
+            var transferId = Guid.NewGuid();
 
             copyManager.CopyFileReport += OnCopyFileReport;
             copyManager.FileCompleted += OnFileCompleted;
@@ -59,6 +60,7 @@ namespace UnityCommander.Operation
 
                 return new FileTransferItem
                 {
+                    Id = Guid.NewGuid(),
                     SourcePath = source,
                     DestinationPath = Path.Combine(request.Target, fileName)
                 };
@@ -70,25 +72,25 @@ namespace UnityCommander.Operation
                 Items = items
             };
 
-            var ctx = new OperationContext
-            {
-                OperationId = request.OperationId,
-                Cancellation = new CancellationTokenSource(),
-                Operation = op,
-                Info = new CopyInfo
-                {
-                    Id = request.OperationId,
-                    Source = request.Sources.FirstOrDefault(),
-                    Destination = request.Target,
-                }
-            };
-
             _operationIndex.Register(op, items.Select(i => i.SourcePath)
                                                 .Concat(items.Select(i => i.DestinationPath)));
 
-            foreach (var source in request.Sources)
+            foreach (var item in op.Items)
             {
-                var srcInfo = new DirectoryInfo(source);
+                var ctx = new OperationContext
+                {
+                    OperationId = transferId,
+                    Cancellation = new CancellationTokenSource(),
+                    Operation = op,
+                    Info = new CopyInfo
+                    {
+                        Id = item.Id,
+                        Source = item.SourcePath,
+                        Destination = request.Target,
+                    }
+                };
+
+                var srcInfo = new DirectoryInfo(item.SourcePath);
                 string destForThisSource;
                 if (!copyManager.CopyOnlyFolderContent && srcInfo.Exists)
                     destForThisSource = Path.Combine(request.Target, srcInfo.Name);
@@ -97,7 +99,7 @@ namespace UnityCommander.Operation
 
                 Directory.CreateDirectory(destForThisSource);
 
-                await copyManager.CopyAsync(ctx, source, destForThisSource);
+                await copyManager.CopyAsync(ctx, item.SourcePath, destForThisSource);
             }
 
             await Task.CompletedTask;

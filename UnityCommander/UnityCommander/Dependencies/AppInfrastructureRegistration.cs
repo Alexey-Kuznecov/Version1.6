@@ -1,14 +1,19 @@
 ﻿
 using Prism.Ioc;
 using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Abstractions.Statusbar;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Sidebar;
+using UnityCommander.Core.Panels;
 using UnityCommander.Core.Registrar;
+using UnityCommander.Core.StatusBar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.ToolBar.Builder;
@@ -82,8 +87,9 @@ namespace UnityCommander.Dependencies
             // Ribbon
             registry.RegisterSingleton<IRibbonModelFactory, RibbonModelFactory>();
             registry.RegisterSingleton<IRibbonRegistry, RibbonRegistry>();
-            
-            
+
+            registry.RegisterSingleton<IStatusBarRegistry, StatusBarRegistry>();
+
             registry.RegisterSingleton<IInputCaptureManager, InputCaptureManager>();
             registry.RegisterSingleton<IInputContextService, InputContextService>();
             registry.RegisterSingleton<IInputRouter, InputRouter>();
@@ -92,7 +98,7 @@ namespace UnityCommander.Dependencies
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();
 
-            registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
+            //registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
             registry.RegisterSingleton<IBackgroundService, DirectoryChangeService>();
             registry.RegisterSingleton<BackgroundServiceHost>();
         }

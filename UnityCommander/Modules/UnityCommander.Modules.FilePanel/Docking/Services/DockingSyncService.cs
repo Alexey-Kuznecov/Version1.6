@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Threading;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
 using UnityCommander.Modules.FilePanel.Docking.Builders;

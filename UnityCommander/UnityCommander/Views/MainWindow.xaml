@@ -97,8 +97,7 @@
                 AllowMixedOrientation="True"
                 AutoWindowSizeWhenOpened="True"
                 IsVirtualizingAnchorable="True"
-                IsVirtualizingDocument="True">
-            </DockingManager>
+                IsVirtualizingDocument="True" />
         </Grid>
         <Border
             Grid.Row="2"
@@ -109,6 +108,12 @@
                 Background="{DynamicResource UcSurfaceSecondaryBrush}"
                 Visibility="{Binding IsBottomPanelVisible, RelativeSource={RelativeSource AncestorType=Window}}" />
         </Border>
+
+        <ContentControl
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            prism:RegionManager.RegionName="{x:Static core:RegionNames.StatusBarRegion}" />
     </Grid>
     <!--<WindowChrome.WindowChrome>
         <WindowChrome
@@ -117,4 +122,5 @@
             GlassFrameThickness="0"
             ResizeBorderThickness="15" />
     </WindowChrome.WindowChrome>-->
+
 </Window>

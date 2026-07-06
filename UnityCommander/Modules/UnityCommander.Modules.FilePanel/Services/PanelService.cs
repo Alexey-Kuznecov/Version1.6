@@ -1,15 +1,13 @@
 ﻿
 using AvalonDock;
-using AvalonDock.Layout;
 using Prism.Navigation.Regions;
 using System;
-using System.CodeDom.Compiler;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Docking;
-using UnityCommander.Common.Module;
 using UnityCommander.Core.Helper;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;

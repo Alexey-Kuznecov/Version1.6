@@ -22,11 +22,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Common.Module;
-using UnityCommander.Common.Panels;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
 using UnityCommander.Core.Helper;
@@ -222,7 +221,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public void SetCurrentPath(string value) => _state.CurrentPath = value;
 
-        public IReadOnlyList<BaseDirectory> GetFiles() => _fileNodeContext.Files;
+        public IReadOnlyList<IFileItem> GetFiles() => _fileNodeContext.Files;
 
         public IFileNodeContext FileContext => _fileNodeContext;
 

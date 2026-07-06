@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Abstractions.Panels;
+
 namespace UnityCommander.Common.Models.Directory
 {
     public class DriveModel

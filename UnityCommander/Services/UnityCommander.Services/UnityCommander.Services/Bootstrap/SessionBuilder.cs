@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Linq;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.State;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;

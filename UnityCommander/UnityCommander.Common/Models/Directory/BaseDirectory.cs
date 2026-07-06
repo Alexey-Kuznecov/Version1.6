@@ -1,21 +1,15 @@
 ﻿
 namespace UnityCommander.Common.Models.Directory
 {
-    using Newtonsoft.Json.Linq;
     using NSwag.Collections;
     using Prism.Mvvm;
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Xml.Linq;
     using UnityCommander.Abstractions;
-    using UnityCommander.Common.Selection;
+    using UnityCommander.Abstractions.Panels;
 
-    /// <summary>
-    /// The directory base.
-    /// </summary>
     [Serializable]
-    public abstract class BaseDirectory : BindableBase, ISelectableItem
+    public abstract class BaseDirectory : BindableBase, IDirectoryItem
     {
         private bool _isSelected;
         private string _name;

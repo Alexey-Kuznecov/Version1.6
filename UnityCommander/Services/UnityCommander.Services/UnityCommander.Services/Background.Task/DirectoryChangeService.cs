@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.Background;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Panels;
 using UnityCommander.Services.Background;
 using UnityCommander.SystemMetrics.Monitoring;

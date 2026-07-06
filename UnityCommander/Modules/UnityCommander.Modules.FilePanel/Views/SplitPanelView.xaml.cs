@@ -2,7 +2,7 @@
 namespace UnityCommander.Modules.FilePanel.Views
 {
     using System.Windows.Controls;
-    using UnityCommander.Common.Module;
+    using UnityCommander.Abstractions.Module;
 
     /// <summary>
     /// Interaction logic for LeftPanel

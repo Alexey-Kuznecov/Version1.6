@@ -8,5 +8,7 @@ namespace UnityCommander.Abstractions.IO
         void Unregister(Guid id);
 
         bool TryGetOperation(string path, out IOperation op);
+
+        bool TryGetItem(string path, out FileTransferItem item);
     }
 }

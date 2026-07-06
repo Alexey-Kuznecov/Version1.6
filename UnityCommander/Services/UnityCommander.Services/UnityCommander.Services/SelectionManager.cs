@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;
 

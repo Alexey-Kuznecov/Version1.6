@@ -3,8 +3,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Common.Panels;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services.Interfaces;
@@ -14,9 +14,9 @@ namespace UnityCommander.Modules.FilePanel.States
 {
     public class FileNodeContext : BaseNodeContext, IFileNodeContext, IDisposable
     {
-        private ObservableCollection<FileModel> _files = new();
+        private ObservableCollection<IFileItem> _files = new();
 
-        public ObservableCollection<FileModel> Files
+        public ObservableCollection<IFileItem> Files
         {
             get => _files;
             set => SetProperty(ref _files, value);
@@ -26,7 +26,7 @@ namespace UnityCommander.Modules.FilePanel.States
 
         public string CurrentPath => SelectedFile.Path;
 
-        public ViewportService<FileModel> ScrollService { get; }
+        public ViewportService<IFileItem> ScrollService { get; }
 
         public FileNodeContext(
              ISelectionManager selection,
@@ -35,7 +35,7 @@ namespace UnityCommander.Modules.FilePanel.States
              ViewportMapper mapper
              ) : base(selection, dropTarget, menu, mapper)
         {
-            ScrollService = new ViewportService<FileModel>(
+            ScrollService = new ViewportService<IFileItem>(
                    () => Files);
 
             Mapper.RangeChanged += (start, end) =>
@@ -44,12 +44,12 @@ namespace UnityCommander.Modules.FilePanel.States
             };
         }
 
-        public FileModel? Find(string path)
+        public IFileItem? Find(string path)
         {
             return Files.FirstOrDefault(x => x.Path == path);
         }
 
-        public void Add(FileModel file)
+        public void Add(IFileItem file)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -72,7 +72,7 @@ namespace UnityCommander.Modules.FilePanel.States
             return true;
         }
 
-        public bool Update(FileModel file)
+        public bool Update(IFileItem file)
         {
             var current = Find(file.Path);
 

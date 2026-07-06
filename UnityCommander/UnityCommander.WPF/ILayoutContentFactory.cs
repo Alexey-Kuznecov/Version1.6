@@ -1,6 +1,6 @@
 ﻿
 using System.Windows.Controls;
-using UnityCommander.Common.Module;
+using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.WPF
 {
