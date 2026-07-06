@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Core.IO.Operations
+namespace UnityCommander.Abstractions.IO
 {
     public enum CopyDialogSkipReplaceStatus
     {

@@ -15,6 +15,7 @@ using UnityCommander.Modules.ToolBar.Builder;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Ribbon.Services;
 using UnityCommander.Services;
+using UnityCommander.Services.Background;
 using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
@@ -90,6 +91,10 @@ namespace UnityCommander.Dependencies
 
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();
+
+            registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
+            registry.RegisterSingleton<IBackgroundService, DirectoryChangeService>();
+            registry.RegisterSingleton<BackgroundServiceHost>();
         }
     }
 }

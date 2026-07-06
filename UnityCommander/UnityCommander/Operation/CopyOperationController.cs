@@ -1,8 +1,11 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.IO;
+using UnityCommander.Common.Models;
 using UnityCommander.Core;
 using UnityCommander.Core.IO;
 using UnityCommander.Core.IO.Operations;
@@ -16,6 +19,8 @@ namespace UnityCommander.Operation
         private readonly CopyProgressCalculator progressCalculator;
         private readonly CopyConflictResolver conflictResolver;
         private readonly CopyReportCollector reportCollector;
+        private readonly IFileStateService _stateService;
+        private readonly IOperationIndex _operationIndex;
 
         // События для VM
         public event Action<ProgressModel> ProgressChanged;
@@ -35,8 +40,12 @@ namespace UnityCommander.Operation
             CopyManager copyManager,
             CopyProgressCalculator progressCalculator,
             CopyConflictResolver conflictResolver,
-            CopyReportCollector reportCollector)
+            CopyReportCollector reportCollector, 
+            IFileStateService stateService,
+            IOperationIndex operationIndex)
         {
+            _operationIndex = operationIndex;
+            _stateService = stateService ?? throw new ArgumentNullException(nameof(stateService));
             this.notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
             this.copyManager = copyManager;
             this.progressCalculator = progressCalculator;
@@ -54,7 +63,7 @@ namespace UnityCommander.Operation
 
         private void OnCopyFileCompleted(CopyInfo info)
         {
-            this.notifier.NotifyChanged(info.Root);
+            //this.notifier.NotifyChanged(info.Root);
         }
 
         // Команды управления копированием
@@ -66,16 +75,15 @@ namespace UnityCommander.Operation
         public void StartCopy(string source, string destination)
         {
             reportCollector.Clear();
-            copyManager.Copy(source, destination);
+            //copyManager.Copy(source, destination);
         }
 
-        public async Task StartCopyManyAsync(IEnumerable<string> sources, string destinationRoot)
+        public async Task StartCopyManyAsync(OperationContext context, IEnumerable<string> sources, string destinationRoot)
         {
             if (sources == null) return;
             var sourcesList = sources.ToList();
 
             _totalSources = sourcesList.Count;
-
 
             // 1) вычисляем общий размер всех источников (можно быть дорогая операция)
             _totalBytesAll = 0;
@@ -104,7 +112,7 @@ namespace UnityCommander.Operation
                 _currentSourceTotalBytes = GetDirectoryOrFileSizeSafe(s);
 
                 // Запустим копирование и дождёмся завершения (CopyAsync использует внутренний TCS)
-                await copyManager.CopyAsync(s, destForThisSource);
+                await copyManager.CopyAsync(context, s, destForThisSource);
 
                 // Когда source полностью скопирован, увеличиваем накопитель
                 _accumulatedBytesFromPreviousSources += _currentSourceTotalBytes;
@@ -114,6 +122,7 @@ namespace UnityCommander.Operation
             // всё завершено
             Completed?.Invoke(new CopyOperationResult
             {
+                OperationId = context.OperationId,
                 Success = true
             });
         }

@@ -1,15 +1,14 @@
 ﻿
 namespace UnityCommander.Common.Module
 {
-    using System;
     using System.Collections.Generic;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Common.Panels;
 
-    /// <summary>
-    /// The DirectoryPanel interface.
-    /// </summary>
     public interface IDirectoryPanel : ITabPanelContent
     {
         IReadOnlyList<BaseDirectory> GetFiles();
+
+        public IFileNodeContext FileContext { get; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-using CommandSystem.Infrastructure.Execution;
+using CommandSystem.Abstractions;
 using Prism.Commands;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,14 +41,16 @@ namespace UnityCommander.Modules.FilePanel.Controllers
 
             var tree = _surface.Build(commands, ctx);
 
-            var items = MapToMenu(tree);
+            var items = MapToMenu(tree, ctx);
 
             state.ContextMenuItems.Clear();
             foreach (var item in items)
                 state.ContextMenuItems.Add(item);
         }
 
-        private List<MenuItemViewModel> MapToMenu(IEnumerable<SurfaceNode> nodes)
+        private List<MenuItemViewModel> MapToMenu(
+            IEnumerable<SurfaceNode> nodes, 
+            SurfaceContext context)
         {
             var result = new List<MenuItemViewModel>();
 
@@ -65,11 +67,15 @@ namespace UnityCommander.Modules.FilePanel.Controllers
                 {
                     item.Command = new DelegateCommand(() =>
                     {
-                        _commandExecution.ExecuteAsync(node.CommandName);
+                        var menuContext = context.Get<FilePanelContextMenu>();
+
+                        var ctx = new CommandContext(node.CommandName, menuContext, menuContext?.SelectedFiles);
+
+                        _commandExecution.ExecuteAsync(node.CommandName, ctx);
                     });
                 }
 
-                item.Children = MapToMenu(node.Children);
+                item.Children = MapToMenu(node.Children, context);
                 result.Add(item);
             }
 

@@ -3,6 +3,7 @@ using AvalonDock;
 using AvalonDock.Layout;
 using Prism.Navigation.Regions;
 using System;
+using System.CodeDom.Compiler;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -110,14 +111,11 @@ namespace UnityCommander.Modules.FilePanel.Services
         {
             if (sender is not DockingManager
                 {
-                    ActiveContent: LayoutDocument
+                    ActiveContent: ContentControl
                     {
                         Content: ContentControl
                         {
-                            Content: ContentControl
-                            {
-                                DataContext: ITabPanelContent vm
-                            }
+                            DataContext: ITabPanelContent vm
                         }
                     }
                 })

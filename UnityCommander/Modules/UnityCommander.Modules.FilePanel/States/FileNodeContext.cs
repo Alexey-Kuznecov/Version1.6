@@ -1,15 +1,18 @@
 ﻿
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.WPF.DragDrop;
+using UnityCommander.Common.Panels;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.States
 {
-    public class FileNodeContext : BaseNodeContext, IDisposable
+    public class FileNodeContext : BaseNodeContext, IFileNodeContext, IDisposable
     {
         private ObservableCollection<FileModel> _files = new();
 
@@ -39,6 +42,48 @@ namespace UnityCommander.Modules.FilePanel.States
             {
                 ScrollService.SetRange(start, end);
             };
+        }
+
+        public FileModel? Find(string path)
+        {
+            return Files.FirstOrDefault(x => x.Path == path);
+        }
+
+        public void Add(FileModel file)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Files.Add(file);
+            });
+        }
+
+        public bool Remove(string path)
+        {
+            var file = Find(path);
+
+            if (file == null)
+                return false;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Files.Remove(file);
+            });
+
+            return true;
+        }
+
+        public bool Update(FileModel file)
+        {
+            var current = Find(file.Path);
+
+            if (current == null)
+                return false;
+
+            current.Name = file.Name;
+            current.Size = file.Size;
+            current.Extension = file.Extension;
+
+            return true;
         }
 
         public void Dispose()

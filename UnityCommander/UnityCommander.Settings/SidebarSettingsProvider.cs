@@ -9,6 +9,7 @@ namespace UnityCommander.Settings
         public IEnumerable<SettingDefinition> GetDefinitions()
         {
             yield return GeneralSettings.ShowHiddenFiles;
+            yield return GeneralSettings.ShowCopyProgressDialog;
         }
     }
 }

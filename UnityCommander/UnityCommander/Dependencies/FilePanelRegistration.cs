@@ -1,6 +1,8 @@
 ﻿
 using Prism.Ioc;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Common.Models;
+using UnityCommander.Common.Panels;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
 using UnityCommander.Core.Behaviors.Selection;
@@ -12,6 +14,7 @@ using UnityCommander.Services.Background;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Selection;
 using UnityCommander.Settings;
+using UnityCommander.SystemMetrics.Monitoring;
 
 namespace UnityCommander.Dependencies
 {
@@ -24,6 +27,9 @@ namespace UnityCommander.Dependencies
 
             // Служба для обновления панелей после копирования файлов\папок
             registry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
+            registry.RegisterSingleton<IDirectoryWatchManager, DirectoryWatchManager>();
+            registry.RegisterSingleton<IDirectoryPanelUpdater, DirectoryPanelUpdater>();
+            registry.RegisterSingleton<FileModelFactory>();
 
             // Навигационный контекст, нужен один на всё приложение
             registry.RegisterSingleton<NavigationContextDirectory>();
@@ -46,7 +52,8 @@ namespace UnityCommander.Dependencies
             /// Background Services
             registry.RegisterSingleton<NodeContextRegistry>();
             registry.RegisterSingleton<ViewportMapper>();
-            registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
+
+            registry.RegisterSingleton<IFileStateService, FileRuntimeService>();
         }
     }
 }

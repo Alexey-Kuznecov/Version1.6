@@ -43,11 +43,14 @@ namespace UnityCommander.Modules.FilePanel.Services
             var columns = _registry
                 .GetColumns(PanelType.Files)
                 .Where(x => x.IsDynamic)
+                .OrderBy(x => x.Order)
                 .ToList();
 
             foreach (var file in ctx.ScrollService?.GetVisibleItems())
             {
                 var now = DateTime.UtcNow;
+
+                var index = 0;
 
                 foreach (var column in columns)
                 {
@@ -64,6 +67,7 @@ namespace UnityCommander.Modules.FilePanel.Services
 
                     if (!Equals(file.Additional.GetValueOrDefault(column.Id), newValue))
                     {
+                        //file.Index = index++;
                         file.Additional[column.Id] = newValue;
                     }
                 }

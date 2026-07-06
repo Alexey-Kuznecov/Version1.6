@@ -26,6 +26,7 @@ using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Module;
+using UnityCommander.Common.Panels;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
 using UnityCommander.Core.Helper;
@@ -75,9 +76,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IColumnRegistry columnRegistry;
         private readonly NodeContextRegistry _contextRegistry;
         private readonly TabState _state;
+
         public event Action<string> PathChanged;
         public event Action<string> TabTitleChanged;
-
 
         private readonly ContentNode _folderNode;
         private readonly ContentNode _fileNode;
@@ -166,11 +167,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
             this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
 
-            this._navigationService = new NavigationManager(null);;
+            this._navigationService = new NavigationManager(null);
 
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
 
-            this.columnStateManager = columnStateManager ?? throw new ArgumentNullException(nameof(columnStateManager)); ;
+            this.columnStateManager = columnStateManager ?? throw new ArgumentNullException(nameof(columnStateManager));
         
             this.columnRegistry = columnRegistry;
 
@@ -222,7 +223,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void SetCurrentPath(string value) => _state.CurrentPath = value;
 
         public IReadOnlyList<BaseDirectory> GetFiles() => _fileNodeContext.Files;
-        
+
+        public IFileNodeContext FileContext => _fileNodeContext;
+
         public ISelectionManager SelectionManager => _folderNodeContext.SelectionManager;
 
         public Guid GetPanelToken() => _state.TabId;
@@ -314,14 +317,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             _state.TabId = token;
 
-            //NavigationContextDirectory.Instance.Register(_state.TabId, _navigationService);
-
             _navigationService.CurrentChanged += OnPathChanged;
             
             _ = this.SetLastPanelState();
-
-            //_adapter = new TabContentAdapter(this);
-            //_tabRegistry.Register(_adapter);
 
             _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
             return this;

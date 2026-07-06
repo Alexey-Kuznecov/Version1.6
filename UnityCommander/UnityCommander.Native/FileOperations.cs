@@ -3,8 +3,10 @@ namespace UnityCommander.Native
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Runtime.InteropServices;
     using System.Text;
-
     using UnityCommander.Native.Api;
 
     /// <summary>
@@ -51,13 +53,22 @@ namespace UnityCommander.Native
         /// <returns> If the file is copied successfully, the return value is true. </returns>
         public bool XCopy(string oldFile, string newFile, CopyProgressRoutine callback)
         {
-           return NativeFunctions.CopyFileEx(
-                   oldFile, 
-                   newFile,
-                   callback,
-                   IntPtr.Zero, 
-                   ref this.pbCancel,
-                   CopyFileFlags.COPY_FILE_RESTARTABLE);
+            bool result = NativeFunctions.CopyFileEx(
+                 oldFile,
+                 newFile,
+                 callback,
+                 IntPtr.Zero,
+                 ref pbCancel,
+                 CopyFileFlags.COPY_FILE_RESTARTABLE);
+
+            if (!result)
+            {
+                int error = Marshal.GetLastWin32Error();
+                var ex = new Win32Exception(error);
+                throw new IOException($"Copy failed: {ex.Message}", ex);
+            }
+
+            return result;
         }
 
         /// <summary>

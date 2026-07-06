@@ -13,7 +13,6 @@ namespace UnityCommander.Common.Override.Engine
             _engine = engine;
         }
 
-
         public Task CopyAsync(FileOperationRequest request)
         {
             return _engine.StartAsync(request);

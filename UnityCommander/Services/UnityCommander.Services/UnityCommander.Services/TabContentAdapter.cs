@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Module;
@@ -10,9 +11,12 @@ namespace UnityCommander.Services
     {
         private readonly ITabPanelContent _vm;
 
+        public event Action<string> PathChanged;
+
         public TabContentAdapter(ITabPanelContent vm)
         {
             _vm = vm ?? throw new ArgumentNullException(nameof(vm));
+            _vm.PathChanged += OnPathChanged;
         }
 
         public Guid TabId => _vm.GetPanelToken(); // ← просто переименуй смысл
@@ -20,6 +24,11 @@ namespace UnityCommander.Services
         public bool IsActive => _vm.IsActive;
 
         public string GetCurrentPath() => _vm.GetCurrentPath();
+
+        private void OnPathChanged(string path)
+        {
+            PathChanged?.Invoke(path);
+        }
 
         public IReadOnlyList<BaseDirectory> GetCurrentDirectoryFiles()
         {
@@ -43,7 +52,11 @@ namespace UnityCommander.Services
 
         public void Dispose()
         {
+            _vm.PathChanged -= OnPathChanged;
             _vm.Dispose();
         }
+
+        public IDirectoryPanel GetContent()
+            => (IDirectoryPanel)_vm;
     }
 }

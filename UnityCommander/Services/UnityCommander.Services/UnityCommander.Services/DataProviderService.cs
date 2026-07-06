@@ -7,6 +7,7 @@ namespace UnityCommander.Services
     using System.Threading.Tasks;
     using UnityCommander.Abstractions;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Common.Panels;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
@@ -14,6 +15,13 @@ namespace UnityCommander.Services
     /// </summary>
     public class DataProviderService : IDataProviderService
     {
+       private readonly FileModelFactory _factory;
+
+        public DataProviderService(FileModelFactory factory)
+        {
+            _factory = factory;
+        }
+
         /// <summary>
         /// Получить файлы в директории.
         /// </summary>
@@ -31,19 +39,7 @@ namespace UnityCommander.Services
 
                     if ((file.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        files.Add(new FileModel
-                        {
-                            Name = Path.GetFileNameWithoutExtension(file.Name),
-                            Path = file.FullName,
-                            Extension = file.Extension,
-                            CreationTime = file.CreationTime,
-                            LastAccessTime = file.LastAccessTime,
-                            TargetPanel = TargetPanel.Files,
-                            Key = file.FullName,
-                            Size = file.Length,
-                            IconKey = "core.file",
-                            Kind = IconKind.File
-                        });
+                        files.Add(_factory.Create(file.FullName));
                     }
                 }
 

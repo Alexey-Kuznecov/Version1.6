@@ -21,9 +21,6 @@ namespace UnityCommander.Commands
 
         public IEnumerable<string> Aliases => ["th"];
 
-        public CommandExecutionMode Mode 
-            => CommandExecutionMode.Background;
-
         public ThemeCommand(
           ICommandArgumentParser parse)
         {
@@ -34,9 +31,9 @@ namespace UnityCommander.Commands
         {
             var args = _parser.Parse(context.Arguments);
 
-            var light = args.HasFlag("light");
+            var theme = args.GetAt(0);
 
-            if (light) 
+            if (theme == "Light") 
             {
                 ThemeManager.SetTheme("Light");
             }

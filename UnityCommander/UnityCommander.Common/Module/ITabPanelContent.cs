@@ -6,12 +6,12 @@ namespace UnityCommander.Common.Module
     public interface ITabPanelContent : IViewAttachAware, IDisposable
     {
         event Action<string> PathChanged;
-        public event Action<string> TabTitleChanged;
-        public bool IsActive { get; }
-        public Guid GetPanelToken();
-        public ITabPanelContent InitializedViewModel(ref Guid token, string path);
-        public string GetCurrentPath();
-        public string GetCurrentFilePath();
+        event Action<string> TabTitleChanged;
+        bool IsActive { get; }
+        Guid GetPanelToken();
+        ITabPanelContent InitializedViewModel(ref Guid token, string path);
+        string GetCurrentPath();
+        string GetCurrentFilePath();
         void SetCurrentPath(string value);
     }
 }

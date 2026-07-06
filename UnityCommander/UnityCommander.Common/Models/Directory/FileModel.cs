@@ -3,17 +3,23 @@ namespace UnityCommander.Common.Models.Directory
 {
     using System;
 
-    /// <summary>
-    /// The file model.
-    /// </summary>
     [Serializable]
     public class FileModel : BaseDirectory
     {
-        /// <summary>
-        /// Gets or sets the extension.
-        /// </summary>
-        public string Extension { get; set; }
+        private long _size;
 
-        public float Size { get; set; }
+        public long Size
+        {
+            get => _size;
+            set => SetProperty(ref _size, value);
+        }
+
+        private string _extension;
+
+        public string Extension
+        {
+            get => _extension;
+            set => SetProperty(ref _extension, value);
+        }
     }
 }

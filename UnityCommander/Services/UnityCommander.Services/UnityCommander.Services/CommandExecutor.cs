@@ -16,7 +16,7 @@ namespace UnityCommander.Services
 
         public Task ExecuteAsync(string commandName, CommandContext ctx = default)
         {
-            return _executor.ExecuteAsync(commandName, ctx);
+            return _executor.ExecuteAsync(commandName, ctx?.Parameter, ctx);
         }
 
         internal bool CanExecute(string id)

@@ -20,7 +20,9 @@ namespace UnityCommander.Services
 
         public event Action<TabAddedEvent>? TabAdded;
 
-        public event Action<TabActionEvent>? TabRemoved;
+        public event Action<TabRemovedEvent>? TabRemoved;
+
+        public event Action<ActiveTabChangedEvent>? ActiveTabChanged;
 
         public Guid? ActivePanelId 
         {
@@ -107,6 +109,13 @@ namespace UnityCommander.Services
                     return false;
 
                 panel.TrySetActiveTab(tabId);
+
+                ActiveTabChanged?.Invoke(new ActiveTabChangedEvent()
+                {
+                    PanelId = panelId,
+                    TabId = tabId
+                });
+
                 return true;
             }
         }
@@ -178,7 +187,7 @@ namespace UnityCommander.Services
                         if (TabRemoved == null)
                             return;
 
-                        TabRemoved(new TabActionEvent()
+                        TabRemoved(new TabRemovedEvent()
                         {
                             PanelId = panel.PanelId,
                             TabId = tabId

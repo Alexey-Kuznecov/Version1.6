@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\..\..\..\..\CommandSystem\UnityCommander.SystemMetrics\UnityCommander.SystemMetrics.csproj" />
     <ProjectReference Include="..\..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />

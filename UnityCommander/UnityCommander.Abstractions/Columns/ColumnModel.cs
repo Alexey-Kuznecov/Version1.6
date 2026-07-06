@@ -10,6 +10,8 @@ namespace UnityCommander.Abstractions.Columns
         public string? CellTemplateResourceKey { get; init; }
         public string? DisplayMemberPath { get; init; }
 
+        public string? Foreground { get; init; }
+
         private double _width;
         public double Width
         {
@@ -54,7 +56,6 @@ namespace UnityCommander.Abstractions.Columns
         // Optional: small value-provider when you don't want DataTemplate
         public Func<object, object>? ColumnValueHandler { get; set; }
      
-
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

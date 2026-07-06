@@ -4,10 +4,11 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.IO;
 
 namespace UnityCommander.Core.IO.Operations
 {
-    public class CopyManager : ManagerBase
+    public class CopyManager
     {
         private CopyFiles copyFile;
         private string source;
@@ -42,7 +43,7 @@ namespace UnityCommander.Core.IO.Operations
         }
 
         // Основной метод копирования
-        public void Copy(string sourcePath, string targetPath)
+        public void Copy(OperationContext ctx, string sourcePath, string targetPath)
         {
             this.source = sourcePath;
             var src = new DirectoryInfo(sourcePath);
@@ -59,7 +60,7 @@ namespace UnityCommander.Core.IO.Operations
             }
             
             // Создаём один экземпляр CopyFiles
-            this.copyFile = new CopyFiles
+            this.copyFile = new CopyFiles(ctx)
             {
                 SourceRoot = sourcePath,
                 TargetRoot = targetPath
@@ -113,13 +114,13 @@ namespace UnityCommander.Core.IO.Operations
             copyFile.CopyReportEvent -= FileCopier_CopyReportEvent;
         }
 
-        public Task CopyAsync(string sourcePath, string targetPath)
+        public Task CopyAsync(OperationContext id, string sourcePath, string targetPath)
         {
             // Подготовка TCS
             _currentTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             // Вызываем старый Copy (он стартует Task.Run внутри)
-            Copy(sourcePath, targetPath);
+            Copy(id, sourcePath, targetPath);
 
             // Возвращаем таск, который завершится, когда CopyTask внутри установит результат
             return _currentTcs.Task;

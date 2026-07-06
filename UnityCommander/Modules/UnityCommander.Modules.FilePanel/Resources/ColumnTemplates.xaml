@@ -13,6 +13,7 @@
     <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
     <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
     <converter:DataSizeConverter x:Key="DataSizeConverter" />
+    <converter:RandomForegroundConverter x:Key="RandomForegroundConverter" />
 
     <!--<DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
@@ -49,12 +50,12 @@
             <TextBlock
                 x:Name="Cell"
                 VerticalAlignment="Center"
-                Foreground="BlueViolet">
+                Foreground="{Binding ., Converter={StaticResource RandomForegroundConverter}}">
                 <TextBlock.Text>
                     <converter:BindableParameter
                         Binding="{Binding Additional.Values}"
                         Converter="{StaticResource ColumnValueConverter}"
-                        ConverterParameter="{Binding RelativeSource={RelativeSource Mode=Self}}" />
+                        ConverterParameter="{Binding Index}" />
                 </TextBlock.Text>
             </TextBlock>
         </Grid>

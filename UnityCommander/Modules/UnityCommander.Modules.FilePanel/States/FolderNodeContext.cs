@@ -10,7 +10,6 @@ using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services.Interfaces;
-using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Modules.FilePanel.States
 {

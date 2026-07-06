@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Common.Models.Directory;
 
 namespace MultiColumns.DateTime
 {
@@ -14,23 +15,23 @@ namespace MultiColumns.DateTime
             {
                 return new List<ColumnModel>
                 {
-                    new ColumnModel
-                    {
-                        Id = "debug.progress",
-                        Header = "Debug",
-                        //DisplayMemberPath = "Name",
-                        CellTemplateResourceKey = "ColumnTextDataTemplate",
-                        UpdatePriority = ColumnUpdatePriority.Realtime,
-                        Width = 200,
-                        Order = 1,
-                        SyncGroup = "Name2",
-                        IsDynamic = true,
-                        ColumnValueHandler = f =>
-                        {
-                            var r = Random.Shared.Next(0, 100);
-                            return $"{r}%";
-                        }
-                    },
+                    //new ColumnModel
+                    //{
+                    //    Id = "debug.progress",
+                    //    Header = "Debug",
+                    //    //DisplayMemberPath = "Name",
+                    //    CellTemplateResourceKey = "ColumnTextDataTemplate",
+                    //    UpdatePriority = ColumnUpdatePriority.Realtime,
+                    //    Width = 200,
+                    //    Order = 3,
+                    //    SyncGroup = "Name2",
+                    //    IsDynamic = true,
+                    //    ColumnValueHandler = f =>
+                    //    {
+                    //        var r = Random.Shared.Next(0, 100);
+                    //        return $"{r}%";
+                    //    }
+                    //},
                     //new ColumnModel
                     //{
                     //    Id = "debug.progress2",

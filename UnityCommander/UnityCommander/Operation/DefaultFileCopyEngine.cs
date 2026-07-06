@@ -1,35 +1,103 @@
 ﻿
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Common.Models;
+using UnityCommander.Core.IO.Operations;
 
 namespace UnityCommander.Operation
 {
     public class DefaultFileCopyEngine : IFileCopyEngine
     {
-        private CopyOperationController _controller;
+        private readonly IFileStateService _stateService;
+        private readonly IOperationIndex _operationIndex;
 
-        public DefaultFileCopyEngine(CopyOperationController controller)
+        public DefaultFileCopyEngine(
+            IFileStateService stateService,
+            IOperationIndex operationIndex)
         {
-            _controller = controller;
-
-            _controller.Completed += OnCopyCompleted;
+            _operationIndex = operationIndex;
+            _stateService = stateService ?? throw new ArgumentNullException(nameof(stateService));
         }
 
-        private void OnCopyCompleted(CopyOperationResult copyOperation)
+        private void OnCopyFileReport(CopyInfo info)
         {
-            //throw new System.NotImplementedException();
+            var fileName = Path.GetFileName(info.Source);
+            var destinationFilePath = Path.Combine(info.Destination, fileName);
+
+            _stateService.Set(info.Id, new FileState()
+            {
+                SourcePath = info.Source,
+                DestinationPath = destinationFilePath,
+                IsCopying = true,
+                RemainingTime = info.TotalTimeLeft,
+                Progress = (int)Math.Round(info.TotalPercentage),
+                Speed = (long)info.AverageSpeed
+            });
+        }
+
+        private void OnFileCompleted(CopyInfo info)
+        {
+            _stateService.Remove(info.Id);
+            _operationIndex.Unregister(info.Id);
         }
 
         public async Task StartAsync(FileOperationRequest request)
         {
-            if (request != null && request.Sources.Count > 1)
+            var copyManager = new CopyManager();
+
+            copyManager.CopyFileReport += OnCopyFileReport;
+            copyManager.FileCompleted += OnFileCompleted;
+
+            var items = request.Sources.Select(source =>
             {
-                // Запускаем одну общую операцию для всех источников
-                await _controller?.StartCopyManyAsync(request.Sources, request.Target);
-            }
-            else
+                var fileName = Path.GetFileName(source);
+
+                return new FileTransferItem
+                {
+                    SourcePath = source,
+                    DestinationPath = Path.Combine(request.Target, fileName)
+                };
+            }).ToList();
+
+            var op = new CopyOperation
             {
-                await _controller?.StartCopyManyAsync(new[] { request.Sources[0] }, request.Target);
+                Id = request.OperationId,
+                Items = items
+            };
+
+            var ctx = new OperationContext
+            {
+                OperationId = request.OperationId,
+                Cancellation = new CancellationTokenSource(),
+                Operation = op,
+                Info = new CopyInfo
+                {
+                    Id = request.OperationId,
+                    Source = request.Sources.FirstOrDefault(),
+                    Destination = request.Target,
+                }
+            };
+
+            _operationIndex.Register(op, items.Select(i => i.SourcePath)
+                                                .Concat(items.Select(i => i.DestinationPath)));
+
+            foreach (var source in request.Sources)
+            {
+                var srcInfo = new DirectoryInfo(source);
+                string destForThisSource;
+                if (!copyManager.CopyOnlyFolderContent && srcInfo.Exists)
+                    destForThisSource = Path.Combine(request.Target, srcInfo.Name);
+                else
+                    destForThisSource = request.Target;
+
+                Directory.CreateDirectory(destForThisSource);
+
+                await copyManager.CopyAsync(ctx, source, destForThisSource);
             }
 
             await Task.CompletedTask;

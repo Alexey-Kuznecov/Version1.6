@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Common.Diagnostic;
+using UnityCommander.Common.Module;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services

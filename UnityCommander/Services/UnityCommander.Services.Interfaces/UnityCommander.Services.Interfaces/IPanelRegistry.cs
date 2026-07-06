@@ -10,7 +10,9 @@ namespace UnityCommander.Services.Interfaces
     {
         event Action<TabAddedEvent> TabAdded;
 
-        event Action<TabActionEvent> TabRemoved;
+        event Action<TabRemovedEvent> TabRemoved;
+
+        event Action<ActiveTabChangedEvent> ActiveTabChanged;
 
         public Guid? ActivePanelId { get; }
 

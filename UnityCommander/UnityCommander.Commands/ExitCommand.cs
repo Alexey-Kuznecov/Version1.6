@@ -1,13 +1,10 @@
 ﻿
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Lifecicle;
-using UnityCommander.CLI.Mode;
 
 namespace UnityCommander.Commands
 {

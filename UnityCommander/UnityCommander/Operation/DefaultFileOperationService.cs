@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Settings;
+using UnityCommander.Settings.Abstactions;
 
 namespace UnityCommander.Operation
 {
@@ -12,29 +14,37 @@ namespace UnityCommander.Operation
 
         private readonly IFileCopyEngine _engine;
 
-        public DefaultFileOperationService(IFileCopyEngine engine, IWindowManager windowManager)
+        private readonly ISettingsService _settings;
+
+        public DefaultFileOperationService(
+            IFileCopyEngine engine, 
+            IWindowManager windowManager, 
+            ISettingsService settings)
         {
+            _settings = settings;
             _engine = engine;
             _windowManager = windowManager;
         }
 
-        public Task CopyAsync(FileOperationRequest request)
+        public async Task CopyAsync(FileOperationRequest request)
         {
-            var result =
-                _windowManager.ShowModalDialog<CopyDialogResult>(
-                       "core.copy-dialog",
-                       request);
+            var result = _windowManager.ShowModalDialog<CopyDialogResult>(
+                "core.copy-dialog",
+                request);
 
             if (result is null || !result.Accepted)
-                return Task.CompletedTask;
+                return;
 
-            _engine.StartAsync(result.Request);
+            var task = _engine.StartAsync(result.Request);
 
-            _windowManager.ShowModalDialog<CopyDialogResult>(
-                   "core.copy-progress-dialog",
-                   request);
+            if (_settings.Get(GeneralSettings.ShowCopyProgressDialog))
+            {
+                _windowManager.ShowModalDialog<CopyDialogResult>(
+                    "core.copy-progress-dialog",
+                    result.Request);
+            }
 
-            return Task.CompletedTask;
+            await task;
         }
     }
 }

@@ -8,9 +8,11 @@ namespace UnityCommander.Services.Interfaces
 {
     public interface ITabContentAdapter : IAttachAware, IDisposable
     {
+        event Action<string> PathChanged;
         bool IsActive { get; }
         Guid TabId { get; }
         string GetCurrentPath();
         IReadOnlyList<BaseDirectory> GetCurrentDirectoryFiles();
+        IDirectoryPanel GetContent();
     }
 }

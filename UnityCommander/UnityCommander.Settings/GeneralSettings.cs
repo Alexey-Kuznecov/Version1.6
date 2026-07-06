@@ -13,5 +13,14 @@ namespace UnityCommander.Settings
                     "Отображает скрытые и системные файлы",
                     "Files",
                     false);
+
+        public static readonly SettingDefinition<bool>
+            ShowCopyProgressDialog =
+                SettingDefinitionFactory.Create(
+                    "files.copy.showProgressDialog",
+                    "Показывать окно прогресса копирования",
+                    "Если отключено, прогресс отображается только в файловых панелях.",
+                    "Files",
+                    true);
     }
 }

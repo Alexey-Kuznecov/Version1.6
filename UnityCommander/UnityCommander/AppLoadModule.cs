@@ -38,14 +38,16 @@ namespace UnityCommander
             RegisterCommand(containerProvider);
 
             var initializer = containerProvider.Resolve<AppInitializer>();
-            var refreshService = containerProvider.Resolve<IBackgroundService>();
+            var backgroundService = containerProvider.Resolve<BackgroundServiceHost>();
             var settings = containerProvider.Resolve<ISettingsService>();
             var shotcuts = containerProvider.Resolve<IShortcutOverrideStore>();
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
 
-            var token = new CancellationToken();
-            _ = refreshService.RunAsync(token);
             initializer.Initialize();
+
+            var token = new CancellationToken();
+
+            backgroundService.Start(token);
 
             builder.Rebuild();
         }
@@ -162,6 +164,33 @@ namespace UnityCommander
                 Key = ShortcutKey.B,
                 Modifiers = ShortcutModifiers.Ctrl,
                 Scopes = ShortcutScope.Sidebar | ShortcutScope.MainWindow,
+            });
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.History.Undo,
+                Description = CommandPresentationProvider.Get(CommandNames.History.Undo).Description,
+                Key = ShortcutKey.Z,
+                Modifiers = ShortcutModifiers.Ctrl,
+                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
+            });
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.History.Redo,
+                Description = CommandPresentationProvider.Get(CommandNames.History.Redo).Description,
+                Key = ShortcutKey.Y,
+                Modifiers = ShortcutModifiers.Ctrl,
+                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
+            });
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.File.Delete,
+                Description = CommandPresentationProvider.Get(CommandNames.File.Delete).Description,
+                Key = ShortcutKey.Delete,
+                Modifiers = ShortcutModifiers.None,
+                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
             });
         }
     }

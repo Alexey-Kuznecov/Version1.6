@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Native;
 using UnityCommander.Native.Api;
 
@@ -54,10 +55,10 @@ namespace UnityCommander.Core.IO.Operations
 
         #endregion
 
-        public CopyFiles()
+        public CopyFiles(OperationContext ctx)
         {
             fileOperation = new FileOperations();
-            copyInfo = new CopyInfo();
+            copyInfo = ctx.Info;
             SpeedTimer.Elapsed += SpeedTimerHandler;
             ElapsedTimer.Elapsed += ElapseTimerHandler;
         }

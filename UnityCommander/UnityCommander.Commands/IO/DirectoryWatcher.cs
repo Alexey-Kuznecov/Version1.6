@@ -6,43 +6,22 @@ using System;
 
 namespace UnityCommander.Commands.IO
 {
-    /// <summary>
-    /// The directory watcher.
-    /// </summary>
     public class DirectoryWatcher : IDisposable
     {
-        /// <summary>
-        /// The watcher.
-        /// </summary>
         private static FileSystemWatcher watcher;
         private static IConsoleOutput _output;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DirectoryWatcher"/> class.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
         public DirectoryWatcher(string path, IConsoleOutput output)
         {
             Watcher(path);
             _output = output;
         }
 
-        /// <summary>
-        /// The dispose.
-        /// </summary>
         public void Dispose()
         {
             watcher.Dispose();
         }
 
-        /// <summary>
-        /// The watcher.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
 #pragma warning disable SYSLIB0003 // Тип или член устарел
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
 #pragma warning restore SYSLIB0003 // Тип или член устарел
