@@ -4,17 +4,17 @@ using UnityCommander.Abstractions.IO;
 
 namespace UnityCommander.Operation
 {
-    public class CopyProgressCalculator
+    public class CopyProgressCalculator : ICopyProgressCalculator
     {
-        public ProgressModel Calculate(CopyInfo info)
+        public ProgressModel Calculate(OperationState state)
         {
             return new ProgressModel
             {
-                Percent = (int)Math.Round(info.TotalPercentage),
-                ExactPercent = info.TotalPercentage,
-                Speed = FormatBytes(info.AverageSpeed),
-                Remainder = $"{FormatBytes(info.TotalByteDone)} of {FormatBytes(info.TotalBytes)}",
-                TimeLeft = ConvertTimeLeft(info.TotalTimeLeft)
+                Percent = (int)Math.Round(state.TotalBytes > 0 ? (double)state.CompletedBytes / state.TotalBytes * 100 : 0),
+                ExactPercent = state.TotalBytes > 0 ? (double)state.CompletedBytes / state.TotalBytes * 100 : 0,
+                Speed = FormatBytes(state.Speed),
+                Remainder = $"{FormatBytes(state.CompletedBytes)} of {FormatBytes(state.TotalBytes)}",
+                TimeLeft = ConvertTimeLeft(TimeSpan.FromSeconds(state.TotalBytes > 0 ? (state.TotalBytes - state.CompletedBytes) / Math.Max(state.Speed, 1) : 0))
             };
         }
 
@@ -33,14 +33,5 @@ namespace UnityCommander.Operation
             if (time.Minutes > 0) return $"{time.Minutes} min {time.Seconds} sec";
             return $"{time.Seconds} sec";
         }
-    }
-
-    public class ProgressModel
-    {
-        public int Percent { get; set; }
-        public double ExactPercent { get; set; }
-        public string Speed { get; set; }
-        public string Remainder { get; set; }
-        public string TimeLeft { get; set; }
     }
 }

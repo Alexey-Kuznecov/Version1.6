@@ -5,6 +5,7 @@ using UnityCommander.Common.Models;
 using UnityCommander.Common.Panels;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
+using UnityCommander.Core.Background;
 using UnityCommander.Core.Behaviors.Selection;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
@@ -30,6 +31,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IDirectoryWatchManager, DirectoryWatchManager>();
             registry.RegisterSingleton<IDirectoryPanelUpdater, DirectoryPanelUpdater>();
             registry.RegisterSingleton<FileModelFactory>();
+            registry.RegisterSingleton<FolderModelFactory>();
 
             // Навигационный контекст, нужен один на всё приложение
             registry.RegisterSingleton<NavigationContextDirectory>();

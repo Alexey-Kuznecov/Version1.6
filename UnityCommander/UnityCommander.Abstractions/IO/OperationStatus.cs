@@ -4,7 +4,7 @@ namespace UnityCommander.Abstractions.IO
     public enum OperationStatus
     {
         Pending,
-        Running,
+        InProgress,
         Completed,
         Failed,
         Canceled

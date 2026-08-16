@@ -3,7 +3,8 @@ namespace UnityCommander.Abstractions.IO
 {
     public class CopyInfo
     {
-        public Guid Id { get; set; }
+        public Guid OperationId { get; set; }
+        public Guid ItemId { get; set; }
 
         public string Name { get; set; }
 

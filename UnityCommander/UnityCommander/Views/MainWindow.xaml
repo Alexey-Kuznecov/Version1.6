@@ -52,7 +52,7 @@
             <RowDefinition Height="{Binding RibbonHeight}" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="{Binding BottomHeight}" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <!--
             Toolbar region.

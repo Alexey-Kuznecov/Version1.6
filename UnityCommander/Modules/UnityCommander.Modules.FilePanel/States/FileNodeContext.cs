@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using UnityCommander.Abstractions.Panels;
@@ -82,6 +83,21 @@ namespace UnityCommander.Modules.FilePanel.States
             current.Name = file.Name;
             current.Size = file.Size;
             current.Extension = file.Extension;
+
+            return true;
+        }
+
+        public bool Rename(string oldPath, string newPath)
+        {
+            string newName = Path.GetFileName(newPath);
+
+            var current = Find(oldPath);
+
+            if (current == null)
+                return false;
+
+            current.Name = newName;
+            current.Path = newPath;
 
             return true;
         }

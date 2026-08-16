@@ -35,6 +35,13 @@ namespace UnityCommander.Modules.FilePanel.Columns
 
         public IEnumerable<ColumnModel> GetColumns(PanelType panelType)
         {
+            return GetAllColumns(panelType)
+                .Where(x => x.IsVisible)
+                .OrderBy(x => x.Order);
+        }
+
+        public IEnumerable<ColumnModel> GetAllColumns(PanelType panelType)
+        {
             var columns = _entries
                 .SelectMany(e => e.Provider.GetColumnDefinitions(panelType))
                 .ToList();
@@ -48,7 +55,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 throw new InvalidOperationException(
                     $"Duplicate column ids: {string.Join(", ", duplicates.Select(x => x.Key))}");
 
-            return columns.OrderBy(c => c.Order);
+            return columns;
         }
 
         public void Unregister(IColumnProvider provider)

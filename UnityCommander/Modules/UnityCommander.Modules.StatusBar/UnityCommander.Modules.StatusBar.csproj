@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Controls\UnityCommander.Controls.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
     <ProjectReference Include="..\..\UnityCommander.WPF\UnityCommander.WPF.csproj" />

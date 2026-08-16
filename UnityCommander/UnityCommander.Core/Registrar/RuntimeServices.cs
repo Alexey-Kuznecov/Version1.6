@@ -1,5 +1,6 @@
 ﻿
 using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
@@ -8,8 +9,6 @@ using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
-using UnityCommander.Abstractions.Statusbar;
-using UnityCommander.Modules.StatusBar.Services;
 
 namespace UnityCommander.Core.Registrar
 {
@@ -31,7 +30,7 @@ namespace UnityCommander.Core.Registrar
 
         public IRibbonRegistry Ribbon { get; }
         
-        public IStatusBarRegistry StatusBar { get; }
+        public IBackgroundServiceRegistry Services { get; }
 
         public RuntimeServices(
             ISidebarRegistry sidebar, 
@@ -42,9 +41,9 @@ namespace UnityCommander.Core.Registrar
             IPluginCommandRegistry command,
             IRibbonRegistry ribbon,
             IIconSourceRegistry iconSource,
-            IStatusBarRegistry statusBar)
+            IBackgroundServiceRegistry services)
         {
-            StatusBar = statusBar;
+            Services = services;
             Sidebar = sidebar;
             Dialog = dialog;
             Columns = registry;
@@ -64,7 +63,7 @@ namespace UnityCommander.Core.Registrar
             Composition.Cleanup(id);
             Commands.Cleanup(id);
             //Ribbon.Cleanup(id);
-            StatusBar.Cleanup(id);
+            Services.Cleanup(id);
         }
     }
 }

@@ -9,7 +9,6 @@ namespace UnityCommander.Abstractions.Columns
         public string? Header { get; init; }
         public string? CellTemplateResourceKey { get; init; }
         public string? DisplayMemberPath { get; init; }
-
         public string? Foreground { get; init; }
 
         private double _width;

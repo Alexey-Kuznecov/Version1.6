@@ -16,6 +16,7 @@ namespace UnityCommander.ViewModels.Dialogs
     using System.Collections.ObjectModel;
     using System.Windows;
     using UnityCommander.Abstractions.Dialog;
+    using UnityCommander.Abstractions.IO;
     using UnityCommander.Core.IO;
     using UnityCommander.Operation;
 

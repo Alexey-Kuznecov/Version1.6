@@ -45,6 +45,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         SyncGroup = "Live",
                         RefreshInterval = 2000,
                         IsDynamic = true,
+                        IsVisible = false,
                         ColumnValueHandler = f =>
                         {
                             var path = ((BaseDirectory)f).Path;

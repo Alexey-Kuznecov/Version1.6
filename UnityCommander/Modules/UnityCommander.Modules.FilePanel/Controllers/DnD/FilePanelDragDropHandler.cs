@@ -34,7 +34,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
            IDropContext dropContext,
            DragDropContext context)
         {
-            if (context.SourceItems.Count == 0)
+            if (!HasSources(context))
                 return DragDropResult.Deny();
 
             if (string.Equals(
@@ -128,6 +128,12 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 FolderNodeContext folderContext => folderContext.Current,
                 _ => null
             };
+        }
+
+        private bool HasSources(DragDropContext context)
+        {
+            return context.SourceItems.Count > 0
+                || !string.IsNullOrEmpty(context.SourcePath);
         }
 
         private static bool HasValidData(object? data)

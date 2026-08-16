@@ -14,5 +14,7 @@ namespace UnityCommander.Abstractions.Panels
         bool Remove(string path);
 
         bool Update(IFileItem file);
+
+        bool Rename(string path, string newPath);
     }
 }

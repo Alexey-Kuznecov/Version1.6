@@ -10,6 +10,8 @@ namespace UnityCommander.Core.IO.Operations
 {
     public class CopyManager
     {
+        private readonly CopyOperation _operation;
+
         private CopyFiles copyFile;
         private string source;
         private string targetRoot;
@@ -19,6 +21,10 @@ namespace UnityCommander.Core.IO.Operations
 
         public bool CopyOnlyFolderContent { get; set; } = false;
 
+        public Guid Id => _operation.Id;
+
+        public CopyOperation Operation => _operation;
+
         // События для внешнего мира (UI, панели и т.д.)
         public event Action<CopyInfo> FileStarted;
         public event Action<CopyInfo> FileCompleted;
@@ -27,6 +33,11 @@ namespace UnityCommander.Core.IO.Operations
         public event Action CopyFileFinish;
         public event Action<CopyInfo> CopyFileReport;
         public event Action<CopyInfo> CopyFileResult;
+
+        public CopyManager(CopyOperation operation)
+        {
+            _operation = operation;
+        }
 
         // Подписки
         private void SubscribeEvents()
@@ -114,13 +125,13 @@ namespace UnityCommander.Core.IO.Operations
             copyFile.CopyReportEvent -= FileCopier_CopyReportEvent;
         }
 
-        public Task CopyAsync(OperationContext id, string sourcePath, string targetPath)
+        public Task CopyAsync(OperationContext ctx, string sourcePath, string targetPath)
         {
             // Подготовка TCS
             _currentTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             // Вызываем старый Copy (он стартует Task.Run внутри)
-            Copy(id, sourcePath, targetPath);
+            Copy(ctx, sourcePath, targetPath);
 
             // Возвращаем таск, который завершится, когда CopyTask внутри установит результат
             return _currentTcs.Task;

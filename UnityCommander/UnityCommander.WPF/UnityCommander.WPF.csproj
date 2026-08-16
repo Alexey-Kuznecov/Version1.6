@@ -18,4 +18,8 @@
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Popup\" />
+  </ItemGroup>
+
 </Project>

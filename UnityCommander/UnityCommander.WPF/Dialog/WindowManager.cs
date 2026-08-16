@@ -116,9 +116,9 @@ namespace UnityCommander.Services
         }
 
         public TDialogResult? ShowModalDialog<TDialogResult>(
-          string id,
-          object? parameter = null)
-          where TDialogResult : IDialogResult
+            string id,
+            object? parameter = null)
+            where TDialogResult : IDialogResult
         {
             if (!_registry.TryGet(id, out var registration))
                 return default;

@@ -13,7 +13,17 @@ namespace UnityCommander.Modules.FilePanel.Services
     public sealed class ColumnRefreshService : IBackgroundService
     {
         private readonly NodeContextRegistry _contexts;
-        
+
+        public string Id => "column-refresh-service";
+
+        public string Name => "Column Refresh Service";
+
+        public bool IsRunning { get; private set; }
+
+        public bool AutoStart => true;
+
+        public string OwnerId => "core.background.service";
+
         private readonly IColumnRegistry _registry;
       
         public ColumnRefreshService(
@@ -26,15 +36,27 @@ namespace UnityCommander.Modules.FilePanel.Services
 
         public async Task RunAsync(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            if (IsRunning)
+                return;
+
+            IsRunning = true;
+
+            try
             {
-                foreach (var ctx in _contexts.FileContexts)
-                    await RefreshFilesAsync(ctx);
+                while (IsRunning && !token.IsCancellationRequested)
+                {
+                    foreach (var ctx in _contexts.FileContexts)
+                        await RefreshFilesAsync(ctx);
 
-                foreach (var ctx in _contexts.FolderContexts)
-                    await RefreshFoldersAsync(ctx);
+                    foreach (var ctx in _contexts.FolderContexts)
+                        await RefreshFoldersAsync(ctx);
 
-                await Task.Delay(50, token);
+                    await Task.Delay(50, token);
+                }
+            }
+            finally
+            {
+                IsRunning = false;
             }
         }
 
@@ -49,8 +71,6 @@ namespace UnityCommander.Modules.FilePanel.Services
             foreach (var file in ctx.ScrollService?.GetVisibleItems())
             {
                 var now = DateTime.UtcNow;
-
-                var index = 0;
 
                 foreach (var column in columns)
                 {
@@ -67,7 +87,6 @@ namespace UnityCommander.Modules.FilePanel.Services
 
                     if (!Equals(file.Additional.GetValueOrDefault(column.Id), newValue))
                     {
-                        //file.Index = index++;
                         file.Additional[column.Id] = newValue;
                     }
                 }
@@ -119,6 +138,13 @@ namespace UnityCommander.Modules.FilePanel.Services
                 return (int)column.UpdatePriority;
 
             return (int)ColumnUpdatePriority.Normal;
+        }
+
+        public Task StopAsync()
+        {
+            IsRunning = false;
+
+            return Task.CompletedTask;
         }
     }
 }

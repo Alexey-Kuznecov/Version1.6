@@ -17,8 +17,12 @@ namespace UnityCommander.Modules.StatusBar.Services
 
         bool IsVisible { get; }
 
-        ICommand? ClickCommand { get; }
+        ICommand? Command { get; }
 
         object? Details { get; }
+
+        bool ShowProgress { get; set; }
+
+        double Progress { get; set; }
     }
 }

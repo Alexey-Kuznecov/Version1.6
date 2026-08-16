@@ -1,7 +1,11 @@
 ﻿
 using System;
 using System.Collections.Concurrent;
+using System.IO;
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.IO;
+using UnityCommander.Common.Events;
+using UnityCommander.Core.Events;
 
 namespace UnityCommander.Common.Models
 {
@@ -12,9 +16,17 @@ namespace UnityCommander.Common.Models
 
         private readonly IOperationIndex _index;
 
-        public FileRuntimeService(IOperationIndex index)
+        private readonly IEventBus _eventBus;
+
+        public FileRuntimeService(
+            IOperationIndex index,
+            IEventBus eventBus)
         {
+            _eventBus = eventBus;
             _index = index;
+
+            _eventBus.Subscribe<CopyProgressEvent>(OnProgressReport);
+            _eventBus.Subscribe<CopyCompleteEvent>(OnCompleteFile);
         }
 
         public IFileState GetState(string path)
@@ -37,6 +49,27 @@ namespace UnityCommander.Common.Models
         public void Set(Guid operationId, IFileState state)
         {
             _state[operationId] = state;
+        }
+
+        private void OnProgressReport(object sender, CopyProgressEvent e)
+        {
+            var fileName = Path.GetFileName(e.Info.Source);
+            var destinationFilePath = Path.Combine(e.Info.Destination, fileName);
+
+            this.Set(e.Info.ItemId, new FileState()
+            {
+                SourcePath = e.Info.Source,
+                DestinationPath = destinationFilePath,
+                IsCopying = true,
+                RemainingTime = e.Info.TotalTimeLeft,
+                Progress = (int)Math.Round(e.Info.TotalPercentage),
+                Speed = (long)e.Info.AverageSpeed
+            });
+        }
+
+        private void OnCompleteFile(object sender, CopyCompleteEvent e)
+        {
+            this.Remove(e.Info.ItemId);
         }
     }
 }

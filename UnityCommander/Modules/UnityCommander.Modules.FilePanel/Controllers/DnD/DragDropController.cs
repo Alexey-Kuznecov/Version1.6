@@ -25,7 +25,6 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
         public DragDropResult DragOver(
             DragDropContext context)
         {
-
             var resolver =
                 _resolvers.FirstOrDefault(
                     r => r.CanResolve(context));

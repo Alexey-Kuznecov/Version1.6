@@ -1,16 +1,17 @@
 ﻿
 using System;
+using UnityCommander.SystemMetrics.Monitoring;
 
 namespace UnityCommander.Core.Background
 {
     public interface IDirectoryPanelUpdater
     {
-        void FileCreated(Guid tabId, string path);
+        void Created(Guid tabId, string path, FileSystemEntryType entryType);
 
-        void FileDeleted(Guid tabId, string path);
+        void Deleted(Guid tabId, string path, FileSystemEntryType entryType);
 
-        void FileChanged(Guid tabId, string path);
+        void Changed(Guid tabId, string path, FileSystemEntryType entryType);
 
-        void FileRenamed(Guid tabId, string oldPath, string newPath);
+        void Renamed(Guid tabId, string oldPath, string newPath, FileSystemEntryType entryType);
     }
 }

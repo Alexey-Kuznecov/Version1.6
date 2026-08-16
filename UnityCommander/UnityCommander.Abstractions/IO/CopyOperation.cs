@@ -9,5 +9,7 @@ namespace UnityCommander.Abstractions.IO
             { get; set; } = new List<FileTransferItem>();
 
         public OperationState? State { get; }
+
+        public long TotalBytes { get; set; }
     }
 }

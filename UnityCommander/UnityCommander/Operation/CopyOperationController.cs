@@ -146,10 +146,10 @@ namespace UnityCommander.Operation
             info.TotalPercentage = percent;
 
             // Используем калькулятор
-            var progress = progressCalculator.Calculate(info);
+            //var progress = progressCalculator.Calculate(info);
 
-            // Отдаем в UI
-            ProgressChanged?.Invoke(progress);
+            //// Отдаем в UI
+            //ProgressChanged?.Invoke(progress);
         }
 
         private void OnCopyFileFinish()

@@ -34,11 +34,11 @@ namespace UnityCommander.Rendering.Icons
                 typeof(Brush),
                 typeof(IconRender));
 
-        //public static readonly DependencyProperty HoverBrushProperty =
-        //    DependencyProperty.Register(
-        //        nameof(HoverBrush),
-        //        typeof(Brush),
-        //        typeof(IconRender));
+        public static readonly DependencyProperty HoverBrushProperty =
+            DependencyProperty.Register(
+                nameof(HoverBrush),
+                typeof(Brush),
+                typeof(IconRender));
 
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(
@@ -140,11 +140,11 @@ namespace UnityCommander.Rendering.Icons
             set => SetValue(DefaultBrushProperty, value);
         }
 
-        //public Brush HoverBrush
-        //{
-        //    get => (Brush)GetValue(HoverBrushProperty);
-        //    set => SetValue(HoverBrushProperty, value);
-        //}
+        public Brush HoverBrush
+        {
+            get => (Brush)GetValue(HoverBrushProperty);
+            set => SetValue(HoverBrushProperty, value);
+        }
 
         static IconRender()
         {
@@ -158,9 +158,17 @@ namespace UnityCommander.Rendering.Icons
             base.OnApplyTemplate();
         }
 
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        //protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        //{
+        //    base.OnMouseLeftButtonDown(e);
+
+        //    if (Command?.CanExecute(CommandParameter) == true)
+        //        Command.Execute(CommandParameter);
+        //}
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            base.OnMouseLeftButtonDown(e);
+            base.OnMouseLeftButtonUp(e);
 
             if (Command?.CanExecute(CommandParameter) == true)
                 Command.Execute(CommandParameter);
@@ -203,7 +211,7 @@ namespace UnityCommander.Rendering.Icons
             if (Tone != IconTone.Interactive)
                 return;
 
-            //SetCurrentValue(BrushProperty, HoverBrush);
+            SetCurrentValue(BrushProperty, HoverBrush);
         }
         protected override void OnMouseLeave(MouseEventArgs e)
         {
@@ -212,7 +220,7 @@ namespace UnityCommander.Rendering.Icons
             if (Tone != IconTone.Interactive)
                 return;
 
-            //SetCurrentValue(BrushProperty, DefaultBrush);
+            SetCurrentValue(BrushProperty, DefaultBrush);
         }
     }
 }

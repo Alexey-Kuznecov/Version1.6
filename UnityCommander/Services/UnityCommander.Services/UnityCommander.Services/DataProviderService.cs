@@ -17,10 +17,14 @@ namespace UnityCommander.Services
     public class DataProviderService : IDataProviderService
     {
        private readonly FileModelFactory _factory;
+       private readonly FolderModelFactory _folderFactory;
 
-        public DataProviderService(FileModelFactory factory)
+        public DataProviderService(
+            FileModelFactory factory, 
+            FolderModelFactory folderFactory)
         {
             _factory = factory;
+            _folderFactory = folderFactory;
         }
 
         /// <summary>
@@ -65,17 +69,7 @@ namespace UnityCommander.Services
 
                     if ((folder.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        folders.Add(new FolderModel
-                        {
-                            Name = folder.Name,
-                            Path = folder.FullName,
-                            CreationTime = folder.CreationTime,
-                            LastAccessTime = folder.LastAccessTime,
-                            TargetPanel = TargetPanel.Folders,
-                            Key = folder.FullName,
-                            IconKey = "core.folder",
-                            Kind = IconKind.Folder
-                        });
+                        folders.Add(_folderFactory.Create(folder.FullName));
                     }
                 }
 

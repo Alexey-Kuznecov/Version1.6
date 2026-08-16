@@ -225,6 +225,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public IFileNodeContext FileContext => _fileNodeContext;
 
+        public IFolderNodeContext FolderContext => _folderNodeContext;
+
         public ISelectionManager SelectionManager => _folderNodeContext.SelectionManager;
 
         public Guid GetPanelToken() => _state.TabId;
@@ -391,8 +393,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 if (_state.CurrentPath != VirtualPaths.MyComputer)
                 {
-                    var sw = Stopwatch.StartNew();
-
                     var files = await dataService.GetFilesAsync(_state.CurrentPath, CancellationToken.None);
                     var dirs = await dataService.GetDirectoriesAsync(_state.CurrentPath, CancellationToken.None);
 

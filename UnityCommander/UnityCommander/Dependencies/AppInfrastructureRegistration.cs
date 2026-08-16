@@ -8,14 +8,14 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
-using UnityCommander.Abstractions.Statusbar;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Sidebar;
+using UnityCommander.Core.Background;
 using UnityCommander.Core.Panels;
 using UnityCommander.Core.Registrar;
-using UnityCommander.Core.StatusBar;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.ToolBar.Builder;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Ribbon.Services;
@@ -36,6 +36,8 @@ namespace UnityCommander.Dependencies
     {
         public static void Register(IContainerRegistry registry)
         {
+            registry.RegisterSingleton<IEventBus, EventBus>();
+
             // Компоновка UI: отвечает за то, как строятся и наполняются области интерфейса (панели/лейауты)
             registry.RegisterSingleton<ILayoutService, LayoutService>();
             registry.RegisterSingleton<ILayoutContentFactory, PanelContentFactory>();
@@ -88,7 +90,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IRibbonModelFactory, RibbonModelFactory>();
             registry.RegisterSingleton<IRibbonRegistry, RibbonRegistry>();
 
-            registry.RegisterSingleton<IStatusBarRegistry, StatusBarRegistry>();
+            registry.RegisterSingleton<IBackgroundServiceRegistry, BackgroundServiceRegistry>();
 
             registry.RegisterSingleton<IInputCaptureManager, InputCaptureManager>();
             registry.RegisterSingleton<IInputContextService, InputContextService>();
@@ -98,9 +100,16 @@ namespace UnityCommander.Dependencies
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();
 
-            //registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
+            registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
             registry.RegisterSingleton<IBackgroundService, DirectoryChangeService>();
+            registry.RegisterSingleton<IBackgroundService, CopyMonitorService>();
+
             registry.RegisterSingleton<BackgroundServiceHost>();
+
+            registry.RegisterSingleton<IViewFactory, ViewFactory>();
+            registry.RegisterSingleton<IViewRegistry, ViewRegistry>();
+            registry.RegisterSingleton<IPopupService, PopupService>();
+
         }
     }
 }
