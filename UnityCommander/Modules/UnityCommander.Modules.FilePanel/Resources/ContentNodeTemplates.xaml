@@ -64,44 +64,46 @@
 
     <DataTemplate x:Key="DirectoryContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
         <Border BorderThickness="1">
-            <ListView
-                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
-                be:ScrollBehavior.Enable="True"
-                be:ScrollBehavior.ViewportTarget="{Binding Context}"
-                dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
-                ItemContainerStyle="{StaticResource UcGridItemTemplate}"
-                ItemsSource="{Binding Context.Folders, Mode=OneWay}"
-                SelectedItem="{Binding Context.SelectedDirectory}"
-                SelectionMode="Multiple"
-                Style="{StaticResource UcGridListViewTemplate}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                        <i:InvokeCommandAction Command="{Binding Context.NavigateCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseRightButtonUp">
-                        <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel ContextMenu="{Binding ContextMenu}" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ContextMenu>
-                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
-                        <ContextMenu.ItemContainerStyle>
-                            <Style TargetType="MenuItem">
-                                <Setter Property="Header" Value="{Binding Title}" />
-                                <Setter Property="Command" Value="{Binding Command}" />
-                                <Setter Property="ItemsSource" Value="{Binding Children}" />
-                                <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
-                            </Style>
-                        </ContextMenu.ItemContainerStyle>
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
+            <AdornerDecorator>
+                <ListView
+                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
+                    be:ScrollBehavior.Enable="True"
+                    be:ScrollBehavior.ViewportTarget="{Binding Context}"
+                    dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    ItemContainerStyle="{StaticResource UcGridItemTemplate}"
+                    ItemsSource="{Binding Context.Folders, Mode=OneWay}"
+                    SelectedItem="{Binding Context.SelectedDirectory}"
+                    SelectionMode="Multiple"
+                    Style="{StaticResource UcGridListViewTemplate}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding Context.NavigateCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel ContextMenu="{Binding ContextMenu}" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" ItemsSource="{Binding Context.ContextMenuItems}">
+                            <ContextMenu.ItemContainerStyle>
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="Header" Value="{Binding Title}" />
+                                    <Setter Property="Command" Value="{Binding Command}" />
+                                    <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+                                </Style>
+                            </ContextMenu.ItemContainerStyle>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </AdornerDecorator>
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
@@ -117,49 +119,52 @@
 
     <DataTemplate x:Key="FileContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
         <Border BorderThickness="1">
-            <ListView
-                be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
-                be:ScrollBehavior.Enable="True"
-                be:ScrollBehavior.ViewportTarget="{Binding Context}"
-                be:SelectionBehavior.EnableSelection="True"
-                be:SelectionBehavior.Manager="{Binding Context.SelectionManager}"
-                commands:GridViewSort.AutoSort="True"
-                dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
-                dd:DragDrop.IsDragSource="True"
-                dd:DragDrop.IsDropTarget="True"
-                ItemContainerStyle="{StaticResource UcGridItemTemplate}"
-                ItemsSource="{Binding Context.Files, Mode=OneWay}"
-                SelectedItem="{Binding Context.CurrentFile}"
-                Style="{StaticResource UcGridListViewTemplate}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseRightButtonUp">
-                        <i:InvokeCommandAction Command="{Binding Context.SelectedFile, Mode=OneWay, PresentationTraceSources.TraceLevel=High}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseRightButtonUp">
-                        <i:InvokeCommandAction Command="{Binding Context.ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <ListView.ContextMenu>
-                    <ContextMenu
-                        Padding="0"
-                        Background="{DynamicResource UcMenuBackgroundBrush}"
-                        BorderBrush="Transparent"
-                        BorderThickness="0"
-                        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                        ItemsSource="{Binding Context.ContextMenuItems}">
-                        <ContextMenu.ItemContainerStyle>
-                            <Style TargetType="MenuItem">
-                                <Setter Property="Header" Value="{Binding Title}" />
-                                <Setter Property="Icon" Value="🙂" />
-                                <Setter Property="Command" Value="{Binding Command}" />
-                                <Setter Property="Height" Value="30" />
-                                <Setter Property="ItemsSource" Value="{Binding Children}" />
-                                <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
-                            </Style>
-                        </ContextMenu.ItemContainerStyle>
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
+            <AdornerDecorator>
+
+                <ListView
+                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
+                    be:ScrollBehavior.Enable="True"
+                    be:ScrollBehavior.ViewportTarget="{Binding Context}"
+                    be:SelectionBehavior.EnableSelection="True"
+                    be:SelectionBehavior.Manager="{Binding Context.SelectionManager}"
+                    commands:GridViewSort.AutoSort="True"
+                    dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    ItemContainerStyle="{StaticResource UcGridItemTemplate}"
+                    ItemsSource="{Binding Context.Files, Mode=OneWay}"
+                    SelectedItem="{Binding Context.CurrentFile}"
+                    Style="{StaticResource UcGridListViewTemplate}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.SelectedFile, Mode=OneWay, PresentationTraceSources.TraceLevel=High}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListView.ContextMenu>
+                        <ContextMenu
+                            Padding="0"
+                            Background="{DynamicResource UcMenuBackgroundBrush}"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                            ItemsSource="{Binding Context.ContextMenuItems}">
+                            <ContextMenu.ItemContainerStyle>
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="Header" Value="{Binding Title}" />
+                                    <Setter Property="Icon" Value="🙂" />
+                                    <Setter Property="Command" Value="{Binding Command}" />
+                                    <Setter Property="Height" Value="30" />
+                                    <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+                                </Style>
+                            </ContextMenu.ItemContainerStyle>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </AdornerDecorator>
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
@@ -171,6 +176,7 @@
                 </Style>
             </Border.Style>
         </Border>
+
     </DataTemplate>
 
     <DataTemplate x:Key="DriveContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
