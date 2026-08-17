@@ -105,6 +105,10 @@ namespace UnityCommander.Operation
                 await copyManager.CopyAsync(ctx, item.SourcePath, destForThisSource);
             }
 
+            // TODO: Revisit operation cleanup.
+            // Unregister is currently performed after all operation items complete.
+            // Verify lifecycle when cancellation, failure, parallel operations,
+            // or partial completion are introduced.
             _operationService.Unregister(request.OperationId);
             _operationProgress.Unregister(request.OperationId);
 

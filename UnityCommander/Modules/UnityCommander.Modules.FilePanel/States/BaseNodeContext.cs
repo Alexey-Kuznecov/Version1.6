@@ -63,11 +63,10 @@ namespace UnityCommander.Modules.FilePanel.States
             set => SetProperty(ref _context, value);
         }
 
-        public ObservableCollection<BaseDirectory> SelectedItems 
-            => SelectionManager.SelectedItems
-                    .OfType<BaseDirectory>()
-                    .Where(x => x.IsSelected)
-                    .ToObservableCollection();
+        public ObservableCollection<BaseDirectory> SelectedItems =>
+            SelectionManager.SelectedItems
+                .OfType<BaseDirectory>()
+                .ToObservableCollection();
 
         public IDropTarget DropTarget
         {

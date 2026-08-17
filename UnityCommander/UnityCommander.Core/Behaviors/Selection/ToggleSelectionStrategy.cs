@@ -3,7 +3,7 @@ using UnityCommander.Common.Selection;
 
 namespace UnityCommander.Core.Behaviors.Selection
 {
-    public class CtrlSelectionStrategy : ISelectionStrategy
+    public class ToggleSelectionStrategy : ISelectionStrategy
     {
         public SelectionActionType ActionType => SelectionActionType.CtrlClick;
 

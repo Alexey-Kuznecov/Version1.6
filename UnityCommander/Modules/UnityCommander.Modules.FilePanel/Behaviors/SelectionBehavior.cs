@@ -80,8 +80,9 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 list.SelectionMode = SelectionMode.Multiple; // отключаем стандартное выделение
                 list.SelectedItem = null;
 
-                list.PreviewMouseLeftButtonDown += OnMouseDown;
-
+                list.PreviewMouseLeftButtonDown += OnLeftMouseDown;
+                list.PreviewMouseRightButtonDown += OnRightMouseDown;
+                list.PreviewMouseMove += OnPreviewMouseMove;
                 //logger = logCreat.Create(
                 //    category: LogCategory.UserAction,
                 //    scope: LogScope.UserAction
@@ -89,51 +90,102 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             }
         }
 
-        private static void OnMouseDown(object sender, MouseButtonEventArgs e)
+        private static void OnLeftMouseDown(
+            object sender,
+            MouseButtonEventArgs e)
         {
             var list = (ListView)sender;
-            var container = list.ContainerFromElement((DependencyObject)e.OriginalSource) as ListViewItem;
-            if (container == null)
+
+            if (!TryGetSelectionTarget(
+                    list,
+                    e,
+                    out var manager,
+                    out var index))
             {
-                GetManager(list).Clear();
-                list.SelectedItems.Clear();
+                manager?.ClearSelection();
                 return;
             }
-
-            int index = list.ItemContainerGenerator.IndexFromContainer(container);
-            var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
-            var manager = GetManager(list); // через AttachedProperty
-            if (ctx == null || manager == null)
-                return;
-
-            if (list.SelectedItem is ISelectableItem select)
-            {
-                manager.FocusedItem = select;
-            }
-
-            bool ctrl =
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-            bool shift =
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
 
             var action = new SelectionAction
             {
-                Type = SelectionActionType.CtrlClick,
+                TargetIndex = index,
+                Type = SelectionActionType.SingleClick
+            };
+
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                action.Type = SelectionActionType.ShiftClick;
+            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                action.Type = SelectionActionType.CtrlClick;
+
+            e.Handled = true;
+
+            manager.Handle(action);
+        }
+
+        private static void OnRightMouseDown(
+            object sender,
+            MouseButtonEventArgs e)
+        {
+            var list = (ListView)sender;
+
+
+            if (!TryGetSelectionTarget(
+                    list,
+                    e,
+                    out var manager,
+                    out var index))
+                return;
+
+
+            var action = new SelectionAction
+            {
+                Type = SelectionActionType.ContextMenuClick,
                 TargetIndex = index
             };
 
-            if (shift)
-                action.Type = SelectionActionType.ShiftClick;
-            else if (ctrl)
-                action.Type = SelectionActionType.CtrlClick;
-            else
-                action.Type = SelectionActionType.SingleClick;
-
-            //logger.Debug($" Action: {action.Type}");
+            manager.Handle(action);
 
             e.Handled = true;
-            manager.Handle(ctx, action);
+        }
+
+        private static bool TryGetSelectionTarget(
+             ListView list,
+             MouseButtonEventArgs e,
+             out ISelectionManager manager,
+             out int index)
+        {
+            manager = GetManager(list);
+            index = -1;
+
+            if (manager == null)
+                return false;
+
+            var container =
+                list.ContainerFromElement(
+                    (DependencyObject)e.OriginalSource)
+                as ListViewItem;
+
+            if (container == null)
+                return false;
+
+            index = list.ItemContainerGenerator.IndexFromContainer(container);
+
+            manager.SetItems(
+                list.Items.Cast<ISelectableItem>());
+
+            return true;
+        }
+
+        private static void OnPreviewMouseMove(
+            object sender,
+            MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            var list = (ListView)sender;
+
+            // Здесь пока просто диагностика
         }
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)

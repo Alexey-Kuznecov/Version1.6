@@ -101,7 +101,7 @@ namespace UnityCommander.Commands
             }
 
             // создаём контекст на все элементы панели
-            var ctx = new SelectionContext(allItems.Cast<ISelectableItem>());
+            manager.SetItems(allItems.Cast<ISelectableItem>());
 
             // формируем action с параметром (строкой расширений)
             var action = new SelectionAction
@@ -111,10 +111,11 @@ namespace UnityCommander.Commands
             };
 
             // передаём в менеджер
-            manager.Handle(ctx, action);
+            manager.Handle(action);
 
             // выводим количество выделенных элементов
-            context.Output.WriteLine($"Выделено файлов: {ctx.Items.Count(i => i.IsSelected)}");
+            context.Output.WriteLine(
+                $"Выделено файлов: {manager.SelectedItems.Count}");
         }
 
         private void SelectByRegex(IConsoleCommandContext context, ISelectionManager manager, string regexList)

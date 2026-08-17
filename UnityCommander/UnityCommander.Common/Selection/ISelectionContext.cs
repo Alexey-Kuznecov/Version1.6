@@ -9,9 +9,10 @@ namespace UnityCommander.Common.Selection
         IReadOnlyList<ISelectableItem> Items { get; }
 
         int FocusedIndex { get; set; }
+        int AnchorIndex { get; set; }
 
-        // методы доступа/модификации выделения внутри контекста
-        void ClearSelection();
-        void AddToSelection(IEnumerable<ISelectableItem> items);
+        void SetItems(IEnumerable<ISelectableItem> items);
+
+        void Reset();
     }
 }

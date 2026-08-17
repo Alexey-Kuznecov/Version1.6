@@ -5,6 +5,7 @@
         CtrlClick,
         SelectByExtension,
         ShiftClick,
-        SingleClick
+        SingleClick,
+        ContextMenuClick
     }
 }
