@@ -47,7 +47,7 @@ namespace UnityCommander.Modules.Viewer.ViewModels
             return this.CurrentPath;
         }
 
-        public Guid GetPanelToken()
+        public Guid GetTabToken()
         {
             return this.Token;
         }

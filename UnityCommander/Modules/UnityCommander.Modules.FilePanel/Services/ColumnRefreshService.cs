@@ -7,6 +7,7 @@ using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -25,13 +26,17 @@ namespace UnityCommander.Modules.FilePanel.Services
         public string OwnerId => "core.background.service";
 
         private readonly IColumnRegistry _registry;
-      
+
+        private readonly IVisibleTabResolver _visibleTabResolver;
+
         public ColumnRefreshService(
-             IColumnRegistry registry,
-             NodeContextRegistry contexts)
+            IColumnRegistry registry,
+            NodeContextRegistry contexts,
+            IVisibleTabResolver visibleTabResolver)
         {
             _registry = registry;
             _contexts = contexts;
+            _visibleTabResolver = visibleTabResolver;
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -45,11 +50,23 @@ namespace UnityCommander.Modules.FilePanel.Services
             {
                 while (IsRunning && !token.IsCancellationRequested)
                 {
+                    var visibleTabs = _visibleTabResolver.GetVisibleTabs();
+
                     foreach (var ctx in _contexts.FileContexts)
+                    {
+                        if (!visibleTabs.Contains(ctx.TabId))
+                            continue;
+
                         await RefreshFilesAsync(ctx);
+                    }
 
                     foreach (var ctx in _contexts.FolderContexts)
+                    {
+                        if (!visibleTabs.Contains(ctx.TabId))
+                            continue;
+
                         await RefreshFoldersAsync(ctx);
+                    }
 
                     await Task.Delay(50, token);
                 }

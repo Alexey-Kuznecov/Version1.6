@@ -16,8 +16,11 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             DragDropResult result)
         {
             var adorner = AdornerLayer.GetAdornerLayer(target);
+
             if (adorner == null)
-                this.CreateAdornerLayer(target);
+            {
+                // this.CreateAdornerLayer(target);
+            }
 
             var border = FindParent<Border>(target);
 

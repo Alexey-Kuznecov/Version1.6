@@ -19,7 +19,7 @@ namespace UnityCommander.Services
             _vm.PathChanged += OnPathChanged;
         }
 
-        public Guid TabId => _vm.GetPanelToken(); // ← просто переименуй смысл
+        public Guid TabId => _vm.GetTabToken(); // ← просто переименуй смысл
 
         public bool IsActive => _vm.IsActive;
 

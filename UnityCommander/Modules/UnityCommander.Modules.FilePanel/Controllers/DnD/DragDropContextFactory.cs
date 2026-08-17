@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using UnityCommander.Controls.Layout;
-using UnityCommander.Core.Behaviors;
 using UnityCommander.WPF.DragDrop;
 using UnityCommander.Modules.FilePanel.States;
 

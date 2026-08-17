@@ -74,6 +74,9 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             if (handler == null)
                 return Task.CompletedTask;
 
+            _visual.Clear(
+               context.VisualTarget);
+
             return handler.DropAsync(
                 dropContext,
                 context);

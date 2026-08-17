@@ -89,5 +89,10 @@ namespace UnityCommander.Services.Docking
 
             _panes.Remove(pane); 
         }
+
+        internal bool TryGetTabId(LayoutDocument document, out Guid tabId)
+        {
+            return _tabs.TryGetValue(document, out tabId);
+        }
     }
 }

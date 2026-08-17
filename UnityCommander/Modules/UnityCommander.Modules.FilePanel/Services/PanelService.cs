@@ -124,7 +124,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             if (vm == null)
                 return;
 
-            var tabId = vm.GetPanelToken();
+            var tabId = vm.GetTabToken();
 
             if (!_tabRegistry.Contains(tabId))
                 return;

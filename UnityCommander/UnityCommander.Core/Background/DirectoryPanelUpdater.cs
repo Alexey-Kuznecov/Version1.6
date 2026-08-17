@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.IO;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Panels;
 using UnityCommander.SystemMetrics.Monitoring;

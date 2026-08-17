@@ -57,6 +57,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ViewportMapper>();
 
             registry.RegisterSingleton<IFileStateService, FileRuntimeService>();
+            registry.RegisterSingleton<IVisibleTabResolver, VisibleTabResolver>();
         }
     }
 }

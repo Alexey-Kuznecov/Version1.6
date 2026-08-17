@@ -1,6 +1,7 @@
 ﻿
 using Prism.Commands;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,16 +20,17 @@ namespace UnityCommander.Modules.FilePanel.States
 {
     public abstract class BaseNodeContext : BindableBase, IContextMenuHost, IViewportHost
     {
+        public Guid TabId { get; internal set; }
         public string _current;
         public IEnumerable<ColumnModel> _columns = new List<ColumnModel>();
         public ObservableCollection<MenuItemViewModel> _context = new();
         public ObservableCollection<BaseDirectory> _selected = new();
 
         protected BaseNodeContext(
-           ISelectionManager selection,
-           IDropTarget dropTarget,
-           ContextMenuController menu, 
-           ViewportMapper mapper)
+            ISelectionManager selection,
+            IDropTarget dropTarget,
+            ContextMenuController menu, 
+            ViewportMapper mapper)
         {
             Mapper = new ViewportMapper();
             SelectionManager = selection;

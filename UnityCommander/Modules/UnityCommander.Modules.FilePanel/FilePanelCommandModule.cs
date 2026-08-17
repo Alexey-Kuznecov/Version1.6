@@ -57,8 +57,16 @@ namespace UnityCommander.Modules.FilePanel
 
             foreach (var path in contextMenu.SelectedFiles)
             {
-                if (string.IsNullOrEmpty(path) || !File.Exists(path))
-                    return Task.FromResult<UndoToken>(null);
+                if (string.IsNullOrWhiteSpace(path))
+                    continue;
+
+                if (!File.Exists(path))
+                {
+                    Debug.WriteLine(
+                        $"File already does not exist: '{path}'");
+
+                    continue;
+                }
 
                 try
                 {
@@ -67,13 +75,8 @@ namespace UnityCommander.Modules.FilePanel
                     File.Delete(path);
 
                     //_notifier.NotifyChanged(path);
-
-                    return Task.FromResult<UndoToken>(new DelegateUndoToken(
-                       undo: () => UndoDeleteAsync(backup, path),
-                       redo: () => RedoDeleteAsync(path)
-                    ));
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
                     Debug.WriteLine($"Error deleting file '{path}': {e.Message}");
                 }

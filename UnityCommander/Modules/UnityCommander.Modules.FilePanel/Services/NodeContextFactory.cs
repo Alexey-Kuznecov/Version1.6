@@ -1,15 +1,16 @@
 ﻿
 using Prism.Commands;
+using System;
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.WPF.DragDrop;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {

@@ -229,7 +229,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         public ISelectionManager SelectionManager => _folderNodeContext.SelectionManager;
 
-        public Guid GetPanelToken() => _state.TabId;
+        public Guid GetTabToken() => _state.TabId;
 
         public string CurrentDirectory
         {
@@ -309,21 +309,37 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               }
           });
 
-        public ITabPanelContent InitializedViewModel(ref Guid token, string path)
+        public ITabPanelContent InitializedViewModel(
+            ref Guid token,
+            string path)
         {
             SetInternalCurrentPath(path);
 
             if (token == Guid.Empty)
                 token = Guid.NewGuid();
 
-            _state.TabId = token;
+            SetTabId(token);
 
             _navigationService.CurrentChanged += OnPathChanged;
-            
-            _ = this.SetLastPanelState();
 
-            _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
+            _ = SetLastPanelState();
+
+            _workspaceController.ShowDirectoryMode(
+                _headerNode,
+                _folderNode,
+                _fileNode);
+
             return this;
+        }
+
+        private void SetTabId(Guid tabId)
+        {
+            _state.TabId = tabId;
+
+            _fileNodeContext.TabId = tabId;
+            _folderNodeContext.TabId = tabId;
+            //_driveNodeContext.TabId = tabId;
+            //_navigationContext.TabId = tabId;
         }
 
         private void RefreshFileList(IEnumerable<FileModel> files)

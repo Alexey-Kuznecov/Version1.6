@@ -1,8 +1,10 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using UnityCommander.Modules.FilePanel.Services;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
@@ -33,28 +35,41 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         public static IViewportHost GetViewportTarget(DependencyObject obj)
             => (IViewportHost)obj.GetValue(ViewportTargetProperty);
 
-        private static void OnEnableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnEnableChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
         {
             if (d is not ListView listView)
                 return;
 
             listView.Loaded += (_, __) =>
             {
-                var sv = GetScrollViewer(listView);
-                if (sv == null)
-                    return;
-
+                var scrollViewer = GetScrollViewer(listView);
                 var target = GetViewportTarget(listView);
 
-                if (target == null)
+                if (scrollViewer == null || target == null)
                     return;
 
-                sv.ScrollChanged += (s, args) =>
+                void UpdateViewport()
                 {
                     target.Mapper.Update(
-                        sv.VerticalOffset,
-                        sv.ViewportHeight);
+                        scrollViewer.VerticalOffset,
+                        scrollViewer.ViewportHeight);
+
+                    Debug.WriteLine(
+                        $"Viewport: {scrollViewer.ViewportHeight}, " +
+                        $"Offset: {scrollViewer.VerticalOffset}, " +
+                        $"ActualHeight: {scrollViewer.ActualHeight}");
+                }
+
+                scrollViewer.ScrollChanged += (_, __) =>
+                {
+                    UpdateViewport();
                 };
+
+                listView.Dispatcher.BeginInvoke(
+                    UpdateViewport,
+                    DispatcherPriority.Loaded);
             };
         }
 
