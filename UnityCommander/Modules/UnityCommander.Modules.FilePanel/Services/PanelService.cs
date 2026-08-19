@@ -125,17 +125,25 @@ namespace UnityCommander.Modules.FilePanel.Services
                 return;
 
             var tabId = vm.GetTabToken();
+            SynchronizeActiveTab(tabId);
+        }
 
+        public void SynchronizeActiveTab(Guid tabId)
+        {
             if (!_tabRegistry.Contains(tabId))
                 return;
 
-            if (_panelRegistry.FindPanelByTab(tabId) is not Guid panelId)
+            if (_panelRegistry.FindPanelByTab(tabId)
+                is not Guid panelId)
+            {
                 return;
+            }
 
             _panelRegistry.SetActivePanel(panelId);
             _panelRegistry.SetActiveTab(panelId, tabId);
             _tabRegistry.SetActive(tabId);
         }
+
 
         private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

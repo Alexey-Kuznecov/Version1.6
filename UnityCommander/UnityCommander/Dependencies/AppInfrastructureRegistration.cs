@@ -54,6 +54,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ITabRegistry, TabRegistry>();
             registry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
             registry.RegisterSingleton<ITabContextAccessor, TabContextAccessor>();
+            registry.RegisterSingleton<ITabActivationService, TabActivationService>();
 
             // Docking (перетаскивание UI): логика докинга, синхронизация и общий контекст перемещения панелей
             registry.RegisterSingleton<IDockingService, DockingService>();

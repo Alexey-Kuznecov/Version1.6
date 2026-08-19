@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
@@ -16,6 +17,12 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 
         public void DragOver(IDropInfo dropInfo)
         {
+            Debug.WriteLine(
+               $"DRAG OVER: " +
+               $"Target={dropInfo.TargetItem?.GetType().FullName}, " +
+               $"VisualTarget={dropInfo.VisualTarget?.GetType().FullName}, " +
+               $"Source={dropInfo.DragInfo?.VisualSource?.GetType().FullName}");
+
             var context = _factory.Create(dropInfo);
 
             var result = _controller.DragOver(context);

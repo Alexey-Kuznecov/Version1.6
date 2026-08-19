@@ -1,10 +1,6 @@
-﻿using System.Windows;
-
+﻿
 namespace UnityCommander.WPF.DragDrop
 {
-    /// <summary>
-    /// Interface implemented by Drop Handlers.
-    /// </summary>
     public interface IDropTarget
     {
         void DragOver(IDropInfo dropInfo);

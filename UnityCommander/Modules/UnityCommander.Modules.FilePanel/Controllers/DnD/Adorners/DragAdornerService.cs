@@ -5,7 +5,7 @@ using System.Windows.Media;
 using UnityCommander.Core;
 using UnityCommander.WPF;
 
-namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Adorders
+namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Adorners
 {
     public class DragAdornerService
     {

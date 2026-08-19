@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using UnityCommander.Modules.FilePanel.Controllers.DnD.Adorders;
+using UnityCommander.Modules.FilePanel.Controllers.DnD.Adorners;
 using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
@@ -19,7 +19,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 
             if (adorner == null)
             {
-                // this.CreateAdornerLayer(target);
+                this.CreateAdornerLayer(target);
             }
 
             var border = FindParent<Border>(target);

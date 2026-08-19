@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using System.Windows;
 
 namespace UnityCommander.WPF.DragDrop

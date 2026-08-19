@@ -16,6 +16,7 @@ namespace UnityCommander.Modules.FilePanel
     using Prism.Navigation.Regions;
     using UnityCommander.Modules.FilePanel.Controllers;
     using UnityCommander.Modules.FilePanel.Controllers.DnD;
+    using UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers;
     using UnityCommander.Modules.FilePanel.States.Resolver;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.WPF.DragDrop;
@@ -44,7 +45,11 @@ namespace UnityCommander.Modules.FilePanel
             containerRegistry.RegisterSingleton<ContextMenuController>();
 
             // DragDrop
-            containerRegistry.RegisterSingleton<IDropContextResolver, NodeDragDropContextResolver>();
+            containerRegistry.RegisterSingleton<IDropContextResolver, CompositeDropContextResolver>();
+
+            containerRegistry.RegisterSingleton<IDropTargetResolver, DirectoryDropTargetResolver>();
+            containerRegistry.RegisterSingleton<IDropTargetResolver, AvalonDockDropTargetResolver>();
+
             containerRegistry.RegisterSingleton<IDragDropHandler, FilePanelDragDropHandler>();
             containerRegistry.RegisterSingleton<IDragDropVisualService, DragDropVisualService>();
             containerRegistry.RegisterSingleton<DragDropController>();

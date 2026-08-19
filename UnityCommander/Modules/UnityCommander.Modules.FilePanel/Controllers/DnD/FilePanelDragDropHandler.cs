@@ -1,16 +1,19 @@
 ﻿
+using AvalonDock.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Controls.Layout;
-using UnityCommander.WPF.DragDrop;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
+using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
@@ -18,11 +21,14 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
         : IDragDropHandler
     {
         private IFileOperationService _fileOperationService;
+        private ITabActivationService _tabActivation;
 
         public FilePanelDragDropHandler(
-            ServiceOverrideResolver overrideResolver)
+            ServiceOverrideResolver overrideResolver, 
+            ITabActivationService tabActivation)
         {
             _fileOperationService = overrideResolver.Resolve<IFileOperationService>();
+            _tabActivation = tabActivation;
         }
 
         public bool CanHandle(IDropContext context)
@@ -48,19 +54,25 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             if (!HasValidData(context.Data))
                 return DragDropResult.Deny();
 
-            var cxt = ((ContentNode)context.TargetContext).Context is FileNodeContext;
+            if (dropContext is FilePanelDragDropContext ctx)
+            {
+                if (ctx.TabId is Guid tabId)
+                {
+                    _tabActivation.Activate(tabId);
+                }
+            }
 
             return new DragDropResult
             {
                 IsAllowed = true,
                 Effect = DragDropEffects.Copy,
-                Adorner = cxt ? DropTargetAdorners.Insert : DropTargetAdorners.Highlight,
+                Adorner = ResolveAdorner(context)
             };
         }
 
         public Task DropAsync(
-            IDropContext dropContext,
-            DragDropContext context)
+           IDropContext dropContext,
+           DragDropContext context)
         {
             var sourcePaths =
                 ExtractSources(context.Data);
@@ -69,17 +81,19 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 return Task.CompletedTask;
 
             var targetPath =
-                ResolveTargetPath(context);
+                ResolveTargetPath(context)
+                ?? dropContext.Target as string;
 
             if (string.IsNullOrWhiteSpace(targetPath))
                 return Task.CompletedTask;
 
-            _fileOperationService.CopyAsync(new FileOperationRequest
-            {
-                Sources = sourcePaths,
-                Target = targetPath,
-                ShowDialog = true
-            });
+            _fileOperationService.CopyAsync(
+                new FileOperationRequest
+                {
+                    Sources = sourcePaths,
+                    Target = targetPath,
+                    ShowDialog = true
+                });
 
             return Task.CompletedTask;
         }
@@ -128,6 +142,25 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 FolderNodeContext folderContext => folderContext.Current,
                 _ => null
             };
+        }
+
+        private static Type? ResolveAdorner(
+            DragDropContext context)
+        {
+            if (context.VisualTarget is LayoutDocumentTabItem)
+                return null;
+
+            if (context.TargetContext is ContentNode node)
+            {
+                return node.Context is FileNodeContext
+                    ? DropTargetAdorners.Insert
+                    : DropTargetAdorners.Highlight;
+            }
+
+            if (context.VisualTarget is ListView)
+                return DropTargetAdorners.Highlight;
+
+            return null;
         }
 
         private bool HasSources(DragDropContext context)

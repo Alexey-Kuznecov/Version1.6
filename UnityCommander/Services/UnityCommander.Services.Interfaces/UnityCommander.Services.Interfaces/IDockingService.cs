@@ -2,36 +2,29 @@
 using AvalonDock;
 using AvalonDock.Layout;
 using System;
-using System.Windows.Controls;
+using System.Collections.Generic;
 using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.Services.Interfaces
 {
-    //public enum AnchorableShowStrategy
-    //{
-    //    Left,
-    //    Right,
-    //    Bottom,
-    //    Top
-    //}
-
     public interface IDockingService
     {
+        event EventHandler? ActiveContentChanged;
         public DockingManager GetDockingManager();
-        void ShowDocument(UserControl view, string title);
-        void AddDocumentTab(string title, string realPath, string regionName);
-        void AddActiveDocumentTab(string tabId, string title, string regionName);
-        void ShowAnchorable(UserControl view, string title, bool state, AnchorableShowStrategy strategy = AnchorableShowStrategy.Left);
-        void ShowAnchorable(UserControl view, string title, AnchorableShowStrategy strategy = AnchorableShowStrategy.Left);
-
-        // --- New API ---
-        /// <summary>Возвращает DataContext активного содержимого (ViewModel) или null.</summary>
         public ITabPanelContent GetActiveDirectoryPanel();
+        
+        void AddActiveDocumentTab(
+            string contentId, 
+            string title, 
+            string regionName);
 
-        /// <summary>Если DataContext реализует ITabPanelContent — возвращает текущий путь, иначе null.</summary>
+        void Activate(
+            LayoutDocument document);
+
         string? GetActiveTabPath();
 
-        /// <summary>Событие, когда активное содержимое изменилось (ActiveContentChanged в AvalonDock).</summary>
-        event EventHandler? ActiveContentChanged;
+        IEnumerable<LayoutDocument> GetDocuments();
+
+        LayoutDocument? FindDocument(Guid contentId);
     }
 }

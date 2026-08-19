@@ -57,6 +57,37 @@ namespace UnityCommander.Core.Background
 
         public string OwnerId => "core.backround.service";
 
+        public Task RunAsync(CancellationToken token)
+        {
+            IsRunning = true;
+
+            _watchManager.FileChanged += OnFileChanged;
+
+            _panelRegistry.TabAdded += OnTabAdded;
+            _panelRegistry.TabRemoved += OnTabRemoved;
+            _panelRegistry.ActiveTabChanged += OnActiveTabChanged;
+
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync()
+        {
+            IsRunning = false;
+
+            _watchManager.FileChanged -= OnFileChanged;
+
+            _panelRegistry.TabAdded -= OnTabAdded;
+            _panelRegistry.TabRemoved -= OnTabRemoved;
+            _panelRegistry.ActiveTabChanged -= OnActiveTabChanged;
+
+            return Task.CompletedTask;
+        }
+
+        public IEnumerable<IStatusBarItem> GetItems()
+        {
+            yield return _item;
+        }
+
         private void OnActiveTabChanged(ActiveTabChangedEvent obj)
         {
             SynchronizeVisibleTabs();
@@ -148,37 +179,6 @@ namespace UnityCommander.Core.Background
                     _updater.Renamed(e.Token, e.OldPath, e.FullPath, e.EntryType);
                     break;
             }
-        }
-
-        public Task RunAsync(CancellationToken token)
-        {
-            IsRunning = true;
-
-            _watchManager.FileChanged += OnFileChanged;
-
-            _panelRegistry.TabAdded += OnTabAdded;
-            _panelRegistry.TabRemoved += OnTabRemoved;
-            _panelRegistry.ActiveTabChanged += OnActiveTabChanged;
-
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync()
-        {
-            IsRunning = false;
-
-            _watchManager.FileChanged -= OnFileChanged;
-
-            _panelRegistry.TabAdded -= OnTabAdded;
-            _panelRegistry.TabRemoved -= OnTabRemoved;
-            _panelRegistry.ActiveTabChanged -= OnActiveTabChanged;
-
-            return Task.CompletedTask;
-        }
-
-        public IEnumerable<IStatusBarItem> GetItems()
-        {
-            yield return _item;
         }
     }
 }

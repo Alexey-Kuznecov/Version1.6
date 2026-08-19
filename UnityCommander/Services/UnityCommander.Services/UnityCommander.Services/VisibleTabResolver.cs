@@ -4,21 +4,17 @@ using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
     public sealed class VisibleTabResolver : IVisibleTabResolver
     {
-        private readonly DockingSyncContext _dockingSyncContext;
         private readonly DockingManager _manager;
 
         public VisibleTabResolver(
-            DockingSyncContext dockingSyncContext,
             IDockingService dockingService)
         {
-            _dockingSyncContext = dockingSyncContext;
             _manager = dockingService.GetDockingManager();
         }
 

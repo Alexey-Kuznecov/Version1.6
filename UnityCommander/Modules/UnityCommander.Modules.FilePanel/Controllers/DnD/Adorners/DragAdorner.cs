@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Adorders
+namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Adorners
 {
     public class DragAdorner : Adorner
     {

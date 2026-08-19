@@ -14,5 +14,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
         public object? Target { get; init; }
 
         public UIElement? VisualTarget { get; init; }
+
+        public object TabId { get; internal set; }
     }
 }

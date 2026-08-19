@@ -4,6 +4,7 @@ using AvalonDock.Layout;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,66 +13,18 @@ using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Docking
 {
-    public class DockingService : IDockingService
+    public sealed class DockingService : IDockingService
     {
-        private DockingManager _dockingManager;
-        private DockingSyncContext _dockingSyncContext;
+        private DockingManager? _dockingManager;
 
-        public event EventHandler ActiveContentChanged;
+        public event EventHandler? ActiveContentChanged;
 
-        public DockingService(DockingManager dockingManager, DockingSyncContext dockingSyncContext)
+        public DockingService(DockingManager dockingManager)
         {
             _dockingManager = dockingManager;
-            _dockingSyncContext = dockingSyncContext;
         }
 
-        public void SetDockingManager(DockingManager dockingManager) =>_dockingManager = dockingManager;
-        
-        public DockingManager GetDockingManager() => _dockingManager;
-
-        public void ShowDocument(UserControl view, string title)
-        {
-            var doc = new LayoutDocument
-            {
-                Title = title,
-                Content = view
-            };
-
-            var documentsPane = _dockingManager.Layout.Descendents()
-                .OfType<LayoutDocumentPane>().FirstOrDefault();
-
-            if (documentsPane == null)
-            {
-                var newPane = new LayoutDocumentPane();
-                _dockingManager.Layout.RootPanel.Children.Add(newPane);
-                documentsPane = newPane;
-            }
-
-            documentsPane.Children.Add(doc);
-            doc.IsSelected = true;
-        }
-
-        public void AddDocumentTab(string title, string realPath, string regionName)
-        {
-            var contentControl = new ContentControl();
-            RegionManager.SetRegionName(contentControl, regionName);
-            ViewModelLocator.SetAutoWireViewModel(contentControl, true);
-            
-            var document = new LayoutDocument
-            {
-                Title = title,
-                Content = contentControl,
-                ContentId = realPath // важно для восстановления
-            };
-
-            _dockingSyncContext.GetOrCreateTabId(document); // Вот это смотри
-            _dockingManager.Layout.Descendents()
-                .OfType<LayoutDocumentPane>()
-                .First()
-                .Children.Add(document);
-        }
-
-        public void AddActiveDocumentTab(string tabId, string title, string regionName)
+        public void AddActiveDocumentTab(string contentId, string title, string regionName)
         {
             var contentControl = new ContentControl();
             RegionManager.SetRegionName(contentControl, regionName);
@@ -81,17 +34,16 @@ namespace UnityCommander.Services.Docking
             {
                 Title = title,
                 Content = contentControl,
-                ContentId = tabId // важно для восстановления
+                ContentId = contentId
             };
 
-            // 🔥 Подписка после загрузки (когда VM уже создана)
             contentControl.Loaded += (s, e) =>
             {
                 if (GetActiveDirectoryPanel() is IDirectoryPanel panel)
                 {
                     panel.TabTitleChanged += formatPath =>
                     {
-                        document.Title = formatPath; // обновляем вкладку
+                        document.Title = formatPath;
                     };
                 }
             };
@@ -104,7 +56,6 @@ namespace UnityCommander.Services.Docking
             }
             else
             {
-                // fallback
                 var firstPane = _dockingManager.Layout
                     .Descendents()
                     .OfType<LayoutDocumentPane>()
@@ -115,130 +66,47 @@ namespace UnityCommander.Services.Docking
             }
         }
 
-        private LayoutDocumentPane GetActiveDocumentPane()
+        public void SetDockingManager(
+            DockingManager dockingManager)
         {
-            var activeContent = _dockingManager.Layout.ActiveContent as LayoutDocument;
-            if (activeContent == null)
+            _dockingManager = dockingManager;
+        }
+
+        public DockingManager GetDockingManager()
+            => _dockingManager;
+
+        public void Activate(LayoutDocument document)
+        {
+            document.IsActive = true;
+        }
+
+        public LayoutDocument? GetActiveDocument()
+        {
+            return _dockingManager?
+                .Layout
+                .ActiveContent as LayoutDocument;
+        }
+
+        public IEnumerable<LayoutDocument> GetDocuments()
+        {
+            return _dockingManager.Layout
+                .Descendents()
+                .OfType<LayoutDocument>();
+        }
+
+        public LayoutDocumentPane? GetActiveDocumentPane()
+        {
+            return GetActiveDocument()?.Parent
+                as LayoutDocumentPane;
+        }
+
+        public ITabPanelContent? GetActiveDirectoryPanel()
+        {
+            if (_dockingManager?.ActiveContent
+                is not LayoutContent layout)
+            {
                 return null;
-
-            return activeContent.Parent as LayoutDocumentPane;
-        }
-
-        public void ShowAnchorable(UserControl view, string title, bool state, AnchorableShowStrategy strategy = AnchorableShowStrategy.Left)
-        {
-            var anchorable = new LayoutAnchorable
-            {
-                Title = title,
-                Content = view,
-                CanClose = false,
-                CanHide = true
-            };
-
-            LayoutAnchorGroup anchorablePane = null;
-
-            switch (strategy)
-            {
-                case AnchorableShowStrategy.Left:
-                    anchorablePane = _dockingManager.Layout.LeftSide.Children.FirstOrDefault();
-                    break;
-                case AnchorableShowStrategy.Right:
-                    anchorablePane = _dockingManager.Layout.RightSide.Children.FirstOrDefault();
-                    break;
-                case AnchorableShowStrategy.Bottom:
-                    anchorablePane = _dockingManager.Layout.BottomSide.Children.FirstOrDefault();
-                    break;
-                case AnchorableShowStrategy.Top:
-                    anchorablePane = _dockingManager.Layout.TopSide.Children.FirstOrDefault();
-                    break;
             }
-
-            if (anchorablePane == null)
-            {
-                anchorablePane = new LayoutAnchorGroup();
-                switch (strategy)
-                {
-                    case AnchorableShowStrategy.Left:
-                        _dockingManager.Layout.LeftSide.Children.Add(anchorablePane);
-                        break;
-                    case AnchorableShowStrategy.Right:
-                        _dockingManager.Layout.RightSide.Children.Add(anchorablePane);
-                        break;
-                    case AnchorableShowStrategy.Bottom:
-                        _dockingManager.Layout.BottomSide.Children.Add(anchorablePane);
-                        break;
-                    case AnchorableShowStrategy.Top:
-                        _dockingManager.Layout.TopSide.Children.Add(anchorablePane);
-                        break;
-                }
-            }
-
-            anchorablePane.Children.Add(anchorable);
-            anchorable.IsSelected = state;
-            anchorable.IsActive = state;
-            anchorable.Show();
-        }
-
-        public void ShowAnchorable(UserControl view, string title, AnchorableShowStrategy strategy = AnchorableShowStrategy.Left)
-        {
-            //var anchorable = new LayoutAnchorable
-            //{
-            //    Title = title,
-            //    Content = view,
-            //    CanClose = false,
-            //    CanHide = true
-            //};
-
-            //LayoutAnchorablePane anchorablePane = null;
-
-            //switch (strategy)
-            //{
-            //    case AnchorableShowStrategy.Left:
-            //        anchorablePane = _dockingManager.Layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.Parent == _dockingManager.Layout.LeftSide);
-            //        if (anchorablePane == null)
-            //        {
-            //            anchorablePane = new LayoutAnchorablePane();
-            //            _dockingManager.Layout.LeftSide.Children.Add(anchorablePane);
-            //        }
-            //        break;
-            //    case AnchorableShowStrategy.Right:
-            //        anchorablePane = _dockingManager.Layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.Parent == _dockingManager.Layout.RightSide);
-            //        if (anchorablePane == null)
-            //        {
-            //            anchorablePane = new LayoutAnchorablePane();
-            //            _dockingManager.Layout.RightSide.Children.Add(anchorablePane);
-            //        }
-            //        break;
-            //    case AnchorableShowStrategy.Bottom:
-            //        anchorablePane = _dockingManager.Layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.Parent == _dockingManager.Layout.BottomSide);
-            //        if (anchorablePane == null)
-            //        {
-            //            anchorablePane = new LayoutAnchorablePane();
-            //            _dockingManager.Layout.BottomSide.Children.Add(anchorablePane);
-            //        }
-            //        break;
-            //    case AnchorableShowStrategy.Top:
-            //        anchorablePane = _dockingManager.Layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(p => p.Parent == _dockingManager.Layout.TopSide);
-            //        if (anchorablePane == null)
-            //        {
-            //            anchorablePane = new LayoutAnchorablePane();
-            //            _dockingManager.Layout.TopSide.Children.Add(anchorablePane);
-            //        }
-            //        break;
-            //}
-
-            //anchorablePane.Children.Add(anchorable);
-
-            //anchorable.IsActive = true;
-            //anchorable.IsSelected = true;
-            //anchorable.AddToLayout(_dockingManager, false);
-        }
-
-        // --- существующие методы ShowDocument / AddDocumentTab и т.д. ---
-
-        public ITabPanelContent GetActiveDirectoryPanel()
-        {
-            if (_dockingManager?.ActiveContent is not LayoutContent layout)
-                return null;
 
             if (layout.Content is not ContentControl cc)
                 return null;
@@ -246,14 +114,29 @@ namespace UnityCommander.Services.Docking
             if (cc.Content is not FrameworkElement fe)
                 return null;
 
-            return fe.DataContext as ITabPanelContent;
+            return fe.DataContext
+                as ITabPanelContent;
         }
 
         public string GetActiveTabPath()
         {
-            if (GetActiveDirectoryPanel() is ITabPanelContent directoryPanel)
+            if (GetActiveDirectoryPanel()
+                is ITabPanelContent directoryPanel)
+            {
                 return directoryPanel.GetCurrentPath();
-            throw new ArgumentNullException();
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        public LayoutDocument FindDocument(Guid contentId)
+        {
+            var document = GetDocuments()
+               .FirstOrDefault(x =>
+                   Guid.TryParse(x.ContentId, out var id)
+                   && id == contentId);
+
+                return document;
         }
     }
 }

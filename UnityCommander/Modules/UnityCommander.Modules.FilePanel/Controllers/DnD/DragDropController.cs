@@ -39,7 +39,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 _handlers.FirstOrDefault(
                     h => h.CanHandle(dropContext));
 
-             if (handler == null)
+            if (handler == null)
                 return DragDropResult.Deny();
 
             var result =

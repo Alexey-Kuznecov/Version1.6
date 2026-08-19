@@ -9,13 +9,14 @@ using UnityCommander.Core.Background;
 using UnityCommander.Core.Behaviors.Selection;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
+using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services;
-using UnityCommander.Services.Background;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Selection;
 using UnityCommander.Settings;
 using UnityCommander.SystemMetrics.Monitoring;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Dependencies
 {
