@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Operation;
 using UnityCommander.Views.CopyDialogs;
@@ -81,31 +82,36 @@ namespace UnityCommander.ViewModels.Dialogs
             Result = new CopyDialogResult
             {
                 Accepted = true,
-                Request = BuildRequest()
+                Request = BuildRequest(FileOperationType.Copy)
             };
 
             RequestClose?.Invoke();
         });
 
-        private FileOperationRequest BuildRequest()
+        public ICommand MoveCommand => new DelegateCommand(() =>
         {
-            var request = new FileOperationRequest();
-
-            foreach (var source in this.manySource)
+            Result = new CopyDialogResult
             {
-                request.Sources.Add(source);
-            }
+                Accepted = true,
+                Request = BuildRequest(FileOperationType.Move)
+            };
 
-            request.Target = this.Target;
+            RequestClose?.Invoke();
+        });
+
+        private FileOperationRequest BuildRequest(FileOperationType type)
+        {
+            var request = new FileOperationRequest
+            {
+                Type = type,
+                Target = Target
+            };
+
+            foreach (var source in manySource)
+                request.Sources.Add(source);
 
             return request;
         }
-
-        public ICommand MoveCommand => new DelegateCommand(() =>
-        {
-            //var cmdMove = this.globalCommandManager.GetCommand("Move");
-            //cmdMove.Command.Execute(new object[] { this.Source, this.Target });
-        });
 
         public CopyDialogResult Result { get; set; }
 

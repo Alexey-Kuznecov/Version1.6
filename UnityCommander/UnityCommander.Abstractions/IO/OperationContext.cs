@@ -10,5 +10,7 @@ namespace UnityCommander.Abstractions.IO
         public CopyOperation? Operation { get; init; }
 
         public CopyInfo? Info { get; init; }
+
+        public ICopyManager Manager { get; init; }
     }
 }

@@ -57,14 +57,14 @@ namespace MultiColumns.DateTime
                 {
                     new ColumnModel
                     {
-                        Id = "multi.lastAccessTime",
-                        Header = "Last Access",
+                        Id = "multi.random",
+                        Header = "Random (Plugin) ##",
                         //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
                         UpdatePriority = ColumnUpdatePriority.Background,
                         Width = 100,
                         Order = 3,
-                        SyncGroup = "LastAccess",
+                        SyncGroup = "Random",
                         IsDynamic = true,
                         ColumnValueHandler = f =>
                         {

@@ -74,14 +74,6 @@ namespace UnityCommander.Core.IO.Operations
             copyBehaviors = changeOn;
         }
 
-        internal void RaiseFileAlreadyExistsEvent(CopyInfo info)
-        {
-            if (this.FileAlreadyExistsEvent != null)
-            {
-                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
-            }
-        }
-
         public void Copy(string source, string target)
         {
             FileInfo info = new FileInfo(source);
@@ -171,6 +163,14 @@ namespace UnityCommander.Core.IO.Operations
             });
 
             t.Wait();
+        }
+
+        internal void RaiseFileAlreadyExistsEvent(CopyInfo info)
+        {
+            if (this.FileAlreadyExistsEvent != null)
+            {
+                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
+            }
         }
 
         private void RaiseEvent(CopyInfo info)

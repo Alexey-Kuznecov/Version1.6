@@ -100,8 +100,8 @@
                                         TrackBrush="#333">
                                         <icon:IconRender
                                             Key="{Binding Icon}"
-                                            Width="12"
-                                            Height="12"
+                                            Width="16"
+                                            Height="16"
                                             Brush="White" />
 
                                     </control:CircularProgress>

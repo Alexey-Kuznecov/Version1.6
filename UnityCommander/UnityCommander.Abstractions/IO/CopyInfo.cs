@@ -4,6 +4,9 @@ namespace UnityCommander.Abstractions.IO
     public class CopyInfo
     {
         public Guid OperationId { get; set; }
+        
+        public FileTransferStatus Status { get; set; }
+
         public Guid ItemId { get; set; }
 
         public string Name { get; set; }

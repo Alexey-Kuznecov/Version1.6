@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Abstractions.IO;
+
 namespace UnityCommander.Abstractions.Overrides
 {
     public class FileOperationRequest
@@ -8,5 +10,6 @@ namespace UnityCommander.Abstractions.Overrides
             = new List<string>();
         public string? Target { get; set; }
         public bool ShowDialog { get; set; }
+        public FileOperationType Type { get; init; }
     }
 }

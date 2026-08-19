@@ -58,75 +58,6 @@ namespace UnityCommander.Modules.FilePanel.Columns
                             return $"(copied)";
                         }
                     },
-
-                    //new ColumnModel
-                    //{
-                    //    Id = "core.live4",
-                    //    Header = "Progess #####",
-                    //    CellTemplateResourceKey = "ColumnTextDataTemplate",
-                    //    UpdatePriority = ColumnUpdatePriority.Normal,
-                    //    Width = 100,
-                    //    Order = 3,
-                    //    SyncGroup = "Live4",
-                    //    RefreshInterval = 2000,
-                    //    IsDynamic = true,
-                    //    ColumnValueHandler = f =>
-                    //    {
-                    //        if (_fileStateService.TryGet(((BaseDirectory)f).Path, out var state))
-                    //        {
-                    //            return $"{state.Progress}%";
-                    //        }
-
-
-                    //        var r = Random.Shared.Next(10000, 11000);
-                    //        return $"{r}%";
-                    //    }
-                    //},
-
-                    //new ColumnModel
-                    //{
-                    //    Id = "core.live2",
-                    //    Header = "Progess ####",
-                    //    CellTemplateResourceKey = "ColumnTextDataTemplate",
-                    //    UpdatePriority = ColumnUpdatePriority.Normal,
-                    //    Width = 100,
-                    //    Order = 2,
-                    //    SyncGroup = "Live",
-                    //    IsDynamic = true,
-                    //    RefreshInterval = 3000,
-                    //    ColumnValueHandler = f =>
-                    //    {
-                    //        if (_fileStateService.TryGet(((BaseDirectory)f).Path, out var state))
-                    //        {
-                    //            return $"{state.Progress}%";
-                    //        }
-
-                    //        var r = Random.Shared.Next(0, 1000);
-                    //        return $"{r}%";
-                    //    }
-                    //},
-                    //new ColumnModel
-                    //{
-                    //    Id = "core.live3",
-                    //    Header = "Progess ###",
-                    //    CellTemplateResourceKey = "ColumnTextDataTemplate",
-                    //    UpdatePriority = ColumnUpdatePriority.Normal,
-                    //    Width = 100,
-                    //    Order = 4,
-                    //    SyncGroup = "Live",
-                    //    IsDynamic = true,
-                    //    RefreshInterval = 3000,
-                    //    ColumnValueHandler = f =>
-                    //    {
-                    //        if (_fileStateService.TryGet(((BaseDirectory)f).Path, out var state))
-                    //        {
-                    //            return $"{state.Progress}%";
-                    //        }
-
-                    //        var r = Random.Shared.Next(0, 100);
-                    //        return $"{r}%";
-                    //    }
-                    //},
                     new ColumnModel
                     {
                         Id = "core.creationTime",
@@ -170,6 +101,23 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         Order = 5,
                         SyncGroup = "Size",
                         ColumnValueHandler = f => ((FileModel)f).Size
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.random",
+                        Header = "Random (Core) ###",
+                        //DisplayMemberPath = "LastAccessTime",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        UpdatePriority = ColumnUpdatePriority.Realtime,
+                        Width = 100,
+                        Order = 3,
+                        SyncGroup = "Random",
+                        IsDynamic = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var r = Random.Shared.Next(100, 200);
+                            return $"{r}%";
+                        }
                     }
                 };
             }
@@ -210,6 +158,23 @@ namespace UnityCommander.Modules.FilePanel.Columns
                         Order = 3,
                         SyncGroup = "LastAccess",
                         ColumnValueHandler = f => ((BaseDirectory)f).LastAccessTime
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.random",
+                        Header = "Random (Core) ###",
+                        //DisplayMemberPath = "LastAccessTime",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        UpdatePriority = ColumnUpdatePriority.Background,
+                        Width = 100,
+                        Order = 3,
+                        SyncGroup = "Random",
+                        IsDynamic = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var r = Random.Shared.Next(100, 200);
+                            return $"{r}%";
+                        }
                     }
                 };
             }

@@ -66,7 +66,7 @@ namespace UnityCommander.Core.Background
             if (tab == null)
                 return;
 
-            _notifier.NotifyChanged(tab.GetCurrentPath());
+            //_notifier.NotifyChanged(tab.GetCurrentPath());
         }
 
         private void SynchronizeVisibleTabs()

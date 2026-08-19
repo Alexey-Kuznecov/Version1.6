@@ -26,6 +26,10 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IFileCopyEngine, DefaultFileCopyEngine>();
             registry.RegisterSingleton<ICopyOperationService, CopyOperationService>();
             registry.RegisterSingleton<IOperationProgressService, OperationProgressService>();
+
+            registry.RegisterSingleton<IMoveStrategy, SameVolumeMoveStrategy>();
+            registry.RegisterSingleton<IMoveStrategy, CrossVolumeMoveStrategy>();
+            registry.RegisterSingleton<MoveStrategyResolver>();
         }
     }
 }

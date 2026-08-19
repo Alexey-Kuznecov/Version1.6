@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -19,18 +20,21 @@ namespace UnityCommander.Operation
         private readonly IOperationIndex _operationIndex;
         private readonly ICopyOperationService _operationService;
         private readonly IOperationProgressService _operationProgress;
+        private readonly MoveStrategyResolver _moveStrategyResolver;
         private readonly IEventBus _eventBus;
 
         public DefaultFileCopyEngine(
             ICopyOperationService operationService,
             IOperationProgressService operationProgress,
             IOperationIndex operationIndex,
+            MoveStrategyResolver moveStrategyResolver,
             IEventBus eventBus)
         {
             _eventBus = eventBus;
             _operationIndex = operationIndex;
             _operationProgress = operationProgress;
             _operationService = operationService;
+            _moveStrategyResolver = moveStrategyResolver;
         }
 
         private void OnCopyFileReport(CopyInfo info)
@@ -46,73 +50,222 @@ namespace UnityCommander.Operation
 
         public async Task StartAsync(FileOperationRequest request)
         {
-            var items = request.Sources.Select(source =>
-            {
-                var fileName = Path.GetFileName(source);
+            var operation = CreateOperation(request);
 
-                return new FileTransferItem
+            RegisterOperation(operation);
+
+            var manager = CreateCopyManager(operation);
+
+            try
+            {
+                await ExecuteOperationAsync(
+                    request,
+                    operation,
+                    manager);
+            }
+            catch (OperationCanceledException)
+            {
+                if (request.Type == FileOperationType.Copy)
+                    await CleanupAsync(operation);
+                //else
+                //    DeleteSources(operation);
+                throw;
+            }
+            catch (Exception e)
+            {
+
+                Debug.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                UnregisterOperation(request.OperationId);
+            }
+        }
+
+        private void UnregisterOperation(Guid operationId)
+        {
+            _operationService.Unregister(operationId);
+            _operationProgress.Unregister(operationId);
+        }
+
+        private async Task ExecuteOperationAsync(
+            FileOperationRequest request,
+            CopyOperation operation,
+            CopyManager manager)
+        {
+            var deletesSourceImmediately = false;
+
+            foreach (var item in operation.Items)
+            {
+                var context = CreateOperationContext(
+                    manager,
+                    request,
+                    operation,
+                    item);
+
+                var destination = ResolveDestination(
+                    request.Target,
+                    item.SourcePath,
+                    manager);
+
+                //Directory.CreateDirectory(destination);
+
+                item.ShouldCleanupDestination = true;
+
+                if (request.Type == FileOperationType.Copy)
+                {
+                    await manager.CopyAsync(
+                        context,
+                        item.SourcePath,
+                        destination);
+
+                    continue;
+                }
+
+                var strategy = _moveStrategyResolver.Resolve(
+                    item.SourcePath,
+                    destination);
+
+                await strategy.ExecuteAsync(
+                    context,
+                    item.SourcePath,
+                    destination);
+                
+                deletesSourceImmediately |= strategy.DeletesSource;
+            }
+
+            if (request.Type == FileOperationType.Move &&
+                deletesSourceImmediately)
+            {
+                DeleteSources(operation);
+            }
+        }
+
+        private string ResolveDestination(
+            string target,
+            string source,
+            CopyManager copyManager)
+        {
+            var sourceInfo = new DirectoryInfo(source);
+
+            if (!copyManager.CopyOnlyFolderContent &&
+                sourceInfo.Exists)
+            {
+                return Path.Combine(
+                    target,
+                    sourceInfo.Name);
+            }
+
+            return target;
+        }
+
+        private OperationContext CreateOperationContext(
+            CopyManager manager,
+            FileOperationRequest request,
+            CopyOperation operation,
+            FileTransferItem item)
+        {
+            return new OperationContext
+            {
+                Manager = manager,
+                OperationId = request.OperationId,
+                Cancellation = new CancellationTokenSource(),
+                Operation = operation,
+                Info = new CopyInfo
+                {
+                    OperationId = request.OperationId,
+                    ItemId = item.Id,
+                    Source = item.SourcePath,
+                    Destination = request.Target
+                }
+            };
+        }
+
+        private CopyManager CreateCopyManager(CopyOperation operation)
+        {
+            var manager = new CopyManager(operation);
+
+            _operationService.Register(
+                manager,
+                _operationProgress);
+
+            manager.CopyFileReport += OnCopyFileReport;
+            manager.FileCompleted += OnFileCompleted;
+
+            return manager;
+        }
+
+        private void RegisterOperation(CopyOperation operation)
+        {
+            _operationProgress.Register(operation);
+
+            _operationIndex.Register(
+                operation,
+                operation.Items
+                    .SelectMany(x => new[]
+                    {
+                x.SourcePath,
+                x.DestinationPath
+                    }));
+        }
+
+        private CopyOperation CreateOperation(FileOperationRequest request)
+        {
+            var items = request.Sources
+                .Select(source => new FileTransferItem
                 {
                     Id = Guid.NewGuid(),
+                    Status = FileTransferStatus.Pending,
                     SourcePath = source,
-                    DestinationPath = Path.Combine(request.Target, fileName)
-                };
-            }).ToList();
+                    DestinationPath = Path.Combine(
+                        request.Target,
+                        Path.GetFileName(source))
+                })
+                .ToList();
 
-            var op = new CopyOperation
+            return new CopyOperation
             {
                 Id = request.OperationId,
                 Items = items,
                 TotalBytes = items.Sum(x => GetSize(x.SourcePath))
             };
+        }
 
-            _operationProgress.Register(op);
-
-            _operationIndex.Register(op, items.Select(i => i.SourcePath)
-                .Concat(items.Select(i => i.DestinationPath)));
-
-            var copyManager = new CopyManager(op);
-
-            _operationService.Register(copyManager, _operationProgress);
-
-            copyManager.CopyFileReport += OnCopyFileReport;
-            copyManager.FileCompleted += OnFileCompleted;
-
-            foreach (var item in op.Items)
+        private void DeleteSources(CopyOperation operation)
+        {
+            foreach (var item in operation.Items)
             {
-                var ctx = new OperationContext
-                {
-                    OperationId = request.OperationId,
-                    Cancellation = new CancellationTokenSource(),
-                    Operation = op,
-                    Info = new CopyInfo
-                    {
-                        OperationId = request.OperationId,
-                        ItemId = item.Id,
-                        Source = item.SourcePath,
-                        Destination = request.Target,
-                    }
-                };
+                if (!item.ShouldCleanupDestination)
+                    continue;
 
-                var srcInfo = new DirectoryInfo(item.SourcePath);
-                string destForThisSource;
-                if (!copyManager.CopyOnlyFolderContent && srcInfo.Exists)
-                    destForThisSource = Path.Combine(request.Target, srcInfo.Name);
-                else
-                    destForThisSource = request.Target;
+                Delete(item.SourcePath);
+            }
+        }
 
-                Directory.CreateDirectory(destForThisSource);
+        private async Task CleanupAsync(CopyOperation operations)
+        {
+            foreach (var item in operations.Items)
+            {
+                if (!item.ShouldCleanupDestination)
+                    continue;
 
-                await copyManager.CopyAsync(ctx, item.SourcePath, destForThisSource);
+                Delete(item.DestinationPath);
+            }
+        }
+
+        private static void Delete(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                return;
             }
 
-            // TODO: Revisit operation cleanup.
-            // Unregister is currently performed after all operation items complete.
-            // Verify lifecycle when cancellation, failure, parallel operations,
-            // or partial completion are introduced.
-            _operationService.Unregister(request.OperationId);
-            _operationProgress.Unregister(request.OperationId);
-
-            await Task.CompletedTask;
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
         }
 
         private static long GetSize(string path)

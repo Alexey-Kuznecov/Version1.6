@@ -23,6 +23,8 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             FontSize="20"
+            FontWeight="Bold"
+            Foreground="LightSlateGray"
             Text="Plugins" />
         <ListBox
             Grid.Row="1"
