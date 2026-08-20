@@ -1,15 +1,14 @@
 ﻿
 using System.Diagnostics;
-using UnityCommander.WPF.DragDrop;
 
-namespace UnityCommander.Modules.FilePanel.Controllers.DnD
+namespace UnityCommander.WPF.DragDrop
 {
     public sealed class GongDropAdapter : IDropTarget
     {
-        private readonly DragDropController _controller;
-        private readonly DragDropContextFactory _factory;
+        private readonly IDragDropController _controller;
+        private readonly IDragDropContextFactory _factory;
 
-        public GongDropAdapter(DragDropController controller, DragDropContextFactory factory)
+        public GongDropAdapter(IDragDropController controller, IDragDropContextFactory factory)
         {
             _controller = controller;
             _factory = factory;

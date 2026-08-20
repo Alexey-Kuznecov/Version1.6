@@ -160,6 +160,10 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             if (context.VisualTarget is ListView)
                 return DropTargetAdorners.Highlight;
 
+
+            if (context.VisualTarget is Button)
+                return DropTargetAdorners.Highlight;
+
             return null;
         }
 

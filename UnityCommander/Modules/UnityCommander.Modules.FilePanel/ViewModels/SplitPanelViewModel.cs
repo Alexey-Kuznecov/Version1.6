@@ -44,6 +44,7 @@ using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Settings;
 using UnityCommander.Settings.Abstactions;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {

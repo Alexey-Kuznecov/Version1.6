@@ -11,6 +11,7 @@
     xmlns:layout="clr-namespace:UnityCommander.Controls.Layout;assembly=UnityCommander.Controls"
     xmlns:localControl="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:navigation="clr-namespace:UnityCommander.Controls.Navigation;assembly=UnityCommander.Controls"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.Modules.FilePanel.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:SplitPanelViewModel}"
@@ -70,10 +71,12 @@
 
         <ContentControl Content="{Binding LayoutRoot}" />
         <ContentControl Grid.Row="1">
-            <localControl:NavigationPanel
-                Margin="10"
-                DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
-                NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
+            <AdornerDecorator>
+                <navigation:NavigationPanel
+                    Margin="10"
+                    DirectoryPath="{Binding CurrentDirectory, Mode=TwoWay}"
+                    NavigateCommand="{Binding UpdateCommand, Mode=OneWay}" />
+            </AdornerDecorator>
         </ContentControl>
     </Grid>
 </UserControl>

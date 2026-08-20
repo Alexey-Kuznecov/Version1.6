@@ -15,31 +15,15 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             UIElement target,
             DragDropResult result)
         {
-            var adorner = AdornerLayer.GetAdornerLayer(target);
-
-            if (adorner == null)
-            {
-                this.CreateAdornerLayer(target);
-            }
-
-            var border = FindParent<Border>(target);
-
-            if (border != null)
-            {
-                DragDropVisual.SetIsDropTarget(border, result.IsAllowed);
-                var value = DragDropVisual.GetIsDropTarget(border);
-                if (value)
-                {
-                    //Debug.WriteLine(value.ToString());
-                }
-            }
+            DragDropVisual.SetIsDropTarget(
+                target,
+                result.IsAllowed);
         }
 
         public void Clear(UIElement target)
         {
-            var border = FindParent<Border>(target);
             DragDropVisual.SetIsDropTarget(
-                border,
+                target,
                 false);
         }
 

@@ -49,11 +49,12 @@ namespace UnityCommander.Modules.FilePanel
 
             containerRegistry.RegisterSingleton<IDropTargetResolver, DirectoryDropTargetResolver>();
             containerRegistry.RegisterSingleton<IDropTargetResolver, AvalonDockDropTargetResolver>();
+            containerRegistry.RegisterSingleton<IDropTargetResolver, NavigationButtonDropTargetResolver>();
 
             containerRegistry.RegisterSingleton<IDragDropHandler, FilePanelDragDropHandler>();
             containerRegistry.RegisterSingleton<IDragDropVisualService, DragDropVisualService>();
-            containerRegistry.RegisterSingleton<DragDropController>();
-            containerRegistry.RegisterSingleton<DragDropContextFactory>();
+            containerRegistry.RegisterSingleton<IDragDropController, DragDropController>();
+            containerRegistry.RegisterSingleton<IDragDropContextFactory, DragDropContextFactory>();
             containerRegistry.RegisterSingleton<GongDropAdapter>();
         }   
     }

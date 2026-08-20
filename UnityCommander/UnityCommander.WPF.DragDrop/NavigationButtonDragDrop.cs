@@ -1,21 +1,23 @@
 ﻿
-using AvalonDock.Controls;
 using System.Windows;
-using Prism.Ioc;
-using DragDrop = UnityCommander.WPF.DragDrop.DragDrop;
-using UnityCommander.WPF.DragDrop;
+using System.Windows.Controls;
 
-namespace UnityCommander.Modules.FilePanel.Controllers.DnD
+namespace UnityCommander.WPF.DragDrop
 {
-
-    public static class AvalonDockDragDrop
+    public static class NavigationButtonDragDrop
     {
         public static readonly DependencyProperty EnableProperty =
             DependencyProperty.RegisterAttached(
                 "Enable",
                 typeof(bool),
-                typeof(AvalonDockDragDrop),
+                typeof(NavigationButtonDragDrop),
                 new PropertyMetadata(false, OnEnableChanged));
+
+        public static readonly DependencyProperty DropPathProperty =
+            DependencyProperty.RegisterAttached(
+                "DropPath",
+                typeof(string),
+                typeof(NavigationButtonDragDrop));
 
         public static void SetEnable(
             DependencyObject element,
@@ -30,19 +32,32 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             return (bool)element.GetValue(EnableProperty);
         }
 
+        public static void SetDropPath(
+            DependencyObject element,
+            string value)
+        {
+            element.SetValue(DropPathProperty, value);
+        }
+
+        public static string GetDropPath(
+            DependencyObject element)
+        {
+            return (string)element.GetValue(DropPathProperty);
+        }
+
         private static void OnEnableChanged(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
-            if (d is not LayoutDocumentTabItem tab ||
+            if (d is not Button button ||
                 e.NewValue is not true)
                 return;
 
             var adapter =
                 ContainerLocator.Container.Resolve<GongDropAdapter>();
 
-            DragDrop.SetIsDropTarget(tab, true);
-            DragDrop.SetDropHandler(tab, adapter);
+            DragDrop.SetIsDropTarget(button, true);
+            DragDrop.SetDropHandler(button, adapter);
         }
     }
 }

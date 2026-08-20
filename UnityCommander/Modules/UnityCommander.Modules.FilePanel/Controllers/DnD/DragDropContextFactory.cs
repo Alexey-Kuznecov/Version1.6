@@ -8,7 +8,7 @@ using UnityCommander.Modules.FilePanel.States;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
-    public class DragDropContextFactory
+    public class DragDropContextFactory : IDragDropContextFactory
     {
         public DragDropContext Create(
             IDropInfo info)

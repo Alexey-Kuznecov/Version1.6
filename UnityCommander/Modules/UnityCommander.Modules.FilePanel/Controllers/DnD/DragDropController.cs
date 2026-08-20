@@ -6,7 +6,7 @@ using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
-    public sealed class DragDropController
+    public sealed class DragDropController : IDragDropController
     {
         private readonly IEnumerable<IDropContextResolver> _resolvers;
         private readonly IEnumerable<IDragDropHandler> _handlers;
