@@ -1,20 +1,23 @@
 ﻿
 using PluginSystem.Abstractions.Plugin;
 using System.Collections.Generic;
+using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Logging.Profiling;
+using UnityCommander.Services.Bootstrap;
 
 namespace UnityCommander.Services.Interfaces.Plugins
 {
     public class PluginCatalog: IPluginCatalog
     {
-        private LogHub _hub;
-
         private IPluginManager _manager;
 
-        public PluginCatalog(IPluginManager manager, LogHub hub)
+        private readonly LoggerCreator _loggerCreator;
+
+        public PluginCatalog(IPluginManager manager, LoggerCreator loggerCreator)
         {
-            _hub = hub;
+            _loggerCreator = loggerCreator;
             _manager = manager;
         }
 
@@ -27,7 +30,7 @@ namespace UnityCommander.Services.Interfaces.Plugins
 
         public void LoadMetadata()
         {
-            using (new LogScopeTimer(_hub, LogScope.Startup, "Plugin"))
+            using (_loggerCreator.ProfileScope(LogScope.Startup, "Plugin"))
             {
                 _manager.LoadMetadata();
             }

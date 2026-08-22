@@ -27,5 +27,9 @@ namespace UnityCommander.Logging
                 category,
                 scope);
         }
+
+        public static LoggerCreator GetLoggerCreator()
+            => _loggerCreator ?? throw new InvalidOperationException(
+                "LoggerCreator has not been initialized.");
     }
 }

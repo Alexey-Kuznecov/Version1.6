@@ -18,8 +18,8 @@ namespace UnityCommander.Common.Selection
 
         public SelectionContext()
         {
-            Debug.WriteLine(
-                $"[Selection] Context CREATED: {GetHashCode()}, Items={Items.Count}");
+            //Debug.WriteLine(
+            //    $"[Selection] Context CREATED: {GetHashCode()}, Items={Items.Count}");
         }
 
         public IReadOnlyList<ISelectableItem> Items
@@ -44,9 +44,9 @@ namespace UnityCommander.Common.Selection
         {
             Items = items.ToList();
 
-            Debug.WriteLine(
-                 $"[Selection] SetItems: Count={Items.Count}, " +
-                 $"Manager={GetHashCode()}");
+            //Debug.WriteLine(
+            //     $"[Selection] SetItems: Count={Items.Count}, " +
+            //     $"Manager={GetHashCode()}");
         }
 
         public void Reset()

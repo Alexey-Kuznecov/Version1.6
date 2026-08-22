@@ -10,6 +10,8 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
+using UnityCommander.Logging;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
@@ -42,10 +44,11 @@ namespace UnityCommander
             var settings = containerProvider.Resolve<ISettingsService>();
             var shotcuts = containerProvider.Resolve<IShortcutOverrideStore>();
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
+            var loggerCreator = containerProvider.Resolve<LoggerCreator>();
 
             initializer.Initialize();
 
-            var token = new CancellationToken();
+            //var token = new CancellationToken();
 
             //backgroundService.Start(token);
 

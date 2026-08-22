@@ -12,6 +12,7 @@ using CommandSystem.Abstractions;
 using Prism.Commands;
 using Prism.Dialogs;
 using Prism.Navigation.Regions;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,6 +32,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Logging;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -303,10 +305,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
           {
               if (dir != null)
               {
-#if (Nlog)
-                  _logger.Info($"Текущая папка изменена на ({dir})");
-#endif
+                  var sw = Stopwatch.StartNew();
+
                   _navigationService.TryNavigateTo(dir.ToString(), true);
+
+                  sw.Stop();
+//#if (Nlog)
+//                  _logger.Info($"Папка изменена на папку ({dir}) заняло: {sw.ElapsedMilliseconds} ms - файлы: {_fileNodeContext.Files.Count}, папки: {_folderNodeContext.Folders.Count}");
+//#endif
               }
           });
 
@@ -345,6 +351,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private void RefreshFileList(IEnumerable<FileModel> files)
         {
+            using (_loggerCreator.ProfileScope(LogScope.Runtime, "RefreshFileList"))
+            {
             var set = files.Select(f => f.Path).ToHashSet();
 
             for (int i = _fileNodeContext.Files.Count - 1; i >= 0; i--)
@@ -363,9 +371,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 }
             }
         }
+        }
 
         private void RefreshDirectoryList(IEnumerable<FolderModel> dirs)
         {
+            using (_loggerCreator.ProfileScope(LogScope.Runtime, "RefreshDirectoryList"))
+            {
             var set = dirs.Select(d => d.Path).ToHashSet();
 
             for (int i = _folderNodeContext.Folders.Count - 1; i >= 0; i--)
@@ -392,6 +403,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             var dirs = await dirsTask;
             var files = await filesTask;
+
 
             if (token.IsCancellationRequested)
                 return; // ❌ устарело — убиваем
@@ -448,23 +460,55 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private CancellationTokenSource _cts;
 
+        private LoggerCreator _loggerCreator = Log.GetLoggerCreator();
+
         private void OnPathChanged(string path)
         {
+            _ = OnPathChangedAsync(path);
+        }
+            var sw = Stopwatch.StartNew();
+
             SetInternalCurrentPath(path);
 
             _cts?.Cancel();
+                _cts?.Dispose();
+
             _cts = new CancellationTokenSource();
             var token = _cts.Token;
 
-            if (string.IsNullOrEmpty(path) || VirtualPaths.MyComputer == path)
+                if (string.IsNullOrEmpty(path) ||
+                    VirtualPaths.MyComputer == path)
             {
-                _ = this.GoDrivePanel();
-                _workspaceController.ShowMyComputerMode(_headerNode, _driveNode);
+                    await GoDrivePanel();
+
+                    _workspaceController.ShowMyComputerMode(
+                        _headerNode,
+                        _driveNode);
             }
             else
             {
                 _ = RefreshPanelAsync(path, _cts.Token);
                 _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
+
+                    using (_loggerCreator.ProfileScope(
+                        LogScope.UI,
+                        "Workspace Creation"))
+                    {
+                        _workspaceController.ShowDirectoryMode(
+                            _headerNode,
+                            _folderNode,
+                            _fileNode);
+                    }
+                sw.Stop();
+#if (Nlog)
+                _logger.Info(
+                    $"Текущая папка изменена на ({GetCurrentPath()}:) " +
+                    $"файлы: {_fileNodeContext.Files.Count}, " +
+                    $"папки: {_folderNodeContext.Folders.Count}, " +
+                    $"заняло: {sw.ElapsedMilliseconds} ms");
+#endif
+
+
             }
         }
 

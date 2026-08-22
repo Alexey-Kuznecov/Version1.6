@@ -7,24 +7,27 @@ namespace UnityCommander.Logging.Profiling
 {
     public sealed class LogScopeTimer : IDisposable
     {
-        private readonly LogHub _hub;
+        private readonly LoggerCore _core;
         private readonly LogScope _scope;
         private readonly string _name;
         private readonly Stopwatch _sw;
 
-        public LogScopeTimer(LogHub hub, LogScope scope, string name)
+        public LogScopeTimer(
+            LoggerCore core,
+            LogScope scope,
+            string name)
         {
-            _hub = hub;
+            _core = core;
             _scope = scope;
             _name = name;
             _sw = Stopwatch.StartNew();
 
-            _hub.Publish(new LogEntry
+            _core.Process(new LogEntry
             {
                 Scope = scope.Value,
-                Category = _name,
+                Category = name,
                 Level = LogLevel.Profile,
-                Message = $"Start {_name}"
+                Message = $"Start {name}"
             });
         }
 
@@ -32,7 +35,7 @@ namespace UnityCommander.Logging.Profiling
         {
             _sw.Stop();
 
-            _hub.Publish(new LogEntry
+            _core.Process(new LogEntry
             {
                 Scope = _scope.Value,
                 Category = _name,

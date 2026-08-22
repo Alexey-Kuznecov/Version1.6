@@ -5,10 +5,15 @@ using System.Collections.ObjectModel;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Logging;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.WPF.DragDrop;
 
@@ -23,6 +28,9 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly IDropTarget _dropTarget;
         private readonly NodeContextRegistry _contextRegistry;
         private ViewportMapper _scrollMapper;
+        
+        private readonly LoggerCreator _loggerCreator;
+        private readonly ILogger _logger;
 
         public NodeContextFactory(
             NavigationManager navigation,
@@ -33,6 +41,10 @@ namespace UnityCommander.Modules.FilePanel.Services
             NodeContextRegistry nodeContext, 
             ViewportMapper scrollMapper)
         {
+            _loggerCreator = Log.GetLoggerCreator();
+
+            _logger = Log.Create("Navigation", LogScope.UserAction);
+
             _navigation = navigation;
             _menu = menu;
             _selection = selection;
@@ -79,6 +91,10 @@ namespace UnityCommander.Modules.FilePanel.Services
                 {
                     if (dir != null)
                         _navigation.TryNavigateTo(dir.Letter);
+#if (Nlog)
+                    _logger.Info($"Переход в диск ({dir})");
+#endif
+
                 }),
 
                 ShowContextMenuCommand = new DelegateCommand<object>(x =>

@@ -5,6 +5,8 @@ using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
+using UnityCommander.Logging;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
@@ -21,6 +23,10 @@ namespace UnityCommander
 
         public void OnInitialized(IContainerProvider provider)
         {
+            var loggerCreator = provider.Resolve<LoggerCreator>();
+
+            Log.Initialize(loggerCreator);
+
             _providerInfo = provider.Resolve<IPluginInfoProvider>();
             _provider = provider.Resolve<IPluginProvider>();
             _activator = provider.Resolve<IPluginActivator>();

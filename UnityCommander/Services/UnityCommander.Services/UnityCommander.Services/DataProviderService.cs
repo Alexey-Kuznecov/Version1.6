@@ -5,10 +5,12 @@ namespace UnityCommander.Services
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using UnityCommander.Abstractions;
     using UnityCommander.Abstractions.Panels;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Common.Panels;
+    using UnityCommander.Logging;
+    using UnityCommander.Logging.Core;
+    using UnityCommander.Logging.Infrastructure;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
@@ -16,8 +18,10 @@ namespace UnityCommander.Services
     /// </summary>
     public class DataProviderService : IDataProviderService
     {
-       private readonly FileModelFactory _factory;
-       private readonly FolderModelFactory _folderFactory;
+        private readonly FileModelFactory _factory;
+        private readonly FolderModelFactory _folderFactory;
+
+        private LoggerCreator _loggerCreator = Log.GetLoggerCreator();
 
         public DataProviderService(
             FileModelFactory factory, 
@@ -25,6 +29,7 @@ namespace UnityCommander.Services
         {
             _factory = factory;
             _folderFactory = folderFactory;
+
         }
 
         /// <summary>
@@ -34,21 +39,24 @@ namespace UnityCommander.Services
         {
             return await Task.Run(() =>
             {
-                var dir = new DirectoryInfo(path);
-                var files = new List<FileModel>();
-
-                foreach (var file in dir.GetFiles())
+                using (_loggerCreator.ProfileScope(LogScope.Runtime, "DataProviderService: Files"))
                 {
-                    if (cancellation.IsCancellationRequested)
-                        return files;
+                    var dir = new DirectoryInfo(path);
+                    var files = new List<FileModel>();
 
-                    if ((file.Attributes & FileAttributes.Hidden) == 0)
+                    foreach (var file in dir.GetFiles())
                     {
-                        files.Add(_factory.Create(file.FullName));
-                    }
-                }
+                        if (cancellation.IsCancellationRequested)
+                            return files;
 
-                return files;
+                        if ((file.Attributes & FileAttributes.Hidden) == 0)
+                        {
+                            files.Add(_factory.Create(file.FullName));
+                        }
+                    }
+
+                    return files;
+                }
             });
         }
 
@@ -59,21 +67,24 @@ namespace UnityCommander.Services
         {
             return await Task.Run(() =>
             {
-                var dir = new DirectoryInfo(path);
-                var folders = new List<FolderModel>();
-
-                foreach (var folder in dir.GetDirectories())
+                using (_loggerCreator.ProfileScope(LogScope.Runtime, "DataProviderService: Folders"))
                 {
-                    if (cancellation.IsCancellationRequested)
-                        return folders;
+                    var dir = new DirectoryInfo(path);
+                    var folders = new List<FolderModel>();
 
-                    if ((folder.Attributes & FileAttributes.Hidden) == 0)
+                    foreach (var folder in dir.GetDirectories())
                     {
-                        folders.Add(_folderFactory.Create(folder.FullName));
-                    }
-                }
+                        if (cancellation.IsCancellationRequested)
+                            return folders;
 
-                return folders;
+                        if ((folder.Attributes & FileAttributes.Hidden) == 0)
+                        {
+                            folders.Add(_folderFactory.Create(folder.FullName));
+                        }
+                    }
+
+                    return folders;
+                }
             });
         }
 

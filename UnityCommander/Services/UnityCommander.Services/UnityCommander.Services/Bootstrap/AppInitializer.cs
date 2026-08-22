@@ -22,8 +22,8 @@ namespace UnityCommander.Services.Bootstrap
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
 
-        private LogHub _hub;
         private readonly ILogger _logger;
+        private readonly LoggerCreator _loggerCreator;
 
         public AppInitializer(
             ISessionService session,
@@ -33,15 +33,15 @@ namespace UnityCommander.Services.Bootstrap
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
             IMultiCommandService multiCommand, 
-            LogHub hub, // Profiled as AppInitializer, but it is not a hot path, so we can ignore it for now
             LoggerCreator logger
             ) 
         {
-            _logger = logger.For<AppInitializer>(
+            _loggerCreator = logger;
+            
+            _logger = _loggerCreator.For<AppInitializer>(
                scope: LogScope.Startup
             );
 
-            _hub = hub;
             _session = session;
             _layout = layout;
             _panel = panel;
@@ -66,7 +66,7 @@ namespace UnityCommander.Services.Bootstrap
 
         public void Initialize()
         {
-            using (new LogScopeTimer(_hub, LogScope.Startup, "Layout Initial"))
+            using (_loggerCreator.ProfileScope(LogScope.Startup, "Layout Initial"))
             {
                 _logger.Info("Session load..");
                 _state = _session.Load();

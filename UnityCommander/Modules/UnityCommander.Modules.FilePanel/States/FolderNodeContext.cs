@@ -10,6 +10,9 @@ using System.Windows.Input;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Logging;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services.Interfaces;
@@ -31,8 +34,9 @@ namespace UnityCommander.Modules.FilePanel.States
 
         public ICommand NavigateCommand { get; set; }
 
-
         public ViewportService<IFolderItem>? ScrollService { get; }
+
+        private readonly ILogger _logger;
 
         public FolderNodeContext(
            ISelectionManager selection,
@@ -42,6 +46,8 @@ namespace UnityCommander.Modules.FilePanel.States
            ViewportMapper mapper
             ) : base(selection, dropTarget, menu, mapper)
         {
+            _logger = Log.Create("Navigation", LogScope.UserAction);
+
             ScrollService = new ViewportService<IFolderItem>(
                     () => Folders);
 
@@ -52,8 +58,9 @@ namespace UnityCommander.Modules.FilePanel.States
                 if (dir != null)
                     navigation.TryNavigateTo(dir.Path);
                 sw.Stop();
-
-                Debug.WriteLine($"NavigateTo: {sw.ElapsedMilliseconds} ms");
+//#if (Nlog)
+//                _logger.Info($"Переход в папку ({dir.Path}) заняло: {sw.ElapsedMilliseconds} ms, всего папок: {Folders.Count}");
+//#endif
             });
 
             Mapper.RangeChanged += (start, end) =>

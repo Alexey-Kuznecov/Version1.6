@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -56,10 +55,10 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                         scrollViewer.VerticalOffset,
                         scrollViewer.ViewportHeight);
 
-                    Debug.WriteLine(
-                        $"Viewport: {scrollViewer.ViewportHeight}, " +
-                        $"Offset: {scrollViewer.VerticalOffset}, " +
-                        $"ActualHeight: {scrollViewer.ActualHeight}");
+                    //Debug.WriteLine(
+                    //    $"Viewport: {scrollViewer.ViewportHeight}, " +
+                    //    $"Offset: {scrollViewer.VerticalOffset}, " +
+                    //    $"ActualHeight: {scrollViewer.ActualHeight}");
                 }
 
                 scrollViewer.ScrollChanged += (_, __) =>

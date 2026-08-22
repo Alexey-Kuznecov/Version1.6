@@ -6,12 +6,12 @@ namespace UnityCommander.Settings
 {
     public class JsonColumnSettingsStore : IColumnSettingsStore
     {
-        private readonly string _path;
-        private SettingsFile _cache;
+        private readonly string? _path;
+        private SettingsFile? _cache;
 
-        public JsonColumnSettingsStore(string path)
+        public JsonColumnSettingsStore(string? path = null)
         {
-            _path = path;
+            _path = path ?? throw new ArgumentNullException(nameof(path));
             LoadFromDisk();
         }
 

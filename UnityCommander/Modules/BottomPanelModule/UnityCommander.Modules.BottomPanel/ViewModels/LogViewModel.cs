@@ -76,7 +76,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             return
                 $"[{e.Scope}] " +
                 $"[{e.Category}] " +
-                $"[{e.Level}]" +
+                $"[{e.Level}] " +
                 $"{(string.IsNullOrWhiteSpace(e.Source) ? "" : $"[{e.Source}] ")}" +
                 $"{e.Message} " +
                  $"{timeInfo} " +
