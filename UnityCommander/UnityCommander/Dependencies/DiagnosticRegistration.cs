@@ -7,6 +7,7 @@ using UnityCommander.Commands.Rendering;
 using UnityCommander.Commands.Services;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Core.Diagnostics;
+using UnityCommander.Diagnostics.Performance;
 
 namespace UnityCommander.Dependencies
 {
@@ -25,6 +26,11 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IDiagnosticRender, DiagnosticRender>();
             registry.RegisterSingleton<IDiagnosticPipeline, DiagnosticPipeline>();
             registry.RegisterSingleton<IDiagnosticRegistry, DiagnosticRegistry>();
+
+            registry.RegisterSingleton<IPerformanceAnalyzer, PerformanceAnalyzer>();
+            registry.RegisterSingleton<IPerformanceProfiler, PerformanceProfiler>();
+            registry.RegisterSingleton<IPerformanceSnapshotService, PerformanceSnapshotService>();
+            registry.RegisterSingleton<IPerformanceComparisonService, PerformanceComparisonService>();
         }
     }
 }

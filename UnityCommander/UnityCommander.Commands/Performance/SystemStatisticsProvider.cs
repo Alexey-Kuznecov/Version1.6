@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using UnityCommander.Commands.Models;
 
 namespace UnityCommander.Commands.Performance

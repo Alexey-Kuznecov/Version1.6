@@ -32,6 +32,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Diagnostics.Performance;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -39,7 +40,6 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
-using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
@@ -91,7 +91,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private DriveNodeContext _driveNodeContext;
         private FolderNodeContext _folderNodeContext;
         private NavigationNodeContext _navigationContext;
-        
+
+        private int _navCounter;
+
+        private readonly IPerformanceProfiler _performanceProfiler;
+
         #endregion
 
         #region Конструктор
@@ -132,9 +136,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               GongDropAdapter dropTarget, 
               NodeContextRegistry contextRegistry, 
               ViewportMapper scrollMapper, 
-              ISettingsService settingsService)
+              ISettingsService settingsService,
+              IPerformanceProfiler profiler)
             : base(regionManager)
         {
+            _performanceProfiler = profiler;
 
             var setting = settingsService.Get(GeneralSettings.ShowHiddenFiles);
 
@@ -256,8 +262,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         private readonly RegionNode _secondaryRegion =
             new();
-
-
+        
         private LayoutNode BuildLayout()
         {
             return new StackNode
@@ -353,45 +358,46 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             using (_loggerCreator.ProfileScope(LogScope.Runtime, "RefreshFileList"))
             {
-            var set = files.Select(f => f.Path).ToHashSet();
+                var set = files.Select(f => f.Path).ToHashSet();
 
-            for (int i = _fileNodeContext.Files.Count - 1; i >= 0; i--)
-            {
-                if (!set.Contains(_fileNodeContext.Files[i].Path))
-                    _fileNodeContext.Files.RemoveAt(i);
-            }
-
-            var existing = _fileNodeContext.Files.Select(f => f.Path).ToHashSet();
-
-            foreach (var file in files)
-            {
-                if (!existing.Contains(file.Path))
+                for (int i = _fileNodeContext.Files.Count - 1; i >= 0; i--)
                 {
-                    _fileNodeContext.Files.Add(file);
+                    if (!set.Contains(_fileNodeContext.Files[i].Path))
+                        _fileNodeContext.Files.RemoveAt(i);
+                }
+
+                var existing = _fileNodeContext.Files.Select(f => f.Path).ToHashSet();
+
+                foreach (var file in files)
+                {
+                    if (!existing.Contains(file.Path))
+                    {
+                        _fileNodeContext.Files.Add(file);
+                    }
                 }
             }
-        }
         }
 
         private void RefreshDirectoryList(IEnumerable<FolderModel> dirs)
         {
             using (_loggerCreator.ProfileScope(LogScope.Runtime, "RefreshDirectoryList"))
             {
-            var set = dirs.Select(d => d.Path).ToHashSet();
+                var set = dirs.Select(d => d.Path).ToHashSet();
 
-            for (int i = _folderNodeContext.Folders.Count - 1; i >= 0; i--)
-            {
-                if (!set.Contains(_folderNodeContext.Folders[i].Path))
-                    _folderNodeContext.Folders.RemoveAt(i);
-            }
-
-            var existing = _folderNodeContext.Folders.Select(d => d.Path).ToHashSet();
-
-            foreach (var dir in dirs)
-            {
-                if (!existing.Contains(dir.Path))
+                for (int i = _folderNodeContext.Folders.Count - 1; i >= 0; i--)
                 {
-                    _folderNodeContext.Folders.Add(dir);
+                    if (!set.Contains(_folderNodeContext.Folders[i].Path))
+                        _folderNodeContext.Folders.RemoveAt(i);
+                }
+
+                var existing = _folderNodeContext.Folders.Select(d => d.Path).ToHashSet();
+
+                foreach (var dir in dirs)
+                {
+                    if (!existing.Contains(dir.Path))
+                    {
+                        _folderNodeContext.Folders.Add(dir);
+                    }
                 }
             }
         }
@@ -400,10 +406,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         {
             var dirsTask = dataService.GetDirectoriesAsync(dirPath, token);
             var filesTask = dataService.GetFilesAsync(dirPath, token);
-
+            
             var dirs = await dirsTask;
             var files = await filesTask;
-
+            
 
             if (token.IsCancellationRequested)
                 return; // ❌ устарело — убиваем
@@ -459,36 +465,49 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         #region Обработка событий и очистка ресурсов
 
         private CancellationTokenSource _cts;
-
+        
         private LoggerCreator _loggerCreator = Log.GetLoggerCreator();
 
         private void OnPathChanged(string path)
         {
             _ = OnPathChangedAsync(path);
         }
+
+        private async Task OnPathChangedAsync(string path)
+        {
+            using var performance =
+                _performanceProfiler.Measure(
+                    "Navigation");
+
             var sw = Stopwatch.StartNew();
 
-            SetInternalCurrentPath(path);
+                SetInternalCurrentPath(path);
 
-            _cts?.Cancel();
+                _cts?.Cancel();
                 _cts?.Dispose();
 
-            _cts = new CancellationTokenSource();
-            var token = _cts.Token;
+                _cts = new CancellationTokenSource();
+                var token = _cts.Token;
 
                 if (string.IsNullOrEmpty(path) ||
                     VirtualPaths.MyComputer == path)
-            {
+                {
                     await GoDrivePanel();
 
                     _workspaceController.ShowMyComputerMode(
                         _headerNode,
                         _driveNode);
-            }
-            else
-            {
-                _ = RefreshPanelAsync(path, _cts.Token);
-                _workspaceController.ShowDirectoryMode(_headerNode, _folderNode, _fileNode);
+                }
+                else
+                {
+                    using (_loggerCreator.ProfileScope(
+                        LogScope.Runtime,
+                        "Refresh Panel"))
+                    {
+                        await RefreshPanelAsync(
+                            path,
+                            token);
+                    }
 
                     using (_loggerCreator.ProfileScope(
                         LogScope.UI,
@@ -499,6 +518,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                             _folderNode,
                             _fileNode);
                     }
+                }
                 sw.Stop();
 #if (Nlog)
                 _logger.Info(
@@ -508,7 +528,27 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     $"заняло: {sw.ElapsedMilliseconds} ms");
 #endif
 
+            performance.SetMetadata(
+                "Files",
+                _fileNodeContext.Files.Count);
 
+            performance.SetMetadata(
+                "Folders",
+                _folderNodeContext.Folders.Count);
+                
+            performance.SetMetadata(
+                        "Items",
+                        _fileNodeContext.Files.Count +
+                        _folderNodeContext.Folders.Count);
+
+            performance.SetMetadata("Path", path);
+
+            _navCounter++;
+
+            if (_navCounter == 8)
+            {
+                _navCounter = 0;
+                _logger.Info("Navigation counter reset 8");
             }
         }
 

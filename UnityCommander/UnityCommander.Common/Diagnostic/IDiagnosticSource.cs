@@ -1,6 +1,4 @@
 ﻿
-using System.Collections.Generic;
-
 namespace UnityCommander.Common.Diagnostic
 {
     public interface IDiagnosticSource

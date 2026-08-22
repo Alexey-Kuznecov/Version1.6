@@ -1,12 +1,12 @@
 ﻿
 namespace UnityCommander.Abstractions.Diagnostic
 {
-    public class DebugPanelState
+    public class DebugNavigationState
     {
-        public Guid ActivePanel { get; set; }
-        public int PanelCount { get; set; }
-        public int TabCount { get; set; }
-        public int PrePanelCount { get; set; }
-        public int PreTabCount { get; set; }
+        public string? Current { get; set; }
+        public int BackCount { get; set; }
+        public int ForwardCount { get; set; }
+        public bool CanGoBack { get; set; }
+        public bool CanGoForward { get; set; }
     }
 }
