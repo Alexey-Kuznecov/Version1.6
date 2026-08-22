@@ -1,6 +1,4 @@
-﻿
-
-namespace UnityCommander.WPF.Behaviors
+﻿namespace UnityCommander.WPF.Input
 {
     public interface IInputContext
     {

@@ -1,9 +1,8 @@
-﻿
-using UnityCommander.Abstractions.Keyboard;
+﻿using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.Keyboad;
 
-namespace UnityCommander.WPF.Behaviors
+namespace UnityCommander.WPF.Input
 {
     public class InputService : IInputService
     {

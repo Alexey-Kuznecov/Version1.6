@@ -1,5 +1,4 @@
-﻿
-namespace UnityCommander.WPF.Behaviors
+﻿namespace UnityCommander.WPF.Input
 {
     public sealed class InputCaptureManager : IInputCaptureManager
     {

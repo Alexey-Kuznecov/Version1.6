@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace UnityCommander.WPF.Behaviors
+namespace UnityCommander.WPF.Input
 {
     public interface IInputRouter
     {

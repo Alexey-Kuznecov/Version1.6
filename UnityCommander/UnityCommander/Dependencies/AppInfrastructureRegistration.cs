@@ -28,7 +28,7 @@ using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
 using UnityCommander.WPF;
-using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander.Dependencies
 {
@@ -95,6 +95,7 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<IInputCaptureManager, InputCaptureManager>();
             registry.RegisterSingleton<IInputContextService, InputContextService>();
+            registry.RegisterSingleton<IInputState, InputState>();
             registry.RegisterSingleton<IInputRouter, InputRouter>();
             //registry.RegisterSingleton<WindowInputHook>();
 
@@ -111,6 +112,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IViewRegistry, ViewRegistry>();
             registry.RegisterSingleton<IPopupService, PopupService>();
 
+            registry.RegisterSingleton<ICursorTargetService, CursorTargetService>();
+            registry.RegisterSingleton<IProgressIndicatorService, ProgressIndicatorService>();
         }
     }
 }

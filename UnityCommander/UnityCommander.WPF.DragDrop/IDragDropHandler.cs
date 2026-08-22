@@ -12,5 +12,9 @@ namespace UnityCommander.WPF.DragDrop
         Task DropAsync(
             IDropContext dropContext,
             DragDropContext context);
+
+        public void DragLeave(
+            IDropContext dropContext,
+            DragDropContext context);
     }
 }

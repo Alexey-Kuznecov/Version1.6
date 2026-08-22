@@ -1,34 +1,54 @@
 ﻿
 using AvalonDock.Controls;
+using NLog.Targets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF;
 using UnityCommander.WPF.DragDrop;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
     public sealed class FilePanelDragDropHandler
         : IDragDropHandler
     {
-        private IFileOperationService _fileOperationService;
-        private ITabActivationService _tabActivation;
+        private readonly IFileOperationService _fileOperationService;
+        
+        private readonly ITabActivationService _tabActivation;
+
+        public readonly IDragHoverNavigationService _hoverNavigationService;
+        
+        private readonly ICursorTargetService _cursorTargetsService;
+
+        private readonly IInputState _inputState;
 
         public FilePanelDragDropHandler(
             ServiceOverrideResolver overrideResolver, 
-            ITabActivationService tabActivation)
+            ITabActivationService tabActivation, 
+            IDragHoverNavigationService hoverNavigationService, 
+            IInputState inputState, 
+            ICursorTargetService cursorTarget)
         {
             _fileOperationService = overrideResolver.Resolve<IFileOperationService>();
             _tabActivation = tabActivation;
+            _hoverNavigationService = hoverNavigationService;
+            _inputState = inputState;
+            _cursorTargetsService = cursorTarget;
         }
 
         public bool CanHandle(IDropContext context)
@@ -43,13 +63,8 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             if (!HasSources(context))
                 return DragDropResult.Deny();
 
-            if (string.Equals(
-                context.SourcePath,
-                context.TargetPath,
-                StringComparison.OrdinalIgnoreCase))
-            {
+            if (IsInvalidDrop(context))
                 return DragDropResult.Deny();
-            }
 
             if (!HasValidData(context.Data))
                 return DragDropResult.Deny();
@@ -59,6 +74,46 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 if (ctx.TabId is Guid tabId)
                 {
                     _tabActivation.Activate(tabId);
+                }
+
+                if (ctx.CanNavigate)
+                {
+                    var shiftPressed =
+                        (context.KeyStates & DragDropKeyStates.ShiftKey) != 0;
+
+                    if (context.VisualTarget is ListView listView &&
+                        context.DropPosition is Point position)
+                    {
+                        _cursorTargetsService.Update(
+                            listView,
+                            position);
+
+                        var cursorTarget =
+                            _cursorTargetsService.GetCurrent(listView);
+
+                        if (cursorTarget?.Element.Content is IFolderItem folder &&
+                            ctx.TargetInfo?.NavigateCommand is ICommand navCommand)
+                        {
+                            _hoverNavigationService.Begin(
+                                cursorTarget.Element,
+                                () => navCommand.Execute(folder),
+                                shiftPressed);
+                        }
+                        else
+                        {
+                            _hoverNavigationService.Cancel();
+                        }
+                    }
+
+                    if (context.VisualTarget is Button button &&
+                        ctx.TargetInfo?.NavigateCommand is ICommand command &&
+                        button.CommandParameter is string path)
+                    {
+                        _hoverNavigationService.Begin(
+                            button,
+                            () => command.Execute(path),
+                            shiftPressed);
+                    }
                 }
             }
 
@@ -96,6 +151,50 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 });
 
             return Task.CompletedTask;
+        }
+
+        public void DragLeave(
+            IDropContext dropContext,
+            DragDropContext context)
+        {
+            if (context.VisualTarget is ListView listView)
+            {
+                _cursorTargetsService.Clear(listView);
+            }
+
+            _hoverNavigationService.Cancel();
+        }
+
+        private static bool IsInvalidDrop(DragDropContext context)
+        {
+            if (string.IsNullOrEmpty(context.TargetPath))
+                return false;
+
+            foreach (var item in context.SourceItems)
+            {
+                if (item is not BaseDirectory source)
+                    continue;
+
+                var sourcePath = source.Path;
+
+                if (string.Equals(
+                        sourcePath,
+                        context.TargetPath,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                if (context.TargetPath.StartsWith(
+                        sourcePath.TrimEnd(Path.DirectorySeparatorChar)
+                        + Path.DirectorySeparatorChar,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static List<string> ExtractSources(

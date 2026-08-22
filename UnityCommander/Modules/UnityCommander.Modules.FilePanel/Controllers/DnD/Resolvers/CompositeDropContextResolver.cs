@@ -19,8 +19,8 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
 
         public bool CanResolve(DragDropContext context)
         {
-            if (context.Target is not null)
-                return true;
+            //if (context.Target is not null)
+            //    return true;
 
             return _targets.Any(
                 x => x.CanResolve(context));
@@ -29,17 +29,6 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
         public IDropContext Resolve(
             DragDropContext context)
         {
-            if (context.Target is not null)
-            {
-                return new FilePanelDragDropContext
-                {
-                    Data = context.Data,
-                    Source = context.Source,
-                    Target = context.Target,
-                    VisualTarget = context.VisualTarget
-                };
-            }
-
             var resolver = _targets.First(
                 x => x.CanResolve(context));
 
@@ -56,7 +45,9 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
                 Source = context.Source,
                 Target = info.Path,
                 VisualTarget = context.VisualTarget,
-                TabId = info.TabId
+                TabId = info.TabId, 
+                TargetInfo = info,
+                CanNavigate = info.CanNavigate
             };
         }
     }

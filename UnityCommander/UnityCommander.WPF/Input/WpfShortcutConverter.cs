@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using UnityCommander.Abstractions.Keyboard;
 
-namespace UnityCommander.WPF.Behaviors
+namespace UnityCommander.WPF.Input
 {
     public static class WpfShortcutConverter
     {

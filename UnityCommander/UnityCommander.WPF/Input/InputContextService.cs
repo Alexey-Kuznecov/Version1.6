@@ -2,7 +2,7 @@
 using System.Windows;
 using UnityCommander.Abstractions.Keyboard;
 
-namespace UnityCommander.WPF.Behaviors
+namespace UnityCommander.WPF.Input
 {
     public sealed class InputContextService : IInputContextService
     {

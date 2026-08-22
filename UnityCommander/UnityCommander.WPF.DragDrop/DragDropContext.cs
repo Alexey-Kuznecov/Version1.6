@@ -24,5 +24,9 @@ namespace UnityCommander.WPF.DragDrop
         public string? TargetPath { get; init; }
 
         public IReadOnlyList<object> SourceItems { get; init; }
+
+        public Point DropPosition { get; init; }
+
+        public DragDropKeyStates KeyStates { get; init; }
     }
 }

@@ -4,7 +4,7 @@ using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Modules.SettingsPanel.Services;
 using UnityCommander.Mvvm.Base;
 using UnityCommander.Settings.Abstactions;
-using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander.Modules.SettingsPanel.Editors
 {

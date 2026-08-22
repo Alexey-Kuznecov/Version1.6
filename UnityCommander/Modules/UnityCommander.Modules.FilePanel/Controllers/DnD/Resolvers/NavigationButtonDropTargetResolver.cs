@@ -5,7 +5,7 @@ using UnityCommander.WPF.DragDrop;
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
 {
     public sealed class NavigationButtonDropTargetResolver
-    : IDropTargetResolver
+     : IDropTargetResolver
     {
         public bool CanResolve(DragDropContext context)
         {
@@ -19,14 +19,18 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
             if (context.VisualTarget is not Button button)
                 return null;
 
-            var path = NavigationButtonDragDrop.GetDropPath(button);
+            var path =
+                NavigationButtonDragDrop.GetDropPath(button);
 
-            if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrWhiteSpace(path))
                 return null;
 
             return new DropTargetInfo
             {
-                Path = path
+                Path = path,
+                CanNavigate = button.Command is not null,
+                NavigateCommand = button.Command,
+                NavigationTarget = path
             };
         }
     }

@@ -49,8 +49,6 @@ namespace UnityCommander.Services.Bootstrap
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
 
-
-
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
 

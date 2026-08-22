@@ -1,8 +1,7 @@
 ﻿
 using System;
-using System.Windows.Input;
 using UnityCommander.Abstractions.Keyboard;
-using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander.Modules.SettingsPanel.Services
 {

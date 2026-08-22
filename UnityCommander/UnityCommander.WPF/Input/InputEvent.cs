@@ -1,7 +1,6 @@
-﻿
-using UnityCommander.Abstractions.Keyboard;
+﻿using UnityCommander.Abstractions.Keyboard;
 
-namespace UnityCommander.WPF.Behaviors
+namespace UnityCommander.WPF.Input
 {
     public readonly struct InputEvent
     {

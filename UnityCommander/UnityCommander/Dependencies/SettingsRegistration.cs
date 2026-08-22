@@ -9,7 +9,7 @@ using UnityCommander.Modules.SettingsPanel.Services;
 using UnityCommander.Settings;
 using UnityCommander.Settings.Abstactions;
 using UnityCommander.Settings.Core;
-using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander.Dependencies
 {

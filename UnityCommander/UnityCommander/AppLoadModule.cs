@@ -18,7 +18,6 @@ using UnityCommander.Modules.ToolBar;
 using UnityCommander.Services;
 using UnityCommander.Services.Background;
 using UnityCommander.Services.Bootstrap;
-using UnityCommander.Services.Interfaces;
 using UnityCommander.Settings.Abstactions;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views.CopyDialogs;
@@ -48,7 +47,7 @@ namespace UnityCommander
 
             var token = new CancellationToken();
 
-            backgroundService.Start(token);
+            //backgroundService.Start(token);
 
             builder.Rebuild();
         }
