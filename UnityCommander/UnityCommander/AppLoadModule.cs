@@ -48,9 +48,9 @@ namespace UnityCommander
 
             initializer.Initialize();
 
-            //var token = new CancellationToken();
+            var token = new CancellationToken();
 
-            //backgroundService.Start(token);
+            backgroundService.Start(token);
 
             builder.Rebuild();
         }

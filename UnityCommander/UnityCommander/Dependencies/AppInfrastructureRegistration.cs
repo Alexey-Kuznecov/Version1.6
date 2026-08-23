@@ -1,4 +1,5 @@
 ﻿
+using Example;
 using Prism.Ioc;
 using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Background;
@@ -114,6 +115,10 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<ICursorTargetService, CursorTargetService>();
             registry.RegisterSingleton<IProgressIndicatorService, ProgressIndicatorService>();
+
+            registry.RegisterSingleton<IUserActivityService, UserActivityService>();
+            registry.RegisterSingleton<IBackgroundResourcePolicy, BackgroundResourcePolicy>();
+            registry.RegisterSingleton<IBackgroundWorkController, CopyBackgroundWorkController>();
         }
     }
 }

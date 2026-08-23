@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.IO;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Common.Events;
@@ -21,6 +22,7 @@ namespace UnityCommander.Operation
         private readonly ICopyOperationService _operationService;
         private readonly IOperationProgressService _operationProgress;
         private readonly MoveStrategyResolver _moveStrategyResolver;
+        private readonly IBackgroundWorkController _backgroundWorkController;
         private readonly IEventBus _eventBus;
 
         public DefaultFileCopyEngine(
@@ -28,13 +30,15 @@ namespace UnityCommander.Operation
             IOperationProgressService operationProgress,
             IOperationIndex operationIndex,
             MoveStrategyResolver moveStrategyResolver,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            IBackgroundWorkController backgroundWorkController)
         {
             _eventBus = eventBus;
             _operationIndex = operationIndex;
             _operationProgress = operationProgress;
             _operationService = operationService;
             _moveStrategyResolver = moveStrategyResolver;
+            _backgroundWorkController = backgroundWorkController;
         }
 
         private void OnCopyFileReport(CopyInfo info)
@@ -178,7 +182,8 @@ namespace UnityCommander.Operation
                     ItemId = item.Id,
                     Source = item.SourcePath,
                     Destination = request.Target
-                }
+                },
+                BackgroundWork = _backgroundWorkController
             };
         }
 

@@ -1,5 +1,4 @@
 ﻿
-using Spectre.Console;
 using System.IO;
 using UnityCommander.Abstractions.IO;
 using UnityCommander.Core.IO.Operations;

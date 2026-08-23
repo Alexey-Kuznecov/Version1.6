@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Abstractions.Background;
+
 namespace UnityCommander.Abstractions.IO
 {
     public class OperationContext
@@ -11,6 +13,8 @@ namespace UnityCommander.Abstractions.IO
 
         public CopyInfo? Info { get; init; }
 
-        public ICopyManager Manager { get; init; }
+        public ICopyManager? Manager { get; init; }
+
+        public IBackgroundWorkController?  BackgroundWork { get; set; }
     }
 }
