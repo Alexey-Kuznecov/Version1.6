@@ -17,7 +17,7 @@
     <Style x:Key="ModernButton" TargetType="Button">
 
         <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource UcForegroundPrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundTertiaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource UcBorderTertiaryBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -39,7 +39,11 @@
                                 Color="#000000" />
                         </Border.Effect>
 
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <ContentPresenter
+                            x:Name="Content"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -52,14 +56,17 @@
                                         Opacity="0.70"
                                         ShadowDepth="0"
                                         Color="#000000" />
+
                                 </Setter.Value>
                             </Setter>
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="#8C8C95" />
+
                         </Trigger>
 
-                        <!--<Trigger Property="IsPressed" Value="True">
+                        <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Root" Property="Opacity" Value="0.8" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </Trigger>-->
+                        </Trigger>
 
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

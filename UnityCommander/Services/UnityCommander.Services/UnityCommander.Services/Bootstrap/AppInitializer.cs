@@ -1,6 +1,7 @@
 ﻿
 using Prism.Commands;
 using UnityCommander.Abstractions.Keyboard;
+using UnityCommander.CLI.History;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
 using UnityCommander.Logging.Contracts;
@@ -21,7 +22,7 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ISessionBuilder _builder;
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
-
+        private readonly ConsoleHistoryService _consoleHistory;
         private readonly ILogger _logger;
         private readonly LoggerCreator _loggerCreator;
 
@@ -32,7 +33,8 @@ namespace UnityCommander.Services.Bootstrap
             ISessionBuilder builder, 
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
-            IMultiCommandService multiCommand, 
+            IMultiCommandService multiCommand,
+            ConsoleHistoryService consoleHistory,
             LoggerCreator logger
             ) 
         {
@@ -48,6 +50,7 @@ namespace UnityCommander.Services.Bootstrap
             _builder = builder;
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
+            _consoleHistory = consoleHistory;
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -62,6 +65,8 @@ namespace UnityCommander.Services.Bootstrap
             _session.Save(_state);
 
             _layout.Save();
+
+            _consoleHistory.Save();
         });
 
         public void Initialize()
@@ -82,6 +87,9 @@ namespace UnityCommander.Services.Bootstrap
 
                 _logger.Info("Restore prev session..");
                 _sessionAggregator.Restore(_state);
+
+                _consoleHistory.Initialize();
+                _logger.Info("Console history initialized..");
             }
         }
     }

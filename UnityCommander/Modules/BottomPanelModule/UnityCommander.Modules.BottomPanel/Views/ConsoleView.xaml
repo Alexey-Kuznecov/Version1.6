@@ -21,7 +21,11 @@
         </Grid.RowDefinitions>
 
         <!--  Вывод  -->
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            Grid.Row="0"
+            at:ConsoleAutoScrollBehavior.Enable="True"
+            Style="{DynamicResource UcScrollViewerStyle}"
+            VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Lines}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -50,7 +54,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="80" />
                     </Grid.ColumnDefinitions>
                     <TextBlock
                         VerticalAlignment="Center"
@@ -63,10 +67,13 @@
                         at:TextBoxCaretBinding.CaretIndex="{Binding CaretIndex, Mode=TwoWay}"
                         Background="#2D2D30"
                         BorderBrush="#3F3F46"
-                        FontFamily="Consolas"
-                        FontSize="16"
-                        Foreground="White"
+                        FontFamily="Cascadia Mono"
+                        FontSize="15"
+                        FontStyle="Normal"
+                        FontWeight="Normal"
+                        Foreground="#8C8C95"
                         KeyDown="TextBox_KeyDown"
+                        Style="{DynamicResource UcTextBox}"
                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Up" Command="{Binding NavigateUpCommand}" />
@@ -78,8 +85,10 @@
                     </TextBox>
                     <Button
                         Grid.Column="2"
+                        Margin="5,0,0,0"
                         Command="{Binding CopyCommand}"
-                        Content="Копировать" />
+                        Content="Копировать"
+                        Style="{DynamicResource ModernButton}" />
                 </Grid>
                 <!--  🔥 Оверлей автокомплита  -->
                 <ListBox

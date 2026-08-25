@@ -26,7 +26,14 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="false">
+                        <ScrollViewer
+                            Padding="{TemplateBinding Padding}"
+                            CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+                            Focusable="False"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            PanningMode="{TemplateBinding ScrollViewer.PanningMode}"
+                            Style="{DynamicResource UcScrollViewerStyle}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>
@@ -128,7 +135,7 @@
 
                 <Setter Property="Background" Value="{DynamicResource UcListBoxBackgroundBrush}" />
             </MultiTrigger>
-            
+
         </Style.Triggers>
     </Style>
 </ResourceDictionary>

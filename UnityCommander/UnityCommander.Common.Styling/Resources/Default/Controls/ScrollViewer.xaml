@@ -263,4 +263,87 @@
         </Setter>
     </Style>
 
+
+    <Style x:Key="UcScrollViewerStyle" TargetType="{x:Type ScrollViewer}">
+
+        <Setter Property="Focusable" Value="True" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+
+                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+
+                    <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+
+                        <!--  Контент  -->
+                        <ScrollContentPresenter
+                            Name="PART_ScrollContentPresenter"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            CanContentScroll="{TemplateBinding CanContentScroll}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            KeyboardNavigation.DirectionalNavigation="Local"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+
+                        <!--  Horizontal ScrollBar  -->
+                        <ScrollBar
+                            Name="PART_HorizontalScrollBar"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Background="{DynamicResource UcSurfaceTertiaryBrush}"
+                            BorderBrush="{DynamicResource UcSurfaceSecondaryBrush}"
+                            Cursor="Arrow"
+                            Maximum="{TemplateBinding ScrollableWidth}"
+                            Minimum="0.0"
+                            Orientation="Horizontal"
+                            Style="{StaticResource ModernHorizontalScrollBarStyle}"
+                            ViewportSize="{TemplateBinding ViewportWidth}"
+                            Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                            Value="{Binding Path=HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+
+
+                        <!--  Vertical ScrollBar  -->
+                        <ScrollBar
+                            Name="PART_VerticalScrollBar"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Background="{DynamicResource UcSurfaceTertiaryBrush}"
+                            BorderBrush="{DynamicResource UcSurfaceSecondaryBrush}"
+                            Cursor="Arrow"
+                            Maximum="{TemplateBinding ScrollableHeight}"
+                            Minimum="0.0"
+                            Orientation="Vertical"
+                            Style="{StaticResource ModernVerticalScrollBarStyle}"
+                            ViewportSize="{TemplateBinding ViewportHeight}"
+                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                            Value="{Binding Path=VerticalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+
+
+                        <!--  Угол между scrollbar  -->
+                        <Border
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Background="{DynamicResource UcSurfaceTertiaryBrush}" />
+
+                    </Grid>
+
+                </ControlTemplate>
+
+            </Setter.Value>
+        </Setter>
+
+    </Style>
 </ResourceDictionary>

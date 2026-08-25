@@ -14,7 +14,7 @@ using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Autocomplete.Input;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
-
+using UnityCommander.CLI.History;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Lifecicle;
 using UnityCommander.Logging.Contracts;
@@ -22,6 +22,7 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
+using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
@@ -38,6 +39,10 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly IConsoleCommandProvider _consoleCommandProvider;
         private readonly IPluginInfoProvider _pluginProvider;
         private readonly IConsoleAutoComplete _autoComplete;
+
+        private readonly IConsoleHistory _history;
+        private string? _historyDraft;
+
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
         private bool _autoCompleteEnabled = false;
@@ -103,7 +108,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             ICompletionEngine completionEngine,
             LoggerCreator loggerCreator,
             ICliInputAnalyzer cliInputAnalyzer,
-            ICliParseStateBuilder parseStateBuilder) //, IPluginProvider pluginProvider)
+            ICliParseStateBuilder parseStateBuilder,
+            IConsoleHistory history) //, IPluginProvider pluginProvider)
         {
             _cliInputAnalyzer = cliInputAnalyzer;
             _parseStateBuilder = parseStateBuilder;
@@ -116,6 +122,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             _consoleCommandProvider = consoleCommandProvider;
             _pluginProvider = pluginProvider;
             _completionEngine = completionEngine;
+            _history = history;
 
             Completions = new ReadOnlyObservableCollection<CompletionItem>(_completions);
 
@@ -123,7 +130,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 .ObservesProperty(() => SelectedIndex);
 
             CancelCommand = new DelegateCommand(ClearCompletions);
-            
+
+            NavigateUpCommand = new DelegateCommand(NavigateUp);
+
+            NavigateDownCommand = new DelegateCommand(NavigateDown);
+
             // Регистрируем все команды из сервиса
             foreach (var cmd in _consoleCommandProvider.GetAllCommands())
             {
@@ -163,7 +174,16 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private void SendInput()
         {
             var text = InputText;
+
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            _history.Add(text);
+            _historyDraft = null;
+
             InputText = "";
+            CaretIndex = 0;
+
             _input.Submit(text);
         }
 
@@ -266,5 +286,53 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             _completions.Clear();
             SelectedIndex = -1;
         }
+
+        #region History
+
+        private void NavigateDown()
+        {
+            var command = _history.Next();
+
+            if (command != null)
+            {
+                SetInputFromHistory(command);
+                return;
+            }
+
+            SetInputFromHistory(_historyDraft ?? string.Empty);
+            _historyDraft = null;
+        }
+
+        private void NavigateUp()
+        {
+            if (_historyDraft == null)
+                _historyDraft = InputText;
+
+            var command = _history.Previous();
+
+            if (command == null)
+                return;
+
+            SetInputFromHistory(command);
+        }
+
+        private void SetInputFromHistory(string text)
+        {
+            _suppressCompletionUpdate = true;
+
+            try
+            {
+                InputText = text;
+                CaretIndex = text.Length;
+            }
+            finally
+            {
+                _suppressCompletionUpdate = false;
+            }
+
+            ClearCompletions();
+        }
+
+        #endregion
     }
 }

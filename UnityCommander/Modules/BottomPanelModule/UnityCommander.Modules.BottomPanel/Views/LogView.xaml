@@ -24,21 +24,28 @@
             Modifiers="Alt" />
     </UserControl.InputBindings>
     <Grid Background="#1E1E1E">
+
         <!--  Лог: TextBox  -->
-        <TextBox
-            x:Name="TextLog"
-            Margin="0"
-            Padding="0"
-            AcceptsReturn="True"
-            Background="#1E1E1E"
-            FontFamily="Consolas"
-            FontSize="12"
-            Foreground="White"
-            IsReadOnly="True"
-            Text="{Binding LogText}"
-            TextWrapping="Wrap"
+        <ScrollViewer
+            Style="{DynamicResource UcScrollViewerStyle}"
             VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding IsHighlightMode, Converter={StaticResource VisibilityConverter}, ConverterParameter=False}" />
+            Visibility="{Binding IsHighlightMode, Converter={StaticResource VisibilityConverter}, ConverterParameter=False}">
+            <TextBox
+                Margin="0,0,0,1"
+                Padding="0,0,0,1"
+                AcceptsReturn="True"
+                Background="#2D2D30"
+                BorderBrush="#3F3F46"
+                BorderThickness="0"
+                FontFamily="Consolas"
+                FontSize="12"
+                FontStyle="Normal"
+                FontWeight="Normal"
+                Foreground="#8C8C95"
+                Style="{DynamicResource UcTextBox}"
+                Text="{Binding LogText}" />
+
+        </ScrollViewer>
 
         <!--  Лог: ListBox с подсветкой  -->
         <ListBox
@@ -51,6 +58,7 @@
             Loaded="OnLoaded"
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
+            Style="{DynamicResource UcListBoxTemplate}"
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             Visibility="{Binding IsHighlightMode, Converter={StaticResource VisibilityConverter}}">
@@ -96,7 +104,7 @@
 
         <!--  Кнопка поверх лога  -->
         <Button
-            Margin="5"
+            Margin="5,5,26,5"
             Padding="2,1"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"

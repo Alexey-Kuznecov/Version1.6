@@ -8,5 +8,6 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ToggleButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ListView.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ListViewItem.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
