@@ -51,7 +51,6 @@
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
-    <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
     <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
   </ItemGroup>
   <ItemGroup>

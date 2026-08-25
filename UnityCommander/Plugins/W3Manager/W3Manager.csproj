@@ -10,10 +10,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
 		<ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
-		<ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
-			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-			<Private>False</Private>
-		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="Microsoft.Extensions.DependencyInjection">

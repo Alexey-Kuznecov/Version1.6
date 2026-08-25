@@ -5,7 +5,6 @@ namespace UnityCommander.Modules.TabPanel
     using System.Collections.Generic;
     using System.IO;
 
-    using UnityCommander.Common.Module;
     using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.FilePanel.Views;
     using UnityCommander.Modules.Viewer.Views;
@@ -47,31 +46,31 @@ namespace UnityCommander.Modules.TabPanel
         /// <returns>
         /// The collection of <see cref="TabPanelRecord"/>.
         /// </returns>
-        public static IEnumerable<TabPanelRecord> GetTabConfigs(this XDocument document, string filter)
-        {
-            foreach (var element in document.Find("Tab"))
-            {
-                var parent = element.FindAncestor(element, 2);
+        //public static IEnumerable<TabPanelRecord> GetTabConfigs(this XDocument document, string filter)
+        //{
+        //    foreach (var element in document.Find("Tab"))
+        //    {
+        //        var parent = element.FindAncestor(element, 2);
                 
-                if (filter.Contains(parent.Element.FirstAttribute.Value))
-                {
-                    if (Directory.Exists(element.GetAttributeValueByName("Path")) || File.Exists(element.GetAttributeValueByName("Path")))
-                    {
-                        var record = new TabPanelRecord
-                         {
-                             Path = element.GetAttributeValueByName("Path"),
-                             Token = Guid.Parse(element.GetAttributeValueByName("Id")),
-                             Panel = element.GetAttributeValueByName("Name"),
-                             ViewType = element.GetAttributeValueByName("ViewType") == nameof(SplitPanelViewModel) 
-                                           ? new SplitPanelView() : new PluginSettingsView(),
-                             IsActive = Convert.ToBoolean(element.GetAttributeValueByName("IsActive")),
-                        };
+        //        if (filter.Contains(parent.Element.FirstAttribute.Value))
+        //        {
+        //            if (Directory.Exists(element.GetAttributeValueByName("Path")) || File.Exists(element.GetAttributeValueByName("Path")))
+        //            {
+        //                var record = new TabPanelRecord
+        //                 {
+        //                     Path = element.GetAttributeValueByName("Path"),
+        //                     Token = Guid.Parse(element.GetAttributeValueByName("Id")),
+        //                     Panel = element.GetAttributeValueByName("Name"),
+        //                     ViewType = element.GetAttributeValueByName("ViewType") == nameof(SplitPanelViewModel) 
+        //                                   ? new SplitPanelView() : new PluginSettingsView(),
+        //                     IsActive = Convert.ToBoolean(element.GetAttributeValueByName("IsActive")),
+        //                };
                         
-                        yield return record;
-                    }
-                }
-            }
-        }
+        //                yield return record;
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// The get paths.

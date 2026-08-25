@@ -1,5 +1,6 @@
 ﻿
-namespace AlexeyKuznecov.Library.Converters
+namespace 
+    AlexeyKuznecov.Library.Converters
 {
     using System;
 

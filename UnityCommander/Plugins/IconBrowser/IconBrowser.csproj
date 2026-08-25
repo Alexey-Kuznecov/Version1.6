@@ -16,9 +16,7 @@
     <ProjectReference Include="..\..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
-    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
-      <Private>False</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\IconMaker.Core\IconMaker.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,6 @@ using CommandSystem.Abstractions;
 using Prism.Commands;
 using Prism.Dialogs;
 using Prism.Navigation.Regions;
-using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

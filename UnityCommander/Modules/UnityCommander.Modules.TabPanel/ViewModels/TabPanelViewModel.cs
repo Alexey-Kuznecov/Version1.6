@@ -15,13 +15,12 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
     using Services.Interfaces;
     using Services.Interfaces.Database.Queries.Xml;
 
-    using UnityCommander.Common.Module;
     using UnityCommander.Controls.TabPanel;
     using UnityCommander.Modules.TabPanel.Behaviors;
     using System.Collections.Generic;
     using TabControl = Controls.TabPanel.TabControl;
-    using UnityCommander.Services.Interfaces.Settings;
     using Prism.Navigation.Regions;
+    using UnityCommander.Abstractions.Panels;
 
     public class TabPanelViewModel : BindableBase, ITabPanel, IElementFocusable
     {
@@ -111,8 +110,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </remarks>
         public TabPanelViewModel(
             IRegionManager regionManager,
-            IMultiCommandService commandService,
-            IAppConfigService configService)
+            IMultiCommandService commandService)
         {
             //GlobalCommandExecute.GlobalCommandExecuteChanged += OnGlobalCommandExecuteChanged;
             
@@ -125,7 +123,7 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
 
             this.regionManager = regionManager;
             //this.commandManager = manager;
-            this.appConfigService = configService;
+          
 
             // Composite command
             commandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
@@ -171,31 +169,31 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         public DelegateCommand SavePanelStateCommand => new DelegateCommand(
             () =>
             {
-                if (this.RegionContentName == null) return;
-                var appConfig = this.appConfigService.GetSession();
-                var tabs = appConfig.Find("Tabs").ToList();
-                var currentPanel = this.GetCurrentRegion().Name;
-                var region = this.regionManager.Regions.Single(r => r.Name.Contains(currentPanel));
-                var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.RegionContentName);
-                tabsResult.RemoveAll();
+                //if (this.RegionContentName == null) return;
+                //var appConfig = this.appConfigService.GetSession();
+                //var tabs = appConfig.Find("Tabs").ToList();
+                //var currentPanel = this.GetCurrentRegion().Name;
+                //var region = this.regionManager.Regions.Single(r => r.Name.Contains(currentPanel));
+                //var tabsResult = tabs.Single(tab => tab.ParentInfo.GetAttributeValueByName("Name") == this.RegionContentName);
+                //tabsResult.RemoveAll();
 
-                foreach (UserControl view in region.Views)
-                {
-                    if (view is FrameworkElement { DataContext: ITabPanelContent panelContent })
-                    {
-                        tabsResult.Add(
-                            elementRecord =>
-                            {
-                                elementRecord.Tag = "Tab";
-                                elementRecord.Attributes.Add("Id", "{" + panelContent.GetPanelToken() + "}");
-                                elementRecord.Attributes.Add("Path", panelContent.GetCurrentPath());
-                                elementRecord.Attributes.Add("ViewType", panelContent.GetType().Name);
-                                return elementRecord;
-                            });
-                    }
-                }
+                //foreach (UserControl view in region.Views)
+                //{
+                //    if (view is FrameworkElement { DataContext: ITabPanelContent panelContent })
+                //    {
+                //        tabsResult.Add(
+                //            elementRecord =>
+                //            {
+                //                elementRecord.Tag = "Tab";
+                //                elementRecord.Attributes.Add("Id", "{" + panelContent.GetPanelToken() + "}");
+                //                elementRecord.Attributes.Add("Path", panelContent.GetCurrentPath());
+                //                elementRecord.Attributes.Add("ViewType", panelContent.GetType().Name);
+                //                return elementRecord;
+                //            });
+                //    }
+                //}
 
-                appConfig.Save();
+                //appConfig.Save();
             });
 
         
@@ -307,18 +305,18 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
                 }
 
                 //directoryPanels.Add(directoryPanel);
-                viewerView = new ViewerView();
-                var panelContent = viewerView.DataContext as ITabPanelContent;
-                var vPanelContent = viewerView.DataContext as IViewerPanel;
-                vPanelContent?.SetViewerContent(obj);
-                FindDirectoryPanel(viewerView).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
+                //viewerView = new ViewerView();
+                //var panelContent = viewerView.DataContext as ITabPanelContent;
+                //var vPanelContent = viewerView.DataContext as IViewerPanel;
+                //vPanelContent?.SetViewerContent(obj);
+                //FindDirectoryPanel(viewerView).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
 
-                tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
-                tabPanel.TabCollection.Add(tabPanel.currentTab);
-                tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
-                tabPanel.ActivateFilePanel(token);
+                //tabPanel.currentTab = tabPanel.CreateTabControl(token, "Viewer", viewerView, TabTypes.SettingsViewer);
+                //tabPanel.TabCollection.Add(tabPanel.currentTab);
+                //tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, viewerView);
+                //tabPanel.ActivateFilePanel(token);
 
-                viewIsRead = true;
+                //viewIsRead = true;
             }
         }
 
@@ -332,18 +330,18 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             var token = Guid.NewGuid();
             var directoryPanel = new ViewerView();
             
-            if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
-            {
-                var panelContent = tabPanel.ActiveTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
-                var vPanelContent = tabPanel.activePanel.DataContext as IViewerPanel;
-                vPanelContent?.SetViewerContent(obj);
+            //if (elementFocusData.TabPanel is TabPanelViewModel tabPanel)
+            //{
+            //    var panelContent = tabPanel.ActiveTabPanelContent ?? tabPanel.activePanel.DataContext as ITabPanelContent;
+            //    var vPanelContent = tabPanel.activePanel.DataContext as IViewerPanel;
+            //    vPanelContent?.SetViewerContent(obj);
 
-                FindDirectoryPanel(directoryPanel).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
-                tabPanel.currentTab = tabPanel.CreateTabControl(token, tabPanel.TabContentFormat(panelContent?.GetCurrentFilePath()), directoryPanel);
-                tabPanel.TabCollection.Add(tabPanel.currentTab);
-                tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, directoryPanel);
-                tabPanel.ActivateFilePanel(token);
-            }
+            //    FindDirectoryPanel(directoryPanel).InitializedViewModel(ref token, panelContent?.GetCurrentFilePath());
+            //    tabPanel.currentTab = tabPanel.CreateTabControl(token, tabPanel.TabContentFormat(panelContent?.GetCurrentFilePath()), directoryPanel);
+            //    tabPanel.TabCollection.Add(tabPanel.currentTab);
+            //    tabPanel.regionManager.AddToRegion(tabPanel.GetCurrentRegion().Name, directoryPanel);
+            //    tabPanel.ActivateFilePanel(token);
+            //}
         }
 
         /// <summary>
@@ -386,27 +384,27 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
             this.RegionContentName = name;
             var collection = new TabCollection();
 
-            foreach (var config in this.appConfigService.GetSession().GetTabConfigs(this.RegionContentName))
-            {
-                var view = config.ViewType;
-                var token = config.Token;
-                var isActive = config.IsActive;
+            //foreach (var config in this.appConfigService.GetSession().GetTabConfigs(this.RegionContentName))
+            //{
+            //    var view = config.ViewType;
+            //    var token = config.Token;
+            //    var isActive = config.IsActive;
 
-                if (isActive)
-                    this.ActiveTabPanelContent = view.DataContext as ITabPanelContent;
+            //    if (isActive)
+            //        this.ActiveTabPanelContent = view.DataContext as ITabPanelContent;
                 
-                if (view.DataContext is IDirectoryPanel dir)
-                    directoryPanels.Add(dir);
+            //    if (view.DataContext is IDirectoryPanel dir)
+            //        directoryPanels.Add(dir);
                 
-                if (view?.DataContext is ITabPanelContent directoryPanel)
-                {
-                    directoryPanel.InitializedViewModel(ref token, config.Path);
-                    //this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
-                }
+            //    if (view?.DataContext is ITabPanelContent directoryPanel)
+            //    {
+            //        directoryPanel.InitializedViewModel(ref token, config.Path);
+            //        //this.commandManager.GetCommand(token).OnExecuteChanged += this.OnExecuteChanged;
+            //    }
 
-                this.regionManager.AddToRegion(this.GetCurrentRegion().Name, view);
-                collection.Add(this.CreateTabControl(token, this.TabContentFormat(config.Path), view));
-            }
+            //    this.regionManager.AddToRegion(this.GetCurrentRegion().Name, view);
+            //    collection.Add(this.CreateTabControl(token, this.TabContentFormat(config.Path), view));
+            //}
 
             collection.Add(this.CreateAddTabControl());
             collection.CollectionChanged += this.OnTabCollectionChanged;
@@ -569,12 +567,12 @@ namespace UnityCommander.Modules.TabPanel.ViewModels
         /// </param>
         private void ActivateFilePanel(Guid token)
         {
-            var regions = this.GetCurrentRegion();
-            this.activePanel = (UserControl)regions.Views.Single(
-                view => FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == token);
-            regions.Activate(this.activePanel);
-            previousLostFocusTabPanel = this.activePanel.DataContext as ITabPanelContent;
-            ActiveTabPanelContent = this.activePanel.DataContext as ITabPanelContent;
+            //var regions = this.GetCurrentRegion();
+            //this.activePanel = (UserControl)regions.Views.Single(
+            //    view => FindDirectoryPanel((FrameworkElement)view).GetPanelToken() == token);
+            //regions.Activate(this.activePanel);
+            //previousLostFocusTabPanel = this.activePanel.DataContext as ITabPanelContent;
+            //ActiveTabPanelContent = this.activePanel.DataContext as ITabPanelContent;
         }
 
         /// <summary>

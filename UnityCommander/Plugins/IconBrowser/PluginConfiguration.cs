@@ -6,13 +6,11 @@ namespace IconBrowser
 
     using Microsoft.Extensions.DependencyInjection;
 
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Factories;
 
     /// <summary>
     /// The plugin configuration.
     /// </summary>
-    public class PluginConfiguration : IPluginFactory
+    public class PluginConfiguration// : IPluginFactory
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginConfiguration"/> class.
@@ -51,9 +49,9 @@ namespace IconBrowser
         /// <param name="typesRegister">
         /// The types register.
         /// </param>
-        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
-        {
-        }
+        //public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
+        //{
+        //}
 
         public void SetToken(string token)
         {
