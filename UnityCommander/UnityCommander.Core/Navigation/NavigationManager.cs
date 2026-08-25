@@ -5,14 +5,13 @@ using System.Diagnostics;
 using System.IO;
 using UnityCommander.Abstractions.Diagnostic;
 using UnityCommander.Logging;
-using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Core.Navigation
 {
-    public class NavigationManager : IDebuggable<DebugNavigationState>
+    public class NavigationManager
     {
         private readonly Stack<string> _back = new();
         private readonly Stack<string> _forward = new();
@@ -126,18 +125,6 @@ namespace UnityCommander.Core.Navigation
         {
             _back.Clear();
             _forward.Clear();
-        }
-
-        public DebugNavigationState GetDebugState()
-        {
-            return new DebugNavigationState
-            {
-                Current = Current ?? "<null>",
-                BackCount = _back.Count,
-                ForwardCount = _forward.Count,
-                CanGoBack = CanGoBack,
-                CanGoForward = CanGoForward
-            };
         }
     }
 }

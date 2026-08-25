@@ -1,10 +1,8 @@
 ﻿
 namespace UnityCommander.Common.Diagnostic
 {
-    public interface IDiagnosticSource
+    public interface IDiagnosticSource : IDiagnostic
     {
-        string Name { get; }
-
         object GetState();
 
         string Describe();

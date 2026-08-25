@@ -4,15 +4,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using UnityCommander.Abstractions.Selection;
+using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Selection
 {
-    public class SelectionManager : ISelectionManager
+    public class SelectionManager : ISelectionManager, IDiagnosticReporter
     {
         private readonly Dictionary<SelectionActionType, ISelectionStrategy> strategies;
-        
+
+        private readonly object _lock = new();
+
         private ISelectionContext _context 
             = new SelectionContext();
 
@@ -25,9 +28,16 @@ namespace UnityCommander.Services.Selection
 
         public ISelectableItem FocusedItem { get; set; }
 
+        public string Name => "selection";
+
+        public DiagnosticCardinality Cardinality
+            => DiagnosticCardinality.Multiple;
+
         public SelectionManager(
-            IEnumerable<ISelectionStrategy> strategies)
+            IEnumerable<ISelectionStrategy> strategies,
+            IDiagnosticRegistry diagnostic)
         {
+            diagnostic.Register(this);
             this.strategies = strategies.ToDictionary(x => x.ActionType);
         }
 
@@ -70,6 +80,13 @@ namespace UnityCommander.Services.Selection
         private void RaiseChanged()
         {
             SelectionChanged?.Invoke();
+        }
+
+        public void Report(IDiagnosticWriter writer)
+        {
+            var isFocused = _context.FocusedIndex > -1 ? "yes" : "no";
+
+            writer.WriteLine($"Selection: {SelectedItems.Count} items selected. Focused: {isFocused}, AnchorIndex: {_context.AnchorIndex}, FocusedIndex: {_context.FocusedIndex}");
         }
     }
 }

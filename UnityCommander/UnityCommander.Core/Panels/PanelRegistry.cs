@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityCommander.Abstractions.Diagnostic;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Panels;
@@ -10,7 +9,7 @@ using UnityCommander.Common.Panels;
 
 namespace UnityCommander.Core.Panels
 {
-    public class PanelRegistry :  IPanelRegistry, IDebuggable<DebugPanelState>, IDiagnosticSource
+    public class PanelRegistry : IPanelRegistry, IDiagnosticSource
     {
         private readonly Dictionary<Guid, IPanel> _panels = new();
         
@@ -23,6 +22,11 @@ namespace UnityCommander.Core.Panels
         public event Action<TabRemovedEvent>? TabRemoved;
 
         public event Action<ActiveTabChangedEvent>? ActiveTabChanged;
+
+        public PanelRegistry(IDiagnosticRegistry diagnostic)
+        {
+            diagnostic.Register(this);
+        }
 
         public Guid? ActivePanelId 
         {
@@ -250,6 +254,9 @@ namespace UnityCommander.Core.Panels
 
         public string Name => "panel";
 
+        public DiagnosticCardinality Cardinality 
+            => DiagnosticCardinality.Single;
+
         public object GetState()
         {
             lock (_lock)
@@ -262,19 +269,6 @@ namespace UnityCommander.Core.Panels
                     ["Panels"] = _panels.ToDictionary(
                         pair => pair.Key.ToString(),
                         pair => (object)pair.Value.Tabs.Select(tabId => tabId.ToString()).ToList())
-                };
-            }
-        }
-
-        public DebugPanelState GetDebugState()
-        {
-            lock (_lock)
-            {
-                return new DebugPanelState()
-                {
-                    PanelCount = _panels.Count,
-                    TabCount = _panels.Values.Sum(panel => panel.Tabs.Count),
-                    ActivePanel = _activePanelId ?? Guid.Empty,
                 };
             }
         }

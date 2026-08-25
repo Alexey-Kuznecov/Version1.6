@@ -1,14 +1,17 @@
 ﻿
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Mode;
 using UnityCommander.Commands.Diagnostic;
 using UnityCommander.Commands.Parsing;
-using UnityCommander.Commands.Rendering;
 using UnityCommander.Commands.Services;
+using UnityCommander.Common.Diagnostic;
+using UnityCommander.Diagnostics.Diagnostic;
 
 
 namespace UnityCommander.Commands
@@ -19,7 +22,10 @@ namespace UnityCommander.Commands
         private IDiagnosticRender _renderer;
         private ICommandArgumentParser _parser;
         private IDiagnosticPipeline _pipeline;
+        
         private WatchService _watchService;
+        
+        private DiagnosticTrace _trace;
 
         public string Name => "inspect";
 
@@ -38,15 +44,20 @@ namespace UnityCommander.Commands
             _renderer = render;
             _parser = parse;
             _pipeline = pipeline;
-            _watchService = new WatchService(pipeline);
+            _watchService = new WatchService();
         }
 
         public async Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken)
         {
+            var output = context.Output;
+            var writer = new DiagnosticConsoleWriter(output);
+
             var args = _parser.Parse(context.Arguments);
 
             var interval = args.GetInt("interval");
             var isWatch = args.HasFlag("watch");
+            var isReporter = args.HasFlag("report");
+            var isTrace = args.HasFlag("trace");
 
             var query = new DiagnosticQuery
             {
@@ -56,16 +67,43 @@ namespace UnityCommander.Commands
 
             if (!isWatch)
             {
-                var result = _pipeline.Execute(query);
-                _renderer.Render(context.Output, result);
+                if (isReporter)
+                    _pipeline.Report(query, writer);
+                else
+                    _renderer.Render(output, _pipeline.Execute(query));
+
                 return;
             }
+            await _watchService.Run(
+                interval,
+                () =>
+                {
+                    if (isReporter)
+                    {
+                        if (isTrace)
+                        {
+                            if (!_pipeline.ReportChanged(query, writer))
+                                return;
 
-            await _watchService.Run(query, interval, result =>
-            {
-                context.Output.Clear();
-                _renderer.Render(context.Output, result);
-            }, cancellationToken);
+                            //output.WriteLine(writer.ToString());
+                            return;
+                        }
+
+                        output.Clear();
+
+                        _pipeline.Report(query, writer);
+
+                        return;
+                    }
+
+                    var result = _pipeline.Execute(query);
+
+                    if (!isTrace)
+                        output.Clear();
+
+                    _renderer.Render(output, result);
+                },
+                cancellationToken);
         }
 
         public Task FinalizeAsync()

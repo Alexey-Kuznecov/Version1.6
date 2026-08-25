@@ -5,12 +5,14 @@ namespace UnityCommander.Common.Diagnostic
 {
     public interface IDiagnosticRegistry
     {
-        void Register(IDiagnosticSource source);
+        void Register(IDiagnostic diagnostic);
 
-        bool TryGet(string name, out IDiagnosticSource? source);
+        DiagnosticDefinition Get(string name);
 
-        IDiagnosticSource Get(string source);
+        IEnumerable<DiagnosticDefinition> GetAll();
 
-        IEnumerable<IDiagnosticSource> GetAll();
+        public bool TryGet(
+            string name,
+            out DiagnosticDefinition? diagnostic);
     }
 }

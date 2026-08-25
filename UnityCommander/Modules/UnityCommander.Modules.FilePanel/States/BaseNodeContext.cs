@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;

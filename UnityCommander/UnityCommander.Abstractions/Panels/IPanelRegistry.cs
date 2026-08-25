@@ -1,10 +1,9 @@
 ﻿
-using UnityCommander.Abstractions.Diagnostic;
 using UnityCommander.Common.Panels;
 
 namespace UnityCommander.Abstractions.Panels
 {
-    public interface IPanelRegistry : IDebuggable<DebugPanelState>
+    public interface IPanelRegistry
     {
         event Action<TabAddedEvent> TabAdded;
 

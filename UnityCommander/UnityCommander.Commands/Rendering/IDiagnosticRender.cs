@@ -1,8 +1,9 @@
 ﻿
-using UnityCommander.CLI.Core;
-using UnityCommander.Commands.Diagnostic;
 
-namespace UnityCommander.Commands.Rendering
+using UnityCommander.CLI.Core;
+using UnityCommander.Diagnostics.Diagnostic;
+
+namespace UnityCommander.Commands.Diagnostic
 {
     public interface IDiagnosticRender
     {

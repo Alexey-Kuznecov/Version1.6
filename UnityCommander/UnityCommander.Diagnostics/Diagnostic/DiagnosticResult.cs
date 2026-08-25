@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Commands.Diagnostic
+namespace UnityCommander.Diagnostics.Diagnostic
 {
     public class DiagnosticResult
     {

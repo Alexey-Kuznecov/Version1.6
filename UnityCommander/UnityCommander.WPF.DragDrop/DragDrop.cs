@@ -282,6 +282,22 @@ namespace UnityCommander.WPF.DragDrop
 
         private static void DragSourceOnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (sender is ItemsControl itemsControl)
+            {
+                var position = e.GetPosition(itemsControl);
+
+                var sourceItem =
+                    itemsControl.ContainerFromElement(
+                        (DependencyObject)e.OriginalSource);
+
+                if (sourceItem == null)
+                {
+                    // Это не item → это обычный клик по пустому месту.
+                    // Gong здесь вообще не должен вмешиваться.
+                    return;
+                }
+            }
+
             DoMouseButtonDown(sender, e);
         }
 

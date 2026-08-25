@@ -375,6 +375,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         _fileNodeContext.Files.Add(file);
                     }
                 }
+
+                _fileNodeContext.SelectionManager.SetItems(_fileNodeContext.Files);
             }
         }
 
@@ -390,6 +392,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         _folderNodeContext.Folders.RemoveAt(i);
                 }
 
+
                 var existing = _folderNodeContext.Folders.Select(d => d.Path).ToHashSet();
 
                 foreach (var dir in dirs)
@@ -399,6 +402,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         _folderNodeContext.Folders.Add(dir);
                     }
                 }
+
+                _folderNodeContext.SelectionManager.SetItems(_folderNodeContext.Folders);
             }
         }
 

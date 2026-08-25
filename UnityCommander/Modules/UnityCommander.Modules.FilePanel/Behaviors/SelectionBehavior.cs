@@ -1,5 +1,6 @@
 ﻿
 using Prism.Ioc;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -80,9 +81,8 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 list.SelectionMode = SelectionMode.Multiple; // отключаем стандартное выделение
                 list.SelectedItem = null;
 
-                list.PreviewMouseLeftButtonDown += OnLeftMouseDown;
+                list.PreviewMouseLeftButtonDown += OnPreviewLeftMouseDown;
                 list.PreviewMouseRightButtonDown += OnRightMouseDown;
-                list.PreviewMouseMove += OnPreviewMouseMove;
                 //logger = logCreat.Create(
                 //    category: LogCategory.UserAction,
                 //    scope: LogScope.UserAction
@@ -90,11 +90,19 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             }
         }
 
-        private static void OnLeftMouseDown(
-            object sender,
-            MouseButtonEventArgs e)
+        private static void OnPreviewLeftMouseDown(
+           object sender,
+           MouseButtonEventArgs e)
         {
             var list = (ListView)sender;
+
+            Debug.WriteLine(
+               $"[Selection] PreviewLeftMouseDown " +
+               $"Source={e.Source?.GetType().Name}, " +
+               $"OriginalSource={e.OriginalSource?.GetType().Name}, " +
+               $"Handled={e.Handled}, " +
+               $"Modifiers={Keyboard.Modifiers}");
+
 
             if (!TryGetSelectionTarget(
                     list,
@@ -102,6 +110,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                     out var manager,
                     out var index))
             {
+                e.Handled = true;
                 manager?.ClearSelection();
                 return;
             }
@@ -174,18 +183,6 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 list.Items.Cast<ISelectableItem>());
 
             return true;
-        }
-
-        private static void OnPreviewMouseMove(
-            object sender,
-            MouseEventArgs e)
-        {
-            if (e.LeftButton != MouseButtonState.Pressed)
-                return;
-
-            var list = (ListView)sender;
-
-            // Здесь пока просто диагностика
         }
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)

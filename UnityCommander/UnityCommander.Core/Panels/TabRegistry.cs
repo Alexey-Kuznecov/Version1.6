@@ -17,6 +17,11 @@ namespace UnityCommander.Core.Panels
         
         private ITabContentAdapter _activeTab;
 
+        public TabRegistry(IDiagnosticRegistry diagnostic)
+        {
+            diagnostic.Register(this);
+        }
+
         /// <summary>
         /// Событие вызывается при смене активной панели.
         /// </summary>
@@ -142,6 +147,9 @@ namespace UnityCommander.Core.Panels
             => _map.ContainsKey(tabId);
 
         public string Name => "tab";
+
+        public DiagnosticCardinality Cardinality
+            => DiagnosticCardinality.Single;
 
         public object GetState()
         {

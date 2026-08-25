@@ -10,6 +10,7 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
+using UnityCommander.Core.Diagnostics;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel;
@@ -20,6 +21,7 @@ using UnityCommander.Modules.ToolBar;
 using UnityCommander.Services;
 using UnityCommander.Services.Background;
 using UnityCommander.Services.Bootstrap;
+using UnityCommander.Services.Interfaces;
 using UnityCommander.Settings.Abstactions;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views.CopyDialogs;
@@ -46,11 +48,16 @@ namespace UnityCommander
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
             var loggerCreator = containerProvider.Resolve<LoggerCreator>();
 
+          
+
             initializer.Initialize();
 
             var token = new CancellationToken();
 
             backgroundService.Start(token);
+
+
+            var selectionDiagnostics = containerProvider.Resolve<SelectionDiagnostics>();
 
             builder.Rebuild();
         }
@@ -61,13 +68,15 @@ namespace UnityCommander
 
         private static void RegisterDiagnostics(IContainerProvider containerRegistry)
         {
-            var diagnostics = containerRegistry.Resolve<IDiagnosticRegistry>();
+            //var diagnostics = containerRegistry.Resolve<IDiagnosticRegistry>();
 
-            var pan = containerRegistry.Resolve<IPanelRegistry>();
-            var tab = containerRegistry.Resolve<ITabRegistry>();
+            //var pan = containerRegistry.Resolve<IPanelRegistry>();
+            //var tab = containerRegistry.Resolve<ITabRegistry>();
+            //var selection = containerRegistry.Resolve<ISelectionManager>();
 
-            diagnostics.Register(pan as IDiagnosticSource);
-            diagnostics.Register(tab as IDiagnosticSource);
+            //diagnostics.Register(pan as IDiagnosticSource);
+            //diagnostics.Register(tab as IDiagnosticSource);
+            //diagnostics.Register(selection as IDiagnosticSource);
         }
 
         private static void RegisterDiaglog(IContainerProvider containerRegistry)

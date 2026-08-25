@@ -7,6 +7,7 @@ using UnityCommander.Commands.Rendering;
 using UnityCommander.Commands.Services;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Core.Diagnostics;
+using UnityCommander.Diagnostics.Diagnostic;
 using UnityCommander.Diagnostics.Performance;
 
 namespace UnityCommander.Dependencies

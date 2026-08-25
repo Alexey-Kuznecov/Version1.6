@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityCommander.CLI.Core;
-using UnityCommander.Commands.Rendering;
+using UnityCommander.Diagnostics.Diagnostic;
 
 namespace UnityCommander.Commands.Diagnostic
 {
