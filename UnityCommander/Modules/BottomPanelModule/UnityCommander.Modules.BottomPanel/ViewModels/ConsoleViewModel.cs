@@ -45,7 +45,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private readonly ICompletionEngine _completionEngine;
         private bool _suppressCompletionUpdate;
-        private bool _autoCompleteEnabled = false;
+        private bool _autoCompleteEnabled = true;
         private string _lastTokenValue;
         private InputToken _lastInputToken;
 
@@ -53,21 +53,22 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         public string InputText
         {
             get => _inputText;
+            set => SetProperty(ref _inputText, value);
+        }
+
+        private int _caretIndex;
+
+        public int CaretIndex
+        {
+            get => _caretIndex;
             set
             {
-                if (SetProperty(ref _inputText, value))
+                if (SetProperty(ref _caretIndex, value))
                 {
                     if (!_suppressCompletionUpdate)
                         UpdateCompletions();
                 }
             }
-        }
-
-        private int _caretIndex;
-        public int CaretIndex
-        {
-            get => _caretIndex;
-            set => SetProperty(ref _caretIndex, value);
         }
 
         private int _selectedIndex = 0;
@@ -214,30 +215,48 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             if (!_autoCompleteEnabled)
                 return;
 
+            if (string.IsNullOrEmpty(InputText))
+            {
+                ClearCompletions();
+                return;
+            }
+
             var caret = Math.Max(0, CaretIndex);
-            var inputStatus = _cliInputAnalyzer.Analyze(InputText, caret);
+
+            var inputStatus = _cliInputAnalyzer.Analyze(
+                InputText,
+                caret);
 
             inputStatus.Logger = _logger;
 
             var parseState = _parseStateBuilder.Build(inputStatus);
             var state = new InputState(InputText, caret);
+
             if (parseState.IsEditingToken)
                 return;
-            var result = _completionEngine.GetCompletions(state, parseState);
-            var token = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
+
+            var result = _completionEngine.GetCompletions(
+                state,
+                parseState);
+
+            var token = _completionEngine.GetTokenNearCaret(
+                InputText,
+                caret);
 
             _completions.Clear();
 
-            _logger.Info($"UpdateCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
+            _logger.Info(
+                $"UpdateCompletions " +
+                $"[CaretPosition={state.CaretPosition}] " +
+                $"[InputText={InputText}]");
+
             if (result == null)
                 return;
 
-            //_logger.ObjectInfo("UpdateCompletions ", token);
             foreach (var item in result.Items)
                 _completions.Add(item);
+
             SelectedIndex = result.DefaultSelectedIndex;
-            CaretIndex = CaretIndex < InputText.Length ? InputText.Length : CaretIndex;
-            RaisePropertyChanged(nameof(CaretIndex));
         }
 
         private bool CanAccept() =>

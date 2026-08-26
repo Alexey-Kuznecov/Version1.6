@@ -11,6 +11,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
         public int Length => Text.Length;
 
         public int End => Start + Length;
+        
         public bool IsActive { get; set; }
 
         public TokenKind Kind { get; set; }

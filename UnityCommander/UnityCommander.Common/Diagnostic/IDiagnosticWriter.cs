@@ -6,15 +6,15 @@ namespace UnityCommander.Common.Diagnostic
         void Write(string value);
         void WriteLine(string value);
 
-        //void BeginSection(string title);
-        //void EndSection();
+        void BeginSection(string title);
+        void EndSection();
 
-        //void Indent();
+        void BeginTable(string title);
+        void Row(string name, object? value);
+        void EndTable();
 
-        ////void WriteTable(
-        ////    IReadOnlyList<DiagnosticColumn> columns,
-        ////    IReadOnlyList<IReadOnlyList<object?>> rows);
+        void Indent();
 
-        //void Inspect(object? value);
+        void Inspect(object? value);
     }
 }

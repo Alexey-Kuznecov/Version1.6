@@ -14,7 +14,10 @@ namespace UnityCommander.Autocomplete.Completion.Providers
             
             // фильтруем команды по тому, что уже введено
             var partial = ctx.PartialValue ?? "";
-            var command = ctx.Command ?? throw new ArgumentNullException();
+            var command = ctx.Command;
+
+            if (command == null)
+                return Enumerable.Empty<CompletionItem>();
 
             return command.Variants
                 .Where(c => c.Name.StartsWith(partial, StringComparison.OrdinalIgnoreCase))

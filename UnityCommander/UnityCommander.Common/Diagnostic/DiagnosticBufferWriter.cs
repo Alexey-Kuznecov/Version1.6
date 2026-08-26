@@ -16,5 +16,40 @@ namespace UnityCommander.Diagnostics.Diagnostic
 
         public override string ToString()
             => _buffer.ToString();
+
+        public void BeginSection(string title)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void EndSection()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void BeginTable(string title)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Row(string name, object value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void EndTable()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Indent()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Inspect(object value)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

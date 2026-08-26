@@ -1,25 +1,44 @@
 ﻿
 
 using UnityCommander.Abstractions.Completion;
+using UnityCommander.Autocomplete.Diagnostic;
+using UnityCommander.Common.Diagnostic;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
-using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Logging.Extensions;
+using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
-    public sealed class CliInputAnalyzer : ICliInputAnalyzer
+    public sealed class CliInputAnalyzer : ICliInputAnalyzer, IDiagnosticReporter
     {
         private readonly IReadOnlyList<ICommandDescriptor> _commands;
-        
+
+        private InputDiagnostics? _diagnostics;
+
         private readonly ILogger? _logger;
 
+        #region Report Data
+
+        private string __text = string.Empty;
+        private int __lastCaretPosition = 0;
+
+        #endregion
+
+        public string Name => "cli-input-analyzer";
+
+        public DiagnosticCardinality Cardinality 
+            => DiagnosticCardinality.Single;
+
         public CliInputAnalyzer(
-            IReadOnlyList<ICommandDescriptor> commands,
+            IReadOnlyList<ICommandDescriptor> commands, 
+            IDiagnosticRegistry diagnostic,
             LoggerCreator? loggerCreator = null)
         {
+            diagnostic.Register(this);
+
             _commands = commands;
-            _logger = loggerCreator?.For<DefaultCliInputAnalyzer>(LogScope.Runtime);
+            _logger = loggerCreator?.For<CliInputAnalyzer>(LogScope.Runtime);
         }
 
         public CliInputAnalyzer(ICommandCatalog catalog)
@@ -56,7 +75,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             var status = new InputStatus
             {
                 Tokens = tokens,
-                ActiveToken = tokens.FirstOrDefault(t => t.Status == TokenStatus.Editing)
+                //ActiveToken = tokens.FirstOrDefault(t => t.Status == TokenStatus.Editing)
             };
 
             //_logger?.CollectionInfo($"TokenStatus {status?.ActiveToken?.Text}", tokens, t =>
@@ -80,6 +99,18 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 .Select(t => t.Clone())
                 .ToList();
 
+            var currentToken = tokens.FirstOrDefault(t => t.IsActive);
+
+            _diagnostics = new InputDiagnostics
+            {
+                Text = text,
+                CaretIndex = caretPosition,
+                CurrentToken = currentToken?.Clone(),
+                Tokens = tokens
+                   .Select(t => t.Clone())
+                   .ToList()
+            };
+
             // 3. Валидация (пока можно stub)
             //ResolveValidation(status);
 
@@ -100,38 +131,22 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             IReadOnlyList<AnalyzerToken> tokens,
             int caretPosition)
         {
-            //_logger?.CollectionInfo("IReadOnlyList<AnalyzerToken> tokens", tokens, p => 
-            //{
-            //    _logger?.ObjectInfo($"", p);
-            //});
-
-            foreach (var token in tokens)
+            for (int i = 0; i < tokens.Count; i++)
             {
-                //_logger?.ObjectInfo("", token);
-                if (IsCaretInsideToken(caretPosition, token))
-                {
-                    token.IsActive = true;
-                    //token.Status = TokenStatus.Editing;
-                    //token.SemanticIndex = -1;
+                var token = tokens[i];
+
+                token.IsActive = IsCaretInsideToken(caretPosition, token);
+                token.SemanticIndex = i;
+
+                if (token.IsActive)
                     return;
-                }
-
-                token.IsActive = false;
-                //token.Status = TokenStatus.Completed;
-            }
-            
-            // Каретка после пробела → создаём виртуальный токен
-            var last = tokens.LastOrDefault();
-            if (last != null && caretPosition > last.End)
-            {
-                last.IsActive = true;
             }
         }
 
         bool IsCaretInsideToken(int caret, AnalyzerToken token)
         {
             return caret >= token.Start &&
-                   caret <= token.End + 1;
+                   caret <= token.End;
         }
 
         void ResolveTokens(InputStatus status)
@@ -144,6 +159,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 
                 if (token.IsActive)
                 {
+                    status.ActiveToken = token;
                     token.Status = TokenStatus.Editing;
                     break;
                 }
@@ -155,37 +171,50 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             AnalyzerContext ctx,
             InputStatus status)
         {
-            // 1️⃣ Ожидается значение флага
             if (ctx.WaitingFlagValue != null)
             {
                 token.Kind = TokenKind.FlagValue;
+
+                // Здесь надо проверить соответствие ожидаемому типу значения,
+                // если FlagValue у тебя именно именованное значение.
                 ctx.WaitingFlagValue = null;
                 return;
             }
 
-            // 2️⃣ Команда ещё не выбрана
             if (ctx.Command == null)
             {
                 token.Kind = TokenKind.Command;
+
                 ctx.Command = ResolveCommand(token.Text);
                 status.Command = ctx.Command;
+
+                token.IsComplete = ctx.Command != null &&
+                                   token.Text == ctx.Command.Name;
+
                 return;
             }
 
-            // 3️⃣ Вариант (если есть)
             if (ctx.Variant == null && ctx.Command.Variants.Any())
             {
                 token.Kind = TokenKind.Variant;
+
                 ctx.Variant = ResolveVariant(ctx.Command, token.Text);
                 status.Variant = ctx.Variant;
+
+                token.IsComplete = ctx.Variant != null &&
+                                   token.Text == ctx.Variant.Name;
+
                 return;
             }
 
-            // 4️⃣ Флаг?
             if (token.Text.StartsWith("-"))
             {
                 var flag = ResolveFlag(ctx, token.Text);
+
                 token.Kind = TokenKind.Flag;
+
+                token.IsComplete = flag != null &&
+                                   token.Text == flag.Name;
 
                 if (flag?.RequiresValue == true)
                     ctx.WaitingFlagValue = flag;
@@ -193,9 +222,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 return;
             }
 
-            // 5️⃣ Позиционный аргумент
             token.Kind = TokenKind.PositionalArgument;
-            ctx.PositionalIndex++;
         }
 
         private ICommandVariant? ResolveVariant(ICommandDescriptor command, string name)
@@ -223,13 +250,12 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
         private void ResolveExpectedKind(InputStatus status)
         {
-            // 1️⃣ Если есть редактируемый токен — он главный
-            var editing = status.Tokens
-                .LastOrDefault(t => t.Status == TokenStatus.Editing);
+            var active = status.Tokens.FirstOrDefault(t => t.IsActive);
 
-            if (editing != null)
+            // Каретка внутри незавершённого токена.
+            if (active != null && !active.IsComplete)
             {
-                status.ExpectedKind = editing.Kind switch
+                status.ExpectedKind = active.Kind switch
                 {
                     TokenKind.Command => ExpectedKind.Command,
                     TokenKind.Variant => ExpectedKind.Variant,
@@ -238,18 +264,16 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                     TokenKind.PositionalArgument => ExpectedKind.PositionalArgument,
                     _ => ExpectedKind.Nothing
                 };
-                return;
-            }
 
-            // 2️⃣ Если НЕТ редактирования — смотрим, ожидается ли вообще что-то
-            if (IsInputComplete(status))
-            {
-                status.ExpectedKind = ExpectedKind.Nothing;
                 return;
             }
 
             // 3️⃣ Иначе — что ожидается следующим по контексту
-            status.ExpectedKind = ResolveNextExpected(status);
+            if (active == null)
+            {
+                status.ActiveToken = CreateVirtualToken(status);
+                status.ExpectedKind = ResolveNextExpected(status);
+            }
         }
 
         private ExpectedKind ResolveNextExpected(InputStatus status)
@@ -282,18 +306,17 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             return ExpectedKind.Nothing;
         }
 
-        private bool IsInputComplete(InputStatus status)
+        private AnalyzerToken CreateVirtualToken(InputStatus status)
         {
-            if (status.Command == null)
-                return false;
+            var last = status.Tokens.LastOrDefault();
 
-            if (status.Variant != null)
+            var start = last?.End +1 ?? 0;
+
+            return new AnalyzerToken("", start)
             {
-                // TODO: тут позже учтёшь обязательные аргументы
-                return true;
-            }
-
-            return false;
+                IsActive = true,
+                //IsVirtual = true
+            };
         }
 
         private List<AnalyzerToken> Tokenize(string text)
@@ -317,6 +340,34 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             }
 
             return tokens;
+        }
+
+        public void Report(IDiagnosticWriter writer)
+        {
+            writer.BeginTable("Analyzer");
+
+            writer.Row("Input", _diagnostics?.Text);
+            writer.Row("Caret", _diagnostics?.CaretIndex);
+
+            writer.Row("CurrentToken", _diagnostics?.CurrentToken?.Text);
+            writer.Row("SemanticIndex", _diagnostics?.CurrentToken?.SemanticIndex);
+            writer.Row("Kind", _diagnostics?.CurrentToken?.Kind);
+            writer.Row("Status", _diagnostics?.CurrentToken?.Status);
+            writer.Row("Complete", _diagnostics?.CurrentToken?.IsComplete);
+
+            writer.EndTable();
+
+
+            //writer.BeginTable("Tokens");
+
+            //foreach (var token in _diagnostics?.Tokens ?? [])
+            //{
+            //    writer.Row(
+            //        $"{token.SemanticIndex}: {token.Text}",
+            //        $"{token.Kind}, {token.Status}");
+            //}
+
+            //writer.EndTable();
         }
     }
 }

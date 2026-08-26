@@ -1,12 +1,27 @@
-﻿using UnityCommander.Abstractions.Completion;
+﻿
+using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Context.Descriptors;
+using UnityCommander.Common.Diagnostic;
 
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
-    public sealed class CliParseStateBuilder : ICliParseStateBuilder
+    public sealed class CliParseStateBuilder : ICliParseStateBuilder, IDiagnosticReporter
     {
+        public string Name => "cli.parse.state.builder";
+
+        public InputStatus? Status = null;
+
+        public DiagnosticCardinality Cardinality 
+            => DiagnosticCardinality.Single;
+
+        public CliParseStateBuilder(IDiagnosticRegistry diagnostic)
+        {
+            diagnostic.Register(this);
+        }
+
         public CliParseState Build(InputStatus status)
         {
+            Status = status;
             var command = status.Command;
             var variant = status.Variant;
             var tokens = status.Tokens ?? Array.Empty<AnalyzerToken>();
@@ -15,10 +30,14 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             // Если команда ещё не выбрана
             if (command == null)
             {
+                var errorMessage = tokens.Count > 0
+                    ? $"Unknown command '{tokens[0]?.Text}'"
+                    : "No command specified";
+
                 return CreateBaseState(
                     command: null,
                     variant: null,
-                    new CliError($"Unknown command '{tokens[0]?.Text}'"),
+                    new CliError(errorMessage),
                     status,
                     activeToken
                 );
@@ -219,5 +238,31 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 next,
                 0,
                 new CliError(message));
+
+        public void Report(IDiagnosticWriter writer)
+        {
+            writer.BeginTable("ActiveToken");
+
+            writer.Row("Input", Status?.ActiveToken?.Text);
+
+            writer.Row("CurrentToken", Status?.ActiveToken?.Text);
+            writer.Row("SemanticIndex", Status?.ActiveToken?.SemanticIndex);
+            writer.Row("Kind", Status?.ActiveToken?.Kind);
+            writer.Row("Status", Status?.ActiveToken?.Status);
+            writer.Row("Complete", Status?.ActiveToken?.IsComplete);
+
+            writer.EndTable();
+
+            writer.BeginTable("InputStatus");
+
+            writer.Row("CommandName", Status?.Command?.Name);
+
+            writer.Row("IsValidCommand", Status?.IsValidCommand);
+            writer.Row("VariantName", Status?.Variant?.Name);
+            writer.Row("ExpectedKind", Status?.ExpectedKind);
+            writer.Row("TokensCount", Status?.Tokens?.Count);
+
+            writer.EndTable();
+        }
     }
 }

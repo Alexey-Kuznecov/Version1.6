@@ -28,7 +28,7 @@ namespace UnityCommander.Autocomplete.Tokenization
 
         public InputToken? GetTokenNearCaret(string text, int caretPosition)
         {
-            _appLogger?.Info($"GetTokenNearCaret called with caretPos: {caretPosition} on text: '{text}'");
+          
             if (_tokens.Count == 0 || string.IsNullOrEmpty(text))
                 return null;
 
@@ -52,6 +52,9 @@ namespace UnityCommander.Autocomplete.Tokenization
 
             if (pos < 0)
                 return null;
+
+
+            _appLogger?.Info($"Method GetTokenNearCaret called with caretPos: {caretPosition} -> pos: {pos} on text: '{text}'");
 
             return _tokens.FirstOrDefault(t =>
                 pos >= t.Start &&

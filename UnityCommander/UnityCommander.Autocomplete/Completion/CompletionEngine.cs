@@ -1,9 +1,10 @@
 ﻿
-using UnityCommander.Abstractions.Completion;
-using UnityCommander.Autocomplete.Context;
 using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Input;
 using UnityCommander.Autocomplete.Tokenization;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Completion
 {
@@ -11,15 +12,28 @@ namespace UnityCommander.Autocomplete.Completion
     {
         private readonly ITokenRegistry _tokenRegistry;
         private readonly IEnumerable<ICompletionProvider> _providers;
+        private readonly ILogger? _logger;
 
-        public CompletionEngine(ITokenRegistry tokenRegistry, IEnumerable<ICompletionProvider> providers)
+        public CompletionEngine(
+            ITokenRegistry tokenRegistry, 
+            IEnumerable<ICompletionProvider> providers, 
+            LoggerCreator? loggerCreator = null)
         {
             _tokenRegistry = tokenRegistry;
             _providers = providers;
+            _logger = loggerCreator?.For<CompletionEngine>(LogScope.Runtime);
         }
 
         public CompletionResult GetCompletions(InputState state, CliParseState analyze)
         {
+            _logger?.Info(
+               $"GetCompletions: " +
+               $"Text='{state.Text}', " +
+               $"Caret={state.CaretPosition}, " +
+               $"CurrentToken='{analyze.CurrentToken}', " +
+               $"ReplaceStart={analyze.ReplaceStart}, " +
+               $"ReplaceLength={analyze.ReplaceLength}");
+
             var items = _providers
                 .Where(p => p.CanHandle(analyze))
                 .SelectMany(p => p.GetCompletions(analyze))
@@ -35,6 +49,14 @@ namespace UnityCommander.Autocomplete.Completion
                     )
                 })
                 .ToList();
+
+            _logger?.Info(
+               $"GetCompletions: " +
+               $"Text='{state.Text}', " +
+               $"Caret={state.CaretPosition}, " +
+               $"CurrentToken='{analyze.CurrentToken}', " +
+               $"ReplaceStart={analyze.ReplaceStart}, " +
+               $"ReplaceLength={analyze.ReplaceLength}");
 
             return new CompletionResult(items)
             {
