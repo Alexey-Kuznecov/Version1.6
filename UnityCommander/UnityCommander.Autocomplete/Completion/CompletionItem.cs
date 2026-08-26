@@ -10,6 +10,8 @@ namespace UnityCommander.Autocomplete.Completion
 
         public string? DisplayText { get; init; }
 
+        public int CaretOffset { get; init; }
+
         public CompletionKind Kind { get; init; }
 
         public Func<InputState, TextEdit> EditFactory { get; set; } = null!;

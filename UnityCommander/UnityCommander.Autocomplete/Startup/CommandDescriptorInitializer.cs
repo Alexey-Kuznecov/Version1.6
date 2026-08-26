@@ -22,8 +22,8 @@ namespace UnityCommander.Autocomplete.Startup
             _registry.Register(
                 new PluginCommandDefinition());
 
-            //_registry.Register(
-            //    new CopyDescriptor());
+            _registry.Register(
+                new InspectCommandDefinition());
         }
     }
 }

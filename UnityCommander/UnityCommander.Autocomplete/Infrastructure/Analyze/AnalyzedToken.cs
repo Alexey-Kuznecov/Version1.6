@@ -21,6 +21,9 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
         public bool IsComplete { get; set; }
 
         public int SemanticIndex { get; internal set; }
+        
+        public bool IsValid { get; internal set; }
+        public bool IsVirtual { get; internal set; }
 
         public AnalyzerToken(string text, int start)
         {

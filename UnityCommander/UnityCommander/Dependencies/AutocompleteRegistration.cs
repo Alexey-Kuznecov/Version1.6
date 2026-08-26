@@ -22,6 +22,7 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterInstance<ICommandDescriptor>(new GitCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new PluginCommandDefinition());
+            registry.RegisterInstance<ICommandDescriptor>(new InspectCommandDefinition());
         }
     }
 }

@@ -18,13 +18,6 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
         private readonly ILogger? _logger;
 
-        #region Report Data
-
-        private string __text = string.Empty;
-        private int __lastCaretPosition = 0;
-
-        #endregion
-
         public string Name => "cli-input-analyzer";
 
         public DiagnosticCardinality Cardinality 
@@ -48,58 +41,21 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
         public InputStatus Analyze(string text, int caretPosition)
         {
-            _logger?.Info($"text: {text} caretPosition:  {caretPosition}");
-
             var tokens = Tokenize(text);
 
-            var snapshot = tokens
-                .Select(t => t.Clone())
-                .ToList();
-
             MarkActiveToken(tokens, caretPosition);
-
-           _logger?.CollectionDiff("MarkActiveToken", snapshot, tokens,
-           (log, oldToken, newToken) =>
-           {
-               if (oldToken.Status != newToken.Status)
-               {
-                   log.Warning(
-                       $"{oldToken.Text}: {oldToken.Status} -> {newToken.Status}");
-               }
-           });
-
-            var snapshot2 = tokens
-                .Select(t => t.Clone())
-                .ToList();
 
             var status = new InputStatus
             {
                 Tokens = tokens,
-                //ActiveToken = tokens.FirstOrDefault(t => t.Status == TokenStatus.Editing)
+                ActiveToken = tokens.FirstOrDefault(t => t.Status == TokenStatus.Editing)
             };
-
-            //_logger?.CollectionInfo($"TokenStatus {status?.ActiveToken?.Text}", tokens, t =>
-            //{
-            //    _logger.Info($"{t.Text}; = {t.Status} \n");
-            //});
 
             ResolveTokens(status);
 
-            _logger?.CollectionDiff("ResolveTokens", snapshot2, tokens,
-            (log, oldToken, newToken) =>
-            {
-                if (oldToken.Status == newToken.Status)
-                {
-                    log.Warning(
-                        $"{oldToken.Text}: {oldToken.Status} -> {newToken.Status}");
-                }
-            });
-
-            var snapshot3 = tokens
-                .Select(t => t.Clone())
-                .ToList();
-
             var currentToken = tokens.FirstOrDefault(t => t.IsActive);
+
+            ResolveExpectedKind(status);
 
             _diagnostics = new InputDiagnostics
             {
@@ -108,22 +64,9 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 CurrentToken = currentToken?.Clone(),
                 Status = status,
                 Tokens = tokens
-                   .Select(t => t.Clone())
-                   .ToList()
+               .Select(t => t.Clone())
+               .ToList()
             };
-
-            // 3. Валидация (пока можно stub)
-            //ResolveValidation(status);
-
-            // 4. Фаза + ожидания
-            ResolveExpectedKind(status);
-
-            _logger?.CollectionDiff("ResolveTokens", snapshot3, tokens,
-            (log, oldToken, newToken) =>
-            {
-                log.Warning(
-                    $"{oldToken.Text}: {oldToken.Status} -> {newToken.Status}");
-            });
 
             return status;
         }
@@ -176,9 +119,10 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             {
                 token.Kind = TokenKind.FlagValue;
 
-                // Здесь надо проверить соответствие ожидаемому типу значения,
-                // если FlagValue у тебя именно именованное значение.
+                token.IsComplete = !token.IsActive;
+                token.IsValid = IsValidValue(token.Text, ctx.WaitingFlagValue);
                 ctx.WaitingFlagValue = null;
+                status.ExpectedFlagValue = null;
                 return;
             }
 
@@ -246,15 +190,19 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
         private bool CanAcceptPositionalArgument(
             AnalyzerContext ctx)
         {
-            var variant = ctx.Variant;
+            var arguments = ctx.Variant?.Arguments ?? ctx.Command?.Arguments;
 
-            if (variant == null)
+            if (arguments == null)
                 return false;
 
-            if (ctx.PositionalIndex >= variant.Arguments.Count)
+            if (ctx.PositionalIndex >= arguments.Count)
                 return false;
 
-            return variant.PositionalArgumentPolicy switch
+            var policy = ctx.Variant?.PositionalArgumentPolicy 
+                ?? ctx.Command?.PositionalArgumentPolicy 
+                ?? PositionalArgumentPolicy.None;
+
+            return policy switch
             {
                 PositionalArgumentPolicy.None =>
                     false,
@@ -275,16 +223,43 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 .FirstOrDefault(v => v.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        private IFlagDescriptor? ResolveFlag(AnalyzerContext ctx, string text)
+        private IFlagDescriptor? ResolveFlag(
+          AnalyzerContext ctx,
+          string text)
         {
-            if (ctx.Variant == null)
+            var flags = ctx.Variant?.Flags ?? ctx.Command?.Flags;
+
+            if (flags == null)
                 return null;
 
-            return ctx.Variant.Flags.FirstOrDefault(f =>
+            return flags.FirstOrDefault(f =>
                 f.Name.StartsWith(text, StringComparison.OrdinalIgnoreCase) ||
                 (!string.IsNullOrEmpty(f.ShortName) &&
                  f.ShortName.StartsWith(text, StringComparison.OrdinalIgnoreCase)));
         }
+
+
+        //private IFlagDescriptor? ResolveFlag(
+        //    AnalyzerContext ctx,
+        //    string text)
+        //{
+        //    var flags = ctx.Variant?.Flags ?? ctx.Command?.Flags;
+
+        //    if (flags == null)
+        //        return null;
+
+        //    return flags.FirstOrDefault(f =>
+        //        string.Equals(
+        //            f.Name,
+        //            text,
+        //            StringComparison.OrdinalIgnoreCase) ||
+        //        (!string.IsNullOrEmpty(f.ShortName) &&
+        //         string.Equals(
+        //             f.ShortName,
+        //             text,
+        //             StringComparison.OrdinalIgnoreCase)));
+        //}
+
 
         private ICommandDescriptor? ResolveCommand(string name)
         {
@@ -322,28 +297,56 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             if (status.Command == null)
                 return ExpectedKind.Command;
 
-            if (status.Variant == null &&
-                status.Command.Variants.Any())
+            if (status.Command.Variants.Any() &&
+                status.Variant == null)
+            {
                 return ExpectedKind.Variant;
+            }
 
             if (status.ExpectedFlagValue != null)
                 return ExpectedKind.FlagValue;
 
-            var variant = status.Variant;
+            var arguments = status.Variant?.Arguments
+                            ?? status.Command.Arguments;
 
-            if (variant == null)
-                return ExpectedKind.Nothing;
+            var flags = status.Variant?.Flags
+                        ?? status.Command.Flags;
 
-            if (status.PositionalIndex < variant.Arguments.Count)
+            if (status.PositionalIndex < arguments?.Count)
                 return ExpectedKind.PositionalArgument;
 
-            if (variant.Flags.Any(flag =>
+            if (flags.Any(flag =>
                 !status.UsedFlags.Any(used => used.Name == flag.Name)))
             {
                 return ExpectedKind.Flag;
             }
 
             return ExpectedKind.Nothing;
+        }
+
+        private bool IsValidValue(
+            string text,
+            IFlagDescriptor flag)
+        {
+            return flag.ValueType switch
+            {
+                ArgumentValueType.String =>
+                    !string.IsNullOrWhiteSpace(text),
+
+                ArgumentValueType.Int =>
+                    int.TryParse(text, out _),
+
+                ArgumentValueType.Boolean =>
+                    bool.TryParse(text, out _),
+
+                ArgumentValueType.Path =>
+                    !string.IsNullOrWhiteSpace(text),
+
+                ArgumentValueType.Enum =>
+                    !string.IsNullOrWhiteSpace(text),
+
+                _ => false
+            };
         }
 
         private AnalyzerToken CreateVirtualToken(InputStatus status)
@@ -355,7 +358,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             return new AnalyzerToken("", start)
             {
                 IsActive = true,
-                //IsVirtual = true
+                IsVirtual = true
             };
         }
 

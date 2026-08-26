@@ -26,14 +26,6 @@ namespace UnityCommander.Autocomplete.Completion
 
         public CompletionResult GetCompletions(InputState state, CliParseState analyze)
         {
-            _logger?.Info(
-               $"GetCompletions: " +
-               $"Text='{state.Text}', " +
-               $"Caret={state.CaretPosition}, " +
-               $"CurrentToken='{analyze.CurrentToken}', " +
-               $"ReplaceStart={analyze.ReplaceStart}, " +
-               $"ReplaceLength={analyze.ReplaceLength}");
-
             var items = _providers
                 .Where(p => p.CanHandle(analyze))
                 .SelectMany(p => p.GetCompletions(analyze))
@@ -41,6 +33,7 @@ namespace UnityCommander.Autocomplete.Completion
                 {
                     DisplayText = item.DisplayText,
                     InsertText = item.InsertText,
+                    CaretOffset = item.CaretOffset,
                     EditFactory = s => new TextEdit(
                         analyze.ReplaceStart,
                         analyze.ReplaceLength,
@@ -49,14 +42,6 @@ namespace UnityCommander.Autocomplete.Completion
                     )
                 })
                 .ToList();
-
-            _logger?.Info(
-               $"GetCompletions: " +
-               $"Text='{state.Text}', " +
-               $"Caret={state.CaretPosition}, " +
-               $"CurrentToken='{analyze.CurrentToken}', " +
-               $"ReplaceStart={analyze.ReplaceStart}, " +
-               $"ReplaceLength={analyze.ReplaceLength}");
 
             return new CompletionResult(items)
             {

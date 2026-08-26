@@ -5,7 +5,11 @@ namespace UnityCommander.Abstractions.Completion
     {
         string Name { get; }          // --force
         string? ShortName { get; }    // -f
+        
         ArgumentValueType? ValueType { get; }
+        
+        ValueSeparator Separator { get; }
+
         bool IsRepeatable { get; }    // --tag a --tag b
         bool RequiresValue { get; }
     }

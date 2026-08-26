@@ -245,11 +245,6 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             _completions.Clear();
 
-            _logger.Info(
-                $"UpdateCompletions " +
-                $"[CaretPosition={state.CaretPosition}] " +
-                $"[InputText={InputText}]");
-
             if (result == null)
                 return;
 
@@ -266,6 +261,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         {
             if (!CanAccept())
                 return;
+            
             _suppressCompletionUpdate = true;
 
             try
@@ -277,24 +273,20 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 var item = _completions[SelectedIndex];
 
                 var edit = _completionEngine.ApplyCompletion(state, item);
-                _logger.Info($"AcceptCompletions [CaretPosition={state.CaretPosition}] [InputText={InputText}]");
-                _logger.ObjectInfo("AcceptCompletions ", edit.CurrentToken);
-                // Заменяем только нужный диапазон
+
                 InputText = InputText.Substring(0, edit.ReplaceStart)
                             + edit.InsertText
                             + InputText.Substring(edit.ReplaceStart + edit.ReplaceLength);
 
-                // Ставим каретку после вставленного текста
                 Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    CaretIndex = edit.ReplaceStart + edit.InsertText.Length;
+                    CaretIndex = edit.ReplaceStart + edit.InsertText.Length + item.CaretOffset;
                 }, DispatcherPriority.Background);
 
                 ClearCompletions();
             }
             finally
             {
-                //_lastInputToken = _completionEngine.GetTokenNearCaret(InputText, CaretIndex);
                 _suppressCompletionUpdate = false;
                 _lastTokenValue = InputText;
             }
@@ -310,6 +302,37 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void NavigateDown()
         {
+            if (Completions.Count > 0)
+            {
+                SelectedIndex =
+                    SelectedIndex < Completions.Count - 1
+                        ? SelectedIndex + 1
+                        : 0;
+
+                return;
+            }
+
+            NavigateHistoryDown();
+        }
+
+
+        private void NavigateUp()
+        {
+            if (Completions.Count > 0)
+            {
+                SelectedIndex =
+                    SelectedIndex > 0
+                        ? SelectedIndex - 1
+                        : Completions.Count - 1;
+
+                return;
+            }
+
+            NavigateHistoryUp();
+        }
+
+        private void NavigateHistoryDown()
+        {
             var command = _history.Next();
 
             if (command != null)
@@ -322,7 +345,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             _historyDraft = null;
         }
 
-        private void NavigateUp()
+        private void NavigateHistoryUp()
         {
             if (_historyDraft == null)
                 _historyDraft = InputText;

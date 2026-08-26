@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Context.Descriptors;
 using UnityCommander.Common.Diagnostic;
@@ -28,45 +29,28 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             var activeToken = status.ActiveToken;
 
             // Если команда ещё не выбрана
-            if (command == null)
-            {
-                var errorMessage = tokens.Count > 0
-                    ? $"Unknown command '{tokens[0]?.Text}'"
-                    : "No command specified";
+            var hasVariants = command?.Variants.Count > 0;
 
-                return CreateBaseState(
-                    command: null,
-                    variant: null,
-                    new CliError(errorMessage),
-                    status,
-                    activeToken
-                );
-            }
-
-            if (tokens.Count == 1)
+            if (hasVariants && variant == null)
             {
+                var variantText = tokens.Count > 1
+                    ? tokens[1].Text
+                    : string.Empty;
+
                 return CreateBaseState(
                     command,
                     null,
-                    null,
+                    new CliError($"Unknown variant '{variantText}'"),
                     status,
                     activeToken);
-            }
-            
-            if (variant == null)
-            {
-                return CreateBaseState(
-                    command: null,
-                    variant: null,
-                    new CliError($"Unknown command '{tokens[1].Text}'"),
-                    status,
-                    activeToken
-                );
             }
 
             // -------------------------
             // Позиционные аргументы
             // -------------------------
+
+            var arguments = variant?.Arguments ?? command?.Arguments;
+
             var positionalTokens = tokens
                 .Where(t => t.Kind == TokenKind.PositionalArgument)
                 .ToList();
@@ -75,18 +59,27 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
             for (int i = 0; i < positionalTokens.Count; i++)
             {
-                if (i >= variant.Arguments.Count)
+                if (i >= arguments?.Count)
                 {
-                     return ErrorState(CompletionKind.Error, "Too many positional arguments", positionalTokens[i].Start);
+                    return ErrorState(
+                        CompletionKind.Error,
+                        "Too many positional arguments",
+                        positionalTokens[i].Start);
                 }
 
-                var descriptor = variant.Arguments[i];
-                parsedArguments.Add(new ParsedArgument(descriptor, positionalTokens[i].Text));
+                var descriptor = arguments[i];
+
+                parsedArguments.Add(
+                    new ParsedArgument(
+                        descriptor,
+                        positionalTokens[i].Text));
             }
 
             // -------------------------
             // Флаги
             // -------------------------
+
+            var flags = variant?.Flags ?? command?.Flags;
 
             var parsedFlags = new List<ParsedFlag>();
 
@@ -95,24 +88,27 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 if (token.Kind != TokenKind.Flag)
                     continue;
 
-                // ⚠️ Активный / редактируемый флаг — НЕ ВАЛИДИРУЕМ
-                if (token == activeToken || token.Status == TokenStatus.Editing)
+                if (token == activeToken ||
+                    token.Status == TokenStatus.Editing)
                 {
                     parsedFlags.Add(new ParsedFlag(null, null));
                     continue;
                 }
 
-                var flag = variant.Flags.FirstOrDefault(f =>
+                var flag = flags.FirstOrDefault(f =>
                     f.Name == token.Text ||
-                    !string.IsNullOrEmpty(f.ShortName) && f.ShortName == token.Text);
+                    (!string.IsNullOrEmpty(f.ShortName) &&
+                     f.ShortName == token.Text));
 
                 if (flag == null)
                 {
-                    return ErrorState(CompletionKind.Flag, $"Unknown flag '{token.Text}'", token.Start);
+                    return ErrorState(
+                        CompletionKind.Flag,
+                        $"Unknown flag '{token.Text}'",
+                        token.Start);
                 }
 
                 parsedFlags.Add(new ParsedFlag(null, null));
-                continue;
             }
 
             // -------------------------
@@ -121,22 +117,20 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
             var availableArguments = new List<SimplePositionalArgumentDescriptor>();
 
-            int consumed = parsedArguments.Count;
-
-            if (variant.IsStrictOrder)
+            if (status.PositionalIndex < arguments?.Count)
             {
-                if (consumed < variant.Arguments.Count &&
-                    variant.Arguments[consumed] is SimplePositionalArgumentDescriptor next)
+                if (variant?.IsStrictOrder ?? command.IsStrictOrder)
                 {
-                    availableArguments.Add(next);
+                    if (arguments[status.PositionalIndex] is SimplePositionalArgumentDescriptor next)
+                        availableArguments.Add(next);
                 }
-            }
-            else
-            {
-                for (int i = consumed; i < variant.Arguments.Count; i++)
+                else
                 {
-                    if (variant.Arguments[i] is SimplePositionalArgumentDescriptor arg)
-                        availableArguments.Add(arg);
+                    for (int i = status.PositionalIndex; i < arguments.Count; i++)
+                    {
+                        if (arguments[i] is SimplePositionalArgumentDescriptor argument)
+                            availableArguments.Add(argument);
+                    }
                 }
             }
 
@@ -146,7 +140,10 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
             var availableFlags = new List<SimpleFlagDescriptor>();
 
-            foreach (var flag in variant.Flags)
+            if (flags == null)
+                flags = Array.Empty<SimpleFlagDescriptor>();
+
+            foreach (var flag in flags)
             {
                 if (flag.IsRepeatable || !status.UsedFlags.Contains(flag))
                 {

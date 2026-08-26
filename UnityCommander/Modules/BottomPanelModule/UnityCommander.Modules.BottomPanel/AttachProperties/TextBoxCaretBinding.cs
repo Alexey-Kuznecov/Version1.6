@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -51,11 +48,6 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
 
             int newIndex = (int)e.NewValue;
 
-            Debug.WriteLine(
-              $"BOUND CARET CHANGED: Text='{tb.Text}', " +
-              $"Old={e.OldValue}, New={newIndex}, " +
-              $"Actual={tb.CaretIndex}");
-
             int clamped = Math.Min(newIndex, tb.Text.Length);
 
             if (tb.CaretIndex != clamped)
@@ -80,9 +72,6 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
             if (sender is not TextBox tb)
                 return;
 
-            Debug.WriteLine(
-                $"SELECTION CHANGED: Text='{tb.Text}', Caret={tb.CaretIndex}");
-
             SyncCaretToBinding(tb);
         }
 
@@ -90,9 +79,6 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
         {
             if (sender is not TextBox tb)
                 return;
-
-            Debug.WriteLine(
-                $"TEXT CHANGED: Text='{tb.Text}', Caret={tb.CaretIndex}");
 
             SyncCaretToBinding(tb);
         }
