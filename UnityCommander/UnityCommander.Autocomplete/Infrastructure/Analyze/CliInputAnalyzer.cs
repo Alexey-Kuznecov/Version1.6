@@ -106,6 +106,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 Text = text,
                 CaretIndex = caretPosition,
                 CurrentToken = currentToken?.Clone(),
+                Status = status,
                 Tokens = tokens
                    .Select(t => t.Clone())
                    .ToList()
@@ -157,7 +158,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             {
                 ResolveToken(token, ctx, status);
                 
-                if (token.IsActive)
+                if (token.IsActive && !token.IsComplete)
                 {
                     status.ActiveToken = token;
                     token.Status = TokenStatus.Editing;
@@ -188,6 +189,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 ctx.Command = ResolveCommand(token.Text);
                 status.Command = ctx.Command;
 
+                status.IsValidCommand = ctx.Command != null;
                 token.IsComplete = ctx.Command != null &&
                                    token.Text == ctx.Command.Name;
 
@@ -213,16 +215,58 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
                 token.Kind = TokenKind.Flag;
 
+                if (flag != null)
+                {
+                    ctx.HasUsedFlags = true;
+                    status.UsedFlags.Add(flag);
+                }
+
                 token.IsComplete = flag != null &&
                                    token.Text == flag.Name;
 
                 if (flag?.RequiresValue == true)
+                {
+                    status.ExpectedFlagValue = flag;
                     ctx.WaitingFlagValue = flag;
+                }
 
                 return;
             }
 
-            token.Kind = TokenKind.PositionalArgument;
+            if (CanAcceptPositionalArgument(ctx))
+            {
+                token.Kind = TokenKind.PositionalArgument;
+                ctx.PositionalIndex++;
+
+                status.PositionalIndex = ctx.PositionalIndex;
+                return;
+            }
+        }
+
+        private bool CanAcceptPositionalArgument(
+            AnalyzerContext ctx)
+        {
+            var variant = ctx.Variant;
+
+            if (variant == null)
+                return false;
+
+            if (ctx.PositionalIndex >= variant.Arguments.Count)
+                return false;
+
+            return variant.PositionalArgumentPolicy switch
+            {
+                PositionalArgumentPolicy.None =>
+                    false,
+
+                PositionalArgumentPolicy.AfterVariant =>
+                    !ctx.HasUsedFlags,
+
+                PositionalArgumentPolicy.Anywhere =>
+                    true,
+
+                _ => false
+            };
         }
 
         private ICommandVariant? ResolveVariant(ICommandDescriptor command, string name)
@@ -269,40 +313,36 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             }
 
             // 3️⃣ Иначе — что ожидается следующим по контексту
-            if (active == null)
-            {
-                status.ActiveToken = CreateVirtualToken(status);
-                status.ExpectedKind = ResolveNextExpected(status);
-            }
+            status.ActiveToken = CreateVirtualToken(status);
+            status.ExpectedKind = ResolveNextExpected(status);
         }
 
         private ExpectedKind ResolveNextExpected(InputStatus status)
         {
-            // 1️⃣ Команда ещё не выбрана
             if (status.Command == null)
                 return ExpectedKind.Command;
 
-            // 2️⃣ Есть варианты — но вариант ещё не выбран
-            if (status.Command.Variants.Any() && status.Variant == null)
+            if (status.Variant == null &&
+                status.Command.Variants.Any())
                 return ExpectedKind.Variant;
 
+            if (status.ExpectedFlagValue != null)
+                return ExpectedKind.FlagValue;
+
             var variant = status.Variant;
+
             if (variant == null)
                 return ExpectedKind.Nothing;
 
-            //// 3️⃣ Ожидается значение флага
-            //if (status.Context.WaitingFlagValue != null)
-            //    return ExpectedKind.FlagValue;
+            if (status.PositionalIndex < variant.Arguments.Count)
+                return ExpectedKind.PositionalArgument;
 
-            //// 4️⃣ Позиционные аргументы
-            //if (status.Context.PositionalIndex < variant.Arguments.Count)
-            //    return ExpectedKind.PositionalArgument;
-
-            // 5️⃣ Флаги (если есть)
-            if (variant.Flags.Any())
+            if (variant.Flags.Any(flag =>
+                !status.UsedFlags.Any(used => used.Name == flag.Name)))
+            {
                 return ExpectedKind.Flag;
+            }
 
-            // 6️⃣ Всё введено
             return ExpectedKind.Nothing;
         }
 
@@ -355,8 +395,12 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             writer.Row("Status", _diagnostics?.CurrentToken?.Status);
             writer.Row("Complete", _diagnostics?.CurrentToken?.IsComplete);
 
-            writer.EndTable();
+            writer.Row("Status.ExpectedKind", _diagnostics?.Status?.ExpectedKind);
+            writer.Row("Status.PositionalIndex", _diagnostics?.Status?.PositionalIndex);
+            writer.Row("Status.IsValidCommand", _diagnostics?.Status?.IsValidCommand);
+            writer.Row("Status.ExpectedFlagValue", _diagnostics?.Status?.ExpectedFlagValue);
 
+            writer.EndTable();
 
             //writer.BeginTable("Tokens");
 

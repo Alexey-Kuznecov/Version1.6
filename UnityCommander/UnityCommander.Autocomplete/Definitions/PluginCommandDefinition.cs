@@ -34,6 +34,7 @@ namespace UnityCommander.Autocomplete.Definitions
                                isRequired: true)
                        },
                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                       positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                        usage: "plugin load <path> [--force] [--dependencies]"
                    ),
 
@@ -61,6 +62,7 @@ namespace UnityCommander.Autocomplete.Definitions
                                isRequired: false)
                        },
                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                       positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                        usage: "plugin unload [name] [--all] [--force]"
                    ),
 
@@ -83,6 +85,7 @@ namespace UnityCommander.Autocomplete.Definitions
                                isRequired: false)
                            },
                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                       positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                        usage: "plugin reload [name] [--all]"
                    ),
 
@@ -99,6 +102,7 @@ namespace UnityCommander.Autocomplete.Definitions
                            },
                        arguments: new List<IPositionalArgumentDescriptor>(), // путь не нужен для list
                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                       positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                        usage: "plugin list [--verbose]"
                    ),
 
@@ -121,6 +125,7 @@ namespace UnityCommander.Autocomplete.Definitions
                                isRequired: true)
                            },
                        flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                       positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                        usage: "plugin info <name> [--all]"
                    )
                }

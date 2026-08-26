@@ -12,6 +12,8 @@ namespace UnityCommander.Autocomplete.Diagnostic
         public string AfterCaret { get; init; } = string.Empty;
 
         public AnalyzerToken? CurrentToken { get; init; }
+        
+        public InputStatus? Status { get; init; }
 
         public IReadOnlyList<AnalyzerToken> Tokens { get; init; } = [];
     }

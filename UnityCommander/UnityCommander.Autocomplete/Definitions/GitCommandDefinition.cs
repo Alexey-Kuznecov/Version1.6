@@ -30,6 +30,7 @@ namespace UnityCommander.Autocomplete.Definitions
                             new SimplePositionalArgumentDescriptor("message", ArgumentValueType.String)
                         },
                         flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                        positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                         usage: "git commit <message> [-m <message>] [--amend]"),
                     new CommandVariant(
                         name: "push",
@@ -51,6 +52,7 @@ namespace UnityCommander.Autocomplete.Definitions
                             new SimplePositionalArgumentDescriptor("remote", ArgumentValueType.String)
                         },
                         flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                        positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                         usage: "git push <message> [-m <message>] [--amend]"
                     )
                 })

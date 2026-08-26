@@ -136,9 +136,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 for (int i = consumed; i < variant.Arguments.Count; i++)
                 {
                     if (variant.Arguments[i] is SimplePositionalArgumentDescriptor arg)
-                    {
                         availableArguments.Add(arg);
-                    }
                 }
             }
 
@@ -150,14 +148,10 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
             foreach (var flag in variant.Flags)
             {
-                bool alreadyUsed = parsedFlags.Any(f => f.Descriptor == flag);
-
-                if (!alreadyUsed || flag.IsRepeatable)
+                if (flag.IsRepeatable || !status.UsedFlags.Contains(flag))
                 {
                     if (flag is SimpleFlagDescriptor simpleFlag)
-                    {
                         availableFlags.Add(simpleFlag);
-                    }
                 }
             }
 

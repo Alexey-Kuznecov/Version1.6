@@ -3,14 +3,16 @@ using UnityCommander.Abstractions.Completion;
 
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
-    public class AnalyzerContext
+    public sealed class AnalyzerContext
     {
         public ICommandDescriptor? Command;
         public ICommandVariant? Variant;
 
         public IFlagDescriptor? WaitingFlagValue;
+
         public int PositionalIndex;
 
-        public bool IsStrictOrder;
+        public List<IFlagDescriptor> UsedFlags { get; } = new();
+        public bool HasUsedFlags { get; internal set; }
     }
 }
