@@ -177,6 +177,55 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 return;
             }
 
+            //if (token.Text.StartsWith("-"))
+            //{
+            //    var flag = ResolveFlag(ctx, token.Text);
+
+            //    token.Kind = TokenKind.Flag;
+
+            //    if (flag != null)
+            //    {
+            //        ctx.HasUsedFlags = true;
+            //        status.UsedFlags.Add(flag);
+            //    }
+
+            //    token.IsComplete = flag != null &&
+            //                       token.Text == flag.Name;
+
+            //    if (flag?.RequiresValue == true)
+            //    {
+            //        if (flag.Separator == ValueSeparator.Equals)
+            //        {
+            //            var separatorIndex = token.Text.IndexOf('=');
+
+            //            if (separatorIndex >= 0)
+            //            {
+            //                var flagText = token.Text[..separatorIndex];
+            //                var valueText = token.Text[(separatorIndex + 1)..];
+
+            //                // flagText → ищем флаг
+            //                // valueText → значение
+            //            }
+
+            //            token.IsComplete = flag != null &&
+            //                    token.Text == flag.Name + "=";
+
+            //            if (token.IsComplete)
+            //            {
+            //                status.ExpectedFlagValue = flag;
+            //                ctx.WaitingFlagValue = flag;
+
+            //                return;
+            //            }
+            //        }
+
+            //        status.ExpectedFlagValue = flag;
+            //        ctx.WaitingFlagValue = flag;
+            //    }
+
+            //    return;
+            //}
+
             if (CanAcceptPositionalArgument(ctx))
             {
                 token.Kind = TokenKind.PositionalArgument;

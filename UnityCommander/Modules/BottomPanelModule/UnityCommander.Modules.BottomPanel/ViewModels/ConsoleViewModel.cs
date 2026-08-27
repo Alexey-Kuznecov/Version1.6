@@ -1,17 +1,13 @@
 ﻿
 using Prism.Commands;
-using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using UnityCommander.Autocomplete.Completion;
-using UnityCommander.CLI.Integration;
 using UnityCommander.Modules.BottomPanel.Console;
-using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {

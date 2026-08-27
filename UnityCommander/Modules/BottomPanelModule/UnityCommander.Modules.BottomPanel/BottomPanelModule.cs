@@ -25,7 +25,7 @@ namespace UnityCommander.Modules.BottomPanel
             regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(BottomPanelView));
             regionManager.RequestNavigate(RegionNames.RightConsoleRegion, nameof(ConsoleView));
             regionManager.RequestNavigate(RegionNames.LeftConsoleRegion, nameof(ConsoleView));
-            //regionManager.RequestNavigate(RegionNames.LogTabRegion, nameof(LogView));
+            regionManager.RequestNavigate(RegionNames.LogTabRegion, nameof(LogView));
             regionManager.RequestNavigate(RegionNames.PreviewRegion, nameof(PreviewView));
 
             var coordinator =

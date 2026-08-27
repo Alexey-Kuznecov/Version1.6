@@ -99,6 +99,7 @@
                 IsVirtualizingAnchorable="True"
                 IsVirtualizingDocument="True" />
         </Grid>
+
         <Border
             Grid.Row="2"
             Grid.Column="2"
@@ -107,7 +108,9 @@
                 prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}"
                 Background="{DynamicResource UcSurfaceSecondaryBrush}"
                 Visibility="{Binding IsBottomPanelVisible, RelativeSource={RelativeSource AncestorType=Window}}" />
+
         </Border>
+
 
         <ContentControl
             Grid.Row="3"
