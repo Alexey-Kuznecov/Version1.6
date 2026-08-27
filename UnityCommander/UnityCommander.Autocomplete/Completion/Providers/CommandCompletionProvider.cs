@@ -20,7 +20,6 @@ namespace UnityCommander.Autocomplete.Completion.Providers
 
             if (ctx.Command == null && ctx.CurrentToken == null)
             {
-                // неизвестная команда
                 return false;
             }
 

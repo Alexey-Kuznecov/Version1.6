@@ -17,7 +17,8 @@ namespace UnityCommander.Core
         public const string StatusBarRegion = nameof(StatusBarRegion);
 
         // BottomPanelRegion SubRegions
-        public const string ConsoleTabRegion = nameof(ConsoleTabRegion);
+        public const string RightConsoleRegion = nameof(RightConsoleRegion);
+        public const string LeftConsoleRegion = nameof(LeftConsoleRegion);
         public const string LogTabRegion = nameof(LogTabRegion);
         public const string PreviewRegion = nameof(PreviewRegion);
     }

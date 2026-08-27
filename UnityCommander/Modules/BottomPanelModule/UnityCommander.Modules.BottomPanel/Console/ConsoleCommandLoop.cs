@@ -26,13 +26,21 @@ namespace UnityCommander.Modules.BottomPanel.Console
             _lifetime = lifetime;
         }
 
-        public async Task RunAsync(ConsoleSession session, CancellationToken cancellationToken)
+        public async Task RunAsync(ConsoleSession session)
         {
-            session.Output.WriteLine("Unity Commander Internal Console ready.");
+            using var linkedCts =
+                CancellationTokenSource.CreateLinkedTokenSource(
+                    _lifetime.Token,
+                    session.Lifetime.Token);
 
-            while (_lifetime.IsRunning)
+            var token = linkedCts.Token;
+
+            session.Output.WriteLine(
+                "Unity Commander Internal Console ready.");
+
+            while (!token.IsCancellationRequested)
             {
-                var line = await session.Input.ReadLineAsync(_lifetime.Token);
+                var line = await session.Input.ReadLineAsync(token);
 
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
@@ -48,14 +56,10 @@ namespace UnityCommander.Modules.BottomPanel.Console
                     args,
                     line);
 
-                using var commandCts =
-                    CancellationTokenSource.CreateLinkedTokenSource(
-                        _lifetime.Token);
-
                 await _dispatcher.ExecuteCommandAsync(
                     name,
                     ctx,
-                    commandCts.Token);
+                    token);
             }
         }
     }

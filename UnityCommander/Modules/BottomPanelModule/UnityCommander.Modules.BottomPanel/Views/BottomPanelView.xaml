@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <!--  Левая вкладка: консоль / логи  -->
 
-        <ContentControl Grid.Column="0" prism:RegionManager.RegionName="{x:Static core:RegionNames.ConsoleTabRegion}" />
+        <ContentControl Grid.Column="0" prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftConsoleRegion}" />
 
         <!--  Правая вкладка: предпросмотр файлов  -->
         <Border
@@ -27,7 +27,8 @@
             Margin="10,0,0,0"
             BorderBrush="{DynamicResource MaterialDesignDivider}"
             BorderThickness="1,0,0,0">
-            <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.LogTabRegion}" />
+            <!--<ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.LogTabRegion}" />-->
+            <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.RightConsoleRegion}" />
             <!--<ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.PreviewRegion}" />-->
         </Border>
     </Grid>

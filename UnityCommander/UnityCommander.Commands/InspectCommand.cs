@@ -85,7 +85,7 @@ namespace UnityCommander.Commands
                             if (!_pipeline.ReportChanged(query, writer))
                                 return;
 
-                            //output.WriteLine(writer.ToString());
+                            output.WriteLine(writer.ToString());
                             return;
                         }
 

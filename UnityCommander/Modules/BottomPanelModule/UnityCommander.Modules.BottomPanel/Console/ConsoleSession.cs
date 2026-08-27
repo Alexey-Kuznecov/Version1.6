@@ -1,16 +1,16 @@
 ﻿
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.History;
-using UnityCommander.CLI.Lifecicle;
 
 namespace UnityCommander.Modules.BottomPanel.Console
 {
-    public sealed class ConsoleSession
+    public sealed class ConsoleSession : IDisposable
     {
         public ConsoleState State { get; }
+
+        public ConsoleLifetime Lifetime { get; }
 
         public IConsoleHistory History { get; }
 
@@ -22,15 +22,13 @@ namespace UnityCommander.Modules.BottomPanel.Console
 
         public IConsoleInput Input { get; }
 
-        private ConsoleCommandLoop _loop;
-
         public ConsoleSession(
             IConsoleHistory history,
             ConsoleInputProcessor inputProcessor,
             ConsoleAutocompleteProcessor completeProcessor,
+            ConsoleLifetime lifetime,
             IConsoleOutput output,
-            IConsoleInput input, 
-            ConsoleCommandLoop loop)
+            IConsoleInput input)
         {
             State = new ConsoleState(completeProcessor);
             History = history;
@@ -38,10 +36,12 @@ namespace UnityCommander.Modules.BottomPanel.Console
             CompleteProcessor = completeProcessor;
             Output = output;
             Input = input;
-            _loop = loop;
+            Lifetime = lifetime;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-            => _loop.RunAsync(this, cancellationToken);
+        public void Dispose()
+        {
+            Lifetime.Dispose();
+        }
     }
 }

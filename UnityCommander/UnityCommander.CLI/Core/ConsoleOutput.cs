@@ -3,6 +3,9 @@ using UnityCommander.CLI.Core;
 
 public class ConsoleOutput : IConsoleOutput
 {
+    public event Action<string>? TextWritten;
+    public event Action? Cleared;
+
     public void Write(string message)
     {
         Console.Write(message);

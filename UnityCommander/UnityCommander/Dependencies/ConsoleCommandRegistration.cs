@@ -19,13 +19,13 @@ namespace UnityCommander.Dependencies
         public static void Register(IContainerRegistry registry)
         {
             // Ввод и вывод внутренней консоли приложения
-            registry.RegisterSingleton<IConsoleInput, InternalConsoleInput>();
-            registry.RegisterSingleton<IConsoleOutput, InternalConsoleOutput>();
+            //registry.RegisterSingleton<IConsoleInput, InternalConsoleInput>();
+            //registry.RegisterSingleton<IConsoleOutput, InternalConsoleOutput>();
 
-            registry.Register<ConsoleSession>();
             registry.RegisterSingleton<ConsoleCommandLoop>();
             registry.RegisterSingleton<ConsoleInputProcessor>();
             registry.RegisterSingleton<ConsoleAutocompleteProcessor>();
+            registry.RegisterSingleton<IConsoleManager, ConsoleManager>();
 
             // Основные компоненты системы выполнения команд
             registry.RegisterSingleton<ConsoleCommandDispatcher>();

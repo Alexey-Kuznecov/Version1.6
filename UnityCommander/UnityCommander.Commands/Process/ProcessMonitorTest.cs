@@ -21,10 +21,8 @@ namespace UnityCommander.Commands.UtilProcess
             _output.WriteLine($"Запуск мониторинга процесса {processName}...");
             do
             {
-                _output.SetCursorVisible(false);
                 await Task.Delay(5000, cancellationToken);  // Асинхронная задержка
                 VmcControllerTest(processName);
-                _output.SetCursorPosition(0, 1);
             }
             while (true);
         }

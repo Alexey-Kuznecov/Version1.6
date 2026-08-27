@@ -26,22 +26,15 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly ObservableCollection<string> _lines = new();
         public ReadOnlyObservableCollection<string> Lines { get; }
 
-        public ConsoleViewModel(
-            ConsoleSession session,
-            IEventAggregator ea,
-            IConsoleCommandProvider consoleCommandProvider,
-            ConsoleCommandDispatcher dispatcher)
+        public ConsoleViewModel(IConsoleManager manager)
         {
-            foreach (var cmd in consoleCommandProvider.GetAllCommands())
-            {
-                dispatcher.RegisterCommand(cmd);
-            }
-
-            _session = session;
+            _session = manager.Create();
             _inputProcessor = _session.InputProcessor;
             _completeProcessor = _session.CompleteProcessor;
 
             Completions = new ReadOnlyObservableCollection<CompletionItem>(_session.State.Completions);
+            
+            Lines = new ReadOnlyObservableCollection<string>(_lines);
 
             AcceptCommand = new DelegateCommand(Accept, CanAccept)
                 .ObservesProperty(() => SelectedIndex);
@@ -52,22 +45,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             NavigateDownCommand = new DelegateCommand(NavigateDown);
 
-            Lines = new ReadOnlyObservableCollection<string>(_lines);
-
-            ea.GetEvent<ConsoleWriteEvent>().Subscribe(text =>
-            {
-                Application.Current.Dispatcher.Invoke(() => AppendLine(text));
-            });
-
-            ea.GetEvent<ConsoleClearEvent>().Subscribe(() =>
-            {
-                Application.Current.Dispatcher.Invoke(() => Clear());
-            });
-
+            _session.Output.TextWritten += AppendLine;
+            _session.Output.Cleared += Clear;
             _session.State.PropertyChanged += OnStatePropertyChanged;
 
             SendCommand = new DelegateCommand(SendInput);
-            _session.StartAsync(CancellationToken.None);
         }
 
         public ICommand NavigateUpCommand { get; }
@@ -103,12 +85,12 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void Clear()
         {
-            _lines.Clear();
+            Application.Current.Dispatcher.Invoke(() => _lines.Clear());
         }
 
         private void AppendLine(string text)
         {
-            _lines.Add(text);
+            Application.Current.Dispatcher.Invoke(() => _lines.Add(text));
         }
 
         private void SendInput()
