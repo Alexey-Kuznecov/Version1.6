@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace UnityCommander.Modules.BottomPanel.AttachProperties
 {
@@ -72,7 +73,9 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
             if (sender is not TextBox tb)
                 return;
 
-            SyncCaretToBinding(tb);
+            tb.Dispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new Action(() => SyncCaretToBinding(tb)));
         }
 
         private static void OnTextChanged(object sender, TextChangedEventArgs e)
@@ -80,7 +83,9 @@ namespace UnityCommander.Modules.BottomPanel.AttachProperties
             if (sender is not TextBox tb)
                 return;
 
-            SyncCaretToBinding(tb);
+            tb.Dispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new Action(() => SyncCaretToBinding(tb)));
         }
 
         private static void SyncCaretToBinding(TextBox tb)

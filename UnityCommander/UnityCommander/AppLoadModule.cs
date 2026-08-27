@@ -1,4 +1,6 @@
 ﻿
+using CommandSystem.Infrastructure.Execution;
+using PluginSystem.Abstractions.Commands;
 using Prism.Ioc;
 using Prism.Modularity;
 using System.Threading;
@@ -6,6 +8,7 @@ using System.Threading.Tasks;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Abstractions.Panels;
+using UnityCommander.CLI.Integration;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;
@@ -48,14 +51,20 @@ namespace UnityCommander
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
             var loggerCreator = containerProvider.Resolve<LoggerCreator>();
 
-          
+            //var commandProvider = containerProvider.Resolve<IConsoleCommandProvider>();
+            //var commandDispatcher = containerProvider.Resolve<ConsoleCommandDispatcher>();
+
+            // Регистрируем все команды из сервиса
+            //foreach (var cmd in commandProvider.GetAllCommands())
+            //{
+            //    commandDispatcher.RegisterCommand(cmd);
+            //}
 
             initializer.Initialize();
 
             var token = new CancellationToken();
 
             backgroundService.Start(token);
-
 
             var selectionDiagnostics = containerProvider.Resolve<SelectionDiagnostics>();
 

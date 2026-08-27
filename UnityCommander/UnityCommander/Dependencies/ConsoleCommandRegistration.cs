@@ -8,6 +8,7 @@ using UnityCommander.CLI.Lifecicle;
 using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Modules.BottomPanel;
+using UnityCommander.Modules.BottomPanel.Console;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 
@@ -20,6 +21,11 @@ namespace UnityCommander.Dependencies
             // Ввод и вывод внутренней консоли приложения
             registry.RegisterSingleton<IConsoleInput, InternalConsoleInput>();
             registry.RegisterSingleton<IConsoleOutput, InternalConsoleOutput>();
+
+            registry.Register<ConsoleSession>();
+            registry.RegisterSingleton<ConsoleCommandLoop>();
+            registry.RegisterSingleton<ConsoleInputProcessor>();
+            registry.RegisterSingleton<ConsoleAutocompleteProcessor>();
 
             // Основные компоненты системы выполнения команд
             registry.RegisterSingleton<ConsoleCommandDispatcher>();

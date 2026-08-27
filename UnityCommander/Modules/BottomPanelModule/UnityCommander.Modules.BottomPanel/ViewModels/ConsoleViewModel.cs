@@ -1,131 +1,47 @@
-﻿using Prism.Commands;
+﻿
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.ComponentModel;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using UnityCommander.Autocomplete.Completion;
-using UnityCommander.Autocomplete.Infrastructure.Analyze;
-using UnityCommander.Autocomplete.Input;
-using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Helper;
-using UnityCommander.CLI.History;
 using UnityCommander.CLI.Integration;
-using UnityCommander.CLI.Lifecicle;
-using UnityCommander.Logging.Contracts;
-using UnityCommander.Logging.Core;
-using UnityCommander.Logging.Infrastructure;
+using UnityCommander.Modules.BottomPanel.Console;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Interfaces.Plugins;
-using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
-    public class ConsoleViewModel : BindableBase
+    public sealed class ConsoleViewModel : BindableBase
     {
-        private readonly ICliInputAnalyzer _cliInputAnalyzer;
-        private readonly ICliParseStateBuilder _parseStateBuilder;
-        private readonly ILogger _logger;
-        private readonly IConsoleInput _input;
-        private readonly IConsoleOutput _output;
-        private readonly ConsoleCommandDispatcher _dispatcher;
-        private readonly IServiceProvider _services;
-        private readonly ConsoleApplicationLifetime _lifetime;
-        private readonly IConsoleCommandProvider _consoleCommandProvider;
-        private readonly IPluginInfoProvider _pluginProvider;
-        private readonly IConsoleAutoComplete _autoComplete;
+        private readonly ConsoleInputProcessor _inputProcessor;
+        private readonly ConsoleAutocompleteProcessor _completeProcessor;
+        private readonly ConsoleSession _session;
 
-        private readonly IConsoleHistory _history;
-        private string? _historyDraft;
-
-        private readonly ICompletionEngine _completionEngine;
-        private bool _suppressCompletionUpdate;
-        private bool _autoCompleteEnabled = true;
-        private string _lastTokenValue;
-        private InputToken _lastInputToken;
-
-        private string _inputText = "";
-        public string InputText
-        {
-            get => _inputText;
-            set => SetProperty(ref _inputText, value);
-        }
-
-        private int _caretIndex;
-
-        public int CaretIndex
-        {
-            get => _caretIndex;
-            set
-            {
-                if (SetProperty(ref _caretIndex, value))
-                {
-                    if (!_suppressCompletionUpdate)
-                        UpdateCompletions();
-                }
-            }
-        }
-
-        private int _selectedIndex = 0;
-
-        public int SelectedIndex
-        {
-            get => _selectedIndex;
-            set => SetProperty(ref _selectedIndex, value);
-        }
-
-        private readonly ObservableCollection<CompletionItem> _completions = new();
         public ReadOnlyObservableCollection<CompletionItem> Completions { get; }
 
         private readonly ObservableCollection<string> _lines = new();
         public ReadOnlyObservableCollection<string> Lines { get; }
 
-        public DelegateCommand SendCommand { get; }
-        public DelegateCommand CopyCommand => new DelegateCommand(() =>
-        {
-            var text = string.Join(Environment.NewLine, Lines);
-            Clipboard.SetText(text);
-        });
-
-        public ICommand NavigateUpCommand { get; }
-        public ICommand NavigateDownCommand { get; }
-        public ICommand AcceptCommand { get; }
-        public ICommand CancelCommand { get; }
-
         public ConsoleViewModel(
-            IConsoleInput input,
-            IConsoleOutput output,
-            ConsoleCommandDispatcher dispatcher,
-            IServiceProvider services,
-            ConsoleApplicationLifetime lifetime,
+            ConsoleSession session,
             IEventAggregator ea,
             IConsoleCommandProvider consoleCommandProvider,
-            IPluginInfoProvider pluginProvider,
-            ICompletionEngine completionEngine,
-            LoggerCreator loggerCreator,
-            ICliInputAnalyzer cliInputAnalyzer,
-            ICliParseStateBuilder parseStateBuilder,
-            IConsoleHistory history) //, IPluginProvider pluginProvider)
+            ConsoleCommandDispatcher dispatcher)
         {
-            _cliInputAnalyzer = cliInputAnalyzer;
-            _parseStateBuilder = parseStateBuilder;
-            _logger = loggerCreator.For<ConsoleViewModel>(LogScope.UI);
-            _input = input;
-            _output = output;
-            _dispatcher = dispatcher;
-            _services = services;
-            _lifetime = lifetime;
-            _consoleCommandProvider = consoleCommandProvider;
-            _pluginProvider = pluginProvider;
-            _completionEngine = completionEngine;
-            _history = history;
+            foreach (var cmd in consoleCommandProvider.GetAllCommands())
+            {
+                dispatcher.RegisterCommand(cmd);
+            }
 
-            Completions = new ReadOnlyObservableCollection<CompletionItem>(_completions);
+            _session = session;
+            _inputProcessor = _session.InputProcessor;
+            _completeProcessor = _session.CompleteProcessor;
+
+            Completions = new ReadOnlyObservableCollection<CompletionItem>(_session.State.Completions);
 
             AcceptCommand = new DelegateCommand(Accept, CanAccept)
                 .ObservesProperty(() => SelectedIndex);
@@ -136,14 +52,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             NavigateDownCommand = new DelegateCommand(NavigateDown);
 
-            // Регистрируем все команды из сервиса
-            foreach (var cmd in _consoleCommandProvider.GetAllCommands())
-            {
-                _dispatcher.RegisterCommand(cmd);
-            }
-
             Lines = new ReadOnlyObservableCollection<string>(_lines);
-            // САМОЕ ВАЖНОЕ: подписка на UI-потоке
+
             ea.GetEvent<ConsoleWriteEvent>().Subscribe(text =>
             {
                 Application.Current.Dispatcher.Invoke(() => AppendLine(text));
@@ -154,13 +64,42 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 Application.Current.Dispatcher.Invoke(() => Clear());
             });
 
-            SendCommand = new DelegateCommand(SendInput);
+            _session.State.PropertyChanged += OnStatePropertyChanged;
 
-            InputText = string.Empty;
-            CaretIndex = 1;
-            Task.Run(MainLoop);
-            _pluginProvider = pluginProvider;
+            SendCommand = new DelegateCommand(SendInput);
+            _session.StartAsync(CancellationToken.None);
         }
+
+        public ICommand NavigateUpCommand { get; }
+        public ICommand NavigateDownCommand { get; }
+        public ICommand AcceptCommand { get; }
+        public ICommand CancelCommand { get; }
+
+        public string InputText
+        {
+            get => _session.State.InputText;
+            set => _session.State.InputText = value;
+        }
+
+        public int CaretIndex
+        {
+            get => _session.State.CaretIndex;
+            set => _session.State.CaretIndex = value;
+        }
+
+        public int SelectedIndex
+        {
+            get => _session.State.SelectedIndex;
+            set => _session.State.SelectedIndex = value;
+        }
+
+        public DelegateCommand SendCommand { get; }
+
+        public DelegateCommand CopyCommand => new DelegateCommand(() =>
+        {
+            var text = string.Join(Environment.NewLine, Lines);
+            Clipboard.SetText(text);
+        });
 
         private void Clear()
         {
@@ -174,207 +113,48 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void SendInput()
         {
-            var text = InputText;
-
-            if (string.IsNullOrWhiteSpace(text))
-                return;
-
-            _history.Add(text);
-            _historyDraft = null;
-
-            InputText = "";
-            CaretIndex = 0;
-
-            _input.Submit(text);
-        }
-
-        private async Task MainLoop()
-        {
-            _output.WriteLine("Unity Commander Internal Console ready.");
-
-            while (_lifetime.IsRunning)
-            {
-                var line = await _input.ReadLineAsync(_lifetime.Token);
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var parts = ParseHelper.ParseArguments(line);
-                var name = parts[0];
-                var args = parts.Skip(1).ToArray();
-
-                var ctx = new ConsoleCommandContext(_services, _output, args, _inputText);
-
-                var commandCts = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
-
-                await _dispatcher.ExecuteCommandAsync(name, ctx, commandCts.Token);
-            }
-        }
-
-        private void UpdateCompletions()
-        {
-            if (!_autoCompleteEnabled)
-                return;
-
-            if (string.IsNullOrEmpty(InputText))
-            {
-                ClearCompletions();
-                return;
-            }
-
-            var caret = Math.Max(0, CaretIndex);
-
-            var inputStatus = _cliInputAnalyzer.Analyze(
-                InputText,
-                caret);
-
-            inputStatus.Logger = _logger;
-
-            var parseState = _parseStateBuilder.Build(inputStatus);
-            var state = new InputState(InputText, caret);
-
-            if (parseState.IsEditingToken)
-                return;
-
-            var result = _completionEngine.GetCompletions(
-                state,
-                parseState);
-
-            var token = _completionEngine.GetTokenNearCaret(
-                InputText,
-                caret);
-
-            _completions.Clear();
-
-            if (result == null)
-                return;
-
-            foreach (var item in result.Items)
-                _completions.Add(item);
-
-            SelectedIndex = result.DefaultSelectedIndex;
-        }
-
-        private bool CanAccept() =>
-            SelectedIndex >= 0 && SelectedIndex < _completions.Count;
-
-        private void Accept()
-        {
-            if (!CanAccept())
-                return;
-            
-            _suppressCompletionUpdate = true;
-
-            try
-            {
-                if (string.IsNullOrEmpty(InputText))
-                    return;
-
-                var state = new InputState(InputText, CaretIndex -1);
-                var item = _completions[SelectedIndex];
-
-                var edit = _completionEngine.ApplyCompletion(state, item);
-
-                InputText = InputText.Substring(0, edit.ReplaceStart)
-                            + edit.InsertText
-                            + InputText.Substring(edit.ReplaceStart + edit.ReplaceLength);
-
-                Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    CaretIndex = edit.ReplaceStart + edit.InsertText.Length + item.CaretOffset;
-                }, DispatcherPriority.Background);
-
-                ClearCompletions();
-            }
-            finally
-            {
-                _suppressCompletionUpdate = false;
-                _lastTokenValue = InputText;
-            }
+            _inputProcessor.SendInput(_session);
         }
 
         private void ClearCompletions()
         {
-            _completions.Clear();
-            SelectedIndex = -1;
+            _completeProcessor.ClearCompletions(_session.State);
         }
 
-        #region History
+        private bool CanAccept()
+        {
+            return _completeProcessor.CanAccept(_session.State);
+        }
+
+        private void Accept()
+        {
+            _completeProcessor.Accept(_session.State);
+        }
 
         private void NavigateDown()
         {
-            if (Completions.Count > 0)
-            {
-                SelectedIndex =
-                    SelectedIndex < Completions.Count - 1
-                        ? SelectedIndex + 1
-                        : 0;
-
-                return;
-            }
-
-            NavigateHistoryDown();
+            _inputProcessor.NavigateDown(_session.State);
+            //_completeProcessor.ClearCompletions(_session.State);
         }
-
 
         private void NavigateUp()
         {
-            if (Completions.Count > 0)
-            {
-                SelectedIndex =
-                    SelectedIndex > 0
-                        ? SelectedIndex - 1
-                        : Completions.Count - 1;
-
-                return;
-            }
-
-            NavigateHistoryUp();
+            _inputProcessor.NavigateUp(_session.State);
+            //_completeProcessor.ClearCompletions(_session.State);
         }
 
-        private void NavigateHistoryDown()
+        private void OnStatePropertyChanged(
+            object? sender,
+            PropertyChangedEventArgs e)
         {
-            var command = _history.Next();
+            if (e.PropertyName == nameof(ConsoleState.InputText))
+                RaisePropertyChanged(nameof(InputText));
 
-            if (command != null)
-            {
-                SetInputFromHistory(command);
-                return;
-            }
+            if (e.PropertyName == nameof(ConsoleState.CaretIndex))
+                RaisePropertyChanged(nameof(CaretIndex));
 
-            SetInputFromHistory(_historyDraft ?? string.Empty);
-            _historyDraft = null;
+            if (e.PropertyName == nameof(ConsoleState.SelectedIndex))
+                RaisePropertyChanged(nameof(SelectedIndex));
         }
-
-        private void NavigateHistoryUp()
-        {
-            if (_historyDraft == null)
-                _historyDraft = InputText;
-
-            var command = _history.Previous();
-
-            if (command == null)
-                return;
-
-            SetInputFromHistory(command);
-        }
-
-        private void SetInputFromHistory(string text)
-        {
-            _suppressCompletionUpdate = true;
-
-            try
-            {
-                InputText = text;
-                CaretIndex = text.Length;
-            }
-            finally
-            {
-                _suppressCompletionUpdate = false;
-            }
-
-            ClearCompletions();
-        }
-
-        #endregion
     }
 }

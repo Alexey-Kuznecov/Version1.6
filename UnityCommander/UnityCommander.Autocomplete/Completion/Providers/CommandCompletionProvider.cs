@@ -13,8 +13,19 @@ namespace UnityCommander.Autocomplete.Completion.Providers
             _allCommands = allCommands;
         }
 
-        public bool CanHandle(CliParseState ctx)
-            => ctx.ExpectedNext == CompletionKind.Command;
+        public bool CanHandle(CliParseState ctx)   
+        {
+            if (ctx.ExpectedNext != CompletionKind.Command)
+                return false;
+
+            if (ctx.Command == null && ctx.CurrentToken == null)
+            {
+                // неизвестная команда
+                return false;
+            }
+
+            return true;
+        }
 
         public IEnumerable<CompletionItem> GetCompletions(CliParseState ctx)
         {
