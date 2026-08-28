@@ -26,6 +26,7 @@ using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
+using UnityCommander.Services.Interfaces.Docking;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
 using UnityCommander.WPF;

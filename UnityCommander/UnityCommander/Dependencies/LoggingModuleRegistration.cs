@@ -10,8 +10,7 @@ using UnityCommander.Logging.Filters;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Logging.Sinks;
 using UnityCommander.Services;
-using UnityCommander.Settings.Abstactions;
-using UnityCommander.Settings.Core;
+using UnityCommander.Services.Interfaces;
 using UnityCommander.Sinks;
 
 namespace UnityCommander.Dependencies
@@ -40,20 +39,25 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<LogHub>();
             registry.RegisterSingleton<ILogSink, NullSink>();
-            registry.RegisterSingleton<ILogSink>(_ => new FileLogSink("journal.log", LogChannel.Journal));
-            registry.RegisterSingleton<ILogSink>(_ => new FileLogSink("errors.log", LogChannel.Error));
+            
+            registry.RegisterSingleton<ILogSink>(
+                _ => new FileLogSink("journal.log", LogChannel.Journal));
+
+            //registry.RegisterSingleton<ILogSink>(
+            //    _ => new FileLogSink("errors.log", LogChannel.Error));
+
             registry.RegisterSingleton<ILogFilter, LoggingPolicyFilter>();
             registry.RegisterSingleton<ILogColorResolver, DefaultLogColorResolver>();
             registry.RegisterSingleton<ILoggingRuntimeControl, LoggingRuntimeControl>();
 
             registry.RegisterSingleton<ILoggingSettingsStore>(sp =>
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "config", "logging.json"); ;
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "config", "logging.json");
                 return new JsonLoggingSettingsStore(path);
             });
 
             registry.RegisterSingleton<LoggerCreator>();
-            registry.RegisterSingleton<LoggingSinkService>();
+            registry.RegisterSingleton<ILoggingSinkService, LoggingSinkService>();
         }
     }
 }

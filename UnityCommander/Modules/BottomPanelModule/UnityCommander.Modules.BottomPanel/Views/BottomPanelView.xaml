@@ -17,7 +17,7 @@
     <Grid inputBinding:KeyboardBinding.Scope="Console,MainWindow">
 
         <DockingManager
-            x:Name="DockManager"
+            x:Name="ToolDockManager"
             Grid.Row="1"
             AllowMixedOrientation="True"
             AutoWindowSizeWhenOpened="True"

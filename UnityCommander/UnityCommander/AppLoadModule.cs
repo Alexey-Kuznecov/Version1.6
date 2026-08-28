@@ -1,20 +1,22 @@
 ﻿
-using CommandSystem.Infrastructure.Execution;
-using PluginSystem.Abstractions.Commands;
+
 using Prism.Ioc;
 using Prism.Modularity;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Keyboard;
-using UnityCommander.Abstractions.Panels;
+using UnityCommander.CLI.Bootstrap;
 using UnityCommander.CLI.Integration;
+using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
-using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.Diagnostics;
 using UnityCommander.Logging;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.LeftSideBars;
@@ -37,9 +39,13 @@ namespace UnityCommander
     [ModuleDependency(nameof(ToolBarModule))]
     internal class AppLoadModule : IModule
     {
+        private static ILogger _logger;
+
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            RegisterDiagnostics(containerProvider);
+            _logger = Log.Create("AppLoadModule", LogScope.Startup);
+    
+            RegisterConsoleCommands(containerProvider);
             RegisterShortcuts(containerProvider);
             RegisterDiaglog(containerProvider);
             RegisterCommand(containerProvider);
@@ -51,15 +57,6 @@ namespace UnityCommander
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
             var loggerCreator = containerProvider.Resolve<LoggerCreator>();
 
-            //var commandProvider = containerProvider.Resolve<IConsoleCommandProvider>();
-            //var commandDispatcher = containerProvider.Resolve<ConsoleCommandDispatcher>();
-
-            // Регистрируем все команды из сервиса
-            //foreach (var cmd in commandProvider.GetAllCommands())
-            //{
-            //    commandDispatcher.RegisterCommand(cmd);
-            //}
-
             initializer.Initialize();
 
             var token = new CancellationToken();
@@ -69,23 +66,46 @@ namespace UnityCommander
             var selectionDiagnostics = containerProvider.Resolve<SelectionDiagnostics>();
 
             builder.Rebuild();
+
+            _logger.Info("AppLoadModule initialized");
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
         }
 
-        private static void RegisterDiagnostics(IContainerProvider containerRegistry)
+        private static void RegisterConsoleCommands(IContainerProvider containerProvider)
         {
-            //var diagnostics = containerRegistry.Resolve<IDiagnosticRegistry>();
+            ValidateConsoleCommands(containerProvider);
 
-            //var pan = containerRegistry.Resolve<IPanelRegistry>();
-            //var tab = containerRegistry.Resolve<ITabRegistry>();
-            //var selection = containerRegistry.Resolve<ISelectionManager>();
+            var commandProvider = containerProvider.Resolve<IConsoleCommandProvider>();
+            var dispatcher = containerProvider.Resolve<ConsoleCommandDispatcher>();
 
-            //diagnostics.Register(pan as IDiagnosticSource);
-            //diagnostics.Register(tab as IDiagnosticSource);
-            //diagnostics.Register(selection as IDiagnosticSource);
+            // Регистрируем все команды из сервиса
+            foreach (var cmd in commandProvider.GetAllCommands())
+            {
+                dispatcher.RegisterCommand(cmd);
+            }
+        }
+
+        private static void ValidateConsoleCommands(
+            IContainerProvider containerProvider)
+        {
+            var commands =
+                ConsoleCommandDiscovery.Discover(
+                    typeof(EchoCommand).Assembly);
+
+            foreach (var type in commands)
+            {
+                try
+                {
+                    containerProvider.Resolve(type);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Info($"Console command failed: {type.FullName}\n{ex}");
+                }
+            }
         }
 
         private static void RegisterDiaglog(IContainerProvider containerRegistry)

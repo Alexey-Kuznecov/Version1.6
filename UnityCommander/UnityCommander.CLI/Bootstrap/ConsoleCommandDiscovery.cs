@@ -8,7 +8,7 @@ namespace UnityCommander.CLI.Bootstrap
     public static class ConsoleCommandDiscovery
     {
         public static IEnumerable<Type> Discover(
-       Assembly assembly)
+            Assembly assembly)
         {
             return assembly.GetTypes()
                 .Where(t => t.IsClass)

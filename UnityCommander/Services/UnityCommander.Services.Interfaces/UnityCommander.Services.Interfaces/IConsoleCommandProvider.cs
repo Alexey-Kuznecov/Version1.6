@@ -1,6 +1,6 @@
 ﻿
 using System.Collections.Generic;
-using UnityCommander.Common.Commands;
+using UnityCommander.CLI.Core;
 
 namespace UnityCommander.Services.Interfaces
 {
@@ -9,6 +9,6 @@ namespace UnityCommander.Services.Interfaces
     /// </summary>
     public interface IConsoleCommandProvider
     {
-        IEnumerable<IConsoleCommandBase> GetAllCommands();
+        IEnumerable<IConsoleCommand> GetAllCommands();
     }
 }

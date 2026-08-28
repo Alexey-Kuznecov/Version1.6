@@ -1,13 +1,13 @@
 ﻿
 using Prism.Ioc;
+using System;
+using System.Diagnostics;
 using UnityCommander.CLI.Bootstrap;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Lifecicle;
 using UnityCommander.Commands;
-using UnityCommander.Common.Commands;
-using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.BottomPanel.Console;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
@@ -36,19 +36,20 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IConsoleCommandInvoker, ConsoleCommandInvoker>();
 
             // Сервисы, предоставляющие команды приложению
+
+            DiagnosticRegistration.Register(registry); //Выяснить почему диагностика вызывается здесь, а не в App.xaml.cs
+
             registry.RegisterSingleton<IConsoleCommandProvider, ConsoleCommandProvider>();
 
-            DiagnosticRegistration.Register(registry);
-
-             var commands =
+            var commands =
                 ConsoleCommandDiscovery.Discover(
                     typeof(EchoCommand).Assembly);
 
             // Регистрация всех обнаруженных консольных команд
             foreach (var type in commands)
             {
-                registry.Register(
-                    typeof(IConsoleCommandBase),
+                registry.RegisterSingleton(
+                    typeof(IConsoleCommand),
                     type);
             }
         }

@@ -1,15 +1,14 @@
 ﻿
 using Prism.Commands;
-using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.CLI.History;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
-using UnityCommander.Logging.Profiling;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
+using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Services.Bootstrap
 {
@@ -22,6 +21,7 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ISessionBuilder _builder;
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
+        private readonly IToolDockingService _toolDocking;
         private readonly ConsoleHistoryService _consoleHistory;
         private readonly ILogger _logger;
         private readonly LoggerCreator _loggerCreator;
@@ -34,9 +34,9 @@ namespace UnityCommander.Services.Bootstrap
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
             IMultiCommandService multiCommand,
+            IToolDockingService toolDocking,
             ConsoleHistoryService consoleHistory,
-            LoggerCreator logger
-            ) 
+            LoggerCreator logger) 
         {
             _loggerCreator = logger;
             
@@ -51,6 +51,7 @@ namespace UnityCommander.Services.Bootstrap
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
             _consoleHistory = consoleHistory;
+            _toolDocking = toolDocking;
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -65,6 +66,8 @@ namespace UnityCommander.Services.Bootstrap
             _session.Save(_state);
 
             _layout.Save();
+
+            _toolDocking.Save();
 
             _consoleHistory.Save();
         });
@@ -88,7 +91,10 @@ namespace UnityCommander.Services.Bootstrap
                 _logger.Info("Restore prev session..");
                 _sessionAggregator.Restore(_state);
 
-                _consoleHistory.Initialize();
+                _toolDocking.Load();
+                _logger.Info("Tool layout loaded.");
+
+                 _consoleHistory.Initialize();
                 _logger.Info("Console history initialized..");
             }
         }

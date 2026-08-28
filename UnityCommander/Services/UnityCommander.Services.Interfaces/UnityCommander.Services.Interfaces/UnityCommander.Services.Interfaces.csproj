@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Abstractions\UnityCommander.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
   </ItemGroup>

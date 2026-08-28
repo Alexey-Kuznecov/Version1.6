@@ -134,10 +134,10 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             NavigateDownCommand = new DelegateCommand(NavigateDown);
 
             // Регистрируем все команды из сервиса
-            foreach (var cmd in _consoleCommandProvider.GetAllCommands())
-            {
-                _dispatcher.RegisterCommand(cmd);
-            }
+            //foreach (var cmd in _consoleCommandProvider.GetAllCommands())
+            //{
+            //    _dispatcher.RegisterCommand(cmd);
+            //}
 
             Lines = new ReadOnlyObservableCollection<string>(_lines);
             // САМОЕ ВАЖНОЕ: подписка на UI-потоке

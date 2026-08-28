@@ -1,5 +1,4 @@
 ﻿
-using Prism.Events;
 using System.Collections.Generic;
 using UnityCommander.CLI.History;
 using UnityCommander.CLI.Integration;
@@ -26,25 +25,19 @@ namespace UnityCommander.Modules.BottomPanel.Console
 
         public IReadOnlyCollection<ConsoleSession> Sessions => _sessions;
 
-        private readonly ConsoleCommandDispatcher _dispatcher;
-        private readonly IConsoleCommandProvider _commandProvider;
-
         public ConsoleManager(
             IConsoleHistory history,
             ConsoleInputProcessor inputProcessor,
             ConsoleAutocompleteProcessor completeProcessor,
             ConsoleApplicationLifetime lifetime,
-            ConsoleCommandLoop loop,  
-            ConsoleCommandDispatcher dispatcher,
-            IConsoleCommandProvider commandProvider)
+            ConsoleCommandLoop loop,
+            ConsoleCommandDispatcher dispatcher)
         {
             _loop = loop;
             _history = history;
             _inputProcessor = inputProcessor;
             _completeProcessor = completeProcessor;
             _lifetime = lifetime;
-            _dispatcher = dispatcher;
-            _commandProvider = commandProvider;
         }
 
         private bool _initialized;
@@ -55,11 +48,6 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 return;
 
             _initialized = true;
-
-            foreach (var command in _commandProvider.GetAllCommands())
-            {
-                _dispatcher.RegisterCommand(command);
-            }
         }
 
         private ConsoleSession CreateSession()

@@ -1,17 +1,15 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
-using System.Windows.Threading;
 using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Keyboard;
-using UnityCommander.CLI.Core;
-using UnityCommander.CLI.Integration;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
 using UnityCommander.Logging;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Rendering.Icons;
-using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.WPF.Behaviors;
@@ -20,6 +18,7 @@ namespace UnityCommander
 {
     internal class EarlyLoadModule : IModule
     {
+        private static ILogger _logger;
         private IPluginProvider _provider;
         private IPluginActivator _activator;
         private IIconSourceRegistry _iconSource;
@@ -27,9 +26,9 @@ namespace UnityCommander
 
         public void OnInitialized(IContainerProvider provider)
         {
-            var loggerCreator = provider.Resolve<LoggerCreator>();
+            _logger = LoggingBootstrap.Initialize(provider);
 
-            Log.Initialize(loggerCreator);
+            _logger.Info("EarlyLoadModule initialized.");
 
             _providerInfo = provider.Resolve<IPluginInfoProvider>();
             _provider = provider.Resolve<IPluginProvider>();
@@ -38,7 +37,7 @@ namespace UnityCommander
             var iconRender = provider.Resolve<IIconRenderService>();
             var iconColor = provider.Resolve<IIconColorResolver>();
             var context = provider.Resolve<IShortcutContextService>();
-           
+          
             IconHub.Initialize(iconRender, iconColor);
             KeyboardBinding.Initialize(context);
 

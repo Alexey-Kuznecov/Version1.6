@@ -22,9 +22,9 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private readonly ObservableCollection<string> _lines = new();
         public ReadOnlyObservableCollection<string> Lines { get; }
 
-        public ConsoleViewModel(IConsoleManager manager)
+        public ConsoleViewModel(ConsoleSession session)
         {
-            _session = manager.Create();
+            _session = session;
             _inputProcessor = _session.InputProcessor;
             _completeProcessor = _session.CompleteProcessor;
 

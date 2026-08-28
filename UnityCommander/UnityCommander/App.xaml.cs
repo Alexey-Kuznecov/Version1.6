@@ -66,6 +66,7 @@ namespace UnityCommander
             AutocompleteRegistration.Register(containerRegistry);
             CopyModuleRegistration.Register(containerRegistry);
             SettingsRegistration.Register(containerRegistry);
+            BottomPanelRegistration.Register(containerRegistry);
             //AiRegistration.Register(containerRegistry);
         }
 
@@ -82,7 +83,6 @@ namespace UnityCommander
             // Модули 
             moduleCatalog.AddModule<FilePanelModule>();       
             moduleCatalog.AddModule<LeftSideBarsModule>();
-            moduleCatalog.AddModule<BottomPanelModule>();
             // ВАЖНО: Ribbon инициализируется после нижней панели и после всех модулей, которые регистрируют свои команды в конструкторе.
             // Это необходимо для того, чтобы Ribbon успел построиться и корректно разрешить команды, предоставляемые модулями.
             moduleCatalog.AddModule<ToolBarModule>();
@@ -94,6 +94,7 @@ namespace UnityCommander
             // Регистрация команд модулей
             moduleCatalog.AddModule<FilePanelCommandModule>(); // Команды
 
+            moduleCatalog.AddModule<BottomPanelModule>();
             // Инициализация после загрузки все модулей
             moduleCatalog.AddModule<AppLoadModule>();
         }

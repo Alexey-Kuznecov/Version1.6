@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
+using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
-    public sealed class LoggingSinkService
+    public sealed class LoggingSinkService : ILoggingSinkService
     {
         private readonly LogHub _hub;
         private readonly List<ILogSink> _sinks = new();

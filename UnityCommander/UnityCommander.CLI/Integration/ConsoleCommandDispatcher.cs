@@ -34,7 +34,7 @@ namespace UnityCommander.CLI.Integration
             _registry.Register(command);
         }
 
-        public void RegisterCommand(IConsoleCommandBase command)
+        public void RegisterCommand(IConsoleCommand command)
         {
             if (command is not IConsoleCommand console)
                 throw new InvalidOperationException("Trying to register non-CLI command in CLI command registry.");
