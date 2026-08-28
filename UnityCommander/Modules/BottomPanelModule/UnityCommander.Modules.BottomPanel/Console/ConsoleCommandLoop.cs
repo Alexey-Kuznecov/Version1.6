@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.CodeDom.Compiler;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,18 +13,19 @@ namespace UnityCommander.Modules.BottomPanel.Console
 {
     public sealed class ConsoleCommandLoop
     {
-        private readonly ConsoleCommandDispatcher _dispatcher;
         private readonly IServiceProvider _services;
         private readonly ConsoleApplicationLifetime _lifetime;
 
+        private readonly ConsoleLineExecutor _executor;
+
         public ConsoleCommandLoop(
-            ConsoleCommandDispatcher dispatcher,
             IServiceProvider services,
-            ConsoleApplicationLifetime lifetime)
+            ConsoleApplicationLifetime lifetime, 
+            ConsoleLineExecutor executor)
         {
-            _dispatcher = dispatcher;
             _services = services;
             _lifetime = lifetime;
+            _executor = executor;
         }
 
         public async Task RunAsync(ConsoleSession session)
@@ -45,21 +47,14 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                var parts = ParseHelper.ParseArguments(line);
+                var result = await _executor.ExecuteAsync(session, line, token);
 
-                var name = parts[0];
-                var args = parts.Skip(1).ToArray();
-
-                var ctx = new ConsoleCommandContext(
-                    _services,
-                    session.Output,
-                    args,
-                    line);
-
-                await _dispatcher.ExecuteCommandAsync(
-                    name,
-                    ctx,
-                    token);
+                if (result is CommandExecutionResult.Success)
+                {
+                    session.Profile.StartupCommand = line;
+                    session.Output.WriteLine("Command executed successfully.");
+                    break;
+                }
             }
         }
     }

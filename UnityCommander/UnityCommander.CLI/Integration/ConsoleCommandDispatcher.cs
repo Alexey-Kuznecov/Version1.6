@@ -4,7 +4,6 @@ using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration.UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Lifecicle;
 using UnityCommander.CLI.Mode;
-using UnityCommander.Common.Commands;
 
 namespace UnityCommander.CLI.Integration
 {
@@ -86,6 +85,11 @@ namespace UnityCommander.CLI.Integration
             }
         }
 
+        public async Task ExecuteAsync(string input)
+        {
+            // Implementation for executing command asynchronously
+        }
+
         public void RegisterDelegateCommand(
             string name,
             string description,
@@ -140,5 +144,10 @@ namespace UnityCommander.CLI.Integration
 
         public IEnumerable<IConsoleCommand> GetAvailableCommands()
               => _registry.GetAllCommands();
+
+        public async Task ExecuteCommandAsync(string command, object context, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

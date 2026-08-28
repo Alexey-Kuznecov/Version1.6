@@ -26,12 +26,14 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ConsoleInputProcessor>();
             registry.RegisterSingleton<ConsoleAutocompleteProcessor>();
             registry.RegisterSingleton<IConsoleManager, ConsoleManager>();
+            registry.RegisterSingleton<IConsoleProfileStore, ConsoleProfileStore>();
 
             // Основные компоненты системы выполнения команд
             registry.RegisterSingleton<ConsoleCommandDispatcher>();
             registry.RegisterSingleton<ConsoleCommandFactory>();
             registry.RegisterSingleton<ConsoleApplicationLifetime>();
             registry.RegisterSingleton<CommandProcessManager>();
+            registry.RegisterSingleton<ConsoleLineExecutor>();
             registry.RegisterSingleton<IConsoleCommandRegistry, ConsoleCommandRegistry>();
             registry.RegisterSingleton<IConsoleCommandInvoker, ConsoleCommandInvoker>();
 
