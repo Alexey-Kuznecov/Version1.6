@@ -1,6 +1,6 @@
 ﻿
 using CommandSystem.Abstractions;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.Command;
@@ -93,6 +93,9 @@ namespace UnityCommander.Modules.ToolBar.Builder
                                         RibbonRadioButtonDefinition radio =>
                                             CreateRadioButton(radio),
 
+                                        RibbonComboBoxDefinition comboBox =>
+                                            CreateComboBox(comboBox),
+
                                         _ => null
                                     };
 
@@ -105,6 +108,25 @@ namespace UnityCommander.Modules.ToolBar.Builder
             }
 
             return model;
+        }
+
+        private RibbonItemModel CreateComboBox(
+            RibbonComboBoxDefinition comboBox)
+        {
+            return new RibbonComboBoxModel
+            {
+                Id = comboBox.Id,
+                IconKey = comboBox.IconKey,
+                Items = comboBox.Items
+                    .Select(x => new RibbonComboBoxItemModel
+                    {
+                        Id = x.Id,
+                        IconKey = x.IconKey,
+                        Title = x.Title,
+                        CommandId = x.CommandId
+                    })
+                    .ToList()
+            };
         }
 
         private RibbonItemModel CreateCheckBox(RibbonCheckBoxDefinition checkBox)

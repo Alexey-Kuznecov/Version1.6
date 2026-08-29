@@ -10,27 +10,27 @@ using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Services.Docking
 {
-    public sealed class ToolDockingService : IToolDockingService
+    public class ToolDockingStore : IToolDockingStore
     {
         private const string LayoutPath = "tool-layout.xml";
 
         private readonly IToolRegistry _toolRegistry;
+        private readonly ToolDockingHost _dockingHost;
+        private readonly DockingContext _context;
 
-        private DockingManager? _dockingManager;
-
-        public ToolDockingService(IToolRegistry toolRegistry)
+        public ToolDockingStore(
+            DockingContext context,
+            ToolDockingHost dockingHost,
+            IToolRegistry toolRegistry)
         {
+            _context = context;
             _toolRegistry = toolRegistry;
-        }
-
-        public void SetDockingManager(DockingManager manager)
-        {
-            _dockingManager = manager;
+            _dockingHost = dockingHost;
         }
 
         public void Load()
         {
-            if (_dockingManager == null)
+            if (_context.ToolManager == null)
                 throw new InvalidOperationException(
                     "DockingManager has not been initialized.");
 
@@ -62,11 +62,11 @@ namespace UnityCommander.Services.Docking
 
         public void Save()
         {
-            if (_dockingManager == null)
+            if (_context.ToolManager == null)
                 throw new InvalidOperationException(
                     "DockingManager has not been initialized.");
 
-            var serializer = new XmlLayoutSerializer(_dockingManager);
+            var serializer = new XmlLayoutSerializer(_context.ToolManager);
 
             using var writer = new StreamWriter(LayoutPath);
             serializer.Serialize(writer);
@@ -74,7 +74,7 @@ namespace UnityCommander.Services.Docking
 
         private XmlLayoutSerializer CreateSerializer()
         {
-            var serializer = new XmlLayoutSerializer(_dockingManager);
+            var serializer = new XmlLayoutSerializer(_context.ToolManager);
 
             serializer.LayoutSerializationCallback += OnLayoutItem;
 
@@ -94,12 +94,17 @@ namespace UnityCommander.Services.Docking
 
             if (descriptor == null)
             {
+                descriptor = _toolRegistry.FindByContentId(contentId);
+            }
+
+            if (descriptor == null)
+            {
                 Debug.WriteLine(
                     $"Tool descriptor not found: {contentId}");
 
                 return;
             }
-
+        
             args.Content = descriptor.Create();
         }
     }

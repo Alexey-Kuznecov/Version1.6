@@ -4,6 +4,7 @@ using UnityCommander.Modules.BottomPanel.Console;
 using UnityCommander.Modules.BottomPanel.ViewModels;
 using UnityCommander.Modules.BottomPanel.Views;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Modules.BottomPanel.Services
 {
@@ -15,6 +16,9 @@ namespace UnityCommander.Modules.BottomPanel.Services
         public string Title => "Console";
 
         public bool CanCreateMultiple => true;
+
+        public ToolDockSide DockSide 
+            => ToolDockSide.Center;
 
         public ConsoleToolDescriptor(IConsoleManager consoleManager)
         {

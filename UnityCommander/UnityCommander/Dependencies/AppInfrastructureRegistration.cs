@@ -20,6 +20,7 @@ using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.ToolBar.Builder;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Ribbon.Services;
+using UnityCommander.Ribbon.Services.Icon;
 using UnityCommander.Services;
 using UnityCommander.Services.Background;
 using UnityCommander.Services.Bootstrap;
@@ -69,7 +70,8 @@ namespace UnityCommander.Dependencies
 
             // UI-лента (Ribbon): управление кнопками/командами верхнего меню
             registry.RegisterSingleton<IRibbonManager, RibbonManager>();
-            
+            registry.RegisterSingleton<IRibbonIconProvider, RibbonIconProvider>();
+
             registry.RegisterSingleton<ISidebarSectionFactory, SidebarSectionFactory>();
             registry.RegisterSingleton<IViewResolver, ViewResolver> ();
             registry.RegisterSingleton<ISidebarService, SidebarService>();

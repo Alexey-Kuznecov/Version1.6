@@ -1,7 +1,11 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.Icons;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Rendering.Icons;
 
 namespace UnityCommander.Abstractions.Resources
@@ -16,8 +20,14 @@ namespace UnityCommander.Abstractions.Resources
 
         private RuntimeIcon _missingIcon = new RuntimeIcon();
 
-        public CompositeIconResolver(IIconSourceRegistry iconSource)
+        private readonly CompositeIconResolver _iconResolver;
+
+        private readonly ILogger _logger;
+
+        public CompositeIconResolver(IIconSourceRegistry iconSource, LoggerCreator loggerCreator)
         {
+            _logger = loggerCreator.For<CompositeIconResolver>(LogScope.Runtime);
+
             _registry = iconSource;
         }
 
@@ -48,13 +58,24 @@ namespace UnityCommander.Abstractions.Resources
 
         public RuntimeIcon Resolve(string key)
         {
-            if (_cache.TryGetValue(key, out var icon))
-                return icon;
+            try
+            {
+                if (_cache.TryGetValue(key, out var icon))
+                    return icon;
 
-            if (TryResolve(key, out icon))
-                return icon;
+                if (TryResolve(key, out icon))
+                    return icon;
 
-            return _missingIcon;
+                return _missingIcon;
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.Error(
+                   
+                    $"Failed to resolve icon '{key}'.", ex);
+
+                return _missingIcon;
+            }
         }
     }
 }

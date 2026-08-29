@@ -73,10 +73,13 @@ namespace UnityCommander.Common.Styling
 
             //var results = Export();
 
+            var color = packIcon.Foreground.ToString();
+
             return new RuntimeIcon
             {
                 Key = key,
-                Data = packIcon.Data
+                Data = packIcon.Data,
+                Color = color
             };
         }
     }

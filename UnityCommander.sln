@@ -31,8 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lab", "Lab", "{30D7551D-E97
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nlog", "Nlog", "{7440573D-A989-4FB3-9B14-2D1A81D02E86}"
 	ProjectSection(SolutionItems) = preProject
-		C:\Users\Geralt\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config = C:\Users\Geralt\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config
-		C:\Users\Geralt\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd = C:\Users\Geralt\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd
+		..\..\..\..\..\Geralt\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config = ..\..\..\..\..\Geralt\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config
+		..\..\..\..\..\Geralt\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd = ..\..\..\..\..\Geralt\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityCommander.Test", "Lab\UnityCommander.Test\UnityCommander.Test.csproj", "{6BEB4DFB-6B12-4619-BADD-508D30B82314}"
@@ -164,6 +164,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Modules.StatusBar", "UnityCommander\Modules\UnityCommander.Modules.StatusBar\UnityCommander.Modules.StatusBar.csproj", "{8A4A96B3-B185-4280-BAC4-F0B71BB9C0F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityCommander.Diagnostics", "UnityCommander\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj", "{C4654EEB-62F5-4238-8457-94EF87CB4242}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ribbon", "Ribbon", "{609C1D57-143D-461B-9021-6E5302039866}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

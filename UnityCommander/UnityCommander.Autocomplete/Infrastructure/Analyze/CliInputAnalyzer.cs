@@ -5,7 +5,6 @@ using UnityCommander.Autocomplete.Diagnostic;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
-using UnityCommander.Logging.Extensions;
 using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze

@@ -15,6 +15,7 @@ using UnityCommander.Modules.StatusBar;
 using UnityCommander.Modules.ToolBar;
 using UnityCommander.Modules.Viewer;
 using UnityCommander.Modules.WebBrowser;
+using UnityCommander.Moduls;
 using UnityCommander.Theme;
 using UnityCommander.Views;
 using UnityCommander.WPF.Dialog;
@@ -83,6 +84,7 @@ namespace UnityCommander
             // Модули 
             moduleCatalog.AddModule<FilePanelModule>();       
             moduleCatalog.AddModule<LeftSideBarsModule>();
+            moduleCatalog.AddModule<BottomPanelModule>();
             // ВАЖНО: Ribbon инициализируется после нижней панели и после всех модулей, которые регистрируют свои команды в конструкторе.
             // Это необходимо для того, чтобы Ribbon успел построиться и корректно разрешить команды, предоставляемые модулями.
             moduleCatalog.AddModule<ToolBarModule>();
@@ -92,11 +94,11 @@ namespace UnityCommander
             moduleCatalog.AddModule<StatusBarModule>();
 
             // Регистрация команд модулей
-            moduleCatalog.AddModule<FilePanelCommandModule>(); // Команды
+            //moduleCatalog.AddModule<FilePanelCommandModule>();
 
-            moduleCatalog.AddModule<BottomPanelModule>();
             // Инициализация после загрузки все модулей
             moduleCatalog.AddModule<AppLoadModule>();
+            moduleCatalog.AddModule<CommandRegistrationModule>(); // Команды
         }
     }
 }

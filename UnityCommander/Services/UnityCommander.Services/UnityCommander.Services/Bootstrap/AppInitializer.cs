@@ -21,7 +21,7 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ISessionBuilder _builder;
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
-        private readonly IToolDockingService _toolDocking;
+        private readonly IToolDockingStore _toolDockingStore;
         private readonly ConsoleHistoryService _consoleHistory;
         private readonly ILogger _logger;
         private readonly LoggerCreator _loggerCreator;
@@ -34,7 +34,7 @@ namespace UnityCommander.Services.Bootstrap
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
             IMultiCommandService multiCommand,
-            IToolDockingService toolDocking,
+            IToolDockingStore toolDockingStore,
             ConsoleHistoryService consoleHistory,
             LoggerCreator logger) 
         {
@@ -51,7 +51,7 @@ namespace UnityCommander.Services.Bootstrap
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
             _consoleHistory = consoleHistory;
-            _toolDocking = toolDocking;
+            _toolDockingStore = toolDockingStore;
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -67,7 +67,7 @@ namespace UnityCommander.Services.Bootstrap
 
             _layout.Save();
 
-            _toolDocking.Save();
+            _toolDockingStore.Save();
 
             _consoleHistory.Save();
         });
@@ -91,7 +91,7 @@ namespace UnityCommander.Services.Bootstrap
                 _logger.Info("Restore prev session..");
                 _sessionAggregator.Restore(_state);
 
-                _toolDocking.Load();
+                _toolDockingStore.Load();
                 _logger.Info("Tool layout loaded.");
 
                  _consoleHistory.Initialize();

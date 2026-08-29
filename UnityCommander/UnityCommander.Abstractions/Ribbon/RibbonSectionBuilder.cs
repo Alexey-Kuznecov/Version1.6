@@ -32,6 +32,21 @@ namespace UnityCommander.Abstractions.Ribbon
             return this;
         }
 
+        public RibbonSectionBuilder ComboBox(
+            string Id, 
+            List<RibbonComboBoxItemDefinition> itemDefinitions)
+        {
+            _section.Items.Add(
+                new RibbonComboBoxDefinition
+                {
+                    Id = Id,
+                    SectionId = _section.Id,
+                    Items = itemDefinitions
+                });
+
+            return this;
+        }
+
         public RibbonGroupBuilder EndSection()
             => _parent;
     }

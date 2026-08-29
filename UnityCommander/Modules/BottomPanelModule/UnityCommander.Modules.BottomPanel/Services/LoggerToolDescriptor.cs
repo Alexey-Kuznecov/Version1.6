@@ -4,6 +4,7 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Modules.BottomPanel.ViewModels;
 using UnityCommander.Modules.BottomPanel.Views;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Modules.BottomPanel.Services
 {
@@ -19,6 +20,9 @@ namespace UnityCommander.Modules.BottomPanel.Services
         public string Id => "Logger";
         public string Title => "Logger";
         public bool CanCreateMultiple => false;
+
+        public ToolDockSide DockSide 
+            => ToolDockSide.Right;
 
         public Control Create()
         {

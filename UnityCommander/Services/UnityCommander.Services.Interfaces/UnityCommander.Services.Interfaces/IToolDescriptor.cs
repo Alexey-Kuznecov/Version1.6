@@ -1,5 +1,7 @@
 ﻿
+
 using System.Windows.Controls;
+using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Services.Interfaces
 {
@@ -10,6 +12,8 @@ namespace UnityCommander.Services.Interfaces
         string Title { get; }
 
         bool CanCreateMultiple { get; }
+
+        ToolDockSide DockSide { get; }
 
         Control Create();
     }

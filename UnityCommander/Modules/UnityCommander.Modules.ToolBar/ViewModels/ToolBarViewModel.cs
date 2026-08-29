@@ -47,11 +47,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             RibbonManager = ribbonManager;
             IsExpanded = true;
 
-            RibbonManager.Configure(new RibbonServices()
-            {
-                Commands = resolver
-            });
-
             RibbonManager.TabCollapsed += RibbonManager_TabCollapsed;
             RibbonManager.TabExpanded += RibbonManager_TabExpanded;
 
@@ -65,7 +60,29 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 r.Tab("home", "Главная")
                     .Group("tools", "Инструменты")
                         .Section("main", RibbonGroupLayout.Large)
-                            .Button(CommandNames.UI.ToggleBottomPanel, "core.drive");
+                            .Button(CommandNames.UI.ToggleBottomPanel, "core.drive")
+                            .ComboBox("tools", new()
+                                {
+                                    new RibbonComboBoxItemDefinition
+                                    {
+                                        Id = "console",
+                                        Title = "Консоль",
+                                        CommandId = CommandNames.ToolBar.Create
+                                    },
+                                    new RibbonComboBoxItemDefinition
+                                    {
+                                        Id = "viewer",
+                                        Title = "Просмотрщик",
+                                        CommandId = CommandNames.ToolBar.Create
+                                    },
+                                    new RibbonComboBoxItemDefinition
+                                    {
+                                        Id = "logger",
+                                        Title = "Журнал",
+                                        CommandId = CommandNames.ToolBar.Create
+                                    }
+                                });
+                           
             });
 
             var ribbon = modelFactory.Create();

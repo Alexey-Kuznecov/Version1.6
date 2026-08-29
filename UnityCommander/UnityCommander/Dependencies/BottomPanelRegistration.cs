@@ -15,7 +15,10 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IToolRegistry, ToolRegistry>();
             registry.RegisterSingleton<IToolDescriptor, ConsoleToolDescriptor>();
             registry.RegisterSingleton<IToolDescriptor, LoggerToolDescriptor>();
-            registry.RegisterSingleton<IToolDockingService, ToolDockingService>();
+            //registry.RegisterSingleton<IToolDockingService, ToolDockingService>();
+            registry.RegisterSingleton<IToolDockingStore, ToolDockingStore>();
+            registry.RegisterSingleton<IToolDockingManager, ToolDockingManager>();
+            registry.RegisterSingleton<DockingContext>();
         }
     }
 }

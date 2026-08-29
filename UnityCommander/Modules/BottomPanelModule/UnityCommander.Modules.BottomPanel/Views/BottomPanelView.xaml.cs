@@ -17,8 +17,9 @@ namespace UnityCommander.Modules.BottomPanel.Views
         {
             InitializeComponent();
 
-            var dockingService = ContainerLocator.Container.Resolve<IToolDockingService>() as ToolDockingService;
-            dockingService?.SetDockingManager(this.ToolDockManager);
+            var dockingContext = ContainerLocator.Container.Resolve<DockingContext>();
+
+            dockingContext.ToolManager = this.ToolDockManager;
         }
     }
 }

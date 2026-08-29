@@ -73,6 +73,11 @@ namespace UnityCommander.Common.Commands
             public const string Switch = "panel.switch"; // левая/правая
         }
 
+        public static class ToolBar
+        {
+            public const string Create = "tools.create-console";
+        }
+
         public static class Plugin
         {
             public const string Load = "plugin.load";

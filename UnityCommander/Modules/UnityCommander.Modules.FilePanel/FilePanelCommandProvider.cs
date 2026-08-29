@@ -1,6 +1,10 @@
 ﻿
 using CommandSystem.Abstractions;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
+using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel
@@ -24,6 +28,57 @@ namespace UnityCommander.Modules.FilePanel
         {
             var value = ctx.Parameter?.ToString();
             _dockingService.GetActiveDirectoryPanel()?.SetCurrentPath(value);
+            return Task.CompletedTask;
+        }
+
+        public Task<UndoToken> ExecuteDeleteAsync(CommandContext ctx)
+        {
+            var contextMenu = (FilePanelContextMenu)ctx.Context;
+
+            foreach (var path in contextMenu.SelectedFiles)
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                    continue;
+
+                if (!File.Exists(path))
+                {
+                    Debug.WriteLine(
+                        $"File already does not exist: '{path}'");
+
+                    continue;
+                }
+
+                try
+                {
+                    var backup = Path.GetTempFileName();
+                    //File.Copy(path, backup, overwrite: true);
+                    File.Delete(path);
+
+                    //_notifier.NotifyChanged(path);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"Error deleting file '{path}': {e.Message}");
+                }
+            }
+
+            return Task.FromResult<UndoToken>(null);
+        }
+
+        private Task UndoDeleteAsync(string backup, string path)
+        {
+            File.Copy(backup, path, overwrite: true);
+
+            //_notifier.NotifyChanged(path);
+            return Task.CompletedTask;
+        }
+
+        private Task RedoDeleteAsync(string path)
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+
+            //_notifier.NotifyChanged(path);
             return Task.CompletedTask;
         }
     }
