@@ -8,6 +8,7 @@ using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Helper;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Lifecicle;
+using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Modules.BottomPanel.Console
 {
@@ -49,11 +50,16 @@ namespace UnityCommander.Modules.BottomPanel.Console
 
                 var result = await _executor.ExecuteAsync(session, line, token);
 
-                if (result is CommandExecutionResult.Success)
+                if (result.Success)
                 {
-                    session.Profile.StartupCommand = line;
                     session.Output.WriteLine("Command executed successfully.");
-                    break;
+
+                    if (result.Directives.HasFlag(CommandExecutionDirective.Startup))
+                    {
+                        session.Profile.StartupCommand = line;
+
+                        session.Output.WriteLine("Command marked as startup.");
+                    }
                 }
             }
         }

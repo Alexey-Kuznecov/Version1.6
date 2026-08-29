@@ -158,7 +158,7 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 command,
                 token);
 
-            if (result == CommandExecutionResult.Success)
+            if (result.Success && result.Directives.HasFlag(CommandExecutionDirective.Startup))
             {
                 session.Profile.StartupCommand = command;
                 _profileStore.Save(session.Profile);
@@ -181,7 +181,7 @@ namespace UnityCommander.Modules.BottomPanel.Console
                     command,
                     token);
 
-                if (result == CommandExecutionResult.Success)
+                if (result.Success)
                 {
                     session.Profile.RemoveStartupCommand();
                     _profileStore.Save(session.Profile);

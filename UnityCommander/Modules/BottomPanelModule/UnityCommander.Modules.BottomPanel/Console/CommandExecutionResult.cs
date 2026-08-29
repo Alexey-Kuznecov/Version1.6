@@ -1,10 +1,10 @@
 ﻿
 namespace UnityCommander.Modules.BottomPanel.Console
 {
-    public enum CommandExecutionResult
+    public sealed class CommandExecutionResult
     {
-        Success,
-        Failed,
-        Cancelled
+        public bool Success { get; init; }
+
+        public CommandExecutionDirective Directives { get; init; }
     }
 }

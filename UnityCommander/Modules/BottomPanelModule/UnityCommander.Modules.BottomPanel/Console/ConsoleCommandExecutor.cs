@@ -28,13 +28,33 @@ namespace UnityCommander.Modules.BottomPanel.Console
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(line))
-                return CommandExecutionResult.Failed;
+                return new CommandExecutionResult
+                {
+                    Success = false
+                };
 
             var parts = ParseHelper.ParseArguments(line);
 
             if (parts.Length == 0)
-                return CommandExecutionResult.Failed;
+                return new CommandExecutionResult
+                {
+                    Success = false
+                };
 
+            var directives = CommandExecutionDirective.None;
+
+            if (parts[0] == "startup:")
+            {
+                directives |= CommandExecutionDirective.Startup;
+                parts = parts.Skip(1).ToArray();
+            }
+
+            if (parts.Length == 0)
+                return new CommandExecutionResult
+                {
+                    Success = false
+                };
+            
             var name = parts[0];
             var args = parts.Skip(1).ToArray();
 
@@ -49,7 +69,11 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 context,
                 cancellationToken);
 
-            return CommandExecutionResult.Success;
+            return new CommandExecutionResult
+            {
+                Success = true,
+                Directives = directives
+            };
         }
     }
 }
