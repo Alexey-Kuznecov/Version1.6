@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.Search\UnityCommander.Search.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.WPF\UnityCommander.WPF.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>

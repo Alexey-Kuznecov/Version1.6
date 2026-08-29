@@ -68,6 +68,7 @@ namespace UnityCommander
             CopyModuleRegistration.Register(containerRegistry);
             SettingsRegistration.Register(containerRegistry);
             BottomPanelRegistration.Register(containerRegistry);
+            SearchRegistration.Register(containerRegistry);
             //AiRegistration.Register(containerRegistry);
         }
 

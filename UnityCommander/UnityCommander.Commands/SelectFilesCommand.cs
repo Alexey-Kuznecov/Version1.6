@@ -1,14 +1,13 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using UnityCommander.Abstractions.Selection;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
-using UnityCommander.CLI.Mode;
 using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;
 
