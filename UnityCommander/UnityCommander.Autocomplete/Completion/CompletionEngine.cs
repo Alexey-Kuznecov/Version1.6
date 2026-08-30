@@ -24,28 +24,40 @@ namespace UnityCommander.Autocomplete.Completion
             _logger = loggerCreator?.For<CompletionEngine>(LogScope.Runtime);
         }
 
-        public CompletionResult GetCompletions(InputState state, CliParseState analyze)
+        public CompletionResult GetCompletions(
+           InputState state,
+           CliParseState analyze)
         {
-            var items = _providers
+            var providers = _providers
                 .Where(p => p.CanHandle(analyze))
-                .SelectMany(p => p.GetCompletions(analyze))
-                .Select(item => new CompletionItem
-                {
-                    DisplayText = item.DisplayText,
-                    InsertText = item.InsertText,
-                    CaretOffset = item.CaretOffset,
-                    EditFactory = s => new TextEdit(
-                        analyze.ReplaceStart,
-                        analyze.ReplaceLength,
-                        analyze.CurrentToken,
-                        item.InsertText + " "
-                    )
-                })
+                .OrderByDescending(p => p.Priority)
                 .ToList();
+
+            var priority = providers.FirstOrDefault()?.Priority;
+
+            var items = priority.HasValue
+                ? providers
+                    .Where(p => p.Priority == priority.Value)
+                    .SelectMany(p => p.GetCompletions(analyze))
+                    .Select(item => new CompletionItem
+                    {
+                        DisplayText = item.DisplayText,
+                        InsertText = item.InsertText,
+                        CaretOffset = item.CaretOffset,
+                        EditFactory = s => new TextEdit(
+                            analyze.ReplaceStart,
+                            analyze.ReplaceLength,
+                            analyze.CurrentToken,
+                            item.InsertText + " "
+                        )
+                    })
+                    .ToList()
+                : [];
 
             return new CompletionResult(items)
             {
-                DefaultSelectedIndex = items.Count > 0 ? items.Count - 1 : -1
+                DefaultSelectedIndex =
+                    items.Count > 0 ? items.Count - 1 : -1
             };
         }
 

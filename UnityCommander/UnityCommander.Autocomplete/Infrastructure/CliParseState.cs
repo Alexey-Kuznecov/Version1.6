@@ -12,6 +12,9 @@ namespace UnityCommander.Autocomplete.Infrastructure
         public IReadOnlyList<IPositionalArgumentDescriptor> AvailableArguments { get; }
         public IReadOnlyList<IFlagDescriptor> AvailableFlags { get; }
         public CompletionKind ExpectedNext { get; }
+
+        public ExpectedValue? ExpectedValue { get; set; }
+
         public int ArgumentIndex { get; }
         public CliError? Error { get; }
         public bool IsComplete { get; }
@@ -30,6 +33,7 @@ namespace UnityCommander.Autocomplete.Infrastructure
             IReadOnlyList<IPositionalArgumentDescriptor> availableArguments,
             IReadOnlyList<IFlagDescriptor> availableFlags,
             CompletionKind expectedNext,
+            ExpectedValue? expectedValue,
             int argumentIndex,
             CliError? error,
             InputToken? currentToken = null,
@@ -47,7 +51,7 @@ namespace UnityCommander.Autocomplete.Infrastructure
             ArgumentIndex = argumentIndex;
             Error = error;
             IsComplete = error == null && expectedNext == CompletionKind.Nothing;
-
+            ExpectedValue = expectedValue;
             CurrentToken = currentToken;
             ReplaceStart = replaceStart;
             ReplaceLength = replaceLength;

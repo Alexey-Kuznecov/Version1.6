@@ -6,6 +6,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
 {
     public class CommandCompletionProvider : ICompletionProvider
     {
+        public int Priority => 100;
+
         private readonly IReadOnlyList<ICommandDescriptor> _allCommands;
 
         public CommandCompletionProvider(IReadOnlyList<ICommandDescriptor> allCommands)

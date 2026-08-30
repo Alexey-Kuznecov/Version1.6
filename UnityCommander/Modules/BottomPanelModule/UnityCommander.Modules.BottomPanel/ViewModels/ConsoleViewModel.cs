@@ -81,12 +81,12 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void Clear()
         {
-            Application.Current.Dispatcher.Invoke(() => _lines.Clear());
+            Application.Current?.Dispatcher?.Invoke(() => _lines.Clear());
         }
 
         private void AppendLine(string text)
         {
-            Application.Current.Dispatcher.Invoke(() => _lines.Add(text));
+            Application.Current?.Dispatcher?.Invoke(() => _lines.Add(text));
         }
 
         private void SendInput()

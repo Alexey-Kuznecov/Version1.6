@@ -8,7 +8,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
         public ICommandDescriptor? Command;
         public ICommandVariant? Variant;
 
-        public IFlagDescriptor? WaitingFlagValue;
+        public ExpectedValue? ExpectedValue { get; set; }
 
         public int PositionalIndex;
 

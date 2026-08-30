@@ -7,7 +7,7 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
     {
         public string Name { get; init; } = string.Empty;
         public string? ShortName { get; init; }
-        public ArgumentValueType? ValueType { get; init; }
+        public ArgumentValueType ValueType { get; init; }
         public ValueSeparator Separator { get; }
         public bool IsRepeatable { get; init; }
         public bool RequiresValue { get; }
@@ -17,7 +17,7 @@ namespace UnityCommander.Autocomplete.Context.Descriptors
          string? shortName,
          bool requiresValue,
          bool isRepeatable = false,
-         ArgumentValueType? valueType = ArgumentValueType.String,
+         ArgumentValueType valueType = ArgumentValueType.String,
          ValueSeparator valueSeparator = ValueSeparator.Space)
         {
             Name = name;

@@ -114,14 +114,28 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             AnalyzerContext ctx,
             InputStatus status)
         {
-            if (ctx.WaitingFlagValue != null)
+            if (ctx.ExpectedValue != null)
             {
-                token.Kind = TokenKind.FlagValue;
+                var expected = ctx.ExpectedValue;
+
+                token.Kind = expected.Kind switch
+                {
+                    CompletionKind.Flag =>
+                        TokenKind.FlagValue,
+
+                    CompletionKind.PositionalArgument =>
+                        TokenKind.PositionalArgument,
+
+                    _ =>
+                        TokenKind.Unknown
+                };
 
                 token.IsComplete = !token.IsActive;
-                token.IsValid = IsValidValue(token.Text, ctx.WaitingFlagValue);
-                ctx.WaitingFlagValue = null;
-                status.ExpectedFlagValue = null;
+                token.IsValid = IsValidValue(token.Text, expected);
+
+                ctx.ExpectedValue = null;
+                status.ExpectedValue = null;
+
                 return;
             }
 
@@ -169,68 +183,49 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 
                 if (flag?.RequiresValue == true)
                 {
-                    status.ExpectedFlagValue = flag;
-                    ctx.WaitingFlagValue = flag;
+                    var expectedValue = new ExpectedValue(
+                        flag,
+                        CompletionKind.Flag,
+                        flag.ValueType);
+
+                    status.ExpectedValue = expectedValue;
+                    ctx.ExpectedValue = expectedValue;
                 }
 
                 return;
             }
 
-            //if (token.Text.StartsWith("-"))
-            //{
-            //    var flag = ResolveFlag(ctx, token.Text);
-
-            //    token.Kind = TokenKind.Flag;
-
-            //    if (flag != null)
-            //    {
-            //        ctx.HasUsedFlags = true;
-            //        status.UsedFlags.Add(flag);
-            //    }
-
-            //    token.IsComplete = flag != null &&
-            //                       token.Text == flag.Name;
-
-            //    if (flag?.RequiresValue == true)
-            //    {
-            //        if (flag.Separator == ValueSeparator.Equals)
-            //        {
-            //            var separatorIndex = token.Text.IndexOf('=');
-
-            //            if (separatorIndex >= 0)
-            //            {
-            //                var flagText = token.Text[..separatorIndex];
-            //                var valueText = token.Text[(separatorIndex + 1)..];
-
-            //                // flagText → ищем флаг
-            //                // valueText → значение
-            //            }
-
-            //            token.IsComplete = flag != null &&
-            //                    token.Text == flag.Name + "=";
-
-            //            if (token.IsComplete)
-            //            {
-            //                status.ExpectedFlagValue = flag;
-            //                ctx.WaitingFlagValue = flag;
-
-            //                return;
-            //            }
-            //        }
-
-            //        status.ExpectedFlagValue = flag;
-            //        ctx.WaitingFlagValue = flag;
-            //    }
-
-            //    return;
-            //}
-
             if (CanAcceptPositionalArgument(ctx))
             {
-                token.Kind = TokenKind.PositionalArgument;
-                ctx.PositionalIndex++;
+                var arguments =
+                    ctx.Variant?.Arguments ??
+                    ctx.Command?.Arguments;
 
+                var argument = arguments![ctx.PositionalIndex];
+
+                token.Kind = TokenKind.PositionalArgument;
+                token.IsComplete = !token.IsActive;
+
+                var expectedValue = new ExpectedValue(
+                    argument,
+                    CompletionKind.PositionalArgument,
+                    argument.ValueType);
+
+                token.IsValid = IsValidValue(
+                    token.Text,
+                    expectedValue);
+
+                ctx.PositionalIndex++;
                 status.PositionalIndex = ctx.PositionalIndex;
+
+                if (!status.AvailableArguments.Contains(argument))
+                    status.AvailableArguments.Add(argument);
+
+                if (token.IsActive)
+                {
+                    status.ExpectedValue = expectedValue;
+                }
+
                 return;
             }
         }
@@ -286,29 +281,6 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                  f.ShortName.StartsWith(text, StringComparison.OrdinalIgnoreCase)));
         }
 
-
-        //private IFlagDescriptor? ResolveFlag(
-        //    AnalyzerContext ctx,
-        //    string text)
-        //{
-        //    var flags = ctx.Variant?.Flags ?? ctx.Command?.Flags;
-
-        //    if (flags == null)
-        //        return null;
-
-        //    return flags.FirstOrDefault(f =>
-        //        string.Equals(
-        //            f.Name,
-        //            text,
-        //            StringComparison.OrdinalIgnoreCase) ||
-        //        (!string.IsNullOrEmpty(f.ShortName) &&
-        //         string.Equals(
-        //             f.ShortName,
-        //             text,
-        //             StringComparison.OrdinalIgnoreCase)));
-        //}
-
-
         private ICommandDescriptor? ResolveCommand(string name)
         {
             return _commands.FirstOrDefault(
@@ -319,40 +291,63 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
         {
             var active = status.Tokens.FirstOrDefault(t => t.IsActive);
 
-            // Каретка внутри незавершённого токена.
-            if (active != null && !active.IsComplete)
+            if (active != null)
             {
-                status.ExpectedKind = active.Kind switch
+                if (active.Kind == TokenKind.PositionalArgument)
                 {
-                    TokenKind.Command => ExpectedKind.Command,
-                    TokenKind.Variant => ExpectedKind.Variant,
-                    TokenKind.Flag => ExpectedKind.Flag,
-                    TokenKind.FlagValue => ExpectedKind.FlagValue,
-                    TokenKind.PositionalArgument => ExpectedKind.PositionalArgument,
-                    _ => ExpectedKind.Nothing
-                };
+                    status.ExpectedKind = CompletionKind.PositionalArgument;
 
-                return;
+                    var arguments =
+                        status.Variant?.Arguments ??
+                        status.Command?.Arguments;
+
+                    if (arguments != null &&
+                        status.PositionalIndex > 0 &&
+                        status.PositionalIndex <= arguments.Count)
+                    {
+                        var argument = arguments[status.PositionalIndex - 1];
+
+                        status.ExpectedValue = new ExpectedValue(
+                            argument,
+                            CompletionKind.PositionalArgument,
+                            argument.ValueType);
+                    }
+
+                    return;
+                }
+
+                if (!active.IsComplete)
+                {
+                    status.ExpectedKind = active.Kind switch
+                    {
+                        TokenKind.Command => CompletionKind.Command,
+                        TokenKind.Variant => CompletionKind.Variant,
+                        TokenKind.Flag => CompletionKind.Flag,
+                        TokenKind.FlagValue => CompletionKind.FlagValue,
+                        _ => CompletionKind.Nothing
+                    };
+
+                    return;
+                }
             }
 
-            // 3️⃣ Иначе — что ожидается следующим по контексту
             status.ActiveToken = CreateVirtualToken(status);
             status.ExpectedKind = ResolveNextExpected(status);
         }
 
-        private ExpectedKind ResolveNextExpected(InputStatus status)
+        private CompletionKind ResolveNextExpected(InputStatus status)
         {
             if (status.Command == null)
-                return ExpectedKind.Command;
+                return CompletionKind.Command;
 
             if (status.Command.Variants.Any() &&
                 status.Variant == null)
             {
-                return ExpectedKind.Variant;
+                return CompletionKind.Variant;
             }
 
-            if (status.ExpectedFlagValue != null)
-                return ExpectedKind.FlagValue;
+            if (status.ExpectedValue != null)
+                return CompletionKind.FlagValue;
 
             var arguments = status.Variant?.Arguments
                             ?? status.Command.Arguments;
@@ -361,22 +356,35 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                         ?? status.Command.Flags;
 
             if (status.PositionalIndex < arguments?.Count)
-                return ExpectedKind.PositionalArgument;
+            {
+                if (arguments != null &&
+                    status.PositionalIndex < arguments.Count)
+                {
+                    var argument = arguments[status.PositionalIndex];
+
+                    status.ExpectedValue = new ExpectedValue(
+                        argument,
+                        CompletionKind.PositionalArgument,
+                        argument.ValueType);
+                }
+
+                return CompletionKind.PositionalArgument;
+            }
 
             if (flags.Any(flag =>
                 !status.UsedFlags.Any(used => used.Name == flag.Name)))
             {
-                return ExpectedKind.Flag;
+                return CompletionKind.Flag;
             }
 
-            return ExpectedKind.Nothing;
+            return CompletionKind.Nothing;
         }
 
         private bool IsValidValue(
             string text,
-            IFlagDescriptor flag)
+            ExpectedValue expected)
         {
-            return flag.ValueType switch
+            return expected.ValueType switch
             {
                 ArgumentValueType.String =>
                     !string.IsNullOrWhiteSpace(text),
@@ -449,7 +457,10 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             writer.Row("Status.ExpectedKind", _diagnostics?.Status?.ExpectedKind);
             writer.Row("Status.PositionalIndex", _diagnostics?.Status?.PositionalIndex);
             writer.Row("Status.IsValidCommand", _diagnostics?.Status?.IsValidCommand);
-            writer.Row("Status.ExpectedFlagValue", _diagnostics?.Status?.ExpectedFlagValue);
+            writer.Row("Status.ExpectedValueType", _diagnostics?.Status?.ExpectedValue?.ValueType);
+            writer.Row("Status.ExpectedKind", _diagnostics?.Status?.ExpectedValue?.Kind);
+            writer.Row("Status.ExpectedDescriptor", _diagnostics?.Status?.ExpectedValue?.Descriptor);
+            writer.Row("Status.ExpectedDescriptorName", _diagnostics?.Status?.ExpectedValue?.Descriptor.Name);
 
             writer.EndTable();
 

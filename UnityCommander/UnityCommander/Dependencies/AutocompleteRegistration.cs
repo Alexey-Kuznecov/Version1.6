@@ -17,12 +17,14 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ICompletionProvider, VariantCompletionProvider>();
             registry.RegisterSingleton<ICompletionProvider, ArgumentCompletionProvider>();
             registry.RegisterSingleton<ICompletionProvider, FlagCompletionProvider>();
+            registry.RegisterSingleton<ICompletionProvider, PathCompletionProvider>();
             registry.RegisterSingleton<IInputTokenizer, SimpleInputTokenizer>();
             registry.RegisterSingleton<ICompletionEngine, CompletionEngine>();
 
             registry.RegisterInstance<ICommandDescriptor>(new GitCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new PluginCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new InspectCommandDefinition());
+            registry.RegisterInstance<ICommandDescriptor>(new SearchCommandDefinition());
         }
     }
 }

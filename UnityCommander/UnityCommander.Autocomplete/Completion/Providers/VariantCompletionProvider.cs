@@ -6,6 +6,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
 {
     public class VariantCompletionProvider : ICompletionProvider
     {
+        public int Priority => 100;
+
         public bool CanHandle(CliParseState ctx)
             => ctx.ExpectedNext == CompletionKind.Variant;
 

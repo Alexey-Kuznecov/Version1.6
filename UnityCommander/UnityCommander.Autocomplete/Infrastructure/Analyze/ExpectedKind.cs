@@ -1,7 +1,7 @@
 ﻿
 namespace UnityCommander.Autocomplete.Infrastructure.Analyze
 {
-    public enum ExpectedKind
+    public enum CompletionKindExpectedKind
     {
         Command,
         Variant,

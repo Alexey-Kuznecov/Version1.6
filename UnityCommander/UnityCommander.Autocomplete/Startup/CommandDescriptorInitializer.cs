@@ -24,6 +24,9 @@ namespace UnityCommander.Autocomplete.Startup
 
             _registry.Register(
                 new InspectCommandDefinition());
+            
+            _registry.Register(
+               new SearchCommandDefinition());
         }
     }
 }
