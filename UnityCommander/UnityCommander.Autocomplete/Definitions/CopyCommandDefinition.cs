@@ -4,16 +4,18 @@ using UnityCommander.Autocomplete.Context.Descriptors;
 
 namespace UnityCommander.Autocomplete.Definitions
 {
-    public sealed class SearchCommandDefinition : SimpleCommandDescriptor
+    public sealed class CopyCommandDefinition : SimpleCommandDescriptor
     {
-        public SearchCommandDefinition()
-           : base(name: "search",
+        public CopyCommandDefinition()
+           : base(name: "copy",
                 variants: Array.Empty<CommandVariant>(),
                 arguments: new IPositionalArgumentDescriptor[]
                 {
-                     new PathPositionalArgumentDescriptor(
+                    new PathPositionalArgumentDescriptor(
                         name: "source",
-                        pathKind: PathKind.Directory,
+                        isRequired: true),
+                    new PathPositionalArgumentDescriptor(
+                        name: "target",
                         isRequired: true)
                 },
                 flags: new IFlagDescriptor[]

@@ -17,7 +17,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
                 .Select(f => new CompletionItem
                 {
                     DisplayText = f.Name,
-                    InsertText = f.Name
+                    InsertText = f.Name,
+                    AppendSpace = true,
                 });
         }
     }

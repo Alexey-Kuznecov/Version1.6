@@ -17,5 +17,7 @@ namespace UnityCommander.Autocomplete.Completion
         public Func<InputState, TextEdit> EditFactory { get; set; } = null!;
 
         public ILogger? Logger { get; set; }
+       
+        public bool AppendSpace { get; set; }
     }
 }

@@ -37,7 +37,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
                 .Select(cmd => new CompletionItem
                 {
                     DisplayText = cmd.Name,
-                    InsertText = cmd.Name
+                    InsertText = cmd.Name,
+                    AppendSpace = true
                 });
         }
     }

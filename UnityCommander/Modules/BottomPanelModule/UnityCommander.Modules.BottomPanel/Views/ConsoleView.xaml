@@ -94,6 +94,7 @@
                 <ListBox
                     Grid.Row="0"
                     MaxHeight="150"
+                    at:CompletionAutoScroll.SelectedIndex="{Binding SelectedIndex}"
                     Background="#222"
                     Foreground="White"
                     ItemsSource="{Binding Completions}"

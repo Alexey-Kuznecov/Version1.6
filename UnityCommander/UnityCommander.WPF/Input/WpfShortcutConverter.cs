@@ -78,6 +78,7 @@ namespace UnityCommander.WPF.Input
             [ShortcutKey.Escape] = Key.Escape,
             [ShortcutKey.Backspace] = Key.Back,
             [ShortcutKey.Tab] = Key.Tab,
+            [ShortcutKey.CapsLock] = Key.CapsLock,
             [ShortcutKey.Space] = Key.Space,
             [ShortcutKey.Delete] = Key.Delete,
             [ShortcutKey.Insert] = Key.Insert,

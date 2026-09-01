@@ -49,6 +49,8 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 null,
                 output: output,
                 args: profile.StartupCommands.ToArray());
+
+            State.SelectedIndex = 0;
         }
 
         public void Dispose()

@@ -31,7 +31,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
                     {
                         DisplayText = ctx.ExpectedValue.Descriptor.Name,
                         InsertText = "\"\"",
-                        CaretOffset = -2
+                        CaretOffset = -2,
+                        AppendSpace = true
                     }
                         },
 

@@ -1,24 +1,32 @@
 ﻿
+using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Input;
 using UnityCommander.Autocomplete.Tokenization;
+using UnityCommander.Common.Diagnostic;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Autocomplete.Completion
 {
-    public sealed class CompletionEngine : ICompletionEngine
+    public sealed class CompletionEngine : ICompletionEngine, IDiagnosticReporter
     {
         private readonly ITokenRegistry _tokenRegistry;
         private readonly IEnumerable<ICompletionProvider> _providers;
         private readonly ILogger? _logger;
+        
+        public string Name => "completion.engine";
+        public DiagnosticCardinality Cardinality
+        => DiagnosticCardinality.Single;
 
         public CompletionEngine(
-            ITokenRegistry tokenRegistry, 
-            IEnumerable<ICompletionProvider> providers, 
-            LoggerCreator? loggerCreator = null)
+                  ITokenRegistry tokenRegistry,
+                  IEnumerable<ICompletionProvider> providers,
+                  IDiagnosticRegistry diagnostic,
+                  LoggerCreator? loggerCreator = null)
         {
+            diagnostic.Register(this);
             _tokenRegistry = tokenRegistry;
             _providers = providers;
             _logger = loggerCreator?.For<CompletionEngine>(LogScope.Runtime);
@@ -35,6 +43,12 @@ namespace UnityCommander.Autocomplete.Completion
 
             var priority = providers.FirstOrDefault()?.Priority;
 
+            //var final =
+            // analyze.ExpectedNext == CompletionKind.Nothing ||
+            // (analyze?.ExpectedValue?.Kind != CompletionKind.Flag &&
+            //  analyze.AvailableFlags.Count > 0 &&
+            //  analyze.AvailableFlags.Count == 0);
+
             var items = priority.HasValue
                 ? providers
                     .Where(p => p.Priority == priority.Value)
@@ -48,7 +62,8 @@ namespace UnityCommander.Autocomplete.Completion
                             analyze.ReplaceStart,
                             analyze.ReplaceLength,
                             analyze.CurrentToken,
-                            item.InsertText + " "
+                            item.InsertText +
+                            (item.AppendSpace ? " " : "")
                         )
                     })
                     .ToList()
@@ -73,5 +88,34 @@ namespace UnityCommander.Autocomplete.Completion
 
         public IReadOnlyList<InputToken> GetAllTokens()
             => _tokenRegistry.Tokens;
+
+        public void Report(IDiagnosticWriter writer)
+        {
+            //writer.BeginTable("ActiveToken");
+
+            //writer.Row("Input", _cliParseState?.ActiveToken?.Text);
+
+            //writer.Row("CurrentToken", Status?.ActiveToken?.Text);
+            //writer.Row("SemanticIndex", Status?.ActiveToken?.SemanticIndex);
+            //writer.Row("Kind", Status?.ActiveToken?.Kind);
+            //writer.Row("Status", Status?.ActiveToken?.Status);
+            //writer.Row("Complete", Status?.ActiveToken?.IsComplete);
+
+            //writer.EndTable();
+
+            //writer.BeginTable("InputStatus");
+
+            //writer.Row("CommandName", Status?.Command?.Name);
+
+            //writer.Row("IsValidCommand", Status?.IsValidCommand);
+            //writer.Row("VariantName", Status?.Variant?.Name);
+            //writer.Row("ExpectedKind", Status?.ExpectedKind);
+            //writer.Row("TokensCount", Status?.Tokens?.Count);
+
+            //writer.Row("FlagUsage", _availableFlags?.Count);
+            //writer.Row("ArgumentUsage", _availableArguments?.Count);
+
+            //writer.EndTable();
+        }
     }
 }

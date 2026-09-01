@@ -259,6 +259,7 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
             writer.Row("IsValidCommand", Status?.IsValidCommand);
             writer.Row("VariantName", Status?.Variant?.Name);
             writer.Row("ExpectedKind", Status?.ExpectedKind);
+            writer.Row("ExpectedValue.Kind", Status?.ExpectedValue?.Kind);
             writer.Row("TokensCount", Status?.Tokens?.Count);
             
             writer.Row("FlagUsage", _availableFlags?.Count);

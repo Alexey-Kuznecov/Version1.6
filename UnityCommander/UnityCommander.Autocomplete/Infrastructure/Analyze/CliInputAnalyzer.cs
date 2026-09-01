@@ -428,11 +428,31 @@ namespace UnityCommander.Autocomplete.Infrastructure.Analyze
                 while (pos < text.Length && char.IsWhiteSpace(text[pos]))
                     pos++;
 
-                if (pos >= text.Length) break;
+                if (pos >= text.Length)
+                    break;
 
                 int start = pos;
-                while (pos < text.Length && !char.IsWhiteSpace(text[pos]))
+
+                if (text[pos] == '"')
+                {
                     pos++;
+
+                    while (pos < text.Length)
+                    {
+                        if (text[pos] == '"')
+                        {
+                            pos++;
+                            break;
+                        }
+
+                        pos++;
+                    }
+                }
+                else
+                {
+                    while (pos < text.Length && !char.IsWhiteSpace(text[pos]))
+                        pos++;
+                }
 
                 var tokenText = text.Substring(start, pos - start);
                 tokens.Add(new AnalyzerToken(tokenText, start));
