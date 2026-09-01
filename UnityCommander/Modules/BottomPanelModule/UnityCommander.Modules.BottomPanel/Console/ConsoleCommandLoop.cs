@@ -52,7 +52,7 @@ namespace UnityCommander.Modules.BottomPanel.Console
 
                 if (result.Success)
                 {
-                    session.Output.WriteLine("Command executed successfully.");
+                    //session.Output.WriteLine("Command executed successfully.");
 
                     if (result.Directives.HasFlag(CommandExecutionDirective.Startup))
                     {

@@ -13,6 +13,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
     public sealed class ConsoleViewModel : BindableBase
     {
+        private const int MaxConsoleLines = 10_000;
         private readonly ConsoleInputProcessor _inputProcessor;
         private readonly ConsoleAutocompleteProcessor _completeProcessor;
         private readonly ConsoleSession _session;
@@ -86,7 +87,13 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void AppendLine(string text)
         {
-            Application.Current?.Dispatcher?.Invoke(() => _lines.Add(text));
+            Application.Current?.Dispatcher?.Invoke(() =>
+            {
+                _lines.Add(text);
+
+                while (_lines.Count > MaxConsoleLines)
+                    _lines.RemoveAt(0);
+            });
         }
 
         private void SendInput()

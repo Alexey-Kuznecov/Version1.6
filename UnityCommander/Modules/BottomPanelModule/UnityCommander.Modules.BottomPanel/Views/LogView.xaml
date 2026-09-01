@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="clr-namespace:UnityCommander.Modules.BottomPanel.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:highlight="clr-namespace:UnityCommander.Modules.BottomPanel.Highlighting"
     xmlns:local="clr-namespace:UnityCommander.Modules.BottomPanel.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="250"
@@ -56,11 +57,9 @@
             BorderThickness="0"
             ItemsSource="{Binding Logs}"
             Loaded="OnLoaded"
-            ScrollViewer.CanContentScroll="True"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.CanContentScroll="False"
             Style="{DynamicResource UcListBoxTemplate}"
-            VirtualizingStackPanel.IsVirtualizing="True"
-            VirtualizingStackPanel.VirtualizationMode="Recycling"
+            VirtualizingStackPanel.IsVirtualizing="False"
             Visibility="{Binding IsHighlightMode, Converter={StaticResource VisibilityConverter}}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
@@ -80,24 +79,11 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <ItemsControl ItemsSource="{Binding Parts}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    Background="{Binding Background}"
-                                    FontFamily="Consolas"
-                                    FontSize="12"
-                                    Foreground="{Binding Foreground}"
-                                    Text="{Binding Text}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <highlight:HighlightedTextBlock
+                        FontFamily="Consolas"
+                        FontSize="12"
+                        Foreground="White"
+                        Parts="{Binding Parts}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

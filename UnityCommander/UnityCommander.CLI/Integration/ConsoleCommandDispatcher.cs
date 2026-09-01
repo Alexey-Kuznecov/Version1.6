@@ -43,46 +43,36 @@ namespace UnityCommander.CLI.Integration
 
         // Выполняет команду
         public async Task ExecuteCommandAsync(
-             string commandName,
-             IConsoleCommandContext context,
-             CancellationToken cancellationToken = default)
+            string commandName,
+            IConsoleCommandContext context,
+            CancellationToken cancellationToken = default)
         {
             var output = context.Output;
 
-            try
+            var command = _registry.Find(commandName);
+
+            if (command == null)
+                throw new InvalidOperationException(
+                    $"Command '{commandName}' not found.");
+
+            if (command.Mode == CommandExecutionMode.Background)
             {
-                var command = _registry.Find(commandName);
-
-                if (command == null)
-                    throw new InvalidOperationException($"Command '{commandName}' not found.");
-
-                if (command.Mode == CommandExecutionMode.Background)
+                var id = _processManager.Start(commandName, async ct =>
                 {
-                    var id = _processManager.Start(commandName, async ct =>
-                    {
-                        var ctx = new ConsoleCommandContext(
-                            context.Services,
-                            context.Output,
-                            context.Arguments,
-                            context.Input);
+                    var ctx = new ConsoleCommandContext(
+                        context.Services,
+                        context.Output,
+                        context.Arguments,
+                        context.Input);
 
-                        await command.ExecuteAsync(ctx, ct);
-                    });
+                    await command.ExecuteAsync(ctx, ct);
+                });
 
-                    output.WriteLine($"Started background process: {id}");
-                    return;
-                }
+                output.WriteLine($"Started background process: {id}");
+                return;
+            }
 
-                await command.ExecuteAsync(context, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                output.WriteLine("Команда отменена.");
-            }
-            catch (InvalidOperationException)
-            {
-                output.WriteError($"Команда '{commandName}' не найдена.");
-            }
+            await command.ExecuteAsync(context, cancellationToken);
         }
 
         public async Task ExecuteAsync(string input)

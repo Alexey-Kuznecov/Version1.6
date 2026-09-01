@@ -28,18 +28,12 @@ namespace UnityCommander.Modules.BottomPanel.Console
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(line))
-                return new CommandExecutionResult
-                {
-                    Success = false
-                };
+                return new CommandExecutionResult { Success = false };
 
             var parts = ParseHelper.ParseArguments(line);
 
             if (parts.Length == 0)
-                return new CommandExecutionResult
-                {
-                    Success = false
-                };
+                return new CommandExecutionResult { Success = false };
 
             var directives = CommandExecutionDirective.None;
 
@@ -50,11 +44,8 @@ namespace UnityCommander.Modules.BottomPanel.Console
             }
 
             if (parts.Length == 0)
-                return new CommandExecutionResult
-                {
-                    Success = false
-                };
-            
+                return new CommandExecutionResult { Success = false };
+
             var name = parts[0];
             var args = parts.Skip(1).ToArray();
 
@@ -64,16 +55,35 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 args,
                 line);
 
-            await _dispatcher.ExecuteCommandAsync(
-                name,
-                context,
-                cancellationToken);
-
-            return new CommandExecutionResult
+            try
             {
-                Success = true,
-                Directives = directives
-            };
+                await _dispatcher.ExecuteCommandAsync(
+                    name,
+                    context,
+                    cancellationToken);
+
+                return new CommandExecutionResult
+                {
+                    Success = true,
+                    Directives = directives
+                };
+            }
+            catch (OperationCanceledException)
+            {
+                return new CommandExecutionResult
+                {
+                    Success = false
+                };
+            }
+            catch (Exception ex)
+            {
+                session.Output.WriteError(ex.Message);
+
+                return new CommandExecutionResult
+                {
+                    Success = false
+                };
+            }
         }
     }
 }

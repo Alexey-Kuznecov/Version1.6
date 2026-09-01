@@ -1,4 +1,8 @@
 ﻿
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
+
 namespace UnityCommander.CLI.Lifecicle
 {
     public class CommandProcessManager // : ICommandProcessManager
@@ -15,6 +19,13 @@ namespace UnityCommander.CLI.Lifecicle
 
         private readonly Dictionary<Guid, ProcessEntry> _processes = new();
 
+        private readonly  ILogger _logger;
+
+        public CommandProcessManager(LoggerCreator loggerCreator)
+        {
+            _logger = loggerCreator.For<CommandProcessManager>(LogScope.Runtime);
+        }
+
         public Guid Start(string name, Func<CancellationToken, Task> taskFactory)
         {
             var id = Guid.NewGuid();
@@ -28,12 +39,12 @@ namespace UnityCommander.CLI.Lifecicle
                 }
                 catch (OperationCanceledException)
                 {
-                    // нормальное завершение
+                    _logger.Info($"Process {id} canceled");
                 }
                 catch (Exception ex)
                 {
                     // тут можешь логировать
-                    Console.WriteLine($"Process {id} crashed: {ex}");
+                    _logger.Error($"Process {id} crashed: {ex}");
                 }
             }, CancellationToken.None);
 
