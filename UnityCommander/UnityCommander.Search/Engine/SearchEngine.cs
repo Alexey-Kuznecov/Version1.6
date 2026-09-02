@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using UnityCommander.Search.Abstractions;
 using UnityCommander.Search.Enumeration;
@@ -21,15 +22,48 @@ namespace UnityCommander.Search.Engine
         {
             ArgumentNullException.ThrowIfNull(request);
 
+            var processed = 0;
+            var skipped = 0;
+            var found = 0;
+
             await foreach (var item in _enumerator.EnumerateAsync(
                 request.Scope,
                 cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // Пока без фильтров и стратегии.
-                // Просто рабочий проход через Enumerator.
+                processed++;
+
+                if (request.Filters.Any(filter => !filter.Match(item)))
+                {
+                    skipped++;
+                    ReportProgress();
+                    continue;
+                }
+
+                if (request.Matcher != null &&
+                    !request.Matcher.Match(item, request.Query ?? string.Empty))
+                {
+                    skipped++;
+                    ReportProgress();
+                    continue;
+                }
+
+                found++;
+
+                ReportProgress();
+
                 yield return new FileSearchResult(item);
+            }
+
+            void ReportProgress()
+            {
+                request.Progress?.Report(new SearchProgress
+                {
+                    Processed = processed,
+                    Found = found,
+                    Skipped = skipped
+                });
             }
         }
     }

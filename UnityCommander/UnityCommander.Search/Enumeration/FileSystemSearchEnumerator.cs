@@ -31,24 +31,61 @@ namespace UnityCommander.Search.Enumeration
             string path,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            foreach (var entry in Directory.EnumerateFileSystemEntries(path))
+            IEnumerable<string> entries;
+
+            try
+            {
+               entries = Directory.EnumerateFileSystemEntries(path);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                yield break;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                yield break;
+            }
+            catch (IOException)
+            {
+                yield break;
+            }
+
+            foreach (var entry in entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (File.Exists(entry))
+                bool isDirectory;
+
+                try
                 {
-                    yield return new SearchItem(entry);
+                    isDirectory = Directory.Exists(entry);
+                }
+                catch
+                {
+                    continue;
                 }
 
-                if (Directory.Exists(entry))
+                if (isDirectory)
                 {
-                    await foreach (var item in EnumerateDirectoryAsync(
+                    await foreach (var child in EnumerateDirectoryAsync(
                         entry,
                         cancellationToken))
                     {
-                        yield return item;
+                        yield return child;
                     }
+
+                    continue;
                 }
+
+                var info = new FileInfo(entry);
+
+                yield return new SearchItem(entry, Path.GetFileName(entry))
+                {
+                    IsDirectory = isDirectory,
+                    CreationTime = File.GetCreationTime(entry),
+                    LastWriteTime = File.GetLastAccessTime(entry),
+                    Size = info.Length
+                };
             }
         }
     }

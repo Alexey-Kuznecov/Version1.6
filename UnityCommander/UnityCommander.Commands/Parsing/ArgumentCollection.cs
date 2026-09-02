@@ -1,33 +1,35 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityCommander.Commands.Parsing
 {
     public sealed class ArgumentCollection : IArgumentCollection
     {
-        private readonly Dictionary<string, string> _arguments;
+        private readonly Dictionary<string, List<string>> _named;
         private readonly IReadOnlyList<string> _positional;
 
         public ArgumentCollection(
-            Dictionary<string, string> arguments,
+            Dictionary<string, List<string>> named,
             IReadOnlyList<string> positional)
         {
-            _arguments = arguments;
+            _named = named;
             _positional = positional;
         }
 
         public bool HasFlag(string name)
-        {
-            return _arguments.ContainsKey(name);
-        }
+            => _named.ContainsKey(name);
 
         public string? GetString(string name)
-        {
-            return _arguments.TryGetValue(name, out var value)
-                ? value
+            => _named.TryGetValue(name, out var values)
+                ? values.FirstOrDefault()
                 : null;
-        }
+
+        public IReadOnlyList<string> GetStrings(string name)
+            => _named.TryGetValue(name, out var values)
+                ? values
+                : Array.Empty<string>();
 
         public int GetInt(
             string name,
@@ -36,15 +38,13 @@ namespace UnityCommander.Commands.Parsing
             return int.TryParse(
                 GetString(name),
                 out var result)
-                ? result
-                : defaultValue;
+                    ? result
+                    : defaultValue;
         }
 
         public string? GetAt(int index)
-        {
-            return index >= 0 && index < _positional.Count
+            => index >= 0 && index < _positional.Count
                 ? _positional[index]
                 : null;
-        }
     }
 }

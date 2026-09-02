@@ -72,7 +72,7 @@ namespace UnityCommander.Commands
 
             output.Write(icons.Count().ToString());
 
-            var path = Path.Combine(@"G:\", "material.iconpack");
+            var path = Path.Combine(@"C:\Users\Алексей\Documents\Projects\CSharp\UnityCommander\UnityCommander\Resources", "material.iconpack");
             //icons = IconPackBinaryReader.Load(path);
 
             IconPackBinaryWriter.Save(path, icons);

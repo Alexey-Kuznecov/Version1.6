@@ -11,54 +11,55 @@ using UnityCommander.Native;
 
 namespace UnityCommander.Commands.UtilProcess
 {
+    [Obsolete("This class is for testing purposes only and should not be used in production.")]
     public class ProcessMonitorTest
     {
-        private static IConsoleOutput _output = new ConsoleOutput();
+    //    private static IConsoleOutput _output = new ConsoleOutput();
 
-        public static async Task StartAsync(string processName, IConsoleOutput output, CancellationToken cancellationToken)
-        {
-            _output = output;
-            _output.WriteLine($"Запуск мониторинга процесса {processName}...");
-            do
-            {
-                await Task.Delay(5000, cancellationToken);  // Асинхронная задержка
-                VmcControllerTest(processName);
-            }
-            while (true);
-        }
+    //    public static async Task StartAsync(string processName, IConsoleOutput output, CancellationToken cancellationToken)
+    //    {
+    //        _output = output;
+    //        _output.WriteLine($"Запуск мониторинга процесса {processName}...");
+    //        do
+    //        {
+    //            await Task.Delay(5000, cancellationToken);  // Асинхронная задержка
+    //            VmcControllerTest(processName);
+    //        }
+    //        while (true);
+    //    }
 
-        private static void VmcControllerTest(string processName)
-        {
-            List<FileSystemInfo> infos;
+    //    private static void VmcControllerTest(string processName)
+    //    {
+    //        List<FileSystemInfo> infos;
 
-            var process = Process.GetProcessesByName(processName).Select(p => p.Id).ToList();
-            if (!process.Any())
-            {
-                _output.WriteLine($"Процесс с именем {processName} не найден.");
-                return;
-            }
+    //        var process = Process.GetProcessesByName(processName).Select(p => p.Id).ToList();
+    //        if (!process.Any())
+    //        {
+    //            _output.WriteLine($"Процесс с именем {processName} не найден.");
+    //            return;
+    //        }
 
-            infos = new List<FileSystemInfo>();
+    //        infos = new List<FileSystemInfo>();
 
-            using (var openFiles = ProcessUtility.GetOpenFilesEnumerator(process[0]))
-            {
-                while (openFiles.MoveNext())
-                {
-                    infos.Add(openFiles.Current);
-                }
-            }
+    //        using (var openFiles = ProcessUtility.GetOpenFilesEnumerator(process[0]))
+    //        {
+    //            while (openFiles.MoveNext())
+    //            {
+    //                infos.Add(openFiles.Current);
+    //            }
+    //        }
 
-            infos.Sort(SortPaths);
+    //        infos.Sort(SortPaths);
 
-            foreach (var fileSystem in infos)
-            {
-                _output.WriteLine(fileSystem.FullName);
-            }
-        }
+    //        foreach (var fileSystem in infos)
+    //        {
+    //            _output.WriteLine(fileSystem.FullName);
+    //        }
+    //    }
 
-        private static int SortPaths(FileSystemInfo firstPath, FileSystemInfo secondPath)
-        {
-            return string.Compare(firstPath.FullName, secondPath.FullName, StringComparison.Ordinal);
-        }
+    //    private static int SortPaths(FileSystemInfo firstPath, FileSystemInfo secondPath)
+    //    {
+    //        return string.Compare(firstPath.FullName, secondPath.FullName, StringComparison.Ordinal);
+    //    }
     }
 }

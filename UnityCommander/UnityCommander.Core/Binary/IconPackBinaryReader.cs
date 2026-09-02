@@ -11,34 +11,43 @@ namespace UnityCommander.Core.Binary
     {
         public static Dictionary<string, RuntimeIcon> Load(string path)
         {
-            using var fs = File.OpenRead(path);
-            using var br = new BinaryReader(fs, Encoding.UTF8);
-
-            var version = br.ReadInt32();
-            var count = br.ReadInt32();
-
-            var result = new Dictionary<string, RuntimeIcon>(count, StringComparer.OrdinalIgnoreCase);
-
-            for (int i = 0; i < count; i++)
+            try
             {
-                var key = ReadString(br);
-                var data = ReadString(br);
+                using var fs = File.OpenRead(path);
 
-                string? color = null;
+                using var br = new BinaryReader(fs, Encoding.UTF8);
 
-                var hasColor = br.ReadBoolean();
-                if (hasColor)
-                    color = ReadString(br);
+                var version = br.ReadInt32();
+                var count = br.ReadInt32();
 
-                result[key] = new RuntimeIcon
+                var result = new Dictionary<string, RuntimeIcon>(count, StringComparer.OrdinalIgnoreCase);
+
+                for (int i = 0; i < count; i++)
                 {
-                    Key = key,
-                    Data = data,
-                    Color = color
-                };
+                    var key = ReadString(br);
+                    var data = ReadString(br);
+
+                    string? color = null;
+
+                    var hasColor = br.ReadBoolean();
+                    if (hasColor)
+                        color = ReadString(br);
+
+                    result[key] = new RuntimeIcon
+                    {
+                        Key = key,
+                        Data = data,
+                        Color = color
+                    };
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
             }
 
-            return result;
+            return new Dictionary<string, RuntimeIcon>();
         }
 
         private static string ReadString(BinaryReader br)

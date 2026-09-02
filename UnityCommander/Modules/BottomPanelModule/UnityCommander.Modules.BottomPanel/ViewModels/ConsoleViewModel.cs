@@ -7,13 +7,14 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using UnityCommander.Autocomplete.Completion;
+using UnityCommander.CLI.Infrastructure;
 using UnityCommander.Modules.BottomPanel.Console;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {
     public sealed class ConsoleViewModel : BindableBase
     {
-        private const int MaxConsoleLines = 10_000;
+        private const int MaxConsoleLines = 2_000;
         private readonly ConsoleInputProcessor _inputProcessor;
         private readonly ConsoleAutocompleteProcessor _completeProcessor;
         private readonly ConsoleSession _session;
@@ -46,6 +47,8 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             _session.Output.Cleared += Clear;
             _session.State.PropertyChanged += OnStatePropertyChanged;
 
+            _session.Output.ActivityChanged += OnActivityChanged;
+
             SendCommand = new DelegateCommand(SendInput);
         }
 
@@ -71,6 +74,22 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
             get => _session.State.SelectedIndex;
             set => _session.State.SelectedIndex = value;
         }
+
+        private IConsoleActivityState? _consoleActivityState;
+
+        public IConsoleActivityState? ConsoleActivityState
+        {
+            get => _consoleActivityState;
+            private set
+            {
+                _consoleActivityState = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged("IsActivityVisible");
+            }
+        }
+
+        public bool IsActivityVisible =>
+            ConsoleActivityState is not null;
 
         public DelegateCommand SendCommand { get; }
 
@@ -119,13 +138,11 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
         private void NavigateDown()
         {
             _inputProcessor.NavigateDown(_session.State);
-            //_completeProcessor.ClearCompletions(_session.State);
         }
 
         private void NavigateUp()
         {
             _inputProcessor.NavigateUp(_session.State);
-            //_completeProcessor.ClearCompletions(_session.State);
         }
 
         private void OnStatePropertyChanged(
@@ -140,6 +157,14 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
             if (e.PropertyName == nameof(ConsoleState.SelectedIndex))
                 RaisePropertyChanged(nameof(SelectedIndex));
+        }
+
+        private void OnActivityChanged(IConsoleActivityState? state)
+        {
+            if (state is not null)
+            {
+                ConsoleActivityState = state;
+            }
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿
+using AvalonDock.Layout;
 using Prism.Commands;
+using System.Collections.Generic;
+using System.Linq;
 using UnityCommander.CLI.History;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
@@ -21,6 +24,7 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ISessionBuilder _builder;
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
+        private readonly SessionStateValidator _stateValidator;
         private readonly IToolDockingStore _toolDockingStore;
         private readonly ConsoleHistoryService _consoleHistory;
         private readonly ILogger _logger;
@@ -36,10 +40,11 @@ namespace UnityCommander.Services.Bootstrap
             IMultiCommandService multiCommand,
             IToolDockingStore toolDockingStore,
             ConsoleHistoryService consoleHistory,
-            LoggerCreator logger) 
+            LoggerCreator logger, SessionStateValidator stateValidator) 
         {
             _loggerCreator = logger;
-            
+            _stateValidator = stateValidator;
+
             _logger = _loggerCreator.For<AppInitializer>(
                scope: LogScope.Startup
             );
@@ -78,6 +83,8 @@ namespace UnityCommander.Services.Bootstrap
             {
                 _logger.Info("Session load..");
                 _state = _session.Load();
+
+                _stateValidator.Validate(_state);
 
                 _logger.Info("AvalonDock init..");
                 _layout.Load(_state);

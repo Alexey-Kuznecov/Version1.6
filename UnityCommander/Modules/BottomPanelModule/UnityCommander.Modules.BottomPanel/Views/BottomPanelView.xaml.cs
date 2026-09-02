@@ -1,10 +1,7 @@
 ﻿
 using Prism.Ioc;
 using System.Windows.Controls;
-using UnityCommander.Services;
 using UnityCommander.Services.Docking;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Modules.BottomPanel.Views
 {

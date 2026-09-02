@@ -49,6 +49,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ISessionService, SessionService>();
             registry.RegisterSingleton<ISessionAggregator, SessionAggregator>();
             registry.RegisterSingleton<ISessionBuilder, SessionBuilder>();
+            registry.RegisterSingleton<SessionStateValidator>();
 
             // Управление панелями: создание, жизненный цикл и управление UI-панелями
             registry.RegisterSingleton<IPanelService, PanelService>();

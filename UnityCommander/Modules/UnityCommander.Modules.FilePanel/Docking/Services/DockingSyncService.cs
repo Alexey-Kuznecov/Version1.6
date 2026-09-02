@@ -82,6 +82,35 @@ namespace UnityCommander.Modules.FilePanel.Docking.Services
                 foreach (var tab in state.Tabs)
                     _panelRegistry.AddTab(state.PanelId, tab.TabId);
             }
+
+            SynchronizeLayout(panels);
+        }
+
+        private void SynchronizeLayout(
+          IEnumerable<PanelSessionState> panels)
+        {
+            var validPanelIds = panels
+                .Select(x => x.PanelId)
+                .ToHashSet();
+
+            var validTabIds = panels
+                .SelectMany(x => x.Tabs)
+                .Select(x => x.TabId)
+                .ToHashSet();
+
+            var panes = _manager.Layout
+                .Descendents()
+                .OfType<LayoutDocumentPane>()
+                .ToList();
+
+            foreach (var pane in panes)
+            {
+                foreach (var document in pane.Children.OfType<LayoutDocument>().ToList())
+                {
+                    if (!validTabIds.Contains(Guid.Parse(document.ContentId)))
+                        pane.RemoveChild(document);
+                }
+            }
         }
 
         private void RestoreFloatingWindows()

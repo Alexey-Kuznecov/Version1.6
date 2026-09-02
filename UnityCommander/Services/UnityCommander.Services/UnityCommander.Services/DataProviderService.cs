@@ -9,6 +9,7 @@ namespace UnityCommander.Services
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Common.Panels;
     using UnityCommander.Logging;
+    using UnityCommander.Logging.Contracts;
     using UnityCommander.Logging.Core;
     using UnityCommander.Logging.Infrastructure;
     using UnityCommander.Services.Interfaces;
@@ -21,15 +22,18 @@ namespace UnityCommander.Services
         private readonly FileModelFactory _factory;
         private readonly FolderModelFactory _folderFactory;
 
-        private LoggerCreator _loggerCreator = Log.GetLoggerCreator();
+        private LoggerCreator _loggerCreator;
+        private ILogger _logger;
 
         public DataProviderService(
             FileModelFactory factory, 
-            FolderModelFactory folderFactory)
+            FolderModelFactory folderFactory, 
+            LoggerCreator loggerCreator)
         {
             _factory = factory;
             _folderFactory = folderFactory;
-
+            _loggerCreator = loggerCreator;
+            _logger = loggerCreator.For<DataProviderService>(LogScope.Runtime);
         }
 
         /// <summary>
@@ -41,21 +45,37 @@ namespace UnityCommander.Services
             {
                 using (_loggerCreator.ProfileScope(LogScope.Runtime, "DataProviderService: Files"))
                 {
-                    var dir = new DirectoryInfo(path);
-                    var files = new List<FileModel>();
-
-                    foreach (var file in dir.GetFiles())
+                    try
                     {
-                        if (cancellation.IsCancellationRequested)
-                            return files;
+                        var dir = new DirectoryInfo(path);
+                        var files = new List<FileModel>();
 
-                        if ((file.Attributes & FileAttributes.Hidden) == 0)
+                        foreach (var file in dir.GetFiles())
                         {
-                            files.Add(_factory.Create(file.FullName));
-                        }
-                    }
+                            if (cancellation.IsCancellationRequested)
+                                return files;
 
-                    return files;
+                            if ((file.Attributes & FileAttributes.Hidden) == 0)
+                            {
+                                files.Add(_factory.Create(file.FullName));
+                            }
+                        }
+
+                        return files;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        return null;
+                    }
+                    catch (DriveNotFoundException)
+                    {
+                        return null;
+                    }
+                    catch (IOException ex)
+                    {
+                        _logger.Error($"Failed to enumerate directory: {path}", ex);
+                        return null;
+                    }
                 }
             });
         }

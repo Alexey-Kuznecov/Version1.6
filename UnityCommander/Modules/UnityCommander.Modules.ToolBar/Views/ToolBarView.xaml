@@ -11,11 +11,6 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
-    </UserControl.Resources>
-
     <Grid Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
         <ribbon:Ribbon Manager="{Binding DataContext.RibbonManager, RelativeSource={RelativeSource AncestorType=UserControl}}" />
     </Grid>

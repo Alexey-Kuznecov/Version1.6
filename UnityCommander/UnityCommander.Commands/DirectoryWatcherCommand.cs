@@ -13,13 +13,14 @@ using UnityCommander.SystemMetrics.Monitoring;
 namespace UnityCommander.Commands
 {
     [ConsoleCommand("dirwatch", "Мониторит изменения в указанной директории", "dw", "watcher")]
+    [Obsolete("Команда устарела. Используйте 'watch' вместо 'dirwatch'.")]
     public class DirectoryWatcherCommand : IConsoleCommand, IDisposable
     {
         private ICommandArgumentParser _parser;
         private ITabContextAccessor _accessor;
         private IDirectoryWatchManager _watchManager;
 
-        private IConsoleOutput _output = new ConsoleOutput();
+        private IConsoleOutput _output;
 
         private bool _subscribed;
 

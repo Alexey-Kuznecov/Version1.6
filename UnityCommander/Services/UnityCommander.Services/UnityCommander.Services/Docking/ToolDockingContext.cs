@@ -1,4 +1,5 @@
-﻿using AvalonDock;
+﻿
+using AvalonDock;
 
 namespace UnityCommander.Services.Docking
 {

@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace UnityCommander.Commands.Parsing
 {
     public interface IArgumentCollection
@@ -7,10 +9,10 @@ namespace UnityCommander.Commands.Parsing
 
         string? GetString(string name);
 
-        int GetInt(
-            string name, 
-            int defaultValue = 0);
+        IReadOnlyList<string> GetStrings(string name);
 
-        string GetAt(int index);
+        int GetInt(string name, int defaultValue = 0);
+
+        string? GetAt(int index);
     }
 }

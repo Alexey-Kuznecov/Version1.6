@@ -1,5 +1,5 @@
 ﻿
-using System.DirectoryServices;
+using UnityCommander.Search.Abstractions;
 using UnityCommander.Search.Filtering;
 using UnityCommander.Search.Strategies;
 
@@ -14,6 +14,10 @@ namespace UnityCommander.Search.Models
         public IReadOnlyList<ISearchFilter> Filters { get; init; }
             = [];
 
-        public ISearchStrategy Strategy { get; init; }
+        public ISearchMatcher? Matcher { get; init; }
+
+        public ISearchStrategy? Strategy { get; init; }
+
+        public IProgress<SearchProgress>? Progress { get; set; }
     }
 }

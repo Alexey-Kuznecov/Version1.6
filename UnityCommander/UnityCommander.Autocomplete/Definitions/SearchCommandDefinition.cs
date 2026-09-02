@@ -12,16 +12,48 @@ namespace UnityCommander.Autocomplete.Definitions
                 arguments: new IPositionalArgumentDescriptor[]
                 {
                      new PathPositionalArgumentDescriptor(
-                        name: "source",
+                        name: "scope",
                         pathKind: PathKind.Directory,
-                        isRequired: true)
+                        isRequired: true),
+                      new SimplePositionalArgumentDescriptor(
+                        name: "query",
+                        valueType: ArgumentValueType.String,
+                        isRequired: false)
                 },
                 flags: new IFlagDescriptor[]
                 {
                     new SimpleFlagDescriptor(
-                        name: "--recursive",
+                        name: "--extensions",
                         shortName: null,
-                        requiresValue: false)
+                        requiresValue: true),
+                    new SimpleFlagDescriptor(
+                        name: "--created-after",
+                        shortName: null,
+                        requiresValue: true),
+                    new SimpleFlagDescriptor(
+                        name: "--created-before",
+                        shortName: null,
+                        requiresValue: true),
+                    new SimpleFlagDescriptor(
+                        name: "--modified-before",
+                        shortName: null,
+                        requiresValue: true),
+                    new SimpleFlagDescriptor(
+                        name: "--modified-after",
+                        shortName: null,
+                        requiresValue: true),
+                    new SimpleFlagDescriptor(
+                        name: "--size-min",
+                        shortName: null,
+                        requiresValue: true),
+                   new SimpleFlagDescriptor(
+                        name: "--size-max",
+                        shortName: null,
+                        requiresValue: true),
+                    new SimpleFlagDescriptor(
+                        name: "--size",
+                        shortName: null,
+                        requiresValue: true)
                 })
             {
         }
