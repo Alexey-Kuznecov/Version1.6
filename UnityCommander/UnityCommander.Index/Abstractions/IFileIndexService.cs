@@ -18,13 +18,13 @@ namespace UnityCommander.Index.Abstractions
             long id,
             CancellationToken cancellationToken = default);
 
-        Task<long> AddAsync(
-           IndexedFile file,
+        Task<IndexAddResult> AddAsync(
+           string path,
            CancellationToken cancellationToken = default);
 
-        Task AddRangeAsync(
-            IEnumerable<IndexedFile> files,
-            CancellationToken cancellationToken = default);
+        Task<IndexOperationResult> AddRecursiveAsync(
+            string path,
+            CancellationToken cancellationToken);
 
         Task UpdateAsync(
             IndexedFile file,

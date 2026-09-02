@@ -5,9 +5,9 @@ namespace UnityCommander.Index.Models
 {
     public sealed class IndexedFile
     {
-        public long Id { get; init; }
+        public long Id { get; internal set; }
 
-        public long? ParentId { get; set; }
+        public long? ParentId { get; internal set; }
 
         public string Path { get; init; } = string.Empty;
 

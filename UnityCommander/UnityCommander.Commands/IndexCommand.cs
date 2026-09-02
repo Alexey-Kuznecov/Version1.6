@@ -108,23 +108,27 @@ namespace UnityCommander.Commands
                     $"Path does not exist: {path}");
 
                 return;
-            
             }
 
             var recursive = args.HasFlag("recursive");
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (recursive)
+
+            if (recursive && Directory.Exists(path))
             {
-                await AddRecursiveAsync(path, context, cancellationToken);
+                var operationResult = await _indexService.AddRecursiveAsync(path, cancellationToken);
+
+                foreach (var item in operationResult.Items)
+                {
+                    context.Output.WriteLine($"P: {item.Path} : {item.ParentId}");
+                }
+
                 return;
             }
 
-            var id = await AddSingleAsync(path, context, cancellationToken);
-
-            var result = await _indexService.GetAsync(
-                id,
+            var result = await _indexService.AddAsync(
+                path,
                 cancellationToken);
 
             if (result == null)
@@ -135,101 +139,7 @@ namespace UnityCommander.Commands
                 return;
             }
 
-            WriteFile(context, result);
-        }
-
-        private async Task AddRecursiveAsync(
-          string path,
-          IConsoleCommandContext context,
-          CancellationToken cancellationToken)
-        {
-            if (!Directory.Exists(path))
-            {
-                context.Output.WriteLine(
-                    $"Directory not found: {path}");
-
-                return;
-            }
-
-            var directory = new DirectoryInfo(path);
-
-            await AddDirectoryRecursiveAsync(
-                directory,
-                null,
-                context,
-                cancellationToken);
-        }
-
-        private async Task AddDirectoryRecursiveAsync(
-            DirectoryInfo directory,
-            long? parentId,
-            IConsoleCommandContext context,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var directoryFile = CreateIndexedDirectory(directory);
-
-            directoryFile.ParentId = parentId;
-
-            var directoryId = await _indexService.AddAsync(
-                directoryFile,
-                cancellationToken);
-
-            context.Output.WriteLine(
-                $"Indexed: {directory.FullName} (Id: {directoryId}, ParentId: {parentId})");
-
-            var files = new List<IndexedFile>();
-
-            foreach (var file in directory.EnumerateFiles())
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var indexedFile = CreateIndexedFile(file);
-
-                indexedFile.ParentId = directoryId;
-
-                files.Add(indexedFile);
-            }
-
-            if (files.Count > 0)
-            {
-                await _indexService.AddRangeAsync(
-                    files,
-                    cancellationToken);
-
-                foreach (var file in files)
-                {
-                    context.Output.WriteLine(
-                        $"Indexed: {file.Path} (ParentId: {directoryId})");
-                }
-            }
-
-            foreach (var childDirectory in directory.EnumerateDirectories())
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await AddDirectoryRecursiveAsync(
-                    childDirectory,
-                    directoryId,
-                    context,
-                    cancellationToken);
-            }
-        }
-
-        private async Task<long> AddSingleAsync(
-            string path,
-            IConsoleCommandContext context,
-            CancellationToken cancellationToken)
-        {
-            var indexed = CreateIndexedFile(path);
-
-            context.Output.WriteLine(
-                $"Indexed: {indexed.Path}");
-
-            return await _indexService.AddAsync(
-                    indexed,
-                    cancellationToken);
+            WriteFile(context, result.File);
         }
 
         private async Task ExecuteGetAsync(
@@ -445,58 +355,6 @@ namespace UnityCommander.Commands
             context.Output.WriteLine($"Modified: {file.LastWriteTime}");
             context.Output.WriteLine($"Accessed: {file.LastAccessTime}");
             context.Output.WriteLine($"Attributes: {file.Attributes}");
-        }
-
-        private IndexedFile CreateIndexedFile(string path)
-        {
-            IndexedFile indexed;
-
-            if (File.Exists(path))
-            {
-                var info = new FileInfo(path);
-
-                indexed = CreateIndexedFile(info);
-            }
-            else
-            {
-                var info = new DirectoryInfo(path);
-
-                indexed = CreateIndexedDirectory(info);
-            }
-
-            return indexed;
-        }
-
-        private static IndexedFile CreateIndexedFile(FileInfo file)
-        {
-            return new IndexedFile
-            {
-                Path = file.FullName,
-                Name = file.Name,
-                Extension = file.Extension,
-                IsDirectory = false,
-                Size = file.Length,
-                CreationTime = file.CreationTime,
-                LastWriteTime = file.LastWriteTime,
-                LastAccessTime = file.LastAccessTime,
-                Attributes = file.Attributes
-            };
-        }
-
-        private static IndexedFile CreateIndexedDirectory(DirectoryInfo directory)
-        {
-            return new IndexedFile
-            {
-                Path = directory.FullName,
-                Name = directory.Name,
-                Extension = string.Empty,
-                IsDirectory = true,
-                Size = 0,
-                CreationTime = directory.CreationTime,
-                LastWriteTime = directory.LastWriteTime,
-                LastAccessTime = directory.LastAccessTime,
-                Attributes = directory.Attributes
-            };
         }
 
         public Task FinalizeAsync()
