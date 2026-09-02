@@ -27,7 +27,7 @@ namespace UnityCommander.Commands
 
         public async Task ExecuteAsync(IConsoleCommandContext context, CancellationToken cancellationToken)
         {
-
+            var args = _parser.Parse(context.Arguments);
         }
 
         public Task FinalizeAsync()

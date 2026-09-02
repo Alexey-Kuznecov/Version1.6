@@ -15,6 +15,7 @@
     <ProjectReference Include="..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
+    <ProjectReference Include="..\UnityCommander.Index\UnityCommander.Index.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
     <ProjectReference Include="..\UnityCommander.Theme\UnityCommander.Theme.csproj" />
   </ItemGroup>

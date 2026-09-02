@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using System.Collections.Generic;
 using System.IO;
+using UnityCommander.Common;
 using UnityCommander.Logging.Abstractions;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -52,8 +53,10 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<ILoggingSettingsStore>(sp =>
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "config", "logging.json");
-                return new JsonLoggingSettingsStore(path);
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new JsonLoggingSettingsStore(
+                    paths.Config("logging.json"));
             });
 
             registry.RegisterSingleton<LoggerCreator>();

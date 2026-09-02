@@ -26,6 +26,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterInstance<ICommandDescriptor>(new InspectCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new SearchCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new CopyCommandDefinition());
+            registry.RegisterInstance<ICommandDescriptor>(new IndexCommandDefinition());
         }
     }
 }

@@ -3,6 +3,7 @@ using Prism.Ioc;
 using System.IO;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Abstractions.Settings;
+using UnityCommander.Common;
 using UnityCommander.Core.Keyboad;
 using UnityCommander.Core.Registrar;
 using UnityCommander.Modules.SettingsPanel.Services;
@@ -27,16 +28,20 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IShortcutMapBuilder, ShortcutMapBuilder>();
             registry.RegisterSingleton<JsonShortcutOverrideStorage>(sp =>
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "config", "shotcuts.json"); ;
-                return new JsonShortcutOverrideStorage(path);
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new JsonShortcutOverrideStorage(
+                    paths.Config("shortcuts.json"));
             });
 
-
             registry.RegisterSingleton<ISettingsService, SettingsService>();
+
             registry.RegisterSingleton<ISettingsStore>(sp =>
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "config", "settings.json"); ;
-                return new JsonSettingsStore(path);
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new JsonSettingsStore(
+                    paths.Config("settings.json"));
             });
 
             //registry.RegisterSingleton<ISettingsProvider, ShortcutSettingsProvider>();

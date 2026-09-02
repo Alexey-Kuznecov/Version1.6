@@ -1,6 +1,7 @@
 ﻿
 using Example;
 using Prism.Ioc;
+using System.IO;
 using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Icons;
@@ -9,11 +10,15 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Common;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Sidebar;
 using UnityCommander.Core.Background;
 using UnityCommander.Core.Panels;
 using UnityCommander.Core.Registrar;
+using UnityCommander.Index.Abstractions;
+using UnityCommander.Index.Indexing;
+using UnityCommander.Index.Storage;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.StatusBar.Services;
@@ -39,6 +44,7 @@ namespace UnityCommander.Dependencies
     {
         public static void Register(IContainerRegistry registry)
         {
+            registry.RegisterSingleton<UnityCommanderPath>();
             registry.RegisterSingleton<IEventBus, EventBus>();
 
             // Компоновка UI: отвечает за то, как строятся и наполняются области интерфейса (панели/лейауты)
@@ -123,6 +129,24 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IUserActivityService, UserActivityService>();
             registry.RegisterSingleton<IBackgroundResourcePolicy, BackgroundResourcePolicy>();
             registry.RegisterSingleton<IBackgroundWorkController, CopyBackgroundWorkController>();
+
+            registry.RegisterSingleton<SqliteFileIndex>(sp =>
+            {
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new SqliteFileIndex(
+                    Path.Combine(
+                        paths.DataDirectory,
+                        "file_index.db"));
+            });
+
+            registry.RegisterSingleton<IFileIndexReader>(sp =>
+                sp.Resolve<SqliteFileIndex>());
+
+            registry.RegisterSingleton<IFileIndexWriter>(sp =>
+                sp.Resolve<SqliteFileIndex>());
+
+            registry.RegisterSingleton<IFileIndexService, FileIndexService>();
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿
 using Prism.Ioc;
-using System.IO;
 using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.CLI.History;
-using UnityCommander.Logging.Configuration;
+using UnityCommander.Common;
 
 namespace UnityCommander.Dependencies
 {
@@ -19,8 +18,10 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<IConsoleHistoryStore>(sp =>
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "config", "console-history.json"); ;
-                return new JsonConsoleHistoryStore(path);
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new JsonConsoleHistoryStore(
+                    paths.Config("console-history.json"));
             });
         }
     }

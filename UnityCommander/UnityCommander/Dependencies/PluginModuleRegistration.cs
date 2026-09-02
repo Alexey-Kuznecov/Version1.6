@@ -10,6 +10,7 @@ using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Plugin;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
+using UnityCommander.Common;
 using UnityCommander.Common.Plugins.UnityCommander.Common.Plugins;
 using UnityCommander.Core.Plugin;
 using UnityCommander.Core.Registrar;
@@ -26,14 +27,17 @@ namespace UnityCommander.Dependencies
         public static void Register(IContainerRegistry registry)
         {
             // PluginSystem
-            
-            var options = new PluginSystemOptions
-            {
-                Loader = new PluginLoader(),
-                PluginsRootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins")
-            };
 
-            registry.TryRegisterInstance(options);
+            registry.RegisterSingleton<PluginSystemOptions>(sp =>
+            {
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new PluginSystemOptions
+                {
+                    Loader = new PluginLoader(),
+                    PluginsRootPath = paths.PluginsDirectory
+                };
+            });
 
             registry.RegisterSingleton<IPluginManager, PluginManager>();
 
