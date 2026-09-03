@@ -20,6 +20,7 @@ namespace UnityCommander.Commands
     {
         private readonly ICommandArgumentParser _parser;
         private readonly IFileIndexService _indexService;
+        private readonly IFileIndexSynchronizer _synchronizer;
 
         public string Name => "index";
 
@@ -31,10 +32,12 @@ namespace UnityCommander.Commands
 
         public IndexCommand(
             ICommandArgumentParser parser,
-            IFileIndexService indexService)
+            IFileIndexService indexService, 
+            IFileIndexSynchronizer synchronizer)
         {
             _parser = parser;
             _indexService = indexService;
+            _synchronizer = synchronizer;
         }
 
         public async Task ExecuteAsync(
@@ -81,11 +84,63 @@ namespace UnityCommander.Commands
                         context,
                         cancellationToken);
                     break;
+                case "sync":
+                    await ExecuteSyncAsync(
+                        args,
+                        context,
+                        cancellationToken);
+                    break;
 
                 default:
                     context.Output.WriteLine(
                         "Usage: index <add|get|list|update|delete> ...");
                     break;
+            }
+        }
+
+        private async Task ExecuteSyncAsync(
+            IArgumentCollection args,
+            IConsoleCommandContext context,
+            CancellationToken cancellationToken)
+        {
+            var path = args.GetAt(1);
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                context.Output.WriteLine(
+                    "Usage: index sync <path>");
+
+                return;
+            }
+
+            if (!Directory.Exists(path))
+            {
+                context.Output.WriteLine(
+                    $"Directory does not exist: {path}");
+
+                return;
+            }
+
+            await _synchronizer.StartAsync(
+                path,
+                cancellationToken);
+
+            context.Output.WriteLine(
+                $"Index synchronization started: {path}");
+
+            try
+            {
+                await Task.Delay(
+                    Timeout.Infinite,
+                    cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                // нормальное завершение команды
+            }
+            finally
+            {
+                await _synchronizer.StopAsync();
             }
         }
 

@@ -147,6 +147,8 @@ namespace UnityCommander.Dependencies
                 sp.Resolve<SqliteFileIndex>());
 
             registry.RegisterSingleton<IFileIndexService, FileIndexService>();
+            registry.RegisterSingleton<IFileIndexChangeQueue, FileIndexChangeQueue>();
+            registry.RegisterSingleton<IFileIndexSynchronizer, FileIndexSynchronizer>();
         }
     }
 }

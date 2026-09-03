@@ -4,6 +4,9 @@ using System.Windows.Threading;
 using UnityCommander.Autocomplete.Completion;
 using UnityCommander.Autocomplete.Infrastructure.Analyze;
 using UnityCommander.Autocomplete.Input;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 
 namespace UnityCommander.Modules.BottomPanel.Console
 {
@@ -11,13 +14,16 @@ namespace UnityCommander.Modules.BottomPanel.Console
     {
         private readonly ICliInputAnalyzer _cliInputAnalyzer;
         private readonly ICliParseStateBuilder _parseStateBuilder;
+        private readonly ILogger _logger;
         private readonly ICompletionEngine _completionEngine;
 
         public ConsoleAutocompleteProcessor(
             ICompletionEngine completionEngine,
             ICliInputAnalyzer cliInputAnalyzer,
-            ICliParseStateBuilder parseStateBuilder)
+            ICliParseStateBuilder parseStateBuilder, 
+            LoggerCreator loggerCreator)
         {
+            _logger = loggerCreator.For<ConsoleAutocompleteProcessor>(LogScope.Runtime);
             _completionEngine = completionEngine;
             _cliInputAnalyzer = cliInputAnalyzer;
             _parseStateBuilder = parseStateBuilder;
@@ -73,10 +79,40 @@ namespace UnityCommander.Modules.BottomPanel.Console
                 if (string.IsNullOrEmpty(consoleState.InputText))
                     return;
 
+                var inputText = consoleState.InputText;
+                var caretIndex = consoleState.CaretIndex;
+                var selectedIndex = consoleState.SelectedIndex;
+
+                _logger.Debug(
+                    $"[Completion] Snapshot: " +
+                    $"Input='{inputText}', " +
+                    $"Length={inputText?.Length}, " +
+                    $"Caret={caretIndex}, " +
+                    $"Selected={selectedIndex}");
+
                 var state = new InputState(consoleState.InputText, consoleState.CaretIndex - 1);
                 var item = consoleState.Completions[consoleState.SelectedIndex];
 
                 var edit = _completionEngine.ApplyCompletion(state, item);
+
+
+                if (edit.ReplaceStart < 0 ||
+                    edit.ReplaceLength < 0 ||
+                    edit.ReplaceStart + edit.ReplaceLength > inputText.Length)
+                {
+                    _logger.Error(
+                        $"[Completion] INVALID EDIT! " +
+                        $"Input='{inputText}', " +
+                        $"InputLength={inputText.Length}, " +
+                        $"Caret={caretIndex}, " +
+                        $"SelectedIndex={selectedIndex}, " +
+                        $"ReplaceStart={edit.ReplaceStart}, " +
+                        $"ReplaceLength={edit.ReplaceLength}, " +
+                        $"InsertText='{edit.InsertText}', " +
+                        $"CaretOffset={item.CaretOffset}");
+
+                    return;
+                }
 
                 consoleState.InputText = consoleState.InputText.Substring(0, edit.ReplaceStart)
                                          + edit.InsertText

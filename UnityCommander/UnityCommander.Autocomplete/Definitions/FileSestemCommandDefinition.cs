@@ -4,96 +4,101 @@ using UnityCommander.Autocomplete.Context.Descriptors;
 
 namespace UnityCommander.Autocomplete.Definitions
 {
-    public class IndexCommandDefinition : SimpleCommandDescriptor
+    public class FileSestemCommandDefinition : SimpleCommandDescriptor
     {
-        public IndexCommandDefinition()
+        public FileSestemCommandDefinition()
             : base(
-                "index",
+                "fs",
                  variants: new[]
                 {
                     new CommandVariant(
-                        name: "add",
-                        flags: new[]
-                            {
-                                new SimpleFlagDescriptor(
-                                    name: "--recursive",
-                                    shortName: null,
-                                    requiresValue: false),
-                            },
+                        name: "create",
+                        flags: new IFlagDescriptor[0],
                         arguments: new IPositionalArgumentDescriptor[]
                         {
                             new PathPositionalArgumentDescriptor(
                                 name: "path",
-                                pathKind: PathKind.Any,
+                                pathKind: PathKind.Directory,
                                 isRequired: true)
                         },
                         flagOrderPolicy: FlagOrderPolicy.StrictOrder,
                         positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
-                        usage: "index add <path>  [--recursive]"),
+                        usage: "fs create <path>"),
                         
                      new CommandVariant(
-                            name: "get",
+                            name: "mkdir",
                             flags: new IFlagDescriptor[0],
                             arguments: new IPositionalArgumentDescriptor[]
                             {
-                                new SimplePositionalArgumentDescriptor(
-                                    name: "id",
-                                    valueType: ArgumentValueType.Int,
-                                    isRequired: true)
-                            },
-                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
-                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
-                            usage: "index get <id>"),
-                        
-                     new CommandVariant(
-                            name: "update",
-                            flags: new IFlagDescriptor[0],
-                            arguments: new IPositionalArgumentDescriptor[]
-                            {
-                                new SimplePositionalArgumentDescriptor(
-                                    name: "id",
-                                    valueType: ArgumentValueType.Int,
-                                    isRequired: true)
-                            },
-                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
-                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
-                            usage: "index update <id>"),
-                        
-                     new CommandVariant(
-                            name: "delete",
-                            flags: new IFlagDescriptor[0],
-                            arguments: new IPositionalArgumentDescriptor[]
-                            {
-                                new SimplePositionalArgumentDescriptor(
-                                    name: "id",
-                                    valueType: ArgumentValueType.Int,
-                                    isRequired: true)
-                            },
-                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
-                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
-                            usage: "index delete <id>"),
-                         
-                     new CommandVariant(
-                            name: "list",
-                            flags: new IFlagDescriptor[0],
-                            arguments: new IPositionalArgumentDescriptor[0],
-                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
-                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
-                            usage: "index list"),
-                          
-                     new CommandVariant(
-                            name: "sync",
-                            flags: new IFlagDescriptor[0],
-                            arguments: new IPositionalArgumentDescriptor[]
-                            {
-                                 new PathPositionalArgumentDescriptor(
+                                new PathPositionalArgumentDescriptor(
                                     name: "path",
                                     pathKind: PathKind.Directory,
                                     isRequired: true)
                             },
                             flagOrderPolicy: FlagOrderPolicy.StrictOrder,
                             positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
-                            usage: "index sync <path>"),
+                            usage: "fs mkdir <path>"),
+                        
+                     new CommandVariant(
+                            name: "delete",
+                            flags: new IFlagDescriptor[0],
+                            arguments: new IPositionalArgumentDescriptor[]
+                            {
+                               new PathPositionalArgumentDescriptor(
+                                    name: "path",
+                                    pathKind: PathKind.Any,
+                                    isRequired: true)
+                            },
+                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
+                            usage: "fs delete <path>"),
+
+                     new CommandVariant(
+                            name: "rename",
+                            flags: new IFlagDescriptor[0],
+                            arguments: new IPositionalArgumentDescriptor[]
+                            {
+                                new PathPositionalArgumentDescriptor(
+                                    name: "source",
+                                    pathKind: PathKind.Any,
+                                    isRequired: true),
+                                new PathPositionalArgumentDescriptor(
+                                    name: "destination",
+                                    pathKind: PathKind.Any,
+                                    isRequired: true),
+                            },
+                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
+                            usage: "fs rename <source> <destination>"),
+
+                     new CommandVariant(
+                            name: "list",
+                            flags: new IFlagDescriptor[0],
+                            arguments: new IPositionalArgumentDescriptor[]
+                            {
+                                new PathPositionalArgumentDescriptor(
+                                    name: "path",
+                                    pathKind: PathKind.Directory,
+                                    isRequired: true),
+                            },
+                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
+                            usage: "fs list <path>"),
+                          
+                     new CommandVariant(
+                            name: "stress",
+                            flags: new IFlagDescriptor[0],
+                            arguments: new IPositionalArgumentDescriptor[]
+                            {
+                                 new PathPositionalArgumentDescriptor(
+                                    name: "path",
+                                    pathKind: PathKind.Directory,
+                                    isRequired: true),
+                                   new SimplePositionalArgumentDescriptor("count", ArgumentValueType.Int)
+                            },
+                            flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
+                            usage: "fs stress <root> <count>"),
                 })
             {
         }

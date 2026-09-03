@@ -51,13 +51,26 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
 
         private void OnLog(LogEntry entry)
         {
+            if (entry == null)
+                return;
+
             if (entry.Channel != LogChannel.Journal)
                 return;
-            
+
             var formatted = FormatEntry(entry);
 
-            Application.Current.Dispatcher.Invoke(() =>
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null)
+                return;
+
+            dispatcher.Invoke(() =>
             {
+                if (_builder == null)
+                    return;
+
+                if (Logs == null)
+                    return;
+
                 _builder.AppendLine(formatted);
                 LogText = _builder.ToString();
 

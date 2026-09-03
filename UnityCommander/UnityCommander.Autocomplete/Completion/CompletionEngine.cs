@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using UnityCommander.Abstractions.Completion;
 using UnityCommander.Autocomplete.Infrastructure;
 using UnityCommander.Autocomplete.Input;
@@ -36,6 +37,11 @@ namespace UnityCommander.Autocomplete.Completion
            InputState state,
            CliParseState analyze)
         {
+            _logger.Debug(
+                $"[ApplyCompletion] Input='{state.Text}', " +
+                $"InputLength={state.Text?.Length}, " +
+                $"CaretIndex={state.CaretPosition}, ");
+
             var providers = _providers
                 .Where(p => p.CanHandle(analyze))
                 .OrderByDescending(p => p.Priority)
@@ -58,13 +64,29 @@ namespace UnityCommander.Autocomplete.Completion
                         DisplayText = item.DisplayText,
                         InsertText = item.InsertText,
                         CaretOffset = item.CaretOffset,
-                        EditFactory = s => new TextEdit(
-                            analyze.ReplaceStart,
-                            analyze.ReplaceLength,
-                            analyze.CurrentToken,
-                            item.InsertText +
-                            (item.AppendSpace ? " " : "")
-                        )
+                        EditFactory = s =>
+                        {
+                            var insertText = item.InsertText;
+                            var replaceStart = analyze.ReplaceStart;
+                            var replaceLength = analyze.ReplaceLength;
+
+                            if (replaceStart > s.Text.Length)
+                            {
+                                replaceStart = s.Text.Length;
+                                replaceLength = 0;
+
+                                insertText = " " + insertText;
+                            }
+
+                            if (item.AppendSpace)
+                                insertText += " ";
+
+                            return new TextEdit(
+                                replaceStart,
+                                replaceLength,
+                                analyze.CurrentToken,
+                                insertText);
+                        }
                     })
                     .ToList()
                 : [];
