@@ -1,7 +1,8 @@
 ﻿
 using UnityCommander.Common.Diagnostic;
+using UnityCommander.Diagnostics.Diagnostic;
 
-namespace UnityCommander.Diagnostics.Diagnostic
+namespace UnityCommander.Diagnostics.Reporting
 {
     public sealed class DiagnosticPipeline : IDiagnosticPipeline
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Diagnostics.Diagnostic
+namespace UnityCommander.Diagnostics.Reporting
 {
     public enum DiagnosticCardinality
     {

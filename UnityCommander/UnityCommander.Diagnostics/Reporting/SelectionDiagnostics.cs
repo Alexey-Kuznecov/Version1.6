@@ -2,7 +2,7 @@
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Services.Interfaces;
 
-namespace UnityCommander.Core.Diagnostics
+namespace UnityCommander.Diagnostics.Reporting
 {
     public sealed class SelectionDiagnostics // : IDiagnosticReporter
     {
