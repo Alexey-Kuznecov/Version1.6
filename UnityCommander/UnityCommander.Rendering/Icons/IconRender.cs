@@ -28,6 +28,24 @@ namespace UnityCommander.Rendering.Icons
                 typeof(Brush),
                 typeof(IconRender));
 
+        public static readonly DependencyProperty StrokeProperty =
+            DependencyProperty.Register(
+                nameof(Stroke),
+                typeof(Brush),
+                typeof(IconRender));
+
+        public static readonly DependencyProperty FillProperty =
+            DependencyProperty.Register(
+                nameof(Fill),
+                typeof(Brush),
+                typeof(IconRender));
+
+        public static readonly DependencyProperty StrokeThicknessProperty =
+           DependencyProperty.Register(
+               nameof(StrokeThickness),
+               typeof(double),
+               typeof(IconRender));
+
         public static readonly DependencyProperty DefaultBrushProperty =
             DependencyProperty.Register(
                 nameof(DefaultBrush),
@@ -134,6 +152,24 @@ namespace UnityCommander.Rendering.Icons
             set => SetValue(BrushProperty, value);
         }
 
+        public Brush Stroke
+        {
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
+        }
+
+        public Brush Fill
+        {
+            get => (Brush)GetValue(FillProperty);
+            set => SetValue(FillProperty, value);
+        }
+
+        public double StrokeThickness
+        {
+            get => (double)GetValue(StrokeThicknessProperty);
+            set => SetValue(StrokeThicknessProperty, value);
+        }
+
         public Brush DefaultBrush
         {
             get => (Brush)GetValue(DefaultBrushProperty);
@@ -186,22 +222,32 @@ namespace UnityCommander.Rendering.Icons
         //    control.DefaultBrush = IconHub.Resolve(control.IconKind, control.Role, control.Tone, control.State);
         //}
 
-        private static void UpdateIcon(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void UpdateIcon(
+             DependencyObject d,
+             DependencyPropertyChangedEventArgs e)
         {
             var control = (IconRender)d;
 
-            if (e.NewValue is string)
+            if (e.NewValue is string key)
             {
-                var key = (string)e.NewValue;
-
                 if (!IconHub.TryGet(key, out var result))
                     return;
 
                 control.Data = result.Geometry;
+                control.Fill = result.Brush;
+                control.Stroke = result.Stroke;
+                control.StrokeThickness = result.StrokeWidth ?? 1;
             }
 
             if (e.NewValue is IconKind || e.NewValue is IconRole)
-                control.DefaultBrush = IconHub.Resolve(control.IconKind, control.Role, control.Tone, control.State);
+            {
+                control.DefaultBrush =
+                    IconHub.Resolve(
+                        control.IconKind,
+                        control.Role,
+                        control.Tone,
+                        control.State);
+            }
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

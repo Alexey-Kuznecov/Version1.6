@@ -8,9 +8,9 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
+    <Grid Background="{DynamicResource UcApplicationBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="45" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="45" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -21,26 +21,46 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu
-            Grid.Row="0"
-            Grid.ColumnSpan="2"
-            Background="#FFFFFF">
-            <MenuItem FontSize="12" Header="File">
-                <MenuItem Command="{Binding AddNewIconCommand}" Header="Open" />
-                <MenuItem Header="Save" />
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem
+                FontSize="12"
+                Foreground="White"
+                Header="File">
+                <MenuItem
+                    Command="{Binding AddNewIconCommand}"
+                    Foreground="White"
+                    Header="Open" />
+                <MenuItem
+                    Command="{Binding ImportIconCommand}"
+                    Foreground="White"
+                    Header="Импорт Svg" />
+                <MenuItem
+                    Command="{Binding SaveCommand}"
+                    Foreground="White"
+                    Header="Сохранить" />
                 <Separator />
-                <MenuItem Command="{Binding ShutdownCommand}" Header="Close" />
+                <MenuItem
+                    Command="{Binding ShutdownCommand}"
+                    Foreground="White"
+                    Header="Close" />
             </MenuItem>
-            <MenuItem FontSize="12" Header="View">
-                <MenuItem Header="Lists" />
-                <MenuItem Header="Tiles" />
-                <MenuItem Header="Cards" />
+            <MenuItem
+                FontSize="12"
+                Foreground="White"
+                Header="View">
+                <MenuItem Foreground="White" Header="Lists" />
+                <MenuItem Foreground="White" Header="Tiles" />
+                <MenuItem Foreground="White" Header="Cards" />
             </MenuItem>
-            <MenuItem FontSize="12" Header="Tools">
-                <MenuItem Header="Resource" />
-                <MenuItem Header="Palette" />
-                <MenuItem Header="Formatter" />
-                <MenuItem Header="Plugins" />
+            <MenuItem
+                FontSize="12"
+                Foreground="White"
+                Header="Tools">
+                <MenuItem Foreground="White" Header="Resource" />
+                <MenuItem Foreground="White" Header="Palette" />
+                <MenuItem Foreground="White" Header="Formatter" />
+                <MenuItem Foreground="White" Header="Plugins" />
             </MenuItem>
         </Menu>
 
@@ -50,6 +70,8 @@
             Width="200"
             Height="35"
             AllowDrop="True"
+            Background="{DynamicResource UcSurfaceTertiaryBrush}"
+            BorderThickness="0"
             FontSize="16"
             FontStyle="Italic"
             Tag="Имя..."
@@ -63,8 +85,8 @@
 
         <ScrollViewer
             Grid.Row="1"
-            Grid.Column="1"
             Grid.RowSpan="2"
+            Grid.Column="1"
             Margin="5"
             VerticalScrollBarVisibility="Auto">
 
@@ -92,7 +114,7 @@
             Grid.Row="3"
             Grid.ColumnSpan="2"
             Padding="10"
-            Background="#F2F2F2">
+            Background="{DynamicResource UcSurfaceTertiaryBrush}">
 
             <Grid>
                 <Grid.ColumnDefinitions>

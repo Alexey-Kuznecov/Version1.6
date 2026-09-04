@@ -1,13 +1,17 @@
 ﻿
+using IconBrowser.Services;
 using IconBrowser.Services.Search;
 using IconMaker.Core.Models;
 using IconMaker.Core.Mvvm.Base;
 using IconMaker.Core.Services;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +26,9 @@ namespace IconBrowser.ViewModels
     {
         private readonly IIconService _iconService;
         private readonly IIconSearchService _searchService;
+
+        private readonly IIconImporter _importer;
+
         private readonly ILogger _logger;
 
         private IconPackListViewModel _packListVm;
@@ -74,9 +81,11 @@ namespace IconBrowser.ViewModels
         public IconMakerViewModel(
             IIconService iconService, 
             IIconThemeService themeService,
-            IIconSearchService searchService, 
+            IIconSearchService searchService,
+            IIconImporter importer,
             LoggerCreator logger)
         {
+            _importer = importer;
             _searchService = searchService;
             _logger = logger.For<IconMakerViewModel>();
             _iconService = iconService;
@@ -87,6 +96,7 @@ namespace IconBrowser.ViewModels
 
             _iconService.PackChanged += OnPackChanged;
             _iconService.IconRemoved += OnIconRemoved;
+            _iconService.IconUpdated += OnIconUpdated;
 
             _packListVm = new IconPackListViewModel(_iconService);
             _packListVm.PackSelected += OnPackSelected;
@@ -99,9 +109,23 @@ namespace IconBrowser.ViewModels
             _searchService.RebuildIndexAsync();
         }
 
-        public ICommand SaveThemeCommand { get; }
-        public ICommand ShutdownCommand { get; }
+        public ICommand SaveCommand => new RelayCommand(obj =>
+        {
+            _iconService.SaveAll();
+        });
+
+        public ICommand ShutdownCommand => new RelayCommand(obj =>
+        {
+            Application app = Application.Current;
+            app.Shutdown();
+        });
+
         public ICommand AddNewIconCommand { get; }
+
+        public ICommand ImportIconCommand => new RelayCommand(obj =>
+        {
+            ImportSvgs();
+        });
 
         public string SearchQuery
         {
@@ -243,6 +267,11 @@ namespace IconBrowser.ViewModels
             );
         }
 
+        private void OnIconUpdated(string packId, Guid iconId)
+        {
+            _iconService.SavePack(packId);
+        }
+
         private void OnThemeChanged(string id)
         {
             foreach (var icon in Icons)
@@ -265,6 +294,54 @@ namespace IconBrowser.ViewModels
                 return;
 
             _ = LoadPack(packId);
+        }
+
+        public void ImportSvg()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Import SVG Icon",
+                Filter = "SVG files (*.svg)|*.svg",
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            var path = dialog.FileName;
+
+            var name = Path.GetFileNameWithoutExtension(path);
+
+            var definition = _importer.Import(path, name);
+
+            var iconItem = CreateVm(definition, _currentPackId);
+
+            Icons.Add(iconItem);
+        }
+
+        public void ImportSvgs()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Import SVG Icons",
+                Filter = "SVG files (*.svg)|*.svg",
+                Multiselect = true
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            foreach (var path in dialog.FileNames)
+            {
+                var name = Path.GetFileNameWithoutExtension(path);
+
+                var definition = _importer.Import(path, name);
+
+                var iconItem = CreateVm(definition, _currentPackId);
+
+                Icons.Add(iconItem);
+                _iconService.GetPack("misk").Icons.Add(definition);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using Example;
 using Prism.Ioc;
 using UnityCommander.Commands.Diagnostic;
 using UnityCommander.Commands.Parsing;
@@ -9,6 +10,8 @@ using UnityCommander.Common.Diagnostic;
 using UnityCommander.Core.Diagnostics;
 using UnityCommander.Diagnostics.Diagnostic;
 using UnityCommander.Diagnostics.Performance;
+using UnityCommander.Diagnostics.Reporting;
+using UnityCommander.Diagnostics.Tracing;
 
 namespace UnityCommander.Dependencies
 {
@@ -32,6 +35,11 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IPerformanceProfiler, PerformanceProfiler>();
             registry.RegisterSingleton<IPerformanceSnapshotService, PerformanceSnapshotService>();
             registry.RegisterSingleton<IPerformanceComparisonService, PerformanceComparisonService>();
+
+
+            registry.RegisterSingleton<IDiagnosticTraceStore, DiagnosticTraceStore>();
+
+            registry.RegisterSingleton<IDiagnosticTrace, Diagnostics.Tracing.DiagnosticTrace>();
         }
     }
 }

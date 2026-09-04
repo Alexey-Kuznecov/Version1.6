@@ -100,10 +100,7 @@
             <!--<converters:ContentConverter x:Key="ContentConverter" />-->
         </ControlTemplate.Resources>
         <Grid>
-            <Path
-                x:Name="rect"
-                Fill="#F6F6F1"
-                Stretch="Uniform">
+            <Path x:Name="rect" Stretch="Uniform">
                 <Path.Data>
                     <RectangleGeometry Rect="0,0,50,50" />
                 </Path.Data>

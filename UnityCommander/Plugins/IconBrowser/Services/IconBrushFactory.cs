@@ -2,6 +2,7 @@
 using IconBrowser.Models;
 using IconMaker.Core.Helper;
 using IconMaker.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
@@ -17,12 +18,26 @@ namespace IconBrowser.Services
 
             foreach (var layer in icon.Layers.OrderBy(x => x.Order))
             {
-                group.Children.Add(
-                    new GeometryDrawing
-                    {
-                        Geometry = Geometry.Parse(layer.Geometry),
-                        Brush = ParseBrush(layer.Fill)
-                    });
+                var drawing = new GeometryDrawing
+                {
+                    Geometry = Geometry.Parse(layer.Geometry)
+                };
+
+                if (!string.IsNullOrWhiteSpace(layer.Fill))
+                {
+                    drawing.Brush = ParseBrush(layer.Fill);
+                }
+
+                if (!string.IsNullOrWhiteSpace(layer.Stroke))
+                {
+                    var pen = new Pen(
+                        ParseBrush(layer.Stroke),
+                        layer.StrokeWidth ?? 1);
+
+                    drawing.Pen = pen;
+                }
+
+                group.Children.Add(drawing);
             }
 
             return new DrawingBrush
@@ -32,39 +47,79 @@ namespace IconBrowser.Services
             };
         }
 
-        public static DrawingBrush CreateBrush(IconDefinition icon, IconTheme theme)
+        public static DrawingBrush CreateBrush(
+          IconDefinition icon,
+          IconTheme theme)
         {
-            DrawingBrush dBrush = new DrawingBrush();
-            DrawingGroup group = new DrawingGroup();
+            var group = new DrawingGroup();
 
-            foreach (var layer in icon.Layers)
+            foreach (var layer in icon.Layers.OrderBy(x => x.Order))
             {
-                GeometryDrawing geometryDrawing = new GeometryDrawing();
-                geometryDrawing.Geometry = Geometry.Parse(layer.Geometry);
-                
+                var geometryDrawing = new GeometryDrawing
+                {
+                    Geometry = Geometry.Parse(layer.Geometry)
+                };
+
                 if (theme.IsMonochrome)
                 {
-                    geometryDrawing.Brush =
+                    var color =
                         theme.MonochromeColor.StringFormatToSolidColor();
+
+                    if (layer.Fill != null)
+                        geometryDrawing.Brush = color;
+
+                    if (layer.Stroke != null)
+                    {
+                        geometryDrawing.Pen = new Pen(
+                            color,
+                            layer.StrokeWidth ?? 1);
+                    }
                 }
                 else
                 {
-                    geometryDrawing.Brush =
-                        layer.Fill.StringFormatToSolidColor();
+                    if (layer.Fill != null)
+                    {
+                        geometryDrawing.Brush =
+                            ResolveColor(layer.Fill, theme);
+                    }
+
+                    if (layer.Stroke != null)
+                    {
+                        geometryDrawing.Pen = new Pen(
+                            ResolveColor(layer.Stroke, theme),
+                            layer.StrokeWidth ?? 1);
+                    }
                 }
 
                 group.Children.Add(geometryDrawing);
             }
 
-            dBrush.Drawing = group;
-            dBrush.Stretch = Stretch.Uniform;
-            return dBrush;
+            return new DrawingBrush
+            {
+                Drawing = group,
+                Stretch = Stretch.Uniform
+            };
         }
 
-        private static Brush ParseBrush(string color)
+        private static SolidColorBrush ResolveColor(
+            string value,
+            IconTheme theme)
+        {
+            if (value.Equals(
+                    "currentColor",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return theme.MonochromeColor
+                    .StringFormatToSolidColor();
+            }
+
+            return value.StringFormatToSolidColor();
+        }
+
+        private static SolidColorBrush ParseBrush(string color)
         {
             return (SolidColorBrush)
-                new BrushConverter().ConvertFromString(color);
+                new BrushConverter().ConvertFromString(color)!;
         }
     }
 }

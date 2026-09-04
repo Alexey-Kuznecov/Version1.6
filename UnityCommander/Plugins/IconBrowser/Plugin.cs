@@ -1,5 +1,7 @@
 ﻿
 using IconBrowser.Commands;
+using IconBrowser.Converters;
+using IconBrowser.Services;
 using IconBrowser.Services.Search;
 using IconBrowser.ViewModels;
 using IconBrowser.Views;
@@ -12,6 +14,7 @@ using PluginSystem.Runtime;
 using System;
 using System.IO;
 using UnityCommander.Abstractions.Command;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Infrastructure;
@@ -44,10 +47,13 @@ namespace IconBrowser
 
             init.RegisterInstance(new IconPaths(path));
             init.RegisterSingleton<FileSystem>();
+
+      
             init.RegisterSingleton<IIconStorage, JsonIconStorage>();
             init.RegisterSingleton<IIconStore, IconStore>();
             init.RegisterSingleton<IIconService, IconService>();
             init.RegisterSingleton<IIconSerializer, JsonIconSerializer>();
+            init.RegisterSingleton<IIconImporter, SvgIconImporter>();
 
             init.RegisterSingleton<IIconThemeStorage, JsonIconThemeStorage>();
             init.RegisterSingleton<IIconThemeStore, IconThemeStore>();
@@ -77,7 +83,7 @@ namespace IconBrowser
                 r.Tab("home", "Главная")
                     .Group("tools", "Инструменты")
                         .Section("main", RibbonGroupLayout.Inline)
-                            .Button("open-icon-maker", "git");
+                            .Button("open-icon-maker", "directory.create2");
             });
 
             //init.RegisterDialog(
@@ -92,7 +98,11 @@ namespace IconBrowser
                      "icon_maker-1.0-new",
                      typeof(IconMakerView),
                      typeof(IconMakerViewModel)
-         ));
+            ));
+
+            init.RegisterSingleton<IconDefinitionCompiler>();
+            init.RegisterSingleton<IconMakerIconSource>();
+            init.RegisterIconSource<IconMakerIconSource>();
         }
 
         public void Start(IPluginContext context)

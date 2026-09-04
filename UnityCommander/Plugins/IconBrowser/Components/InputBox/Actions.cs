@@ -6,6 +6,7 @@
         Add,
         Delete,
         Cancal,
-        Null
+        Null,
+        Rename
     }
 }

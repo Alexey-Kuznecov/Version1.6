@@ -1,10 +1,10 @@
-﻿using System;
+﻿
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using IconBrowser.Models;
 using IconMaker.Core.Models;
 using static System.Windows.Media.ColorConverter;
 

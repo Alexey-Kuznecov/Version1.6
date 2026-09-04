@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO.Packaging;
 using System.Reflection;
 using System.Windows;
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Plugin;
 using UnityCommander.Core.Plugin;
@@ -95,7 +96,11 @@ namespace UnityCommander.Services.Plugins
                 services.Add(descriptor);
             }
 
-            return services.BuildServiceProvider();
+            var provider = services.BuildServiceProvider();
+
+            registrar.Initialize(provider, rootProvider);
+
+            return provider;
         }
 
         private void RegisterHostServices(

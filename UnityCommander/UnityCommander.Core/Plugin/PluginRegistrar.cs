@@ -1,12 +1,15 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using PluginSystem.Abstractions;
+using PluginSystem.Abstractions.Plugin;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugin;
 using UnityCommander.Abstractions.Plugins;
@@ -30,6 +33,8 @@ namespace UnityCommander.Core.Plugin
         private readonly List<IDialogDefinition> _dialogDefinitions = new();
 
         private readonly List<IColumnProvider> _columnProviders = new();
+
+        private readonly List<IIconSource> _iconSources = new();
 
         private readonly List<CompositionDefinition> _compositions = new();
 
@@ -117,6 +122,12 @@ namespace UnityCommander.Core.Plugin
 
         public void RegisterDialog(IDialogDefinition dialog)
             => _dialogDefinitions.Add(dialog);
+
+        public void RegisterIconSource(IIconSource source)
+        {
+            StampPluginOwnership(source, _pluginId);
+            _iconSources.Add(source);
+        }
 
         public void RegisterEventHandler(Delegate handler)
         {
@@ -228,6 +239,42 @@ namespace UnityCommander.Core.Plugin
         private void RegisterInfrastructureServices()
         {
             _services.Add(ServiceDescriptor.Singleton(typeof(IMessageBus), typeof(MessageBus)));
+        }
+
+        public T GetRequired<T>()
+        {
+            var descriptor = Services.FirstOrDefault(x => x.ServiceType == typeof(T));
+            return (T)Activator.CreateInstance(descriptor.ImplementationType);
+        }
+
+        private readonly List<Func<IServiceProvider, object>> _deferred = new ();
+
+        public void RegisterIconSource<T>()
+            where T : IIconSource
+        {
+            _deferred.Add(provider =>
+            {
+                var source = provider.GetRequiredService<T>();
+                _iconSources.Add(source);
+
+                return source;
+            });
+        }
+
+        public void Initialize(
+             IServiceProvider pluginProvider,
+             IServiceProvider rootProvider)
+        {
+            foreach (var deferred in _deferred)
+                deferred(pluginProvider);
+
+            var runtime = rootProvider.GetRequiredService<IRuntimeServices>();
+
+            foreach (var source in _iconSources)
+                runtime.Icons.Register(source);
+
+            _iconSources.Clear();
+            _deferred.Clear();
         }
     }
 }

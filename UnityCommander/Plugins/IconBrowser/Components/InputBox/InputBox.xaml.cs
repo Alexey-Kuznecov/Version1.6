@@ -14,6 +14,7 @@ namespace IconBrowser.Components.InputBox
             InitializeComponent();
         }
         private static InputBox _inputBox;
+        
         public static void Show(ICommand action, Actions actionType, string placeholder = "")
         {
             // Intializaion inputbox by constructor argument

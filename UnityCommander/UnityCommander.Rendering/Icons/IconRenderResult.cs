@@ -4,12 +4,14 @@ namespace UnityCommander.Rendering.Icons
 {
     public sealed class IconRenderResult
     {
-        public static IconRenderResult Empty { get; }
-            = new IconRenderResult();
-        public Geometry Geometry { get; init; } = Geometry.Empty;
+        public required Geometry Geometry { get; init; }
 
-        public Brush Brush { get; init; } = Brushes.Black;
+        public Brush? Brush { get; init; }
 
-        public double Size { get; init; }
+        public Brush? Stroke { get; init; }
+
+        public double? StrokeWidth { get; init; }
+
+        public int Size { get; init; }
     }
 }

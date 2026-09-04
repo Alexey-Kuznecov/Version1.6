@@ -1,7 +1,6 @@
 ﻿
 using IconMaker.Core.Models;
 using IconMaker.Core.Storage;
-using System.Drawing;
 
 namespace IconMaker.Core.Services
 {

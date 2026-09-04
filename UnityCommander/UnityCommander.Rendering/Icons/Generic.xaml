@@ -10,7 +10,9 @@
                     <Path
                         Data="{TemplateBinding Data}"
                         Fill="{TemplateBinding Brush}"
-                        Stretch="Uniform" />
+                        Stretch="Uniform"
+                        Stroke="{TemplateBinding Stroke}"
+                        StrokeThickness="{TemplateBinding StrokeThickness}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

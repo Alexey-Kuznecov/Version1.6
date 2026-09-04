@@ -1,8 +1,10 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
+using System.IO;
 using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Keyboard;
+using UnityCommander.Common;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
 using UnityCommander.Logging;
@@ -29,7 +31,7 @@ namespace UnityCommander
             _logger = LoggingBootstrap.Initialize(provider);
 
             _logger.Info("EarlyLoadModule initialized.");
-
+           
             _providerInfo = provider.Resolve<IPluginInfoProvider>();
             _provider = provider.Resolve<IPluginProvider>();
             _activator = provider.Resolve<IPluginActivator>();
@@ -49,8 +51,9 @@ namespace UnityCommander
             //_activator.Activate("plugin-test-1.0");
             //_activator.Activate("advance-copy-1.0");
 
+            var paths = provider.Resolve<UnityCommanderPath>();
             _iconSource.Register(new MaterialIconSource());
-            _iconSource.Register(new FileIconSource("G:\\material.iconpack"));
+            _iconSource.Register(new FileIconSource(Path.Combine(paths.IconsDirectory, "Icons", "material.iconpack")));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

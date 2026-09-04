@@ -2,6 +2,7 @@
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
@@ -20,6 +21,8 @@ namespace UnityCommander.Abstractions
         IColumnRegistry Columns { get; }
 
         IServiceOverrideRegistry Overrides { get; }
+
+        IIconSourceRegistry Icons { get; }
 
         ICompositionRegistry Composition { get; }
 

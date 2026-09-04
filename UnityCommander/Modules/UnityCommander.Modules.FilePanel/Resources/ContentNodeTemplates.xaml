@@ -247,16 +247,16 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:UICommand}">
                         <ContentControl
-                            Height="20"
+                            Width="25"
+                            Height="25"
                             Padding="3"
                             Style="{StaticResource UcIconControlStyle}"
                             ToolTip="{Binding Description}">
                             <ContentControl.Content>
                                 <icon:IconRender
                                     Key="{Binding IconKey}"
-                                    Width="15"
-                                    Height="15"
-                                    Brush="#D8E1E1" />
+                                    Width="16"
+                                    Height="16" />
                             </ContentControl.Content>
                             <ContentControl.InputBindings>
                                 <MouseBinding Command="{Binding Command}" Gesture="LeftClick" />

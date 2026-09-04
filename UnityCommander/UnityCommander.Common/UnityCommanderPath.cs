@@ -22,6 +22,9 @@ namespace UnityCommander.Common
         public string ResourcesDirectory =>
             Path.Combine(BaseDirectory, "Resources");
 
+        public string IconsDirectory =>
+           Path.Combine(BaseDirectory, "Icons");
+
         public string DataDirectory =>
           Path.Combine(BaseDirectory, "Data");
 

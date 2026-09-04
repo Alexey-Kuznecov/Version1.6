@@ -23,7 +23,7 @@
 
 
     <Style TargetType="{x:Type Menu}">
-        <Setter Property="Background" Value="{DynamicResource UcMenuBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
         <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}" />
         <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}" />
@@ -35,7 +35,7 @@
                 <ControlTemplate TargetType="{x:Type Menu}">
                     <Border
                         Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
+                        Background="{DynamicResource UcSurfaceTertiaryBrush}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="true">
