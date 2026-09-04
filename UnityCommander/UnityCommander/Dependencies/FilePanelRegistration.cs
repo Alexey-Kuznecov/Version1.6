@@ -57,6 +57,9 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<IFileStateService, FileRuntimeService>();
             registry.RegisterSingleton<IVisibleTabResolver, VisibleTabResolver>();
+
+
+            registry.RegisterSingleton<ICreationService, CreationService>();
         }
     }
 }

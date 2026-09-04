@@ -4,6 +4,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using UnityCommander.Common.Models.Directory;
+using UnityCommander.Modules.FilePanel.Models;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services.Interfaces;
 
@@ -31,34 +33,101 @@ namespace UnityCommander.Modules.FilePanel
             return Task.CompletedTask;
         }
 
+        public Task CreateItem(CommandContext ctx)
+        {
+            //var type = ctx.Parameter as CreateItemType?
+            //    ?? CreateItemType.Folder;
+
+            //var panel = _dockingService.GetActiveDirectoryPanel();
+
+            //if (panel == null)
+            //    return Task.CompletedTask;
+
+            //var directory = panel.CurrentPath;
+
+            //if (string.IsNullOrWhiteSpace(directory))
+            //    return Task.CompletedTask;
+
+            //switch (type)
+            //{
+            //    case CreateItemType.Folder:
+            //        Directory.CreateDirectory(
+            //            Path.Combine(directory, "New Folder"));
+            //        break;
+
+            //    case CreateItemType.TextFile:
+            //        File.Create(
+            //            Path.Combine(directory, "New Text Document.txt"))
+            //            .Dispose();
+            //        break;
+            //}
+
+            return Task.CompletedTask;
+        }
+
         public Task<UndoToken> ExecuteDeleteAsync(CommandContext ctx)
         {
             var contextMenu = (FilePanelContextMenu)ctx.Context;
 
-            foreach (var path in contextMenu.SelectedFiles)
+            if (contextMenu == null)
             {
-                if (string.IsNullOrWhiteSpace(path))
-                    continue;
+                var selectionService = ctx.GetService<ISelectionService>();
+                var active = selectionService.GetActive();
 
-                if (!File.Exists(path))
+                foreach (var item in active.SelectedItems)
                 {
-                    Debug.WriteLine(
-                        $"File already does not exist: '{path}'");
+                    if (item is FolderModel directory)
+                    {
+                        var path = directory.Path;
 
-                    continue;
+                        if (Directory.Exists(path))
+                            Directory.Delete(path, recursive: true);
+                    }
+                    else if (item is FileModel file)
+                    {
+                        var path = file.Path;
+
+                        if (File.Exists(path))
+                            File.Delete(path);
+                    }
                 }
+            }
+            else
+            {
 
-                try
+                foreach (var path in contextMenu.SelectedPaths)
                 {
-                    var backup = Path.GetTempFileName();
-                    //File.Copy(path, backup, overwrite: true);
-                    File.Delete(path);
+                    if (string.IsNullOrWhiteSpace(path))
+                        continue;
 
-                    //_notifier.NotifyChanged(path);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Error deleting file '{path}': {e.Message}");
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                    else if (Directory.Exists(path))
+                    {
+                        Directory.Delete(path, recursive: true);
+                    }
+                    else
+                    {
+                        Debug.WriteLine(
+                            $"Path already does not exist: '{path}'");
+
+                        continue;
+                    }
+
+                    //try
+                    //{
+                    //    var backup = Path.GetTempFileName();
+                    //    //File.Copy(path, backup, overwrite: true);
+                    //    File.Delete(path);
+
+                    //    //_notifier.NotifyChanged(path);
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    Debug.WriteLine($"Error deleting file '{path}': {e.Message}");
+                    //}
                 }
             }
 

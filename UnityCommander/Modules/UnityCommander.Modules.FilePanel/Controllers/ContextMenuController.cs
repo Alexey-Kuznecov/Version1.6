@@ -69,7 +69,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
                     {
                         var menuContext = context.Get<FilePanelContextMenu>();
 
-                        var ctx = new CommandContext(node.CommandName, menuContext, menuContext?.SelectedFiles);
+                        var ctx = new CommandContext(node.CommandName, menuContext, menuContext?.SelectedPaths);
 
                         _commandExecution.ExecuteAsync(node.CommandName, ctx);
                     });

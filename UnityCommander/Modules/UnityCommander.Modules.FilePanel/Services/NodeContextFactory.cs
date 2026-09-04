@@ -27,12 +27,12 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly ICommandUIService _commands;
         private readonly IDropTarget _dropTarget;
         private readonly NodeContextRegistry _contextRegistry;
-        private ViewportMapper _scrollMapper;
-        
-        private readonly LoggerCreator _loggerCreator;
         private readonly ILogger _logger;
+        private readonly ICreationService _creationService;
+        private ViewportMapper _scrollMapper;
 
         public NodeContextFactory(
+            ICreationService creationService,
             NavigationManager navigation,
             ContextMenuController menu,
             ISelectionManager selection,
@@ -41,7 +41,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             NodeContextRegistry nodeContext, 
             ViewportMapper scrollMapper)
         {
-            _loggerCreator = Log.GetLoggerCreator();
+            var loggerCreator = Log.GetLoggerCreator();
 
             _logger = Log.Create("Navigation", LogScope.UserAction);
 
@@ -52,6 +52,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             _dropTarget = dropTarget;
             _contextRegistry = nodeContext;
             _scrollMapper = scrollMapper;
+            _creationService = creationService;
         }
 
         public FolderNodeContext CreateFolderNode()
@@ -114,7 +115,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                 Commands = new ObservableCollection<UICommand>()
             };
 
-            var navFactory = new NavigationCommandFactory(_navigation, _selection, _commands);
+            var navFactory = new NavigationCommandFactory(_creationService, _navigation, _selection, _commands);
 
             ctx.Commands.Add(
               navFactory.CreateGoBackCommand<FolderModel>(
@@ -135,6 +136,16 @@ namespace UnityCommander.Modules.FilePanel.Services
                 navFactory.CreateRefreshCommand(
                     CommandNames.Navigation.Refresh,
                     () => true));
+
+            ctx.Commands.Add(
+                navFactory.CreateCreationCommand(
+                    CommandNames.File.Create,
+                    () => true));
+
+            ctx.Commands.Add(
+                 navFactory.CreateCreationCommand(
+                     CommandNames.Directory.Create,
+                     () => true));
 
             ctx.SelectionManager = _selection;
 

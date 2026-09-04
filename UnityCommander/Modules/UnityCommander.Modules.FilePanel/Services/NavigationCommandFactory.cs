@@ -12,8 +12,10 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly NavigationManager _navigation;
         private readonly ICommandUIService _ui;
         private readonly ISelectionManager _selection;
+        private readonly ICreationService _creationService;
 
         public NavigationCommandFactory(
+            ICreationService creationService,
             NavigationManager navigation,
             ISelectionManager selectionManager,
             ICommandUIService ui)
@@ -21,6 +23,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             _navigation = navigation;
             _ui = ui;
             _selection = selectionManager;
+            _creationService = creationService;
         }
 
         public UICommand CreateGoBackCommand<T>(
@@ -73,6 +76,22 @@ namespace UnityCommander.Modules.FilePanel.Services
                     if (x != null)
                     {
                         _navigation.TryNavigateTo(x.ToString(), true);
+                    }
+                }),
+                canExecute);
+        }
+
+        public UICommand CreateCreationCommand(
+           string id,
+           Func<bool> canExecute)
+        {
+            return _ui.Create(
+                id,
+                new DelegateCommand<object>(x =>
+                {
+                    if (x != null)
+                    {
+                        _creationService.CreateAsync(id, x.ToString());
                     }
                 }),
                 canExecute);

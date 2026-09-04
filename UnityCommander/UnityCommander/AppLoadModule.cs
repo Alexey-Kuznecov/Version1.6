@@ -63,8 +63,6 @@ namespace UnityCommander
 
             backgroundService.Start(token);
 
-            var selectionDiagnostics = containerProvider.Resolve<SelectionDiagnostics>();
-
             builder.Rebuild();
 
             _logger.Info("AppLoadModule initialized");

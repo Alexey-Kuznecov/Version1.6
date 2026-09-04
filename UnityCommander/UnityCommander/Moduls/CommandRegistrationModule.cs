@@ -45,6 +45,12 @@ namespace UnityCommander.Moduls
                 filePanelProvider.ExecuteDeleteAsync,
                 contextTypes: typeof(FilePanelContextMenu)));
 
+            commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
+                CommandNames.File.Rename,
+                null,
+                filePanelProvider.ExecuteDeleteAsync,
+                contextTypes: typeof(FilePanelContextMenu)));
+
             // -------------------------------
             // 2. Регистрация команд панели интсрументов
             // -------------------------------

@@ -24,7 +24,7 @@ namespace UnityCommander.Common.Commands
             public const string Delete = "file.delete";
             public const string Rename = "file.rename";
 
-            public const string CreateFile = "file.create";
+            public const string Create = "file.create";
             //public const string CreateDirectory = "file.create-directory";
 
             public const string Open = "file.open";

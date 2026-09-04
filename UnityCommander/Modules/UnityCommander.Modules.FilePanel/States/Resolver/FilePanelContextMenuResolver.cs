@@ -23,7 +23,7 @@ namespace UnityCommander.Modules.FilePanel.States.Resolver
             result.Set(new FilePanelContextMenu
             {
                 CurrentPath = state.Current,
-                SelectedFiles = state.SelectedItems
+                SelectedPaths = state.SelectedItems
                     .Select(x => x.Path)
                     .ToList()
             });

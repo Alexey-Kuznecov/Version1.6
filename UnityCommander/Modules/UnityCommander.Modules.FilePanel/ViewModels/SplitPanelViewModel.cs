@@ -136,7 +136,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               NodeContextRegistry contextRegistry, 
               ViewportMapper scrollMapper, 
               ISettingsService settingsService,
-              IPerformanceProfiler profiler)
+              IPerformanceProfiler profiler, 
+              ICreationService creationService)
             : base(regionManager)
         {
             _performanceProfiler = profiler;
@@ -185,6 +186,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             columnRegistry.PluginUnloaded += OnPluginUnloaded;
 
             var contextFactory = new NodeContextFactory(
+                creationService,
                 _navigationService, 
                 _contextMenuController, 
                 _selectionManager, 

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Panels;
-using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Logging;

@@ -105,6 +105,8 @@ namespace UnityCommander.Core.Navigation
         public bool CanGoBack => _back.Count > 0;
         public bool CanGoForward => _forward.Count > 0;
 
+        public bool CanGoParent { get; set; }
+
         public void GoBack()
         {
             if (!CanGoBack) return;
