@@ -24,6 +24,8 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.ToolBar.Builder;
 using UnityCommander.Rendering.Icons;
+using UnityCommander.Rendering.Icons.Services;
+using UnityCommander.Rendering.Icons.Strategies;
 using UnityCommander.Ribbon.Services;
 using UnityCommander.Ribbon.Services.Icon;
 using UnityCommander.Services;
@@ -88,6 +90,12 @@ namespace UnityCommander.Dependencies
             // Ресурсы интерфейса: поставка иконок и визуальных элементов
             registry.RegisterSingleton<IIconSourceRegistry, IconSourceRegistry>();
             registry.RegisterSingleton<IIconRenderService, IconRenderService>();
+            registry.RegisterSingleton<IIconBrushResolver, IconBrushResolver>();
+            registry.RegisterSingleton<IIconRenderStrategyResolver, IconRenderStrategyResolver>();
+            registry.RegisterSingleton<IIconRenderStrategy, StrokeIconRenderStrategy>();
+            registry.RegisterSingleton<IIconRenderStrategy, LayeredIconRenderStrategy>();
+            registry.RegisterSingleton<IIconRenderStrategy, FilledIconRenderStrategy>();
+            registry.RegisterSingleton<IIconRenderNormalizer, IconRenderNormalizer>();
             registry.RegisterSingleton<IIconResolver, CompositeIconResolver>();
             registry.RegisterSingleton<IIconColorResolver, IconColorResolver>();
 

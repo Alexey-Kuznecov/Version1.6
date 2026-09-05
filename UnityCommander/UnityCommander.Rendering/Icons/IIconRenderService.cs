@@ -1,4 +1,6 @@
-﻿using System.Windows.Shapes;
+﻿
+
+using System.Windows.Shapes;
 
 namespace UnityCommander.Rendering.Icons
 {

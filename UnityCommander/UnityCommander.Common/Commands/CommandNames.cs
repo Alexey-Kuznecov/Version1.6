@@ -25,11 +25,10 @@ namespace UnityCommander.Common.Commands
             public const string Rename = "file.rename";
 
             public const string Create = "file.create";
-            //public const string CreateDirectory = "file.create-directory";
 
             public const string Open = "file.open";
             public const string OpenWith = "file.open-with";
-            public const string OpenInViewer = "file.open-in-viewer"; // ContentViewer
+            public const string OpenInViewer = "file.open-in-viewer"; 
 
             public const string GetInfo = "file.get-info";
             public const string SetAttributes = "file.set-attributes";

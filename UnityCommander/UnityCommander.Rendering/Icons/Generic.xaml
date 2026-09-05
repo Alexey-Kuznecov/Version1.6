@@ -3,21 +3,75 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons">
 
+
+    <!--<DataTemplate x:Key="RibbonIconTemplate">
+        <Viewbox
+            Width="{Binding IconSize}"
+            Height="{Binding IconSize}"
+            Stretch="Uniform">
+
+            <Canvas Width="{Binding Icon.ViewBoxWidth}" Height="{Binding Icon.ViewBoxHeight}">
+
+                <ItemsControl ItemsSource="{Binding Icon.Layers}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Path
+                                Data="{Binding Geometry}"
+                                Fill="{Binding Fill}"
+                                Stroke="{Binding Stroke}"
+                                StrokeThickness="{Binding StrokeThickness}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Canvas>
+        </Viewbox>
+    </DataTemplate>-->
+
+
     <Style TargetType="{x:Type icon:IconRender}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type icon:IconRender}">
-                    <Path
-                        Data="{TemplateBinding Data}"
-                        Fill="{TemplateBinding Brush}"
-                        Stretch="Uniform"
-                        Stroke="{TemplateBinding Stroke}"
-                        StrokeThickness="{TemplateBinding StrokeThickness}" />
+                    <Viewbox Stretch="Uniform">
+                        <Canvas Width="{Binding ViewBoxWidth, RelativeSource={RelativeSource TemplatedParent}}" Height="{Binding ViewBoxHeight, RelativeSource={RelativeSource TemplatedParent}}">
+
+                            <ItemsControl ItemsSource="{TemplateBinding Layers}">
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <!--<ItemsControl.RenderTransform>
+                                    <TranslateTransform X="{Binding ViewBoxX, RelativeSource={RelativeSource TemplatedParent}}" Y="{Binding ViewBoxY, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </ItemsControl.RenderTransform>-->
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Path
+                                            Data="{Binding Geometry}"
+                                            Fill="{Binding Fill}"
+                                            Stroke="{Binding Stroke}"
+                                            StrokeThickness="{Binding StrokeWidth}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+                        </Canvas>
+                    </Viewbox>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Brush" Value="{Binding DefaultBrush, RelativeSource={RelativeSource Self}}" />
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
@@ -25,6 +79,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
 
     <Style x:Key="IconHostStyle" TargetType="Border">
         <Setter Property="Background" Value="Transparent" />

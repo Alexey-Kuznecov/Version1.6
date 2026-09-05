@@ -9,12 +9,8 @@ namespace UnityCommander.Rendering.Icons
 {
     public class IconRender : Control
     {
-        public static readonly DependencyProperty KeyProperty =
-            DependencyProperty.Register(
-                nameof(Key),
-                typeof(string),
-                typeof(IconRender),
-                new PropertyMetadata(null, UpdateIcon));
+
+        #region Dependency properties for icon rendering
 
         public static readonly DependencyProperty DataProperty =
             DependencyProperty.Register(
@@ -22,11 +18,23 @@ namespace UnityCommander.Rendering.Icons
                 typeof(Geometry),
                 typeof(IconRender));
 
+        public Geometry Data
+        {
+            get => (Geometry)GetValue(DataProperty);
+            private set => SetValue(DataProperty, value);
+        }
+
         public static readonly DependencyProperty BrushProperty =
             DependencyProperty.Register(
                 nameof(Brush),
                 typeof(Brush),
                 typeof(IconRender));
+
+        public Brush Brush
+        {
+            get => (Brush)GetValue(BrushProperty);
+            set => SetValue(BrushProperty, value);
+        }
 
         public static readonly DependencyProperty StrokeProperty =
             DependencyProperty.Register(
@@ -34,11 +42,23 @@ namespace UnityCommander.Rendering.Icons
                 typeof(Brush),
                 typeof(IconRender));
 
+        public Brush Stroke
+        {
+            get => (Brush)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
+        }
+
         public static readonly DependencyProperty FillProperty =
             DependencyProperty.Register(
                 nameof(Fill),
                 typeof(Brush),
                 typeof(IconRender));
+
+        public Brush Fill
+        {
+            get => (Brush)GetValue(FillProperty);
+            set => SetValue(FillProperty, value);
+        }
 
         public static readonly DependencyProperty StrokeThicknessProperty =
            DependencyProperty.Register(
@@ -46,11 +66,23 @@ namespace UnityCommander.Rendering.Icons
                typeof(double),
                typeof(IconRender));
 
+        public double StrokeThickness
+        {
+            get => (double)GetValue(StrokeThicknessProperty);
+            set => SetValue(StrokeThicknessProperty, value);
+        }
+
         public static readonly DependencyProperty DefaultBrushProperty =
             DependencyProperty.Register(
                 nameof(DefaultBrush),
                 typeof(Brush),
                 typeof(IconRender));
+
+        public Brush DefaultBrush
+        {
+            get => (Brush)GetValue(DefaultBrushProperty);
+            set => SetValue(DefaultBrushProperty, value);
+        }
 
         public static readonly DependencyProperty HoverBrushProperty =
             DependencyProperty.Register(
@@ -58,11 +90,27 @@ namespace UnityCommander.Rendering.Icons
                 typeof(Brush),
                 typeof(IconRender));
 
+        public Brush HoverBrush
+        {
+            get => (Brush)GetValue(HoverBrushProperty);
+            set => SetValue(HoverBrushProperty, value);
+        }
+
+        #endregion
+
+        #region Command and CommandParameter properties
+
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(
                 nameof(Command),
                 typeof(ICommand),
                 typeof(IconRender));
+
+        public ICommand? Command
+        {
+            get => (ICommand?)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
+        }
 
         public static readonly DependencyProperty CommandParameterProperty =
             DependencyProperty.Register(
@@ -70,12 +118,42 @@ namespace UnityCommander.Rendering.Icons
                 typeof(object),
                 typeof(IconRender));
 
-        public static readonly DependencyProperty ToneProperty =
+
+        public object? CommandParameter
+        {
+            get => (object?)GetValue(CommandParameterProperty);
+            set => SetValue(CommandParameterProperty, value);
+        }
+
+        public static readonly DependencyProperty KeyProperty =
             DependencyProperty.Register(
-                nameof(Tone),
-                typeof(IconTone),
+                nameof(Key),
+                typeof(string),
                 typeof(IconRender),
-                new PropertyMetadata(IconTone.Default, UpdateIcon));
+                new PropertyMetadata(null, UpdateIcon));
+
+        public string Key
+        {
+            get => (string)GetValue(KeyProperty);
+            set => SetValue(KeyProperty, value);
+        }
+
+        #endregion
+
+        #region Series of properties that affect the icon rendering
+
+        public static readonly DependencyProperty ToneProperty =
+          DependencyProperty.Register(
+              nameof(Tone),
+              typeof(IconTone),
+              typeof(IconRender),
+              new PropertyMetadata(IconTone.Default, UpdateIcon));
+
+        public IconTone Tone
+        {
+            get => (IconTone)GetValue(ToneProperty);
+            set => SetValue(ToneProperty, value);
+        }
 
         public static readonly DependencyProperty StateProperty =
             DependencyProperty.Register(
@@ -84,12 +162,24 @@ namespace UnityCommander.Rendering.Icons
                 typeof(IconRender),
                 new PropertyMetadata(VisualState.Normal, UpdateIcon));
 
+        public VisualState State
+        {
+            get => (VisualState)GetValue(StateProperty);
+            set => SetValue(StateProperty, value);
+        }
+
         public static readonly DependencyProperty IconKindProperty =
             DependencyProperty.Register(
                 nameof(IconKind),
                 typeof(IconKind),
                 typeof(IconRender),
                 new PropertyMetadata(IconKind.Default, UpdateIcon));
+
+        public IconKind IconKind
+        {
+            get => (IconKind)GetValue(IconKindProperty);
+            set => SetValue(IconKindProperty, value);
+        }
 
         public static readonly DependencyProperty RoleProperty =
              DependencyProperty.Register(
@@ -98,88 +188,74 @@ namespace UnityCommander.Rendering.Icons
                  typeof(IconRender),
                  new PropertyMetadata(IconRole.Generic, UpdateIcon));
 
-        public ICommand? Command
-        {
-            get => (ICommand?)GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
-        }
-
-        public object? CommandParameter
-        {
-            get => (object?)GetValue(CommandParameterProperty);
-            set => SetValue(CommandParameterProperty, value);
-        }
-
-        public IconTone Tone
-        {
-            get => (IconTone)GetValue(ToneProperty);
-            set => SetValue(ToneProperty, value);
-        }
-
-        public VisualState State
-        {
-            get => (VisualState)GetValue(StateProperty);
-            set => SetValue(StateProperty, value);
-        }
-
-        public IconKind IconKind
-        {
-            get => (IconKind)GetValue(IconKindProperty);
-            set => SetValue(IconKindProperty, value);
-        }
-
         public IconRole Role
         {
             get => (IconRole)GetValue(RoleProperty);
             set => SetValue(RoleProperty, value);
         }
 
-        public string Key
+        #endregion
+
+
+        public static readonly DependencyProperty ViewBoxXProperty =
+           DependencyProperty.Register(
+               nameof(ViewBoxX),
+               typeof(double),
+               typeof(IconRender));
+
+        public double ViewBoxX
         {
-            get => (string)GetValue(KeyProperty);
-            set => SetValue(KeyProperty, value);
+            get => (double)GetValue(ViewBoxXProperty);
+            set => SetValue(ViewBoxXProperty, value);
         }
 
-        public Geometry Data
+        public static readonly DependencyProperty ViewBoxYProperty =
+           DependencyProperty.Register(
+               nameof(ViewBoxY),
+               typeof(double),
+               typeof(IconRender));
+
+        public double ViewBoxY
         {
-            get => (Geometry)GetValue(DataProperty);
-            private set => SetValue(DataProperty, value);
+            get => (double)GetValue(ViewBoxYProperty);
+            set => SetValue(ViewBoxYProperty, value);
         }
 
-        public Brush Brush
+        public static readonly DependencyProperty ViewBoxWidthProperty =
+           DependencyProperty.Register(
+               nameof(ViewBoxWidth),
+               typeof(double),
+               typeof(IconRender));
+
+        public double ViewBoxWidth
         {
-            get => (Brush)GetValue(BrushProperty);
-            set => SetValue(BrushProperty, value);
+            get => (double)GetValue(ViewBoxWidthProperty);
+            set => SetValue(ViewBoxWidthProperty, value);
         }
 
-        public Brush Stroke
+        public static readonly DependencyProperty ViewBoxHeightProperty =
+           DependencyProperty.Register(
+               nameof(ViewBoxHeight),
+               typeof(double),
+               typeof(IconRender));
+
+        public double ViewBoxHeight
         {
-            get => (Brush)GetValue(StrokeProperty);
-            set => SetValue(StrokeProperty, value);
+            get => (double)GetValue(ViewBoxHeightProperty);
+            set => SetValue(ViewBoxHeightProperty, value);
         }
 
-        public Brush Fill
-        {
-            get => (Brush)GetValue(FillProperty);
-            set => SetValue(FillProperty, value);
-        }
+        public static readonly DependencyProperty LayersProperty =
+          DependencyProperty.Register(
+              nameof(Layers),
+              typeof(IReadOnlyList<IconRenderLayer>),
+              typeof(IconRender),
+              new PropertyMetadata(default(IReadOnlyList<IconRenderLayer>), UpdateIcon));
 
-        public double StrokeThickness
+        public IReadOnlyList<IconRenderLayer> Layers
         {
-            get => (double)GetValue(StrokeThicknessProperty);
-            set => SetValue(StrokeThicknessProperty, value);
-        }
-
-        public Brush DefaultBrush
-        {
-            get => (Brush)GetValue(DefaultBrushProperty);
-            set => SetValue(DefaultBrushProperty, value);
-        }
-
-        public Brush HoverBrush
-        {
-            get => (Brush)GetValue(HoverBrushProperty);
-            set => SetValue(HoverBrushProperty, value);
+            get => (IReadOnlyList<IconRenderLayer>)GetValue(LayersProperty);
+            set => SetValue(LayersProperty, value);
         }
 
         static IconRender()
@@ -223,8 +299,8 @@ namespace UnityCommander.Rendering.Icons
         //}
 
         private static void UpdateIcon(
-             DependencyObject d,
-             DependencyPropertyChangedEventArgs e)
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e)
         {
             var control = (IconRender)d;
 
@@ -233,10 +309,11 @@ namespace UnityCommander.Rendering.Icons
                 if (!IconHub.TryGet(key, out var result))
                     return;
 
-                control.Data = result.Geometry;
-                control.Fill = result.Brush;
-                control.Stroke = result.Stroke;
-                control.StrokeThickness = result.StrokeWidth ?? 1;
+                control.Layers = result.Layers;
+                control.ViewBoxWidth = result.ViewBoxWidth;
+                control.ViewBoxHeight = result.ViewBoxHeight;
+                control.ViewBoxX = result.ViewBoxX;
+                control.ViewBoxY = result.ViewBoxY;
             }
 
             if (e.NewValue is IconKind || e.NewValue is IconRole)

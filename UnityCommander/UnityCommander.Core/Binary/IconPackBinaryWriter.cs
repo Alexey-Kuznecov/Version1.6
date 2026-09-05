@@ -18,8 +18,8 @@ namespace UnityCommander.Core.Binary
 
             foreach (var icon in icons.Values)
             {
-                WriteString(bw, icon.Key);
-                WriteString(bw, icon.Data);
+                //WriteString(bw, icon.Key);
+                //WriteString(bw, icon.Data);
 
                 bw.Write(icon.Color is not null);
 

@@ -4,6 +4,9 @@ namespace UnityCommander.Abstractions.Icons
     public sealed class RuntimeIcon
     {
         public string? Key { get; init; }
+
+        public IconType IconType { get; init; }
+
         public string? Data { get; init; }
 
         public string? Color { get; init; }

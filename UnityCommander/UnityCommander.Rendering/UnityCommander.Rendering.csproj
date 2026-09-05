@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander.Abstractions\UnityCommander.Abstractions.csproj" />
+    <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
     <ProjectReference Include="..\UnityCommander.Theme\UnityCommander.Theme.csproj" />
     <ProjectReference Include="..\UnityCommander.WPF\UnityCommander.WPF.csproj" />
   </ItemGroup>

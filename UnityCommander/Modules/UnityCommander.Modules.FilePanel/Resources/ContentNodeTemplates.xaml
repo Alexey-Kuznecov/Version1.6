@@ -256,7 +256,8 @@
                                 <icon:IconRender
                                     Key="{Binding IconKey}"
                                     Width="16"
-                                    Height="16" />
+                                    Height="16"
+                                    Brush="{DynamicResource UcAccentTertiaryBrush}" />
                             </ContentControl.Content>
                             <ContentControl.InputBindings>
                                 <MouseBinding Command="{Binding Command}" Gesture="LeftClick" />
