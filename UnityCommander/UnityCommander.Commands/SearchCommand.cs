@@ -353,7 +353,7 @@ namespace UnityCommander.Commands
             IArgumentCollection args,
             out ISearchFilter? filter)
         {
-            var extensions = args.GetStrings("extensions");
+            var extensions = args.GetValues("extensions");
 
             if (extensions.Count == 0)
             {

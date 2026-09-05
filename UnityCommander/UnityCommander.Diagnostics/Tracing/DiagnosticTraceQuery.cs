@@ -13,6 +13,8 @@ namespace UnityCommander.Diagnostics.Tracing
 
         public DateTime? To { get; init; }
 
+        public IReadOnlyDictionary<string, object?>? Data { get; init; }
+
         public int? Limit { get; init; }
     }
 }

@@ -75,10 +75,18 @@ namespace UnityCommander.Diagnostics.Tracing
                 }
 
                 if (query.From.HasValue)
-                    result = result.Where(x => x.Timestamp >= query.From);
+                    result = result.Where(x => x.Timestamp >= query.From.Value);
 
                 if (query.To.HasValue)
-                    result = result.Where(x => x.Timestamp <= query.To);
+                    result = result.Where(x => x.Timestamp <= query.To.Value);
+
+                if (query.Data != null)
+                {
+                    result = result.Where(entry =>
+                        query.Data.All(filter =>
+                            entry.Data.TryGetValue(filter.Key, out var value) &&
+                            Equals(value, filter.Value)));
+                }
 
                 result = result.OrderBy(x => x.Timestamp);
 

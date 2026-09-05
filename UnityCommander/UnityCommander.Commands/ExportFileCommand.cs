@@ -57,12 +57,12 @@ namespace UnityCommander.Commands
                     icon.Measure(new Size(100, 100));
                     icon.Arrange(new Rect(0, 0, 100, 100));
 
-                    icons[name] = new RuntimeIcon
-                    {
-                        Key = name,
-                        Data = icon.Data,
-                        Color = null
-                    };
+                    //icons[name] = new RuntimeIcon
+                    //{
+                    //    Key = name,
+                    //    Data = icon.Data,
+                    //    Color = null
+                    //};
                 }
             });
 

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+
 using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Mode;
@@ -11,7 +11,7 @@ using UnityCommander.Commands.Diagnostic;
 using UnityCommander.Commands.Parsing;
 using UnityCommander.Commands.Services;
 using UnityCommander.Common.Diagnostic;
-using UnityCommander.Diagnostics.Diagnostic;
+using UnityCommander.Diagnostics.Reporting;
 
 
 namespace UnityCommander.Commands

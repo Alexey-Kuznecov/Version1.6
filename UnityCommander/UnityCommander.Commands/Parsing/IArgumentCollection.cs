@@ -9,10 +9,14 @@ namespace UnityCommander.Commands.Parsing
 
         string? GetString(string name);
 
-        IReadOnlyList<string> GetStrings(string name);
+        IReadOnlyList<string> GetValues(string name);
 
-        int GetInt(string name, int defaultValue = 0);
+        bool TryGetKeyValues(
+          string name,
+          out IReadOnlyList<KeyValuePair<string, object>> values);
 
         string? GetAt(int index);
+
+        int GetInt(string name, int defaultValue = 0);
     }
 }

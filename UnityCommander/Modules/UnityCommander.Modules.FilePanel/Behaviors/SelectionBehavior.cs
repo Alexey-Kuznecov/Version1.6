@@ -96,12 +96,12 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         {
             var list = (ListView)sender;
 
-            Debug.WriteLine(
-               $"[Selection] PreviewLeftMouseDown " +
-               $"Source={e.Source?.GetType().Name}, " +
-               $"OriginalSource={e.OriginalSource?.GetType().Name}, " +
-               $"Handled={e.Handled}, " +
-               $"Modifiers={Keyboard.Modifiers}");
+            //Debug.WriteLine(
+            //   $"[Selection] PreviewLeftMouseDown " +
+            //   $"Source={e.Source?.GetType().Name}, " +
+            //   $"OriginalSource={e.OriginalSource?.GetType().Name}, " +
+            //   $"Handled={e.Handled}, " +
+            //   $"Modifiers={Keyboard.Modifiers}");
 
 
             if (!TryGetSelectionTarget(

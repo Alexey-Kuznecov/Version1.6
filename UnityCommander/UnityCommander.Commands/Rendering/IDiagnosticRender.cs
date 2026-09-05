@@ -1,7 +1,7 @@
 ﻿
 
 using UnityCommander.CLI.Core;
-using UnityCommander.Diagnostics.Diagnostic;
+using UnityCommander.Diagnostics.Reporting;
 
 namespace UnityCommander.Commands.Diagnostic
 {

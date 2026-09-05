@@ -28,6 +28,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterInstance<ICommandDescriptor>(new CopyCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new IndexCommandDefinition());
             registry.RegisterInstance<ICommandDescriptor>(new FileSestemCommandDefinition());
+            registry.RegisterInstance<ICommandDescriptor>(new TraceCommandDefinition());
         }
     }
 }
