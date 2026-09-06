@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
@@ -76,6 +77,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IColumnStateManager columnStateManager;
         private readonly IColumnRegistry columnRegistry;
         private readonly NodeContextRegistry _contextRegistry;
+        private readonly ITabStateRegistry _tabStateRegistry;
         private readonly TabState _state;
 
         public event Action<string> PathChanged;
@@ -137,7 +139,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ViewportMapper scrollMapper, 
               ISettingsService settingsService,
               IPerformanceProfiler profiler, 
-              ICreationService creationService)
+              ICreationService creationService, 
+              ITabStateRegistry tabStateRegistry,
+              IWindowManager windowManager)
             : base(regionManager)
         {
             _performanceProfiler = profiler;
@@ -147,6 +151,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _contextRegistry = contextRegistry;
 
             _state = new TabState();
+
+            _tabStateRegistry = tabStateRegistry;
+
             _state.CurrentPathChanged += path =>
             {
                 RaisePropertyChanged(nameof(CurrentDirectory));
@@ -193,7 +200,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 _commandUIService,
                 dropTarget,
                 _contextRegistry, 
-                scrollMapper);
+                scrollMapper,
+                windowManager);
 
             var contentFactory = new ContentNodeFactory(contextFactory);
 
@@ -332,6 +340,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 token = Guid.NewGuid();
 
             SetTabId(token);
+
+            _tabStateRegistry.Register(_state);
 
             _navigationService.CurrentChanged += OnPathChanged;
 
@@ -598,6 +608,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _navigationService.CurrentChanged -= OnPathChanged;
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
 
+            _tabStateRegistry.Unregister(_state.TabId);
             //(_navigationContext as IDisposable).Dispose();
             //(_driveNodeContext as IDisposable).Dispose();
             (_folderNodeContext as IDisposable).Dispose();

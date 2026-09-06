@@ -3,6 +3,7 @@ using Prism.Commands;
 using System;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Common.Commands;
+using UnityCommander.Common.Panels;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
@@ -11,11 +12,16 @@ namespace UnityCommander.Services
     {
         private readonly CommandExecutionService _commands;
         private readonly CompositeIconResolver _iconResolver;
+        private readonly FilePanelContext _panelContext;
 
-        public CommandUIService(CompositeIconResolver iconResolver, CommandExecutionService commands)
+        public CommandUIService(
+            CompositeIconResolver iconResolver, 
+            CommandExecutionService commands, 
+            FilePanelContext panelContext)
         {
             _commands = commands;
             _iconResolver = iconResolver;
+            _panelContext = panelContext;
         }
 
         public UICommand Create(string id)
@@ -28,6 +34,8 @@ namespace UnityCommander.Services
 
                 Title = meta.DisplayName,
                 Description = meta.Description,
+
+                CommandParameter = _panelContext,
 
                 IconKey = _iconResolver.Resolve(id).Key,
 
@@ -49,6 +57,7 @@ namespace UnityCommander.Services
                 Id = id,
                 Title = meta.DisplayName,
                 Description = meta.Description,
+                CommandParameter = _panelContext,
                 IconKey = _iconResolver.Resolve(id).Key,
                 Command = command,
                 CanExecute = canExecute

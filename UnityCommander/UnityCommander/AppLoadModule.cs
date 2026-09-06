@@ -19,6 +19,7 @@ using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel;
+using UnityCommander.Modules.FilePanel.Dialog;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
 using UnityCommander.Modules.SettingsPanel.Views;
@@ -146,6 +147,20 @@ namespace UnityCommander
                      Width = 500,
                      IsResizable = false,
                      Title = "Копирование файлов"
+                 }
+                 ));
+
+
+            dialog.Register(new DialogDefinition(
+                 "core.creation-item-dialog",
+                 typeof(CreationDialogView),
+                 typeof(CreationDialogViewModel),
+                 new DialogOptions()
+                 {
+                     Height = 250,
+                     Width = 300,
+                     IsResizable = false,
+                     Title = "Создание элемента"
                  }
                  ));
         }

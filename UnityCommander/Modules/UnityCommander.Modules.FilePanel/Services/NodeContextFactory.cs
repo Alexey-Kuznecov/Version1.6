@@ -2,6 +2,7 @@
 using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
+using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Core.Navigation;
@@ -13,6 +14,7 @@ using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Controllers.DnD;
 using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.Services;
 using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.WPF.DragDrop;
@@ -30,6 +32,7 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly ILogger _logger;
         private readonly ICreationService _creationService;
         private ViewportMapper _scrollMapper;
+        private readonly IWindowManager _windowManager;
 
         public NodeContextFactory(
             ICreationService creationService,
@@ -39,7 +42,8 @@ namespace UnityCommander.Modules.FilePanel.Services
             ICommandUIService commands,
             GongDropAdapter dropTarget, 
             NodeContextRegistry nodeContext, 
-            ViewportMapper scrollMapper)
+            ViewportMapper scrollMapper,
+            IWindowManager windowManager)
         {
             var loggerCreator = Log.GetLoggerCreator();
 
@@ -53,6 +57,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             _contextRegistry = nodeContext;
             _scrollMapper = scrollMapper;
             _creationService = creationService;
+            _windowManager = windowManager;
         }
 
         public FolderNodeContext CreateFolderNode()
@@ -115,7 +120,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                 Commands = new ObservableCollection<UICommand>()
             };
 
-            var navFactory = new NavigationCommandFactory(_creationService, _navigation, _selection, _commands);
+            var navFactory = new NavigationCommandFactory(_creationService, _navigation, _selection, _commands, _windowManager);
 
             ctx.Commands.Add(
               navFactory.CreateGoBackCommand<FolderModel>(
@@ -138,14 +143,19 @@ namespace UnityCommander.Modules.FilePanel.Services
                     () => true));
 
             ctx.Commands.Add(
-                navFactory.CreateCreationCommand(
-                    CommandNames.File.Create,
-                    () => true));
-
-            ctx.Commands.Add(
-                 navFactory.CreateCreationCommand(
+                 navFactory.CreateCreationFolderCommand(
                      CommandNames.Directory.Create,
                      () => true));
+
+            ctx.Commands.Add(
+                 navFactory.CreateCreationFileCommand(
+                     CommandNames.File.Create,
+                     () => true));
+
+            ctx.Commands.Add(
+              navFactory.CreateCreationCommand(
+                  CommandNames.Panel.CreationItem,
+                  () => true));
 
             ctx.SelectionManager = _selection;
 

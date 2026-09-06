@@ -1,16 +1,29 @@
 ﻿
 using IconMaker.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using UnityCommander.Abstractions.Icons;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 
 namespace IconBrowser.Converters
 {
     public sealed class IconDefinitionCompiler
     {
+        private readonly ILogger _logger;
+
+        public IconDefinitionCompiler(LoggerCreator loggerCreator)
+        {
+            _logger = loggerCreator.For<IconDefinitionCompiler>(LogScope.Runtime);
+        }
+
         public RuntimeIcon Compile(IconDefinition definition)
         {
+            ArgumentNullException.ThrowIfNull(definition);
+
             var layers = definition.Layers
                 .OrderBy(x => x.Order)
                 .Select(x => new RuntimeIconLayer
@@ -24,12 +37,17 @@ namespace IconBrowser.Converters
                 })
                 .ToList();
 
+            if (layers.Count == 0)
+                _logger.Error($"Icon '{definition.Name}' contains no layers.");
+
+            if (layers.Any(x => string.IsNullOrWhiteSpace(x.Data)))
+                _logger.Error($"Icon '{definition.Name}' contains an empty geometry.");
+
             return new RuntimeIcon
             {
-                Data = layers.First().Data,
+                Data = layers[0].Data,
                 Key = definition.Name,
-                IconType = ResolveIconType(
-                    layers),
+                IconType = ResolveIconType(layers),
                 Layers = layers
             };
         }

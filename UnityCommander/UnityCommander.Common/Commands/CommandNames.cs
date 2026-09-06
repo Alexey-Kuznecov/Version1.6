@@ -54,6 +54,7 @@ namespace UnityCommander.Common.Commands
 
         public static class Panel
         {
+            public const string CreationItem = "panel.create-item";
             public const string GetCurrentItem = "panel.get-current-item";
             public const string SetCurrentItem = "panel.set-current-item";
 

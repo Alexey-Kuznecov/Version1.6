@@ -1,9 +1,9 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Models
 {
-    public enum CreateItemType
+    public enum CreationType
     {
-        Folder,
-        TextFile
+        File,
+        Directory
     }
 }

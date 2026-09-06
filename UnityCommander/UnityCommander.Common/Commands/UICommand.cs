@@ -11,6 +11,8 @@ namespace UnityCommander.Common.Commands
 
         public ICommand Command { get; init; }
 
+        public object? CommandParameter { get; init; }
+
         public string Title { get; init; }
 
         public string Description { get; init; }

@@ -18,19 +18,29 @@ namespace UnityCommander.Modules.FilePanel.Services
         public IReadOnlyList<CreationDefinition> GetAvailable()
             => _definitions.Values.ToList();
 
-        public Task CreateAsync(string creationId, string directory)
+        public Task CreateAsync(CreationContext creation)
         {
-            switch (creationId)
+            var name = creation.Type == CreationType.File
+                ? Path.ChangeExtension(
+                    creation.InputName,
+                    creation.Extension)
+                : creation.InputName;
+
+            var path = Path.Combine(
+                creation.TargetDirectory,
+                name);
+
+            if (File.Exists(path) || Directory.Exists(path))
+                throw new IOException($"Object already exists: {path}");
+
+            switch (creation.Type)
             {
-                case "folder":
-                    Directory.CreateDirectory(
-                        Path.Combine(directory, "New Folder"));
+                case CreationType.Directory:
+                    Directory.CreateDirectory(path);
                     break;
 
-                case "text-file":
-                    File.WriteAllText(
-                        Path.Combine(directory, "New Text File.txt"),
-                        string.Empty);
+                case CreationType.File:
+                    File.WriteAllText(path, string.Empty);
                     break;
             }
 

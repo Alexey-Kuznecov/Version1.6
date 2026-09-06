@@ -260,7 +260,10 @@
                                     Brush="{DynamicResource UcAccentTertiaryBrush}" />
                             </ContentControl.Content>
                             <ContentControl.InputBindings>
-                                <MouseBinding Command="{Binding Command}" Gesture="LeftClick" />
+                                <MouseBinding
+                                    Command="{Binding Command}"
+                                    CommandParameter="{Binding CommandParameter}"
+                                    Gesture="LeftClick" />
                             </ContentControl.InputBindings>
                         </ContentControl>
                     </DataTemplate>

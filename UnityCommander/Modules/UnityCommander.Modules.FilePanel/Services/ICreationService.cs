@@ -10,7 +10,6 @@ namespace UnityCommander.Modules.FilePanel.Services
         IReadOnlyList<CreationDefinition> GetAvailable();
 
         Task CreateAsync(
-            string creationId,
-            string directory);
+           CreationContext context);
     }
 }

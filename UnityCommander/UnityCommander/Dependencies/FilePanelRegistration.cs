@@ -1,6 +1,7 @@
 ﻿
 using Prism.Ioc;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models;
 using UnityCommander.Common.Panels;
 using UnityCommander.Common.Selection;
@@ -60,6 +61,8 @@ namespace UnityCommander.Dependencies
 
 
             registry.RegisterSingleton<ICreationService, CreationService>();
+            registry.RegisterSingleton<ITabStateRegistry, TabStateRegistry>();
+            registry.RegisterSingleton<FilePanelContext>();
         }
     }
 }
