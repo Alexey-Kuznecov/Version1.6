@@ -9,7 +9,15 @@ namespace UnityCommander.Common.Commands
     {
         public string Id { get; init; }
 
-        public ICommand Command { get; init; }
+        public ICommand? Command { get; init; }
+
+        private bool _isEnabled;
+
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set => this.SetProperty(ref _isEnabled, value);
+        }
 
         public object? CommandParameter { get; init; }
 
@@ -21,8 +29,11 @@ namespace UnityCommander.Common.Commands
 
         public Func<bool>? CanExecute { get; init; }
 
-        public bool IsEnabled => CanExecute?.Invoke() ?? true;
-
         public bool IsVisible { get; set; }
+
+        public void RefreshCanExecute()
+        {
+            IsEnabled = CanExecute?.Invoke() ?? true;
+        }
     }
 }

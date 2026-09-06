@@ -60,7 +60,8 @@
                                             Data="{Binding Geometry}"
                                             Fill="{Binding Fill}"
                                             Stroke="{Binding Stroke}"
-                                            StrokeThickness="{Binding StrokeWidth}" />
+                                            StrokeThickness="1.5" />
+                                        <!--  StrokeThickness="{Binding StrokeWidth}"  -->
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
 

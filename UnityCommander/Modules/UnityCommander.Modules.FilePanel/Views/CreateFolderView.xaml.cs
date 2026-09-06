@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace W3Manager
+namespace UnityCommander.Modules.FilePanel.Views
 {
     /// <summary>
-    /// Логика взаимодействия для UserControl1.xaml
+    /// Логика взаимодействия для CreateFolderView.xaml
     /// </summary>
-    public partial class UserControl1 : UserControl
+    public partial class CreateFolderView : UserControl
     {
-        public UserControl1()
+        public CreateFolderView()
         {
             InitializeComponent();
         }

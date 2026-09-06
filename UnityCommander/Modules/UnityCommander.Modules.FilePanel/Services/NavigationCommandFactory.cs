@@ -1,32 +1,40 @@
 ﻿
 using Prism.Commands;
 using System;
-using System.Reflection.Metadata;
+using System.Windows;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Panels;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Dialog;
 using UnityCommander.Modules.FilePanel.Models;
+using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
     public class NavigationCommandFactory // : INavigationCommandFactory
     {
+        private readonly ActiveTab _activeTab;
         private readonly NavigationManager _navigation;
         private readonly ICommandUIService _ui;
         private readonly ISelectionManager _selection;
         private readonly ICreationService _creationService;
         private readonly IWindowManager _windowManager;
+        private readonly IPopupService _popupService;
 
         public NavigationCommandFactory(
+            ActiveTab activeTab,
+            IPopupService popupService,
             ICreationService creationService,
             NavigationManager navigation,
             ISelectionManager selectionManager,
             ICommandUIService ui,
             IWindowManager windowManager)
         {
+            _activeTab = activeTab;
+            _popupService = popupService;
             _navigation = navigation;
             _ui = ui;
             _selection = selectionManager;
@@ -35,29 +43,37 @@ namespace UnityCommander.Modules.FilePanel.Services
         }
 
         public UICommand CreateGoBackCommand<T>(
-            string id,
-            Func<bool> canExecute)
+           string id,
+           Func<bool> canExecute)
         {
-            return _ui.Create(
+            var command = _ui.Create<object>(
                 id,
-                new DelegateCommand<T>(x =>
-                {
-                    _navigation.GoBack();
-                }),
+                new DelegateCommand<object>(
+                    _ => _navigation.GoBack(),
+                    _ => canExecute()),
                 canExecute);
+
+            _navigation.CurrentChanged += _ =>
+                command.RefreshCanExecute();
+
+            return command;
         }
 
         public UICommand CreateGoForwardCommand<T>(
-         string id,
-         Func<bool> canExecute)
+            string id,
+            Func<bool> canExecute)
         {
-            return _ui.Create(
-                id,
-                new DelegateCommand<T>(x =>
-                {
-                    _navigation.GoForward();
-                }),
-                canExecute);
+            var command = _ui.Create<object>(
+                 id,
+                 new DelegateCommand<object>(
+                     _ => _navigation.GoForward(),
+                     _ => canExecute()), 
+                 canExecute);
+
+            _navigation.CurrentChanged += _ =>
+                  command.RefreshCanExecute();
+
+            return command;
         }
 
         public UICommand CreateShowDrivesCommand(
@@ -81,10 +97,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                 id,
                 new DelegateCommand<object>(x =>
                 {
-                    if (x != null)
-                    {
-                        _navigation.TryNavigateTo(x.ToString(), true);
-                    }
+                    _navigation.TryNavigateTo(_activeTab.CurrentPath, true);
                 }),
                 canExecute);
         }
@@ -97,17 +110,13 @@ namespace UnityCommander.Modules.FilePanel.Services
                 id,
                 new DelegateCommand<object>(parameter =>
                 {
-
-                    if (parameter is not FilePanelContext context)
-                        return;
-
                     var request = _windowManager.ShowModalDialog<CreationDialogResult>(
                         "core.creation-item-dialog");
 
                     if (request is null)
                         return;
 
-                    var path = context.CurrentPath;
+                    var path = _activeTab.CurrentPath;
 
                     var creation = 
                     new CreationContext(
@@ -128,17 +137,14 @@ namespace UnityCommander.Modules.FilePanel.Services
         {
             return _ui.Create(
                 id,
-                new DelegateCommand<object>(parameter =>
+                new DelegateCommand<object>(obj =>
                 {
-
-                    if (parameter is not FilePanelContext context)
+                    if (obj is not FrameworkElement element)
                         return;
 
-                    var path = context.CurrentPath;
-
-                    var creation = new CreationContext("New File", path, ".txt", CreationType.File, null);
-
-                    _creationService.CreateAsync(creation);
+                    _popupService.Show<CreateFileViewModel>(
+                        element, 
+                        PopupPlacement.Bottom);
                 }),
                 canExecute);
         }
@@ -149,17 +155,14 @@ namespace UnityCommander.Modules.FilePanel.Services
         {
             return _ui.Create(
                 id,
-                new DelegateCommand<object>(parameter =>
+                new DelegateCommand<object>(obj =>
                 {
-
-                    if (parameter is not FilePanelContext context)
+                    if (obj is not FrameworkElement element)
                         return;
 
-                    var path = context.CurrentPath;
-
-                    var creation = new CreationContext("New Folder", path, null, CreationType.Directory, null);
-
-                    _creationService.CreateAsync(creation);
+                    _popupService.Show<CreateFolderViewModel>(
+                       element,
+                       PopupPlacement.Bottom);
                 }),
                 canExecute);
         }

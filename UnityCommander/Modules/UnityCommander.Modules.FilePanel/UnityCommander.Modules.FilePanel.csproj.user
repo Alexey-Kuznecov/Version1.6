@@ -13,6 +13,12 @@
     <Compile Update="Dialog\CreationDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\CreateFileView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\CreateFolderView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\ImageViewerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

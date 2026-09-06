@@ -2,6 +2,7 @@
 
 using Prism.Ioc;
 using Prism.Modularity;
+using Prism.Mvvm;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,12 +15,15 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
 using UnityCommander.Core.Diagnostics;
+using UnityCommander.Core.Registrar;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.Dialog;
+using UnityCommander.Modules.FilePanel.ViewModels;
+using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
 using UnityCommander.Modules.SettingsPanel.Views;
@@ -32,6 +36,7 @@ using UnityCommander.Settings.Abstactions;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views.CopyDialogs;
 using UnityCommander.Views.Dialogs;
+using IViewRegistry = UnityCommander.Core.Registrar.IViewRegistry;
 
 namespace UnityCommander
 {
@@ -50,6 +55,7 @@ namespace UnityCommander
             RegisterShortcuts(containerProvider);
             RegisterDiaglog(containerProvider);
             RegisterCommand(containerProvider);
+            RegisterViewModels(containerProvider);
 
             var initializer = containerProvider.Resolve<AppInitializer>();
             var backgroundService = containerProvider.Resolve<BackgroundServiceHost>();
@@ -178,6 +184,14 @@ namespace UnityCommander
                         windowManager.ShowDialog<SettingsPanelView>();
                         await Task.CompletedTask;
                     }));
+        }
+
+        private static void RegisterViewModels(IContainerProvider containerRegistry)
+        {
+            var viewRegistry = containerRegistry.Resolve<IViewRegistry>();
+
+            viewRegistry.Register<CreateFolderViewModel, CreateFolderView>();
+            viewRegistry.Register<CreateFileViewModel, CreateFileView>();
         }
 
         private static void RegisterShortcuts(IContainerProvider containerRegistry)

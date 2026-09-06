@@ -250,6 +250,7 @@
                             Width="25"
                             Height="25"
                             Padding="3"
+                            IsEnabled="{Binding IsEnabled}"
                             Style="{StaticResource UcIconControlStyle}"
                             ToolTip="{Binding Description}">
                             <ContentControl.Content>
@@ -257,14 +258,15 @@
                                     Key="{Binding IconKey}"
                                     Width="16"
                                     Height="16"
-                                    Brush="{DynamicResource UcAccentTertiaryBrush}" />
+                                    Brush="{DynamicResource UcAccentTertiaryBrush}"
+                                    IsEnabled="{Binding IsEnabled}"
+                                    State="Disabled" />
                             </ContentControl.Content>
-                            <ContentControl.InputBindings>
-                                <MouseBinding
-                                    Command="{Binding Command}"
-                                    CommandParameter="{Binding CommandParameter}"
-                                    Gesture="LeftClick" />
-                            </ContentControl.InputBindings>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding Command}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </ContentControl>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

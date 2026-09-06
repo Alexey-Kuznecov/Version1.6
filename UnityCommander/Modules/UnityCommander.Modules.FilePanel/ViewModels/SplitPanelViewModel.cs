@@ -27,6 +27,7 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.Panels;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
 using UnityCommander.Core.Helper;
@@ -46,6 +47,7 @@ using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Settings;
 using UnityCommander.Settings.Abstactions;
+using UnityCommander.WPF;
 using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
@@ -141,7 +143,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IPerformanceProfiler profiler, 
               ICreationService creationService, 
               ITabStateRegistry tabStateRegistry,
-              IWindowManager windowManager)
+              IWindowManager windowManager,
+              IPopupService popupService,
+              ActiveTab activeTab)
             : base(regionManager)
         {
             _performanceProfiler = profiler;
@@ -201,7 +205,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 dropTarget,
                 _contextRegistry, 
                 scrollMapper,
-                windowManager);
+                windowManager,
+                popupService,
+                activeTab);
 
             var contentFactory = new ContentNodeFactory(contextFactory);
 
@@ -497,44 +503,44 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             var sw = Stopwatch.StartNew();
 
-                SetInternalCurrentPath(path);
+            SetInternalCurrentPath(path);
 
-                _cts?.Cancel();
-                _cts?.Dispose();
+            _cts?.Cancel();
+            _cts?.Dispose();
 
-                _cts = new CancellationTokenSource();
-                var token = _cts.Token;
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
 
-                if (string.IsNullOrEmpty(path) ||
-                    VirtualPaths.MyComputer == path)
+            if (string.IsNullOrEmpty(path) ||
+                VirtualPaths.MyComputer == path)
+            {
+                await GoDrivePanel();
+
+                _workspaceController.ShowMyComputerMode(
+                    _headerNode,
+                    _driveNode);
+            }
+            else
+            {
+                using (_loggerCreator.ProfileScope(
+                    LogScope.Runtime,
+                    "Refresh Panel"))
                 {
-                    await GoDrivePanel();
+                    await RefreshPanelAsync(
+                        path,
+                        token);
+                }
 
-                    _workspaceController.ShowMyComputerMode(
+                using (_loggerCreator.ProfileScope(
+                    LogScope.UI,
+                    "Workspace Creation"))
+                {
+                    _workspaceController.ShowDirectoryMode(
                         _headerNode,
-                        _driveNode);
+                        _folderNode,
+                        _fileNode);
                 }
-                else
-                {
-                    using (_loggerCreator.ProfileScope(
-                        LogScope.Runtime,
-                        "Refresh Panel"))
-                    {
-                        await RefreshPanelAsync(
-                            path,
-                            token);
-                    }
-
-                    using (_loggerCreator.ProfileScope(
-                        LogScope.UI,
-                        "Workspace Creation"))
-                    {
-                        _workspaceController.ShowDirectoryMode(
-                            _headerNode,
-                            _folderNode,
-                            _fileNode);
-                    }
-                }
+            }
                 sw.Stop();
 #if (Nlog)
                 _logger.Info(

@@ -45,48 +45,11 @@ namespace UnityCommander.Modules.FilePanel
 
             if (contextMenu == null)
             {
-                var selectionService = ctx.GetService<ISelectionService>();
-                var active = selectionService.GetActive();
+                var renameManager = ctx.GetService<IRenameManager>();
 
-                if (active.SelectedItems.Count == 1)
-                {
-                    var item = active.SelectedItems.First();
+                renameManager.Start();
 
-                    var visualElements = ctx.GetService<IVisualElementRegistry>();
-                    var element = visualElements.GetElement(item);
-
-                    if (element == null)
-                        return Task.CompletedTask;
-
-                    var overlay = ctx.GetService<IOverlayService>();
-
-                    var renameManager = ctx.GetService<IRenameManager>();
-
-                    renameManager.Start(((BaseDirectory)item).Path);
-
-                    var overlayRename = new RenameOverlay();
-
-                    overlayRename.RenameRequested += async newName =>
-                    {
-                        ((BaseDirectory)item).Name = newName;
-                        await renameManager.CommitAsync(newName);
-                    };
-
-                    overlay.Show(element, overlayRename);
-
-                    if (item is FileModel fileModel)
-                    {
-                        overlayRename.BeginEdit(
-                            fileModel.Name + fileModel.Extension,
-                            isFile: true);
-                       
-                        return Task.CompletedTask;
-                    }
-
-                    overlayRename.BeginEdit(
-                        ((BaseDirectory)item).Name,
-                        isFile: false);
-                }
+                return Task.CompletedTask;
             }
 
             return Task.CompletedTask;

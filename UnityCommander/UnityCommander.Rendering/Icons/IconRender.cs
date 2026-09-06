@@ -316,6 +316,11 @@ namespace UnityCommander.Rendering.Icons
                 control.ViewBoxY = result.ViewBoxY;
             }
 
+            if (control.State == VisualState.Disabled)
+            { 
+                
+            }
+
             if (e.NewValue is IconKind || e.NewValue is IconRole)
             {
                 control.DefaultBrush =

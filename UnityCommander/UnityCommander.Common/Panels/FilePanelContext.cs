@@ -4,20 +4,20 @@ using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.Common.Panels
 {
-    public sealed class FilePanelContext
+    public sealed class ActiveTab
     {
         private readonly ITabStateRegistry _states;
         private readonly IPanelRegistry _panelRegistry;
 
         public Guid ActiveTabId { get; private set; }
 
-        public TabState? ActiveTab =>
+        public TabState? Active =>
             _states.Get(ActiveTabId);
 
         public string? CurrentPath =>
-            ActiveTab?.CurrentPath;
+            Active?.CurrentPath;
 
-        public FilePanelContext(
+        public ActiveTab(
             ITabStateRegistry states,
             IPanelRegistry panelRegistry)
         {

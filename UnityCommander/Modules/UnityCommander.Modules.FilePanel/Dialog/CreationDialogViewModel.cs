@@ -23,8 +23,6 @@ namespace UnityCommander.Modules.FilePanel.Dialog
             CancelCommand = new DelegateCommand(Cancel);
         }
 
-
-
         public string Name
         {
             get => _name;
