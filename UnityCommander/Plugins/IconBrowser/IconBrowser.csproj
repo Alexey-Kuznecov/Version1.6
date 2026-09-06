@@ -2,20 +2,22 @@
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <AssemblyName>AIconBrowser</AssemblyName>
-    <RootNamespace>AIconBrowser</RootNamespace>
+    <AssemblyName>IconBrowser</AssemblyName>
+    <RootNamespace>IconBrowser</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\AIconBrowser</OutputPath>
-    <OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\AIconBrowser</OutputPath>
+    <OutputPath Condition="'$(TargetFramework)' == 'netcoreapp3.1'">..\..\..\UnityCommander\UnityCommander\bin\Debug\netcoreapp3.1\plugins\IconBrowser</OutputPath>
+    <OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\IconBrowser</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\IconsData.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UnityCommander.Integration\UnityCommander.Integration.csproj">
-      <Private>False</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
+    <ProjectReference Include="..\IconMaker.Core\IconMaker.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.DependencyInjection">
@@ -25,6 +27,9 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <HintPath>..\..\UnityCommander\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -49,4 +54,10 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Factory\" />
+  </ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\UnityCommander\UnityCommander\bin\Debug\net10.0-windows\plugins\IconBrowser\&quot;" />
+	</Target>
 </Project>

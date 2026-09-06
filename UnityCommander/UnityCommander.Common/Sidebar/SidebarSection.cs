@@ -1,5 +1,6 @@
 ﻿
-using System.Windows.Controls;
+using System;
+using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Common.Sidebar
 {
@@ -9,33 +10,35 @@ namespace UnityCommander.Common.Sidebar
 
         public ISidebarDefinition Definition { get; }
 
-        public UserControl View { get; }
+        public Type ViewType { get; }
 
-        public object ViewModel { get; }
+        public Type ViewModel { get; }
 
         public string IconKey { get; }
-
+        
         private bool _isActive;
+
+        public string OwnerId { get; set; }
 
         public SidebarSection(
            ISidebarDefinition def,
-           UserControl view)
+           Type view)
         {
             Id = def.Id;
             Definition = def;
-            View = view;
+            ViewType = view;
 
-            ViewModel = view.DataContext;
+            //ViewModel = view.DataContext;
         }
 
         public SidebarSection(
             string id, 
             string iconKey,
-            UserControl view, 
-            object content)
+            Type view,
+            Type content)
         {
             Id = id;
-            View = view;
+            ViewType = view;
             IconKey = iconKey;
             ViewModel = content;
         }

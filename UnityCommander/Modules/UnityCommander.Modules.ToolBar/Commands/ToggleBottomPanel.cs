@@ -1,14 +1,18 @@
 ﻿
+using System;
+using System.Windows.Input;
 using UnityCommander.Common.Commands;
-using UnityCommander.Ribbon.Core.Models;
 using UnityCommander.Services;
 
 namespace UnityCommander.Modules.ToolBar.Commands
 {
-    public class ToggleBottomPanel : IRibbonCommand
+    public class ToggleBottomPanel : ICommand
     {
-        private CommandService _commandService;
-        public ToggleBottomPanel(CommandService commandService, string id) 
+        private CommandExecutionService _commandService;
+        
+        public event EventHandler CanExecuteChanged;
+
+        public ToggleBottomPanel(CommandExecutionService commandService, string id) 
         {
             _commandService = commandService;
             Id = id;
@@ -16,9 +20,10 @@ namespace UnityCommander.Modules.ToolBar.Commands
 
         public string Id { get; }
 
-        public bool CanExecute() => true;
+        public bool CanExecute(object parameter)
+            => true;
 
-        public void Execute()
+        public void Execute(object parameter)
         {
             _commandService.ExecuteAsync(CommandNames.UI.ToggleBottomPanel);
         }

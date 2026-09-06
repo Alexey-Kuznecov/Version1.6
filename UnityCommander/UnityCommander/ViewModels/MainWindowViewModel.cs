@@ -5,9 +5,6 @@
 // <summary>
 //   Defines the MainWindowViewModel type.
 // </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-using System.Linq;
 
 namespace UnityCommander.ViewModels
 {
@@ -15,26 +12,21 @@ namespace UnityCommander.ViewModels
     using Prism.Dialogs;
     using Prism.Events;
     using Prism.Mvvm;
-    using System;
     using System.IO;
     using System.Windows;
-    using System.Windows.Controls;
     using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Window;
-    using UnityCommander.Core.Behaviors;
     using UnityCommander.Mvvm;
-    using UnityCommander.Ribbon.Core.Services;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
-    using UnityCommander.Services.Interfaces.Settings;
     using UnityCommander.Services.Layout;
 
     /// <summary>
     /// The main window view model.
     /// </summary>
-    public class MainWindowViewModel : BindableBase, IKeyBinding
+    public class MainWindowViewModel : BindableBase
     {
-        private CommandService _commandService;
+        private CommandExecutionService _commandExecutionService;
 
         private IShellLayoutManager _shellLayoutManager;
 
@@ -51,14 +43,11 @@ namespace UnityCommander.ViewModels
         public MainWindowViewModel(
             IDialogService dialogService,
             IEventAggregator exchange,
-            ISettingsProviderService settingsProviderService,
-            IIconProviderService iconProviderService,
             IMultiCommandService command,
             IShellLayoutManager shellLayoutManager,
-            IRibbonManager ribbonManager,
-            CommandService commandService)
+            CommandExecutionService commandService)
         {
-            _commandService = commandService;
+            _commandExecutionService = commandService;
             _shellLayoutManager = shellLayoutManager;
             _shellLayoutManager.AreaChanged += OnAreaChanged;
 
@@ -68,8 +57,6 @@ namespace UnityCommander.ViewModels
                 .SaveCommand
                 .RegisterCommand(this.CloseWindowCommand);
 
-            var settings = settingsProviderService.GetAppConfig();
-                      
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
         }
 
@@ -118,7 +105,7 @@ namespace UnityCommander.ViewModels
                     this.importCustomWindow.CollapseRibbonCommand = new RelayCommand(obj =>
                     {
                         this.importCustomWindow.CollapseContent = (this.importCustomWindow.CollapseContent as string) == "Max" ? "Mix" : "Max";
-                        _commandService.ExecuteAsync(CommandNames.UI.ToggleRibbon);
+                        _commandExecutionService.ExecuteAsync(CommandNames.UI.ToggleRibbon);
                     });
                 }
             }
@@ -135,15 +122,5 @@ namespace UnityCommander.ViewModels
             {
                 Application.Current.Shutdown();
             });
-
-        public void SetBinding(object dependencyObject, KeyboardManager manager)
-        {
-            Grid grid = dependencyObject as Grid;
-
-            //foreach (var globalCommand in this.globalCommandManager.GetCommands().Where(globalCommand => globalCommand?.ShortcutKey != null))
-            //{
-            //    grid?.InputBindings.Add(new InputBinding(globalCommand.Command, globalCommand.ShortcutKey));
-            //}
-        }
     }
 }

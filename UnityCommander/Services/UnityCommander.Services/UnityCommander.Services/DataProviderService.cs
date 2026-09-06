@@ -1,12 +1,17 @@
 ﻿
 namespace UnityCommander.Services
 {
-    using Newtonsoft.Json.Linq;
     using System.Collections.Generic;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
+    using UnityCommander.Abstractions.Panels;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.Common.Panels;
+    using UnityCommander.Logging;
+    using UnityCommander.Logging.Contracts;
+    using UnityCommander.Logging.Core;
+    using UnityCommander.Logging.Infrastructure;
     using UnityCommander.Services.Interfaces;
 
     /// <summary>
@@ -14,6 +19,23 @@ namespace UnityCommander.Services
     /// </summary>
     public class DataProviderService : IDataProviderService
     {
+        private readonly FileModelFactory _factory;
+        private readonly FolderModelFactory _folderFactory;
+
+        private LoggerCreator _loggerCreator;
+        private ILogger _logger;
+
+        public DataProviderService(
+            FileModelFactory factory, 
+            FolderModelFactory folderFactory, 
+            LoggerCreator loggerCreator)
+        {
+            _factory = factory;
+            _folderFactory = folderFactory;
+            _loggerCreator = loggerCreator;
+            _logger = loggerCreator.For<DataProviderService>(LogScope.Runtime);
+        }
+
         /// <summary>
         /// Получить файлы в директории.
         /// </summary>
@@ -21,31 +43,40 @@ namespace UnityCommander.Services
         {
             return await Task.Run(() =>
             {
-                var dir = new DirectoryInfo(path);
-                var files = new List<FileModel>();
-
-                foreach (var file in dir.GetFiles())
+                using (_loggerCreator.ProfileScope(LogScope.Runtime, "DataProviderService: Files"))
                 {
-                    if (cancellation.IsCancellationRequested)
-                        return files;
-
-                    if ((file.Attributes & FileAttributes.Hidden) == 0)
+                    try
                     {
-                        files.Add(new FileModel
+                        var dir = new DirectoryInfo(path);
+                        var files = new List<FileModel>();
+
+                        foreach (var file in dir.GetFiles())
                         {
-                            Name = Path.GetFileNameWithoutExtension(file.Name),
-                            Path = file.FullName,
-                            Extension = file.Extension,
-                            CreationTime = file.CreationTime,
-                            LastAccessTime = file.LastAccessTime,
-                            TargetPanel = TargetPanel.Files,
-                            Key = file.FullName,
-                            Size = file.Length,
-                        });
+                            if (cancellation.IsCancellationRequested)
+                                return files;
+
+                            if ((file.Attributes & FileAttributes.Hidden) == 0)
+                            {
+                                files.Add(_factory.Create(file.FullName));
+                            }
+                        }
+
+                        return files;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        return null;
+                    }
+                    catch (DriveNotFoundException)
+                    {
+                        return null;
+                    }
+                    catch (IOException ex)
+                    {
+                        _logger.Error($"Failed to enumerate directory: {path}", ex);
+                        return null;
                     }
                 }
-
-                return files;
             });
         }
 
@@ -56,29 +87,24 @@ namespace UnityCommander.Services
         {
             return await Task.Run(() =>
             {
-                var dir = new DirectoryInfo(path);
-                var folders = new List<FolderModel>();
-
-                foreach (var folder in dir.GetDirectories())
+                using (_loggerCreator.ProfileScope(LogScope.Runtime, "DataProviderService: Folders"))
                 {
-                    if (cancellation.IsCancellationRequested)
-                        return folders;
+                    var dir = new DirectoryInfo(path);
+                    var folders = new List<FolderModel>();
 
-                    if ((folder.Attributes & FileAttributes.Hidden) == 0)
+                    foreach (var folder in dir.GetDirectories())
                     {
-                        folders.Add(new FolderModel
-                        {
-                            Name = folder.Name,
-                            Path = folder.FullName,
-                            CreationTime = folder.CreationTime,
-                            LastAccessTime = folder.LastAccessTime,
-                            TargetPanel = TargetPanel.Folders,
-                            Key = folder.FullName
-                        });
-                    }
-                }
+                        if (cancellation.IsCancellationRequested)
+                            return folders;
 
-                return folders;
+                        if ((folder.Attributes & FileAttributes.Hidden) == 0)
+                        {
+                            folders.Add(_folderFactory.Create(folder.FullName));
+                        }
+                    }
+
+                    return folders;
+                }
             });
         }
 
@@ -102,7 +128,8 @@ namespace UnityCommander.Services
                         FreeSpace = drive.AvailableFreeSpace,   // сырые байты
                         UsedSpace = drive.TotalSize - drive.AvailableFreeSpace, // сырые байты
                         TotalAmount = drive.TotalSize,          // сырые байты
-                        TargetPanel = TargetPanel.LocalDisk
+                        TargetPanel = TargetPanel.LocalDisk,
+                        IconKey = "core.drive",
                     });
                 }
 

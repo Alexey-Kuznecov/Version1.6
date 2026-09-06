@@ -1,9 +1,6 @@
-﻿using CommandSystem.Abstractions;
+﻿
 using Prism.Ioc;
 using System.Windows;
-using UnityCommander.Commands;
-using UnityCommander.Common.Commands;
-using UnityCommander.Services;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 

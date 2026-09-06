@@ -7,6 +7,7 @@ using Prism.Commands;
 using Prism.Dialogs;
 using Prism.Events;
 using Prism.Mvvm;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Core;
 using UnityCommander.Core.IO.Operations;
 using UnityCommander.Core.Mvvm;

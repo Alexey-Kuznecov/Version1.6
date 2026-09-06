@@ -2,8 +2,7 @@
 namespace UnityCommander.Modules.TabPanel.Behaviors
 {
     using System.Windows;
-
-    using UnityCommander.Common.Module;
+    using UnityCommander.Abstractions.Panels;
 
     /// <summary>
     /// The element focus data.

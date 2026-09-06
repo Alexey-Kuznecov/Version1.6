@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using UnityCommander.Common.Models.Directory;
 using UnityCommander.Controls.Layout;
-using UnityCommander.Core.Behaviors;
-using UnityCommander.Core.DragDrop;
 using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
-    public class DragDropContextFactory
+    public class DragDropContextFactory : IDragDropContextFactory
     {
         public DragDropContext Create(
             IDropInfo info)
@@ -38,7 +39,9 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 TargetPath = GetCurrentPath(targetContext),
                 SourcePath = GetCurrentPath(sourceContext),
                 SourceItems =
-                    ExtractSelection(sourceContext)
+                    ExtractSelection(sourceContext),
+                DropPosition = info.DropPosition,
+                KeyStates = info.KeyStates
             };
         }
 

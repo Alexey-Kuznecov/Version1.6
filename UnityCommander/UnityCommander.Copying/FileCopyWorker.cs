@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics;
+using System.IO;
 using UnityCommander.Copying.Core;
 using UnityCommander.Copying.Sessions;
 using UnityCommander.Copying.Settings;

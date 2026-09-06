@@ -1,15 +1,16 @@
 ﻿
 using Prism.Ioc;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using UnityCommander.UI.Helper;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
-using UnityCommander.Logging.Configuration;
-using UnityCommander.Logging.Core;
-using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.UI.Overlay;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
@@ -82,60 +83,107 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 list.SelectionMode = SelectionMode.Multiple; // отключаем стандартное выделение
                 list.SelectedItem = null;
 
-                list.PreviewMouseLeftButtonDown += OnMouseDown;
-
-                //logger = logCreat.Create(
-                //    category: LogCategory.UserAction,
-                //    scope: LogScope.UserAction
-                //    );
+                list.PreviewMouseLeftButtonDown += OnPreviewLeftMouseDown;
+                list.PreviewMouseRightButtonDown += OnRightMouseDown;
             }
         }
 
-        private static void OnMouseDown(object sender, MouseButtonEventArgs e)
+        private static void OnPreviewLeftMouseDown(
+             object sender,
+             MouseButtonEventArgs e)
         {
             var list = (ListView)sender;
-            var container = list.ContainerFromElement((DependencyObject)e.OriginalSource) as ListViewItem;
-            if (container == null)
-            {
-                GetManager(list).Clear();
-                list.SelectedItems.Clear();
-                return;
-            }
 
-            int index = list.ItemContainerGenerator.IndexFromContainer(container);
-            var ctx = new SelectionContext(list.Items.Cast<ISelectableItem>());
-            var manager = GetManager(list); // через AttachedProperty
-            if (ctx == null || manager == null)
+            if (IsOverlayInput(e.OriginalSource))
                 return;
 
-            if (list.SelectedItem is ISelectableItem select)
+            if (!TryGetSelectionTarget(
+                    list,
+                    e,
+                    out var manager,
+                    out var index))
             {
-                manager.FocusedItem = select;
+                e.Handled = true;
+                manager?.ClearSelection();
+                return;
             }
-
-            bool ctrl =
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-            bool shift =
-                Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
 
             var action = new SelectionAction
             {
-                Type = SelectionActionType.CtrlClick,
+                TargetIndex = index,
+                Type = SelectionActionType.SingleClick
+            };
+
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                action.Type = SelectionActionType.ShiftClick;
+            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                action.Type = SelectionActionType.CtrlClick;
+
+            e.Handled = true;
+
+            manager.Handle(action);
+        }
+
+        private static bool IsOverlayInput(object source)
+        {
+            if (source is not DependencyObject element)
+                return false;
+
+            return element.FindParent<OverlayHost>() != null;
+        }
+
+        private static void OnRightMouseDown(
+            object sender,
+            MouseButtonEventArgs e)
+        {
+            var list = (ListView)sender;
+
+
+            if (!TryGetSelectionTarget(
+                    list,
+                    e,
+                    out var manager,
+                    out var index))
+                return;
+
+
+            var action = new SelectionAction
+            {
+                Type = SelectionActionType.ContextMenuClick,
                 TargetIndex = index
             };
 
-            if (shift)
-                action.Type = SelectionActionType.ShiftClick;
-            else if (ctrl)
-                action.Type = SelectionActionType.CtrlClick;
-            else
-                action.Type = SelectionActionType.SingleClick;
-
-            //logger.Debug($" Action: {action.Type}");
+            manager.Handle(action);
 
             e.Handled = true;
-            manager.Handle(ctx, action);
+        }
+
+        private static bool TryGetSelectionTarget(
+             ListView list,
+             MouseButtonEventArgs e,
+             out ISelectionManager manager,
+             out int index)
+        {
+            manager = GetManager(list);
+            index = -1;
+
+            if (manager == null)
+                return false;
+
+            var container =
+                list.ContainerFromElement(
+                    (DependencyObject)e.OriginalSource)
+                as ListViewItem;
+
+            if (container == null)
+                return false;
+
+            index = list.ItemContainerGenerator.IndexFromContainer(container);
+
+            manager.SetItems(
+                list.Items.Cast<ISelectableItem>());
+
+            return true;
         }
 
         private static void SyncFromManager(ListView list, ISelectionManager manager)

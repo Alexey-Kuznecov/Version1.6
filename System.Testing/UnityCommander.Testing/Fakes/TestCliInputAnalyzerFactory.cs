@@ -67,6 +67,7 @@ namespace UnityCommander.Testing.Fake
                 ArgumentValueType.String)
                 },
                 flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                 usage: "git commit <message> [-m <message>] [--amend]"
             );
         }
@@ -94,6 +95,7 @@ namespace UnityCommander.Testing.Fake
                 ArgumentValueType.String)
                 },
                 flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+                positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
                 usage: "git push <remote> [--all]"
             );
         }
@@ -123,6 +125,7 @@ namespace UnityCommander.Testing.Fake
                     isRequired: true)
             },
             flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
             usage: "plugin load <path> [--force] [--dependencies]"
             );
         }
@@ -151,6 +154,7 @@ namespace UnityCommander.Testing.Fake
                     isRequired: false)
             },
             flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
             usage: "plugin unload [name] [--all] [--force]"
             );
         }
@@ -175,6 +179,7 @@ namespace UnityCommander.Testing.Fake
                     isRequired: false)
             },
             flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
             usage: "plugin reload [name] [--all]"
             );
         }
@@ -192,6 +197,7 @@ namespace UnityCommander.Testing.Fake
                     valueType: ArgumentValueType.Boolean)
             },
             arguments: new List<IPositionalArgumentDescriptor>(), // путь не нужен для list
+            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
             flagOrderPolicy: FlagOrderPolicy.StrictOrder,
             usage: "plugin list [--verbose]"
             );
@@ -217,7 +223,9 @@ namespace UnityCommander.Testing.Fake
                     isRequired: true)
             },
             flagOrderPolicy: FlagOrderPolicy.StrictOrder,
+            positionalArgumentPolicy: PositionalArgumentPolicy.AfterVariant,
             usage: "plugin info <name> [--all]"
+
             );
         }
     }

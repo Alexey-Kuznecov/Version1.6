@@ -1,10 +1,17 @@
 ﻿
+using AvalonDock.Layout;
 using Prism.Commands;
-using Prism.Ioc;
+using System.Collections.Generic;
+using System.Linq;
+using UnityCommander.CLI.History;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.State;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
+using UnityCommander.Services.Interfaces.Docking;
 
 namespace UnityCommander.Services.Bootstrap
 {
@@ -17,6 +24,11 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ISessionBuilder _builder;
         private readonly IDockingSyncService _dockingSync;
         private readonly ISessionAggregator _sessionAggregator;
+        private readonly SessionStateValidator _stateValidator;
+        private readonly IToolDockingStore _toolDockingStore;
+        private readonly ConsoleHistoryService _consoleHistory;
+        private readonly ILogger _logger;
+        private readonly LoggerCreator _loggerCreator;
 
         public AppInitializer(
             ISessionService session,
@@ -25,14 +37,26 @@ namespace UnityCommander.Services.Bootstrap
             ISessionBuilder builder, 
             IDockingSyncService dockingSync,
             ISessionAggregator sessionAggregator, 
-            IMultiCommandService multiCommand)
+            IMultiCommandService multiCommand,
+            IToolDockingStore toolDockingStore,
+            ConsoleHistoryService consoleHistory,
+            LoggerCreator logger, SessionStateValidator stateValidator) 
         {
+            _loggerCreator = logger;
+            _stateValidator = stateValidator;
+
+            _logger = _loggerCreator.For<AppInitializer>(
+               scope: LogScope.Startup
+            );
+
             _session = session;
             _layout = layout;
             _panel = panel;
             _builder = builder;
             _dockingSync = dockingSync;
             _sessionAggregator = sessionAggregator;
+            _consoleHistory = consoleHistory;
+            _toolDockingStore = toolDockingStore;
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -47,19 +71,39 @@ namespace UnityCommander.Services.Bootstrap
             _session.Save(_state);
 
             _layout.Save();
+
+            _toolDockingStore.Save();
+
+            _consoleHistory.Save();
         });
 
         public void Initialize()
         {
-            _state = _session.Load();
+            using (_loggerCreator.ProfileScope(LogScope.Startup, "Layout Initial"))
+            {
+                _logger.Info("Session load..");
+                _state = _session.Load();
 
-            _layout.Load(_state);
+                _stateValidator.Validate(_state);
 
-            _panel.Initialize();
+                _logger.Info("AvalonDock init..");
+                _layout.Load(_state);
 
-            _dockingSync.Initialize(_state.Panels);
+                _logger.Info("Initial Panel..");
+                _panel.Initialize();
 
-            _sessionAggregator.Restore(_state);
+                _logger.Info("AvalonDock and Panel sync..");
+                _dockingSync.Initialize(_state.Panels);
+
+                _logger.Info("Restore prev session..");
+                _sessionAggregator.Restore(_state);
+
+                _toolDockingStore.Load();
+                _logger.Info("Tool layout loaded.");
+
+                 _consoleHistory.Initialize();
+                _logger.Info("Console history initialized..");
+            }
         }
     }
 }

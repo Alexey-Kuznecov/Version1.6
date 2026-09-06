@@ -5,11 +5,7 @@
 
     <Style x:Key="DirectoryPanelHeaderStyle" TargetType="{x:Type Grid}">
         <Setter Property="Height" Value="25" />
-        <Setter Property="Background">
-            <Setter.Value>
-                <SolidColorBrush Color="{DynamicResource GeneralHeaderColor}" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
     </Style>
 
     <Style x:Key="DirectoryPanelContainerStyle" TargetType="{x:Type Grid}">

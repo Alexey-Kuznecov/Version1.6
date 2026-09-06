@@ -6,6 +6,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
 {
     public class FlagCompletionProvider : ICompletionProvider
     {
+        public int Priority => 100;
+
         public bool CanHandle(CliParseState ctx)
             => ctx.ExpectedNext == CompletionKind.Flag;
 
@@ -15,7 +17,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
                 .Select(f => new CompletionItem
                 {
                     DisplayText = f.Name,
-                    InsertText = f.Name
+                    InsertText = f.Name,
+                    AppendSpace = true,
                 });
         }
     }

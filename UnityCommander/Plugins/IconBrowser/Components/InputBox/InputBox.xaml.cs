@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace AIconBrowser.Components.InputBox
+namespace IconBrowser.Components.InputBox
 {
     /// <summary>
     /// Логика взаимодействия для InputBox.xaml
@@ -14,6 +14,7 @@ namespace AIconBrowser.Components.InputBox
             InitializeComponent();
         }
         private static InputBox _inputBox;
+        
         public static void Show(ICommand action, Actions actionType, string placeholder = "")
         {
             // Intializaion inputbox by constructor argument

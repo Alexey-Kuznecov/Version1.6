@@ -10,12 +10,9 @@
     using System.Windows;
     using Microsoft.Extensions.DependencyInjection;
 
-    using UnityCommander.Common.Commands;
-    using UnityCommander.Common.Plugins;
     using UnityCommander.Integration.Columns;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
     using UnityCommander.Integration.Factories;
     using UnityCommander.Integration.Options;
 
@@ -29,7 +26,7 @@
     /// <para>Плагины должны соответствовать стандартной структуре: быть DLL-файлом и реализовывать 
     /// интерфейс <see cref="IPlugin"/>.</para>
     /// </remarks>
-    public class PluginLoader : IPluginLoader, IPluginServicesRegister
+    public class PluginLoader : IPluginLoader
     {
         #region Поля и Свойства
 
@@ -51,7 +48,7 @@
         /// Коллекция зарегистрированных сервисов диалоговых окон, 
         /// предоставляемых плагинами.
         /// </summary>
-        private IEnumerable<IDialogService> dialogService;
+        //private IEnumerable<IDialogService> dialogService;
 
         /// <summary>
         /// Коллекция дескрипторов загруженных плагинов, 
@@ -75,7 +72,7 @@
         /// Коллекция команд, относящихся к конкретным плагинам.
         /// Позволяет расширять функциональность через команды, реализованные в плагинах.
         /// </summary>
-        private IEnumerable<ICommandBase> pluginCommandsBuilder = new List<ICommandBase>();
+        //private IEnumerable<ICommandBase> pluginCommandsBuilder = new List<ICommandBase>();
 
         #endregion
 
@@ -134,14 +131,14 @@
         /// реализованных в загруженных плагинах.
         /// </summary>
         /// <returns>Коллекция сервисов <see cref="IDialogService"/>.</returns>
-        public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
+        //public IEnumerable<IDialogService> GetDialogs() => this.dialogService;
 
         /// <summary>
         /// Получает коллекцию команд, относящихся к конкретным плагинам,
         /// и предназначенных для расширения их функциональности.
         /// </summary>
         /// <returns>Коллекция объектов <see cref="ICommandBase"/>.</returns>
-        public IEnumerable<ICommandBase> GetPluginCommands() => this.pluginCommandsBuilder;
+        //public IEnumerable<ICommandBase> GetPluginCommands() => this.pluginCommandsBuilder;
 
         /// <summary>
         /// Получает коллекцию глобальных команд,
@@ -233,7 +230,7 @@
                         var command = (ICommandFactory)plugin;
                         command?.CommandFactory(commandBuilder);
                         this.commandBuilders = commandBuilder.GetCommands();
-                        this.pluginCommandsBuilder = commandBuilder.GetPluginCommands();
+                        //this.pluginCommandsBuilder = commandBuilder.GetPluginCommands();
                     }
                 }
             }
@@ -255,13 +252,13 @@
         private void RegisterPluginServices()
         {
             // Получаем все сервисы диалогов из контейнера зависимостей
-            this.dialogService = this.serviceProvider.GetServices<IDialogService>();
+            //this.dialogService = this.serviceProvider.GetServices<IDialogService>();
 
             // Получаем все дескрипторы плагинов из контейнера зависимостей
             this.pluginDescriptors = this.serviceProvider.GetServices<IPluginDescriptor>();
 
             // Регистрируем различные сервисы плагинов в систему, связывая их с базовым интерфейсом IPluginService
-            this.Register<IDialogService, IPluginService>(this.dialogService);
+            //this.Register<IDialogService, IPluginService>(this.dialogService);
             this.Register<IPluginDescriptor, IPluginService>(this.pluginDescriptors);
             this.Register<IPluginSettings, IPluginService>(this.serviceProvider.GetServices<IPluginSettings>());
             this.Register<IColumnBuilder, IPluginService>(this.serviceProvider.GetServices<IColumnBuilder>());
@@ -315,7 +312,7 @@
 
             // Обнуляем ссылки на дескрипторы плагинов и сервисы
             this.pluginDescriptors = null;
-            this.dialogService = null;
+            //this.dialogService = null;
             this.alc = null;
 
             // Удаляем ресурсы плагина из глобального словаря ресурсов приложения, если они существуют
@@ -359,7 +356,7 @@
         private void GetPluginResources(Assembly assembly)
         {
             // Получаем ресурсы из менеджера ресурсов плагинов
-            this.pluginResources = PluginResourceManager.GetResourceDictionary(assembly);
+            //this.pluginResources = PluginResourceManager.GetResourceDictionary(assembly);
 
             // Если ресурсы присутствуют, добавляем их в глобальные ресурсы приложения
             if (this.pluginResources?.Count != 0 && this.pluginResources != null)

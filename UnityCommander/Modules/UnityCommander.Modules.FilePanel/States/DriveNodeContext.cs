@@ -1,11 +1,10 @@
 ﻿
-
 using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using UnityCommander.Abstractions.Columns;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 

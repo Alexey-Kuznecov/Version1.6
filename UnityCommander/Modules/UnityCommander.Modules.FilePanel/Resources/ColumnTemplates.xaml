@@ -4,6 +4,7 @@
     xmlns:converter="clr-namespace:UnityCommander.Modules.FilePanel.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
     mc:Ignorable="d">
@@ -12,16 +13,32 @@
     <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
     <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
     <converter:DataSizeConverter x:Key="DataSizeConverter" />
+    <converter:RandomForegroundConverter x:Key="RandomForegroundConverter" />
+
+    <!--<DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
+        <Grid>
+            <AdornerDecorator>
+                <ContentPresenter>
+                    <converter:BindableParameter
+                        Binding="{Binding Icon}"
+                        Converter="{StaticResource IconConverter}"
+                        ConverterParameter="{Binding TargetPanel}" />
+                </ContentPresenter>
+            </AdornerDecorator>
+        </Grid>
+    </DataTemplate>-->
 
     <DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
             <AdornerDecorator>
                 <ContentPresenter>
                     <ContentPresenter.Content>
-                        <converter:BindableParameter
-                            Binding="{Binding Icon}"
-                            Converter="{StaticResource IconConverter}"
-                            ConverterParameter="{Binding TargetPanel}" />
+                        <icon:IconRender
+                            Key="{Binding IconKey}"
+                            Width="12"
+                            Height="12"
+                            Brush="SteelBlue"
+                            IconKind="{Binding Kind}" />
                     </ContentPresenter.Content>
                 </ContentPresenter>
             </AdornerDecorator>
@@ -33,12 +50,12 @@
             <TextBlock
                 x:Name="Cell"
                 VerticalAlignment="Center"
-                Foreground="BlueViolet">
+                Foreground="{Binding ., Converter={StaticResource RandomForegroundConverter}}">
                 <TextBlock.Text>
                     <converter:BindableParameter
                         Binding="{Binding Additional.Values}"
                         Converter="{StaticResource ColumnValueConverter}"
-                        ConverterParameter="{Binding RelativeSource={RelativeSource Mode=Self}}" />
+                        ConverterParameter="{Binding Index}" />
                 </TextBlock.Text>
             </TextBlock>
         </Grid>
@@ -53,10 +70,11 @@
             <TextBlock Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" />
             <ContentPresenter Grid.Column="0">
                 <ContentPresenter.Content>
-                    <converter:BindableParameter
-                        Binding="{Binding Icon}"
-                        Converter="{StaticResource IconConverter}"
-                        ConverterParameter="{Binding TargetPanel}" />
+                    <icon:IconRender
+                        Key="{Binding IconKey}"
+                        Width="12"
+                        Height="12"
+                        IconKind="{Binding Kind}" />
                 </ContentPresenter.Content>
             </ContentPresenter>
         </Grid>
@@ -75,12 +93,12 @@
 
     <DataTemplate x:Key="ColumnCreationDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid>
-            <TextBlock Foreground="Indigo" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />
+            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding CreationTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="ColumnLastAccessDateDataTemplate" DataType="{x:Type models:BaseDirectory}">
         <Grid d:DataContext="{d:DesignData}">
-            <TextBlock Foreground="Indigo" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}" />
+            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding LastAccessTime, Converter={converter:DateTimeConverter}}" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

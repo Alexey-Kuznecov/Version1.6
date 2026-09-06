@@ -31,35 +31,41 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Core\CommandSystem.Core.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Infrastructure\CommandSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
     <ProjectReference Include="..\Modules\BottomPanelModule\UnityCommander.Modules.BottomPanel\UnityCommander.Modules.BottomPanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.FilePanel\UnityCommander.Modules.FilePanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.LeftSideBars\UnityCommander.Modules.LeftSideBars.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.SettingsPanel\UnityCommander.Modules.SettingsPanel.csproj" />
+    <ProjectReference Include="..\Modules\UnityCommander.Modules.StatusBar\UnityCommander.Modules.StatusBar.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.TabPanel\UnityCommander.Modules.TabPanel.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.ToolBar\UnityCommander.Modules.ToolBar.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
     <ProjectReference Include="..\Modules\UnityCommander.Modules.WebBrowser\UnityCommander.Modules.WebBrowser.csproj" />
+    <ProjectReference Include="..\Theme\AvalonDock.Themes.Arc\AvalonDock.Themes.Arc.csproj" />
     <ProjectReference Include="..\UnityCommander.AI.ImageSearch\UnityCommander.AI.ImageSearch.csproj" />
     <ProjectReference Include="..\UnityCommander.Commands\UnityCommander.Commands.csproj" />
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
-    <ProjectReference Include="..\UnityCommander.Integration\UnityCommander.Integration.csproj" />
+    <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
+    <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
+    <ProjectReference Include="..\UnityCommander.UI\UnityCommander.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CommandSystem.Core">
-      <HintPath>..\..\..\_builds\CommandSystem.Core.dll</HintPath>
+    <Reference Include="AvalonDock">
+      <HintPath>..\..\..\_builds\AvalonDock.dll</HintPath>
     </Reference>
-    <Reference Include="CommandSystem.Gui">
-      <HintPath>..\..\..\_builds\CommandSystem.Gui.dll</HintPath>
+    <Reference Include="AvalonDock.Core">
+      <HintPath>..\..\..\_builds\AvalonDock.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CommandSystem.Infrastructure">
-      <HintPath>..\..\..\_builds\CommandSystem.Infrastructure.dll</HintPath>
+    <Reference Include="AvalonDock.Serializer.Xml">
+      <HintPath>..\..\..\_builds\AvalonDock.Serializer.Xml.dll</HintPath>
     </Reference>
-    <Reference Include="PluginSystem.Abstractions">
-      <HintPath>..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="PluginSystem.Runtime">
-      <HintPath>..\..\..\_builds\PluginSystem.Runtime.dll</HintPath>
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="UnityCommander.Ribbon.Core">
       <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>

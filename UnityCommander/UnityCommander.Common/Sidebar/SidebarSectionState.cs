@@ -1,4 +1,6 @@
 ﻿
+using UnityCommander.Abstractions.Sidebar;
+
 namespace UnityCommander.Common.Sidebar
 {
     public class SidebarSectionState : ISidebarSectionState

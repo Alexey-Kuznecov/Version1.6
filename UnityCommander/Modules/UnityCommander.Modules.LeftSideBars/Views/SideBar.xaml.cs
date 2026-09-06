@@ -2,7 +2,6 @@
 namespace UnityCommander.Modules.LeftSideBars.Views
 {
     using System.Windows.Controls;
-    using System.Windows.Input;
 
     /// <summary>
     /// Interaction logic for Sidebar.xaml

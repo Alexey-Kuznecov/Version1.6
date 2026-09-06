@@ -1,10 +1,9 @@
 ﻿
+using CommandSystem.Abstractions;
 using Prism.Commands;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.CommandSurface;
-using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services;
@@ -14,17 +13,20 @@ namespace UnityCommander.Modules.FilePanel.Controllers
     public class ContextMenuController
     {
         private readonly CommandSurfaceEngine _surface;
-        private readonly CommandService _commandService;
+        private readonly CommandExecutionService _commandExecution;
+        private readonly CommandRegistryService _commandRegistry;
         private readonly ContextResolverDispatcher _resolver;
 
 
         public ContextMenuController(
             CommandSurfaceEngine surface,
-            CommandService commandService,
+            CommandExecutionService commandExecution,
+            CommandRegistryService commandRegistry,
             ContextResolverDispatcher resolver)
         {
             _surface = surface;
-            _commandService = commandService;
+            _commandExecution = commandExecution;
+            _commandRegistry = commandRegistry;
             _resolver = resolver;
         }
 
@@ -32,21 +34,23 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         {
             var ctx = _resolver.Resolve(state, parameter);
 
-            var commands = _commandService
+            var commands = _commandRegistry
                 .GetAll()
                 .Select(x => x.Metadata)
                 .ToList();
 
             var tree = _surface.Build(commands, ctx);
 
-            var items = MapToMenu(tree);
+            var items = MapToMenu(tree, ctx);
 
             state.ContextMenuItems.Clear();
             foreach (var item in items)
                 state.ContextMenuItems.Add(item);
         }
 
-        private List<MenuItemViewModel> MapToMenu(IEnumerable<SurfaceNode> nodes)
+        private List<MenuItemViewModel> MapToMenu(
+            IEnumerable<SurfaceNode> nodes, 
+            SurfaceContext context)
         {
             var result = new List<MenuItemViewModel>();
 
@@ -63,11 +67,15 @@ namespace UnityCommander.Modules.FilePanel.Controllers
                 {
                     item.Command = new DelegateCommand(() =>
                     {
-                        _commandService.ExecuteAsync(node.CommandName);
+                        var menuContext = context.Get<FilePanelContextMenu>();
+
+                        var ctx = new CommandContext(node.CommandName, menuContext, menuContext?.SelectedPaths);
+
+                        _commandExecution.ExecuteAsync(node.CommandName, ctx);
                     });
                 }
 
-                item.Children = MapToMenu(node.Children);
+                item.Children = MapToMenu(node.Children, context);
                 result.Add(item);
             }
 

@@ -36,7 +36,7 @@
                 <WrapPanel Grid.Row="2">
                     <!--<TextBlock Margin="10" Text="{Binding TimeLeft}" />-->
                     <TextBlock Margin="10" Text="{Binding AverageSpeed, StringFormat={}Speed: {0}}" />
-                    <TextBlock Margin="10" Text="{Binding TotalTimeLeft}" />
+                    <!--<TextBlock Margin="10" Text="{Binding TotalTimeLeft}" />-->
                 </WrapPanel>
             </Grid>
             <TextBlock

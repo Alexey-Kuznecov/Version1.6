@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AIconBrowser.Components.InputBox;
-using AIconBrowser.Models;
-using AIconBrowser.Mvvm.Base;
+using IconBrowser.Components.InputBox;
+using IconBrowser.Models;
+using IconMaker.Core.Mvvm.Base;
 
-namespace AIconBrowser
+namespace IconBrowser
 {
     /// <summary>
     /// Class of model that responsible to way display icons collection.
@@ -32,7 +32,7 @@ namespace AIconBrowser
         /// <summary>
         /// Command to add new icons.
         /// </summary>
-        public static ICommand AddNewCollection => new Mvvm.Base.RelayCommand(name =>
+        public static ICommand AddNewCollection => new RelayCommand(name =>
         {
             using (IconsDataWriter dataWriter = new IconsDataWriter())
             {
@@ -97,9 +97,9 @@ namespace AIconBrowser
         {
             this.CollectionContextMenu = new ContextMenu();
             this.ContextMenu = new ContextMenu();
-            this.ContextMenu.Items.Add(new MenuItem { Header = "Add category", Command = new Mvvm.Base.RelayCommand(obj => InputBox.Show(AddNewCollection, Actions.Add))});
-            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Rename", Command = new Mvvm.Base.RelayCommand(obj => InputBox.Show(this.RenameCollection, Components.InputBox.Actions.Change, this.CollectionName))});
-            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Remove", Command = new Mvvm.Base.RelayCommand(RemoveCollection) });
+            this.ContextMenu.Items.Add(new MenuItem { Header = "Add category", Command = new RelayCommand(obj => InputBox.Show(AddNewCollection, Actions.Add))});
+            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Rename", Command = new RelayCommand(obj => InputBox.Show(this.RenameCollection, Components.InputBox.Actions.Change, this.CollectionName))});
+            this.CollectionContextMenu.Items.Add(new MenuItem { Header = "Remove", Command = new RelayCommand(RemoveCollection) });
         }
     }
 

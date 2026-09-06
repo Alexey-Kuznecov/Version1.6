@@ -13,9 +13,10 @@ using UnityCommander.Commands.IO;
 namespace UnityCommander.Commands
 {
     [ConsoleCommand("fileunlock", "Разблокирует файл занятый процессом", "fun", "unlk")]
+    [Obsolete("Команда устарела и будет удалена в будущих версиях. Используйте команду 'unlock' вместо нее.")]
     public class FileUnlockCommand : IConsoleCommand
     {
-        private IConsoleOutput _output = new ConsoleOutput();
+        private IConsoleOutput _output;
 
         public string Name => "fileunlock";
 

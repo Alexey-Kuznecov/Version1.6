@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace AIconBrowser.Converters
+namespace IconBrowser.Converters
 {
     public abstract class BaseConverter<T> : MarkupExtension, IValueConverter
         where T : class, new()

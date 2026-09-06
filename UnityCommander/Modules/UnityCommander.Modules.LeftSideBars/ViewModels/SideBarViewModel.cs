@@ -12,31 +12,42 @@ using Prism.Commands;
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
+    using CommandSystem.Abstractions;
+    using CommandSystem.Infrastructure.Lifecycle;
     using MaterialDesignThemes.Wpf;
     using Prism.Dialogs;
     using Prism.Mvvm;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Shapes;
+    using UnityCommander.Abstractions;
     using UnityCommander.Common.Models;
-    using UnityCommander.Common.Models.Icons;
     using UnityCommander.Common.State;
     using UnityCommander.Common.States;
+    using UnityCommander.Core.Commands;
+    using UnityCommander.Rendering.Icons;
+    using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Bootstrap;
+    using UnityCommander.Services.Interfaces.Plugins;
     using UnityCommander.Services.Interfaces.Sidebar;
+    using static UnityCommander.Common.Commands.CommandNames;
 
     /// <summary>
     /// The view a view model.
     /// </summary>
     public class SidebarViewModel : BindableBase
     {
+        private readonly IViewResolver _viewResolver;
+
         private readonly IDialogService _dialogService;
 
-        private readonly SidebarService _sidebarService;
+        private readonly ISidebarService _sidebarService;
 
-        private readonly ObservableCollection<IIcon> packIcon;
+        private readonly IIconRenderService _iconResolver;
 
         private DelegateCommand hideSidebarCommand;
 
@@ -45,26 +56,54 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         private SidebarSessionState _state;
 
         private Path iconHideSidebar;
+
         private UserControl sidebarContent;
+
         private int sidebarContentWidth;
+
         private SidebarItem currentSidebarItem;
 
         public SidebarViewModel(
             IDialogService dialogService,
-            IIconProviderService iconProvider,
-            IPluginProvider pluginLoader,
+            IIconRenderService iconResolver,
+            IPluginInfoProvider pluginLoader,
             IMultiCommandService command,
             ISessionService sessionService,
-            SidebarService sidebarService)
+            IViewResolver viewResolver,
+            ISidebarService sidebarService, 
+            CommandRegistryService commandRegistry)
         {
+            _viewResolver = viewResolver;
+
+            _iconResolver = iconResolver;
+
             _dialogService = dialogService;
 
             _sidebarService = sidebarService;
 
-            packIcon = iconProvider.GetIcons();
+            IconHideSidebar = iconResolver.GetPath(Navigation.Back);
 
-            IconHideSidebar =
-                iconProvider.GetIcon(PackIconKind.ArrowBack).GetIconPath();
+            sidebarService.OnCleanup += SidebarService_PluginUnloaded;
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              UI.ToggleSidebar,
+              ToggleSidebar
+          ));
+        }
+
+        private void SidebarService_PluginUnloaded(string pluginId)
+        {
+            var itemsToRemove = SidebarItems
+                .Where(x => x.Owner == pluginId)
+                .ToList();
+
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                foreach (var item in itemsToRemove)
+                {
+                    SidebarItems.Remove(item);
+                }
+            });
         }
 
         public ObservableCollection<SidebarItem> SidebarItems { get; } = new();
@@ -99,6 +138,16 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             }
         }
 
+        public Task ToggleSidebar(CommandContext ctx)
+        {
+            _state.IsOpen = !_state.IsOpen;
+            _state.ActiveSectionId = _state.IsOpen ? currentSidebarItem?.Id : null;
+
+            Apply();
+
+            return Task.CompletedTask;
+        }
+
         public void Open(SidebarItem item)
         {
             _state.IsOpen = true;
@@ -128,17 +177,21 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         internal void Initialize()
         {
+            SidebarItems.Clear();
+
             foreach (var item in _sidebarService.GetAll().ToList())
             {
-                item.View.DataContext = item?.ViewModel;
+                var view = (UserControl)_viewResolver.Resolve(item.ViewType);
+
+                view.DataContext = _viewResolver.Resolve(item.ViewModel);
 
                 SidebarItems.Add(
                     new SidebarItem
                     {
                         Id = item.Id,
-                        Content = item.View,
-                        Icon = packIcon.Single(
-                            i => ((Common.Models.Icons.Icon)i).Category == item.IconKey)
+                        Content = view,
+                        Owner = item.OwnerId,
+                        IconKey = item.IconKey
                     });
             }
         }
@@ -148,8 +201,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             var item = SidebarItems
                 .FirstOrDefault(x => x.Id == _state.ActiveSectionId);
 
-            SidebarContent = _state.IsOpen ? item?.Content : null;
-            SidebarContentWidth = _state.IsOpen ? 250 : 0;
+            SidebarContent = _state.IsOpen ? (UserControl)item?.Content : null;
+            SidebarContentWidth = _state.IsOpen ? 300 : 0;
         }
 
         public DelegateCommand HideSidebarCommand =>

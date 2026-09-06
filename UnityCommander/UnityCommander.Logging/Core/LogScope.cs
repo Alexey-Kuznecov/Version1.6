@@ -2,6 +2,8 @@
 {
     public readonly struct LogScope
     {
+        public string OperationId { get; }
+
         public string Value { get; }
 
         private LogScope(string value)
@@ -14,8 +16,8 @@
         public static readonly LogScope UI = new("UI");
         public static readonly LogScope UserAction = new("UserAction");
 
-        public static LogScope Plugin(string id)
-            => new($"Plugin:{id}");
+        public static LogScope Plugin()
+            => new($"Plugin");
 
         public override string ToString() => Value;
     }

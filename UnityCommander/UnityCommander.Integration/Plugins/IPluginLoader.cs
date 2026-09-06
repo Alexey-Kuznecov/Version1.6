@@ -4,7 +4,6 @@ namespace UnityCommander.Integration.Plugins
     using System;
     using System.Collections.Generic;
     using Integration.Contracts;
-    using Integration.Dialog;
     using UnityCommander.Common.Commands;
     using UnityCommander.Integration.Commands;
     using UnityCommander.Integration.Factories;
@@ -68,13 +67,13 @@ namespace UnityCommander.Integration.Plugins
         /// Получает коллекцию диалоговых сервисов, доступных в плагинах.
         /// </summary>
         /// <returns>Коллекция сервисов диалогов <see cref="IDialogService"/>.</returns>
-        IEnumerable<IDialogService> GetDialogs();
+        //IEnumerable<IDialogService> GetDialogs();
 
         /// <summary>
         /// Получает коллекцию команд, доступных в загруженных плагинах.
         /// </summary>
         /// <returns>Коллекция команд <see cref="ICommandBase"/>.</returns>
-        IEnumerable<ICommandBase> GetPluginCommands();
+        //IEnumerable<ICommandBase> GetPluginCommands();
 
         /// <summary>
         /// Получает коллекцию базовых команд, доступных в плагинах.

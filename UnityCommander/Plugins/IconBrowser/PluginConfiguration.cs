@@ -1,19 +1,16 @@
 ﻿
-namespace AIconBrowser
+namespace IconBrowser
 {
     using System.Reflection;
     using System.Runtime.Loader;
 
     using Microsoft.Extensions.DependencyInjection;
 
-    using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
-    using UnityCommander.Integration.Factories;
 
     /// <summary>
     /// The plugin configuration.
     /// </summary>
-    public class PluginConfiguration : IPluginFactory
+    public class PluginConfiguration// : IPluginFactory
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginConfiguration"/> class.
@@ -42,8 +39,8 @@ namespace AIconBrowser
         /// </param>
         public void Configure(IServiceCollection services)
         {
-            services.AddSingleton<IDialogService, IconBrowserControl>();
-            services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
+            //services.AddSingleton<IDialogService, IconBrowserControl>();
+            //services.AddSingleton<IPluginDescriptor, IconBrowserControl>();
         }
 
         /// <summary>
@@ -52,9 +49,9 @@ namespace AIconBrowser
         /// <param name="typesRegister">
         /// The types register.
         /// </param>
-        public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
-        {
-        }
+        //public void SetAssociatedTypes(AssociatedTypesRegister typesRegister)
+        //{
+        //}
 
         public void SetToken(string token)
         {

@@ -9,11 +9,18 @@ namespace UnityCommander.Logging.Sinks
         private readonly string _path;
         private readonly LogChannel _channel;
 
-        public FileLogSink(string path, LogChannel channel)
+        public FileLogSink(string name, LogChannel channel)
         {
-            File.WriteAllText(path, ""); // очистка файла при создании
-            _path = path;
+            File.WriteAllText(name, ""); // очистка файла при создании
+            _path = Path.Combine(Directory.GetCurrentDirectory(), "logs", name);
             _channel = channel;
+
+            var directory = Path.GetDirectoryName(_path);
+
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+
+            File.WriteAllText(_path, string.Empty);
         }
 
         public void Emit(LogEntry entry)
@@ -22,6 +29,7 @@ namespace UnityCommander.Logging.Sinks
                 return;
 
             var line = Format(entry);
+
             File.AppendAllText(_path, line + Environment.NewLine);
         }
 

@@ -1,38 +1,50 @@
 ﻿
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityCommander.Common.Sidebar;
+using UnityCommander.Abstractions.Sidebar;
 
 namespace UnityCommander.Services.Interfaces.Sidebar
 {
-    public class SidebarService
+    public sealed class SidebarService : ISidebarService
     {
+        private readonly ISidebarRegistry _registry;
+
         private readonly ISidebarSectionFactory _factory;
 
-        private readonly List<ISidebarSection> _sections = new();
+        public event Action<string>? OnCleanup;
 
-        public IReadOnlyList<ISidebarSection> Sections => _sections;
+        public event Action? Changed;
 
-        public SidebarService(ISidebarSectionFactory factory)
+        public SidebarService(
+            ISidebarRegistry registry,
+            ISidebarSectionFactory factory)
         {
+            _registry = registry;
             _factory = factory;
+
+            registry.OwnerUnload += OwnerUnload;
         }
 
-        public void Register(ISidebarDefinition def)
+        private void OwnerUnload(string ownerId)
         {
-            var section = _factory.Create(def);
-            _sections.Add(section);
+            Changed?.Invoke();
+
+            OnCleanup?.Invoke(ownerId);
         }
 
         public void Register(ISidebarSection section)
+           => _registry.Register(section);
+
+        public void Register(ISidebarDefinition definition)
         {
-            _sections.Add(section);
+            var section = _factory.Create(definition);
+
+            _registry.Register(section);
+
+            Changed?.Invoke();
         }
 
-        public ISidebarSection? Get(string id)
-            => _sections.FirstOrDefault(x => x.Id == id);
-
         public IEnumerable<ISidebarSection>? GetAll()
-            => _sections;
+            => _registry.GetAll();
     }
 }

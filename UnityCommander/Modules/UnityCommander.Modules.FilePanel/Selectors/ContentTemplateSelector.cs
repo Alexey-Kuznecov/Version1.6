@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
-using UnityCommander.Core.Performance;
+using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Selectors
 {

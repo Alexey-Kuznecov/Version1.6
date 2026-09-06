@@ -14,11 +14,12 @@ namespace UnityCommander.Modules.FilePanel
     
     using Prism.Modularity;
     using Prism.Navigation.Regions;
-    using UnityCommander.Core.Behaviors;
     using UnityCommander.Modules.FilePanel.Controllers;
     using UnityCommander.Modules.FilePanel.Controllers.DnD;
+    using UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers;
     using UnityCommander.Modules.FilePanel.States.Resolver;
     using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.WPF.DragDrop;
 
     public class FilePanelModule : IModule
     {
@@ -44,11 +45,18 @@ namespace UnityCommander.Modules.FilePanel
             containerRegistry.RegisterSingleton<ContextMenuController>();
 
             // DragDrop
-            containerRegistry.RegisterSingleton<IDropContextResolver, NodeDragDropContextResolver>();
+            containerRegistry.RegisterSingleton<IDropContextResolver, CompositeDropContextResolver>();
+
+            containerRegistry.RegisterSingleton<IDropTargetResolver, FolderDropTargetResolver>();
+            containerRegistry.RegisterSingleton<IDropTargetResolver, DirectoryDropTargetResolver>();
+            containerRegistry.RegisterSingleton<IDropTargetResolver, AvalonDockDropTargetResolver>();
+            containerRegistry.RegisterSingleton<IDropTargetResolver, NavigationButtonDropTargetResolver>();
+            containerRegistry.RegisterSingleton<IDragHoverNavigationService, DragHoverNavigationService>();
+
             containerRegistry.RegisterSingleton<IDragDropHandler, FilePanelDragDropHandler>();
             containerRegistry.RegisterSingleton<IDragDropVisualService, DragDropVisualService>();
-            containerRegistry.RegisterSingleton<DragDropController>();
-            containerRegistry.RegisterSingleton<DragDropContextFactory>();
+            containerRegistry.RegisterSingleton<IDragDropController, DragDropController>();
+            containerRegistry.RegisterSingleton<IDragDropContextFactory, DragDropContextFactory>();
             containerRegistry.RegisterSingleton<GongDropAdapter>();
         }   
     }

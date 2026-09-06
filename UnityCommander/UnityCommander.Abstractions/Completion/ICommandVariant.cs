@@ -7,6 +7,9 @@ namespace UnityCommander.Abstractions.Completion
         IReadOnlyList<IFlagDescriptor> Flags { get; }
         IReadOnlyList<IPositionalArgumentDescriptor> Arguments { get; } 
         FlagOrderPolicy FlagOrderPolicy { get; }
+
+        PositionalArgumentPolicy PositionalArgumentPolicy { get; }
+
         string Usage { get; }
         bool IsStrictOrder { get; }
     }

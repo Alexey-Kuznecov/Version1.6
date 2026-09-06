@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace AIconBrowser.Database.Xml
+namespace IconBrowser.Database.Xml
 {
     public class XmlReader : XmlParser
     {

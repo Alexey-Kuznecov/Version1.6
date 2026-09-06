@@ -1,4 +1,5 @@
 ﻿
+using System.IO;
 using UnityCommander.Copying.Core;
 using UnityCommander.Copying.Helper;
 using UnityCommander.Copying.Sessions;

@@ -1,5 +1,6 @@
-﻿using System.Windows;
-using UnityCommander.Core.Behaviors;
+﻿
+using System.Windows;
+using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
@@ -13,5 +14,11 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
         public object? Target { get; init; }
 
         public UIElement? VisualTarget { get; init; }
+        
+        public DropTargetInfo TargetInfo { get; init; }
+
+        public object TabId { get; internal set; }
+
+        public bool CanNavigate { get; init; }
     }
 }

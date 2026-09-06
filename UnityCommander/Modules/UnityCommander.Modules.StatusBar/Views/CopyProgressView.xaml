@@ -1,0 +1,201 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.StatusBar.Views.CopyProgressView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="clr-namespace:UnityCommander.Controls;assembly=UnityCommander.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
+    xmlns:local="clr-namespace:UnityCommander.Modules.StatusBar.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Border
+        Width="420"
+        MaxHeight="500"
+        Padding="16"
+        Background="{DynamicResource UcSurfaceTertiaryBrush}"
+        CornerRadius="12">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  Заголовок  -->
+            <TextBlock
+                Grid.Row="0"
+                FontSize="16"
+                FontWeight="SemiBold"
+                Foreground="White"
+                Text="Операции копирования" />
+
+            <!--  Список операций  -->
+            <ScrollViewer
+                Grid.Row="2"
+                MaxHeight="430"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+
+                <ItemsControl ItemsSource="{Binding Operations}">
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+
+                            <Border
+                                Margin="0,0,0,10"
+                                Padding="12"
+                                Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                                CornerRadius="8">
+
+                                <Grid>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="10" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!--  Название операции  -->
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Margin="0,0,10,0"
+                                            FontSize="13"
+                                            FontWeight="SemiBold"
+                                            Foreground="White"
+                                            Text="{Binding Title}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTip="{Binding Title}" />
+
+                                        <!--  Процент  -->
+                                        <control:CircularProgress
+                                            Grid.Column="1"
+                                            Width="30"
+                                            Height="30"
+                                            Content="{Binding OperationProgressPercent}"
+                                            FontSize="12"
+                                            Foreground="{DynamicResource UcForegroundDisabledBrush}"
+                                            Progress="{Binding OperationProgress}"
+                                            ProgressBrush="DodgerBlue"
+                                            StrokeThickness="2"
+                                            TrackBrush="#333" />
+                                    </Grid>
+
+                                    <!--  Имя текущего файла  -->
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Margin="0,4,0,0"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource UcForegroundDisabledBrush}"
+                                        Text="{Binding DisplayName}"
+                                        TextTrimming="CharacterEllipsis"
+                                        ToolTip="{Binding DisplayName}" />
+
+                                    <!--  ProgressBar  -->
+                                    <ProgressBar
+                                        Grid.Row="2"
+                                        Height="5"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        Value="{Binding FileProgress}" />
+
+                                    <!--  Нижняя панель  -->
+                                    <Grid Grid.Row="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  Статус  -->
+                                        <!--<StackPanel
+                                            Grid.Column="0"
+                                            Margin="3"
+                                            VerticalAlignment="Center">
+
+                                            <TextBlock
+                                                FontSize="11"
+                                                Foreground="{DynamicResource UcForegroundDisabledBrush}"
+                                                Text="{Binding Status}" />
+
+                                            <TextBlock
+                                                Margin="0,2,0,0"
+                                                FontSize="11"
+                                                Foreground="{DynamicResource UcForegroundDisabledBrush}"
+                                                Text="{Binding Speed}" />
+
+                                        </StackPanel>-->
+
+                                        <!--  Кнопки  -->
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            Orientation="Horizontal">
+
+                                            <!--  Pause  -->
+                                            <Button
+                                                Width="30"
+                                                Height="30"
+                                                Margin="0,0,4,0"
+                                                Padding="0"
+                                                Command="{Binding PauseCommand}"
+                                                ToolTip="Пауза">
+
+                                                <icon:IconRender
+                                                    Key="Pause"
+                                                    Width="14"
+                                                    Height="14"
+                                                    Brush="Black" />
+                                            </Button>
+
+                                            <!--  Resume  -->
+                                            <Button
+                                                Width="30"
+                                                Height="30"
+                                                Margin="0,0,4,0"
+                                                Padding="0"
+                                                Command="{Binding ResumeCommand}"
+                                                ToolTip="Продолжить">
+
+                                                <icon:IconRender
+                                                    Key="Play"
+                                                    Width="14"
+                                                    Height="14"
+                                                    Brush="Black" />
+                                            </Button>
+
+                                            <!--  Cancel  -->
+                                            <Button
+                                                Width="30"
+                                                Height="30"
+                                                Padding="0"
+                                                Command="{Binding CancelCommand}"
+                                                ToolTip="Отменить">
+
+                                                <icon:IconRender
+                                                    Key="Close"
+                                                    Width="14"
+                                                    Height="14"
+                                                    Brush="Black" />
+                                            </Button>
+
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

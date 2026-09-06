@@ -3,7 +3,6 @@ using UnityCommander.CLI.Core;
 
 namespace UnityCommander.CLI.Integration
 {
-
     public class ConsoleCommandRegistry : IConsoleCommandRegistry
     {
         private readonly Dictionary<string, IConsoleCommand> _commands = new(StringComparer.OrdinalIgnoreCase);

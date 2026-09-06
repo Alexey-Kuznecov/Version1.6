@@ -14,13 +14,26 @@
     <PackageReference Include="Prism.Core" Version="9.0.537" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.Abstractions\UnityCommander.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.CLI\UnityCommander.CLI.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.Search\UnityCommander.Search.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PluginSystem.Abstractions">
-      <HintPath>..\..\..\..\..\_builds\PluginSystem.Abstractions.dll</HintPath>
+    <Reference Include="AvalonDock">
+      <HintPath>..\..\..\..\..\_builds\AvalonDock.dll</HintPath>
     </Reference>
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityCommander.Ribbon.Core">
+      <HintPath>..\..\..\..\..\_builds\UnityCommander.Ribbon.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Command\" />
   </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\_builds\&quot;" />

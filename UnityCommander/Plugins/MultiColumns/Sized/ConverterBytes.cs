@@ -3,42 +3,19 @@ namespace MultiColumns.Sized
 {
     using System;
 
-    /// <summary>
-    /// The unit.
-    /// </summary>
     public enum Unit : long
     {
-        /// <summary>
-        /// The kigabyte.
-        /// </summary>
         Kigabyte = 1048576,
 
-        /// <summary>
-        /// The megabyte.
-        /// </summary>
         Megabyte = 1073741824,
 
-        /// <summary>
-        /// The gigabyte.
-        /// </summary>
         Gigabyte = 1099511627776
     }
 
-    /// <summary>
-    /// 0054 - Convert bytes to KiB, MiB, GiB, kB, MB, GB
-    /// </summary>
     public class ConverterBytes
     {
-        /// <summary>
-        /// Gets the total.
-        /// </summary>
         public static decimal Total => 0;
 
-        /// <summary>
-        /// Automatically detects and formats bytes into other units.
-        /// </summary>
-        /// <param name="bytes"> Initial bytes. </param>
-        /// <returns> The value is in the form of KB MB or GB. </returns>
         public static string AutoConvertFormatBytes(decimal bytes)
         {
             if (bytes < 1024)
@@ -63,11 +40,6 @@ namespace MultiColumns.Sized
             }
         }
 
-        /// <summary>
-        /// Automatically detects and converts bytes into other units.
-        /// </summary>
-        /// <param name="bytes"> Initial bytes. </param>
-        /// <returns> The value is in the form of KB MB or GB. </returns>
         public static decimal AutoConvertBytes(decimal bytes)
         {
             if (bytes < 1024)
@@ -92,12 +64,6 @@ namespace MultiColumns.Sized
             }
         }
 
-        /// <summary>
-        /// Converts a byte to other units such as KB, MB, or GB.
-        /// </summary>
-        /// <param name="bytes"> Initial bytes. </param>
-        /// <param name="unitMeasure"> Select unit of measurement. </param>
-        /// <returns> The value is in the form of KB MB or GB. </returns>
         public static decimal ConvertBytesTo(decimal bytes, Unit unitMeasure)
         {
             switch (unitMeasure)
@@ -111,10 +77,6 @@ namespace MultiColumns.Sized
             }
         }
 
-        /// <summary>
-        /// The show.
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
         public static void Show(decimal bytes)
         {
             Console.WriteLine("Units established by the International Electrotechnical Commission (IEC) in 1998");
@@ -140,61 +102,30 @@ namespace MultiColumns.Sized
 
         #region Convrters
 
-        /// <summary>
-        /// Convert bytes to kibi bytes.
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
-        /// <returns> The <see cref="decimal"/>. </returns>
         public static decimal BytesToKibiBytes(decimal bytes) 
         {
             return bytes / 1024;
         }
 
-        /// <summary>
-        /// Convert bytes to mebi bytes.
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
-        /// <returns> The <see cref="decimal"/>. </returns>
         public static decimal BytesToMebiBytes(decimal bytes) 
         {
             return bytes / 1024 / 1024;
         }
 
-        /// <summary>
-        /// Convert bytes to gibi bytes.
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
-        /// <returns> The <see cref="decimal"/>. </returns>
         public static decimal BytesToGibiBytes(decimal bytes) 
         {
             return bytes / 1024 / 1024 / 1024;
         }
 
-        /// <summary>
-        /// KiloBytes => kB (k in lowercase! K in upper case means Kelvin)
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
-        /// <returns> The <see cref="decimal"/>. </returns>
         public static decimal BytesToKiloBytes(decimal bytes) 
         {
             return bytes / 1000;
         }
 
-        /// <summary>
-        /// Convert bytes to mega bytes.
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
-        /// <returns> The <see cref="decimal"/>. </returns>
         public static decimal BytesToMegaBytes(decimal bytes) 
         {
             return BytesToKiloBytes(bytes) / 1000;
         }
-
-        /// <summary>
-        /// Convert bytes to giga bytes.
-        /// </summary>
-        /// <param name="bytes"> The bytes. </param>
-        /// <returns> The <see cref="decimal"/>. </returns>
         public static decimal BytesToGigaBytes(decimal bytes) 
         {
             return BytesToKiloBytes(bytes) / 1000;

@@ -1,13 +1,9 @@
 ﻿
-using System.Collections.Generic;
-
 namespace UnityCommander.Common.Diagnostic
 {
-    public interface IDiagnosticSource
+    public interface IDiagnosticSource : IDiagnostic
     {
-        string Name { get; }
-
-        IReadOnlyDictionary<string, object?> GetState();
+        object GetState();
 
         string Describe();
     }

@@ -1,4 +1,45 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  Icons  -->
+
+    <SolidColorBrush x:Key="IconDefaultBrush" Color="#FF2C2C2C" />
+    <SolidColorBrush x:Key="IconMutedBrush" Color="#FF7A7A7A" />
+    <SolidColorBrush x:Key="IconDisabledBrush" Color="#FFB8B8B8" />
+
+    <SolidColorBrush x:Key="IconAccentBrush" Color="#FF1976D2" />
+    <SolidColorBrush x:Key="IconHoverBrush" Color="#FF1565C0" />
+    <SolidColorBrush x:Key="IconSelectedBrush" Color="#FF0D47A1" />
+
+    <SolidColorBrush x:Key="IconSuccessBrush" Color="#FF2E7D32" />
+    <SolidColorBrush x:Key="IconWarningBrush" Color="#FFF9A825" />
+    <SolidColorBrush x:Key="IconErrorBrush" Color="#FFC62828" />
+
+    <SolidColorBrush x:Key="Theme.Accent" Color="Red" />
+    <SolidColorBrush x:Key="Theme.Background" Color="Coral" />
+    <SolidColorBrush x:Key="Theme.Foreground" Color="Black" />
+
+
+    <!--  Roles  -->
+
+    <SolidColorBrush x:Key="IconFolderBrush" Color="Orange" />
+    <SolidColorBrush x:Key="IconFileBrush" Color="SteelBlue" />
+
+
+    <!--<SolidColorBrush x:Key="UcBackgroundHover" Color="{DynamicResource UcStateHover}" />
+    <SolidColorBrush x:Key="UcBackgroundPressed" Color="{DynamicResource UcStatePressed}" />
+
+    <SolidColorBrush x:Key="UcBackgroundPrimary" Color="{DynamicResource UcStateNormal}" />
+    <SolidColorBrush x:Key="UcBackgroundSecondary" Color="#D8ECFF" />
+    <SolidColorBrush x:Key="UcBackgroundSurface" Color="#D8ECFF" />
+
+    <SolidColorBrush x:Key="UcForegroundPrimary" Color="#2B2B2B" />
+    <SolidColorBrush x:Key="UcForegroundSecondary" Color="#D8ECFF" />
+
+    <SolidColorBrush x:Key="UcFocusBrush" Color="#D8ECFF" />
+    <SolidColorBrush x:Key="UcBorderBrush" Color="#D8ECFF" />
+    <SolidColorBrush x:Key="UcAccentBrush" Color="#D8ECFF" />
+
+    <SolidColorBrush x:Key="BorderDefault" Color="#D8ECFF" />-->
+
+
 </ResourceDictionary>

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace AIconBrowser.Components.InputBox
+namespace IconBrowser.Components.InputBox
 {
     public class ActionNameConverter : IValueConverter
     {

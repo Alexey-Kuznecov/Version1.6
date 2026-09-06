@@ -2,30 +2,20 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityCommander.Commands.Diagnostic;
+using UnityCommander.Diagnostics.Diagnostic;
 
 namespace UnityCommander.Commands.Services
 {
     public class WatchService
     {
-        private readonly IDiagnosticPipeline _pipeline;
-
-        public WatchService(IDiagnosticPipeline diagnostic)
-        {
-            _pipeline = diagnostic;
-        }
-
         public async Task Run(
-            DiagnosticQuery query,
             int interval,
-            Action<DiagnosticResult> onResult,
+            Action onResult,
             CancellationToken ct)
         {
             while (!ct.IsCancellationRequested)
             {
-                var result = _pipeline.Execute(query);
-
-                onResult(result);
+                onResult();
 
                 await Task.Delay(interval, ct);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Selection;
 
 namespace UnityCommander.Services.Interfaces
@@ -12,8 +13,12 @@ namespace UnityCommander.Services.Interfaces
 
         IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
         
-        void Handle(ISelectionContext ctx, SelectionAction action);
-        
-        void Clear();
+        void Handle(SelectionAction action);
+
+        void ResetContext(IEnumerable<ISelectableItem> items);
+
+        void SetItems(IEnumerable<ISelectableItem> items);
+
+        void ClearSelection();
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace AIconBrowser.Contracts
+namespace IconBrowser.Contracts
 {
     using System;
     using System.Xml.Linq;

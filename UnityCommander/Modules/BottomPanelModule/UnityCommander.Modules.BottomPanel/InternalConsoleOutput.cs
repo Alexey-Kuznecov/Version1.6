@@ -1,46 +1,70 @@
-﻿using Prism.Events;
+﻿
 using System;
 using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Infrastructure;
+using UnityCommander.Modules.BottomPanel.Console;
 
 namespace UnityCommander.Modules.BottomPanel
 {
-    public class InternalConsoleOutput : IConsoleOutput
+    public sealed class InternalConsoleOutput : IConsoleOutput
     {
-        private readonly IEventAggregator _ea;
+        private IConsoleActivityState _activity;
 
-        public InternalConsoleOutput(IEventAggregator ea)
+        public event Action<IConsoleActivityState?>? ActivityChanged;
+
+        public event Action<string>? TextWritten;
+        public event Action? Cleared;
+
+        public InternalConsoleOutput()
         {
-            _ea = ea;
         }
 
         public void Write(string text)
-        {
-            _ea.GetEvent<ConsoleWriteEvent>().Publish(text);
-        }
+            => TextWritten?.Invoke(text);
 
         public void WriteLine(string text)
-        {
-            _ea.GetEvent<ConsoleWriteEvent>().Publish(text + Environment.NewLine);
-        }
+            => TextWritten?.Invoke(text + Environment.NewLine);
 
         public void WriteError(string message)
-        {
-            WriteLine("[ERROR] " + message);
-        }
+            => WriteLine("[ERROR] " + message);
 
         public void WriteWarning(string message)
-        {
-            WriteLine("[WARNING] " + message);
-        }
+            => WriteLine("[WARNING] " + message);
 
         public void WriteSuccess(string message)
-        {
-            WriteLine("[OK] " + message);
-        }
+            => WriteLine("[OK] " + message);
 
         public void Clear()
+            => Cleared?.Invoke();
+
+        public IConsoleActivity StartActivity(string message)
         {
-            _ea.GetEvent<ConsoleClearEvent>().Publish();
+            _activity = new ConsoleActivityState
+            {
+                Title = message,
+                Status = message,
+            };
+
+            ActivityChanged?.Invoke(_activity);
+
+            return new ConsoleActivity(this);
+        }
+
+        internal void UpdateActivity(Action<IConsoleActivityState> update)
+        {
+            if (_activity == null)
+                return;
+
+            update.Invoke(_activity);
+
+            ActivityChanged?.Invoke(_activity);
+        }
+
+        internal void CompleteActivity()
+        {
+            _activity = null;
+
+            ActivityChanged?.Invoke(null);
         }
     }
 }

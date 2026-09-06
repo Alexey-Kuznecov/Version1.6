@@ -1,6 +1,5 @@
 ﻿#define Nlog
 
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +7,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using UnityCommander.Abstractions.Background;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Native;
 using UnityCommander.Native.Api;
 
@@ -19,6 +20,7 @@ namespace UnityCommander.Core.IO.Operations
     public class CopyFiles : IDisposable
     {
         #region Fields
+        private readonly IBackgroundWorkController _backgroundWork;
 
         private readonly Queue<long> Snapshots = new Queue<long>(30);
         private readonly Timer SpeedTimer = new Timer(1000D);
@@ -40,7 +42,8 @@ namespace UnityCommander.Core.IO.Operations
         public event Action<CopyInfo> FileStarted;        // Начало копирования файла
         public event Action<CopyInfo> FileCompleted;      // Файл полностью скопирован
         public event Action<string> DirectoryCreated;     // Папка создана
- 
+
+
         #endregion
 
         #region Test Properties
@@ -55,10 +58,11 @@ namespace UnityCommander.Core.IO.Operations
 
         #endregion
 
-        public CopyFiles()
+        public CopyFiles(OperationContext ctx)
         {
+            _backgroundWork = ctx.BackgroundWork;
             fileOperation = new FileOperations();
-            copyInfo = new CopyInfo();
+            copyInfo = ctx.Info;
             SpeedTimer.Elapsed += SpeedTimerHandler;
             ElapsedTimer.Elapsed += ElapseTimerHandler;
         }
@@ -72,14 +76,6 @@ namespace UnityCommander.Core.IO.Operations
         public void ChangeCopyStatus(CopyBehaviors changeOn)
         {
             copyBehaviors = changeOn;
-        }
-
-        internal void RaiseFileAlreadyExistsEvent(CopyInfo info)
-        {
-            if (this.FileAlreadyExistsEvent != null)
-            {
-                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
-            }
         }
 
         public void Copy(string source, string target)
@@ -173,6 +169,14 @@ namespace UnityCommander.Core.IO.Operations
             t.Wait();
         }
 
+        internal void RaiseFileAlreadyExistsEvent(CopyInfo info)
+        {
+            if (this.FileAlreadyExistsEvent != null)
+            {
+                this.FileAlreadyExistsEvent.Invoke(this, new CopyReportEventArg(info));
+            }
+        }
+
         private void RaiseEvent(CopyInfo info)
         {
             if (CopyReportEvent != null)
@@ -182,6 +186,8 @@ namespace UnityCommander.Core.IO.Operations
         }
 
         #region Private Methods
+
+        private bool _throttleCopy = true;
 
         private CopyProgressResult CopyProgressHandle(
             long total,
@@ -197,6 +203,9 @@ namespace UnityCommander.Core.IO.Operations
             switch (reason)
             {
                 case CopyProgressCallbackReason.CALLBACK_CHUNK_FINISHED:
+
+                    _backgroundWork.Wait();
+
                     switch (copyBehaviors)
                     {
                         case CopyBehaviors.Pause:

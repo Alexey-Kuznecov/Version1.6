@@ -15,7 +15,11 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Style="{DynamicResource NavigationPopupHeaderStyle}" />
         <Border Grid.Row="1" Style="{DynamicResource NavigationPopupContainerStyle}">
-            <ListBox ItemsSource="{Binding DirectoryList, Mode=OneWay}" SelectedItem="{Binding SelectItem, Mode=TwoWay}">
+            <ListBox
+                ItemContainerStyle="{DynamicResource UcListBoxItemTemplate}"
+                ItemsSource="{Binding DirectoryList, Mode=OneWay}"
+                SelectedItem="{Binding SelectItem, Mode=TwoWay}"
+                Style="{DynamicResource UcListBoxTemplate}">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="local:PopupViewModel">
                         <WrapPanel>

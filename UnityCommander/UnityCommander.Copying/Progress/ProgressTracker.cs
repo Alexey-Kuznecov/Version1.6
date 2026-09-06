@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Diagnostics;
+using System.IO;
 using UnityCommander.Copying.Core;
 
 namespace UnityCommander.Copying.Progress

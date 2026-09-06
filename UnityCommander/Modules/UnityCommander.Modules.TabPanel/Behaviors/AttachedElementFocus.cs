@@ -1,13 +1,10 @@
 ﻿
 namespace UnityCommander.Modules.TabPanel.Behaviors
 {
-    using System;
-    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
 
-    using UnityCommander.Common.Module;
 
     /// <summary>
     /// The attached element focus.

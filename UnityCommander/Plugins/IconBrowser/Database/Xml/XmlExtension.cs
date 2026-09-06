@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace AIconBrowser.Database.Xml
+namespace IconBrowser.Database.Xml
 {
     /// <summary>
     /// The class has methods a lot extending the vanilla feacher of the language linq.

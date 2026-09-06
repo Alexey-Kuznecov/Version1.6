@@ -1,15 +1,8 @@
-﻿#if NET472
-using System.Windows.Markup;
-[assembly: XmlnsDefinition("net472", "Namespace")]
-#endif
+﻿
 namespace UnityCommander.Modules.FilePanel.Views
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Windows;
     using System.Windows.Controls;
-    using UnityCommander.Common.Module;
+    using UnityCommander.Abstractions.Module;
 
     /// <summary>
     /// Interaction logic for LeftPanel

@@ -4,6 +4,7 @@ using UnityCommander.Copying.Core;
 
 namespace UnityCommander.Copying.Filtering
 {
+    using System.IO;
     using System.Text.RegularExpressions;
 
     public class RegexFileFilter : IFileFilter

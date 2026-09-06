@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.Views"
     xmlns:materialDesigh="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -30,30 +31,36 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-
         <Grid
             Grid.Column="0"
             Width="60"
-            Background="#173763">
+            Background="{DynamicResource UcAccentSecondaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ListView
                 Grid.Row="0"
+                Background="{DynamicResource UcAccentSecondaryBrush}"
+                BorderBrush="{x:Null}"
+                ItemContainerStyle="{StaticResource UcListViewItemNormal}"
                 ItemsSource="{Binding SidebarItems}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
                 SelectedItem="{Binding CurrentSidebarItem, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Viewbox
-                            Width="25"
-                            Height="25"
-                            Margin="6"
-                            Stretch="UniformToFill">
-                            <Path Data="{Binding Icon.Path.Data}" Fill="#FF1368" />
-                        </Viewbox>
+                        <Grid
+                            Width="45"
+                            Height="45"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <icon:IconRender
+                                Key="{Binding IconKey}"
+                                Width="25"
+                                Height="25"
+                                Brush="{DynamicResource UcAccentTertiaryBrush}" />
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -68,7 +75,7 @@
                             Width="25"
                             Height="25"
                             Margin="16,0"
-                            Foreground="#FF1368"
+                            Foreground="{DynamicResource UcAccentTertiaryBrush}"
                             Kind="Settings" />
                     </materialDesigh:PopupBox.ToggleContent>
                     <StackPanel>
@@ -85,7 +92,7 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             Width="{Binding SidebarContentWidth, Mode=TwoWay}"
-            Background="#F3F2F2">
+            Background="{DynamicResource UcSurfaceTertiaryBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition />
@@ -97,7 +104,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Content="{Binding IconHideSidebar.Data}"
-                Foreground="Gray">
+                Foreground="{DynamicResource UcForegroundTertiaryBrush}">
                 <ContentControl.Template>
                     <DynamicResource ResourceKey="CustomButtonTemplate" />
                 </ContentControl.Template>
@@ -111,7 +118,7 @@
                     <ToolTip Content="Collapse sidebar" />
                 </ContentControl.ToolTip>
             </ContentControl>
-            <Border Grid.Row="1" Background="#FFF3F2F2">
+            <Border Grid.Row="1">
                 <ContentControl Content="{Binding SidebarContent}" />
             </Border>
         </Grid>

@@ -1,13 +1,13 @@
 ﻿
 namespace UnityCommander.Modules.FilePanel.Converters
 {
+    using MaterialDesignThemes.Wpf;
     using System;
     using System.Globalization;
     using System.Windows.Media;
-
-    using MaterialDesignThemes.Wpf;
-    using UnityCommander.Common;
+    using UnityCommander.Abstractions.Panels;
     using UnityCommander.Common.Models.Directory;
+    using UnityCommander.WPF;
 
     /// <summary>
     /// The icon converter.

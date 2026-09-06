@@ -1,4 +1,5 @@
 ﻿
+using UnityCommander.CLI.Core;
 using UnityCommander.Copying.Core;
 using UnityCommander.Copying.Progress;
 

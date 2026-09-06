@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AIconBrowser.Patterns
+namespace IconBrowser.Patterns
 {
     public struct Singleton  
     {

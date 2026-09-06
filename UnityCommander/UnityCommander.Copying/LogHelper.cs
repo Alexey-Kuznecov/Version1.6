@@ -1,6 +1,5 @@
 ﻿
-
-using UnityCommander.Core.Logger;
+using UnityCommander.Logging.Contracts;
 
 namespace UnityCommander.Copying
 {
@@ -10,7 +9,7 @@ namespace UnityCommander.Copying
 
         public LogHelper()
         {
-            Log = new FileLogger();
+            //Log = new FileLogger();
         }
     }
 }

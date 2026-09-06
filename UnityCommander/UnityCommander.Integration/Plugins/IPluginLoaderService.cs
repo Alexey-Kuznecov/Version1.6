@@ -4,7 +4,6 @@ namespace UnityCommander.Integration.Plugins
     using System;
     using System.Collections.Generic;
     using UnityCommander.Integration.Contracts;
-    using UnityCommander.Integration.Dialog;
 
     /// <summary>
     /// Plugin provider service interface.
@@ -31,7 +30,7 @@ namespace UnityCommander.Integration.Plugins
         /// <returns>
         /// List of plugin implementations.
         /// </returns>
-        IEnumerable<IDialogService> GetDialogService();
+        //IEnumerable<IDialogService> GetDialogService();
 
         /// <summary>
         /// The get plugin context.

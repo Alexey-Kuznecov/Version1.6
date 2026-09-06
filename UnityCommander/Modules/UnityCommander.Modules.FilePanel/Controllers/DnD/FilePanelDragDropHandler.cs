@@ -1,28 +1,51 @@
 ﻿
-using Prism.Dialogs;
+using AvalonDock.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Controls.Layout;
-using UnityCommander.Core.Behaviors;
-using UnityCommander.Core.DragDrop;
-using UnityCommander.Core.Mvvm;
 using UnityCommander.Modules.FilePanel.States;
+using UnityCommander.Services;
+using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF;
+using UnityCommander.WPF.DragDrop;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 {
     public sealed class FilePanelDragDropHandler
-     : IDragDropHandler
+        : IDragDropHandler
     {
-        private readonly IDialogService _dialogService;
+        private readonly IFileOperationService _fileOperationService;
+        
+        private readonly ITabActivationService _tabActivation;
 
-        public FilePanelDragDropHandler(IDialogService dialogService)
+        public readonly IDragHoverNavigationService _hoverNavigationService;
+        
+        private readonly ICursorTargetService _cursorTargetsService;
+
+        private readonly IInputState _inputState;
+
+        public FilePanelDragDropHandler(
+            ServiceOverrideResolver overrideResolver, 
+            ITabActivationService tabActivation, 
+            IDragHoverNavigationService hoverNavigationService, 
+            IInputState inputState, 
+            ICursorTargetService cursorTarget)
         {
-            _dialogService = dialogService;
+            _fileOperationService = overrideResolver.Resolve<IFileOperationService>();
+            _tabActivation = tabActivation;
+            _hoverNavigationService = hoverNavigationService;
+            _inputState = inputState;
+            _cursorTargetsService = cursorTarget;
         }
 
         public bool CanHandle(IDropContext context)
@@ -34,33 +57,74 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
            IDropContext dropContext,
            DragDropContext context)
         {
-            if (context.SourceItems.Count == 0)
+            if (!HasSources(context))
                 return DragDropResult.Deny();
 
-            if (string.Equals(
-                context.SourcePath,
-                context.TargetPath,
-                StringComparison.OrdinalIgnoreCase))
-            {
+            if (IsInvalidDrop(context))
                 return DragDropResult.Deny();
-            }
 
             if (!HasValidData(context.Data))
                 return DragDropResult.Deny();
 
-            var cxt = ((ContentNode)context.TargetContext).Context is FileNodeContext;
+            if (dropContext is FilePanelDragDropContext ctx)
+            {
+                if (ctx.TabId is Guid tabId)
+                {
+                    _tabActivation.Activate(tabId);
+                }
+
+                if (ctx.CanNavigate)
+                {
+                    var shiftPressed =
+                        (context.KeyStates & DragDropKeyStates.ShiftKey) != 0;
+
+                    if (context.VisualTarget is ListView listView &&
+                        context.DropPosition is Point position)
+                    {
+                        _cursorTargetsService.Update(
+                            listView,
+                            position);
+
+                        var cursorTarget =
+                            _cursorTargetsService.GetCurrent(listView);
+
+                        if (cursorTarget?.Element.Content is IFolderItem folder &&
+                            ctx.TargetInfo?.NavigateCommand is ICommand navCommand)
+                        {
+                            _hoverNavigationService.Begin(
+                                cursorTarget.Element,
+                                () => navCommand.Execute(folder),
+                                shiftPressed);
+                        }
+                        else
+                        {
+                            _hoverNavigationService.Cancel();
+                        }
+                    }
+
+                    if (context.VisualTarget is Button button &&
+                        ctx.TargetInfo?.NavigateCommand is ICommand command &&
+                        button.CommandParameter is string path)
+                    {
+                        _hoverNavigationService.Begin(
+                            button,
+                            () => command.Execute(path),
+                            shiftPressed);
+                    }
+                }
+            }
 
             return new DragDropResult
             {
                 IsAllowed = true,
                 Effect = DragDropEffects.Copy,
-                Adorner = cxt ? DropTargetAdorners.Insert : DropTargetAdorners.Highlight,
+                Adorner = ResolveAdorner(context)
             };
         }
 
         public Task DropAsync(
-            IDropContext dropContext,
-            DragDropContext context)
+           IDropContext dropContext,
+           DragDropContext context)
         {
             var sourcePaths =
                 ExtractSources(context.Data);
@@ -69,22 +133,65 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 return Task.CompletedTask;
 
             var targetPath =
-                ResolveTargetPath(context);
+                ResolveTargetPath(context)
+                ?? dropContext.Target as string;
 
             if (string.IsNullOrWhiteSpace(targetPath))
                 return Task.CompletedTask;
 
-            _dialogService.ShowDialog(
-                "CopyDialog",
-                new OverrideDialogParameters(
-                    new CopyParameters
-                    {
-                        ManySource = sourcePaths,
-                        Target = targetPath
-                    }),
-                _ => { });
+            _fileOperationService.CopyAsync(
+                new FileOperationRequest
+                {
+                    Sources = sourcePaths,
+                    Target = targetPath,
+                    ShowDialog = true
+                });
 
             return Task.CompletedTask;
+        }
+
+        public void DragLeave(
+            IDropContext dropContext,
+            DragDropContext context)
+        {
+            if (context.VisualTarget is ListView listView)
+            {
+                _cursorTargetsService.Clear(listView);
+            }
+
+            _hoverNavigationService.Cancel();
+        }
+
+        private static bool IsInvalidDrop(DragDropContext context)
+        {
+            if (string.IsNullOrEmpty(context.TargetPath))
+                return false;
+
+            foreach (var item in context.SourceItems)
+            {
+                if (item is not BaseDirectory source)
+                    continue;
+
+                var sourcePath = source.Path;
+
+                if (string.Equals(
+                        sourcePath,
+                        context.TargetPath,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                if (context.TargetPath.StartsWith(
+                        sourcePath.TrimEnd(Path.DirectorySeparatorChar)
+                        + Path.DirectorySeparatorChar,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static List<string> ExtractSources(
@@ -131,6 +238,35 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
                 FolderNodeContext folderContext => folderContext.Current,
                 _ => null
             };
+        }
+
+        private static Type? ResolveAdorner(
+            DragDropContext context)
+        {
+            if (context.VisualTarget is LayoutDocumentTabItem)
+                return null;
+
+            if (context.TargetContext is ContentNode node)
+            {
+                return node.Context is FileNodeContext
+                    ? DropTargetAdorners.Insert
+                    : DropTargetAdorners.Highlight;
+            }
+
+            if (context.VisualTarget is ListView)
+                return DropTargetAdorners.Highlight;
+
+
+            if (context.VisualTarget is Button)
+                return DropTargetAdorners.Highlight;
+
+            return null;
+        }
+
+        private bool HasSources(DragDropContext context)
+        {
+            return context.SourceItems.Count > 0
+                || !string.IsNullOrEmpty(context.SourcePath);
         }
 
         private static bool HasValidData(object? data)

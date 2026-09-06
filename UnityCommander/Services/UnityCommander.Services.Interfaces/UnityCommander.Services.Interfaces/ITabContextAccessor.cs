@@ -1,5 +1,6 @@
 ﻿
 using System;
+using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.Services.Interfaces
 {

@@ -1,10 +1,8 @@
 ﻿
 namespace UnityCommander.Abstractions.Completion
 {
-    public interface IPositionalArgumentDescriptor
+    public interface IPositionalArgumentDescriptor : IValueDescriptor
     {
-        string Name { get; }
-        ArgumentValueType ValueType { get; }
         bool IsRequired { get; }
         bool IsRepeatable { get; }
     }

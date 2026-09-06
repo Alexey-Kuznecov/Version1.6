@@ -1,16 +1,21 @@
 ﻿
 using Prism.Ioc;
+using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.Panels;
+using UnityCommander.Common.Models;
+using UnityCommander.Common.Panels;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core;
+using UnityCommander.Core.Background;
 using UnityCommander.Core.Behaviors.Selection;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Columns;
-using UnityCommander.Operation;
+using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Interfaces.Settings;
 using UnityCommander.Services.Selection;
-using UnityCommander.Services.Settings;
+using UnityCommander.Settings;
+using UnityCommander.SystemMetrics.Monitoring;
 
 namespace UnityCommander.Dependencies
 {
@@ -23,22 +28,21 @@ namespace UnityCommander.Dependencies
 
             // Служба для обновления панелей после копирования файлов\папок
             registry.RegisterSingleton<IDirectoryChangeNotifier, DirectoryChangeNotifier>();
+            registry.RegisterSingleton<IDirectoryWatchManager, DirectoryWatchManager>();
+            registry.RegisterSingleton<IDirectoryPanelUpdater, DirectoryPanelUpdater>();
+            registry.RegisterSingleton<FileModelFactory>();
+            registry.RegisterSingleton<FolderModelFactory>();
 
             // Навигационный контекст, нужен один на всё приложение
             registry.RegisterSingleton<NavigationContextDirectory>();
             registry.RegisterSingleton<NavigationManager>();
 
-            // Калькуляторы и контроллеры для копирования файлов
-            registry.RegisterSingleton<CopyProgressCalculator>();
-            registry.RegisterSingleton<CopyReportCollector>();
-            registry.RegisterSingleton<CopyConflictResolver>();
-            registry.RegisterSingleton<CopyOperationController>();
-
             //// Службы для управления выделением в файловых панелях
-            registry.RegisterSingleton<ISelectionStrategy, SingleClickSelectionStrategy>();
-            registry.RegisterSingleton<ISelectionStrategy, ShiftSelectionStrategy>();
-            registry.RegisterSingleton<ISelectionStrategy, CtrlSelectionStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, ReplaceSelectionStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, RangeSelectionStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, ToggleSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ExtensionSelectionRuleStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, ContextMenuClickStrategy>();
             registry.RegisterSingleton<ISelectionService, SelectionService>();
             registry.Register<ISelectionManager, SelectionManager>();
 
@@ -46,7 +50,21 @@ namespace UnityCommander.Dependencies
             registry.Register<IColumnSettingsStore, InMemoryColumnSettingsStore>(); // глобально
             registry.RegisterSingleton<IColumnProvider, DefaultColumnProvider>();
             registry.Register<IColumnStateManager, ColumnStateManager>(); // по панели
-            registry.Register<ColumnRegistry>(); // зависит от задач
+            registry.RegisterSingleton<IColumnRegistry, ColumnRegistry>(); // зависит от задач
+
+            /// Background Services
+            registry.RegisterSingleton<NodeContextRegistry>();
+            registry.RegisterSingleton<ViewportMapper>();
+
+            registry.RegisterSingleton<IFileStateService, FileRuntimeService>();
+            registry.RegisterSingleton<IVisibleTabResolver, VisibleTabResolver>();
+
+
+            registry.RegisterSingleton<ICreationService, CreationService>();
+            registry.RegisterSingleton<ITabStateRegistry, TabStateRegistry>();
+            registry.RegisterSingleton<FilePanelContext>();
+            registry.RegisterSingleton<IRenameService, RenameService>();
+            registry.RegisterSingleton<IRenameManager, RenameManager>();
         }
     }
 }

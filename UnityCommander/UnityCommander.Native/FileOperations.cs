@@ -2,9 +2,9 @@
 namespace UnityCommander.Native
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
-
+    using System.ComponentModel;
+    using System.IO;
+    using System.Runtime.InteropServices;
     using UnityCommander.Native.Api;
 
     /// <summary>
@@ -12,6 +12,8 @@ namespace UnityCommander.Native
     /// </summary>
     public class FileOperations
     {
+        private const int ERROR_OPERATION_ABORTED = 1235;
+
         /// <summary>
         /// The pb cancel.
         /// </summary>
@@ -49,15 +51,32 @@ namespace UnityCommander.Native
         /// <param name="newFile"> The full path to a new file. </param>
         /// <param name="callback"> Delegate to control copy progress. </param>
         /// <returns> If the file is copied successfully, the return value is true. </returns>
-        public bool XCopy(string oldFile, string newFile, CopyProgressRoutine callback)
+        public bool XCopy(
+            string oldFile,
+            string newFile,
+            CopyProgressRoutine callback)
         {
-           return NativeFunctions.CopyFileEx(
-                   oldFile, 
-                   newFile,
-                   callback,
-                   IntPtr.Zero, 
-                   ref this.pbCancel,
-                   CopyFileFlags.COPY_FILE_RESTARTABLE);
+            bool result = NativeFunctions.CopyFileEx(
+                oldFile,
+                newFile,
+                callback,
+                IntPtr.Zero,
+                ref pbCancel,
+                CopyFileFlags.COPY_FILE_RESTARTABLE);
+
+            if (result)
+                return true;
+
+            int error = Marshal.GetLastWin32Error();
+
+            if (error == ERROR_OPERATION_ABORTED)
+                throw new OperationCanceledException();
+
+            var ex = new Win32Exception(error);
+
+            throw new IOException(
+                $"Copy failed: {ex.Message}",
+                ex);
         }
 
         /// <summary>

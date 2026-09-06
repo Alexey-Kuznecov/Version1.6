@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions;
 using UnityCommander.CLI.Autocomplete;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Interfaces.Plugins;
 
 namespace UnityCommander.Commands
 {
@@ -16,13 +18,20 @@ namespace UnityCommander.Commands
     public class PluginConsoleCommand : IConsoleCommand, IAutoCompleteArgumentsProvider
     {
         private readonly IPluginProvider _pluginProvider;
+        private readonly IPluginActivator _activator;
+        private readonly IRuntimeServices _runtime;
         public string Name => "plugin";
         public IEnumerable<string> Aliases => ["pl"];
         public string Description => "Управление плагинами";
 
-        public PluginConsoleCommand(IPluginProvider pluginProvider)
+        public PluginConsoleCommand(
+            IPluginProvider pluginProvider,
+            IPluginActivator activator, 
+            IRuntimeServices runtime)
         {
             _pluginProvider = pluginProvider;
+            _activator = activator;
+            _runtime = runtime;
         }
 
         public IEnumerable<string> GetArgumentSuggestions(string[] currentArgs)
@@ -79,11 +88,10 @@ namespace UnityCommander.Commands
             }
 
             var target = Path.Combine(AppContext.BaseDirectory, "Plugins", Path.GetFileNameWithoutExtension(args[0]), args[0]);
+            _activator.Activate(args[0]);
+            context.Output.WriteLine($"Плагин загружен: {args[0]}");
 
-            if (_pluginProvider.Load(target))
-                context.Output.WriteLine($"Плагин загружен: {args[0]}");
-            else
-                context.Output.WriteError($"Не удалось загрузить плагин: {args[0]}");
+            //context.Output.WriteError($"Не удалось загрузить плагин: {args[0]}");
 
             return Task.CompletedTask;
         }
@@ -91,12 +99,12 @@ namespace UnityCommander.Commands
         private Task Unload(IConsoleCommandContext context, string[] args)
         {
             var pluginsRoot = Path.Combine(AppContext.BaseDirectory, "Plugins");
+            var name = args[0];
+            //var container = _pluginProvider.GetContainer(name);
 
             if (args.Contains("--all"))
             {
-                //var plugins = _pluginProvider.GetAll().ToList();
-                //foreach (var plugin in plugins)
-                //    _pluginProvider.Unload(plugin.PluginInfo.Name);
+                _pluginProvider.UnloadAll();
 
                 context.Output.WriteLine("Все плагины выгружены.");
                 return Task.CompletedTask;
@@ -108,12 +116,35 @@ namespace UnityCommander.Commands
                 return Task.CompletedTask;
             }
 
-            var name = args[0];
+            _runtime.Cleanup(name);
 
-            if (_pluginProvider.Unload(name))
-                context.Output.WriteLine($"Плагин выгружен: {name}");
-            else
-                context.Output.WriteError($"Плагин не найден или не выгружен: {name}");
+            //var alcContext = container?.LoadContext as AssemblyLoadContext;
+
+            //if (alcContext == null)
+            //    return Task.CompletedTask;
+
+            //PluginUnloadDebugger.MonitorUnload(
+            //  alcContext,
+            //  name);
+           
+            //container = null;
+            //alcContext = null;
+
+            //if (_pluginProvider.Unload(name))
+            //{
+            //    Task.Delay(5000);
+
+            //    if (PluginUnloadDebugger.IsUnloaded(name))
+            //    {
+            //        context.Output.WriteLine(
+            //            $"Плагин полностью выгружен: {name}");
+            //    }
+            //    else
+            //    {
+            //        context.Output.WriteLine(
+            //            $"Плагин всё ещё удерживается в памяти: {name}");
+            //    }
+            //}
 
             return Task.CompletedTask;
         }

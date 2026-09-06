@@ -10,6 +10,7 @@ namespace UnityCommander.Logging.Core
         private readonly LoggerCore _core;
         private readonly string _category;
         private readonly string _scope;
+        private DateTime _lastLogTime = DateTime.UtcNow;
 
         public Logger(LoggerCore core, string category, string scope)
         {
@@ -24,11 +25,17 @@ namespace UnityCommander.Logging.Core
             Exception? ex = null,
             Func<bool>? condition = null)
         {
+            var now = DateTime.UtcNow;
+
+            var deltaMs = (now - _lastLogTime).TotalMilliseconds;
+            _lastLogTime = now;
+
             var obj = payload != null ? ObjectLogFormatter.Format(payload) : null;
 
             var entry = new LogEntry
             {
-                Timestamp = DateTime.Now,
+                Timestamp = now,
+                DeltaMs = deltaMs,
                 Level = level,
                 Message = message,
                 Payload = obj,
@@ -66,6 +73,7 @@ namespace UnityCommander.Logging.Core
             => LogInternal(LogLevel.Debug, message, condition: condition);
         public void Info(string m) => LogInternal(LogLevel.Info, m);
         public void Debug(string m) => LogInternal(LogLevel.Debug, m);
+        public void Error(string m) => LogInternal(LogLevel.Error, m);
         public void Warning(string m) => LogInternal(LogLevel.Warning, m);
         public void Trace(string m) => LogInternal(LogLevel.Trace, m);
         
@@ -154,7 +162,7 @@ namespace UnityCommander.Logging.Core
                 });
         }
 
-        public void Error(string m, Exception? e = null) => LogInternal(LogLevel.Error, m, e);
-        public void Fatal(string m, Exception? e = null) => LogInternal(LogLevel.Fatal, m, e);
+        public void Error(string m, Exception? e) => LogInternal(LogLevel.Error, m, e);
+        public void Fatal(string m, Exception? e) => LogInternal(LogLevel.Fatal, m, e);
     }
 }

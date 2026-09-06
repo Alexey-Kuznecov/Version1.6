@@ -1,5 +1,5 @@
 ﻿
-using UnityCommander.Copying.Core;
+using System.IO;
 
 namespace UnityCommander.Copying.Strategies
 {

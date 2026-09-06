@@ -1,0 +1,93 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.SettingsPanel.Editors.ShortcutEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:UnityCommander.Modules.SettingsPanel.Editors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Grid Margin="5">
+
+        <!--  EDITOR AREA  -->
+        <Border
+            Grid.Column="0"
+            Height="60"
+            Padding="10,6"
+            BorderThickness="1"
+            CornerRadius="4">
+
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="{StaticResource UcBorderPrimaryBrush}" />
+                    <Setter Property="Background" Value="Transparent" />
+
+                    <Style.Triggers>
+
+                        <!--  Hover  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="{StaticResource UcHoverSecondaryBrush}" />
+                        </Trigger>
+
+                        <!--  Recording state  -->
+                        <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                            <Setter Property="BorderBrush" Value="{StaticResource UcErrorBorderBrush}" />
+                            <Setter Property="Background" Value="{StaticResource UcErrorBackgroundBrush}" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+
+                <!--  DESCRIPTION  -->
+                <TextBlock
+                    Grid.Row="0"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource UcForegroundTertiaryBrush}"
+                    Text="{Binding Description}" />
+
+                <!--  SHORTCUT DISPLAY  -->
+                <TextBlock
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource UcForegroundTertiaryBrush}">
+
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding Display}" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                                    <Setter Property="Text" Value="Нажмите комбинацию..." />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+
+                </TextBlock>
+
+                <!--  BUTTON  -->
+                <Button
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Width="90"
+                    Height="30"
+                    Command="{Binding BeginCaptureCommand}"
+                    Content="Изменить"
+                    Style="{StaticResource ModernButton}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-	<TargetFramework>net10.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
+	<TargetFramework>net10.0</TargetFramework>
     <AssemblyName>UnityCommander.Core</AssemblyName>
     <BaseOutputPath>bin\</BaseOutputPath>
   </PropertyGroup>
@@ -14,10 +13,6 @@
     <Page Remove="Modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Behaviors\DragDrop\Drag.cs" />
-    <Compile Remove="Behaviors\DragDrop\Drop.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="C:\Users\lexa1\.nuget\packages\nlog.config\4.7.4\contentFiles\any\any\NLog.config" />
     <None Remove="C:\Users\lexa1\.nuget\packages\nlog.schema\4.7.4\contentFiles\any\any\NLog.xsd" />
     <None Remove="Commands\ReceiverBase.cs~RF10164661.TMP" />
@@ -26,12 +21,10 @@
     <None Remove="RegionNames.cs~RF22523a1b.TMP" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.14" />
-    <PackageReference Include="System.Reactive" Version="6.1.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Gui\CommandSystem.Gui.csproj" />
+    <ProjectReference Include="..\..\..\CommandSystem\UnityCommander.SystemMetrics\UnityCommander.SystemMetrics.csproj" />
+    <ProjectReference Include="..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj">
       <Private>False</Private>
     </ProjectReference>
@@ -45,6 +38,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <Reference Include="UnityCommander.Ribbon.Abstractions">
+      <HintPath>..\..\..\_builds\UnityCommander.Ribbon.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Settings\" />
+    <Folder Include="Theming\" />
   </ItemGroup>
 </Project>

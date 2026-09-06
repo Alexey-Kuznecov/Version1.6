@@ -8,7 +8,7 @@ namespace UnityCommander.Modules.Viewer.Converters
     using System.Windows.Data;
     using System.Windows.Input;
     using System.Windows.Media;
-    using UnityCommander.Common;
+    using UnityCommander.WPF;
 
     /// <summary>
     /// The date time converter.

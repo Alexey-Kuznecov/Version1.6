@@ -1,11 +1,12 @@
-﻿using System;
+﻿
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Markup;
-using AIconBrowser.Contracts;
+using IconBrowser.Contracts;
 
-namespace AIconBrowser
+namespace IconBrowser
 {
     [DebuggerStepThrough]
     public class XamlFileService : IFileService

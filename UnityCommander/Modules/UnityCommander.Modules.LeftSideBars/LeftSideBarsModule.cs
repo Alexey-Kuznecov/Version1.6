@@ -1,18 +1,16 @@
 ﻿
-using System;
-
 namespace UnityCommander.Modules.LeftSideBars
 {
     using Prism.Ioc;
     using Prism.Modularity;
     using Prism.Navigation.Regions;
-    using UnityCommander.Common;
     using UnityCommander.Common.Sidebar;
     using UnityCommander.Core;
     using UnityCommander.Modules.LeftSideBars.Content;
     using UnityCommander.Modules.LeftSideBars.SidebarContent;
     using UnityCommander.Modules.LeftSideBars.ViewModels;
     using UnityCommander.Modules.LeftSideBars.Views;
+    using UnityCommander.Mvvm.Helper;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Interfaces.Sidebar;
 
@@ -29,7 +27,7 @@ namespace UnityCommander.Modules.LeftSideBars
         {
             this.regionManager.RequestNavigate(RegionNames.LeftSideBarRegion, nameof(Sidebar));
            
-            var sidebarService = containerProvider.Resolve<SidebarService>();
+            var sidebarService = containerProvider.Resolve<ISidebarService>();
             var coordinator =
                 containerProvider.Resolve<ISessionAggregator>();
 
@@ -46,26 +44,26 @@ namespace UnityCommander.Modules.LeftSideBars
             sidebarService.Register(
                 new SidebarSection(
                     "core.column",
-                    "TableColumn",
-                    new ColumnsOptionControl(),
-                    new ColumnOptionViewModel()
+                    "core.column",
+                    typeof(ColumnsOptionControl),
+                    typeof(ColumnOptionViewModel)
                 ));
 
             sidebarService.Register(
                 new SidebarSection
                 (
                    "core.plugins",
-                   "Plugin",
-                    new PluginControlPanel(),
-                    new PluginPanelViewModel()
+                   "core.plugins",
+                    typeof(PluginControlPanel),
+                    typeof(PluginPanelViewModel)
                 ));
 
             sidebarService.Register(
                new SidebarSection
                (
                   "core.commnet",
-                  "Comment",
-                   new CommentControl(),
+                  "core.commnet",
+                   typeof(CommentControl),
                    null
                ));
 
@@ -73,8 +71,8 @@ namespace UnityCommander.Modules.LeftSideBars
                new SidebarSection
                (
                   "core.foldertree",
-                  "FileTree",
-                   new FolderTreeOverviewControl(),
+                  "core.foldertree",
+                   typeof(FolderTreeOverviewControl),
                    null
                ));
 
@@ -82,8 +80,8 @@ namespace UnityCommander.Modules.LeftSideBars
                new SidebarSection
                (
                   "core.tag",
-                  "Tag",
-                  new TagControlPanel(),
+                  "core.tag",
+                  typeof(TagControlPanel),
                    null
                ));
 

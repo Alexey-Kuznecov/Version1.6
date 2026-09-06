@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using UnityCommander.AI.ImageSearch;
 using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
-using UnityCommander.CLI.Mode;
 using UnityCommander.Commands.Helper;
 
 namespace UnityCommander.Commands
 {
     [ConsoleCommand("findsimilar", "Поиск схожих картинок", "fsim")]
-    public class FindSimilarCommand : IConsoleCommand
+    public class FindSimilarCommand // : IConsoleCommand
     {
         public string Name => "findsimilar";
 

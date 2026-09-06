@@ -1,5 +1,5 @@
 ﻿
-namespace AIconBrowser.Contracts
+namespace IconBrowser.Contracts
 {
     /// <summary>
     /// The FileService interface.

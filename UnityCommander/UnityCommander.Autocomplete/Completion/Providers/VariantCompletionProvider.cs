@@ -6,6 +6,8 @@ namespace UnityCommander.Autocomplete.Completion.Providers
 {
     public class VariantCompletionProvider : ICompletionProvider
     {
+        public int Priority => 100;
+
         public bool CanHandle(CliParseState ctx)
             => ctx.ExpectedNext == CompletionKind.Variant;
 
@@ -14,14 +16,18 @@ namespace UnityCommander.Autocomplete.Completion.Providers
             
             // фильтруем команды по тому, что уже введено
             var partial = ctx.PartialValue ?? "";
-            var command = ctx.Command ?? throw new ArgumentNullException();
+            var command = ctx.Command;
+
+            if (command == null)
+                return Enumerable.Empty<CompletionItem>();
 
             return command.Variants
                 .Where(c => c.Name.StartsWith(partial, StringComparison.OrdinalIgnoreCase))
                 .Select(cmd => new CompletionItem
                 {
                     DisplayText = cmd.Name,
-                    InsertText = cmd.Name
+                    InsertText = cmd.Name,
+                    AppendSpace = true
                 });
         }
     }

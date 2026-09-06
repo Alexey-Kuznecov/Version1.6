@@ -1,4 +1,7 @@
 ﻿
+using UnityCommander.Abstractions;
+using UnityCommander.Abstractions.Sidebar;
+
 namespace UnityCommander.Common.Sidebar
 {
     public class SidebarSectionFactory : ISidebarSectionFactory
@@ -12,9 +15,11 @@ namespace UnityCommander.Common.Sidebar
 
         public ISidebarSection Create(ISidebarDefinition def)
         {
-            var view = _viewResolver.Resolve(def.ViewKey);
+            var name = def.ViewKey;
 
-            return new SidebarSection(def, view);
+            var view = _viewResolver.Resolve(name.GetType());
+
+            return new SidebarSection(def, view.GetType());
         }
     }
 }

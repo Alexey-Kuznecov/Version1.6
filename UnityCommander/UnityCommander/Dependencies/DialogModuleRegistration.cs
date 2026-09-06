@@ -1,12 +1,17 @@
 ﻿
 using Prism.Dialogs;
 using Prism.Ioc;
+using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Bootstrap;
+using UnityCommander.Common.Dialog;
+using UnityCommander.Core.Registrar;
 using UnityCommander.Modules.Viewer.Views;
+using UnityCommander.Services;
 using UnityCommander.ViewModels;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views;
 using UnityCommander.Views.CopyDialogs;
+using UnityCommander.WPF.Dialog;
 
 namespace UnityCommander.Dependencies
 {
@@ -19,13 +24,16 @@ namespace UnityCommander.Dependencies
             // -------------------------------
             // Каждый диалог регистрируется с View и ViewModel
             registry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
-            registry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
+            //registry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
             registry.RegisterDialog<CopyDialogSkipReplace, CopyDialogSkipReplaceViewModel>("CopyDialogSkipReplace");
             registry.RegisterDialog<AppConfigDialogControl, AppConfigDialogViewModel>("AppConfigDialog");
 
             //registry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig"); // пока закомментирован
-            
+
             registry.RegisterSingleton<IDialogService, OverrideDialogService>();
+            registry.RegisterSingleton<IDialogRegistry, DialogRegistry>();
+            registry.RegisterSingleton<IWindowManager, WindowManager>();
+            registry.RegisterSingleton<WindowInputManager>();
         }
     }
 }

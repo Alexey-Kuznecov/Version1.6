@@ -5,25 +5,66 @@ namespace UnityCommander.Common.Models.Directory
     using Prism.Mvvm;
     using System;
     using System.Collections.Generic;
-    using UnityCommander.Common.Models.Icons;
-    using UnityCommander.Common.Selection;
+    using UnityCommander.Abstractions;
+    using UnityCommander.Abstractions.Panels;
 
-    /// <summary>
-    /// The directory base.
-    /// </summary>
     [Serializable]
-    public abstract class BaseDirectory : BindableBase, ISelectableItem
+    public abstract class BaseDirectory : BindableBase, IDirectoryItem
     {
         private bool _isSelected;
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public Icon Icon { get; set; }
-        public DateTime CreationTime { get; set; }
-        public DateTime LastAccessTime { get; set; }
-        public IDictionary<string, object> Additional { get; set; } = new ObservableDictionary<string, object>();
+        private string _name;
+        private string _path;
+        private string _iconKey;
+        private IconKind _kind;
+        private DateTime _creationTime;
+        private DateTime _lastAccessTime;
+
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+
+        public string Path
+        {
+            get => _path;
+            set => SetProperty(ref _path, value);
+        }
+
+        public string IconKey
+        {
+            get => _iconKey;
+            set => SetProperty(ref _iconKey, value);
+        }
+
+        public IconKind Kind
+        {
+            get => _kind;
+            set => SetProperty(ref _kind, value);
+        }
+
+        public DateTime CreationTime
+        {
+            get => _creationTime;
+            set => SetProperty(ref _creationTime, value);
+        }
+
+        public DateTime LastAccessTime
+        {
+            get => _lastAccessTime;
+            set => SetProperty(ref _lastAccessTime, value);
+        }
+
+        public IDictionary<string, object> Additional { get; set; }
+            = new ObservableDictionary<string, object>();
+
         public TargetPanel TargetPanel { get; set; }
-        public List<ContextItem> ContextItems { get; set; }
+        
+        public Dictionary<string, DateTime> LastUpdate { get; }
+          = new();
+
         public string Key { get; set; }
+
         public bool IsSelected
         {
             get => _isSelected;

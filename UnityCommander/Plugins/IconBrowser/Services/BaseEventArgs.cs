@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AIconBrowser.Services
+namespace IconBrowser.Services
 {
     public class BaseEventArgs : EventArgs
     {

@@ -1,21 +1,27 @@
 ﻿
 using Prism.Commands;
 using System;
-using System.Windows.Input;
+using UnityCommander.Abstractions.Resources;
 using UnityCommander.Common.Commands;
+using UnityCommander.Common.Panels;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services
 {
     public class CommandUIService : ICommandUIService
     {
-        private readonly CommandService _commands;
-        private readonly IIconProviderService _icons;
+        private readonly CommandExecutionService _commands;
+        private readonly CompositeIconResolver _iconResolver;
+        private readonly FilePanelContext _panelContext;
 
-        public CommandUIService(IIconProviderService icons, CommandService commands)
+        public CommandUIService(
+            CompositeIconResolver iconResolver, 
+            CommandExecutionService commands, 
+            FilePanelContext panelContext)
         {
             _commands = commands;
-            _icons = icons;
+            _iconResolver = iconResolver;
+            _panelContext = panelContext;
         }
 
         public UICommand Create(string id)
@@ -29,7 +35,9 @@ namespace UnityCommander.Services
                 Title = meta.DisplayName,
                 Description = meta.Description,
 
-                Icon = _icons.GetIcon(id),
+                CommandParameter = _panelContext,
+
+                IconKey = _iconResolver.Resolve(id).Key,
 
                 Command = new DelegateCommand(
                     () => _commands.ExecuteAsync(id),
@@ -49,7 +57,8 @@ namespace UnityCommander.Services
                 Id = id,
                 Title = meta.DisplayName,
                 Description = meta.Description,
-                Icon = _icons.GetIcon(id),
+                CommandParameter = _panelContext,
+                IconKey = _iconResolver.Resolve(id).Key,
                 Command = command,
                 CanExecute = canExecute
             };

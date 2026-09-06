@@ -1,5 +1,7 @@
 ﻿
+using Prism.Ioc;
 using System.Windows.Controls;
+using UnityCommander.Services.Docking;
 
 namespace UnityCommander.Modules.BottomPanel.Views
 {
@@ -11,6 +13,10 @@ namespace UnityCommander.Modules.BottomPanel.Views
         public BottomPanelView()
         {
             InitializeComponent();
+
+            var dockingContext = ContainerLocator.Container.Resolve<DockingContext>();
+
+            dockingContext.ToolManager = this.ToolDockManager;
         }
     }
 }

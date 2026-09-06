@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UnityCommander\Services\UnityCommander.Services\UnityCommander.Services\UnityCommander.Services.csproj" />
-    <ProjectReference Include="..\UnityCommander\UnityCommander.Integration\UnityCommander.Integration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

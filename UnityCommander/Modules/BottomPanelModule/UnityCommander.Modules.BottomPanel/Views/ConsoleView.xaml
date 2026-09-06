@@ -7,12 +7,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UnityCommander.Modules.BottomPanel.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
     d:DesignHeight="250"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <conv:CountToVisibilityConverter x:Key="CountToVisibility" />
     </UserControl.Resources>
+
     <Grid Margin="0" Background="#1E1E1E">
 
         <Grid.RowDefinitions>
@@ -21,21 +23,39 @@
         </Grid.RowDefinitions>
 
         <!--  Вывод  -->
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Lines}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock
-                            Height="15"
-                            Margin="5,2"
-                            FontFamily="Consolas"
-                            Foreground="#dcdcdc"
-                            Text="{Binding}"
-                            TextWrapping="Wrap" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        <Grid Grid.Row="0">
+            <!--  Существующая консоль  -->
+            <Grid>
+                <ScrollViewer
+                    at:ConsoleAutoScrollBehavior.Enable="True"
+                    Style="{DynamicResource UcScrollViewerStyle}"
+                    VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Lines}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Height="15"
+                                    Margin="5,2"
+                                    FontFamily="Consolas"
+                                    Foreground="#dcdcdc"
+                                    Text="{Binding}"
+                                    TextWrapping="Wrap" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!--  Поверх неё  -->
+            <local:ConsoleActivityWidget
+                Width="300"
+                Margin="0,10,10,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                DataContext="{Binding ConsoleActivityState}"
+                Visibility="{Binding DataContext.IsActivityVisible, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+        </Grid>
 
         <!--  Ввод  -->
         <DockPanel Grid.Row="1" Margin="0,4,0,0">
@@ -50,7 +70,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="80" />
                     </Grid.ColumnDefinitions>
                     <TextBlock
                         VerticalAlignment="Center"
@@ -63,10 +83,13 @@
                         at:TextBoxCaretBinding.CaretIndex="{Binding CaretIndex, Mode=TwoWay}"
                         Background="#2D2D30"
                         BorderBrush="#3F3F46"
-                        FontFamily="Consolas"
-                        FontSize="16"
-                        Foreground="White"
+                        FontFamily="Cascadia Mono"
+                        FontSize="15"
+                        FontStyle="Normal"
+                        FontWeight="Normal"
+                        Foreground="#8C8C95"
                         KeyDown="TextBox_KeyDown"
+                        Style="{DynamicResource UcTextBox}"
                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Up" Command="{Binding NavigateUpCommand}" />
@@ -78,13 +101,16 @@
                     </TextBox>
                     <Button
                         Grid.Column="2"
+                        Margin="5,0,0,0"
                         Command="{Binding CopyCommand}"
-                        Content="Копировать" />
+                        Content="Копировать"
+                        Style="{DynamicResource ModernButton}" />
                 </Grid>
                 <!--  🔥 Оверлей автокомплита  -->
                 <ListBox
                     Grid.Row="0"
                     MaxHeight="150"
+                    at:CompletionAutoScroll.SelectedIndex="{Binding SelectedIndex}"
                     Background="#222"
                     Foreground="White"
                     ItemsSource="{Binding Completions}"

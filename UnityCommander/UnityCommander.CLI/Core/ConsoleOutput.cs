@@ -1,8 +1,12 @@
 ﻿
-using UnityCommander.CLI.Core;
+using UnityCommander.CLI.Infrastructure;
 
-public class ConsoleOutput : IConsoleOutput
+[Obsolete("This class is for testing purposes only and should not be used in production.")]
+public class ConsoleOutput //: IConsoleOutput
 {
+    public event Action<string>? TextWritten;
+    public event Action? Cleared;
+
     public void Write(string message)
     {
         Console.Write(message);
@@ -38,5 +42,10 @@ public class ConsoleOutput : IConsoleOutput
     public void Clear()
     {
         Console.Clear();
+    }
+
+    public IConsoleActivity StartActivity(string message)
+    {
+        throw new NotImplementedException();
     }
 }
