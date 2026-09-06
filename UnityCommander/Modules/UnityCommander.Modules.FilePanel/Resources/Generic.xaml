@@ -4,7 +4,8 @@
     xmlns:be="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:behaviors="clr-namespace:UnityCommander.Modules.FilePanel.Behaviors"
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:ui="clr-namespace:UnityCommander.UI.Overlay;assembly=UnityCommander.UI">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="DrivesColumnTemplates.xaml" />

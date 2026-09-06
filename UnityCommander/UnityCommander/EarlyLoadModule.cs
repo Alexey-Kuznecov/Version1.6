@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Win32;
 using Prism.Ioc;
 using Prism.Modularity;
 using System.IO;
@@ -11,6 +12,8 @@ using UnityCommander.Logging.Contracts;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
+using UnityCommander.UI.AttachProperties;
+using UnityCommander.UI.Visual;
 using UnityCommander.WPF.Behaviors;
 
 namespace UnityCommander
@@ -36,9 +39,11 @@ namespace UnityCommander
             var iconRender = provider.Resolve<IIconRenderService>();
             var iconColor = provider.Resolve<IIconColorResolver>();
             var context = provider.Resolve<IShortcutContextService>();
-          
+            var elementRegistry = provider.Resolve<IVisualElementRegistry>();
+
             IconHub.Initialize(iconRender, iconColor);
             KeyboardBinding.Initialize(context);
+            VisualElementRegistration.Initialize(elementRegistry);
 
             _providerInfo.LoadMetadata();
 

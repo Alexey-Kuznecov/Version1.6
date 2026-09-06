@@ -63,6 +63,7 @@
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
     <ProjectReference Include="..\UnityCommander.Theme\UnityCommander.Theme.csproj" />
+    <ProjectReference Include="..\UnityCommander.UI\UnityCommander.UI.csproj" />
     <ProjectReference Include="..\UnityCommander.WPF\UnityCommander.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>

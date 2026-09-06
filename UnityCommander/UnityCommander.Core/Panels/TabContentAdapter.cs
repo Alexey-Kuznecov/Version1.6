@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityCommander.Abstractions.Module;
 using UnityCommander.Abstractions.Panels;
-using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Services
 {

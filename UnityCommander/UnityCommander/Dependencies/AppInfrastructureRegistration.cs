@@ -34,9 +34,10 @@ using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
-using UnityCommander.Services.Interfaces.Docking;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
+using UnityCommander.UI.Overlay;
+using UnityCommander.UI.Visual;
 using UnityCommander.WPF;
 using UnityCommander.WPF.Input;
 
@@ -157,6 +158,10 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IFileIndexService, FileIndexService>();
             registry.RegisterSingleton<IFileIndexChangeQueue, FileIndexChangeQueue>();
             registry.RegisterSingleton<IFileIndexSynchronizer, FileIndexSynchronizer>();
+
+
+            registry.RegisterSingleton<IVisualElementRegistry, VisualElementRegistry>();
+            registry.RegisterSingleton<IOverlayService, OverlayService>();
         }
     }
 }

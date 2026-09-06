@@ -52,6 +52,7 @@
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
     <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
     <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
+    <ProjectReference Include="..\UnityCommander.UI\UnityCommander.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AvalonDock">

@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using UnityCommander.Common.Commands;
 using UnityCommander.Core.Navigation;
-using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel.States
@@ -24,6 +23,5 @@ namespace UnityCommander.Modules.FilePanel.States
         public bool CanGoParent => Navigation.CanGoParent;
        
         public bool CanExecute => true;
-
     }
 }

@@ -63,6 +63,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ICreationService, CreationService>();
             registry.RegisterSingleton<ITabStateRegistry, TabStateRegistry>();
             registry.RegisterSingleton<FilePanelContext>();
+            registry.RegisterSingleton<IRenameService, RenameService>();
+            registry.RegisterSingleton<IRenameManager, RenameManager>();
         }
     }
 }

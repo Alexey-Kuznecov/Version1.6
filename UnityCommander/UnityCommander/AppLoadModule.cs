@@ -246,6 +246,15 @@ namespace UnityCommander
                 Modifiers = ShortcutModifiers.None,
                 Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
             });
+
+            shortcut.Register(new ShortcutDefinition()
+            {
+                CommandId = CommandNames.File.Rename,
+                Description = CommandPresentationProvider.Get(CommandNames.File.Rename).Description,
+                Key = ShortcutKey.F2,
+                Modifiers = ShortcutModifiers.None,
+                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
+            });
         }
     }
 }

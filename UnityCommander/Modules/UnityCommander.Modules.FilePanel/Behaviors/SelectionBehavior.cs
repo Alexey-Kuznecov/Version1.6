@@ -5,10 +5,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using UnityCommander.UI.Helper;
 using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.UI.Overlay;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
@@ -83,26 +85,17 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
                 list.PreviewMouseLeftButtonDown += OnPreviewLeftMouseDown;
                 list.PreviewMouseRightButtonDown += OnRightMouseDown;
-                //logger = logCreat.Create(
-                //    category: LogCategory.UserAction,
-                //    scope: LogScope.UserAction
-                //    );
             }
         }
 
         private static void OnPreviewLeftMouseDown(
-           object sender,
-           MouseButtonEventArgs e)
+             object sender,
+             MouseButtonEventArgs e)
         {
             var list = (ListView)sender;
 
-            //Debug.WriteLine(
-            //   $"[Selection] PreviewLeftMouseDown " +
-            //   $"Source={e.Source?.GetType().Name}, " +
-            //   $"OriginalSource={e.OriginalSource?.GetType().Name}, " +
-            //   $"Handled={e.Handled}, " +
-            //   $"Modifiers={Keyboard.Modifiers}");
-
+            if (IsOverlayInput(e.OriginalSource))
+                return;
 
             if (!TryGetSelectionTarget(
                     list,
@@ -129,6 +122,14 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             e.Handled = true;
 
             manager.Handle(action);
+        }
+
+        private static bool IsOverlayInput(object source)
+        {
+            if (source is not DependencyObject element)
+                return false;
+
+            return element.FindParent<OverlayHost>() != null;
         }
 
         private static void OnRightMouseDown(

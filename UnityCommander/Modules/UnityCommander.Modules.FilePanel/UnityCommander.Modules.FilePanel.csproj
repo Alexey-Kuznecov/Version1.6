@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
     <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Settings\UnityCommander.Settings.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.UI\UnityCommander.UI.csproj" />
     <ProjectReference Include="..\..\UnityCommander.WPF.DragDrop\UnityCommander.WPF.DragDrop.csproj" />
     <ProjectReference Include="..\UnityCommander.Modules.Viewer\UnityCommander.Modules.Viewer.csproj" />
   </ItemGroup>

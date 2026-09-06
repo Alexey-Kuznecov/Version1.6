@@ -7,6 +7,9 @@
     <Compile Update="Controls\NavigationPopup.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controls\RenameOverlay.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Dialog\CreationDialogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

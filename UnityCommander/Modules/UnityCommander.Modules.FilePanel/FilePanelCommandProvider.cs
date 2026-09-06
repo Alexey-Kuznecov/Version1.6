@@ -1,13 +1,19 @@
 ﻿
 using CommandSystem.Abstractions;
-using System;
+using CommandSystem.Core.Execution;
+using CommandSystem.Gui.MVVM;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.Models;
+using UnityCommander.Modules.FilePanel.Controls;
+using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.UI.Overlay;
+using UnityCommander.UI.Visual;
 
 namespace UnityCommander.Modules.FilePanel
 {
@@ -33,34 +39,55 @@ namespace UnityCommander.Modules.FilePanel
             return Task.CompletedTask;
         }
 
-        public Task CreateItem(CommandContext ctx)
+        public Task ExecuteRenameAsync(CommandContext ctx)
         {
-            //var type = ctx.Parameter as CreateItemType?
-            //    ?? CreateItemType.Folder;
+            var contextMenu = (FilePanelContextMenu)ctx.Context;
 
-            //var panel = _dockingService.GetActiveDirectoryPanel();
+            if (contextMenu == null)
+            {
+                var selectionService = ctx.GetService<ISelectionService>();
+                var active = selectionService.GetActive();
 
-            //if (panel == null)
-            //    return Task.CompletedTask;
+                if (active.SelectedItems.Count == 1)
+                {
+                    var item = active.SelectedItems.First();
 
-            //var directory = panel.CurrentPath;
+                    var visualElements = ctx.GetService<IVisualElementRegistry>();
+                    var element = visualElements.GetElement(item);
 
-            //if (string.IsNullOrWhiteSpace(directory))
-            //    return Task.CompletedTask;
+                    if (element == null)
+                        return Task.CompletedTask;
 
-            //switch (type)
-            //{
-            //    case CreateItemType.Folder:
-            //        Directory.CreateDirectory(
-            //            Path.Combine(directory, "New Folder"));
-            //        break;
+                    var overlay = ctx.GetService<IOverlayService>();
 
-            //    case CreateItemType.TextFile:
-            //        File.Create(
-            //            Path.Combine(directory, "New Text Document.txt"))
-            //            .Dispose();
-            //        break;
-            //}
+                    var renameManager = ctx.GetService<IRenameManager>();
+
+                    renameManager.Start(((BaseDirectory)item).Path);
+
+                    var overlayRename = new RenameOverlay();
+
+                    overlayRename.RenameRequested += async newName =>
+                    {
+                        ((BaseDirectory)item).Name = newName;
+                        await renameManager.CommitAsync(newName);
+                    };
+
+                    overlay.Show(element, overlayRename);
+
+                    if (item is FileModel fileModel)
+                    {
+                        overlayRename.BeginEdit(
+                            fileModel.Name + fileModel.Extension,
+                            isFile: true);
+                       
+                        return Task.CompletedTask;
+                    }
+
+                    overlayRename.BeginEdit(
+                        ((BaseDirectory)item).Name,
+                        isFile: false);
+                }
+            }
 
             return Task.CompletedTask;
         }
@@ -94,7 +121,6 @@ namespace UnityCommander.Modules.FilePanel
             }
             else
             {
-
                 foreach (var path in contextMenu.SelectedPaths)
                 {
                     if (string.IsNullOrWhiteSpace(path))

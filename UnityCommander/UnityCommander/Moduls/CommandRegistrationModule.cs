@@ -29,26 +29,16 @@ namespace UnityCommander.Moduls
             // -------------------------------
             // 1. Регистрация команд файловой панели
             // -------------------------------
-            commandRegistry.Register(CommandFactoryExtensions.Create(
-                CommandNames.Panel.GetCurrentPath,
-                filePanelProvider.GetCurrentPath
-            ));
-
-            commandRegistry.Register(CommandFactoryExtensions.Create(
-                CommandNames.Panel.SetCurrentPath,
-                filePanelProvider.SetCurrentPath
-            ));
-
             commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
                 CommandNames.File.Delete,
                 null,
                 filePanelProvider.ExecuteDeleteAsync,
                 contextTypes: typeof(FilePanelContextMenu)));
 
-            commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
+            commandRegistry.Register(CommandFactoryExtensions.Create(
                 CommandNames.File.Rename,
+                filePanelProvider.ExecuteRenameAsync,
                 null,
-                filePanelProvider.ExecuteDeleteAsync,
                 contextTypes: typeof(FilePanelContextMenu)));
 
             // -------------------------------
