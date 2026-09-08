@@ -24,16 +24,23 @@ namespace UnityCommander.Rendering.Icons
             private set => SetValue(DataProperty, value);
         }
 
+        public Brush? Brush
+        {
+            get => (Brush?)GetValue(BrushProperty);
+            set => SetValue(BrushProperty, value);
+        }
+
         public static readonly DependencyProperty BrushProperty =
             DependencyProperty.Register(
                 nameof(Brush),
                 typeof(Brush),
                 typeof(IconRender));
 
-        public Brush Brush
+
+        public Brush? Stroke
         {
-            get => (Brush)GetValue(BrushProperty);
-            set => SetValue(BrushProperty, value);
+            get => (Brush?)GetValue(StrokeProperty);
+            set => SetValue(StrokeProperty, value);
         }
 
         public static readonly DependencyProperty StrokeProperty =
@@ -41,12 +48,6 @@ namespace UnityCommander.Rendering.Icons
                 nameof(Stroke),
                 typeof(Brush),
                 typeof(IconRender));
-
-        public Brush Stroke
-        {
-            get => (Brush)GetValue(StrokeProperty);
-            set => SetValue(StrokeProperty, value);
-        }
 
         public static readonly DependencyProperty FillProperty =
             DependencyProperty.Register(

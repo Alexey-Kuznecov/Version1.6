@@ -46,10 +46,10 @@ namespace UnityCommander.Modules.ToolBar.Builder
 
             var result = _converter.Convert(icon, iconKey);
 
-            trace.Write(
-                "converted",
-                DiagnosticTraceData.Of(
-                    ("layerCount", result.Layers.Count)));
+            //trace.Write(
+            //    "converted",
+            //    DiagnosticTraceData.Of(
+            //        ("layerCount", result.Layers.Count)));
 
             trace.Complete();
 

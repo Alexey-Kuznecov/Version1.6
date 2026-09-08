@@ -258,9 +258,9 @@
                                     Key="{Binding IconKey}"
                                     Width="16"
                                     Height="16"
-                                    Brush="{DynamicResource UcAccentTertiaryBrush}"
                                     IsEnabled="{Binding IsEnabled}"
-                                    State="Disabled" />
+                                    State="Disabled"
+                                    Stroke="#B8B8B8" />
                             </ContentControl.Content>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonUp">

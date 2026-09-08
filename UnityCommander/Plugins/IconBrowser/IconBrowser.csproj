@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Abstractions\PluginSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\PluginSystem\PluginSystem.Runtime\PluginSystem.Runtime.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Common\UnityCommander.Common.csproj" />
+    <ProjectReference Include="..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
     <ProjectReference Include="..\IconMaker.Core\IconMaker.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

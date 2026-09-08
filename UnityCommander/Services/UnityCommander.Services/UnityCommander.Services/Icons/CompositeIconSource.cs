@@ -18,7 +18,7 @@ namespace UnityCommander.Abstractions.Resources
 
         private readonly IIconSourceRegistry _registry;
 
-        private RuntimeIcon _missingIcon = new RuntimeIcon();
+        private RuntimeIcon _missingIcon = DefaultIcons.Missing;
 
         private readonly CompositeIconResolver _iconResolver;
 
@@ -38,21 +38,39 @@ namespace UnityCommander.Abstractions.Resources
 
             if (_missing.Contains(key))
             {
-                icon = default!;
+                icon = _missingIcon!;
                 return false;
             }
 
             foreach (var source in _registry.Sources.OrderByDescending(x => x.Priority))
             {
-                if (!source.TryGet(key, out icon))
-                    continue;
+                try
+                {
+                    if (!source.TryGet(key, out var resolvedIcon))
+                        continue;
 
-                _cache[key] = icon;
-                return true;
+                    if (resolvedIcon is null)
+                    {
+                        _logger.Warning(
+                            $"Icon source '{source.GetType().FullName}' returned null " +
+                            $"for icon '{key}'.");
+
+                        continue;
+                    }
+
+                    _cache[key] = resolvedIcon;
+                    icon = resolvedIcon;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(
+                        $"Icon source '{source.GetType().FullName}' failed to resolve icon '{key}'.", ex);
+                }
             }
 
             _missing.Add(key);
-            icon = default!;
+            icon = _missingIcon!;
             return false;
         }
 

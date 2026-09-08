@@ -1,4 +1,5 @@
 ﻿
+using System.Windows.Media;
 using System.Windows.Shapes;
 using UnityCommander.Diagnostics.Tracing;
 using UnityCommander.Rendering.Icons.Strategies;
@@ -57,17 +58,22 @@ namespace UnityCommander.Rendering.Icons
 
         public Path CreatePath(IconRenderResult result)
         {
+            var firstLayer = result.Layers[0];
+
+            var geometry = new GeometryGroup();
+
+            foreach (var layer in result.Layers)
+            {
+                geometry.Children.Add(layer.Geometry);
+            }
+
             return new Path
             {
-                //Data = result.Geometry,
+                Data = geometry,
 
-                //Fill = result.Brush,
-                //Stroke = result.Stroke,
-                //StrokeThickness = result.StrokeWidth ?? 1,
-
-                //Width = result.Size,
-                //Height = result.Size,
-                //Stretch = Stretch.Uniform
+                Fill = firstLayer.Fill,
+                Stroke = firstLayer.Stroke,
+                StrokeThickness = firstLayer.StrokeWidth ?? 1
             };
         }
     }
