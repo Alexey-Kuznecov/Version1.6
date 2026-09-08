@@ -9,16 +9,111 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style
+            x:Name="WidgetArrowStyle"
+            BasedOn="{StaticResource UcButton}"
+            TargetType="{x:Type Button}">
+            <Setter Property="Content" Value="▼" />
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                    <Setter Property="Content" Value="▲" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <Grid HorizontalAlignment="Center">
 
-        <Grid>
-            <ItemsControl ItemsSource="{Binding Widgets}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </Grid>
+        <widgets:WidgetHost ItemsSource="{Binding Widgets}">
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Margin="0,0,0,8"
+                        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                        BorderBrush="{DynamicResource UcBorderPrimaryBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Header  -->
+                            <Grid Grid.Row="0" Margin="12,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Grid.Column="0"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                                    Text="{Binding Title}" />
+
+                                <Button
+                                    Grid.Column="1"
+                                    Background="Transparent"
+                                    Content="⋮"
+                                    Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                                    Style="{StaticResource UcButton}" />
+                            </Grid>
+
+                            <!--  Widget content  -->
+                            <ContentPresenter
+                                x:Name="WidgetContent"
+                                Grid.Row="1"
+                                Content="{Binding View}" />
+
+                            <!--  Collapse  -->
+                            <Button
+                                Grid.Row="2"
+                                Width="280"
+                                BorderThickness="0"
+                                Command="{Binding ToggleExpandedCommand}"
+                                FontSize="12"
+                                Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                                Style="{StaticResource UcButton}">
+
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Text" Value="▼" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                    <Setter Property="Text" Value="▲" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                            <Setter TargetName="WidgetContent" Property="Height" Value="0" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+        </widgets:WidgetHost>
     </Grid>
 </UserControl>

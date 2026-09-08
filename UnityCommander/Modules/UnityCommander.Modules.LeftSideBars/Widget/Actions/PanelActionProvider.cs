@@ -5,7 +5,7 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.UI.Interaction;
 
-namespace UnityCommander.Modules.LeftSideBars.Widget
+namespace UnityCommander.Modules.LeftSideBars.Widget.Actions
 {
     public sealed class PanelActionProvider : IContextActionProvider
     {

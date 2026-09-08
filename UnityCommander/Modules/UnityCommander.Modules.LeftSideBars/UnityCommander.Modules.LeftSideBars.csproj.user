@@ -22,6 +22,9 @@
     <Compile Update="Widget\DriveView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Widget\SystemFoldersWidget.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Content\ColumnsOptionControl.xaml">

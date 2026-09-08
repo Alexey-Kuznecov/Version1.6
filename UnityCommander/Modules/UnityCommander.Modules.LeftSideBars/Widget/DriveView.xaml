@@ -14,234 +14,128 @@
 
     <UserControl.Resources>
         <wpf:DataSizeConverter x:Key="DataSizeConverter" />
-        <Style
-            x:Key="UcListBoxItemWidgetStyle"
-            BasedOn="{StaticResource UcListBoxItemTemplate}"
-            TargetType="{x:Type ListBoxItem}">
-
-            <Setter Property="Background" Value="Transparent" />
-
-            <Setter Property="BorderThickness" Value="3" />
-            <Setter Property="Padding" Value="5" />
-            <Setter Property="ui:Interaction.ContextSource" Value="{Binding}" />
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid>
-                            <!--  Твой обычный item  -->
-                            <Border
-                                Padding="{TemplateBinding Padding}"
-                                Background="Transparent"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-
-                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            </Border>
-
-                            <!--  Popup  -->
-                            <Popup
-                                ui:Interaction.PopupHost="True"
-                                AllowsTransparency="True"
-                                HorizontalOffset="4"
-                                IsOpen="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:Interaction.IsOpen)}"
-                                Placement="Top"
-                                PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                StaysOpen="True">
-
-                                <Border
-                                    Padding="3"
-                                    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                                    BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-
-                                    <ItemsControl ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:Interaction.Actions)}">
-
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button
-                                                    Margin="1"
-                                                    Padding="7,4"
-                                                    BorderThickness="0"
-                                                    Command="{Binding Command}"
-                                                    Content="{Binding Name}"
-                                                    ToolTip="{Binding Name}" />
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-
-                                    </ItemsControl>
-
-                                </Border>
-                            </Popup>
-
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-
-            </Setter>
-
-            <Style.Triggers>
-
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="Red" />
-                </Trigger>
-
-            </Style.Triggers>
-
-        </Style>
-
     </UserControl.Resources>
 
-    <Border
-        Width="290"
-        Background="{DynamicResource UcSurfaceSecondaryBrush}"
-        BorderBrush="{DynamicResource UcBorderPrimaryBrush}"
-        BorderThickness="1"
-        CornerRadius="4">
+    <ListBox
+        Grid.Row="1"
+        HorizontalAlignment="Center"
+        Background="{x:Null}"
+        BorderBrush="{x:Null}"
+        ItemContainerStyle="{DynamicResource UcListBoxItemWidgetStyle}"
+        ItemsSource="{Binding Drives}"
+        SelectedItem="{Binding SelectedDrive}"
+        Style="{DynamicResource UcListBoxTemplate}">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
-            </Grid.RowDefinitions>
+        <ListBox.ItemTemplate>
+            <DataTemplate>
 
-            <TextBlock
-                Grid.Row="0"
-                Margin="16"
-                FontSize="14"
-                FontWeight="Bold"
-                Foreground="{DynamicResource UcForegroundSecondaryBrush}"
-                Text="Drives" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition Width="210" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Иконка диска  -->
+                    <Border
+                        Grid.Column="0"
+                        Width="28"
+                        Height="28"
+                        VerticalAlignment="Top"
+                        Background="{DynamicResource UcSurfaceTertiaryBrush}"
+                        CornerRadius="6">
+                        <icon:IconRender
+                            Key="{Binding IconKey}"
+                            Width="16"
+                            Height="16"
+                            State="Disabled"
+                            Stroke="#B8B8B8" />
+                    </Border>
 
-            <ListBox
-                Grid.Row="1"
-                HorizontalAlignment="Center"
-                Background="{x:Null}"
-                BorderBrush="{x:Null}"
-                ItemContainerStyle="{StaticResource UcListBoxItemWidgetStyle}"
-                ItemsSource="{Binding Drives}"
-                SelectedItem="{Binding SelectedDrive}"
-                Style="{StaticResource UcListBoxTemplate}">
+                    <!--  Информация  -->
+                    <Grid Grid.Column="1">
 
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="32" />
-                                <ColumnDefinition Width="210" />
-                            </Grid.ColumnDefinitions>
-                            <!--  Иконка диска  -->
-                            <Border
-                                Grid.Column="0"
-                                Width="28"
-                                Height="28"
-                                VerticalAlignment="Top"
-                                Background="{DynamicResource UcSurfaceTertiaryBrush}"
-                                CornerRadius="6">
-                                <icon:IconRender
-                                    Key="{Binding IconKey}"
-                                    Width="16"
-                                    Height="16"
-                                    State="Disabled"
-                                    Stroke="#B8B8B8" />
-                            </Border>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                            <!--  Информация  -->
-                            <Grid Grid.Column="1">
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <!--  Буква + имя  -->
-                                <Grid Grid.Column="0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock
-                                            FontSize="13"
-                                            FontWeight="SemiBold"
-                                            Foreground="{DynamicResource UcForegroundSecondaryBrush}"
-                                            Text="{Binding Letter}" />
-                                        <TextBlock
-                                            Margin="6,0,0,0"
-                                            FontSize="13"
-                                            Foreground="{DynamicResource UcForegroundSecondaryBrush}"
-                                            Opacity="0.7"
-                                            Text="{Binding Name}" />
-                                    </StackPanel>
-                                </Grid>
-
-                                <!--  Использовано / всего  -->
+                        <!--  Буква + имя  -->
+                        <Grid Grid.Column="0">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock
-                                    Grid.Column="1"
-                                    Margin="0,2,0,5"
-                                    HorizontalAlignment="Right"
-                                    FontSize="11"
-                                    Opacity="0.6">
-                                    <Run Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding UsedSize, Converter={StaticResource DataSizeConverter}, Mode=OneWay}" />
-                                    <Run Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text=" / " />
-                                    <Run Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding TotalSize, Converter={StaticResource DataSizeConverter}, Mode=OneWay}" />
-                                </TextBlock>
-
-                                <ProgressBar
-                                    Grid.Row="1"
-                                    Grid.ColumnSpan="2"
-                                    Height="4"
-                                    Maximum="1"
-                                    Minimum="0"
-                                    Value="{Binding UsedRatio, Mode=OneWay}">
-
-                                    <ProgressBar.Template>
-                                        <ControlTemplate TargetType="{x:Type ProgressBar}">
-                                            <Grid>
-                                                <Border
-                                                    Height="4"
-                                                    Background="{TemplateBinding Background}"
-                                                    CornerRadius="2" />
-                                                <Border
-                                                    Height="4"
-                                                    HorizontalAlignment="Left"
-                                                    Background="#3B82F6"
-                                                    CornerRadius="2">
-                                                    <Border.RenderTransform>
-                                                        <ScaleTransform ScaleX="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}" />
-                                                    </Border.RenderTransform>
-                                                    <Border.RenderTransformOrigin>
-                                                        0,0.5
-                                                    </Border.RenderTransformOrigin>
-                                                    <Border.Width>
-                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource TemplatedParent}" />
-                                                    </Border.Width>
-                                                </Border>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </ProgressBar.Template>
-                                </ProgressBar>
-                                <Popup
-                                    IsOpen="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:Interaction.IsOpen)}"
-                                    Placement="Right"
-                                    PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-
-                                    <ItemsControl ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:Interaction.Actions)}" />
-                                </Popup>
-                            </Grid>
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                                    Text="{Binding Letter}" />
+                                <TextBlock
+                                    Margin="6,0,0,0"
+                                    FontSize="13"
+                                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                                    Opacity="0.7"
+                                    Text="{Binding Name}" />
+                            </StackPanel>
                         </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Grid>
-    </Border>
+
+                        <!--  Использовано / всего  -->
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="0,2,0,5"
+                            HorizontalAlignment="Right"
+                            FontSize="11"
+                            Opacity="0.6">
+                            <Run Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding UsedSize, Converter={StaticResource DataSizeConverter}, Mode=OneWay}" />
+                            <Run Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text=" / " />
+                            <Run Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding TotalSize, Converter={StaticResource DataSizeConverter}, Mode=OneWay}" />
+                        </TextBlock>
+
+                        <ProgressBar
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Height="4"
+                            Maximum="1"
+                            Minimum="0"
+                            Value="{Binding UsedRatio, Mode=OneWay}">
+
+                            <ProgressBar.Template>
+                                <ControlTemplate TargetType="{x:Type ProgressBar}">
+                                    <Grid>
+                                        <Border
+                                            Height="4"
+                                            Background="{TemplateBinding Background}"
+                                            CornerRadius="2" />
+                                        <Border
+                                            Height="4"
+                                            HorizontalAlignment="Left"
+                                            Background="#3B82F6"
+                                            CornerRadius="2">
+                                            <Border.RenderTransform>
+                                                <ScaleTransform ScaleX="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            </Border.RenderTransform>
+                                            <Border.RenderTransformOrigin>
+                                                0,0.5
+                                            </Border.RenderTransformOrigin>
+                                            <Border.Width>
+                                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource TemplatedParent}" />
+                                            </Border.Width>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </ProgressBar.Template>
+                        </ProgressBar>
+                        <Popup
+                            IsOpen="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:Interaction.IsOpen)}"
+                            Placement="Right"
+                            PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+
+                            <ItemsControl ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:Interaction.Actions)}" />
+                        </Popup>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

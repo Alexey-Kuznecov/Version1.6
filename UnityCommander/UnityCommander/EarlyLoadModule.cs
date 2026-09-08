@@ -75,6 +75,12 @@ namespace UnityCommander
                  DrivesWidgetView>(
                      "drives",
                      "Drives");
+
+            widgetRegistry.Register<
+                SystemFoldersViewModel,
+                SystemFoldersWidget>(
+                    "system-folders",
+                    "System Folders");
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

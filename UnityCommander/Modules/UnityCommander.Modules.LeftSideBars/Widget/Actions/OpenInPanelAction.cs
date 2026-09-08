@@ -2,9 +2,10 @@
 using System;
 using System.Threading.Tasks;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Modules.LeftSideBars.Widget.Contexts;
 using UnityCommander.UI.Interaction;
 
-namespace UnityCommander.Modules.LeftSideBars.Widget
+namespace UnityCommander.Modules.LeftSideBars.Widget.Actions
 {
     public sealed class OpenInPanelAction : IContextAction
     {

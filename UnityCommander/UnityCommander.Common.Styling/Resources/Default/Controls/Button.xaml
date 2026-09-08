@@ -3,15 +3,67 @@
     <Style x:Key="UcButton" TargetType="{x:Type Button}">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Background" Value="{x:Null}" />
-        <Setter Property="BorderBrush" Value="{x:Null}" />
-        <Setter Property="Content" Value="Goback" />
-        <Setter Property="Foreground" Value="#E8E8EC" />
-        <Style.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="White" />
-            </Trigger>
-        </Style.Triggers>
+
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundPrimaryBrush}" />
+        <Setter Property="Padding" Value="7,4" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="Background"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5">
+
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+
+                        <!--  Hover  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="#323334" />
+                        </Trigger>
+
+                        <!--  Pressed  -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource UcPressedBrush}" />
+                        </Trigger>
+
+                        <!--  Disabled  -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource UcForegroundDisabledBrush}" />
+                            <Setter TargetName="Background" Property="Opacity" Value="0.5" />
+                        </Trigger>
+
+                        <!--  Keyboard focus  -->
+                        <!--<Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource UcFocusBrush}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="1" />
+                        </Trigger>-->
+
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{x:Null}" />
+                            <Setter TargetName="Background" Property="BorderThickness" Value="0" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ModernButton" TargetType="Button">

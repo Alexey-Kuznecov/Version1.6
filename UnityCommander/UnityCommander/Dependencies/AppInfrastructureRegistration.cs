@@ -21,7 +21,7 @@ using UnityCommander.Index.Indexing;
 using UnityCommander.Index.Storage;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
-using UnityCommander.Modules.LeftSideBars.Widget;
+using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.ToolBar.Builder;
 using UnityCommander.Rendering.Icons;

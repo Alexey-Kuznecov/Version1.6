@@ -1,19 +1,32 @@
 ﻿
 using System.Collections.ObjectModel;
-using System.Windows;
 using UnityCommander.WPF.Widget;
 
 namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     public sealed class HomeViewModel
     {
-        public ObservableCollection<FrameworkElement> Widgets { get; }
+        public ObservableCollection<WidgetItem> Widgets { get; } = [];
 
         public HomeViewModel(IWidgetFactory widgetFactory)
         {
             Widgets =
             [
-                widgetFactory.Create("drives")
+                new WidgetItem
+                {
+                    Id = "drives",
+                    Title = "Drives",
+                    View = widgetFactory.Create("drives"),
+                    Order = 0
+                },
+
+                new WidgetItem
+                {
+                    Id = "system-folders",
+                    Title = "System Folders",
+                    View = widgetFactory.Create("system-folders"),
+                    Order = 1
+                }
             ];
         }
     }
