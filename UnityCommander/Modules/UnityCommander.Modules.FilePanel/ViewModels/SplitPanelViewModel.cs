@@ -65,6 +65,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDataProviderService dataService;
         private readonly IMultiCommandService multiCommandService;
         private readonly NavigationManager _navigationService;
+        private readonly INavigationRegistry _navigationRegistry;
         private readonly ILogger _logger;
         private readonly ICommandUIService _commandUIService;
         private ITabRegistry _tabRegistry;
@@ -145,6 +146,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               ITabStateRegistry tabStateRegistry,
               IWindowManager windowManager,
               IPopupService popupService,
+              INavigationRegistry navigationRegistry,
               ActiveTab activeTab)
             : base(regionManager)
         {
@@ -187,6 +189,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
 
             this._navigationService = new NavigationManager(null);
+            this._navigationRegistry = navigationRegistry;
 
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
 
@@ -348,7 +351,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             SetTabId(token);
 
             _tabStateRegistry.Register(_state);
-
+            _navigationRegistry.Register(token, _navigationService);
             _navigationService.CurrentChanged += OnPathChanged;
 
             _ = SetLastPanelState();
@@ -614,6 +617,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _navigationService.CurrentChanged -= OnPathChanged;
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
 
+            _navigationRegistry.Remove(_state.TabId);
             _tabStateRegistry.Unregister(_state.TabId);
             //(_navigationContext as IDisposable).Dispose();
             //(_driveNodeContext as IDisposable).Dispose();

@@ -2,7 +2,7 @@
   <PropertyGroup>
 	  <TargetFramework>net10.0-windows</TargetFramework>
 	  <UseWPF>true</UseWPF>
-	  <LangVersion>9.0</LangVersion>
+	  <LangVersion>12.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>FEATURE_UNLOAD;DEBUG</DefineConstants>
@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.Search\UnityCommander.Search.csproj" />
+    <ProjectReference Include="..\..\..\UnityCommander.UI\UnityCommander.UI.csproj" />
     <ProjectReference Include="..\..\..\UnityCommander.WPF\UnityCommander.WPF.csproj" />
     <ProjectReference Include="..\..\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
   </ItemGroup>

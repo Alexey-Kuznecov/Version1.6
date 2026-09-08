@@ -8,7 +8,6 @@ namespace UnityCommander.Services
     using UnityCommander.Abstractions.Panels;
     using UnityCommander.Common.Models.Directory;
     using UnityCommander.Common.Panels;
-    using UnityCommander.Logging;
     using UnityCommander.Logging.Contracts;
     using UnityCommander.Logging.Core;
     using UnityCommander.Logging.Infrastructure;

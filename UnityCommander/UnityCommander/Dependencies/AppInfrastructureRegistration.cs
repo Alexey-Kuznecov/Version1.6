@@ -21,6 +21,7 @@ using UnityCommander.Index.Indexing;
 using UnityCommander.Index.Storage;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.LeftSideBars.Widget;
 using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.ToolBar.Builder;
 using UnityCommander.Rendering.Icons;
@@ -36,6 +37,7 @@ using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Sidebar;
 using UnityCommander.Services.Layout;
+using UnityCommander.UI.Interaction;
 using UnityCommander.UI.Overlay;
 using UnityCommander.UI.Visual;
 using UnityCommander.WPF;
@@ -168,6 +170,9 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<IWidgetFactory, WidgetFactory>();
             registry.RegisterSingleton<IWidgetRegistry, WidgetRegistry>();
+
+            registry.RegisterSingleton<IContextActionProvider, PanelActionProvider>();
+            registry.RegisterSingleton<IContextActionService, ContextActionService>();
         }
     }
 }

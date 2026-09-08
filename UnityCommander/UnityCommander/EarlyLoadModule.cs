@@ -14,6 +14,7 @@ using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
 using UnityCommander.UI.AttachProperties;
+using UnityCommander.UI.Interaction;
 using UnityCommander.UI.Visual;
 using UnityCommander.WPF.Behaviors;
 
@@ -43,6 +44,10 @@ namespace UnityCommander
             var iconColor = provider.Resolve<IIconColorResolver>();
             var context = provider.Resolve<IShortcutContextService>();
             var elementRegistry = provider.Resolve<IVisualElementRegistry>();
+            var actionProvider = provider.Resolve<IContextActionProvider>();
+
+
+            Interaction.Initialize(actionProvider);
 
             IconHub.Initialize(iconRender, iconColor);
             KeyboardBinding.Initialize(context);

@@ -2,7 +2,6 @@
 
 using Prism.Ioc;
 using Prism.Modularity;
-using Prism.Mvvm;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,8 +13,6 @@ using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
-using UnityCommander.Core.Diagnostics;
-using UnityCommander.Core.Registrar;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -63,7 +60,7 @@ namespace UnityCommander
             var shotcuts = containerProvider.Resolve<IShortcutOverrideStore>();
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
             var loggerCreator = containerProvider.Resolve<LoggerCreator>();
-
+           
             initializer.Initialize();
 
             var token = new CancellationToken();
