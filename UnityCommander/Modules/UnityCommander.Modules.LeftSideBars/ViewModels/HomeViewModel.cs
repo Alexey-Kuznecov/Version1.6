@@ -12,21 +12,10 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         {
             Widgets =
             [
-                new WidgetItem
-                {
-                    Id = "drives",
-                    Title = "Drives",
-                    View = widgetFactory.Create("drives"),
-                    Order = 0
-                },
-
-                new WidgetItem
-                {
-                    Id = "system-folders",
-                    Title = "System Folders",
-                    View = widgetFactory.Create("system-folders"),
-                    Order = 1
-                }
+                widgetFactory.Create("drives", 0),
+                widgetFactory.Create("system-folders", 1),
+                widgetFactory.Create("history", 2),
+                widgetFactory.Create("favorites", 3)
             ];
         }
     }

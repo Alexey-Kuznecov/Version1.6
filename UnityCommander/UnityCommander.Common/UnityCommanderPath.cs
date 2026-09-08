@@ -23,10 +23,13 @@ namespace UnityCommander.Common
             Path.Combine(BaseDirectory, "Resources");
 
         public string IconsDirectory =>
-           Path.Combine(BaseDirectory, "Icons");
+            Path.Combine(BaseDirectory, "Icons");
 
         public string DataDirectory =>
-          Path.Combine(BaseDirectory, "Data");
+            Path.Combine(BaseDirectory, "Data");
+
+        public string UserNavigationHistoryDirectory =>
+            Path.Combine(BaseDirectory, "Data");
 
         public string Config(string fileName) =>
             Path.Combine(ConfigDirectory, fileName);

@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="UnityCommander.Modules.LeftSideBars.Widget.SystemFoldersWidget"
+    x:Class="UnityCommander.Modules.LeftSideBars.Widget.HistoryWidgetView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,13 +14,14 @@
         Background="{DynamicResource UcSurfaceSecondaryBrush}"
         BorderThickness="0"
         ItemContainerStyle="{StaticResource UcListBoxItemWidgetStyle}"
-        ItemsSource="{Binding Folders}"
-        SelectedItem="{Binding SelectedSystemFolder}"
+        ItemsSource="{Binding History}"
+        SelectedItem="{Binding SelectedHistoryFolder}"
         Style="{StaticResource UcListBoxTemplate}">
 
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <StackPanel Height="20" Orientation="Horizontal">
+
                     <icon:IconRender
                         Key="{Binding IconKey}"
                         Width="12"
@@ -34,6 +35,7 @@
                         VerticalAlignment="Center"
                         Text="{Binding Name}"
                         TextAlignment="Center" />
+
                 </StackPanel>
             </DataTemplate>
         </ListBox.ItemTemplate>

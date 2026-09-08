@@ -12,12 +12,12 @@ namespace UnityCommander.Services
     {
         private readonly CommandExecutionService _commands;
         private readonly CompositeIconResolver _iconResolver;
-        private readonly ActiveTab _panelContext;
+        private readonly ActiveTabContext _panelContext;
 
         public CommandUIService(
             CompositeIconResolver iconResolver, 
-            CommandExecutionService commands, 
-            ActiveTab panelContext)
+            CommandExecutionService commands,
+            ActiveTabContext panelContext)
         {
             _commands = commands;
             _iconResolver = iconResolver;

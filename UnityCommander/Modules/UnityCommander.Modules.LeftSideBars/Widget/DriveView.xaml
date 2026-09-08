@@ -17,14 +17,12 @@
     </UserControl.Resources>
 
     <ListBox
-        Grid.Row="1"
-        HorizontalAlignment="Center"
-        Background="{x:Null}"
-        BorderBrush="{x:Null}"
-        ItemContainerStyle="{DynamicResource UcListBoxItemWidgetStyle}"
+        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+        BorderThickness="0"
+        ItemContainerStyle="{StaticResource UcListBoxItemWidgetStyle}"
         ItemsSource="{Binding Drives}"
         SelectedItem="{Binding SelectedDrive}"
-        Style="{DynamicResource UcListBoxTemplate}">
+        Style="{StaticResource UcListBoxTemplate}">
 
         <ListBox.ItemTemplate>
             <DataTemplate>
@@ -35,20 +33,15 @@
                         <ColumnDefinition Width="210" />
                     </Grid.ColumnDefinitions>
                     <!--  Иконка диска  -->
-                    <Border
+
+                    <icon:IconRender
+                        Key="{Binding IconKey}"
                         Grid.Column="0"
-                        Width="28"
-                        Height="28"
-                        VerticalAlignment="Top"
-                        Background="{DynamicResource UcSurfaceTertiaryBrush}"
-                        CornerRadius="6">
-                        <icon:IconRender
-                            Key="{Binding IconKey}"
-                            Width="16"
-                            Height="16"
-                            State="Disabled"
-                            Stroke="#B8B8B8" />
-                    </Border>
+                        Width="12"
+                        Height="12"
+                        Margin="5,0,5,0"
+                        State="Disabled"
+                        Stroke="#B8B8B8" />
 
                     <!--  Информация  -->
                     <Grid Grid.Column="1">

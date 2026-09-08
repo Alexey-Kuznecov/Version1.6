@@ -1,10 +1,9 @@
 ﻿
-using System.Windows;
 
 namespace UnityCommander.WPF.Widget
 {
     public interface IWidgetFactory
     {
-        FrameworkElement Create(string widgetId);
+        WidgetItem Create(string widgetId, int order);
     }
 }

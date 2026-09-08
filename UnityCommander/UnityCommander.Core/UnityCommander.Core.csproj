@@ -8,8 +8,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Modules\**" />
+    <Compile Remove="Theming\**" />
     <EmbeddedResource Remove="Modules\**" />
+    <EmbeddedResource Remove="Theming\**" />
     <None Remove="Modules\**" />
+    <None Remove="Theming\**" />
     <Page Remove="Modules\**" />
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +47,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Settings\" />
-    <Folder Include="Theming\" />
   </ItemGroup>
 </Project>

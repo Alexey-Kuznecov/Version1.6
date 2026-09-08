@@ -10,7 +10,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     public sealed class CreateFolderViewModel : BindableBase
     {
-        private readonly ActiveTab _activeTab;
+        private readonly ActiveTabContext _activeTab;
         private readonly IPopupService _popupService;
         private readonly ICreationService _creationService;
 
@@ -19,7 +19,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public CreateFolderViewModel(
              IPopupService popupService,
              ICreationService creationService,
-             ActiveTab activeTab)
+             ActiveTabContext activeTab)
         {
             _popupService = popupService;
             _activeTab = activeTab;

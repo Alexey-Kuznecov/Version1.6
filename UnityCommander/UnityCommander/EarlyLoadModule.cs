@@ -74,13 +74,48 @@ namespace UnityCommander
                  DriveViewModel,
                  DrivesWidgetView>(
                      "drives",
-                     "Drives");
+                     "Drives", 
+                     null, 
+                     null);
 
             widgetRegistry.Register<
                 SystemFoldersViewModel,
                 SystemFoldersWidget>(
                     "system-folders",
-                    "System Folders");
+                    "System Folders", 
+                    null, 
+                    null);
+
+            widgetRegistry.Register<
+                HistoryViewModel,
+                HistoryWidgetView>(
+                   "history", "History", 
+                   null, 
+                   null);
+
+            widgetRegistry.Register<
+                FavoritesViewModel,
+                FavoritesWidget>(
+                    "favorites",
+                    "Favorites",
+                    primaryAction: new WidgetActionDefinition
+                    {
+                        Id = "add-current",
+                        Title = "Add current folder",
+                        IconKey = "add",
+                        CreateCommand = vm =>
+                            ((FavoritesViewModel)vm).AddCurrentCommand
+                      },
+                    actions: 
+                    [
+                        new WidgetActionDefinition
+                        {
+                            Id = "clear",
+                            Title = "Clear favorites",
+                            CreateCommand = vm =>
+                                ((FavoritesViewModel)vm).ClearCommand
+                        }
+            ]);
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
