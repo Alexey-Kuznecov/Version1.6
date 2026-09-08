@@ -19,7 +19,7 @@ using System.Windows;
 using System.Windows.Input;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Infrastructure;
-using UnityCommander.Mvvm.Base;
+
 namespace IconBrowser.ViewModels
 {
     internal class IconMakerViewModel : BindableBase

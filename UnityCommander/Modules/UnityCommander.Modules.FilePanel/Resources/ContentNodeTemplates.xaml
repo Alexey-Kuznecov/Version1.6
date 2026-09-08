@@ -106,9 +106,10 @@
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                            ItemsSource="{Binding Context.ContextMenuItems}">
+                            ItemsSource="{Binding Context.ContextMenuItems}"
+                            Style="{DynamicResource UcContextMenu}">
                             <ContextMenu.ItemContainerStyle>
-                                <Style TargetType="MenuItem">
+                                <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
                                     <Setter Property="Icon" Value="🙂" />
                                     <Setter Property="Command" Value="{Binding Command}" />
@@ -167,9 +168,10 @@
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                            ItemsSource="{Binding Context.ContextMenuItems}">
+                            ItemsSource="{Binding Context.ContextMenuItems}"
+                            Style="{DynamicResource UcContextMenu}">
                             <ContextMenu.ItemContainerStyle>
-                                <Style TargetType="MenuItem">
+                                <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
                                     <Setter Property="Icon" Value="🙂" />
                                     <Setter Property="Command" Value="{Binding Command}" />

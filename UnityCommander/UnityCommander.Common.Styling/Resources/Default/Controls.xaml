@@ -5,6 +5,7 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/RepeatButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ListBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ContextMenu.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/MenuItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ToggleButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ListView.xaml" />

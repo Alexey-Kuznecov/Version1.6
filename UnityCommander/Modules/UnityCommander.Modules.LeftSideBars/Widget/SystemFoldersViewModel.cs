@@ -1,17 +1,36 @@
 ﻿
+using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.LeftSideBars.Widget.Models;
 
 namespace UnityCommander.Modules.LeftSideBars.Widget
 {
-    public class SystemFoldersViewModel
+    public class SystemFoldersViewModel : BindableBase
     {
+        private PanelActionExecutor _executor;
+
+        private SystemFolderInfoModel _selectedFolder;
+
         public ObservableCollection<SystemFolderInfoModel> Folders { get; } = [];
 
-        public SystemFoldersViewModel()
+        public SystemFolderInfoModel SelectedSystemFolder
         {
+            get => _selectedFolder;
+            set
+            {
+                if (SetProperty(ref _selectedFolder, value))
+                {
+                    _executor.Navigate(_selectedFolder.Path);
+                }
+            }
+        }
+
+        public SystemFoldersViewModel(PanelActionExecutor executor)
+        {
+            _executor = executor;
             Folders.Add(new SystemFolderInfoModel
             {
                 Name = "Desktop",
@@ -39,7 +58,7 @@ namespace UnityCommander.Modules.LeftSideBars.Widget
             {
                 Name = "Pictures",
                 Path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                IconKey = "image"
+                IconKey = "picture"
             });
 
             Folders.Add(new SystemFolderInfoModel

@@ -15,6 +15,10 @@ namespace UnityCommander.WPF.Widget
 
         public FrameworkElement View { get; init; } = null!;
 
+        public WidgetAction? PrimaryAction { get; init; }
+
+        public IReadOnlyList<WidgetAction> Actions { get; init; } = [];
+
         public bool IsVisible { get; set; } = true;
 
         public int Order { get; set; }
@@ -27,10 +31,21 @@ namespace UnityCommander.WPF.Widget
 
         public ICommand ToggleExpandedCommand { get; }
 
+        public ICommand ShowActionsCommand 
+            => new RelayCommand((t) => IsActionsOpen = true);
+
         public WidgetItem()
         {
             ToggleExpandedCommand = new RelayCommand(
                 obj => IsExpanded = !IsExpanded);
+        }
+
+        private bool _isActionsOpen;
+
+        public bool IsActionsOpen
+        {
+            get => _isActionsOpen;
+            set => SetProperty(ref _isActionsOpen, value);
         }
     }
 }

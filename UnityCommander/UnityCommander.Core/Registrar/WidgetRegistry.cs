@@ -12,13 +12,17 @@ namespace UnityCommander.Core.Registrar
 
         public void Register<TViewModel, TView>(
             string id,
-            string name)
+            string name,
+            WidgetActionDefinition primaryAction,
+            IReadOnlyList<WidgetActionDefinition> actions)
         {
             var definition = new WidgetDefinition(
                 id,
                 name,
                 typeof(TViewModel),
-                typeof(TView));
+                typeof(TView),
+                primaryAction,
+                actions);
 
             if (!_widgets.TryAdd(id, definition))
             {

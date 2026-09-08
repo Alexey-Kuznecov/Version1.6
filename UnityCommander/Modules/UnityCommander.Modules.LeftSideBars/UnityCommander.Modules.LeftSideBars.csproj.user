@@ -22,6 +22,12 @@
     <Compile Update="Widget\DriveView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Widget\FavoritesWidget.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Widget\HistoryWidgetView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Widget\SystemFoldersWidget.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

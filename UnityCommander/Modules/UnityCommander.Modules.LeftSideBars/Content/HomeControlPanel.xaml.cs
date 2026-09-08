@@ -22,5 +22,10 @@ namespace UnityCommander.Modules.LeftSideBars.Content
         {
             InitializeComponent();
         }
+
+        private void ActionsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            //ActionsPopup.IsOpen = true;
+        }
     }
 }

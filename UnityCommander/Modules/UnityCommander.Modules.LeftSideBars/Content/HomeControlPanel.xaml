@@ -23,6 +23,20 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+
+        <!--<Style
+            x:Name="PrimaryActionButton"
+            BasedOn="{StaticResource UcButton}"
+            TargetType="{x:Type Button}">
+            <Setter Property="Content" Value="▼" />
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                    <Setter Property="Content" Value="▲" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>-->
     </UserControl.Resources>
 
     <Grid HorizontalAlignment="Center">
@@ -46,24 +60,98 @@
 
                             <!--  Header  -->
                             <Grid Grid.Row="0" Margin="12,8">
+
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock
                                     Grid.Column="0"
+                                    VerticalAlignment="Center"
                                     FontSize="14"
                                     FontWeight="Bold"
                                     Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                                     Text="{Binding Title}" />
 
+                                <!--  Primary action  -->
                                 <Button
+                                    x:Name="PrimaryActionButton"
                                     Grid.Column="1"
+                                    Width="24"
+                                    Height="24"
+                                    Margin="4,0,2,0"
                                     Background="Transparent"
+                                    Command="{Binding PrimaryAction.Command}"
+                                    Content="＋">
+
+                                    <Button.Style>
+                                        <Style BasedOn="{StaticResource UcButton}" TargetType="Button">
+
+                                            <Setter Property="Visibility" Value="Visible" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding PrimaryAction}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+
+                                        </Style>
+                                    </Button.Style>
+
+                                </Button>
+                                <!--  More  -->
+                                <Button
+                                    x:Name="ActionsButton"
+                                    Grid.Column="2"
+                                    Width="24"
+                                    Height="24"
+                                    Margin="2,0,0,0"
+                                    Background="Transparent"
+                                    Click="ActionsButton_OnClick"
+                                    Command="{Binding ShowActionsCommand}"
                                     Content="⋮"
-                                    Foreground="{StaticResource UcForegroundSecondaryBrush}"
                                     Style="{StaticResource UcButton}" />
+
+                                <Popup
+                                    x:Name="ActionsPopup"
+                                    AllowsTransparency="True"
+                                    HorizontalOffset="1"
+                                    IsOpen="{Binding IsActionsOpen, Mode=TwoWay}"
+                                    Placement="Bottom"
+                                    PlacementTarget="{Binding ElementName=ActionsButton}"
+                                    StaysOpen="False"
+                                    VerticalOffset="1">
+
+                                    <Border
+                                        MinWidth="150"
+                                        Padding="4"
+                                        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                                        BorderBrush="{DynamicResource UcBorderPrimaryBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4">
+
+                                        <ItemsControl ItemsSource="{Binding Actions}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+
+                                                    <Button
+                                                        MinWidth="140"
+                                                        HorizontalContentAlignment="Left"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Command="{Binding Command}"
+                                                        Content="{Binding Title}"
+                                                        IsEnabled="{Binding IsEnabled}"
+                                                        Style="{StaticResource UcButton}" />
+
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                    </Border>
+                                </Popup>
                             </Grid>
 
                             <!--  Widget content  -->
