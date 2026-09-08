@@ -6,9 +6,12 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
+    xmlns:wpf="clr-namespace:UnityCommander.WPF.Converters;assembly=UnityCommander.WPF"
     mc:Ignorable="d">
+
     <converter:IconConverter x:Key="IconConverter" />
-    <converter:DataSizeConverter x:Key="DataSizeConverter" />
+    <wpf:DataSizeConverter x:Key="DataSizeConverter" />
+
     <DataTemplate x:Key="ColumnLetterDataTemplate" DataType="{x:Type models:DriveModel}">
         <StackPanel Orientation="Horizontal">
             <AdornerDecorator>

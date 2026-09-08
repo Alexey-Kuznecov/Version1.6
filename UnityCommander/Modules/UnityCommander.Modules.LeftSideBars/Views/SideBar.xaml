@@ -103,7 +103,7 @@
                 Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Content="{Binding IconHideSidebar.Data}"
+                Content="{Binding IconHideSidebar}"
                 Foreground="{DynamicResource UcForegroundTertiaryBrush}">
                 <ContentControl.Template>
                     <DynamicResource ResourceKey="CustomButtonTemplate" />

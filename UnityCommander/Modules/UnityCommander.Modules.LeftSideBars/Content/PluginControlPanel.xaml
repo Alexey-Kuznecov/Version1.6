@@ -34,7 +34,7 @@
             Style="{StaticResource UcListBoxTemplate}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="4">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220" />
                             <ColumnDefinition Width="50" />

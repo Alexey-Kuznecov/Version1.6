@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace UnityCommander.Modules.LeftSideBars.Content
 {
     /// <summary>
-    /// Логика взаимодействия для TagControlPanel.xaml
+    /// Логика взаимодействия для HomeControlPanel.xaml
     /// </summary>
-    public partial class TagControlPanel : UserControl
+    public partial class HomeControlPanel : UserControl
     {
-        public TagControlPanel()
+        public HomeControlPanel()
         {
             InitializeComponent();
         }

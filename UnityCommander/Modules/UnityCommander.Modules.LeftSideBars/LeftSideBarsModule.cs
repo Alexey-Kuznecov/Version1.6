@@ -42,12 +42,21 @@ namespace UnityCommander.Modules.LeftSideBars
             }
 
             sidebarService.Register(
-                new SidebarSection(
-                    "core.column",
-                    "core.column",
-                    typeof(ColumnsOptionControl),
-                    typeof(ColumnOptionViewModel)
-                ));
+             new SidebarSection
+             (
+                "core.home",
+                "core.home",
+                typeof(HomeControlPanel),
+                typeof(HomeViewModel)
+             ));
+
+            //sidebarService.Register(
+            //    new SidebarSection(
+            //        "core.column",
+            //        "core.column",
+            //        typeof(ColumnsOptionControl),
+            //        typeof(ColumnOptionViewModel)
+            //    ));
 
             sidebarService.Register(
                 new SidebarSection
@@ -58,14 +67,14 @@ namespace UnityCommander.Modules.LeftSideBars
                     typeof(PluginPanelViewModel)
                 ));
 
-            sidebarService.Register(
-               new SidebarSection
-               (
-                  "core.commnet",
-                  "core.commnet",
-                   typeof(CommentControl),
-                   null
-               ));
+            //sidebarService.Register(
+            //   new SidebarSection
+            //   (
+            //      "core.commnet",
+            //      "core.commnet",
+            //       typeof(CommentControl),
+            //       null
+            //   ));
 
             sidebarService.Register(
                new SidebarSection
@@ -73,15 +82,6 @@ namespace UnityCommander.Modules.LeftSideBars
                   "core.foldertree",
                   "core.foldertree",
                    typeof(FolderTreeOverviewControl),
-                   null
-               ));
-
-            sidebarService.Register(
-               new SidebarSection
-               (
-                  "core.tag",
-                  "core.tag",
-                  typeof(TagControlPanel),
                    null
                ));
 

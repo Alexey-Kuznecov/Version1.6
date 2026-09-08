@@ -1,14 +1,15 @@
 ﻿
-using Microsoft.Win32;
 using Prism.Ioc;
 using Prism.Modularity;
 using System.IO;
 using UnityCommander.Abstractions.Icons;
 using UnityCommander.Abstractions.Keyboard;
+using UnityCommander.Abstractions.Widget;
 using UnityCommander.Common;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
 using UnityCommander.Logging.Contracts;
+using UnityCommander.Modules.LeftSideBars.Widget;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Plugins;
@@ -31,7 +32,9 @@ namespace UnityCommander
             _logger = LoggingBootstrap.Initialize(provider);
 
             _logger.Info("EarlyLoadModule initialized.");
-           
+
+            RegisterWidgets(provider);
+
             _providerInfo = provider.Resolve<IPluginInfoProvider>();
             _provider = provider.Resolve<IPluginProvider>();
             _activator = provider.Resolve<IPluginActivator>();
@@ -56,6 +59,17 @@ namespace UnityCommander
             var paths = provider.Resolve<UnityCommanderPath>();
             _iconSource.Register(new MaterialIconSource());
             _iconSource.Register(new FileIconSource(Path.Combine(paths.IconsDirectory, "Icons", "material.iconpack")));
+        }
+
+        private static void RegisterWidgets(IContainerProvider containerRegistry)
+        {
+            var widgetRegistry = containerRegistry.Resolve<IWidgetRegistry>();
+
+            widgetRegistry.Register<
+                 DriveViewModel,
+                 DrivesWidgetView>(
+                     "drives",
+                     "Drives");
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

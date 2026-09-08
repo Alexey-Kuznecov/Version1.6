@@ -32,7 +32,7 @@
     <SolidColorBrush x:Key="UcBorderSecondaryBrush" Color="#191A1B" />
     <SolidColorBrush x:Key="UcBorderTertiaryBrush" Color="#191A1B" />
 
-    <SolidColorBrush x:Key="UcAccentPrimaryBrush" Color="#808082" />
+    <SolidColorBrush x:Key="UcAccentPrimaryBrush" Color="#3B82F6" />
     <SolidColorBrush x:Key="UcAccentSecondaryBrush" Color="#191A1B" />
     <SolidColorBrush x:Key="UcAccentTertiaryBrush" Color="#FF1368" />
 

@@ -1,5 +1,4 @@
 ﻿
-using Example;
 using Prism.Ioc;
 using System.IO;
 using UnityCommander.Abstractions;
@@ -10,6 +9,7 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Abstractions.Widget;
 using UnityCommander.Common;
 using UnityCommander.Common.Docking;
 using UnityCommander.Common.Sidebar;
@@ -40,6 +40,7 @@ using UnityCommander.UI.Overlay;
 using UnityCommander.UI.Visual;
 using UnityCommander.WPF;
 using UnityCommander.WPF.Input;
+using UnityCommander.WPF.Widget;
 
 namespace UnityCommander.Dependencies
 {
@@ -68,6 +69,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IPanelRegistry, PanelRegistry>();
             registry.RegisterSingleton<ITabContextAccessor, TabContextAccessor>();
             registry.RegisterSingleton<ITabActivationService, TabActivationService>();
+            registry.RegisterSingleton<INavigationRegistry, NavigationRegistry>();
 
             // Docking (перетаскивание UI): логика докинга, синхронизация и общий контекст перемещения панелей
             registry.RegisterSingleton<IDockingService, DockingService>();
@@ -162,6 +164,10 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<IVisualElementRegistry, VisualElementRegistry>();
             registry.RegisterSingleton<IOverlayService, OverlayService>();
+
+
+            registry.RegisterSingleton<IWidgetFactory, WidgetFactory>();
+            registry.RegisterSingleton<IWidgetRegistry, WidgetRegistry>();
         }
     }
 }

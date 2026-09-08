@@ -1,8 +1,8 @@
-﻿using System;
+﻿
 using System.Globalization;
 using System.Windows.Data;
 
-namespace UnityCommander.Modules.FilePanel.Converters
+namespace UnityCommander.WPF.Converters
 {
     public class DataSizeConverter : IValueConverter
     {
