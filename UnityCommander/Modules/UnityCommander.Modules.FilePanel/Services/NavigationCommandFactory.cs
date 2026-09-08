@@ -16,7 +16,7 @@ namespace UnityCommander.Modules.FilePanel.Services
 {
     public class NavigationCommandFactory // : INavigationCommandFactory
     {
-        private readonly ActiveTab _activeTab;
+        private readonly ActiveTabContext _activeTab;
         private readonly NavigationManager _navigation;
         private readonly ICommandUIService _ui;
         private readonly ISelectionManager _selection;
@@ -25,7 +25,7 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly IPopupService _popupService;
 
         public NavigationCommandFactory(
-            ActiveTab activeTab,
+            ActiveTabContext activeTab,
             IPopupService popupService,
             ICreationService creationService,
             NavigationManager navigation,

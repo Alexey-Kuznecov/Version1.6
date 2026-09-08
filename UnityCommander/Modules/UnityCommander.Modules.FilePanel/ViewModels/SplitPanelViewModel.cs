@@ -147,7 +147,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IWindowManager windowManager,
               IPopupService popupService,
               INavigationRegistry navigationRegistry,
-              ActiveTab activeTab)
+              ActiveTabContext activeTab)
             : base(regionManager)
         {
             _performanceProfiler = profiler;

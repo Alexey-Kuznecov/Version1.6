@@ -62,7 +62,7 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<ICreationService, CreationService>();
             registry.RegisterSingleton<ITabStateRegistry, TabStateRegistry>();
-            registry.RegisterSingleton<ActiveTab>();
+            registry.RegisterSingleton<ActiveTabContext>();
             registry.RegisterSingleton<IRenameService, RenameService>();
             registry.RegisterSingleton<IRenameManager, RenameManager>();
         }

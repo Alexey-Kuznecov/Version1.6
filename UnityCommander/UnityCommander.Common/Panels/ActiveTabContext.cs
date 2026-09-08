@@ -4,7 +4,7 @@ using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.Common.Panels
 {
-    public sealed class ActiveTab
+    public sealed class ActiveTabContext
     {
         private readonly ITabStateRegistry _states;
         private readonly IPanelRegistry _panelRegistry;
@@ -17,7 +17,7 @@ namespace UnityCommander.Common.Panels
         public string? CurrentPath =>
             Active?.CurrentPath;
 
-        public ActiveTab(
+        public ActiveTabContext(
             ITabStateRegistry states,
             IPanelRegistry panelRegistry)
         {

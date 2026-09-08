@@ -32,7 +32,7 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly IDropTarget _dropTarget;
         private readonly NodeContextRegistry _contextRegistry;
         private readonly ILogger _logger;
-        private readonly ActiveTab _activeTab;
+        private readonly ActiveTabContext _activeTab;
         private readonly IPopupService _popupService;
         private readonly ICreationService _creationService;
         private ViewportMapper _scrollMapper;
@@ -49,7 +49,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             ViewportMapper scrollMapper,
             IWindowManager windowManager,
             IPopupService popupService,
-            ActiveTab activeTab)
+            ActiveTabContext activeTab)
         {
             var loggerCreator = Log.GetLoggerCreator();
 
@@ -131,12 +131,12 @@ namespace UnityCommander.Modules.FilePanel.Services
             var navFactory = new NavigationCommandFactory(_activeTab, _popupService, _creationService, _navigation, _selection, _commands, _windowManager);
 
             ctx.Commands.Add(
-              navFactory.CreateGoBackCommand<ActiveTab>(
+              navFactory.CreateGoBackCommand<ActiveTabContext>(
                   CommandNames.Navigation.Back,
                   () => ctx.CanGoBack));
 
             ctx.Commands.Add(
-                navFactory.CreateGoForwardCommand<ActiveTab>(
+                navFactory.CreateGoForwardCommand<ActiveTabContext>(
                   CommandNames.Navigation.Forward,
                   () => ctx.CanGoForward));
 
