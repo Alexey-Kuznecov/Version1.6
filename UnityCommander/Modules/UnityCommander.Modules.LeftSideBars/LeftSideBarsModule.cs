@@ -45,7 +45,7 @@ namespace UnityCommander.Modules.LeftSideBars
              new SidebarSection
              (
                 "core.home",
-                "core.home",
+                "core.home.account",
                 typeof(HomeControlPanel),
                 typeof(HomeViewModel)
              ));

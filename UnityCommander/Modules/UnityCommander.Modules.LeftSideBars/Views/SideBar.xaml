@@ -77,7 +77,7 @@
                     Style="{StaticResource UcToggleButton}">
 
                     <icon:IconRender
-                        Key="Settings"
+                        Key="core.settings"
                         Width="25"
                         Height="25"
                         Brush="{DynamicResource UcAccentTertiaryBrush}"

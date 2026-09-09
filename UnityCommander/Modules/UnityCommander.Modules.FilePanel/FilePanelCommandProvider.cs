@@ -1,19 +1,13 @@
 ﻿
 using CommandSystem.Abstractions;
-using CommandSystem.Core.Execution;
-using CommandSystem.Gui.MVVM;
+
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.Controls;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.UI.Overlay;
-using UnityCommander.UI.Visual;
 
 namespace UnityCommander.Modules.FilePanel
 {

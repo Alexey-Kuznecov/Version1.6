@@ -9,6 +9,7 @@ using UnityCommander.Core.IO.Operations;
 using UnityCommander.Modules.BottomPanel.Commands;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Modules.ToolBar.Commands;
 using UnityCommander.Services;
 
 namespace UnityCommander.Moduls
@@ -22,9 +23,20 @@ namespace UnityCommander.Moduls
          
             var commandRegistry = containerProvider.Resolve<CommandRegistryService>();
             var filePanelProvider = containerProvider.Resolve<FilePanelCommandProvider>();
+            var ribbonProvider = containerProvider.Resolve<RobbonCommandProvider>();
             var tooBarProvider = containerProvider.Resolve<ToolCommandProvider>();
 
             _notifier = containerProvider.Resolve<IDirectoryChangeNotifier>();
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+               CommandNames.Test.ShowDialog,
+                ribbonProvider.ShowDialogTest,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+               CommandNames.Test.ShowParams,
+                ribbonProvider.ShowParamTest,
+                null));
 
             // -------------------------------
             // 1. Регистрация команд файловой панели

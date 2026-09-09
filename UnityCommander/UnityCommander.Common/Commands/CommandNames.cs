@@ -3,6 +3,12 @@ namespace UnityCommander.Common.Commands
 {
     public static class CommandNames
     {
+        public static class Test
+        {
+            public const string ShowDialog = "test.show.dialog";
+            public const string ShowParams = "test.show.dialog.params";
+        }
+
         public static class Directory
         {
             public const string Create = "directory.create";
@@ -15,6 +21,15 @@ namespace UnityCommander.Common.Commands
             public const string Execute = "command.execute";
             public const string List = "command.list";
             public const string Help = "command.help";
+        }
+
+        public static class Clipboard
+        {
+            public const string Copy = "ribbon.copy.item";
+            public const string Paste = "ribbon.paste.item";
+            public const string Cut = "ribbon.cut.item";
+            public const string CopyPath = "ribbon.copy.path";
+            public const string CopyLink = "ribbon.create.link";
         }
 
         public static class File
@@ -40,9 +55,11 @@ namespace UnityCommander.Common.Commands
             public const string Back = "navigation.back";
             public const string Forward = "navigation.forward";
             public const string Parent = "navigation.parent";
+            public const string Network = "navigation.network";
             public const string Refresh = "navigation.refresh";
             public const string Desktop = "navigation.desktop";
             public const string Drives = "navigation.drives";
+            public const string RecycleBin = "navigation.recycle.bin";
         }
 
         public static class History

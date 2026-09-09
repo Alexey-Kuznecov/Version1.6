@@ -1,7 +1,4 @@
 ﻿
-using UnityCommander.Common.Commands;
-using UnityCommander.Services;
-
 namespace UnityCommander.Modules.ToolBar.Commands
 {
     //public class FileRemoveCommand : IRibbonCommand

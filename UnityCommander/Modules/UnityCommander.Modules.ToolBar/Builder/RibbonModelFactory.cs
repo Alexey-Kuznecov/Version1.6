@@ -3,11 +3,13 @@ using CommandSystem.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
 using UnityCommander.Abstractions.Command;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Ribbon.Abstractions;
 using UnityCommander.Ribbon.Abstractions.Models;
 using UnityCommander.Ribbon.Abstractions.Models.Controls;
+using UnityCommander.Ribbon.Wpf.Controls;
 
 namespace UnityCommander.Modules.ToolBar.Builder
 {
@@ -131,7 +133,12 @@ namespace UnityCommander.Modules.ToolBar.Builder
 
         private RibbonItemModel CreateCheckBox(RibbonCheckBoxDefinition checkBox)
         {
-            return null;
+            return new RibbonCheckBoxModel()
+            {
+                Text = checkBox.Text,
+                Id = checkBox.SectionId,
+                IconKey = checkBox.IconKey,
+            };
         }
 
         private RibbonItemModel CreateRadioButton(RibbonRadioButtonDefinition radio)
@@ -141,16 +148,12 @@ namespace UnityCommander.Modules.ToolBar.Builder
 
         private RibbonItemModel CreateButton(RibbonButtonDefinition button)
         {
-            var cmd = _commands.Get(button.CommandId);
-
-            if (!_pluginCommands.TryGet(button.CommandId, out var def) && cmd == null)
-                return null;
-
-            return new RibbonButtonModel()
+            return new RibbonButtonModel
             {
+                Title = button.Text,
                 Id = button.CommandId,
                 IconKey = button.IconKey,
-                CommandId = def?.Id ?? cmd.Name,
+                CommandId = button.CommandId
             };
         }
     }

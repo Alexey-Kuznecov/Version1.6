@@ -19,7 +19,7 @@ namespace UnityCommander.Common.StatusBar
           
         public long Speed { get; set; }
 
-        public object? Icon => "DatabaseSync";
+        public object? Icon => "background.service.watch";
 
         public ICommand? Command { get; set; }
 

@@ -4,6 +4,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
     using CommandSystem.Abstractions;
     using Prism.Mvvm;
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using UnityCommander.Abstractions.Command;
     using UnityCommander.Abstractions.Ribbon;
@@ -58,31 +59,116 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
             ConfigureRibbon(r =>
             {
                 r.Tab("home", "Главная")
-                    .Group("tools", "Инструменты")
-                        .Section("main", RibbonGroupLayout.Large)
-                            .Button(CommandNames.UI.ToggleBottomPanel, "core.drive")
-                            .ComboBox("tools", new()
-                                {
-                                    new RibbonComboBoxItemDefinition
-                                    {
-                                        Id = "console",
-                                        Title = "Консоль",
-                                        CommandId = CommandNames.ToolBar.Create
-                                    },
-                                    new RibbonComboBoxItemDefinition
-                                    {
-                                        Id = "viewer",
-                                        Title = "Просмотрщик",
-                                        CommandId = CommandNames.ToolBar.Create
-                                    },
-                                    new RibbonComboBoxItemDefinition
-                                    {
-                                        Id = "logger",
-                                        Title = "Журнал",
-                                        CommandId = CommandNames.ToolBar.Create
-                                    }
-                                });
-                           
+                    .Group("clipboard", "Буфер обмена")
+                        .Section("clip", RibbonGroupLayout.Inline)
+                            .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                            .Button("Кнопка 2", CommandNames.Test.ShowParams, "directory.create2")
+                            .Button("Кнопка 3", CommandNames.Test.ShowParams, "directory.create2")
+
+                        .EndSection()
+
+                        .Section("clip2", RibbonGroupLayout.Medium)
+                         .Button("Кнопка 1", CommandNames.Test.ShowDialog, "directory.create2")
+                         .Button("Кнопка 2", CommandNames.Test.ShowDialog, "directory.create2")
+                         .Button("Кнопка 3", CommandNames.Test.ShowDialog, "directory.create2")
+
+                        .EndSection()
+                    .EndGroup()
+                     .Group("navigation", "Навигация")
+                        .Section("nav", RibbonGroupLayout.Large)
+                         .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 2", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 3", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 4", CommandNames.Test.ShowParams, "directory.create2")
+                    .EndSection()
+                       .Section("nav2", RibbonGroupLayout.Small)
+                         .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 2", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 3", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 4", CommandNames.Test.ShowParams, "directory.create2")
+                     .EndSection()
+                     .EndGroup()
+                      .Group("view", "Вид")
+                       .Section("view", RibbonGroupLayout.Medium)
+                         .ComboBox(CommandNames.Test.ShowDialog, new List<RibbonComboBoxItemDefinition>()
+                         {
+                             new RibbonComboBoxItemDefinition()
+                             {
+                                 CommandId = "1",
+                                 IconKey = "directory.create2",
+                                 Id = "2",
+                                 Title = "directory"
+                             },
+                             new RibbonComboBoxItemDefinition()
+                             {
+                                 CommandId = "2",
+                                 IconKey = "directory.create2",
+                                 Id = "3",
+                                 Title = "directory"
+                             }
+                         }
+                        )
+                         .CheckBox("check 1", "directory.create2")
+                        .CheckBox("check 2", "directory.create2")
+                          .EndSection()
+                       .Section("view2", RibbonGroupLayout.Small)
+                         .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 2", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 3", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 4", CommandNames.Test.ShowParams, "directory.create2");
+
+
+                r.Tab("home", "Главная")
+                  .Group("tools", "Интрументы")
+                      .Section("editor", RibbonGroupLayout.Inline)
+                         .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                          .CheckBox("check 1", "directory.create2")
+                      .EndSection()
+                      .Section("converter", RibbonGroupLayout.Medium)
+                         .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                          .CheckBox("check 1", "directory.create2")
+                          .ComboBox(CommandNames.Test.ShowParams, new List<RibbonComboBoxItemDefinition>()
+                         {
+                             new RibbonComboBoxItemDefinition()
+                             {
+                                 CommandId = "1",
+                                 IconKey = "directory.create2",
+                                 Id = "2",
+                                 Title = "Item 4"
+                             },
+                             new RibbonComboBoxItemDefinition()
+                             {
+                                 CommandId = "2",
+                                 IconKey = "directory.create2",
+                                 Id = "3",
+                                 Title = "Item 3"
+                             }
+                         }
+                        )
+                      .EndSection()
+                        .Section("compress", RibbonGroupLayout.Small)
+                         .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                         .Button("Кнопка 2", CommandNames.Test.ShowParams, "directory.create2")
+                        .ComboBox(CommandNames.Test.ShowParams, new List<RibbonComboBoxItemDefinition>()
+                         {
+                             new RibbonComboBoxItemDefinition()
+                             {
+                                 CommandId = "1",
+                                 IconKey = "directory.create2",
+                                 Id = "2",
+                                 Title = "Item 1"
+                             },
+                             new RibbonComboBoxItemDefinition()
+                             {
+                                 CommandId = "2",
+                                 IconKey = "directory.create2",
+                                 Id = "3",
+                                 Title = "Item 2"
+                             }
+                         }
+                        );
+
+
             });
 
             var ribbon = modelFactory.Create();
