@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Selection
@@ -13,9 +14,15 @@ namespace UnityCommander.Services.Selection
 
         private readonly ITabContextAccessor _tabContextAccessor;
 
-        public SelectionService(ITabContextAccessor tabContextAccessor)
+        public SelectionService(ITabContextAccessor tabContextAccessor, IPanelRegistry registry)
         {
             _tabContextAccessor = tabContextAccessor;
+            registry.TabRemoved += OnTabRemoved;
+        }
+
+        private void OnTabRemoved(TabRemovedEvent obj)
+        {
+            Unregister(obj.TabId);
         }
 
         public void Register(Guid tabId, ISelectionManager manager)

@@ -1,11 +1,15 @@
 ﻿
 using CommandSystem.Abstractions;
-
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.Panels;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Panels;
+using UnityCommander.Common.Selection;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services;
@@ -128,21 +132,57 @@ namespace UnityCommander.Modules.FilePanel
             return Task.FromResult<UndoToken>(null);
         }
 
-        private Task UndoDeleteAsync(string backup, string path)
+        public Task ExecuteSelectFoldersAsync(CommandContext context)
         {
-            File.Copy(backup, path, overwrite: true);
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
 
-            //_notifier.NotifyChanged(path);
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryDirectories();
+
+            SelectAll(items, selectionService);
+
             return Task.CompletedTask;
         }
 
-        private Task RedoDeleteAsync(string path)
+        public Task ExecuteSelectFilesAsync(CommandContext context)
         {
-            if (File.Exists(path))
-                File.Delete(path);
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
 
-            //_notifier.NotifyChanged(path);
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryFiles();
+
+            SelectAll(items, selectionService);
+
             return Task.CompletedTask;
+        }
+
+        public Task ExecuteSelectAllAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
+
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryItems();
+
+            SelectAll(items, selectionService);
+
+            return Task.CompletedTask;
+        }
+
+        private void SelectAll(
+        IEnumerable<IDirectoryItem> items,
+        ISelectionService selectionService)
+        {
+            var manager = selectionService.GetActive();
+
+            manager.SetItems(items.Cast<ISelectableItem>());
+
+            manager.Handle(new SelectionAction
+            {
+                Type = SelectionActionType.SelectAll
+            });
         }
     }
 }

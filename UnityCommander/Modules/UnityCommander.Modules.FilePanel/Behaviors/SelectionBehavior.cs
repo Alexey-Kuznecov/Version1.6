@@ -12,6 +12,8 @@ using UnityCommander.Common.Selection;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.UI.Overlay;
 using ILogger = UnityCommander.Logging.Contracts.ILogger;
+using UnityCommander.Logging;
+using UnityCommander.Logging.Core;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
@@ -25,8 +27,6 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
         //private static LoggerCreator logCreat = ContainerLocator.Container.Resolve<LoggerCreator>();
         
-        private static ILogger logger;
-           
         public static readonly DependencyProperty PanelIdProperty =
            DependencyProperty.RegisterAttached(
                "PanelId",
@@ -51,8 +51,6 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             if (d is ListView list && e.NewValue is ISelectionManager manager)
             {
                 var tabId = _tabContextAccessor.ActiveTabId;
-
-                Service.Register(tabId, manager);
 
                 manager.SelectionChanged += () =>
                 {
@@ -190,17 +188,10 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         {
             list.SelectedItems.Clear();
 
-            foreach (var item in list.Items)
+            foreach (var item in manager.SelectedItems)
             {
-                if (item is BaseDirectory dir)
-                {
-                    //logger.Debug(dir.Path + $" is selected {dir.IsSelected}");
-                }
-
-                if (item is ISelectableItem select && select.IsSelected)
-                {
-                    list.SelectedItems.Add(select);
-                }
+                if (list.Items.Contains(item))
+                    list.SelectedItems.Add(item);
             }
         }
     }

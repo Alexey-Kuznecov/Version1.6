@@ -38,6 +38,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<NavigationManager>();
 
             //// Службы для управления выделением в файловых панелях
+            registry.RegisterSingleton<ISelectionStrategy, SelectAllStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ReplaceSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, RangeSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ToggleSelectionStrategy>();

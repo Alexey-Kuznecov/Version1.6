@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityCommander.Abstractions.Module;
 using UnityCommander.Abstractions.Panels;
 
@@ -33,6 +34,27 @@ namespace UnityCommander.Services
         {
             if (_vm is IDirectoryPanel dp)
                 return dp.GetFiles();
+
+            throw new NotSupportedException();
+        }
+
+        public IReadOnlyList<IDirectoryItem> GetCurrentDirectoryDirectories()
+        {
+            if (_vm is IDirectoryPanel dp)
+                return dp.GetDirectories();
+
+            throw new NotSupportedException();
+        }
+
+        public IReadOnlyList<IDirectoryItem> GetCurrentDirectoryItems()
+        {
+            if (_vm is IDirectoryPanel dp)
+            {
+                return dp.GetDirectories()
+                    .Cast<IDirectoryItem>()
+                    .Concat(dp.GetFiles().Cast<IDirectoryItem>())
+                    .ToArray();
+            }
 
             throw new NotSupportedException();
         }

@@ -14,6 +14,7 @@ namespace UnityCommander.Common.Commands
             public const string Create = "directory.create";
             public const string Delete = "directory.delete";
             public const string Rename = "directory.rename";
+            public const string SelectAll = "directory.select.all";
         }
 
         public static class Command
@@ -49,8 +50,7 @@ namespace UnityCommander.Common.Commands
             
             public const string Copy = "file.copy";
             public const string Paste = "file.paste";
-
-            public static string SelectAll = "file.select.all";
+            public const string SelectAll = "file.select.all";
         }
 
         public static class Navigation
@@ -93,6 +93,7 @@ namespace UnityCommander.Common.Commands
 
             public const string Focus = "panel.focus";
             public const string Switch = "panel.switch"; // левая/правая
+            public const string SelectAll = "panel.select.all";
         }
 
         public static class ToolBar

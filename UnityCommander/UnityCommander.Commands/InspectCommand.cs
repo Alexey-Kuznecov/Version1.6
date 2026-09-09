@@ -1,6 +1,8 @@
 ﻿
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 using System.Threading.Tasks;
@@ -22,7 +24,8 @@ namespace UnityCommander.Commands
         private IDiagnosticRender _renderer;
         private ICommandArgumentParser _parser;
         private IDiagnosticPipeline _pipeline;
-        
+        private readonly IDiagnosticRegistry _registry;
+
         private WatchService _watchService;
         
         private DiagnosticTrace _trace;
@@ -36,11 +39,15 @@ namespace UnityCommander.Commands
         public CommandExecutionMode Mode 
             => CommandExecutionMode.Background;
 
+
+
         public InspectCommand(
             ICommandArgumentParser parse,
             IDiagnosticRender render,
-            IDiagnosticPipeline pipeline)
+            IDiagnosticPipeline pipeline, 
+            IDiagnosticRegistry registry)
         {
+            _registry = registry;
             _renderer = render;
             _parser = parse;
             _pipeline = pipeline;
@@ -53,6 +60,12 @@ namespace UnityCommander.Commands
             var writer = new DiagnosticConsoleWriter(output);
 
             var args = _parser.Parse(context.Arguments);
+
+            if (args.GetAt(0) == "list")
+            {
+                ExecuteList(output);
+                return;
+            }
 
             var interval = args.GetInt("interval");
             var isWatch = args.HasFlag("watch");
@@ -104,6 +117,27 @@ namespace UnityCommander.Commands
                     _renderer.Render(output, result);
                 },
                 cancellationToken);
+        }
+
+        private void ExecuteList(IConsoleOutput output)
+        {
+            output.WriteLine("Diagnostic registrations:");
+
+            foreach (var definition in _registry.GetAll().OrderBy(x => x.Name))
+            {
+                foreach (var registration in definition.Instances)
+                {
+                    var type =
+                        registration.Source is not null
+                            ? "Source"
+                            : registration.Reporter is not null
+                                ? "Reporter"
+                                : "Unknown";
+
+                    output.WriteLine(
+                        $"  {definition.Name,-30} [{type,-8}] {registration.Id}");
+                }
+            }
         }
 
         public Task FinalizeAsync()

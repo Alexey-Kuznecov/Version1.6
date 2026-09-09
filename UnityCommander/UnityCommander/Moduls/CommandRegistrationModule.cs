@@ -46,6 +46,21 @@ namespace UnityCommander.Moduls
                 filePanelProvider.ExecuteGoUpAsync,
                 null));
 
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                CommandNames.Directory.SelectAll,
+                filePanelProvider.ExecuteSelectFoldersAsync,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                 CommandNames.File.SelectAll,
+                 filePanelProvider.ExecuteSelectFilesAsync,
+                 null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                 CommandNames.Panel.SelectAll,
+                 filePanelProvider.ExecuteSelectAllAsync,
+                 null));
+
             commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
                 CommandNames.File.Delete,
                 null,

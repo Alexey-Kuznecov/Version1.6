@@ -195,13 +195,18 @@ namespace UnityCommander
         {
             var shortcutBinder = containerRegistry.Resolve<IShortcutBinder>();
 
+            shortcutBinder.Bind(CommandNames.UI.ShowSettings, ShortcutKey.F12);
+            shortcutBinder.Bind(CommandNames.UI.ToggleBottomPanel, ShortcutKey.Oem3, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.UI.ToggleRibbon, ShortcutKey.T, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.UI.ToggleSidebar, ShortcutKey.B, ShortcutModifiers.Ctrl);
             shortcutBinder.Bind(CommandNames.Navigation.GoUp, ShortcutKey.Backspace);
             shortcutBinder.Bind(CommandNames.File.Delete, ShortcutKey.Delete);
             shortcutBinder.Bind(CommandNames.File.Rename, ShortcutKey.F2);
+            //shortcutBinder.Bind(CommandNames.File.Copy, ShortcutKey.C, ShortcutModifiers.Ctrl);
+            //shortcutBinder.Bind(CommandNames.File.Paste, ShortcutKey.V, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.Panel.SelectAll, ShortcutKey.A, ShortcutModifiers.Ctrl);
             shortcutBinder.Bind(CommandNames.History.Redo, ShortcutKey.Y, ShortcutModifiers.Ctrl);
-            shortcutBinder.Bind(CommandNames.File.Copy, ShortcutKey.C, ShortcutModifiers.Ctrl);
-            shortcutBinder.Bind(CommandNames.File.Paste, ShortcutKey.V, ShortcutModifiers.Ctrl);
-            shortcutBinder.Bind(CommandNames.File.SelectAll, ShortcutKey.A, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.History.Undo, ShortcutKey.Z, ShortcutModifiers.Ctrl);
         }
     }
 }
