@@ -11,6 +11,7 @@ using UnityCommander.Modules.FilePanel.Models;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.WPF;
+using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -165,6 +166,24 @@ namespace UnityCommander.Modules.FilePanel.Services
                        PopupPlacement.Bottom);
                 }),
                 canExecute);
+        }
+
+        public UICommand CreateGoUpCommand(
+            string id,
+            Func<bool> canExecute)
+        {
+            var command = _ui.Create(
+                id,
+                 new DelegateCommand<object>(obj =>
+                 {
+                     _navigation.GoParent();
+                 }),
+                canExecute);
+
+            _navigation.CurrentChanged += _ =>
+                command.RefreshCanExecute();
+
+            return command;
         }
     }
 }

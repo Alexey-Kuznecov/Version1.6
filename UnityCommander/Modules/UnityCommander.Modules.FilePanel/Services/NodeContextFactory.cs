@@ -131,6 +131,11 @@ namespace UnityCommander.Modules.FilePanel.Services
             var navFactory = new NavigationCommandFactory(_activeTab, _popupService, _creationService, _navigation, _selection, _commands, _windowManager);
 
             ctx.Commands.Add(
+               navFactory.CreateGoUpCommand(
+                   CommandNames.Navigation.GoUp,
+                   () => ctx.CanGoParent));
+
+            ctx.Commands.Add(
               navFactory.CreateGoBackCommand<ActiveTabContext>(
                   CommandNames.Navigation.Back,
                   () => ctx.CanGoBack));
@@ -161,9 +166,9 @@ namespace UnityCommander.Modules.FilePanel.Services
                      () => true));
 
             ctx.Commands.Add(
-              navFactory.CreateCreationCommand(
-                  CommandNames.Panel.CreationItem,
-                  () => true));
+                navFactory.CreateCreationCommand(
+                    CommandNames.Panel.CreationItem,
+                    () => true));
 
             ctx.SelectionManager = _selection;
 

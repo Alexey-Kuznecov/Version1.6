@@ -3,14 +3,14 @@ using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.LeftSideBars.Widget.Models;
+using UnityCommander.Services;
 
 namespace UnityCommander.Modules.LeftSideBars.Widget
 {
     public class SystemFoldersViewModel : BindableBase
     {
-        private PanelActionExecutor _executor;
+        private ActiveNavigationService _executor;
 
         private SystemFolderInfoModel _selectedFolder;
 
@@ -28,7 +28,7 @@ namespace UnityCommander.Modules.LeftSideBars.Widget
             }
         }
 
-        public SystemFoldersViewModel(PanelActionExecutor executor)
+        public SystemFoldersViewModel(ActiveNavigationService executor)
         {
             _executor = executor;
             Folders.Add(new SystemFolderInfoModel

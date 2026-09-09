@@ -2,8 +2,11 @@
 using CommandSystem.Abstractions;
 using Prism.Commands;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Windows;
 using UnityCommander.CommandSurface;
+using UnityCommander.Common.Commands;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services;
@@ -49,8 +52,8 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         }
 
         private List<MenuItemViewModel> MapToMenu(
-            IEnumerable<SurfaceNode> nodes, 
-            SurfaceContext context)
+        IEnumerable<SurfaceNode> nodes,
+        SurfaceContext context)
         {
             var result = new List<MenuItemViewModel>();
 
@@ -58,20 +61,28 @@ namespace UnityCommander.Modules.FilePanel.Controllers
             {
                 var item = new MenuItemViewModel
                 {
-                    Title = node.CommandName == null
-                        ? node.Title
-                        : node.CommandName
+                    Title = node.Title
                 };
 
-                if (node.CommandName != null)
+                if (node.CommandName is not null)
                 {
+                    var name = CommandPresentationProvider.Get(node.CommandName).DisplayName;
+
+                    item.Title = name ?? node.CommandName;
+                    item.IconKey = node.CommandName;
+
                     item.Command = new DelegateCommand(() =>
                     {
                         var menuContext = context.Get<FilePanelContextMenu>();
 
-                        var ctx = new CommandContext(node.CommandName, menuContext, menuContext?.SelectedPaths);
+                        var ctx = new CommandContext(
+                            node.CommandName,
+                            menuContext,
+                            menuContext?.SelectedPaths);
 
-                        _commandExecution.ExecuteAsync(node.CommandName, ctx);
+                        _commandExecution.ExecuteAsync(
+                            node.CommandName,
+                            ctx);
                     });
                 }
 

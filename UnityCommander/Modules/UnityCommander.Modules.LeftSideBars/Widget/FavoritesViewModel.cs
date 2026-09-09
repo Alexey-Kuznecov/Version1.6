@@ -2,20 +2,19 @@
 using CommandSystem.Gui.MVVM;
 using Prism.Mvvm;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
 using UnityCommander.Abstractions.History;
 using UnityCommander.Common.Panels;
-using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.LeftSideBars.Widget.Models;
+using UnityCommander.Services;
 
 namespace UnityCommander.Modules.LeftSideBars.Widget
 {
     public sealed class FavoritesViewModel : BindableBase
     {
-        private PanelActionExecutor _executor;
+        private ActiveNavigationService _executor;
 
         private FavoriteInfoModel _selectedFolder;
 
@@ -34,7 +33,7 @@ namespace UnityCommander.Modules.LeftSideBars.Widget
         public FavoritesViewModel(
             IUserFavorites favorites,
             ActiveTabContext activeTabContext,
-            PanelActionExecutor executor)
+            ActiveNavigationService executor)
         {
             _executor = executor;
             _favorites = favorites;

@@ -3,6 +3,7 @@ using System;
 
 namespace UnityCommander.Core.Navigation
 {
+    [Obsolete]
     public sealed class NavigateCommand : IAppCommand
     {
         private readonly INavigationService _nav;

@@ -2,16 +2,16 @@
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.LeftSideBars.Widget.Models;
 using UnityCommander.Rendering.Icons;
+using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.LeftSideBars.Widget
 {
     public class DriveViewModel : BindableBase
     {
-        private PanelActionExecutor _executor;
+        private ActiveNavigationService _executor;
 
         public string Path { get; }
 
@@ -19,8 +19,8 @@ namespace UnityCommander.Modules.LeftSideBars.Widget
 
         public DriveViewModel(
             IDataProviderService dataProvider, 
-            IIconRenderService iconResolver, 
-            PanelActionExecutor executor)
+            IIconRenderService iconResolver,
+            ActiveNavigationService executor)
         {
             _executor = executor;
             _ = GoDrivePanel(dataProvider, iconResolver);

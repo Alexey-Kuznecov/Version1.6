@@ -174,13 +174,15 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IWidgetRegistry, WidgetRegistry>();
 
             registry.RegisterSingleton<IContextActionProvider, PanelActionProvider>();
-            registry.RegisterSingleton<PanelActionExecutor>();
+            registry.RegisterSingleton<ActiveNavigationService>();
             registry.RegisterSingleton<IContextActionService, ContextActionService>();
 
             registry.RegisterSingleton<IUserNavigationHistory, UserNavigationHistory>();
             registry.RegisterSingleton<IUserFavorites, UserFavorites>();
             registry.RegisterSingleton<IUserFavoriteStore, JsonUserFavoritesStore>();
             registry.RegisterSingleton<IUserNavigationHistoryStore, JsonUserNavigationHistoryStore>();
+
+            registry.RegisterSingleton<IShortcutBinder, ShortcutBinder>();
         }
     }
 }

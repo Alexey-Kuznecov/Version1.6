@@ -193,79 +193,15 @@ namespace UnityCommander
 
         private static void RegisterShortcuts(IContainerProvider containerRegistry)
         {
-            var shortcut = containerRegistry.Resolve<IShortcutRegistry>();
+            var shortcutBinder = containerRegistry.Resolve<IShortcutBinder>();
 
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ShowSettings,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ShowSettings).Description,
-                Key = ShortcutKey.F12,
-                Modifiers = ShortcutModifiers.None,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ToggleBottomPanel,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleBottomPanel).Description,
-                Key = ShortcutKey.Oem3,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.Console | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ToggleRibbon,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleRibbon).Description,
-                Key = ShortcutKey.T,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ToggleSidebar,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleSidebar).Description,
-                Key = ShortcutKey.B,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.Sidebar | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.History.Undo,
-                Description = CommandPresentationProvider.Get(CommandNames.History.Undo).Description,
-                Key = ShortcutKey.Z,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.History.Redo,
-                Description = CommandPresentationProvider.Get(CommandNames.History.Redo).Description,
-                Key = ShortcutKey.Y,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.File.Delete,
-                Description = CommandPresentationProvider.Get(CommandNames.File.Delete).Description,
-                Key = ShortcutKey.Delete,
-                Modifiers = ShortcutModifiers.None,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.File.Rename,
-                Description = CommandPresentationProvider.Get(CommandNames.File.Rename).Description,
-                Key = ShortcutKey.F2,
-                Modifiers = ShortcutModifiers.None,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
+            shortcutBinder.Bind(CommandNames.Navigation.GoUp, ShortcutKey.Backspace);
+            shortcutBinder.Bind(CommandNames.File.Delete, ShortcutKey.Delete);
+            shortcutBinder.Bind(CommandNames.File.Rename, ShortcutKey.F2);
+            shortcutBinder.Bind(CommandNames.History.Redo, ShortcutKey.Y, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.File.Copy, ShortcutKey.C, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.File.Paste, ShortcutKey.V, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.File.SelectAll, ShortcutKey.A, ShortcutModifiers.Ctrl);
         }
     }
 }

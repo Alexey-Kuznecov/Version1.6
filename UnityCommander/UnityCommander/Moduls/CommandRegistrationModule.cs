@@ -41,6 +41,11 @@ namespace UnityCommander.Moduls
             // -------------------------------
             // 1. Регистрация команд файловой панели
             // -------------------------------
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                CommandNames.Navigation.GoUp,
+                filePanelProvider.ExecuteGoUpAsync,
+                null));
+
             commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
                 CommandNames.File.Delete,
                 null,

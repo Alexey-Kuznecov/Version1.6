@@ -6,12 +6,13 @@ using UnityCommander.Abstractions.History;
 using UnityCommander.Common.Panels;
 using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.LeftSideBars.Widget.Models;
+using UnityCommander.Services;
 
 namespace UnityCommander.Modules.LeftSideBars.Widget
 {
     public sealed class HistoryViewModel : BindableBase
     {
-        private PanelActionExecutor _executor;
+        private ActiveNavigationService _executor;
 
         private HistoryInfoModel _selectedFolder;
 
@@ -24,7 +25,7 @@ namespace UnityCommander.Modules.LeftSideBars.Widget
         public HistoryViewModel(
             IUserNavigationHistory history,
             ActiveTabContext activeTabContext,
-            PanelActionExecutor executor)
+            ActiveNavigationService executor)
         {
             _executor = executor;
             _history = history;

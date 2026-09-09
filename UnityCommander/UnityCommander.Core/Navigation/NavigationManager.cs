@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using UnityCommander.Abstractions.Diagnostic;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -88,24 +87,36 @@ namespace UnityCommander.Core.Navigation
             CurrentChanged?.Invoke(Current);
 
             var totalMs = sw.Elapsed.TotalMilliseconds;
-
-            //_logger.Info(
-            //     $"\n[Navigation] " +
-            //     $"\nFrom='{old ?? "<null>"}' " +
-            //     $"\nTo='{path ?? "<null>"}' " +
-            //     $"\nValidation={validationMs:F2}ms " +
-            //     $"\nState={stateMs - validationMs:F2}ms " +
-            //     $"\nHistory={historyMs - stateMs:F2}ms " +
-            //     $"\nCurrentChanged={totalMs - historyMs:F2}ms " +
-            //     $"\nTotal={totalMs:F2}ms " +
-            //     $"\nBack={_back.Count} " +
-            //     $"\nForward={_forward.Count}");
         }
 
         public bool CanGoBack => _back.Count > 0;
         public bool CanGoForward => _forward.Count > 0;
 
-        public bool CanGoParent { get; set; }
+        public bool CanGoParent
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Current))
+                    return false;
+
+                // Корень диска (C:\, D:\ и т.д.)
+                var root = Path.GetPathRoot(Current);
+                return !string.Equals(Current, root, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public void GoParent()
+        {
+            if (!CanGoParent)
+                return;
+
+            var parent = Directory.GetParent(Current!);
+            if (parent == null)
+                return;
+
+            // Используем существующий NavigateTo, чтобы история записалась правильно
+            NavigateTo(parent.FullName);
+        }
 
         public void GoBack()
         {

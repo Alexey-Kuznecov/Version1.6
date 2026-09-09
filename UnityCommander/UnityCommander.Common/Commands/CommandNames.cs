@@ -34,7 +34,6 @@ namespace UnityCommander.Common.Commands
 
         public static class File
         {
-            public const string Copy = "file.copy";
             public const string Move = "file.move";
             public const string Delete = "file.delete";
             public const string Rename = "file.rename";
@@ -47,6 +46,11 @@ namespace UnityCommander.Common.Commands
 
             public const string GetInfo = "file.get-info";
             public const string SetAttributes = "file.set-attributes";
+            
+            public const string Copy = "file.copy";
+            public const string Paste = "file.paste";
+
+            public static string SelectAll = "file.select.all";
         }
 
         public static class Navigation
@@ -60,6 +64,7 @@ namespace UnityCommander.Common.Commands
             public const string Desktop = "navigation.desktop";
             public const string Drives = "navigation.drives";
             public const string RecycleBin = "navigation.recycle.bin";
+            public const string GoUp = "navigation.go.up";
         }
 
         public static class History

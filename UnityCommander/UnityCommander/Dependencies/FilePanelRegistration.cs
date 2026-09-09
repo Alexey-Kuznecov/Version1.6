@@ -34,7 +34,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<FolderModelFactory>();
 
             // Навигационный контекст, нужен один на всё приложение
-            registry.RegisterSingleton<NavigationContextDirectory>();
+            //registry.RegisterSingleton<NavigationContextDirectory>();
             registry.RegisterSingleton<NavigationManager>();
 
             //// Службы для управления выделением в файловых панелях

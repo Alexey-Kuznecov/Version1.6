@@ -5,8 +5,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.Panels;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.FilePanel
@@ -30,6 +32,15 @@ namespace UnityCommander.Modules.FilePanel
         {
             var value = ctx.Parameter?.ToString();
             _dockingService.GetActiveDirectoryPanel()?.SetCurrentPath(value);
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteGoUpAsync(CommandContext context)
+        {
+            var nav = context.GetService<ActiveNavigationService>();
+
+            nav.GoParent();
+
             return Task.CompletedTask;
         }
 

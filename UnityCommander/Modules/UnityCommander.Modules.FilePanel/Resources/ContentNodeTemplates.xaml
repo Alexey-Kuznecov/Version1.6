@@ -111,7 +111,7 @@
                             <ContextMenu.ItemContainerStyle>
                                 <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
-                                    <Setter Property="Icon" Value="🙂" />
+                                    <Setter Property="Icon" Value="{Binding IconKey}" />
                                     <Setter Property="Command" Value="{Binding Command}" />
                                     <Setter Property="Height" Value="30" />
                                     <Setter Property="ItemsSource" Value="{Binding Children}" />
