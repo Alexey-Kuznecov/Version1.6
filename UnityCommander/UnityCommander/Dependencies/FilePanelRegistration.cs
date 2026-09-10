@@ -34,15 +34,18 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<FolderModelFactory>();
 
             // Навигационный контекст, нужен один на всё приложение
-            registry.RegisterSingleton<NavigationContextDirectory>();
+            //registry.RegisterSingleton<NavigationContextDirectory>();
             registry.RegisterSingleton<NavigationManager>();
 
             //// Службы для управления выделением в файловых панелях
+            registry.RegisterSingleton<ISelectionStrategy, SelectAllStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ReplaceSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, RangeSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ToggleSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ExtensionSelectionRuleStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ContextMenuClickStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, MoveSelectionStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, FocusFirstStrategy>();
             registry.RegisterSingleton<ISelectionService, SelectionService>();
             registry.Register<ISelectionManager, SelectionManager>();
 
@@ -62,7 +65,7 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<ICreationService, CreationService>();
             registry.RegisterSingleton<ITabStateRegistry, TabStateRegistry>();
-            registry.RegisterSingleton<FilePanelContext>();
+            registry.RegisterSingleton<ActiveTabContext>();
             registry.RegisterSingleton<IRenameService, RenameService>();
             registry.RegisterSingleton<IRenameManager, RenameManager>();
         }

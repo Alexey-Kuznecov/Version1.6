@@ -10,7 +10,7 @@ namespace UnityCommander.Core.Diagnostics
     {
         private readonly Dictionary<string, DiagnosticDefinition> _diagnostics = new();
 
-        public void Register(IDiagnostic diagnostic)
+        public string Register(IDiagnostic diagnostic)
         {
             var definition = GetOrCreate(
                 diagnostic.Name,
@@ -24,12 +24,24 @@ namespace UnityCommander.Core.Diagnostics
                     "does not support multiple instances.");
             }
 
-            definition.Instances.Add(
-                new DiagnosticRegistration
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    Diagnostic = diagnostic
-                });
+            var registration = new DiagnosticRegistration
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                Diagnostic = diagnostic,
+            };
+
+            definition.Instances.Add(registration);
+
+            return registration.Id;
+        }
+
+        public void Unregister(IDiagnostic diagnostic)
+        {
+            foreach (var definition in _diagnostics.Values)
+            {
+                definition.Instances.RemoveAll(
+                    x => ReferenceEquals(x.Diagnostic, diagnostic));
+            }
         }
 
         public DiagnosticDefinition Get(string name)

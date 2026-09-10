@@ -16,12 +16,13 @@ namespace UnityCommander.Common.Styling
 
         public MaterialIconSource()
         {
+            _icons.Add("core.home.account", PackIconKind.Home);
             _icons.Add("core.foldertree", PackIconKind.FileTree);
             _icons.Add("core.column", PackIconKind.TableColumn);
             _icons.Add("core.tag", PackIconKind.Tag);
             _icons.Add("core.commnet", PackIconKind.Comment);
             _icons.Add("core.plugins", PackIconKind.Plugin);
-            _icons.Add("Settings", PackIconKind.Cog);
+            _icons.Add("core.settings", PackIconKind.Cog);
             _icons.Add("core.git", PackIconKind.Git);
             _icons.Add("core.sack", PackIconKind.Sack);
             _icons.Add("core.drive", PackIconKind.Scanner);

@@ -16,6 +16,7 @@ namespace UnityCommander.Abstractions.Ribbon
         }
 
         public RibbonSectionBuilder Button(
+            string text,
             string commandId,
             string iconKey,
             int order = 0)
@@ -23,6 +24,7 @@ namespace UnityCommander.Abstractions.Ribbon
             _section.Items.Add(
                 new RibbonButtonDefinition
                 {
+                    Text = text,
                     CommandId = commandId,
                     SectionId = _section.Id,
                     IconKey = iconKey,
@@ -42,6 +44,22 @@ namespace UnityCommander.Abstractions.Ribbon
                     Id = Id,
                     SectionId = _section.Id,
                     Items = itemDefinitions
+                });
+
+            return this;
+        }
+        public RibbonSectionBuilder CheckBox(
+            string text,
+            string iconKey,
+            int order = 0)
+        {
+            _section.Items.Add(
+                new RibbonCheckBoxDefinition
+                {
+                    Text = text,
+                    IconKey = iconKey,
+                    SectionId = _section.Id,
+                    Order = order
                 });
 
             return this;

@@ -23,7 +23,7 @@ namespace UnityCommander.Common.Panels
                 Key = info.FullName,
                 Size = info.Length,
                 IconKey = "core.file",
-                Kind = IconKind.File
+                Kind = IconKind.File,
             };
         }
     }

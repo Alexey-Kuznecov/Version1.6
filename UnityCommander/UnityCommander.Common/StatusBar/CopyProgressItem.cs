@@ -41,7 +41,7 @@ namespace UnityCommander.Common.StatusBar
 
         public long Speed { get; set; }
 
-        public object? Icon => "ContentCopy";
+        public object? Icon => "background.service.copy";
 
         public ICommand? Command { get; set; }
 

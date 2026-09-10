@@ -3,11 +3,18 @@ namespace UnityCommander.Common.Commands
 {
     public static class CommandNames
     {
+        public static class Test
+        {
+            public const string ShowDialog = "test.show.dialog";
+            public const string ShowParams = "test.show.dialog.params";
+        }
+
         public static class Directory
         {
             public const string Create = "directory.create";
             public const string Delete = "directory.delete";
             public const string Rename = "directory.rename";
+            public const string SelectAll = "directory.select.all";
         }
 
         public static class Command
@@ -17,9 +24,17 @@ namespace UnityCommander.Common.Commands
             public const string Help = "command.help";
         }
 
+        public static class Clipboard
+        {
+            public const string Copy = "clipboard.copy.item";
+            public const string Paste = "clipboard.paste.item";
+            public const string Cut = "clipboard.cut.item";
+            public const string CopyPath = "clipboard.copy.path";
+            public const string CopyLink = "clipboard.create.link";
+        }
+
         public static class File
         {
-            public const string Copy = "file.copy";
             public const string Move = "file.move";
             public const string Delete = "file.delete";
             public const string Rename = "file.rename";
@@ -32,6 +47,10 @@ namespace UnityCommander.Common.Commands
 
             public const string GetInfo = "file.get-info";
             public const string SetAttributes = "file.set-attributes";
+            
+            public const string Copy = "file.copy";
+            public const string Paste = "file.paste";
+            public const string SelectAll = "file.select.all";
         }
 
         public static class Navigation
@@ -40,9 +59,12 @@ namespace UnityCommander.Common.Commands
             public const string Back = "navigation.back";
             public const string Forward = "navigation.forward";
             public const string Parent = "navigation.parent";
+            public const string Network = "navigation.network";
             public const string Refresh = "navigation.refresh";
             public const string Desktop = "navigation.desktop";
             public const string Drives = "navigation.drives";
+            public const string RecycleBin = "navigation.recycle.bin";
+            public const string GoUp = "navigation.go.up";
         }
 
         public static class History
@@ -71,6 +93,7 @@ namespace UnityCommander.Common.Commands
 
             public const string Focus = "panel.focus";
             public const string Switch = "panel.switch"; // левая/правая
+            public const string SelectAll = "panel.select.all";
         }
 
         public static class ToolBar

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace UnityCommander.Common.Diagnostic
 {
     public sealed class DiagnosticRegistration

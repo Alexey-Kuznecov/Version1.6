@@ -1,5 +1,6 @@
 ﻿
 using System.Threading.Tasks;
+using UnityCommander.Common.Models.Directory;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -7,7 +8,9 @@ namespace UnityCommander.Modules.FilePanel.Services
     {
         bool IsActive { get; }
 
-        void Start(string sourcePath);
+        void Start();
+
+        void Start(BaseDirectory item);
 
         Task CommitAsync(string newName);
 

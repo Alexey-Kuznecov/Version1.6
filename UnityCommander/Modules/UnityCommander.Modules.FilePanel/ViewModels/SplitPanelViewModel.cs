@@ -26,9 +26,12 @@ using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
+using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.Panels;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
+using UnityCommander.Core.Diagnostics;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
@@ -44,8 +47,10 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Selection;
 using UnityCommander.Settings;
 using UnityCommander.Settings.Abstactions;
+using UnityCommander.WPF;
 using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
@@ -63,6 +68,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private readonly IDataProviderService dataService;
         private readonly IMultiCommandService multiCommandService;
         private readonly NavigationManager _navigationService;
+        private readonly INavigationRegistry _navigationRegistry;
         private readonly ILogger _logger;
         private readonly ICommandUIService _commandUIService;
         private ITabRegistry _tabRegistry;
@@ -74,6 +80,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private CommandPresentationProvider _presentationProvider;
         private ContextMenuController _contextMenuController;
 
+        private readonly ISelectionService _selectionService;
+        private readonly IDiagnosticRegistry _diagnosticRegistry;
         private readonly IColumnStateManager columnStateManager;
         private readonly IColumnRegistry columnRegistry;
         private readonly NodeContextRegistry _contextRegistry;
@@ -141,16 +149,25 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IPerformanceProfiler profiler, 
               ICreationService creationService, 
               ITabStateRegistry tabStateRegistry,
-              IWindowManager windowManager)
+              IWindowManager windowManager,
+              IPopupService popupService,
+              INavigationRegistry navigationRegistry,
+              ISelectionService selectionService,
+              IDiagnosticRegistry diagnosticRegistry,
+              ActiveTabContext activeTab)
             : base(regionManager)
         {
-            _performanceProfiler = profiler;
+            _diagnosticRegistry = diagnosticRegistry;
 
+            _performanceProfiler = profiler;
+ 
             var setting = settingsService.Get(GeneralSettings.ShowHiddenFiles);
 
             _contextRegistry = contextRegistry;
 
             _state = new TabState();
+
+            _selectionService = selectionService;
 
             _tabStateRegistry = tabStateRegistry;
 
@@ -170,19 +187,20 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 scope: LogScope.UserAction
                 );
 
-            this._contextMenuController = contextMenuController;
-            this._commandService = commandService;
-            this._commandUIService = commandUIService;
+            _contextMenuController = contextMenuController;
+            _commandService = commandService;
+            _commandUIService = commandUIService;
 
-            this._presentationProvider = presentationProvider;
-            this._selectionManager = selectionManager;
+            _presentationProvider = presentationProvider;
+            _selectionManager = selectionManager;
         
             this.dataService = dataService;
             this.multiCommandService = multiCommandService;
             this.multiCommandService.SaveCommand.RegisterCommand(this.SavePanelStateCommand);
-            this._tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
+            _tabRegistry = tabRegistry ?? throw new ArgumentNullException(nameof(tabRegistry));
 
-            this._navigationService = new NavigationManager(null);
+            _navigationService = new NavigationManager(null);
+            _navigationRegistry = navigationRegistry;
 
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
 
@@ -201,7 +219,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 dropTarget,
                 _contextRegistry, 
                 scrollMapper,
-                windowManager);
+                windowManager,
+                popupService,
+                activeTab);
 
             var contentFactory = new ContentNodeFactory(contextFactory);
 
@@ -240,6 +260,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void SetCurrentPath(string value) => _state.CurrentPath = value;
 
         public IReadOnlyList<IFileItem> GetFiles() => _fileNodeContext.Files;
+
+        public IReadOnlyList<IFolderItem> GetDirectories() => _folderNodeContext.Folders;
 
         public IFileNodeContext FileContext => _fileNodeContext;
 
@@ -341,8 +363,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             SetTabId(token);
 
+            _selectionService.Register(token, _selectionManager);
             _tabStateRegistry.Register(_state);
-
+            _navigationRegistry.Register(token, _navigationService);
             _navigationService.CurrentChanged += OnPathChanged;
 
             _ = SetLastPanelState();
@@ -497,44 +520,44 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             var sw = Stopwatch.StartNew();
 
-                SetInternalCurrentPath(path);
+            SetInternalCurrentPath(path);
 
-                _cts?.Cancel();
-                _cts?.Dispose();
+            _cts?.Cancel();
+            _cts?.Dispose();
 
-                _cts = new CancellationTokenSource();
-                var token = _cts.Token;
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
 
-                if (string.IsNullOrEmpty(path) ||
-                    VirtualPaths.MyComputer == path)
+            if (string.IsNullOrEmpty(path) ||
+                VirtualPaths.MyComputer == path)
+            {
+                await GoDrivePanel();
+
+                _workspaceController.ShowMyComputerMode(
+                    _headerNode,
+                    _driveNode);
+            }
+            else
+            {
+                using (_loggerCreator.ProfileScope(
+                    LogScope.Runtime,
+                    "Refresh Panel"))
                 {
-                    await GoDrivePanel();
+                    await RefreshPanelAsync(
+                        path,
+                        token);
+                }
 
-                    _workspaceController.ShowMyComputerMode(
+                using (_loggerCreator.ProfileScope(
+                    LogScope.UI,
+                    "Workspace Creation"))
+                {
+                    _workspaceController.ShowDirectoryMode(
                         _headerNode,
-                        _driveNode);
+                        _folderNode,
+                        _fileNode);
                 }
-                else
-                {
-                    using (_loggerCreator.ProfileScope(
-                        LogScope.Runtime,
-                        "Refresh Panel"))
-                    {
-                        await RefreshPanelAsync(
-                            path,
-                            token);
-                    }
-
-                    using (_loggerCreator.ProfileScope(
-                        LogScope.UI,
-                        "Workspace Creation"))
-                    {
-                        _workspaceController.ShowDirectoryMode(
-                            _headerNode,
-                            _folderNode,
-                            _fileNode);
-                    }
-                }
+            }
                 sw.Stop();
 #if (Nlog)
                 _logger.Info(
@@ -608,6 +631,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _navigationService.CurrentChanged -= OnPathChanged;
             this.multiCommandService.SaveCommand.UnregisterCommand(this.SavePanelStateCommand);
 
+            _diagnosticRegistry.Unregister(_selectionManager as IDiagnostic);
+            _navigationRegistry.Remove(_state.TabId);
             _tabStateRegistry.Unregister(_state.TabId);
             //(_navigationContext as IDisposable).Dispose();
             //(_driveNodeContext as IDisposable).Dispose();

@@ -6,7 +6,7 @@
         ==================================================================
     -->
 
-    <Style TargetType="{x:Type Menu}">
+    <!--<Style TargetType="{x:Type Menu}">
         <Setter Property="Background" Value="{DynamicResource UcMenuBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
         <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}" />
@@ -28,5 +28,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

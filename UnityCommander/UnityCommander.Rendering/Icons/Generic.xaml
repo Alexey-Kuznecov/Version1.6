@@ -1,8 +1,11 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:UnityCommander.Rendering.Converters"
     xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons">
 
+
+    <converter:NullFallbackBrushConverter x:Key="NullFallbackBrushConverter" />
 
     <!--<DataTemplate x:Key="RibbonIconTemplate">
         <Viewbox
@@ -56,11 +59,23 @@
 
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Path
-                                            Data="{Binding Geometry}"
-                                            Fill="{Binding Fill}"
-                                            Stroke="{Binding Stroke}"
-                                            StrokeThickness="{Binding StrokeWidth}" />
+                                        <Path Data="{Binding Geometry}" StrokeThickness="1.5">
+
+                                            <Path.Fill>
+                                                <MultiBinding Converter="{StaticResource NullFallbackBrushConverter}">
+                                                    <Binding Path="Brush" RelativeSource="{RelativeSource AncestorType={x:Type icon:IconRender}, AncestorLevel=1}" />
+                                                    <Binding Path="Fill" />
+                                                </MultiBinding>
+                                            </Path.Fill>
+
+                                            <Path.Stroke>
+                                                <MultiBinding Converter="{StaticResource NullFallbackBrushConverter}">
+                                                    <Binding Path="Stroke" RelativeSource="{RelativeSource AncestorType={x:Type icon:IconRender}, AncestorLevel=1}" />
+                                                    <Binding Path="Stroke" />
+                                                </MultiBinding>
+                                            </Path.Stroke>
+
+                                        </Path>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
 
@@ -73,11 +88,11 @@
 
         <Setter Property="Cursor" Value="Hand" />
 
-        <Style.Triggers>
+        <!--<Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Brush" Value="Red" />
             </Trigger>
-        </Style.Triggers>
+        </Style.Triggers>-->
     </Style>
 
 

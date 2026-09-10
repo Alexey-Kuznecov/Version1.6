@@ -65,25 +65,74 @@
                 </ListView.ItemTemplate>
             </ListView>
             <DockPanel Grid.Row="1" Dock="Bottom">
-                <materialDesigh:PopupBox
+
+                <ToggleButton
+                    x:Name="SettingsButton"
+                    Width="60"
                     Height="60"
-                    IsPopupOpen="False"
-                    PlacementMode="TopAndAlignRightEdges"
-                    StaysOpen="True">
-                    <materialDesigh:PopupBox.ToggleContent>
-                        <materialDesigh:PackIcon
-                            Width="25"
-                            Height="25"
-                            Margin="16,0"
-                            Foreground="{DynamicResource UcAccentTertiaryBrush}"
-                            Kind="Settings" />
-                    </materialDesigh:PopupBox.ToggleContent>
-                    <StackPanel>
-                        <MenuItem Header="Themes" />
-                        <MenuItem Header="Icons" />
-                        <MenuItem Command="{Binding OpenSettingDialogCommand}" Header="Settings" />
-                    </StackPanel>
-                </materialDesigh:PopupBox>
+                    HorizontalAlignment="Right"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    Style="{StaticResource UcToggleButton}">
+
+                    <icon:IconRender
+                        Key="core.settings"
+                        Width="25"
+                        Height="25"
+                        Brush="{DynamicResource UcAccentTertiaryBrush}"
+                        Stroke="{x:Null}" />
+
+                </ToggleButton>
+
+                <Popup
+                    AllowsTransparency="True"
+                    HorizontalOffset="10"
+                    IsOpen="{Binding IsChecked, ElementName=SettingsButton}"
+                    Placement="Top"
+                    PlacementTarget="{Binding ElementName=SettingsButton}"
+                    PopupAnimation="Fade"
+                    StaysOpen="False"
+                    VerticalOffset="-4">
+
+                    <Border
+                        Width="180"
+                        Padding="4"
+                        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                        BorderBrush="{DynamicResource UcBorderPrimaryBrush}"
+                        BorderThickness="1"
+                        CornerRadius="5">
+
+                        <ItemsControl>
+                            <Menu IsMainMenu="True" Style="{StaticResource UcMenu}">
+
+                                <Menu.Resources>
+
+                                    <Style BasedOn="{StaticResource UcMenuItem}" TargetType="{x:Type MenuItem}" />
+
+                                    <Style BasedOn="{StaticResource UcMenuSeparator}" TargetType="{x:Type Separator}" />
+
+                                </Menu.Resources>
+
+                                <MenuItem Header="Themes">
+                                    <MenuItem Header="Dark" />
+                                    <MenuItem Header="Light" />
+                                    <MenuItem Header="System" />
+                                </MenuItem>
+
+                                <MenuItem Header="Icons">
+                                    <MenuItem Header="Modern" />
+                                    <MenuItem Header="Classic" />
+                                </MenuItem>
+
+                                <Separator Style="{DynamicResource UcMenuSeparator}" />
+
+                                <MenuItem Command="{Binding OpenSettingDialogCommand}" Header="Settings" />
+
+                            </Menu>
+                        </ItemsControl>
+                    </Border>
+                </Popup>
             </DockPanel>
         </Grid>
 
@@ -103,7 +152,7 @@
                 Margin="0,0,10,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Content="{Binding IconHideSidebar.Data}"
+                Content="{Binding IconHideSidebar}"
                 Foreground="{DynamicResource UcForegroundTertiaryBrush}">
                 <ContentControl.Template>
                     <DynamicResource ResourceKey="CustomButtonTemplate" />

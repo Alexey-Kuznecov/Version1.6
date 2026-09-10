@@ -12,12 +12,12 @@ namespace UnityCommander.Services
     {
         private readonly CommandExecutionService _commands;
         private readonly CompositeIconResolver _iconResolver;
-        private readonly FilePanelContext _panelContext;
+        private readonly ActiveTabContext _panelContext;
 
         public CommandUIService(
             CompositeIconResolver iconResolver, 
-            CommandExecutionService commands, 
-            FilePanelContext panelContext)
+            CommandExecutionService commands,
+            ActiveTabContext panelContext)
         {
             _commands = commands;
             _iconResolver = iconResolver;
@@ -52,16 +52,20 @@ namespace UnityCommander.Services
         {
             var meta = CommandPresentationProvider.Get(id);
 
-            return new UICommand
+            var uiCommand = new UICommand
             {
                 Id = id,
                 Title = meta.DisplayName,
                 Description = meta.Description,
-                CommandParameter = _panelContext,
+                //CommandParameter = _panelContext,
                 IconKey = _iconResolver.Resolve(id).Key,
                 Command = command,
                 CanExecute = canExecute
             };
+
+            uiCommand.RefreshCanExecute(); // ← первоначальное состояние
+
+            return uiCommand;
         }
     }
 }

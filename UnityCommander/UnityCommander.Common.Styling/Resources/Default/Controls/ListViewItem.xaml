@@ -23,12 +23,21 @@
                                     Visibility="Collapsed" />
                                 <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="True" />
                                 <overlay:OverlayHost x:Name="OverlayHost" />
+                                <Border
+                                    x:Name="CutOverlay"
+                                    Background="Transparent"
+                                    BorderBrush="{DynamicResource UcListViewItemBorderBrush}"
+                                    BorderThickness="1"
+                                    Visibility="Collapsed" />
                             </Grid>
                         </Border>
                     </Border>
 
                     <ControlTemplate.Triggers>
-
+                        <DataTrigger Binding="{Binding IsCut}" Value="True">
+                            <Setter TargetName="CutOverlay" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="InnerBorder" Property="Opacity" Value="0.55" />
+                        </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" Value="{DynamicResource UcListViewItemHoverBrush}" />
                             <Setter Property="BorderBrush" Value="{DynamicResource UcListViewItemHoverBrush}" />

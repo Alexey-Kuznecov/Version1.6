@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace UnityCommander.Core.Navigation
 {
+    [Obsolete]
     public class CommandHistory
     {
         private readonly List<IAppCommand> _commands = new();

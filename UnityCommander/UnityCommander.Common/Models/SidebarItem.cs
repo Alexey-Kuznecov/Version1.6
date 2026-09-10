@@ -1,4 +1,6 @@
 ﻿
+using System.Windows.Input;
+
 namespace UnityCommander.Common.Models
 {
     public class SidebarItem

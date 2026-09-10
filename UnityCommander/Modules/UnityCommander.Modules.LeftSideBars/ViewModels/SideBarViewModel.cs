@@ -166,7 +166,8 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
         internal void Capture(AppSessionState state)
         {
-            state.Sidebar.ActiveSectionId = CurrentSidebarItem?.Id;
+            if (CurrentSidebarItem is not null)
+                state.Sidebar.ActiveSectionId = CurrentSidebarItem.Id;
         }
 
         internal void Restore(AppSessionState state)

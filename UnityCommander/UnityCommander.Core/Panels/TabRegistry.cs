@@ -157,7 +157,7 @@ namespace UnityCommander.Core.Panels
             {
                 ["TabCount"] = _map.Count,
                 ["ActiveTabId"] = _activeTabId,
-                ["Path"] = _activeTab.GetCurrentPath()
+                ["Path"] = _activeTab?.GetCurrentPath()
             };
         }
 

@@ -13,13 +13,14 @@ using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
-using UnityCommander.Core.Diagnostics;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.Dialog;
+using UnityCommander.Modules.FilePanel.ViewModels;
+using UnityCommander.Modules.FilePanel.Views;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
 using UnityCommander.Modules.SettingsPanel.Views;
@@ -32,6 +33,7 @@ using UnityCommander.Settings.Abstactions;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views.CopyDialogs;
 using UnityCommander.Views.Dialogs;
+using IViewRegistry = UnityCommander.Core.Registrar.IViewRegistry;
 
 namespace UnityCommander
 {
@@ -50,6 +52,7 @@ namespace UnityCommander
             RegisterShortcuts(containerProvider);
             RegisterDiaglog(containerProvider);
             RegisterCommand(containerProvider);
+            RegisterViewModels(containerProvider);
 
             var initializer = containerProvider.Resolve<AppInitializer>();
             var backgroundService = containerProvider.Resolve<BackgroundServiceHost>();
@@ -57,7 +60,7 @@ namespace UnityCommander
             var shotcuts = containerProvider.Resolve<IShortcutOverrideStore>();
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
             var loggerCreator = containerProvider.Resolve<LoggerCreator>();
-
+           
             initializer.Initialize();
 
             var token = new CancellationToken();
@@ -180,81 +183,32 @@ namespace UnityCommander
                     }));
         }
 
+        private static void RegisterViewModels(IContainerProvider containerRegistry)
+        {
+            var viewRegistry = containerRegistry.Resolve<IViewRegistry>();
+
+            viewRegistry.Register<CreateFolderViewModel, CreateFolderView>();
+            viewRegistry.Register<CreateFileViewModel, CreateFileView>();
+        }
+
         private static void RegisterShortcuts(IContainerProvider containerRegistry)
         {
-            var shortcut = containerRegistry.Resolve<IShortcutRegistry>();
+            var shortcutBinder = containerRegistry.Resolve<IShortcutBinder>();
 
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ShowSettings,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ShowSettings).Description,
-                Key = ShortcutKey.F12,
-                Modifiers = ShortcutModifiers.None,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ToggleBottomPanel,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleBottomPanel).Description,
-                Key = ShortcutKey.Oem3,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.Console | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ToggleRibbon,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleRibbon).Description,
-                Key = ShortcutKey.T,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.UI.ToggleSidebar,
-                Description = CommandPresentationProvider.Get(CommandNames.UI.ToggleSidebar).Description,
-                Key = ShortcutKey.B,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.Sidebar | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.History.Undo,
-                Description = CommandPresentationProvider.Get(CommandNames.History.Undo).Description,
-                Key = ShortcutKey.Z,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.History.Redo,
-                Description = CommandPresentationProvider.Get(CommandNames.History.Redo).Description,
-                Key = ShortcutKey.Y,
-                Modifiers = ShortcutModifiers.Ctrl,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.File.Delete,
-                Description = CommandPresentationProvider.Get(CommandNames.File.Delete).Description,
-                Key = ShortcutKey.Delete,
-                Modifiers = ShortcutModifiers.None,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
-
-            shortcut.Register(new ShortcutDefinition()
-            {
-                CommandId = CommandNames.File.Rename,
-                Description = CommandPresentationProvider.Get(CommandNames.File.Rename).Description,
-                Key = ShortcutKey.F2,
-                Modifiers = ShortcutModifiers.None,
-                Scopes = ShortcutScope.FilePanel | ShortcutScope.MainWindow,
-            });
+            shortcutBinder.Bind(CommandNames.File.Open, ShortcutKey.Enter);
+            shortcutBinder.Bind(CommandNames.File.Delete, ShortcutKey.Delete);
+            shortcutBinder.Bind(CommandNames.File.Rename, ShortcutKey.F2);
+            shortcutBinder.Bind(CommandNames.Clipboard.Copy, ShortcutKey.C, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.Clipboard.Cut, ShortcutKey.X, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.Clipboard.Paste, ShortcutKey.V, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.UI.ShowSettings, ShortcutKey.F12);
+            shortcutBinder.Bind(CommandNames.UI.ToggleBottomPanel, ShortcutKey.Oem3, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.UI.ToggleRibbon, ShortcutKey.T, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.UI.ToggleSidebar, ShortcutKey.B, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.Panel.SelectAll, ShortcutKey.A, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.History.Redo, ShortcutKey.Y, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.History.Undo, ShortcutKey.Z, ShortcutModifiers.Ctrl);
+            shortcutBinder.Bind(CommandNames.Navigation.GoUp, ShortcutKey.Backspace);
         }
     }
 }

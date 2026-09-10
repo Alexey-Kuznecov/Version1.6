@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.Panels;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;
@@ -17,6 +18,7 @@ using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.WPF;
 using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.Services
@@ -30,6 +32,8 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly IDropTarget _dropTarget;
         private readonly NodeContextRegistry _contextRegistry;
         private readonly ILogger _logger;
+        private readonly ActiveTabContext _activeTab;
+        private readonly IPopupService _popupService;
         private readonly ICreationService _creationService;
         private ViewportMapper _scrollMapper;
         private readonly IWindowManager _windowManager;
@@ -43,12 +47,16 @@ namespace UnityCommander.Modules.FilePanel.Services
             GongDropAdapter dropTarget, 
             NodeContextRegistry nodeContext, 
             ViewportMapper scrollMapper,
-            IWindowManager windowManager)
+            IWindowManager windowManager,
+            IPopupService popupService,
+            ActiveTabContext activeTab)
         {
             var loggerCreator = Log.GetLoggerCreator();
 
             _logger = Log.Create("Navigation", LogScope.UserAction);
 
+            _activeTab = activeTab;
+            _popupService = popupService;
             _navigation = navigation;
             _menu = menu;
             _selection = selection;
@@ -120,15 +128,20 @@ namespace UnityCommander.Modules.FilePanel.Services
                 Commands = new ObservableCollection<UICommand>()
             };
 
-            var navFactory = new NavigationCommandFactory(_creationService, _navigation, _selection, _commands, _windowManager);
+            var navFactory = new NavigationCommandFactory(_activeTab, _popupService, _creationService, _navigation, _selection, _commands, _windowManager);
 
             ctx.Commands.Add(
-              navFactory.CreateGoBackCommand<FolderModel>(
+               navFactory.CreateGoUpCommand(
+                   CommandNames.Navigation.GoUp,
+                   () => ctx.CanGoParent));
+
+            ctx.Commands.Add(
+              navFactory.CreateGoBackCommand<ActiveTabContext>(
                   CommandNames.Navigation.Back,
                   () => ctx.CanGoBack));
 
             ctx.Commands.Add(
-                navFactory.CreateGoForwardCommand<FolderModel>(
+                navFactory.CreateGoForwardCommand<ActiveTabContext>(
                   CommandNames.Navigation.Forward,
                   () => ctx.CanGoForward));
 
@@ -153,9 +166,9 @@ namespace UnityCommander.Modules.FilePanel.Services
                      () => true));
 
             ctx.Commands.Add(
-              navFactory.CreateCreationCommand(
-                  CommandNames.Panel.CreationItem,
-                  () => true));
+                navFactory.CreateCreationCommand(
+                    CommandNames.Panel.CreationItem,
+                    () => true));
 
             ctx.SelectionManager = _selection;
 

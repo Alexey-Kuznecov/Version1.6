@@ -9,6 +9,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using UnityCommander.Abstractions.Panels;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Docking
@@ -18,13 +21,19 @@ namespace UnityCommander.Services.Docking
         private DockingManager? _dockingManager;
 
         public event EventHandler? ActiveContentChanged;
+        
+        private readonly ILogger _logger;
 
-        public DockingService(DockingManager dockingManager)
+        public DockingService(
+            DockingManager dockingManager, 
+            LoggerCreator loggerCreator)
         {
+            _logger = loggerCreator.For<DockingService>(LogScope.Runtime);
+            
             _dockingManager = dockingManager;
         }
 
-        public void AddActiveDocumentTab(string contentId, string title, string regionName)
+        public LayoutDocument AddActiveDocumentTab(string contentId, string title, string regionName)
         {
             var contentControl = new ContentControl();
             RegionManager.SetRegionName(contentControl, regionName);
@@ -39,13 +48,27 @@ namespace UnityCommander.Services.Docking
 
             contentControl.Loaded += (s, e) =>
             {
-                if (GetActiveDirectoryPanel() is IDirectoryPanel panel)
-                {
-                    panel.TabTitleChanged += formatPath =>
-                    {
-                        document.Title = formatPath;
-                    };
-                }
+                _logger.Debug(
+                    $"[Tabs] ContentControl Loaded: " +
+                    $"Content={contentControl.Content?.GetType().Name ?? "null"}, " +
+                    $"DataContext={contentControl.DataContext?.GetType().Name ?? "null"}");
+
+                var panel = GetActiveDirectoryPanel();
+
+                _logger.Debug(
+                    $"[Tabs] ActiveDirectoryPanel: " +
+                    $"{panel?.GetType().Name ?? "null"}");
+
+                //if (panel is not null)
+                //{
+                //    panel.TabTitleChanged += formatPath =>
+                //    {
+                //        _logger.Debug(
+                //            $"[Tabs] TabTitleChanged: {formatPath}");
+
+                //        document.Title = formatPath;
+                //    };
+                //}
             };
 
             var activePane = GetActiveDocumentPane();
@@ -64,6 +87,8 @@ namespace UnityCommander.Services.Docking
                 firstPane?.Children.Add(document);
                 document.IsActive = true;
             }
+            
+            return document;
         }
 
         public void SetDockingManager(

@@ -9,16 +9,24 @@ namespace UnityCommander.Services.Interfaces
     {
         event Action SelectionChanged;
 
+        bool SelectFirstOnNextSync { get; }
+
         public ISelectableItem FocusedItem { get; set; }
 
         IReadOnlyCollection<ISelectableItem> SelectedItems { get; }
         
+        int FocusedIndex { get; }
+
         void Handle(SelectionAction action);
 
         void ResetContext(IEnumerable<ISelectableItem> items);
 
         void SetItems(IEnumerable<ISelectableItem> items);
 
+        void RequestSelectFirst();
+
         void ClearSelection();
+        
+        void SelectFirst();
     }
 }

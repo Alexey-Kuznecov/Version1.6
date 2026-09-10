@@ -12,8 +12,8 @@ namespace UnityCommander.Services.Interfaces
         event EventHandler? ActiveContentChanged;
         public DockingManager GetDockingManager();
         public ITabPanelContent GetActiveDirectoryPanel();
-        
-        void AddActiveDocumentTab(
+
+        LayoutDocument AddActiveDocumentTab(
             string contentId, 
             string title, 
             string regionName);

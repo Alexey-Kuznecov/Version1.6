@@ -32,7 +32,13 @@ namespace UnityCommander.Commands
 
             var processName = arguments.GetAt(0);
 
-            _processManager.StopByName(processName);
+            if (processName != null)
+            {
+                _processManager.StopByName(processName);
+                return Task.CompletedTask;
+            }
+
+            _processManager.StopAll();
 
             context.Output.WriteLine($"Процесс ({processName}) успешно завершен!");
 

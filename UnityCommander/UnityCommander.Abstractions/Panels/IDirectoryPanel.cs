@@ -7,6 +7,8 @@ namespace UnityCommander.Abstractions.Panels
     {
         IReadOnlyList<IFileItem> GetFiles();
 
+        IReadOnlyList<IFolderItem> GetDirectories();
+
         public IFileNodeContext FileContext { get; }
 
         public IFolderNodeContext FolderContext { get; }

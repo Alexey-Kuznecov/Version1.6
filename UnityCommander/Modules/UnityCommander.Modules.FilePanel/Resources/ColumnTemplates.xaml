@@ -7,12 +7,13 @@
     xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:UnityCommander.Common.Models.Directory;assembly=UnityCommander.Common"
+    xmlns:wpf="clr-namespace:UnityCommander.WPF.Converters;assembly=UnityCommander.WPF"
     mc:Ignorable="d">
 
     <converter:IconConverter x:Key="IconConverter" />
     <converter:ColumnValueConverter x:Key="ColumnValueConverter" />
     <converter:BoolToBrushConverter x:Key="BoolToBrushConverter" />
-    <converter:DataSizeConverter x:Key="DataSizeConverter" />
+    <wpf:DataSizeConverter x:Key="DataSizeConverter" />
     <converter:RandomForegroundConverter x:Key="RandomForegroundConverter" />
 
     <!--<DataTemplate x:Key="ColumnIconDataTemplate" DataType="{x:Type models:BaseDirectory}">
@@ -52,10 +53,7 @@
                 VerticalAlignment="Center"
                 Foreground="{Binding ., Converter={StaticResource RandomForegroundConverter}}">
                 <TextBlock.Text>
-                    <converter:BindableParameter
-                        Binding="{Binding Additional.Values}"
-                        Converter="{StaticResource ColumnValueConverter}"
-                        ConverterParameter="{Binding Index}" />
+                    <converter:BindableParameter Binding="{Binding Additional.Values}" Converter="{StaticResource ColumnValueConverter}" />
                 </TextBlock.Text>
             </TextBlock>
         </Grid>

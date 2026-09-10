@@ -57,25 +57,25 @@ namespace AdvancedCopyFiles
                 CommandType = typeof(OpenCopyDialog),
             });
 
-            init.ConfigureRibbon(r =>
-            {
-                r.Tab("home", "Главная")
-                    .Group("clipboard", "Буфер")
-                        .Section("main", RibbonGroupLayout.Large)
-                            .Button("open-copy-advanced", "git")
-                            .Button("open-old-copy-advanced", "git");
-                    //    .EndSection()
-                    //.EndGroup()
-                    //.Group("tools", "Инструменты")
-                    //    .Section("plugins", RibbonGroupLayout.Inline)
-                    //        .Button("advanced-copy", "advanced-copy");
+            //init.ConfigureRibbon(r =>
+            //{
+            //    r.Tab("home", "Главная")
+            //        .Group("clipboard", "Буфер")
+            //            .Section("main", RibbonGroupLayout.Large)
+            //                .Button("open-copy-advanced", "git")
+            //                .Button("open-old-copy-advanced", "git")
+            //            .EndSection()
+            //        .EndGroup()
+            //        .Group("tools", "Инструменты")
+            //            .Section("plugins", RibbonGroupLayout.Inline)
+            //                .Button("advanced-copy", "advanced-copy");
 
-                //r.Tab("view", "Вид")
-                //    .Group("panels", "Панели")
-                //        .Section("main", RibbonGroupLayout.Medium)
-                //            .Button("toggle-sidebar", "toggle-sidebar")
-                //            .Button("toggle-console", "toggle-console");
-            });
+            //    r.Tab("view", "Вид")
+            //        .Group("panels", "Панели")
+            //            .Section("main", RibbonGroupLayout.Medium)
+            //                .Button("toggle-sidebar", "toggle-sidebar")
+            //                .Button("toggle-console", "toggle-console");
+            //});
 
             init.RegisterSingleton<IProgressCalculator, ProgressCalculator>();
             init.RegisterSingleton<ISpeedCalculator, SpeedCalculator>();

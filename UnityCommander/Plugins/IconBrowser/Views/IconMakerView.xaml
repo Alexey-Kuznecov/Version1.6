@@ -5,9 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:IconBrowser.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:IconBrowser.Models"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+
+    <UserControl.Resources />
+
+
     <Grid Background="{DynamicResource UcApplicationBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
@@ -49,9 +54,23 @@
                 FontSize="12"
                 Foreground="White"
                 Header="View">
-                <MenuItem Foreground="White" Header="Lists" />
-                <MenuItem Foreground="White" Header="Tiles" />
-                <MenuItem Foreground="White" Header="Cards" />
+                <MenuItem
+                    Command="{Binding SetViewCommand}"
+                    CommandParameter="{x:Static models:IconViewMode.List}"
+                    Foreground="White"
+                    Header="Lists" />
+
+                <MenuItem
+                    Command="{Binding SetViewCommand}"
+                    CommandParameter="{x:Static models:IconViewMode.Tile}"
+                    Foreground="White"
+                    Header="Tiles" />
+
+                <MenuItem
+                    Command="{Binding SetViewCommand}"
+                    CommandParameter="{x:Static models:IconViewMode.Card}"
+                    Foreground="White"
+                    Header="Cards" />
             </MenuItem>
             <MenuItem
                 FontSize="12"
@@ -98,7 +117,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <local:IconItemView />
+                        <local:IconItemView ViewMode="{Binding ViewMode, Mode=TwoWay}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 

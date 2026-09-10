@@ -3,6 +3,7 @@ using System;
 
 namespace UnityCommander.Core.Navigation
 {
+    [Obsolete]
     public interface INavigationService
     {
         string Current { get; }

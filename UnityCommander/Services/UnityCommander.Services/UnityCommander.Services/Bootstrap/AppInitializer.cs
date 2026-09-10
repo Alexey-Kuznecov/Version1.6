@@ -1,10 +1,13 @@
 ﻿
 using AvalonDock.Layout;
+using CommandSystem.Core.UndoRedo;
 using Prism.Commands;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Abstractions.History;
 using UnityCommander.CLI.History;
 using UnityCommander.Common.Docking;
+using UnityCommander.Common.History;
 using UnityCommander.Common.State;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -12,6 +15,7 @@ using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Docking;
+using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Services.Bootstrap
 {
@@ -29,6 +33,10 @@ namespace UnityCommander.Services.Bootstrap
         private readonly ConsoleHistoryService _consoleHistory;
         private readonly ILogger _logger;
         private readonly LoggerCreator _loggerCreator;
+        private readonly IUserNavigationHistory _navigationHistory;
+        private readonly IUserFavorites _userFavorites;
+        private readonly IUserFavoriteStore _favoriteStore;
+        private readonly IUserNavigationHistoryStore _userNavigation;
 
         public AppInitializer(
             ISessionService session,
@@ -39,8 +47,13 @@ namespace UnityCommander.Services.Bootstrap
             ISessionAggregator sessionAggregator, 
             IMultiCommandService multiCommand,
             IToolDockingStore toolDockingStore,
+            IUserNavigationHistory userNavigationHistory,
+            IUserFavorites userFavorites,
+            IUserNavigationHistoryStore navigationHistoryStore,
+            IUserFavoriteStore userFavoriteStore,
             ConsoleHistoryService consoleHistory,
-            LoggerCreator logger, SessionStateValidator stateValidator) 
+            LoggerCreator logger, 
+            SessionStateValidator stateValidator) 
         {
             _loggerCreator = logger;
             _stateValidator = stateValidator;
@@ -57,6 +70,10 @@ namespace UnityCommander.Services.Bootstrap
             _sessionAggregator = sessionAggregator;
             _consoleHistory = consoleHistory;
             _toolDockingStore = toolDockingStore;
+            _navigationHistory = userNavigationHistory;
+            _userFavorites = userFavorites;
+            _userNavigation = navigationHistoryStore;
+            _favoriteStore = userFavoriteStore;
 
             multiCommand.SaveCommand.RegisterCommand(SavePanelStateCommand);
         }
@@ -75,6 +92,11 @@ namespace UnityCommander.Services.Bootstrap
             _toolDockingStore.Save();
 
             _consoleHistory.Save();
+
+            _favoriteStore.Save(_userFavorites.Paths);
+
+            _userNavigation.Save(_navigationHistory.Paths);
+            
         });
 
         public void Initialize()

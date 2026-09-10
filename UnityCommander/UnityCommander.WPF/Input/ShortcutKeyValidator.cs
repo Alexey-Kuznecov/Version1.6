@@ -37,7 +37,9 @@ namespace UnityCommander.WPF.Input
                 ShortcutKey.Right or
                 ShortcutKey.PrintScreen or
                 ShortcutKey.Pause or
-                ShortcutKey.Escape;
+                ShortcutKey.Escape or
+                ShortcutKey.Backspace or
+                ShortcutKey.Enter;
         }
 
         private static bool IsFunctionKey(ShortcutKey key)

@@ -1,6 +1,7 @@
 ﻿
 using System.IO;
 using System.Text.Json;
+using UnityCommander.Common;
 using UnityCommander.Common.State;
 using UnityCommander.Services.Interfaces.Bootstrap;
 
@@ -8,7 +9,12 @@ namespace UnityCommander.Services.Bootstrap
 {
     public class SessionService : ISessionService
     {
-        private const string FileName = "session.json";
+        private readonly string FileName = "session.json";
+
+        public SessionService(UnityCommanderPath commanderPath)
+        {
+            FileName = Path.Combine(commanderPath.DataDirectory, "session.json");
+        }
 
         public AppSessionState Load()
         {

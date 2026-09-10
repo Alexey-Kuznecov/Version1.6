@@ -16,54 +16,75 @@ namespace UnityCommander.WPF
         }
 
         public void Show(
-          FrameworkElement owner,
-          object viewModel)
+            FrameworkElement owner,
+            object viewModel,
+            PopupPlacement placement = PopupPlacement.Top)
         {
-            Point location = owner.PointToScreen(new Point(0, 0));
-
             var view = _factory.Create(viewModel);
 
+            Show(owner, view, placement);
+        }
+
+        public void Show<TViewModel>(
+            FrameworkElement owner,
+            PopupPlacement placement = PopupPlacement.Top)
+        {
+            var view = _factory.Create<TViewModel>();
+
+            Show(owner, view, placement);
+        }
+
+        private void Show(
+            FrameworkElement owner,
+            FrameworkElement view,
+            PopupPlacement placement)
+        {
             _popup = new Popup
             {
                 Child = view,
                 PlacementTarget = owner,
                 Placement = PlacementMode.Custom,
-                CustomPopupPlacementCallback = PlacePopup,
-                StaysOpen = false,
+                CustomPopupPlacementCallback =
+                    (popupSize, targetSize, offset) =>
+                        PlacePopup(
+                            owner,
+                            popupSize,
+                            targetSize,
+                            placement),
+                StaysOpen = false
             };
 
             _popup.IsOpen = true;
         }
 
         private CustomPopupPlacement[] PlacePopup(
+            FrameworkElement owner,
             Size popupSize,
             Size targetSize,
-            Point offset)
+            PopupPlacement placement)
         {
-            var window = Window.GetWindow(_popup.PlacementTarget);
-
-            double x = 0;
-
-            if (window != null)
+            var point = placement switch
             {
-                // Правая граница Target относительно окна
-                Point p = _popup.PlacementTarget.TranslatePoint(
-                    new Point(targetSize.Width, 0), window);
+                PopupPlacement.Top =>
+                    new Point(0, -popupSize.Height),
 
-                double right = p.X + popupSize.Width;
+                PopupPlacement.Bottom =>
+                    new Point(0, targetSize.Height),
 
-                const double margin = -10;
+                PopupPlacement.Left =>
+                    new Point(-popupSize.Width, 0),
 
-                if (right > window.ActualWidth - margin)
-                {
-                    x -= right - (window.ActualWidth - margin);
-                }
-            }
+                PopupPlacement.Right =>
+                    new Point(targetSize.Width, 0),
+
+                _ => new Point(0, -popupSize.Height)
+            };
 
             return
             [
-                new CustomPopupPlacement(new Point(x, -popupSize.Height),
-                    PopupPrimaryAxis.Horizontal)
+                new CustomPopupPlacement(
+                point,
+                PopupPrimaryAxis.None)
             ];
         }
 

@@ -6,5 +6,7 @@ namespace UnityCommander.WPF
     public interface IViewFactory
     {
         FrameworkElement Create(object viewModel);
+
+        FrameworkElement Create<TViewModel>();
     }
 }

@@ -9,7 +9,12 @@ namespace UnityCommander.Abstractions.Panels
         bool IsActive { get; }
         Guid TabId { get; }
         string GetCurrentPath();
+
         IReadOnlyList<IDirectoryItem> GetCurrentDirectoryFiles();
+
+        IReadOnlyList<IDirectoryItem> GetCurrentDirectoryItems();
+
+        IReadOnlyList<IDirectoryItem> GetCurrentDirectoryDirectories();
 
         IDirectoryPanel GetContent();
     }

@@ -14,5 +14,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         // удобно для UI
         public bool HasChildren => Children.Count > 0;
+
+        public string IconKey { get; internal set; }
     }
 }

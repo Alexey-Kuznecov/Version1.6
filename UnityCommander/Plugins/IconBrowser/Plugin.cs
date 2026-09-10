@@ -82,8 +82,8 @@ namespace IconBrowser
             {
                 r.Tab("home", "Главная")
                     .Group("tools", "Инструменты")
-                        .Section("main", RibbonGroupLayout.Inline)
-                            .Button("open-icon-maker", "directory.create2");
+                        .Section("tool", RibbonGroupLayout.Inline)
+                            .Button("Редактор иконок", "open-icon-maker", "directory.create2");
             });
 
             //init.RegisterDialog(

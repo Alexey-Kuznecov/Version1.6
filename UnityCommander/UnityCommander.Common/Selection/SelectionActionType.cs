@@ -6,6 +6,9 @@
         SelectByExtension,
         ShiftClick,
         SingleClick,
-        ContextMenuClick
+        ContextMenuClick,
+        SelectAll,
+        Move,
+        FocusFirst,
     }
 }

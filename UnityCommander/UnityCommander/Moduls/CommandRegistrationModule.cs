@@ -9,6 +9,7 @@ using UnityCommander.Core.IO.Operations;
 using UnityCommander.Modules.BottomPanel.Commands;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Modules.ToolBar.Commands;
 using UnityCommander.Services;
 
 namespace UnityCommander.Moduls
@@ -22,13 +23,64 @@ namespace UnityCommander.Moduls
          
             var commandRegistry = containerProvider.Resolve<CommandRegistryService>();
             var filePanelProvider = containerProvider.Resolve<FilePanelCommandProvider>();
+            var ribbonProvider = containerProvider.Resolve<RobbonCommandProvider>();
             var tooBarProvider = containerProvider.Resolve<ToolCommandProvider>();
 
             _notifier = containerProvider.Resolve<IDirectoryChangeNotifier>();
 
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+               CommandNames.Test.ShowDialog,
+                ribbonProvider.ShowDialogTest,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+               CommandNames.Test.ShowParams,
+                ribbonProvider.ShowParamTest,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              CommandNames.Clipboard.Copy,
+               filePanelProvider.ExecuteCopyAsync,
+               null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              CommandNames.Clipboard.Cut,
+               filePanelProvider.ExecuteCutAsync,
+               null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              CommandNames.Clipboard.Paste,
+               filePanelProvider.ExecutePasteAsync,
+               null));
+
             // -------------------------------
             // 1. Регистрация команд файловой панели
             // -------------------------------
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                CommandNames.Navigation.GoUp,
+                filePanelProvider.ExecuteGoUpAsync,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                CommandNames.File.Open,
+                filePanelProvider.ExecuteOpenFoldersAsync,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                CommandNames.Directory.SelectAll,
+                filePanelProvider.ExecuteSelectFoldersAsync,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                 CommandNames.File.SelectAll,
+                 filePanelProvider.ExecuteSelectFilesAsync,
+                 null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+                 CommandNames.Panel.SelectAll,
+                 filePanelProvider.ExecuteSelectAllAsync,
+                 null));
+
             commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
                 CommandNames.File.Delete,
                 null,

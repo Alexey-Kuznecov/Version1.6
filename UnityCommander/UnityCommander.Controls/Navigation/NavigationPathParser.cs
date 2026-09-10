@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityCommander.Core.Navigation;
 
 namespace UnityCommander.Controls.Navigation
 {
@@ -10,6 +11,17 @@ namespace UnityCommander.Controls.Navigation
         public NavigationPath Parse(string path)
         {
             var items = new List<NavigationPathItem>();
+
+            if (path == VirtualPaths.MyComputer)
+            {
+                items.Add(
+                    new NavigationPathItem(
+                         VirtualPaths.MyComputer,
+                        VirtualPaths.MyComputer,
+                        null));
+
+                return new NavigationPath(items);
+            }
 
             var root = Path.GetPathRoot(path);
 

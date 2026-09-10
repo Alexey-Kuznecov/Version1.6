@@ -77,22 +77,26 @@ namespace UnityCommander.Modules.SettingsPanel.Editors
 
             IsRecording = true;
 
-            _captureManager.Push(
-                new ShortcutCaptureContext(
-                    result =>
-                    {
-                        SetShortcut(result);
+            IInputContext? context = null;
 
-                        IsRecording = false;
+            context = new ShortcutCaptureContext(
+                result =>
+                {
+                    SetShortcut(result);
 
-                        OnPropertyChanged(nameof(Display));
-                    },
-                    () =>
-                    {
-                        IsRecording = false;
+                    IsRecording = false;
+                    OnPropertyChanged(nameof(Display));
 
-                        _captureManager.Pop();
-                    }));
+                    _captureManager.Pop(context!);
+                },
+                () =>
+                {
+                    IsRecording = false;
+
+                    _captureManager.Pop(context!);
+                });
+
+            _captureManager.Push(context);
         }
 
         private void SetShortcut(InputEvent input)

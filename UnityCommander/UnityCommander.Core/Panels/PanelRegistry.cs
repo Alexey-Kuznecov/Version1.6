@@ -266,6 +266,7 @@ namespace UnityCommander.Core.Panels
                     ["PanelCount"] = _panels.Count,
                     ["TabCount"] = _panels.Values.Sum(panel => panel.Tabs.Count),
                     ["ActivePanel"] = _activePanelId ?? Guid.Empty,
+                    ["ActiveTab"] = this.GetActivePanel().ActiveTabId,
                     ["Panels"] = _panels.ToDictionary(
                         pair => pair.Key.ToString(),
                         pair => (object)pair.Value.Tabs.Select(tabId => tabId.ToString()).ToList())

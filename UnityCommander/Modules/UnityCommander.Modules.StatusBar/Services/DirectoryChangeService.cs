@@ -4,6 +4,7 @@ using System.Windows;
 using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.StatusBar;
+using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.StatusBar.ViewModels;
 using UnityCommander.Services.Interfaces;
@@ -135,7 +136,9 @@ namespace UnityCommander.Core.Background
             tab.PathChanged += path =>
             {
                 _watchManager.Unwatch(tab.TabId);
-                _watchManager.Watch(tab.TabId, path);
+
+                if (path != VirtualPaths.MyComputer)
+                    _watchManager.Watch(tab.TabId, path);
             };
 
             _watchManager.Watch(

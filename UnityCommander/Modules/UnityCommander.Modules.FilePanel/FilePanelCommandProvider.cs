@@ -1,19 +1,22 @@
 ﻿
 using CommandSystem.Abstractions;
-using CommandSystem.Core.Execution;
-using CommandSystem.Gui.MVVM;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Controls;
+using UnityCommander.Abstractions.Clipboard;
+using UnityCommander.Abstractions.IO;
+using UnityCommander.Abstractions.Overrides;
+using UnityCommander.Abstractions.Panels;
+using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Modules.FilePanel.Controls;
+using UnityCommander.Common.Selection;
+using UnityCommander.Core.Clipboard;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.UI.Overlay;
-using UnityCommander.UI.Visual;
 
 namespace UnityCommander.Modules.FilePanel
 {
@@ -39,54 +42,30 @@ namespace UnityCommander.Modules.FilePanel
             return Task.CompletedTask;
         }
 
+        public Task ExecuteGoUpAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var nav = context.GetService<ActiveNavigationService>();
+            var manager = selectionService.GetActive();
+            
+            nav.GoParent();
+
+            manager.RequestSelectFirst();
+
+            return Task.CompletedTask;
+        }
+
         public Task ExecuteRenameAsync(CommandContext ctx)
         {
             var contextMenu = (FilePanelContextMenu)ctx.Context;
 
             if (contextMenu == null)
             {
-                var selectionService = ctx.GetService<ISelectionService>();
-                var active = selectionService.GetActive();
+                var renameManager = ctx.GetService<IRenameManager>();
 
-                if (active.SelectedItems.Count == 1)
-                {
-                    var item = active.SelectedItems.First();
+                renameManager.Start();
 
-                    var visualElements = ctx.GetService<IVisualElementRegistry>();
-                    var element = visualElements.GetElement(item);
-
-                    if (element == null)
-                        return Task.CompletedTask;
-
-                    var overlay = ctx.GetService<IOverlayService>();
-
-                    var renameManager = ctx.GetService<IRenameManager>();
-
-                    renameManager.Start(((BaseDirectory)item).Path);
-
-                    var overlayRename = new RenameOverlay();
-
-                    overlayRename.RenameRequested += async newName =>
-                    {
-                        ((BaseDirectory)item).Name = newName;
-                        await renameManager.CommitAsync(newName);
-                    };
-
-                    overlay.Show(element, overlayRename);
-
-                    if (item is FileModel fileModel)
-                    {
-                        overlayRename.BeginEdit(
-                            fileModel.Name + fileModel.Extension,
-                            isFile: true);
-                       
-                        return Task.CompletedTask;
-                    }
-
-                    overlayRename.BeginEdit(
-                        ((BaseDirectory)item).Name,
-                        isFile: false);
-                }
+                return Task.CompletedTask;
             }
 
             return Task.CompletedTask;
@@ -160,21 +139,152 @@ namespace UnityCommander.Modules.FilePanel
             return Task.FromResult<UndoToken>(null);
         }
 
-        private Task UndoDeleteAsync(string backup, string path)
+        public Task ExecuteCopyAsync(CommandContext context)
         {
-            File.Copy(backup, path, overwrite: true);
+            var selectionService = context.GetService<ISelectionService>();
+            var clipboard = context.GetService<FileClipboard>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
 
-            //_notifier.NotifyChanged(path);
+            if (selectionService is null || clipboard is null)
+                return Task.CompletedTask;
+
+            var selected = selectionService.GetActive().SelectedItems;
+
+            clipboard.Set(
+                selected.Select(x => ((IDirectoryItem)x).Path),
+                FileClipboardOperation.Copy);
+
             return Task.CompletedTask;
         }
 
-        private Task RedoDeleteAsync(string path)
+        public Task ExecuteCutAsync(CommandContext context)
         {
-            if (File.Exists(path))
-                File.Delete(path);
+            var selectionService = context.GetService<ISelectionService>();
+            var clipboard = context.GetService<FileClipboard>();
 
-            //_notifier.NotifyChanged(path);
+            if (selectionService is null || clipboard is null)
+                return Task.CompletedTask;
+
+            var selected = selectionService.GetActive().SelectedItems;
+
+            foreach ( var item in selected )
+            {
+                if (item is ICuttableItem cuttable)
+                {
+                    cuttable.IsCut = true;
+                }
+            }
+
+            clipboard.Set(
+                selected.Select(x => ((IDirectoryItem)x).Path),
+                FileClipboardOperation.Cut);
+
             return Task.CompletedTask;
+        }
+
+        public Task ExecutePasteAsync(CommandContext context)
+        {
+            var clipboard = context.GetService<FileClipboard>();
+            var tabContext = context.GetService<ITabContextAccessor>();
+            var overrideResolver = context.GetService<ServiceOverrideResolver>();
+
+            if (clipboard is null || !clipboard.HasItems)
+                return Task.CompletedTask;
+
+            var fileOperationService =
+                overrideResolver.Resolve<IFileOperationService>();
+
+            var type = clipboard.Operation == FileClipboardOperation.Copy
+                ? FileOperationType.Copy
+                : FileOperationType.Move;
+
+            fileOperationService.CopyAsync(new FileOperationRequest
+            {
+                ShowDialog = true,
+                Target = tabContext.CurrentPath,
+                Sources = clipboard.Paths.ToList(),
+                Type = type
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteOpenFoldersAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var navigation = context.GetService<ActiveNavigationService>();
+
+            if (selectionService is null || navigation is null)
+                return Task.CompletedTask;
+
+            var manager = selectionService.GetActive();
+
+            var selected = manager.SelectedItems;
+
+            if (selected.Count != 1)
+                return Task.CompletedTask;
+
+            if (selected.FirstOrDefault() is not IFolderItem folder)
+                return Task.CompletedTask;
+
+            navigation.Navigate(folder.Path);
+
+            manager.RequestSelectFirst();
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteSelectFoldersAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
+
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryDirectories();
+
+            SelectAll(items, selectionService);
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteSelectFilesAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
+
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryFiles();
+
+            SelectAll(items, selectionService);
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteSelectAllAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
+
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryItems();
+
+            SelectAll(items, selectionService);
+
+            return Task.CompletedTask;
+        }
+
+        private void SelectAll(
+        IEnumerable<IDirectoryItem> items,
+        ISelectionService selectionService)
+        {
+            var manager = selectionService.GetActive();
+
+            manager.SetItems(items.Cast<ISelectableItem>());
+
+            manager.Handle(new SelectionAction
+            {
+                Type = SelectionActionType.SelectAll
+            });
         }
     }
 }

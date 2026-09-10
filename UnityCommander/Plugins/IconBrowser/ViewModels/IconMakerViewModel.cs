@@ -1,16 +1,16 @@
 ﻿
+using CommandSystem.Gui.MVVM;
+using IconBrowser.Models;
 using IconBrowser.Services;
 using IconBrowser.Services.Search;
 using IconMaker.Core.Models;
-using IconMaker.Core.Mvvm.Base;
 using IconMaker.Core.Services;
 using Microsoft.Win32;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -22,7 +22,7 @@ using UnityCommander.Logging.Infrastructure;
 
 namespace IconBrowser.ViewModels
 {
-    internal class IconMakerViewModel : PropertiesChanged
+    internal class IconMakerViewModel : BindableBase
     {
         private readonly IIconService _iconService;
         private readonly IIconSearchService _searchService;
@@ -109,6 +109,11 @@ namespace IconBrowser.ViewModels
             _searchService.RebuildIndexAsync();
         }
 
+        public ICommand SetViewCommand => new RelayCommand<IconViewMode>(mode =>
+        {
+            ViewMode = mode;
+        });
+
         public ICommand SaveCommand => new RelayCommand(obj =>
         {
             _iconService.SaveAll();
@@ -133,7 +138,7 @@ namespace IconBrowser.ViewModels
             set
             {
                 _searchQuery = value;
-                OnPropertyChanged(nameof(SearchQuery));
+                RaisePropertyChanged(nameof(SearchQuery));
 
                 _searchCts?.Cancel();
                 _searchCts = new CancellationTokenSource();
@@ -151,7 +156,7 @@ namespace IconBrowser.ViewModels
                 {
                     SearchResults.Clear();
                     IsSearchActive = false;
-                    OnPropertyChanged(nameof(VisibleIcons));
+                    RaisePropertyChanged(nameof(VisibleIcons));
                 });
 
                 return;
@@ -178,7 +183,7 @@ namespace IconBrowser.ViewModels
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 IsSearchActive = true;
-                OnPropertyChanged(nameof(VisibleIcons));
+                RaisePropertyChanged(nameof(VisibleIcons));
             });
         }
 
@@ -196,7 +201,7 @@ namespace IconBrowser.ViewModels
             set
             {
                 _currentTheme = value;
-                OnPropertyChanged(nameof(CurrentTheme));
+                RaisePropertyChanged(nameof(CurrentTheme));
 
                 if (value != null)
                 {
@@ -211,7 +216,7 @@ namespace IconBrowser.ViewModels
             set
             {
                 _selectedColor = value;
-                OnPropertyChanged(nameof(SelectedColor));
+                RaisePropertyChanged(nameof(SelectedColor));
 
                 _currentTheme.MonochromeColor = value;
             }
@@ -341,6 +346,18 @@ namespace IconBrowser.ViewModels
 
                 Icons.Add(iconItem);
                 _iconService.GetPack("misk").Icons.Add(definition);
+            }
+        }
+
+        private IconViewMode _viewMode = IconViewMode.Tile;
+
+        public IconViewMode ViewMode
+        {
+            get => _viewMode;
+            set
+            {
+                if (!SetProperty(ref _viewMode, value))
+                    return;
             }
         }
     }

@@ -1,11 +1,14 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Selection;
+using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
+using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Services.Selection
@@ -14,12 +17,18 @@ namespace UnityCommander.Services.Selection
     {
         private readonly Dictionary<SelectionActionType, ISelectionStrategy> strategies;
 
+        private readonly ILogger _logger;
+
         private readonly object _lock = new();
+
+        private bool _selectFirstOnNextSync;
 
         private ISelectionContext _context 
             = new SelectionContext();
 
         public event Action SelectionChanged;
+
+        public bool SelectFirstOnNextSync => _selectFirstOnNextSync;
 
         public IReadOnlyCollection<ISelectableItem> SelectedItems =>
             _context.Items
@@ -33,29 +42,40 @@ namespace UnityCommander.Services.Selection
         public DiagnosticCardinality Cardinality
             => DiagnosticCardinality.Multiple;
 
+        public int FocusedIndex => _context.FocusedIndex;
+
         public SelectionManager(
             IEnumerable<ISelectionStrategy> strategies,
-            IDiagnosticRegistry diagnostic)
+            IDiagnosticRegistry diagnostic, 
+            LoggerCreator loggerCreator)
         {
+            _logger = loggerCreator.For<SelectionManager>(LogScope.Runtime);
+      
             diagnostic.Register(this);
             this.strategies = strategies.ToDictionary(x => x.ActionType);
         }
 
         public void Handle(SelectionAction action)
         {
-            Debug.WriteLine(
-                $"[Selection] Handle: {action.Type}, " +
-                $"Index={action.TargetIndex}");
+            _selectFirstOnNextSync = false;
 
             if (!strategies.TryGetValue(action.Type, out var strategy))
-                return; // или лог ошибки
-            strategies[action.Type].Select(_context, action);
+            {
+                _logger.Info(
+                    $"[Selection] Handle SKIP: " +
+                    $"No strategy for {action.Type}");
+
+                return;
+            }
+
+            strategy.Select(_context, action);
+
             RaiseChanged();
         }
 
         public void ClearSelection()
         {
-            Debug.WriteLine("[Selection] ClearSelection");
+            _logger.Info("[Selection] ClearSelection");
 
             foreach (var item in _context.Items)
                 item.IsSelected = false;
@@ -64,6 +84,12 @@ namespace UnityCommander.Services.Selection
             _context.AnchorIndex = -1;
 
             SelectionChanged?.Invoke();
+        }
+
+        public void RequestSelectFirst()
+        {
+            _selectFirstOnNextSync = true;
+            //SelectionChanged?.Invoke();
         }
 
         public void ResetContext(IEnumerable<ISelectableItem> items)
@@ -82,11 +108,74 @@ namespace UnityCommander.Services.Selection
             SelectionChanged?.Invoke();
         }
 
+        public void SelectFirst()
+        {
+            if (_context.Items.FirstOrDefault() is not IFolderItem item)
+                return;
+
+            item.IsSelected = true;
+
+            _context.AnchorIndex = 0;
+            _context.FocusedIndex = 0;
+
+            _selectFirstOnNextSync = false;
+        }
+
         public void Report(IDiagnosticWriter writer)
         {
-            var isFocused = _context.FocusedIndex > -1 ? "yes" : "no";
+            if (FocusedItem != null)
+            {
+                writer.WriteLine(
+                    $"First selected type: {FocusedItem.GetType().FullName}");
+            }
 
-            writer.WriteLine($"Selection: {SelectedItems.Count} items selected. Focused: {isFocused}, AnchorIndex: {_context.AnchorIndex}, FocusedIndex: {_context.FocusedIndex}");
+            var selected = _context.Items
+                .Where(x => x.IsSelected)
+                .ToList();
+
+            writer.WriteLine("=== Selection Manager ===");
+
+            writer.WriteLine(
+                $"Manager: {GetHashCode():X8}");
+
+            writer.WriteLine(
+                $"Context: {_context.GetHashCode():X8}");
+
+            writer.WriteLine("");
+
+            writer.WriteLine("=== Context ===");
+
+            writer.WriteLine(
+                $"Items: {_context.Items.Count}");
+
+            writer.WriteLine(
+                $"Selected flags: {selected.Count}");
+
+            writer.WriteLine(
+                $"AnchorIndex: {_context.AnchorIndex}");
+
+            writer.WriteLine(
+                $"FocusedIndex: {_context.FocusedIndex}");
+
+            writer.WriteLine(
+                $"Anchor valid: " +
+                $"{_context.AnchorIndex >= 0 && _context.AnchorIndex < _context.Items.Count}");
+
+            writer.WriteLine(
+                $"Focused valid: " +
+                $"{_context.FocusedIndex >= 0 && _context.FocusedIndex < _context.Items.Count}");
+
+            writer.WriteLine("");
+
+            writer.WriteLine("=== SelectedItems Property ===");
+
+            var selectedItems = SelectedItems;
+
+            writer.WriteLine(
+                $"Count: {selectedItems.Count}");
+
+            writer.WriteLine(
+                $"Matches context flags: {selectedItems.Count == selected.Count}");
         }
     }
 }

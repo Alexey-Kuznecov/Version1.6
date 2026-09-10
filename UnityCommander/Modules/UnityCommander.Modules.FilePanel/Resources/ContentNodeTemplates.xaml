@@ -106,11 +106,12 @@
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                            ItemsSource="{Binding Context.ContextMenuItems}">
+                            ItemsSource="{Binding Context.ContextMenuItems}"
+                            Style="{DynamicResource UcContextMenu}">
                             <ContextMenu.ItemContainerStyle>
-                                <Style TargetType="MenuItem">
+                                <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
-                                    <Setter Property="Icon" Value="🙂" />
+                                    <Setter Property="Icon" Value="{Binding IconKey}" />
                                     <Setter Property="Command" Value="{Binding Command}" />
                                     <Setter Property="Height" Value="30" />
                                     <Setter Property="ItemsSource" Value="{Binding Children}" />
@@ -167,9 +168,10 @@
                             BorderBrush="Transparent"
                             BorderThickness="0"
                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
-                            ItemsSource="{Binding Context.ContextMenuItems}">
+                            ItemsSource="{Binding Context.ContextMenuItems}"
+                            Style="{DynamicResource UcContextMenu}">
                             <ContextMenu.ItemContainerStyle>
-                                <Style TargetType="MenuItem">
+                                <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
                                     <Setter Property="Icon" Value="🙂" />
                                     <Setter Property="Command" Value="{Binding Command}" />
@@ -250,6 +252,7 @@
                             Width="25"
                             Height="25"
                             Padding="3"
+                            IsEnabled="{Binding IsEnabled}"
                             Style="{StaticResource UcIconControlStyle}"
                             ToolTip="{Binding Description}">
                             <ContentControl.Content>
@@ -257,14 +260,15 @@
                                     Key="{Binding IconKey}"
                                     Width="16"
                                     Height="16"
-                                    Brush="{DynamicResource UcAccentTertiaryBrush}" />
+                                    IsEnabled="{Binding IsEnabled}"
+                                    State="Disabled"
+                                    Stroke="#B8B8B8" />
                             </ContentControl.Content>
-                            <ContentControl.InputBindings>
-                                <MouseBinding
-                                    Command="{Binding Command}"
-                                    CommandParameter="{Binding CommandParameter}"
-                                    Gesture="LeftClick" />
-                            </ContentControl.InputBindings>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding Command}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </ContentControl>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

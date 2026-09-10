@@ -16,7 +16,19 @@
     <Compile Update="Content\PluginControlPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Content\TagControlPanel.xaml.cs">
+    <Compile Update="Content\HomeControlPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Widget\DriveView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Widget\FavoritesWidget.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Widget\HistoryWidgetView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Widget\SystemFoldersWidget.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -33,7 +45,7 @@
     <Page Update="Content\PluginControlPanel.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Content\TagControlPanel.xaml">
+    <Page Update="Content\HomeControlPanel.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\SideBar.xaml">
