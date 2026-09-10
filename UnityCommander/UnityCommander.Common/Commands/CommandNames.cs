@@ -26,11 +26,11 @@ namespace UnityCommander.Common.Commands
 
         public static class Clipboard
         {
-            public const string Copy = "ribbon.copy.item";
-            public const string Paste = "ribbon.paste.item";
-            public const string Cut = "ribbon.cut.item";
-            public const string CopyPath = "ribbon.copy.path";
-            public const string CopyLink = "ribbon.create.link";
+            public const string Copy = "clipboard.copy.item";
+            public const string Paste = "clipboard.paste.item";
+            public const string Cut = "clipboard.cut.item";
+            public const string CopyPath = "clipboard.copy.path";
+            public const string CopyLink = "clipboard.create.link";
         }
 
         public static class File

@@ -4,12 +4,13 @@ namespace UnityCommander.Abstractions.Panels
     using System;
     using System.Collections.Generic;
     using UnityCommander.Abstractions;
+    using UnityCommander.Abstractions.Clipboard;
     using UnityCommander.Abstractions.Selection;
 
     /// <summary>
     /// The directory base.
     /// </summary>
-    public interface IDirectoryItem : ISelectableItem
+    public interface IDirectoryItem : ISelectableItem, ICuttableItem
     {
         public string Name { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using UnityCommander.Abstractions.Panels;
+using UnityCommander.Common.Panels;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Services.Interfaces;
 
@@ -8,15 +9,18 @@ namespace UnityCommander.Services
 {
     public sealed class ActiveNavigationService
     {
+        private readonly ActiveTabContext _activeTab;
         private readonly IPanelRegistry _panels;
         private readonly INavigationRegistry _navigationRegistry;
 
         public ActiveNavigationService(
             IPanelRegistry panels,
-            INavigationRegistry navigationRegistry)
+            INavigationRegistry navigationRegistry, 
+            ActiveTabContext activeTab)
         {
             _panels = panels;
             _navigationRegistry = navigationRegistry;
+            _activeTab = activeTab;
         }
 
         public void Navigate(string path)
@@ -48,11 +52,11 @@ namespace UnityCommander.Services
 
         private NavigationManager? GetActiveNavigation()
         {
-            var panel = _panels.GetActivePanel();
-            if (panel?.ActiveTabId is not Guid tabId)
-                return null;
+            //var panel = _panels.GetActivePanel();
+            //if (panel?.ActiveTabId is not Guid tabId)
+            //    return null;
 
-            return _navigationRegistry.Get(tabId);
+            return _navigationRegistry.Get(_activeTab.ActiveTabId);
         }
     }
 }

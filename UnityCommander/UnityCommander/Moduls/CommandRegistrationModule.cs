@@ -38,6 +38,21 @@ namespace UnityCommander.Moduls
                 ribbonProvider.ShowParamTest,
                 null));
 
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              CommandNames.Clipboard.Copy,
+               filePanelProvider.ExecuteCopyAsync,
+               null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              CommandNames.Clipboard.Cut,
+               filePanelProvider.ExecuteCutAsync,
+               null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+              CommandNames.Clipboard.Paste,
+               filePanelProvider.ExecutePasteAsync,
+               null));
+
             // -------------------------------
             // 1. Регистрация команд файловой панели
             // -------------------------------

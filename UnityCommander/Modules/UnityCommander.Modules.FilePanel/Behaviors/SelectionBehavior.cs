@@ -1,22 +1,15 @@
 ﻿
 using Prism.Ioc;
-using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Selection;
-using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
-using UnityCommander.Logging;
-using UnityCommander.Logging.Core;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.UI.Helper;
 using UnityCommander.UI.Overlay;
-using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
@@ -182,7 +175,7 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                     out var manager,
                     out var index))
             {
-                e.Handled = true;
+                //e.Handled = true;
                 manager?.ClearSelection();
                 return;
             }

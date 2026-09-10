@@ -11,7 +11,6 @@ namespace UnityCommander.Common.Models.Directory
     [Serializable]
     public abstract class BaseDirectory : BindableBase, IDirectoryItem
     {
-        private bool _isSelected;
         private string _name;
         private string _path;
         private string _iconKey;
@@ -65,10 +64,20 @@ namespace UnityCommander.Common.Models.Directory
 
         public string Key { get; set; }
 
+        private bool _isSelected;
+
         public bool IsSelected
         {
             get => _isSelected;
             set => SetProperty(ref _isSelected, value);
+        }
+
+        private bool _isCut;
+
+        public bool IsCut
+        {
+            get => _isCut;
+            set => SetProperty(ref _isCut, value);
         }
     }
 }

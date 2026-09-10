@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using UnityCommander.Abstractions.History;
 using UnityCommander.Common.Panels;
-using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.LeftSideBars.Widget.Models;
 using UnityCommander.Services;
 

@@ -180,7 +180,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             var tabHeader = PathTitleHelper.GetTabTitle(basePath);
             var regionName = $"Tab_{tabId}";
 
-            _dockingService.AddActiveDocumentTab(tabId.ToString(), tabHeader, regionName);
+            var document = _dockingService.AddActiveDocumentTab(tabId.ToString(), tabHeader, regionName);
 
             _regionManager.RequestNavigate(regionName, nameof(SplitPanelView), result =>
             {
@@ -188,18 +188,28 @@ namespace UnityCommander.Modules.FilePanel.Services
                     return;
 
                 var view = result.Context.NavigationService.Region.ActiveViews
-                               .FirstOrDefault() as SplitPanelView;
+                    .FirstOrDefault() as SplitPanelView;
+
+                if (view?.DataContext is not IDirectoryPanel panel)
+                    return;
+
+                panel.TabTitleChanged += formatPath =>
+                {
+                    document.Title = formatPath;
+                };
 
                 var viewModel = view?.DataContext as ITabPanelContent;
+               
                 if (viewModel == null) return;
 
                 viewModel.InitializedViewModel(ref tabId, basePath);
 
                 var adapter = new TabContentAdapter(viewModel);
-                _tabRegistry.Register(adapter);
 
-                //_panelRegistry.AddTab(panelId, tabId);
-                //_panelRegistry.SetActiveTab(panelId, tabId);
+                _tabRegistry.Register(adapter);
+                _tabRegistry.SetActive(tabId);
+                _panelRegistry.AddTab(panelId, tabId);
+                _panelRegistry.SetActiveTab(panelId, tabId);
             });
         }
     }

@@ -5,17 +5,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityCommander.Abstractions.Clipboard;
+using UnityCommander.Abstractions.IO;
+using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Common.Panels;
 using UnityCommander.Common.Selection;
+using UnityCommander.Core.Clipboard;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Selection;
-using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace UnityCommander.Modules.FilePanel
 {
@@ -136,6 +137,76 @@ namespace UnityCommander.Modules.FilePanel
             }
 
             return Task.FromResult<UndoToken>(null);
+        }
+
+        public Task ExecuteCopyAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var clipboard = context.GetService<FileClipboard>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
+
+            if (selectionService is null || clipboard is null)
+                return Task.CompletedTask;
+
+            var selected = selectionService.GetActive().SelectedItems;
+
+            clipboard.Set(
+                selected.Select(x => ((IDirectoryItem)x).Path),
+                FileClipboardOperation.Copy);
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExecuteCutAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var clipboard = context.GetService<FileClipboard>();
+
+            if (selectionService is null || clipboard is null)
+                return Task.CompletedTask;
+
+            var selected = selectionService.GetActive().SelectedItems;
+
+            foreach ( var item in selected )
+            {
+                if (item is ICuttableItem cuttable)
+                {
+                    cuttable.IsCut = true;
+                }
+            }
+
+            clipboard.Set(
+                selected.Select(x => ((IDirectoryItem)x).Path),
+                FileClipboardOperation.Cut);
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExecutePasteAsync(CommandContext context)
+        {
+            var clipboard = context.GetService<FileClipboard>();
+            var tabContext = context.GetService<ITabContextAccessor>();
+            var overrideResolver = context.GetService<ServiceOverrideResolver>();
+
+            if (clipboard is null || !clipboard.HasItems)
+                return Task.CompletedTask;
+
+            var fileOperationService =
+                overrideResolver.Resolve<IFileOperationService>();
+
+            var type = clipboard.Operation == FileClipboardOperation.Copy
+                ? FileOperationType.Copy
+                : FileOperationType.Move;
+
+            fileOperationService.CopyAsync(new FileOperationRequest
+            {
+                ShowDialog = true,
+                Target = tabContext.CurrentPath,
+                Sources = clipboard.Paths.ToList(),
+                Type = type
+            });
+
+            return Task.CompletedTask;
         }
 
         public Task ExecuteOpenFoldersAsync(CommandContext context)

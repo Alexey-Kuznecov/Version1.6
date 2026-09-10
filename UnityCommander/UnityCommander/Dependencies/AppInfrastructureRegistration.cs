@@ -16,6 +16,7 @@ using UnityCommander.Common.Docking;
 using UnityCommander.Common.History;
 using UnityCommander.Common.Sidebar;
 using UnityCommander.Core.Background;
+using UnityCommander.Core.Clipboard;
 using UnityCommander.Core.Panels;
 using UnityCommander.Core.Registrar;
 using UnityCommander.Index.Abstractions;
@@ -183,6 +184,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IUserNavigationHistoryStore, JsonUserNavigationHistoryStore>();
 
             registry.RegisterSingleton<IShortcutBinder, ShortcutBinder>();
+            registry.RegisterSingleton<FileClipboard>();
         }
     }
 }
