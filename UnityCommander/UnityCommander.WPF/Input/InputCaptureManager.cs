@@ -9,9 +9,12 @@
             _stack.Push(context);
         }
 
-        public void Pop()
+        public void Pop(IInputContext context)
         {
-            if (_stack.Count > 0)
+            if (_stack.Count == 0)
+                return;
+
+            if (ReferenceEquals(_stack.Peek(), context))
                 _stack.Pop();
         }
 

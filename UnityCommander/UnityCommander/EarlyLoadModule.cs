@@ -17,6 +17,7 @@ using UnityCommander.UI.AttachProperties;
 using UnityCommander.UI.Interaction;
 using UnityCommander.UI.Visual;
 using UnityCommander.WPF.Behaviors;
+using UnityCommander.WPF.Input;
 
 namespace UnityCommander
 {
@@ -45,12 +46,12 @@ namespace UnityCommander
             var context = provider.Resolve<IShortcutContextService>();
             var elementRegistry = provider.Resolve<IVisualElementRegistry>();
             var actionProvider = provider.Resolve<IContextActionProvider>();
+            var inputCaptureManager = provider.Resolve<IInputCaptureManager>();
 
-
-            Interaction.Initialize(actionProvider);
-
-            IconHub.Initialize(iconRender, iconColor);
             KeyboardBinding.Initialize(context);
+            Interaction.Initialize(actionProvider);
+            IconHub.Initialize(iconRender, iconColor);
+            InputCaptureBehavior.Initialize(inputCaptureManager);
             VisualElementRegistration.Initialize(elementRegistry);
 
             _providerInfo.LoadMetadata();

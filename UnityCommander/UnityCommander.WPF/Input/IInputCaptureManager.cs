@@ -5,6 +5,6 @@ namespace UnityCommander.WPF.Input
     {
         bool TryHandle(InputEvent e);
         void Push(IInputContext context);
-        void Pop();
+        void Pop(IInputContext context);
     }
 }

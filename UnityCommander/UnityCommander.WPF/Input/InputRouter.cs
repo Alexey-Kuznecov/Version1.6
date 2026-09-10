@@ -48,7 +48,7 @@ namespace UnityCommander.WPF.Input
 
                 if (_captureManager.TryHandle(input))
                 {
-                    e.Handled = true;
+                    //e.Handled = true;
                     return;
                 }
 
