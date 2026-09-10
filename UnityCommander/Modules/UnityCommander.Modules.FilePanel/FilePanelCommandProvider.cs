@@ -14,6 +14,8 @@ using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.FilePanel.States.Resolver;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
+using UnityCommander.Services.Selection;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace UnityCommander.Modules.FilePanel
 {
@@ -41,9 +43,13 @@ namespace UnityCommander.Modules.FilePanel
 
         public Task ExecuteGoUpAsync(CommandContext context)
         {
+            var selectionService = context.GetService<ISelectionService>();
             var nav = context.GetService<ActiveNavigationService>();
-
+            var manager = selectionService.GetActive();
+            
             nav.GoParent();
+
+            manager.RequestSelectFirst();
 
             return Task.CompletedTask;
         }
@@ -130,6 +136,31 @@ namespace UnityCommander.Modules.FilePanel
             }
 
             return Task.FromResult<UndoToken>(null);
+        }
+
+        public Task ExecuteOpenFoldersAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var navigation = context.GetService<ActiveNavigationService>();
+
+            if (selectionService is null || navigation is null)
+                return Task.CompletedTask;
+
+            var manager = selectionService.GetActive();
+
+            var selected = manager.SelectedItems;
+
+            if (selected.Count != 1)
+                return Task.CompletedTask;
+
+            if (selected.FirstOrDefault() is not IFolderItem folder)
+                return Task.CompletedTask;
+
+            navigation.Navigate(folder.Path);
+
+            manager.RequestSelectFirst();
+
+            return Task.CompletedTask;
         }
 
         public Task ExecuteSelectFoldersAsync(CommandContext context)

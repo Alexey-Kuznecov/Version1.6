@@ -47,6 +47,11 @@ namespace UnityCommander.Moduls
                 null));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
+                CommandNames.File.Open,
+                filePanelProvider.ExecuteOpenFoldersAsync,
+                null));
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
                 CommandNames.Directory.SelectAll,
                 filePanelProvider.ExecuteSelectFoldersAsync,
                 null));

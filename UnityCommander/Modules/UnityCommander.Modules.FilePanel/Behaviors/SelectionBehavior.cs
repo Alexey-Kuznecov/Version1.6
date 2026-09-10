@@ -1,19 +1,22 @@
 ﻿
 using Prism.Ioc;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using UnityCommander.UI.Helper;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
-using UnityCommander.Services.Interfaces;
-using UnityCommander.UI.Overlay;
-using ILogger = UnityCommander.Logging.Contracts.ILogger;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Core;
+using UnityCommander.Services.Interfaces;
+using UnityCommander.UI.Helper;
+using UnityCommander.UI.Overlay;
+using ILogger = UnityCommander.Logging.Contracts.ILogger;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
@@ -55,9 +58,25 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 manager.SelectionChanged += () =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>
+                    
                     {
                         SyncFromManager(list, manager);
                     });
+                };
+                list.ItemContainerGenerator.StatusChanged += (_, _) =>
+                {
+                    if (list.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+                        return;
+
+                    if (!manager.SelectFirstOnNextSync)
+                        return;
+
+                    manager.SetItems(
+                        list.Items.Cast<ISelectableItem>());
+
+                    manager.SelectFirst();
+
+                    SyncFromManager(list, manager);
                 };
             }
         }
@@ -83,7 +102,69 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
 
                 list.PreviewMouseLeftButtonDown += OnPreviewLeftMouseDown;
                 list.PreviewMouseRightButtonDown += OnRightMouseDown;
+                list.PreviewKeyDown += OnPreviewKeyDown;
             }
+        }
+
+        private static void OnPreviewKeyDown(
+          object sender,
+          KeyEventArgs e)
+        {
+            var list = (ListView)sender;
+
+            if (IsOverlayInput(e.OriginalSource))
+                return;
+
+            var manager = GetManager(list);
+
+            if (manager is null || list.Items.Count == 0)
+                return;
+
+            if (e.Key is not (Key.Up or Key.Down))
+                return;
+
+            var current = manager.FocusedIndex;
+
+            if (current < 0)
+                current = 0;
+
+            var offset = e.Key == Key.Up ? -1 : 1;
+            var target = current + offset;
+
+            var shift = Keyboard.Modifiers.HasFlag(
+                ModifierKeys.Shift);
+
+            // Для обычного движения разрешаем wrap-around.
+            if (!shift)
+            {
+                if (target < 0)
+                    target = list.Items.Count - 1;
+                else if (target >= list.Items.Count)
+                    target = 0;
+            }
+            else
+            {
+                // Для Shift не переходим через границу.
+                if (target < 0 || target >= list.Items.Count)
+                {
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            manager.Handle(new SelectionAction
+            {
+                Type = shift
+                    ? SelectionActionType.ShiftClick
+                    : SelectionActionType.Move,
+
+                TargetIndex = target,
+                Offset = offset
+            });
+
+            e.Handled = true;
+
+            ScrollToFocusedItem(list, manager, offset);
         }
 
         private static void OnPreviewLeftMouseDown(
@@ -184,7 +265,25 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
             return true;
         }
 
-        private static void SyncFromManager(ListView list, ISelectionManager manager)
+        private static void ScrollToFocusedItem(
+            ListView list,
+            ISelectionManager manager,
+            int direction)
+        {
+            var index = manager.FocusedIndex;
+
+            if (direction == 1 && index > 0)
+                index--;
+
+            if (index < 0 || index >= list.Items.Count)
+                return;
+
+            list.ScrollIntoView(list.Items[index]);
+        }
+
+        private static void SyncFromManager(
+          ListView list,
+          ISelectionManager manager)
         {
             list.SelectedItems.Clear();
 

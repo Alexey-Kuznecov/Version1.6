@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Selection;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Selection;
@@ -20,10 +21,14 @@ namespace UnityCommander.Services.Selection
 
         private readonly object _lock = new();
 
+        private bool _selectFirstOnNextSync;
+
         private ISelectionContext _context 
             = new SelectionContext();
 
         public event Action SelectionChanged;
+
+        public bool SelectFirstOnNextSync => _selectFirstOnNextSync;
 
         public IReadOnlyCollection<ISelectableItem> SelectedItems =>
             _context.Items
@@ -36,6 +41,8 @@ namespace UnityCommander.Services.Selection
 
         public DiagnosticCardinality Cardinality
             => DiagnosticCardinality.Multiple;
+
+        public int FocusedIndex => _context.FocusedIndex;
 
         public SelectionManager(
             IEnumerable<ISelectionStrategy> strategies,
@@ -50,6 +57,7 @@ namespace UnityCommander.Services.Selection
 
         public void Handle(SelectionAction action)
         {
+            _selectFirstOnNextSync = false;
 
             if (!strategies.TryGetValue(action.Type, out var strategy))
             {
@@ -78,6 +86,12 @@ namespace UnityCommander.Services.Selection
             SelectionChanged?.Invoke();
         }
 
+        public void RequestSelectFirst()
+        {
+            _selectFirstOnNextSync = true;
+            //SelectionChanged?.Invoke();
+        }
+
         public void ResetContext(IEnumerable<ISelectableItem> items)
         {
             _context.Reset();
@@ -92,6 +106,19 @@ namespace UnityCommander.Services.Selection
         private void RaiseChanged()
         {
             SelectionChanged?.Invoke();
+        }
+
+        public void SelectFirst()
+        {
+            if (_context.Items.FirstOrDefault() is not IFolderItem item)
+                return;
+
+            item.IsSelected = true;
+
+            _context.AnchorIndex = 0;
+            _context.FocusedIndex = 0;
+
+            _selectFirstOnNextSync = false;
         }
 
         public void Report(IDiagnosticWriter writer)

@@ -195,6 +195,7 @@ namespace UnityCommander
         {
             var shortcutBinder = containerRegistry.Resolve<IShortcutBinder>();
 
+            shortcutBinder.Bind(CommandNames.File.Open, ShortcutKey.Enter);
             shortcutBinder.Bind(CommandNames.UI.ShowSettings, ShortcutKey.F12);
             shortcutBinder.Bind(CommandNames.UI.ToggleBottomPanel, ShortcutKey.Oem3, ShortcutModifiers.Ctrl);
             shortcutBinder.Bind(CommandNames.UI.ToggleRibbon, ShortcutKey.T, ShortcutModifiers.Ctrl);

@@ -44,6 +44,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ISelectionStrategy, ToggleSelectionStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ExtensionSelectionRuleStrategy>();
             registry.RegisterSingleton<ISelectionStrategy, ContextMenuClickStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, MoveSelectionStrategy>();
+            registry.RegisterSingleton<ISelectionStrategy, FocusFirstStrategy>();
             registry.RegisterSingleton<ISelectionService, SelectionService>();
             registry.Register<ISelectionManager, SelectionManager>();
 

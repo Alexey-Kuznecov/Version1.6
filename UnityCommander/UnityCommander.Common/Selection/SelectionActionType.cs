@@ -7,6 +7,8 @@
         ShiftClick,
         SingleClick,
         ContextMenuClick,
-        SelectAll
+        SelectAll,
+        Move,
+        FocusFirst,
     }
 }
