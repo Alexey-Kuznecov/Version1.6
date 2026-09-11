@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.IO;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services.Interfaces;
@@ -27,13 +29,17 @@ namespace UnityCommander.Modules.FilePanel.Services
 
         private readonly IColumnRegistry _registry;
 
+        private readonly IFileActivityService _activityService;
+
         private readonly IVisibleTabResolver _visibleTabResolver;
 
         public ColumnRefreshService(
             IColumnRegistry registry,
             NodeContextRegistry contexts,
-            IVisibleTabResolver visibleTabResolver)
+            IVisibleTabResolver visibleTabResolver, 
+            IFileActivityService activityService)
         {
+            _activityService = activityService;
             _registry = registry;
             _contexts = contexts;
             _visibleTabResolver = visibleTabResolver;
@@ -93,7 +99,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                 {
                     file.LastUpdate.TryGetValue(column.Id, out var last);
 
-                    var interval = GetInterval(column);
+                    var interval = GetInterval(column, file);
 
                     if ((now - last).TotalMilliseconds < interval)
                         continue;
@@ -127,7 +133,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                 {
                     folder.LastUpdate.TryGetValue(column.Id, out var last);
 
-                    var interval = GetInterval(column);
+                    var interval = GetInterval(column, folder);
 
                     if ((now - last).TotalMilliseconds < interval)
                         continue;
@@ -146,8 +152,13 @@ namespace UnityCommander.Modules.FilePanel.Services
             return Task.CompletedTask;
         }
 
-        private int GetInterval(ColumnModel column)
+        private int GetInterval(
+           ColumnModel column,
+           IDirectoryItem folder)
         {
+            if (_activityService.IsActive(folder.Path))
+                return 500;
+
             if (column.RefreshInterval.HasValue)
                 return column.RefreshInterval.Value;
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityCommander.Abstractions.IO;
+using UnityCommander.Common.Events;
 
 namespace UnityCommander.Core.IO.Operations
 {
@@ -44,6 +45,11 @@ namespace UnityCommander.Core.IO.Operations
         {
             copyFile.ChangeCopyStatus(CopyBehaviors.Cancel);
             cancellationTokenSource.Cancel();
+        }
+
+        public void Report(CopyInfo info)
+        {
+            //CopyProgress?.Invoke(this, new CopyProgressEvent(info));
         }
 
         public Task CopyAsync(OperationContext ctx, string sourcePath, string targetPath)

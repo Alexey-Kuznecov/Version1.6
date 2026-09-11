@@ -7,6 +7,7 @@ namespace UnityCommander.Abstractions.IO
         Copying,
         Completed,
         Cancelled,
-        Failed
+        Failed,
+        Skipped
     }
 }

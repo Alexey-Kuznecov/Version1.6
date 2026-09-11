@@ -23,7 +23,7 @@ namespace UnityCommander.Operation
             {
                 Name = info.Name,
                 Source = info.Source,
-                Destination = info.Destination
+                Destination = info.DestinationPath
             };
             copiedFiles.Add(model);
             return model;

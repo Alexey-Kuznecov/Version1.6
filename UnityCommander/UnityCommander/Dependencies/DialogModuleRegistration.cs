@@ -25,7 +25,6 @@ namespace UnityCommander.Dependencies
             // Каждый диалог регистрируется с View и ViewModel
             registry.RegisterDialog<DialogView, DialogViewModel>("DialogPlugin");
             //registry.RegisterDialog<CopyDialogView, CopyDialogViewModel>("CopyDialog");
-            registry.RegisterDialog<CopyDialogSkipReplace, CopyDialogSkipReplaceViewModel>("CopyDialogSkipReplace");
             registry.RegisterDialog<AppConfigDialogControl, AppConfigDialogViewModel>("AppConfigDialog");
 
             //registry.RegisterDialog<DialogPluginConfigView, DialogPluginConfigVm>("DialogPluginConfig"); // пока закомментирован

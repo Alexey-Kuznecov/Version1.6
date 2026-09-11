@@ -13,7 +13,9 @@ namespace UnityCommander.Abstractions.IO
 
         public string Source { get; set; }
 
-        public string Destination { get; set; }
+        public string Target { get; set; }
+
+        public string DestinationPath { get; set; }
 
         public string Root { get; set; }
 

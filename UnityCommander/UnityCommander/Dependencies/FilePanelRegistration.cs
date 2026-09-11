@@ -1,6 +1,7 @@
 ﻿
 using Prism.Ioc;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models;
 using UnityCommander.Common.Panels;
@@ -60,6 +61,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<ViewportMapper>();
 
             registry.RegisterSingleton<IFileStateService, FileRuntimeService>();
+            registry.RegisterSingleton<IFileActivityService, FileActivityService>();
             registry.RegisterSingleton<IVisibleTabResolver, VisibleTabResolver>();
 
 

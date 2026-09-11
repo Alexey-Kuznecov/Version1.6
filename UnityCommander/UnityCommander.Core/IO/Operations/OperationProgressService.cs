@@ -7,7 +7,6 @@ using System.Threading;
 using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.IO;
 using UnityCommander.Common.Events;
-using UnityCommander.Core.Events;
 
 namespace UnityCommander.Core.IO.Operations
 {

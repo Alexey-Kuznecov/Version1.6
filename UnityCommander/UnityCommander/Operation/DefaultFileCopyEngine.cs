@@ -10,20 +10,22 @@ using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.IO;
 using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Common.Events;
-using UnityCommander.Core.Events;
 using UnityCommander.Core.IO;
 using UnityCommander.Core.IO.Operations;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace UnityCommander.Operation
 {
     public class DefaultFileCopyEngine : IFileCopyEngine
     {
         private readonly IOperationIndex _operationIndex;
+        private readonly IFileConflictResolver _conflictResolver;
         private readonly ICopyOperationService _operationService;
         private readonly IOperationProgressService _operationProgress;
         private readonly MoveStrategyResolver _moveStrategyResolver;
         private readonly IBackgroundWorkController _backgroundWorkController;
         private readonly IEventBus _eventBus;
+        private FileConflictResolutionPolicy _conflictPolicy;
 
         public DefaultFileCopyEngine(
             ICopyOperationService operationService,
@@ -31,7 +33,8 @@ namespace UnityCommander.Operation
             IOperationIndex operationIndex,
             MoveStrategyResolver moveStrategyResolver,
             IEventBus eventBus,
-            IBackgroundWorkController backgroundWorkController)
+            IBackgroundWorkController backgroundWorkController, 
+            IFileConflictResolver conflictResolver)
         {
             _eventBus = eventBus;
             _operationIndex = operationIndex;
@@ -39,17 +42,20 @@ namespace UnityCommander.Operation
             _operationService = operationService;
             _moveStrategyResolver = moveStrategyResolver;
             _backgroundWorkController = backgroundWorkController;
+            _conflictResolver = conflictResolver;
         }
 
         private void OnCopyFileReport(CopyInfo info)
         {
+            info.Status = FileTransferStatus.Copying;
             _eventBus.Publish(this, new CopyProgressEvent(info));
         }
 
         private void OnFileCompleted(CopyInfo info)
         {
             _eventBus.Publish(this, new CopyCompleteEvent(info));
-            _operationIndex.Unregister(info.ItemId);
+
+            //_operationIndex.Unregister(info.ItemId);
         }
 
         public async Task StartAsync(FileOperationRequest request)
@@ -102,7 +108,7 @@ namespace UnityCommander.Operation
 
             foreach (var item in operation.Items)
             {
-                var context = CreateOperationContext(
+                var operationContext = CreateOperationContext(
                     manager,
                     request,
                     operation,
@@ -113,14 +119,115 @@ namespace UnityCommander.Operation
                     item.SourcePath,
                     manager);
 
-                //Directory.CreateDirectory(destination);
+                var target = operationContext.Info.Target;
+
+                if (File.Exists(target) ||
+                    Directory.Exists(target))
+                {
+                    var conflict = new FileConflict
+                    {
+                        SourcePath = item.SourcePath,
+                        DestinationPath = target
+                    };
+                    if (_conflictPolicy == FileConflictResolutionPolicy.Ask)
+                    {
+                        var result = await _conflictResolver.ResolveAsync(
+                            conflict,
+                            operationContext.Cancellation.Token);
+
+                        switch (result)
+                        {
+                            case FileConflictAction.Replace:
+                                _eventBus.Publish(
+                                this,
+                                new FileStatusChangedEvent(
+                                    operationContext.Info.ItemId,
+                                    FileTransferStatus.Copying,
+                                    operationContext.Info.Source,
+                                    target));
+
+                                break;
+
+                            case FileConflictAction.Skip:
+                                _eventBus.Publish(
+                                 this,
+                                 new FileStatusChangedEvent(
+                                     operationContext.Info.ItemId,
+                                     FileTransferStatus.Skipped,
+                                     operationContext.Info.Source,
+                                     target));
+
+                                continue;
+
+                            case FileConflictAction.ReplaceAll:
+                                _conflictPolicy =
+                                    FileConflictResolutionPolicy.Replace;
+
+                                break;
+
+                            case FileConflictAction.SkipAll:
+                                _conflictPolicy =
+                                    FileConflictResolutionPolicy.Skip;
+
+                                _eventBus.Publish(
+                                this,
+                                new FileStatusChangedEvent(
+                                    operationContext.Info.ItemId,
+                                    FileTransferStatus.Skipped,
+                                    operationContext.Info.Source,
+                                    target));
+
+                                continue;
+
+                            case FileConflictAction.KeepBoth:
+
+                                destination = ResolveUniqueDestination(target);
+
+                                operationContext.Info.Target = destination;
+                                break;
+
+                            case FileConflictAction.Cancel:
+                                _eventBus.Publish(
+                                this,
+                                new FileStatusChangedEvent(
+                                    operationContext.Info.ItemId,
+                                    FileTransferStatus.Cancelled,
+                                    operationContext.Info.Source,
+                                    target));
+
+                                return;
+                        }
+                    }
+                    else if (_conflictPolicy == FileConflictResolutionPolicy.Skip)
+                    {
+                        operationContext.Info.Skipped = true;
+                        _eventBus.Publish(
+                              this,
+                              new FileStatusChangedEvent(
+                                  operationContext.Info.ItemId,
+                                  FileTransferStatus.Skipped,
+                                  operationContext.Info.Source,
+                                  target));
+                        continue;
+                    }
+                    else if (_conflictPolicy == FileConflictResolutionPolicy.Replace)
+                    {
+                        _eventBus.Publish(
+                              this,
+                              new FileStatusChangedEvent(
+                                  operationContext.Info.ItemId,
+                                  FileTransferStatus.Copying,
+                                  operationContext.Info.Source,
+                                  target));
+                    }
+                }
 
                 item.ShouldCleanupDestination = true;
 
                 if (request.Type == FileOperationType.Copy)
                 {
                     await manager.CopyAsync(
-                        context,
+                        operationContext,
                         item.SourcePath,
                         destination);
 
@@ -132,10 +239,10 @@ namespace UnityCommander.Operation
                     destination);
 
                 await strategy.ExecuteAsync(
-                    context,
+                    operationContext,
                     item.SourcePath,
                     destination);
-                
+
                 deletesSourceImmediately |= strategy.DeletesSource;
             }
 
@@ -143,6 +250,40 @@ namespace UnityCommander.Operation
                 deletesSourceImmediately)
             {
                 DeleteSources(operation);
+            }
+        }
+
+        private string ResolveUniqueDestination(string destination)
+        {
+            if (!File.Exists(destination) &&
+                !Directory.Exists(destination))
+            {
+                return destination;
+            }
+
+            var directory = Path.GetDirectoryName(destination);
+
+            if (string.IsNullOrEmpty(directory))
+                return destination;
+
+            var name = Path.GetFileNameWithoutExtension(destination);
+            var extension = Path.GetExtension(destination);
+
+            var index = 1;
+
+            while (true)
+            {
+                var candidate = Path.Combine(
+                    directory,
+                    $"{name} ({index}){extension}");
+
+                if (!File.Exists(candidate) &&
+                    !Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                index++;
             }
         }
 
@@ -181,7 +322,9 @@ namespace UnityCommander.Operation
                     OperationId = request.OperationId,
                     ItemId = item.Id,
                     Source = item.SourcePath,
-                    Destination = request.Target
+                    Target = item.DestinationPath,
+                    DestinationPath = request.Target,
+                    Status = FileTransferStatus.Pending,
                 },
                 BackgroundWork = _backgroundWorkController
             };

@@ -8,6 +8,8 @@ namespace UnityCommander.Common.Models
 {
     public sealed class FileState : BindableBase, IFileState
     {
+        public DateTime LastUpdated { get; set; }
+
         public Guid OperationId;
 
         public string SourcePath { get; init; }
@@ -40,6 +42,6 @@ namespace UnityCommander.Common.Models
 
         public Dictionary<string, object> Values { get; } = new();
 
-        public OperationStatus Status { get; internal set; }
+        public OperationStatus Status { get; set; }
     }
 }

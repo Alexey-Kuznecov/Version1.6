@@ -137,13 +137,13 @@ namespace UnityCommander.Core.IO.Operations
             copyInfo.Name = info.Name;
             copyInfo.Length = info.Length;
             copyInfo.Source = info.FullName;
-            copyInfo.Destination = newDir;
+            copyInfo.DestinationPath = newDir;
             copyInfo.Root = TargetRoot;
             copyInfo.FileInfo = infoF;
 
             FileStarted?.Invoke(copyInfo);
 
-            if (File.Exists(copyInfo.Destination))
+            if (File.Exists(copyInfo.DestinationPath))
             {
                 this.copyBehaviors = CopyBehaviors.Pause;
                 RaiseFileAlreadyExistsEvent(copyInfo);

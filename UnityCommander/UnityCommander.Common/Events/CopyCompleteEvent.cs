@@ -2,7 +2,7 @@
 using System;
 using UnityCommander.Abstractions.IO;
 
-namespace UnityCommander.Core.Events
+namespace UnityCommander.Common.Events
 {
     public sealed class CopyCompleteEvent : EventArgs
     {

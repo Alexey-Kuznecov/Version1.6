@@ -166,6 +166,19 @@ namespace UnityCommander
                      Title = "Создание элемента"
                  }
                  ));
+
+            dialog.Register(new DialogDefinition(
+                 "core.file-conflict-dialog",
+                 typeof(FileConflictDialog),
+                 typeof(FileConflictDialogViewModel),
+                 new DialogOptions()
+                 {
+                     Height = 320,
+                     Width = 600,
+                     IsResizable = true,
+                     Title = "Решение конфликтов"
+                 }
+                 ));
         }
 
         private static void RegisterCommand(IContainerProvider containerRegistry)

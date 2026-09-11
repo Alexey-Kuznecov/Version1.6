@@ -7,6 +7,7 @@ namespace UnityCommander.Abstractions.IO
         InProgress,
         Completed,
         Failed,
-        Canceled
+        Canceled,
+        Skipped
     }
 }

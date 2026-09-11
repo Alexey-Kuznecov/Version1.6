@@ -2,7 +2,6 @@
 using Prism.Dialogs;
 using System.Windows;
 using UnityCommander.Abstractions.IO;
-using UnityCommander.Core.IO.Operations;
 using UnityCommander.Core.Mvvm;
 
 namespace UnityCommander.Operation

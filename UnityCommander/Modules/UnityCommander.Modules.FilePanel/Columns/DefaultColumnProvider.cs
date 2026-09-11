@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.Columns;
+using UnityCommander.Abstractions.IO;
 using UnityCommander.Common.Models;
 using UnityCommander.Common.Models.Directory;
 
@@ -38,12 +39,12 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     new ColumnModel
                     {
                         Id = "core.live",
-                        Header = "Progess ##",
+                        Header = "Status",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
                         Width = 100,
                         Order = 3,
                         SyncGroup = "Live",
-                        RefreshInterval = 2000,
+                        RefreshInterval = 3000,
                         IsDynamic = true,
                         IsVisible = true,
                         ColumnValueHandler = f =>
@@ -51,11 +52,29 @@ namespace UnityCommander.Modules.FilePanel.Columns
                             var path = ((BaseDirectory)f).Path;
 
                             var state = (FileState)_fileStateService.GetState(path);
+                            
+                            if (state is null)
+                                return "-";
 
-                            if (state != null)
-                                return $"{state.Progress}%";
+                            if (state.Progress == 100)
+                                return "Готово";
 
-                            return $"(copied)";
+                            return state.Status switch
+                            {
+                                OperationStatus.InProgress =>
+                                    $"{state.Progress}%",
+
+                                OperationStatus.Completed =>
+                                    "Готово",
+
+                                OperationStatus.Skipped =>
+                                    "Пропущен",
+
+                                OperationStatus.Failed =>
+                                    "Ошибка",
+
+                                _ => "Ожидание"
+                            };
                         }
                     },
                     new ColumnModel
