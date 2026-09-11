@@ -10,5 +10,7 @@ namespace UnityCommander.Abstractions.IO
         public required string DestinationPath;
 
         public bool ShouldCleanupDestination { get; set; }
+        public long Length { get; set; }
+        public FileTransferItemType ItemType { get; set; }
     }
 }

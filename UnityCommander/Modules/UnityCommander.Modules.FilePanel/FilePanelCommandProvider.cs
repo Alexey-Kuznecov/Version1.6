@@ -71,72 +71,61 @@ namespace UnityCommander.Modules.FilePanel
             return Task.CompletedTask;
         }
 
-        public Task<UndoToken> ExecuteDeleteAsync(CommandContext ctx)
+        public Task<UndoToken> ExecuteDeleteAsync(
+            CommandContext ctx)
         {
-            var contextMenu = (FilePanelContextMenu)ctx.Context;
-
-            if (contextMenu == null)
+            return Task.Run(() =>
             {
-                var selectionService = ctx.GetService<ISelectionService>();
-                var active = selectionService.GetActive();
+                var contextMenu = ctx.Context as FilePanelContextMenu;
 
-                foreach (var item in active.SelectedItems)
+                if (contextMenu == null)
                 {
-                    if (item is FolderModel directory)
-                    {
-                        var path = directory.Path;
+                    var selectionService = ctx.GetService<ISelectionService>();
+                    var active = selectionService.GetActive();
 
-                        if (Directory.Exists(path))
-                            Directory.Delete(path, recursive: true);
-                    }
-                    else if (item is FileModel file)
+                    foreach (var item in active.SelectedItems)
                     {
-                        var path = file.Path;
+                        if (item is FolderModel directory)
+                        {
+                            var path = directory.Path;
+
+                            if (Directory.Exists(path))
+                                Directory.Delete(path, recursive: true);
+                        }
+                        else if (item is FileModel file)
+                        {
+                            var path = file.Path;
+
+                            if (File.Exists(path))
+                                File.Delete(path);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var path in contextMenu.SelectedPaths)
+                    {
+                        if (string.IsNullOrWhiteSpace(path))
+                            continue;
 
                         if (File.Exists(path))
+                        {
                             File.Delete(path);
+                        }
+                        else if (Directory.Exists(path))
+                        {
+                            Directory.Delete(path, recursive: true);
+                        }
+                        else
+                        {
+                            Debug.WriteLine(
+                                $"Path already does not exist: '{path}'");
+                        }
                     }
                 }
-            }
-            else
-            {
-                foreach (var path in contextMenu.SelectedPaths)
-                {
-                    if (string.IsNullOrWhiteSpace(path))
-                        continue;
 
-                    if (File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
-                    else if (Directory.Exists(path))
-                    {
-                        Directory.Delete(path, recursive: true);
-                    }
-                    else
-                    {
-                        Debug.WriteLine(
-                            $"Path already does not exist: '{path}'");
-
-                        continue;
-                    }
-
-                    //try
-                    //{
-                    //    var backup = Path.GetTempFileName();
-                    //    //File.Copy(path, backup, overwrite: true);
-                    //    File.Delete(path);
-
-                    //    //_notifier.NotifyChanged(path);
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //    Debug.WriteLine($"Error deleting file '{path}': {e.Message}");
-                    //}
-                }
-            }
-
-            return Task.FromResult<UndoToken>(null);
+                return (UndoToken)null;
+            });
         }
 
         public Task ExecuteCopyAsync(CommandContext context)

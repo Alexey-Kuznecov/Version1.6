@@ -78,78 +78,49 @@ namespace UnityCommander.Core.IO.Operations
             copyBehaviors = changeOn;
         }
 
-        public void Copy(string source, string target)
+        public void Copy(string source, string destinationFile)
         {
-            FileInfo info = new FileInfo(source);
+            var info = new FileInfo(source);
+
             totalFileSize = info.Length;
             copyInfo.TotalBytes += info.Length;
 
-            var existPath = File.Exists(source.Replace(new FileInfo(source).Directory.FullName, target));
-
-            if (!existPath)
-            {
-                SpeedTimer.Start();
-                ElapsedTimer.Start();
-            }
-
-            FileStarted?.Invoke(copyInfo);
-            this.CopyFile(source, target);
-        }
-
-        public void DeepCopy(string source, string target)
-        {
-            this.CalculateTotalFilesSize(source);
             SpeedTimer.Start();
             ElapsedTimer.Start();
 
-            foreach (var oldDir in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
-            {
-                var newDir = oldDir.Replace(source, target);
-                Directory.CreateDirectory(newDir);
+            FileStarted?.Invoke(copyInfo);
 
-                // Сразу уведомляем
-                DirectoryCreated?.Invoke(newDir);
-
-                foreach (var oldFile in Directory.GetFiles(oldDir))
-                {
-                    CopyFile(oldFile, newDir);
-                }
-            }
-
-            // Копирует файлы которые лежат внутри копируемой папки 
-            if (Directory.GetFiles(source).Length != 0)
-            {
-                
-                foreach (var oldFile in Directory.GetFiles(source))
-                {
-                    this.CopyFile(oldFile, target);
-                }
-            }
+            CopyFile(source, destinationFile);
         }
-
-        public void CopyFile(string oldFile, string newDir)
+        
+        public void CopyFile(
+            string oldFile,
+            string newFile)
         {
-            FileInfo info = new FileInfo(oldFile);
-            string newFile = Path.Combine(newDir, new DirectoryInfo(oldFile).Name);
-            FileInfo infoF = new FileInfo(newFile);
+            var info = new FileInfo(oldFile);
+            var infoF = new FileInfo(newFile);
 
             fileSize = info.Length;
+
             copyInfo.Name = info.Name;
             copyInfo.Length = info.Length;
             copyInfo.Source = info.FullName;
-            copyInfo.DestinationPath = newDir;
+            copyInfo.DestinationPath = newFile;
             copyInfo.Root = TargetRoot;
             copyInfo.FileInfo = infoF;
 
             FileStarted?.Invoke(copyInfo);
 
-            if (File.Exists(copyInfo.DestinationPath))
+            if (File.Exists(newFile))
             {
-                this.copyBehaviors = CopyBehaviors.Pause;
+                copyBehaviors = CopyBehaviors.Pause;
                 RaiseFileAlreadyExistsEvent(copyInfo);
             }
 
-            fileOperation.XCopy(oldFile, newFile, CopyProgressHandle);
+            fileOperation.XCopy(
+                oldFile,
+                newFile,
+                CopyProgressHandle);
         }
 
         public void CalculateTotalFilesSize(string source)

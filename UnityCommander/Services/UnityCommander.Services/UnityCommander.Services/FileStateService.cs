@@ -80,10 +80,8 @@ namespace UnityCommander.Services
         {
             e.Info.Status = FileTransferStatus.Completed;
 
-            _fileActivityService.Activate(
-                e.Info.ItemId,
-                e.Info.Source,
-                e.Info.Target);
+            _fileActivityService.Deactivate(
+                e.Info.ItemId);
 
             //this.Remove(e.Info.ItemId);
             //_index.Unregister(e.Info.ItemId);
@@ -93,8 +91,13 @@ namespace UnityCommander.Services
             object? sender,
             FileStatusChangedEvent e)
         {
-            if (e.Status == FileTransferStatus.Skipped || e.Status == FileTransferStatus.Failed)
+            if (e.Status is
+                FileTransferStatus.Skipped or
+                FileTransferStatus.Failed or
+                FileTransferStatus.Cancelled)
+            {
                 _fileActivityService.Deactivate(e.ItemId);
+            }
 
             var state = (FileState)GetState(e.SourcePath);
 

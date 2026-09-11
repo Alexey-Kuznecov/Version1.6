@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.IO;
@@ -8,7 +9,7 @@ namespace UnityCommander.Services
 {
     public sealed class FileActivityService : IFileActivityService
     {
-        private readonly Dictionary<Guid, FileActivity> _active = [];
+        private readonly ConcurrentDictionary<Guid, FileActivity> _active = new();
 
         public bool IsActive(Guid itemId)
             => _active.ContainsKey(itemId);
@@ -37,6 +38,6 @@ namespace UnityCommander.Services
         }
 
         public void Deactivate(Guid itemId)
-            => _active.Remove(itemId);
+            => _active.TryRemove(itemId, out _);
     }
 }

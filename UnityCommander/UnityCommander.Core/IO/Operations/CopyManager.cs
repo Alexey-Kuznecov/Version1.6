@@ -1,5 +1,6 @@
 ﻿#define Nlog
 
+using NLog.Targets;
 using System;
 using System.IO;
 using System.Threading;
@@ -61,42 +62,44 @@ namespace UnityCommander.Core.IO.Operations
             return _currentTcs.Task;
         }
 
-        private void Copy(OperationContext ctx, string sourcePath, string targetPath)
+        private void Copy(
+            OperationContext ctx,
+            string sourcePath,
+            string targetPath)
         {
             this.source = sourcePath;
-            var src = new DirectoryInfo(sourcePath);
 
             targetRoot = targetPath;
-            Directory.CreateDirectory(targetRoot);
 
-            this.copyFile = new CopyFiles(ctx)
+            var targetDirectory = Path.GetDirectoryName(targetPath);
+
+            copyFile = new CopyFiles(ctx)
             {
-                SourceRoot = sourcePath,
-                TargetRoot = targetPath
+                SourceRoot = Path.GetDirectoryName(sourcePath)!,
+                TargetRoot = Path.GetDirectoryName(targetPath)!
             };
 
             SubscribeEvents();
 
             cancellationTokenSource = new CancellationTokenSource();
 
-            Task.Run(() => CopyTask(cancellationTokenSource.Token), cancellationTokenSource.Token);
+            Task.Run(
+                () => CopyTask(
+                    cancellationTokenSource.Token,
+                    targetPath),
+                cancellationTokenSource.Token);
         }
 
-        private void CopyTask(CancellationToken cancellationToken)
+        private void CopyTask(
+            CancellationToken cancellationToken,
+            string destinationFile)
         {
             cancellationToken.Register(() =>
                 copyFile.ChangeCopyStatus(CopyBehaviors.Cancel));
 
             try
             {
-                if (File.Exists(source))
-                {
-                    copyFile.Copy(source, targetRoot);
-                }
-                else if (Directory.Exists(source))
-                {
-                    copyFile.DeepCopy(source, targetRoot);
-                }
+                copyFile.Copy(source, destinationFile);
 
                 CopyFileFinish?.Invoke();
 

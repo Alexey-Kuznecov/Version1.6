@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -114,12 +115,13 @@ namespace UnityCommander.Operation
                     operation,
                     item);
 
-                var destination = ResolveDestination(
-                    request.Target,
-                    item.SourcePath,
-                    manager);
+                var target = item.DestinationPath;
 
-                var target = operationContext.Info.Target;
+                if (item.ItemType == FileTransferItemType.Directory)
+                {
+                    Directory.CreateDirectory(target);
+                    continue;
+                };
 
                 if (File.Exists(target) ||
                     Directory.Exists(target))
@@ -181,9 +183,10 @@ namespace UnityCommander.Operation
 
                             case FileConflictAction.KeepBoth:
 
-                                destination = ResolveUniqueDestination(target);
+                                target = ResolveUniqueDestination(target);
 
-                                operationContext.Info.Target = destination;
+                                item.DestinationPath = target;
+                                operationContext.Info.Target = target;
                                 break;
 
                             case FileConflictAction.Cancel:
@@ -221,7 +224,6 @@ namespace UnityCommander.Operation
                                   target));
                     }
                 }
-
                 item.ShouldCleanupDestination = true;
 
                 if (request.Type == FileOperationType.Copy)
@@ -229,19 +231,19 @@ namespace UnityCommander.Operation
                     await manager.CopyAsync(
                         operationContext,
                         item.SourcePath,
-                        destination);
+                        item.DestinationPath);
 
                     continue;
                 }
 
                 var strategy = _moveStrategyResolver.Resolve(
                     item.SourcePath,
-                    destination);
+                    item.DestinationPath);
 
                 await strategy.ExecuteAsync(
                     operationContext,
                     item.SourcePath,
-                    destination);
+                    item.DestinationPath);
 
                 deletesSourceImmediately |= strategy.DeletesSource;
             }
@@ -285,24 +287,6 @@ namespace UnityCommander.Operation
 
                 index++;
             }
-        }
-
-        private string ResolveDestination(
-            string target,
-            string source,
-            CopyManager copyManager)
-        {
-            var sourceInfo = new DirectoryInfo(source);
-
-            if (!copyManager.CopyOnlyFolderContent &&
-                sourceInfo.Exists)
-            {
-                return Path.Combine(
-                    target,
-                    sourceInfo.Name);
-            }
-
-            return target;
         }
 
         private OperationContext CreateOperationContext(
@@ -358,26 +342,130 @@ namespace UnityCommander.Operation
                     }));
         }
 
+        //private CopyOperation CreateOperation(FileOperationRequest request)
+        //{
+        //    var items = request.Sources
+        //        .Select(source => new FileTransferItem
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            Status = FileTransferStatus.Pending,
+        //            SourcePath = source,
+        //            DestinationPath = Path.Combine(
+        //                request.Target,
+        //                Path.GetFileName(source))
+        //        })
+        //        .ToList();
+
+        //    return new CopyOperation
+        //    {
+        //        Id = request.OperationId,
+        //        Items = items,
+        //        TotalBytes = items.Sum(x => GetSize(x.SourcePath))
+        //    };
+        //}
+
         private CopyOperation CreateOperation(FileOperationRequest request)
         {
-            var items = request.Sources
-                .Select(source => new FileTransferItem
-                {
-                    Id = Guid.NewGuid(),
-                    Status = FileTransferStatus.Pending,
-                    SourcePath = source,
-                    DestinationPath = Path.Combine(
-                        request.Target,
-                        Path.GetFileName(source))
-                })
-                .ToList();
+            var items = new List<FileTransferItem>();
+
+            foreach (var source in request.Sources)
+            {
+                var destination = ResolveDestination(
+                    request.Target,
+                    source);
+
+                AddSourceItems(
+                    items,
+                    source,
+                    destination);
+            }
 
             return new CopyOperation
             {
                 Id = request.OperationId,
                 Items = items,
-                TotalBytes = items.Sum(x => GetSize(x.SourcePath))
+                TotalBytes = items
+                    .Where(x => x.ItemType == FileTransferItemType.File)
+                    .Sum(x => x.Length)
             };
+        }
+
+        private void AddSourceItems(
+           List<FileTransferItem> items,
+           string sourcePath,
+           string destinationPath)
+        {
+            if (File.Exists(sourcePath))
+            {
+                var info = new FileInfo(sourcePath);
+
+                items.Add(new FileTransferItem
+                {
+                    Id = Guid.NewGuid(),
+                    ItemType = FileTransferItemType.File,
+                    Status = FileTransferStatus.Pending,
+                    SourcePath = sourcePath,
+                    DestinationPath = destinationPath,
+                    Length = info.Length
+                });
+
+                return;
+            }
+
+            if (!Directory.Exists(sourcePath))
+                return;
+
+            items.Add(new FileTransferItem
+            {
+                Id = Guid.NewGuid(),
+                ItemType = FileTransferItemType.Directory,
+                Status = FileTransferStatus.Pending,
+                SourcePath = sourcePath,
+                DestinationPath = destinationPath,
+                Length = 0
+            });
+
+            foreach (var directory in Directory.EnumerateDirectories(sourcePath))
+            {
+                AddSourceItems(
+                    items,
+                    directory,
+                    Path.Combine(
+                        destinationPath,
+                        Path.GetFileName(directory)));
+            }
+
+            foreach (var file in Directory.EnumerateFiles(sourcePath))
+            {
+                AddSourceItems(
+                    items,
+                    file,
+                    Path.Combine(
+                        destinationPath,
+                        Path.GetFileName(file)));
+            }
+        }
+
+        private static string ResolveDestination(
+          string target,
+          string source)
+        {
+            if (File.Exists(source))
+            {
+                return Path.Combine(
+                    target,
+                    Path.GetFileName(source));
+            }
+
+            if (Directory.Exists(source))
+            {
+                return Path.Combine(
+                    target,
+                    Path.GetFileName(
+                        Path.TrimEndingDirectorySeparator(source)));
+            }
+
+            return target;
         }
 
         private void DeleteSources(CopyOperation operation)
