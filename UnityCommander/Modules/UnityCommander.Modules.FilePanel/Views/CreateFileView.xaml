@@ -23,13 +23,13 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock
+            <!--<TextBlock
                 Grid.Row="0"
                 Margin="0,0,0,10"
                 FontSize="16"
                 FontWeight="SemiBold"
                 Foreground="{DynamicResource UcForegroundTertiaryBrush}"
-                Text="Create File" />
+                Text="Create File" />-->
 
             <TextBox
                 Grid.Row="1"

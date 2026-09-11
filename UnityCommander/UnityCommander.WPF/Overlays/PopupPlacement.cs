@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.WPF
+namespace UnityCommander.WPF.Overlays
 {
     public enum PopupPlacement
     {

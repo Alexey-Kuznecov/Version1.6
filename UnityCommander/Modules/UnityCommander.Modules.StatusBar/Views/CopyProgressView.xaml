@@ -26,12 +26,12 @@
             </Grid.RowDefinitions>
 
             <!--  Заголовок  -->
-            <TextBlock
+            <!--<TextBlock
                 Grid.Row="0"
                 FontSize="16"
                 FontWeight="SemiBold"
                 Foreground="White"
-                Text="Операции копирования" />
+                Text="Операции копирования" />-->
 
             <!--  Список операций  -->
             <ScrollViewer
@@ -104,11 +104,12 @@
                                     <!--  ProgressBar  -->
                                     <ProgressBar
                                         Grid.Row="2"
-                                        Height="5"
+                                        Height="6"
+                                        Margin="0,6,0,0"
                                         Maximum="100"
                                         Minimum="0"
+                                        Style="{DynamicResource UcProgressBar}"
                                         Value="{Binding FileProgress}" />
-
                                     <!--  Нижняя панель  -->
                                     <Grid Grid.Row="3">
                                         <Grid.ColumnDefinitions>
@@ -148,13 +149,14 @@
                                                 Margin="0,0,4,0"
                                                 Padding="0"
                                                 Command="{Binding PauseCommand}"
+                                                Style="{DynamicResource UcButton}"
                                                 ToolTip="Пауза">
 
                                                 <icon:IconRender
                                                     Key="Pause"
-                                                    Width="14"
-                                                    Height="14"
-                                                    Brush="Black" />
+                                                    Width="12"
+                                                    Height="12"
+                                                    Brush="White" />
                                             </Button>
 
                                             <!--  Resume  -->
@@ -164,13 +166,14 @@
                                                 Margin="0,0,4,0"
                                                 Padding="0"
                                                 Command="{Binding ResumeCommand}"
+                                                Style="{DynamicResource UcButton}"
                                                 ToolTip="Продолжить">
 
                                                 <icon:IconRender
                                                     Key="Play"
-                                                    Width="14"
-                                                    Height="14"
-                                                    Brush="Black" />
+                                                    Width="12"
+                                                    Height="12"
+                                                    Brush="White" />
                                             </Button>
 
                                             <!--  Cancel  -->
@@ -179,13 +182,14 @@
                                                 Height="30"
                                                 Padding="0"
                                                 Command="{Binding CancelCommand}"
+                                                Style="{DynamicResource UcButton}"
                                                 ToolTip="Отменить">
 
                                                 <icon:IconRender
-                                                    Key="Close"
-                                                    Width="14"
-                                                    Height="14"
-                                                    Brush="Black" />
+                                                    Key="Stop"
+                                                    Width="12"
+                                                    Height="12"
+                                                    Brush="White" />
                                             </Button>
 
                                         </StackPanel>

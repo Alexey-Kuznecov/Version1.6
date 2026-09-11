@@ -17,10 +17,12 @@
             <Label
                 Margin="0"
                 Content="Source:"
-                FontSize="15" />
+                FontSize="15"
+                Foreground="{StaticResource UcForegroundSecondaryBrush}" />
             <TextBox
                 Grid.Row="1"
                 FontSize="14"
+                Style="{DynamicResource UcTextBoxStyle}"
                 Text="{Binding Source}" />
         </Grid>
         <Grid Grid.Row="1" Width="450">
@@ -31,36 +33,51 @@
             <Label
                 Margin="0"
                 Content="Destination:"
-                FontSize="15" />
+                FontSize="15"
+                Foreground="{StaticResource UcForegroundSecondaryBrush}" />
             <TextBox
                 Grid.Row="1"
                 FontSize="14"
+                Style="{DynamicResource UcTextBoxStyle}"
                 Text="{Binding Target}" />
         </Grid>
 
         <WrapPanel Grid.Row="2" Margin="5">
             <Button
+                Width="60"
+                Height="30"
                 Margin="10"
                 Command="{Binding CopyCommand}"
-                Content="Copy" />
+                Content="Copy"
+                Style="{StaticResource ModernButton}" />
             <Button
+                Width="60"
+                Height="30"
                 Margin="10"
                 Command="{Binding MoveCommand}"
-                Content="Move" />
+                Content="Move"
+                Style="{StaticResource ModernButton}" />
             <Button
+                Width="60"
+                Height="30"
                 Margin="10"
                 Command="{Binding CloseDialogCommand}"
-                Content="Close" />
+                Content="Close"
+                Style="{StaticResource ModernButton}" />
         </WrapPanel>
         <WrapPanel Grid.Row="3">
             <CheckBox
                 Margin="2"
                 Content="Копировать только содержимое папки"
-                IsChecked="{Binding CopyOnlyFolderContent}" />
+                Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                IsChecked="{Binding CopyOnlyFolderContent}"
+                Style="{DynamicResource UcCheckBoxStyle}" />
             <CheckBox
                 Margin="2"
                 Content="Закрыть окно полсе копирования"
-                IsChecked="{Binding CloseDialogAfterCopyingComplete}" />
+                Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                IsChecked="{Binding CloseDialogAfterCopyingComplete}"
+                Style="{DynamicResource UcCheckBoxStyle}" />
         </WrapPanel>
     </Grid>
 </UserControl>

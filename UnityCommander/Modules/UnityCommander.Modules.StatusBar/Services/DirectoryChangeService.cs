@@ -9,7 +9,7 @@ using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.StatusBar.ViewModels;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.SystemMetrics.Monitoring;
-using UnityCommander.WPF;
+using UnityCommander.WPF.Overlays;
 
 namespace UnityCommander.Core.Background
 {
@@ -37,7 +37,7 @@ namespace UnityCommander.Core.Background
             _item.Details = new WatchDirectoryViewModel();
             _item.Command = new DelegateCommand<FrameworkElement>(obj =>
             {
-                popup.Show(obj, _item.Details);
+                popup.Show("Отслеживание файлов", obj, _item.Details, PopupPlacement.Top, true);
             });
 
             _tabRegistry = tabRegistry;

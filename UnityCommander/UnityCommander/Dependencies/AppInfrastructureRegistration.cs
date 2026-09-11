@@ -45,6 +45,7 @@ using UnityCommander.UI.Overlay;
 using UnityCommander.UI.Visual;
 using UnityCommander.WPF;
 using UnityCommander.WPF.Input;
+using UnityCommander.WPF.Overlays;
 using UnityCommander.WPF.Widget;
 
 namespace UnityCommander.Dependencies

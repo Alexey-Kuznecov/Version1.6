@@ -29,12 +29,13 @@
             Margin="0,0,0,8"
             FontSize="20"
             FontWeight="SemiBold"
+            Foreground="{StaticResource UcForegroundSecondaryBrush}"
             Text="Файл уже существует" />
 
         <TextBlock
             Grid.Row="1"
             Margin="0,0,0,16"
-            Foreground="{DynamicResource UcSecondaryTextBrush}"
+            Foreground="{DynamicResource UcForegroundSecondaryBrush}"
             Text="Файл или папка с таким именем уже находится в папке назначения." />
 
         <!--  Источник  -->
@@ -42,18 +43,22 @@
             Grid.Row="2"
             Margin="0,0,0,4"
             FontWeight="SemiBold"
+            Foreground="{StaticResource UcForegroundSecondaryBrush}"
             Text="Копируется:" />
 
         <Border
             Grid.Row="3"
             Margin="0,0,0,12"
             Padding="10"
-            Background="{DynamicResource UcListViewBackgroundBrush}"
-            BorderBrush="{DynamicResource UcListViewItemBorderBrush}"
+            Background="{DynamicResource UcSurfaceTertiaryBrush}"
+            BorderBrush="{DynamicResource UcBorderTertiaryBrush}"
             BorderThickness="1"
             CornerRadius="4">
 
-            <TextBlock Text="{Binding SourcePath}" TextTrimming="CharacterEllipsis" />
+            <TextBlock
+                Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                Text="{Binding SourcePath}"
+                TextTrimming="CharacterEllipsis" />
         </Border>
 
         <!--  Конфликтующий объект  -->
@@ -61,16 +66,18 @@
             <TextBlock
                 Margin="0,0,0,4"
                 FontWeight="SemiBold"
+                Foreground="{StaticResource UcForegroundSecondaryBrush}"
                 Text="Конфликтующий объект:" />
 
             <Border
                 Padding="10"
-                Background="{DynamicResource UcListViewBackgroundBrush}"
-                BorderBrush="{DynamicResource UcListViewItemBorderBrush}"
+                Background="{DynamicResource UcSurfaceTertiaryBrush}"
+                BorderBrush="{DynamicResource UcBorderTertiaryBrush}"
                 BorderThickness="1"
                 CornerRadius="4">
 
                 <TextBlock
+                    Foreground="{StaticResource UcForegroundSecondaryBrush}"
                     Text="{Binding DestinationPath}"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="Wrap" />
@@ -85,37 +92,61 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Button
                 Grid.Column="0"
                 HorizontalAlignment="Left"
                 Command="{Binding CancelCommand}"
-                Content="Отмена" />
+                Content="Отмена"
+                Style="{StaticResource ModernButton}" />
 
             <Button
                 Grid.Column="1"
+                Width="80"
+                Height="30"
                 Margin="8,0,0,0"
                 Command="{Binding SkipCommand}"
-                Content="Пропустить" />
+                Content="Пропустить"
+                Style="{StaticResource ModernButton}" />
 
             <Button
                 Grid.Column="2"
+                Width="80"
+                Height="30"
                 Margin="8,0,0,0"
                 Command="{Binding SkipAllCommand}"
-                Content="Пропустить все" />
+                Content="Пропустить все"
+                Style="{StaticResource ModernButton}" />
 
             <Button
                 Grid.Column="3"
+                Width="80"
+                Height="30"
                 Margin="8,0,0,0"
                 Command="{Binding ReplaceCommand}"
-                Content="Заменить" />
+                Content="Заменить"
+                Style="{StaticResource ModernButton}" />
 
             <Button
                 Grid.Column="4"
+                Width="80"
+                Height="30"
                 Margin="8,0,0,0"
                 Command="{Binding ReplaceAllCommand}"
-                Content="Заменить все" />
+                Content="Заменить все"
+                Style="{StaticResource ModernButton}" />
+
+            <Button
+                Grid.Column="5"
+                Width="80"
+                Height="30"
+                Margin="8,0,0,0"
+                Command="{Binding KeepBothCommand}"
+                Content="Сохранить оба"
+                Style="{StaticResource ModernButton}" />
         </Grid>
     </Grid>
 </UserControl>

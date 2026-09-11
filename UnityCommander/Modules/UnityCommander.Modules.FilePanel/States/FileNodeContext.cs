@@ -75,6 +75,9 @@ namespace UnityCommander.Modules.FilePanel.States
 
         public bool Update(IFileItem file)
         {
+            if (file == null)
+                return false;
+
             var current = Find(file.Path);
 
             if (current == null)

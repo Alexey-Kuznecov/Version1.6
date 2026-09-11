@@ -69,7 +69,7 @@ namespace UnityCommander.Services
 
                 if (obj is UserControl)
                 {
-                    var window = new Window
+                    var window = new UcWindow
                     {
                         Content = obj,
 
@@ -169,7 +169,7 @@ namespace UnityCommander.Services
 
             view.DataContext = viewModel;
 
-            var window = new Window
+            var window = new UcWindow
             {
                 Title = options.Title,
                 Content = view,

@@ -10,6 +10,12 @@
     <OutputPath Condition="'$(TargetFramework)' == 'net472'">..\..\..\UnityCommander\UnityCommander\bin\Debug\net472\plugins\IconBrowser</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Factory\**" />
+    <EmbeddedResource Remove="Factory\**" />
+    <None Remove="Factory\**" />
+    <Page Remove="Factory\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Resources\IconsData.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -54,9 +60,6 @@
     <Page Update="Resources\Icons.xaml">
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Factory\" />
   </ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y /d &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\UnityCommander\UnityCommander\bin\Debug\net10.0-windows\plugins\IconBrowser\&quot;" />

@@ -29,6 +29,7 @@
                         <!--  Hover  -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="BorderBrush" Value="{StaticResource UcHoverSecondaryBrush}" />
+                            <Setter Property="BorderBrush" Value="{StaticResource UcHoverTertiaryBrush}" />
                         </Trigger>
 
                         <!--  Recording state  -->

@@ -67,6 +67,18 @@ namespace UnityCommander.ViewModels.Dialogs
                 RequestClose?.Invoke();
             });
 
+        public ICommand KeepBothCommand =>
+            new DelegateCommand(() =>
+            {
+                Result = new FileConflictResult
+                {
+                    Action = FileConflictAction.KeepBoth,
+                    ApplyToAll = true
+                };
+
+                RequestClose?.Invoke();
+            });
+
         public ICommand CancelCommand =>
           new DelegateCommand(() =>
           {

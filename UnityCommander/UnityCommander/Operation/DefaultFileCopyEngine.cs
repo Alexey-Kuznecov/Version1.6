@@ -1,4 +1,5 @@
 ﻿
+using NLog.Targets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -78,13 +79,10 @@ namespace UnityCommander.Operation
             {
                 if (request.Type == FileOperationType.Copy)
                     await CleanupAsync(operation);
-                //else
-                //    DeleteSources(operation);
                 throw;
             }
             catch (Exception e)
             {
-
                 Debug.WriteLine(e);
                 throw;
             }
@@ -228,12 +226,27 @@ namespace UnityCommander.Operation
 
                 if (request.Type == FileOperationType.Copy)
                 {
-                    await manager.CopyAsync(
-                        operationContext,
-                        item.SourcePath,
-                        item.DestinationPath);
+                    try
+                    {
+                        await manager.CopyAsync(
+                            operationContext,
+                            item.SourcePath,
+                            item.DestinationPath);
 
-                    continue;
+                        continue;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        _eventBus.Publish(
+                            this,
+                            new FileStatusChangedEvent(
+                                operationContext.Info.ItemId,
+                                FileTransferStatus.Cancelled,
+                                operationContext.Info.Source,
+                                item.DestinationPath));
+
+                        throw;
+                    }
                 }
 
                 var strategy = _moveStrategyResolver.Resolve(
@@ -342,28 +355,6 @@ namespace UnityCommander.Operation
                     }));
         }
 
-        //private CopyOperation CreateOperation(FileOperationRequest request)
-        //{
-        //    var items = request.Sources
-        //        .Select(source => new FileTransferItem
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            Status = FileTransferStatus.Pending,
-        //            SourcePath = source,
-        //            DestinationPath = Path.Combine(
-        //                request.Target,
-        //                Path.GetFileName(source))
-        //        })
-        //        .ToList();
-
-        //    return new CopyOperation
-        //    {
-        //        Id = request.OperationId,
-        //        Items = items,
-        //        TotalBytes = items.Sum(x => GetSize(x.SourcePath))
-        //    };
-        //}
-
         private CopyOperation CreateOperation(FileOperationRequest request)
         {
             var items = new List<FileTransferItem>();
@@ -446,9 +437,9 @@ namespace UnityCommander.Operation
             }
         }
 
-        private static string ResolveDestination(
-          string target,
-          string source)
+          private static string ResolveDestination(
+            string target,
+            string source)
         {
             if (File.Exists(source))
             {

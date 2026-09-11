@@ -54,7 +54,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                             var state = (FileState)_fileStateService.GetState(path);
                             
                             if (state is null)
-                                return "-";
+                                return "Не задан";
 
                             if (state.Progress == 100)
                                 return "Готово";
@@ -69,6 +69,9 @@ namespace UnityCommander.Modules.FilePanel.Columns
 
                                 OperationStatus.Skipped =>
                                     "Пропущен",
+
+                                OperationStatus.Canceled =>
+                                    "Отменено",
 
                                 OperationStatus.Failed =>
                                     "Ошибка",

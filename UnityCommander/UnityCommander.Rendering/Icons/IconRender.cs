@@ -322,15 +322,15 @@ namespace UnityCommander.Rendering.Icons
                 
             }
 
-            if (e.NewValue is IconKind || e.NewValue is IconRole)
-            {
-                control.DefaultBrush =
-                    IconHub.Resolve(
-                        control.IconKind,
-                        control.Role,
-                        control.Tone,
-                        control.State);
-            }
+            //if (e.NewValue is IconKind || e.NewValue is IconRole)
+            //{
+            //    control.DefaultBrush =
+            //        IconHub.Resolve(
+            //            control.IconKind,
+            //            control.Role,
+            //            control.Tone,
+            //            control.State);
+            //}
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

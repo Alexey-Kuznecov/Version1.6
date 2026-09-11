@@ -1,8 +1,9 @@
 ﻿
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using UnityCommander.WPF.Controls;
 
-namespace UnityCommander.WPF
+namespace UnityCommander.WPF.Overlays
 {
     public sealed class PopupService : IPopupService
     {
@@ -16,45 +17,75 @@ namespace UnityCommander.WPF
         }
 
         public void Show(
+            string title,
             FrameworkElement owner,
             object viewModel,
-            PopupPlacement placement = PopupPlacement.Top)
+            PopupPlacement placement = PopupPlacement.Top,
+            bool isPinnable = false)
         {
             var view = _factory.Create(viewModel);
 
-            Show(owner, view, placement);
+            Show(title, owner, view, placement, isPinnable);
         }
-
+       
         public void Show<TViewModel>(
+            string title,
             FrameworkElement owner,
-            PopupPlacement placement = PopupPlacement.Top)
+            PopupPlacement placement = PopupPlacement.Top,
+            bool isPinnable = false)
         {
             var view = _factory.Create<TViewModel>();
 
-            Show(owner, view, placement);
+            Show(title, owner, view, placement, isPinnable);
         }
 
         private void Show(
+            string title,
             FrameworkElement owner,
             FrameworkElement view,
-            PopupPlacement placement)
+            PopupPlacement placement, 
+            bool isPinnable)
         {
-            _popup = new Popup
+            Popup? popup = null;
+
+            var chrome = new PopupChrome();
+
+            var chromeVm = new PopupChromeViewModel(
+                content: view,
+                title: title,
+                isPinnable: isPinnable,
+                close: () =>
+                {
+                    popup?.SetCurrentValue(
+                        Popup.IsOpenProperty,
+                        false);
+                },
+                setPinned: pinned =>
+                {
+                    if (popup is not null)
+                        popup.StaysOpen = pinned;
+                });
+
+            chrome.DataContext = chromeVm;
+
+            popup = new Popup
             {
-                Child = view,
+                AllowsTransparency = true,
+                Child = chrome,
                 PlacementTarget = owner,
                 Placement = PlacementMode.Custom,
                 CustomPopupPlacementCallback =
-                    (popupSize, targetSize, offset) =>
-                        PlacePopup(
-                            owner,
-                            popupSize,
-                            targetSize,
-                            placement),
+                  (popupSize, targetSize, offset) =>
+                      PlacePopup(
+                          owner,
+                          popupSize,
+                          targetSize,
+                          placement),
                 StaysOpen = false
             };
 
-            _popup.IsOpen = true;
+            _popup = popup;
+            popup.IsOpen = true;
         }
 
         private CustomPopupPlacement[] PlacePopup(

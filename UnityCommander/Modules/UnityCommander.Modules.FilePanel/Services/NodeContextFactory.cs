@@ -18,8 +18,8 @@ using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
 using UnityCommander.Services.Bootstrap;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.WPF;
 using UnityCommander.WPF.DragDrop;
+using UnityCommander.WPF.Overlays;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {

@@ -50,8 +50,8 @@ using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Selection;
 using UnityCommander.Settings;
 using UnityCommander.Settings.Abstactions;
-using UnityCommander.WPF;
 using UnityCommander.WPF.DragDrop;
+using UnityCommander.WPF.Overlays;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {

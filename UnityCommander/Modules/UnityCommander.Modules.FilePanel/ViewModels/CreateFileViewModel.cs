@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityCommander.Common.Panels;
 using UnityCommander.Modules.FilePanel.Models;
 using UnityCommander.Modules.FilePanel.Services;
-using UnityCommander.WPF;
+using UnityCommander.WPF.Overlays;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {

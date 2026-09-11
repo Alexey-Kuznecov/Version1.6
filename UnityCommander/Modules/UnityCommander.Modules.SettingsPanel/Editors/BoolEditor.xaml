@@ -35,47 +35,55 @@
 
                         <!--  Hover  -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="BorderBrush" Value="{StaticResource UcHoverSecondaryBrush}" />
+                            <Setter Property="BorderBrush" Value="{StaticResource UcHoverTertiaryBrush}" />
+                            <Setter Property="Background" Value="{StaticResource UcHoverTertiaryBrush}" />
                         </Trigger>
-                        
+
                     </Style.Triggers>
                 </Style>
             </Border.Style>
 
 
-            <Grid Margin="20,15,0,15">
+            <Grid>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <TextBlock
+                <!--  Название + описание  -->
+                <StackPanel
                     Grid.Column="0"
-                    FontSize="14"
-                    FontWeight="Bold"
-                    Foreground="{StaticResource UcForegroundTertiaryBrush}"
-                    Text="{Binding DisplayName}" />
+                    Margin="0,0,24,0"
+                    VerticalAlignment="Center">
 
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    FontSize="14"
-                    FontWeight="Medium"
-                    Foreground="{StaticResource UcForegroundTertiaryBrush}"
-                    Text="{Binding Description}" />
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                        Text="{Binding DisplayName}" />
+
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="12"
+                        Foreground="{DynamicResource UcForegroundTertiaryBrush}"
+                        Text="{Binding Description}"
+                        TextWrapping="Wrap" />
+
+                </StackPanel>
+
+                <!--  Контрол  -->
                 <ToggleButton
-                    Grid.RowSpan="1"
                     Grid.Column="1"
-                    HorizontalAlignment="Center"
+                    Width="42"
+                    Height="23"
+                    Margin="0,0,30,0"
                     VerticalAlignment="Center"
                     IsChecked="{Binding Value}"
-                    Style="{StaticResource UcToggleButton}" />
+                    Style="{StaticResource UcToggleButton2}" />
+
             </Grid>
+
         </Border>
     </Grid>
 </UserControl>

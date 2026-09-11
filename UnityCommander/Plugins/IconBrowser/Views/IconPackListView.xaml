@@ -19,7 +19,13 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Foreground="{DynamicResource UcForegroundPrimaryBrush}" Text="{Binding Name}" />
+                        <TextBlock
+                            Height="20"
+                            Padding="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                            Text="{Binding Name}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

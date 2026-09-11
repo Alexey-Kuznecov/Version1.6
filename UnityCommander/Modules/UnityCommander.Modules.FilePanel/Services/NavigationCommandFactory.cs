@@ -10,8 +10,7 @@ using UnityCommander.Modules.FilePanel.Dialog;
 using UnityCommander.Modules.FilePanel.Models;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.WPF;
-using static UnityCommander.Common.Commands.CommandNames;
+using UnityCommander.WPF.Overlays;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -144,6 +143,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                         return;
 
                     _popupService.Show<CreateFileViewModel>(
+                        "Создание файла",
                         element, 
                         PopupPlacement.Bottom);
                 }),
@@ -162,8 +162,9 @@ namespace UnityCommander.Modules.FilePanel.Services
                         return;
 
                     _popupService.Show<CreateFolderViewModel>(
-                       element,
-                       PopupPlacement.Bottom);
+                        "Создание папки",
+                        element,
+                        PopupPlacement.Bottom);
                 }),
                 canExecute);
         }

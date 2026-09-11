@@ -102,7 +102,6 @@
         </Grid.ContextMenu>
 
         <!--<ContentControl Content="{Binding Brush}" Template="{Binding RelativeSource={RelativeSource AncestorType=local:IconMakerView}, Path=DataContext.ViewMode, Converter={StaticResource IconViewTemplateConverter}}" />-->
-
         <ContentControl
             Width="{Binding Scale}"
             Height="{Binding Scale}"
@@ -112,22 +111,49 @@
             Template="{Binding Template}">
 
             <ContentControl.ToolTip>
-                <ToolTip>
-                    <StackPanel>
-                        <ContentControl
-                            Content="{Binding Brush}"
-                            Style="{Binding Style}"
-                            Tag="{Binding Icon.Id}"
-                            Template="{Binding Template}" />
-                        <TextBlock Text="{Binding Icon.Name}" />
-                    </StackPanel>
+                <ToolTip
+                    Padding="0"
+                    Background="Transparent"
+                    BorderThickness="0">
+
+                    <Border
+                        MinWidth="90"
+                        MinHeight="80"
+                        Padding="10"
+                        Background="{DynamicResource UcSurfacePrimaryBrush}"
+                        BorderBrush="{DynamicResource UcBorderTertiaryBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6">
+
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                            <!--  Иконка  -->
+                            <ContentControl
+                                Width="40"
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                Content="{Binding Brush}"
+                                Style="{Binding Style}"
+                                Tag="{Binding Icon.Id}"
+                                Template="{Binding Template}" />
+
+                            <!--  Название  -->
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                HorizontalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                                Text="{Binding Icon.Name}"
+                                TextAlignment="Center" />
+                        </StackPanel>
+                    </Border>
                 </ToolTip>
             </ContentControl.ToolTip>
-
 
             <ContentControl.InputBindings>
                 <MouseBinding Command="{Binding SelectPackCommand}" Gesture="LeftClick" />
             </ContentControl.InputBindings>
+
         </ContentControl>
     </Grid>
 

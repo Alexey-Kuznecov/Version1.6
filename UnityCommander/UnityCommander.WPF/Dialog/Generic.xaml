@@ -1,0 +1,119 @@
+﻿
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
+    xmlns:local="clr-namespace:UnityCommander.WPF.Dialog"
+    xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
+
+    <Style TargetType="{x:Type local:UcWindow}">
+
+        <Setter Property="Template">
+
+            <Setter.Value>
+
+                <ControlTemplate TargetType="{x:Type local:UcWindow}">
+
+                    <Border
+                        Background="{DynamicResource UcSurfaceTertiaryBrush}"
+                        BorderBrush="{DynamicResource UcForegroundSecondaryBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+
+                        <Grid>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="36" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--  HEADER  -->
+
+                            <Grid Grid.Row="0">
+
+                                <TextBlock
+                                    Margin="12,0,140,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                                    Text="{TemplateBinding Title}" />
+
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+
+
+                                    <Button
+                                        Width="30"
+                                        Height="30"
+                                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                                        Command="{Binding MinimizeCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{DynamicResource UcButton}"
+                                        Visibility="{Binding IsPinnableVisibility}">
+
+                                        <icon:IconRender
+                                            Key="min-window"
+                                            Width="14"
+                                            Height="14"
+                                            Brush="{DynamicResource UcForegroundBrush}" />
+                                    </Button>
+
+                                    <Button
+                                        Width="30"
+                                        Height="30"
+                                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                                        Command="{Binding MaximizeCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{DynamicResource UcButton}"
+                                        Visibility="{Binding IsPinnableVisibility}">
+
+                                        <icon:IconRender
+                                            Key="max-window"
+                                            Width="14"
+                                            Height="14"
+                                            Brush="{DynamicResource UcForegroundBrush}" />
+                                    </Button>
+
+                                    <Button
+                                        Width="30"
+                                        Height="30"
+                                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                                        Command="{Binding CloseCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{DynamicResource UcButton}"
+                                        Visibility="{Binding IsPinnableVisibility}">
+
+                                        <icon:IconRender
+                                            Key="close"
+                                            Width="14"
+                                            Height="14"
+                                            Brush="{DynamicResource UcForegroundBrush}" />
+                                    </Button>
+
+                                </StackPanel>
+
+                            </Grid>
+
+                            <!--  CONTENT  -->
+
+                            <Border Grid.Row="1" Background="{DynamicResource UcApplicationBackgroundBrush}">
+
+                                <AdornerDecorator>
+
+                                    <ContentPresenter
+                                        Content="{TemplateBinding Content}"
+                                        ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}" />
+
+                                </AdornerDecorator>
+
+                            </Border>
+
+                        </Grid>
+
+                    </Border>
+
+                </ControlTemplate>
+
+            </Setter.Value>
+
+        </Setter>
+
+    </Style>
+
+</ResourceDictionary>

@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Popup\**" />
+    <EmbeddedResource Remove="Popup\**" />
+    <None Remove="Popup\**" />
+    <Page Remove="Popup\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="9.0.537" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
   </ItemGroup>
@@ -15,11 +22,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Services\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces\UnityCommander.Services.Interfaces.csproj" />
     <ProjectReference Include="..\UnityCommander.Common\UnityCommander.Common.csproj" />
-    <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
+    <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Popup\" />
+    <Compile Update="Overlays\PopupChrome.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

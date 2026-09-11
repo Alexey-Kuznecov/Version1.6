@@ -40,9 +40,9 @@
 
     <SolidColorBrush x:Key="UcBorderPrimaryBrush" Color="{StaticResource UcBorderColor}" />
     <SolidColorBrush x:Key="UcBorderSecondaryBrush" Color="{StaticResource UcDarkColor}" />
-    <SolidColorBrush x:Key="UcBorderTertiaryBrush" Color="{StaticResource UcDarkColor}" />
+    <SolidColorBrush x:Key="UcBorderTertiaryBrush" Color="#444647" />
 
-    <SolidColorBrush x:Key="UcAccentPrimaryBrush" Color="{StaticResource UcBlueColor}" />
+    <SolidColorBrush x:Key="UcAccentPrimaryBrush" Color="#3582FF" />
     <SolidColorBrush x:Key="UcAccentSecondaryBrush" Color="{StaticResource UcDarkColor}" />
     <SolidColorBrush x:Key="UcAccentTertiaryBrush" Color="{StaticResource UcPinkColor}" />
 

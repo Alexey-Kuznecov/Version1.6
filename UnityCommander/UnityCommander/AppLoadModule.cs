@@ -173,7 +173,7 @@ namespace UnityCommander
                  typeof(FileConflictDialogViewModel),
                  new DialogOptions()
                  {
-                     Height = 320,
+                     Height = 400,
                      Width = 600,
                      IsResizable = true,
                      Title = "Решение конфликтов"

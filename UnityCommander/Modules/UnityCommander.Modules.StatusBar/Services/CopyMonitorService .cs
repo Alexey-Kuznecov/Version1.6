@@ -5,7 +5,7 @@ using UnityCommander.Abstractions.IO;
 using UnityCommander.Common.StatusBar;
 using UnityCommander.Core.IO;
 using UnityCommander.Modules.StatusBar.ViewModels;
-using UnityCommander.WPF;
+using UnityCommander.WPF.Overlays;
 
 namespace UnityCommander.Modules.StatusBar.Services
 {
@@ -38,7 +38,8 @@ namespace UnityCommander.Modules.StatusBar.Services
                 new CopyProgressViewModel(operationService);
 
             _item.Command = new DelegateCommand<FrameworkElement>(
-                obj => popup.Show(obj, _item.Details));
+                obj => popup.Show(
+                  "Операции копирования", obj, _item.Details, PopupPlacement.Top, true));
         }
 
         public Task RunAsync(CancellationToken token)

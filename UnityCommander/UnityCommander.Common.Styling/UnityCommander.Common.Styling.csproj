@@ -6,9 +6,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Resources\Default\Ribbon\**" />
     <Compile Remove="Settings\**" />
+    <EmbeddedResource Remove="Resources\Default\Ribbon\**" />
     <EmbeddedResource Remove="Settings\**" />
+    <None Remove="Resources\Default\Ribbon\**" />
     <None Remove="Settings\**" />
+    <Page Remove="Resources\Default\Ribbon\**" />
     <Page Remove="Settings\**" />
   </ItemGroup>
   <ItemGroup>
@@ -65,8 +69,5 @@
     <ProjectReference Include="..\UnityCommander.Theme\UnityCommander.Theme.csproj" />
     <ProjectReference Include="..\UnityCommander.UI\UnityCommander.UI.csproj" />
     <ProjectReference Include="..\UnityCommander.WPF\UnityCommander.WPF.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\Default\Ribbon\" />
   </ItemGroup>
 </Project>

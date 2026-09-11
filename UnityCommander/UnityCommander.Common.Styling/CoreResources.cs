@@ -6,6 +6,7 @@ namespace UnityCommander.Common.Styling
         public static readonly string[] ResourceUris = new string[] {
 
             //"/UnityCommander.Common.Styling;component/Resources/Default/Colors.xaml",
+            "/UnityCommander.WPF;component/Dialog/Generic.xaml",
             "/UnityCommander.Common.Styling;component/Converters/GeneralConverters.xaml",
             "/UnityCommander.Common.Styling;component/Resources/Default/Brushes.xaml",
             "/UnityCommander.Common.Styling;component/Resources/Default/Controls.xaml",

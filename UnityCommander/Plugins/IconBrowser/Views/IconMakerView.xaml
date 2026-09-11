@@ -10,10 +10,27 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <UserControl.Resources />
+    <UserControl.Resources>
+        <!--<DataTemplate x:Key="ComboBoxItemTemplate">
+
+            <StackPanel Orientation="Horizontal">
+
+                <Border
+                    Width="14"
+                    Height="14"
+                    Margin="0,0,8,0"
+                    Background="{Binding Brush}"
+                    CornerRadius="3" />
+
+                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+
+            </StackPanel>
+
+        </DataTemplate>-->
+    </UserControl.Resources>
 
 
-    <Grid Background="{DynamicResource UcApplicationBackgroundBrush}">
+    <Grid Background="{DynamicResource UcSurfaceSecondaryBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
             <RowDefinition Height="45" />
@@ -27,7 +44,10 @@
         </Grid.ColumnDefinitions>
 
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+        <Menu
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Background="{DynamicResource UcSurfaceTertiaryBrush}">
             <MenuItem
                 FontSize="12"
                 Foreground="White"
@@ -86,14 +106,14 @@
         <TextBox
             Grid.Row="1"
             Grid.Column="0"
-            Width="200"
+            Width="210"
             Height="35"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             AllowDrop="True"
-            Background="{DynamicResource UcSurfaceTertiaryBrush}"
-            BorderThickness="0"
             FontSize="16"
             FontStyle="Italic"
-            Tag="Имя..."
+            Style="{DynamicResource UcTextBoxStyle}"
             Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <local:IconPackListView
@@ -102,11 +122,14 @@
             Margin="5"
             DataContext="{Binding IconPackList}" />
 
+
         <ScrollViewer
             Grid.Row="1"
             Grid.RowSpan="2"
             Grid.Column="1"
             Margin="5"
+            Background="{DynamicResource UcSurfaceSecondaryBrush}"
+            Style="{DynamicResource UcScrollViewerStyle}"
             VerticalScrollBarVisibility="Auto">
 
             <ItemsControl
@@ -146,16 +169,23 @@
 
                 <ComboBox
                     Width="160"
+                    Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                    BorderBrush="{DynamicResource UcBorderPrimaryBrush}"
+                    Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                    ItemContainerStyle="{StaticResource UcComboBoxItemStyle}"
                     ItemTemplate="{StaticResource ComboBoxItemTemplate}"
                     ItemsSource="{Binding AvailableColors}"
-                    SelectedItem="{Binding SelectedColor, Mode=TwoWay}" />
+                    SelectedItem="{Binding SelectedColor, Mode=TwoWay}"
+                    Style="{DynamicResource UcComboBoxStyle}" />
 
                 <CheckBox
                     Grid.Column="1"
                     Margin="15,0,0,0"
                     VerticalAlignment="Center"
                     Content="Monochrome"
-                    IsChecked="{Binding CurrentTheme.IsMonochrome, Mode=TwoWay}" />
+                    Foreground="{StaticResource UcForegroundSecondaryBrush}"
+                    IsChecked="{Binding CurrentTheme.IsMonochrome, Mode=TwoWay}"
+                    Style="{DynamicResource UcCheckBoxStyle}" />
 
                 <Slider
                     Grid.Column="2"
@@ -163,6 +193,7 @@
                     Margin="15,0,0,0"
                     Maximum="256"
                     Minimum="12"
+                    Style="{StaticResource UcSliderStyle}"
                     Value="{Binding CurrentTheme.Scale}" />
 
                 <Button
@@ -171,7 +202,8 @@
                     Margin="0,3,10,0"
                     HorizontalAlignment="Right"
                     Command="{Binding SaveThemeCommand}"
-                    Content="Save Theme" />
+                    Content="Save Theme"
+                    Style="{StaticResource ModernButton}" />
             </Grid>
         </Border>
     </Grid>
