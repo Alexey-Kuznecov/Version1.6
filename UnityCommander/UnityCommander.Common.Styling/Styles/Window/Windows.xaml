@@ -30,7 +30,7 @@
                     </Border.Effect>
                 </Border>
                 <!--  The main window content  -->
-                <Grid Background="{DynamicResource UcSurfacePrimaryBrush}">
+                <Grid Background="{DynamicResource UcApplicationBackgroundBrush}">
                     <!--  Corner clipping  -->
                     <Grid.RowDefinitions>
                         <!--  Title Bar  -->
@@ -52,7 +52,7 @@
                         VerticalAlignment="Top"
                         FontSize="16"
                         IsMainMenu="True"
-                        Style="{StaticResource UcMenu}"
+                        Style="{DynamicResource UcMenu}"
                         WindowChrome.IsHitTestVisibleInChrome="True">
 
                         <Menu.Resources>
@@ -70,7 +70,7 @@
                             VerticalAlignment="Center"
                             Background="{DynamicResource UcAccentTertiaryBrush}"
                             Foreground="{DynamicResource UcForegroundTertiaryBrush}"
-                            Style="{StaticResource UcMainMenuItem}">
+                            Style="{DynamicResource UcMainMenuItem}">
 
                             <MenuItem.Header>
                                 <icon:IconRender
@@ -122,7 +122,7 @@
                         <Viewbox Grid.Column="1">
                             <TextBlock
                                 FontSize="10"
-                                Style="{StaticResource HeaderText}"
+                                Style="{DynamicResource HeaderText}"
                                 Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue='Welcome, friend!'}" />
                         </Viewbox>
                         <!--  Window Buttons  -->
@@ -131,20 +131,20 @@
                                 Command="{Binding ImportCustomWindow.CollapseRibbonCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}"
                                 Content="{Binding ImportCustomWindow.CollapseContent}"
-                                Style="{StaticResource WindowCollapseControlButton}" />
+                                Style="{DynamicResource WindowCollapseControlButton}" />
                             <Button
                                 Command="{Binding ImportCustomWindow.MinimizeCommand}"
                                 Content="_"
-                                Style="{StaticResource WindowControlButton}" />
+                                Style="{DynamicResource WindowControlButton}" />
                             <Button
                                 Command="{Binding ImportCustomWindow.MaximizeCommand}"
                                 Content="[ ]"
-                                Style="{StaticResource WindowControlButton}" />
+                                Style="{DynamicResource WindowControlButton}" />
                             <Button
                                 Command="{Binding ImportCustomWindow.CloseCommand}"
                                 CommandParameter="{Binding ImportCustomWindow.Window}"
                                 Content="X"
-                                Style="{StaticResource WindowCloseButton}" />
+                                Style="{DynamicResource WindowCloseButton}" />
                         </StackPanel>
                     </Grid>
                     <!--  Drop shadow  -->

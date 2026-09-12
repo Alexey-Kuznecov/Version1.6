@@ -173,7 +173,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                    <Grid Background="{DynamicResource UcSurfacePrimaryBrush}" SnapsToDevicePixels="true">
+                    <Grid Background="{DynamicResource UcListViewBackgroundBrush}" SnapsToDevicePixels="true">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />

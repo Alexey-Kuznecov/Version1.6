@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -111,11 +112,11 @@ namespace UnityCommander.Core.IO.Operations
 
             FileStarted?.Invoke(copyInfo);
 
-            if (File.Exists(newFile))
-            {
-                copyBehaviors = CopyBehaviors.Pause;
-                RaiseFileAlreadyExistsEvent(copyInfo);
-            }
+            //if (File.Exists(newFile))
+            //{
+            //    copyBehaviors = CopyBehaviors.Pause;
+            //    RaiseFileAlreadyExistsEvent(copyInfo);
+            //}
 
             fileOperation.XCopy(
                 oldFile,

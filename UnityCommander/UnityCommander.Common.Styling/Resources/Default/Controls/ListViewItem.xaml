@@ -80,7 +80,7 @@
     <Style x:Key="UcListViewItemNormal" TargetType="{x:Type ListViewItem}">
         <Setter Property="Background" Value="{DynamicResource UcAccentSecondaryBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource UcListViewItemForegroundBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource UcListViewItemBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource UcAccentSecondaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -103,11 +103,11 @@
                     <ControlTemplate.Triggers>
 
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcListViewItemHoverBrush}" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcUcAccentHoverSecondaryBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcListViewItemSelectedBrush}" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcUcAccentSelectedSecondaryBrush}" />
 
                             <Setter Property="Foreground" Value="{DynamicResource UcListViewItemSelectedForegroundBrush}" />
                         </Trigger>

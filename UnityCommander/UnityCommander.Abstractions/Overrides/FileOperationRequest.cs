@@ -11,5 +11,7 @@ namespace UnityCommander.Abstractions.Overrides
         public string? Target { get; set; }
         public bool ShowDialog { get; set; }
         public FileOperationType Type { get; init; }
+
+        public FileConflictResolutionPolicy ConflictPolicy { get; init; }
     }
 }

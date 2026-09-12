@@ -53,7 +53,7 @@
                     <ControlTemplate.Triggers>
 
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="Background" Value="#3D5582" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource UcUcAccentHoverSecondaryBrush}" />
                         </Trigger>
 
                         <!--<Trigger Property="IsPressed" Value="True">
@@ -262,7 +262,7 @@
                                     Height="16"
                                     IsEnabled="{Binding IsEnabled}"
                                     State="Disabled"
-                                    Stroke="#B8B8B8" />
+                                    Stroke="White" />
                             </ContentControl.Content>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonUp">

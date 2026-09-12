@@ -41,7 +41,7 @@
                         Height="12"
                         Margin="5,0,5,0"
                         State="Disabled"
-                        Stroke="#B8B8B8" />
+                        Stroke="{StaticResource UcForegroundSecondaryBrush}" />
 
                     <!--  Информация  -->
                     <Grid Grid.Column="1">

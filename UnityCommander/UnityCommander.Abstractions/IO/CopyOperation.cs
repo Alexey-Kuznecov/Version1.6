@@ -10,6 +10,9 @@ namespace UnityCommander.Abstractions.IO
 
         public OperationState? State { get; }
 
+        public FileConflictResolutionPolicy ConflictPolicy { get; set; }
+        = FileConflictResolutionPolicy.Ask;
+
         public long TotalBytes { get; set; }
     }
 }

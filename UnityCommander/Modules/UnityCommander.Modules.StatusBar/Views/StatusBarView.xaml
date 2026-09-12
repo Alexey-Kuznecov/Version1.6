@@ -17,7 +17,7 @@
     <UserControl.Resources>
         <Style x:Key="UcIconControlStyle2" TargetType="ContentControl">
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
             <Setter Property="ToolTip" Value="{Binding Description}" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -65,9 +65,9 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
-                            <TextBlock Foreground="White" Text="{Binding Title}" />
-                            <TextBlock Foreground="White" Text=" | " />
-                            <TextBlock Foreground="White" Text="{Binding Description}" />
+                            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding Title}" />
+                            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text=" | " />
+                            <TextBlock Foreground="{DynamicResource UcForegroundSecondaryBrush}" Text="{Binding Description}" />
                         </WrapPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -97,12 +97,14 @@
                                         Progress="{Binding Progress}"
                                         ProgressBrush="DodgerBlue"
                                         StrokeThickness="2"
-                                        TrackBrush="#333">
+                                        TrackBrush="#808082">
                                         <icon:IconRender
                                             Key="{Binding Icon}"
                                             Width="12"
                                             Height="12"
-                                            Brush="White" />
+                                            Brush="{DynamicResource StatusBarForegroundBrush}"
+                                            Stroke="{DynamicResource StatusBarForegroundBrush}"
+                                            StrokeThickness="3" />
 
                                     </control:CircularProgress>
                                 </ContentControl.Content>

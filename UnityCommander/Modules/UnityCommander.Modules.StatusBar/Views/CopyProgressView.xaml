@@ -72,7 +72,7 @@
                                             Margin="0,0,10,0"
                                             FontSize="13"
                                             FontWeight="SemiBold"
-                                            Foreground="White"
+                                            Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                                             Text="{Binding Title}"
                                             TextTrimming="CharacterEllipsis"
                                             ToolTip="{Binding Title}" />
@@ -156,7 +156,7 @@
                                                     Key="Pause"
                                                     Width="12"
                                                     Height="12"
-                                                    Brush="White" />
+                                                    Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                                             </Button>
 
                                             <!--  Resume  -->
@@ -173,7 +173,7 @@
                                                     Key="Play"
                                                     Width="12"
                                                     Height="12"
-                                                    Brush="White" />
+                                                    Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                                             </Button>
 
                                             <!--  Cancel  -->
@@ -189,7 +189,7 @@
                                                     Key="Stop"
                                                     Width="12"
                                                     Height="12"
-                                                    Brush="White" />
+                                                    Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                                             </Button>
 
                                         </StackPanel>

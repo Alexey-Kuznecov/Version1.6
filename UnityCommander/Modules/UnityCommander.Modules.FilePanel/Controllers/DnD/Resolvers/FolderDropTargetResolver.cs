@@ -1,7 +1,5 @@
 ﻿
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
 using UnityCommander.Common.Models.Directory;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Modules.FilePanel.States;
@@ -14,8 +12,8 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
     {
         public bool CanResolve(DragDropContext context)
         {
-            Debug.WriteLine(
-                $"[FolderDropTargetResolver] TargetItem: {context.Target?.GetType().FullName ?? "null"}");
+            //Debug.WriteLine(
+            //    $"[FolderDropTargetResolver] TargetItem: {context.Target?.GetType().FullName ?? "null"}");
 
             return context.Target is FolderModel;
         }

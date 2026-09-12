@@ -27,7 +27,6 @@ namespace UnityCommander.Operation
         private readonly MoveStrategyResolver _moveStrategyResolver;
         private readonly IBackgroundWorkController _backgroundWorkController;
         private readonly IEventBus _eventBus;
-        private FileConflictResolutionPolicy _conflictPolicy;
 
         public DefaultFileCopyEngine(
             ICopyOperationService operationService,
@@ -129,7 +128,7 @@ namespace UnityCommander.Operation
                         SourcePath = item.SourcePath,
                         DestinationPath = target
                     };
-                    if (_conflictPolicy == FileConflictResolutionPolicy.Ask)
+                    if (operation.ConflictPolicy == FileConflictResolutionPolicy.Ask)
                     {
                         var result = await _conflictResolver.ResolveAsync(
                             conflict,
@@ -138,6 +137,7 @@ namespace UnityCommander.Operation
                         switch (result)
                         {
                             case FileConflictAction.Replace:
+                                
                                 _eventBus.Publish(
                                 this,
                                 new FileStatusChangedEvent(
@@ -149,6 +149,7 @@ namespace UnityCommander.Operation
                                 break;
 
                             case FileConflictAction.Skip:
+
                                 _eventBus.Publish(
                                  this,
                                  new FileStatusChangedEvent(
@@ -160,13 +161,13 @@ namespace UnityCommander.Operation
                                 continue;
 
                             case FileConflictAction.ReplaceAll:
-                                _conflictPolicy =
+                                operation.ConflictPolicy =
                                     FileConflictResolutionPolicy.Replace;
 
                                 break;
 
                             case FileConflictAction.SkipAll:
-                                _conflictPolicy =
+                                operation.ConflictPolicy =
                                     FileConflictResolutionPolicy.Skip;
 
                                 _eventBus.Publish(
@@ -180,11 +181,12 @@ namespace UnityCommander.Operation
                                 continue;
 
                             case FileConflictAction.KeepBoth:
-
+                               
                                 target = ResolveUniqueDestination(target);
 
                                 item.DestinationPath = target;
                                 operationContext.Info.Target = target;
+
                                 break;
 
                             case FileConflictAction.Cancel:
@@ -199,7 +201,7 @@ namespace UnityCommander.Operation
                                 return;
                         }
                     }
-                    else if (_conflictPolicy == FileConflictResolutionPolicy.Skip)
+                    else if (operation.ConflictPolicy == FileConflictResolutionPolicy.Skip)
                     {
                         operationContext.Info.Skipped = true;
                         _eventBus.Publish(
@@ -211,7 +213,7 @@ namespace UnityCommander.Operation
                                   target));
                         continue;
                     }
-                    else if (_conflictPolicy == FileConflictResolutionPolicy.Replace)
+                    else if (operation.ConflictPolicy == FileConflictResolutionPolicy.Replace)
                     {
                         _eventBus.Publish(
                               this,
@@ -222,6 +224,7 @@ namespace UnityCommander.Operation
                                   target));
                     }
                 }
+
                 item.ShouldCleanupDestination = true;
 
                 if (request.Type == FileOperationType.Copy)

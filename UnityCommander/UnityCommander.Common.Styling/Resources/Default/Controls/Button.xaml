@@ -35,7 +35,7 @@
 
                         <!--  Hover  -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Background" Property="Background" Value="#323334" />
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource UcHoverPrimaryBrush}" />
                         </Trigger>
 
                         <!--  Pressed  -->

@@ -13,8 +13,8 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
     {
         public bool CanResolve(DragDropContext context)
         {
-            Debug.WriteLine(
-                $"[DirectoryDropTargetResolver] TargetItem: {context.Target?.GetType().FullName ?? "null"}");
+            //Debug.WriteLine(
+            //    $"[DirectoryDropTargetResolver] TargetItem: {context.Target?.GetType().FullName ?? "null"}");
 
             return context.VisualTarget is ListView;
         }

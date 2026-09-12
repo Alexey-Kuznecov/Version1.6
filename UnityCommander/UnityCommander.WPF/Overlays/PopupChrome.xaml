@@ -44,7 +44,7 @@
                             Key="{Binding PinIconKey}"
                             Width="14"
                             Height="14"
-                            Brush="{DynamicResource UcForegroundBrush}" />
+                            Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                     </Button>
 
                     <Button
@@ -57,7 +57,7 @@
                             Key="Close"
                             Width="14"
                             Height="14"
-                            Brush="{DynamicResource UcForegroundBrush}" />
+                            Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                     </Button>
 
                 </StackPanel>

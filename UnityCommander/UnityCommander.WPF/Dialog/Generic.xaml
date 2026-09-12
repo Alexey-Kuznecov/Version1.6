@@ -16,7 +16,7 @@
 
                     <Border
                         Background="{DynamicResource UcSurfaceTertiaryBrush}"
-                        BorderBrush="{DynamicResource UcForegroundSecondaryBrush}"
+                        BorderBrush="{DynamicResource UcWindowChromeBorderBrush}"
                         BorderThickness="1"
                         CornerRadius="8">
 
@@ -52,7 +52,7 @@
                                             Key="min-window"
                                             Width="14"
                                             Height="14"
-                                            Brush="{DynamicResource UcForegroundBrush}" />
+                                            Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                                     </Button>
 
                                     <Button
@@ -67,7 +67,7 @@
                                             Key="max-window"
                                             Width="14"
                                             Height="14"
-                                            Brush="{DynamicResource UcForegroundBrush}" />
+                                            Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                                     </Button>
 
                                     <Button
@@ -82,7 +82,7 @@
                                             Key="close"
                                             Width="14"
                                             Height="14"
-                                            Brush="{DynamicResource UcForegroundBrush}" />
+                                            Stroke="{DynamicResource UcForegroundSecondaryBrush}" />
                                     </Button>
 
                                 </StackPanel>

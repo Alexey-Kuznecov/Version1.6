@@ -26,7 +26,7 @@
     <SolidColorBrush x:Key="UcSurfaceSecondaryBrush" Color="{StaticResource UcSurfaceColor}" />
     <SolidColorBrush x:Key="UcSurfaceTertiaryBrush" Color="{StaticResource UcLightSurfaceColor}" />
 
-    <SolidColorBrush x:Key="UcHoverPrimaryBrush" Color="{StaticResource UcDarkColor}" />
+    <SolidColorBrush x:Key="UcHoverPrimaryBrush" Color="{StaticResource UcLightSurfaceColor}" />
     <SolidColorBrush x:Key="UcHoverSecondaryBrush" Color="{StaticResource UcLightSurfaceColor}" />
     <SolidColorBrush x:Key="UcHoverTertiaryBrush" Color="#3C3D3E" />
 
@@ -46,6 +46,9 @@
     <SolidColorBrush x:Key="UcAccentSecondaryBrush" Color="{StaticResource UcDarkColor}" />
     <SolidColorBrush x:Key="UcAccentTertiaryBrush" Color="{StaticResource UcPinkColor}" />
 
+    <SolidColorBrush x:Key="UcUcAccentHoverSecondaryBrush" Color="{StaticResource UcBorderColor}" />
+    <SolidColorBrush x:Key="UcUcAccentSelectedSecondaryBrush" Color="#27292A" />
+
 
     <!--  Titlebar Brushes  -->
     <Color x:Key="UcTitleBarShadowColor">#191A1B</Color>
@@ -62,9 +65,9 @@
 
     <SolidColorBrush x:Key="UcInformationBrush" Color="#1565C0" />
 
-    <SolidColorBrush x:Key="UcListView.BackgroundBrush" Color="#202020" />
-    <SolidColorBrush x:Key="UcListView.ForegroundBrush" Color="#202020" />
-    <SolidColorBrush x:Key="UcListView.BorderBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewBackgroundBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewForegroundBrush" Color="#202020" />
+    <SolidColorBrush x:Key="UcListViewBorderBrush" Color="#202020" />
 
     <SolidColorBrush x:Key="UcListBoxBackgroundBrush" Color="#373839" />
     <SolidColorBrush x:Key="UcListBoxForegroundBrush" Color="#808082" />
@@ -98,4 +101,20 @@
     <SolidColorBrush x:Key="UcMenuBorderBrush" Color="#202020" />
 
     <SolidColorBrush x:Key="UcSeparatorBrush" Color="#202020" />
+
+    <!--  WINDOWS CHROME  -->
+
+    <SolidColorBrush x:Key="UcWindowChromeForegroundBrush" Color="#373839" />
+    <SolidColorBrush x:Key="UcWindowChromeBorderBrush" Color="#505052" />
+
+    <!--  SIDEBAR  -->
+
+    <SolidColorBrush x:Key="UcSideBarItemSelectedBrush" Color="#343638" />
+    <SolidColorBrush x:Key="UcSideBarItemHoverBrush" Color="#27282A" />
+
+    <!--  STATUS BAR  -->
+
+    <SolidColorBrush x:Key="StatusBarForegroundBrush" Color="White" />
+    <SolidColorBrush x:Key="StatusBarTrackBrush" Color="#343638" />
+
 </ResourceDictionary>
