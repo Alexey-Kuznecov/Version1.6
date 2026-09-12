@@ -30,7 +30,7 @@ namespace UnityCommander
         {
             var catalog = new ThemeCatalog();
 
-            ThemeManager.Initialize(catalog, "Light");
+            ThemeManager.Initialize(catalog, "Dark");
 
             var resources =
                CoreResources.ResourceUris

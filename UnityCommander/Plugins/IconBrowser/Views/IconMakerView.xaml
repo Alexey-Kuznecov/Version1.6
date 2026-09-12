@@ -50,56 +50,56 @@
             Background="{DynamicResource UcSurfaceTertiaryBrush}">
             <MenuItem
                 FontSize="12"
-                Foreground="White"
+                Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                 Header="File">
                 <MenuItem
                     Command="{Binding AddNewIconCommand}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Open" />
                 <MenuItem
                     Command="{Binding ImportIconCommand}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Импорт Svg" />
                 <MenuItem
                     Command="{Binding SaveCommand}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Сохранить" />
-                <Separator />
+                <Separator Style="{StaticResource UcMenuSeparator}" />
                 <MenuItem
                     Command="{Binding ShutdownCommand}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Close" />
             </MenuItem>
             <MenuItem
                 FontSize="12"
-                Foreground="White"
+                Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                 Header="View">
                 <MenuItem
                     Command="{Binding SetViewCommand}"
                     CommandParameter="{x:Static models:IconViewMode.List}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Lists" />
 
                 <MenuItem
                     Command="{Binding SetViewCommand}"
                     CommandParameter="{x:Static models:IconViewMode.Tile}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Tiles" />
 
                 <MenuItem
                     Command="{Binding SetViewCommand}"
                     CommandParameter="{x:Static models:IconViewMode.Card}"
-                    Foreground="White"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                     Header="Cards" />
             </MenuItem>
             <MenuItem
                 FontSize="12"
-                Foreground="White"
+                Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                 Header="Tools">
-                <MenuItem Foreground="White" Header="Resource" />
-                <MenuItem Foreground="White" Header="Palette" />
-                <MenuItem Foreground="White" Header="Formatter" />
-                <MenuItem Foreground="White" Header="Plugins" />
+                <MenuItem Foreground="{DynamicResource UcForegroundSecondaryBrush}" Header="Resource" />
+                <MenuItem Foreground="{DynamicResource UcForegroundSecondaryBrush}" Header="Palette" />
+                <MenuItem Foreground="{DynamicResource UcForegroundSecondaryBrush}" Header="Formatter" />
+                <MenuItem Foreground="{DynamicResource UcForegroundSecondaryBrush}" Header="Plugins" />
             </MenuItem>
         </Menu>
 

@@ -75,6 +75,7 @@
         <Border BorderThickness="1">
             <AdornerDecorator>
                 <ListView
+                    Padding="0"
                     be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
                     be:ScrollBehavior.Enable="True"
                     be:ScrollBehavior.ViewportTarget="{Binding Context}"

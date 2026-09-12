@@ -117,4 +117,6 @@
     <SolidColorBrush x:Key="StatusBarForegroundBrush" Color="White" />
     <SolidColorBrush x:Key="StatusBarTrackBrush" Color="#343638" />
 
+    <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#505052" />
+
 </ResourceDictionary>

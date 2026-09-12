@@ -29,7 +29,6 @@
             <Grid>
                 <ScrollViewer
                     at:ConsoleAutoScrollBehavior.Enable="True"
-                    Style="{DynamicResource UcScrollViewerStyle}"
                     VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding Lines}">
                         <ItemsControl.ItemTemplate>
