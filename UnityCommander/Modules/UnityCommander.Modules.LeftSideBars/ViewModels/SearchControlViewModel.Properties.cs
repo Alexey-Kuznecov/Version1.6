@@ -6,6 +6,8 @@ using System.Windows.Automation;
 using UnityCommander.Common.Models;
 using UnityCommander.Modules.LeftSideBars.Models;
 using UnityCommander.Modules.LeftSideBars.Search;
+using UnityCommander.Modules.LeftSideBars.Search.Result;
+using UnityCommander.Modules.LeftSideBars.Services;
 using UnityCommander.Mvvm.Base;
 using UnityCommander.Search.Models;
 
@@ -133,7 +135,47 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         // Results
         // ---------------------------------------------------------
 
-        public ObservableCollection<SearchResultItemViewModel> Results { get; } = [];
+        //public ObservableCollection<SearchResultItemViewModel> Results { get; } = [];
+
+        private readonly List<SearchItem> _searchItems = [];
+
+        private ISearchResultView _results =
+            new FlatSearchResultView([]);
+
+        public ISearchResultView Results
+        {
+            get => _results;
+            private set => SetProperty(ref _results, value);
+        }
+
+        private SearchResultViewMode _viewMode = SearchResultViewMode.Flat;
+
+        public SearchResultViewMode ViewMode
+        {
+            get => _viewMode;
+            set
+            {
+                if (!SetProperty(ref _viewMode, value))
+                    return;
+
+                RebuildResults();
+            }
+        }
+
+        private SearchTreeScope _treeScope = SearchTreeScope.FullPath;
+
+        public SearchTreeScope TreeScope
+        {
+            get => _treeScope;
+            set
+            {
+                if (!SetProperty(ref _treeScope, value))
+                    return;
+
+                if (ViewMode == SearchResultViewMode.Tree)
+                    RebuildResults();
+            }
+        }
 
         private long _resultCount;
 
@@ -142,10 +184,6 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             get => _resultCount;
             private set => SetProperty(ref _resultCount, value);
         }
-
-        private IReadOnlyList<SearchItem> _searchItems = [];
-
-        private ISearchResultView _results;
 
         // ---------------------------------------------------------
         // State

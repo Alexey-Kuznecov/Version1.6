@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using UnityCommander.Common.Panels;
 using UnityCommander.Modules.LeftSideBars.Models;
-using UnityCommander.Modules.LeftSideBars.Search;
+using UnityCommander.Modules.LeftSideBars.Services;
 using UnityCommander.Mvvm;
 using UnityCommander.Mvvm.Base;
 using UnityCommander.Search.Abstractions;
@@ -18,19 +18,20 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 {
     public partial class SearchControlViewModel :  PropertiesChanged
     {
+        private readonly ISearchResultBuilder _resultBuilder;
+
         private readonly ISearchService _searchService;
 
         private readonly ActiveTabContext _activeTabContext;
 
         private CancellationTokenSource? _searchCancellation;
 
-        //private SearchMode _searchMode;
-        //private SearchScopeOption _searchScope;
-
         public SearchControlViewModel(
+            ISearchResultBuilder resultBuilder,
             ISearchService searchService,
             ActiveTabContext activeTab)
         {
+            _resultBuilder = resultBuilder;
             _searchService = searchService;
             _activeTabContext = activeTab;
 
@@ -55,7 +56,9 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
 
             _searchCancellation = new CancellationTokenSource();
 
-            Results.Clear();
+            _searchItems.Clear();
+            //_activeSearchPath = path;
+
             ResultCount = 0;
             IsSearching = true;
 
@@ -73,9 +76,11 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                     if (result is not FileSearchResult fileResult)
                         continue;
 
-                    Results.Add(new SearchResultItemViewModel(fileResult.Item));
+                    _searchItems.Add(fileResult.Item);
                     ResultCount++;
                 }
+
+                RebuildResults();
             }
             catch (OperationCanceledException)
             {
@@ -144,6 +149,17 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
                 _ => new NameSearchMatcher()
             };
         }
+
+        private void RebuildResults(string? rootPath = null)
+        {
+            Results = _resultBuilder.Build(
+                _searchItems,
+                ViewMode,
+                TreeScope,
+                rootPath, 
+                _searchText);
+        }
+
         public ICommand SearchCommand { get; }
         public ICommand ClearCommand { get; }
     }

@@ -24,6 +24,7 @@ using UnityCommander.Index.Indexing;
 using UnityCommander.Index.Storage;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.LeftSideBars.Services;
 using UnityCommander.Modules.LeftSideBars.Widget.Actions;
 using UnityCommander.Modules.StatusBar.Services;
 using UnityCommander.Modules.ToolBar.Builder;
@@ -186,6 +187,9 @@ namespace UnityCommander.Dependencies
 
             registry.RegisterSingleton<IShortcutBinder, ShortcutBinder>();
             registry.RegisterSingleton<FileClipboard>();
+
+
+            registry.RegisterSingleton<ISearchResultBuilder, SearchResultBuilder>();
         }
     }
 }

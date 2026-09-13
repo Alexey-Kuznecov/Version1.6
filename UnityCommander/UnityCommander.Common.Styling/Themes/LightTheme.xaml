@@ -84,7 +84,7 @@
     <SolidColorBrush x:Key="UcListViewForegroundBrush" Color="#202020" />
     <SolidColorBrush x:Key="UcListViewBorderBrush" Color="#E6E6EA" />
 
-    <SolidColorBrush x:Key="UcListBoxBackgroundBrush" Color="#E6E6EA" />
+    <SolidColorBrush x:Key="UcListBoxBackgroundBrush" Color="White" />
     <SolidColorBrush x:Key="UcListBoxForegroundBrush" Color="#808082" />
     <SolidColorBrush x:Key="UcListBoxBorderBrush" Color="#E6E6EA" />
 
@@ -184,5 +184,9 @@
     <SolidColorBrush x:Key="CheckBox.Border.Checked" Color="#3B82F6" />
 
     <SolidColorBrush x:Key="CheckBox.Glyph" Color="#FFFFFF" />
+
+    <SolidColorBrush x:Key="Search.Highlight.Background" Color="#FFE066" />
+
+    <SolidColorBrush x:Key="Search.Highlight.Foreground" Color="#1A1B1C" />
 
 </ResourceDictionary>

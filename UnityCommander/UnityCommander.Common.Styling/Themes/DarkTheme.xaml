@@ -171,4 +171,8 @@
 
     <SolidColorBrush x:Key="CheckBox.Glyph" Color="#FFFFFF" />
 
+    <SolidColorBrush x:Key="Search.Highlight.Background" Color="#FFE066" />
+
+    <SolidColorBrush x:Key="Search.Highlight.Foreground" Color="#4A4C4E" />
+
 </ResourceDictionary>

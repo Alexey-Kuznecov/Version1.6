@@ -1,6 +1,7 @@
 ﻿
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading.Channels;
 using UnityCommander.Search.Models;
 
 namespace UnityCommander.Search.Enumeration
@@ -11,43 +12,73 @@ namespace UnityCommander.Search.Enumeration
             SearchScope scope,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var path in scope.Paths)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (!Directory.Exists(path))
-                    continue;
-
-                await foreach (var item in EnumerateDirectoryAsync(
-                    path,
-                    cancellationToken))
+            var channel = Channel.CreateBounded<SearchItem>(
+                new BoundedChannelOptions(256)
                 {
-                    yield return item;
-                }
-            }
+                    SingleWriter = true,
+                    SingleReader = true,
+                    FullMode = BoundedChannelFullMode.Wait
+                });
+
+            _ = Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        foreach (var path in scope.Paths)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            if (!Directory.Exists(path))
+                                continue;
+
+                            EnumerateDirectory(
+                                path,
+                                channel.Writer,
+                                cancellationToken);
+                        }
+
+                        channel.Writer.TryComplete();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        channel.Writer.TryComplete();
+                    }
+                    catch (Exception ex)
+                    {
+                        channel.Writer.TryComplete(ex);
+                    }
+
+                    await Task.CompletedTask;
+                },
+                CancellationToken.None);
+
+            await foreach (var item in channel.Reader.ReadAllAsync(cancellationToken))
+                yield return item;
         }
 
-        private static async IAsyncEnumerable<SearchItem> EnumerateDirectoryAsync(
+        private static void EnumerateDirectory(
             string path,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            ChannelWriter<SearchItem> writer,
+            CancellationToken cancellationToken)
         {
             IEnumerable<string> entries;
 
             try
             {
-               entries = Directory.EnumerateFileSystemEntries(path);
+                entries = Directory.EnumerateFileSystemEntries(path);
             }
             catch (UnauthorizedAccessException)
             {
-                yield break;
+                return;
             }
             catch (DirectoryNotFoundException)
             {
-                yield break;
+                return;
             }
             catch (IOException)
             {
-                yield break;
+                return;
             }
 
             foreach (var entry in entries)
@@ -67,25 +98,43 @@ namespace UnityCommander.Search.Enumeration
 
                 if (isDirectory)
                 {
-                    await foreach (var child in EnumerateDirectoryAsync(
+                    EnumerateDirectory(
                         entry,
-                        cancellationToken))
-                    {
-                        yield return child;
-                    }
+                        writer,
+                        cancellationToken);
 
                     continue;
                 }
 
-                var info = new FileInfo(entry);
-
-                yield return new SearchItem(entry, Path.GetFileName(entry))
+                try
                 {
-                    IsDirectory = isDirectory,
-                    CreationTime = File.GetCreationTime(entry),
-                    LastWriteTime = File.GetLastAccessTime(entry),
-                    Size = info.Length
-                };
+                    var info = new FileInfo(entry);
+
+                    var item = new SearchItem(
+                        entry,
+                        Path.GetFileName(entry))
+                    {
+                        IsDirectory = false,
+                        CreationTime = File.GetCreationTime(entry),
+                        LastWriteTime = File.GetLastAccessTime(entry),
+                        Size = info.Length
+                    };
+
+                    writer.WriteAsync(
+                        item,
+                        cancellationToken)
+                        .AsTask()
+                        .GetAwaiter()
+                        .GetResult();
+                }
+                catch (
+                    UnauthorizedAccessException)
+                {
+                }
+                catch (
+                    IOException)
+                {
+                }
             }
         }
     }
