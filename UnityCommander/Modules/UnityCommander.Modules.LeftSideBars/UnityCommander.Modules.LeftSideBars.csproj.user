@@ -19,6 +19,9 @@
     <Compile Update="Content\HomeControlPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Content\SearchControlPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Widget\DriveView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

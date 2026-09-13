@@ -46,8 +46,8 @@
     <SolidColorBrush x:Key="UcAccentSecondaryBrush" Color="{StaticResource UcDarkColor}" />
     <SolidColorBrush x:Key="UcAccentTertiaryBrush" Color="{StaticResource UcPinkColor}" />
 
-    <SolidColorBrush x:Key="UcUcAccentHoverSecondaryBrush" Color="{StaticResource UcBorderColor}" />
-    <SolidColorBrush x:Key="UcUcAccentSelectedSecondaryBrush" Color="#27292A" />
+    <SolidColorBrush x:Key="UcAccentHoverSecondaryBrush" Color="{StaticResource UcBorderColor}" />
+    <SolidColorBrush x:Key="UcAccentSelectedSecondaryBrush" Color="#27292A" />
 
 
     <!--  Titlebar Brushes  -->

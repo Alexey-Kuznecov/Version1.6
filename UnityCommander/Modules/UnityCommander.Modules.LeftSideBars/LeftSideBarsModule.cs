@@ -50,6 +50,15 @@ namespace UnityCommander.Modules.LeftSideBars
                 typeof(HomeViewModel)
              ));
 
+            sidebarService.Register(
+                new SidebarSection
+                (
+                   "core.search",
+                   "search",
+                   typeof(SearchControlPanel),
+                   typeof(SearchControlViewModel)
+                ));
+
             //sidebarService.Register(
             //    new SidebarSection(
             //        "core.column",

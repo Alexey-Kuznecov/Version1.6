@@ -7,12 +7,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Services\**" />
-    <EmbeddedResource Remove="Services\**" />
-    <None Remove="Services\**" />
-    <Page Remove="Services\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="ViewModels\SidebarViewModel.cs~RF220cb962.TMP" />
   </ItemGroup>
   <ItemGroup>

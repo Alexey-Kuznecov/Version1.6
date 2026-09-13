@@ -78,9 +78,9 @@
     </Style>
 
     <Style x:Key="UcListViewItemNormal" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Background" Value="{DynamicResource UcAccentSecondaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource UcListViewBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource UcListViewItemForegroundBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource UcAccentSecondaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource UcListViewBorderBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />

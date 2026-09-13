@@ -61,8 +61,8 @@
     <SolidColorBrush x:Key="UcAccentTertiaryBrush" Color="{StaticResource UcPinkColor}" />
 
 
-    <SolidColorBrush x:Key="UcUcAccentHoverSecondaryBrush" Color="#6077A5" />
-    <SolidColorBrush x:Key="UcUcAccentSelectedSecondaryBrush" Color="#4F6388" />
+    <SolidColorBrush x:Key="UcAccentHoverSecondaryBrush" Color="#C5C9CD" />
+    <SolidColorBrush x:Key="UcAccentSelectedSecondaryBrush" Color="#C5C9CD" />
 
 
     <!--  Titlebar Brushes  -->
@@ -148,7 +148,6 @@
     <SolidColorBrush x:Key="Expander.Arrow" Color="#777C81" />
     <SolidColorBrush x:Key="Expander.Arrow.Hover" Color="#3A3E42" />
 
-
     <!--  COMBOBOX  -->
 
     <Color x:Key="ComboBox.Background.Color">#F1F2F3</Color>
@@ -171,7 +170,6 @@
     <Color x:Key="ComboBox.Item.Background.Selected.Color">#DDE3EA</Color>
 
     <!--  CHECKBOX  -->
-
 
     <SolidColorBrush x:Key="CheckBox.Background" Color="#F1F2F3" />
 
