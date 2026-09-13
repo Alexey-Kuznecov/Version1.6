@@ -167,8 +167,6 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                              }
                          }
                         );
-
-
             });
 
             var ribbon = modelFactory.Create();

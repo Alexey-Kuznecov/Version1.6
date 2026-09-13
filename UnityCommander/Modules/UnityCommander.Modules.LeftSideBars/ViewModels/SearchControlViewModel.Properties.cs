@@ -1,13 +1,9 @@
 ﻿
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Automation;
-using UnityCommander.Common.Models;
+using System.Windows.Input;
 using UnityCommander.Modules.LeftSideBars.Models;
 using UnityCommander.Modules.LeftSideBars.Search;
-using UnityCommander.Modules.LeftSideBars.Search.Result;
-using UnityCommander.Modules.LeftSideBars.Services;
+using UnityCommander.Mvvm;
 using UnityCommander.Mvvm.Base;
 using UnityCommander.Search.Models;
 
@@ -148,19 +144,27 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
             private set => SetProperty(ref _results, value);
         }
 
-        private SearchResultViewMode _viewMode = SearchResultViewMode.Flat;
+        private SearchResultViewMode _viewMode = SearchResultViewMode.Folders;
 
         public SearchResultViewMode ViewMode
         {
             get => _viewMode;
-            set
+            private set
             {
                 if (!SetProperty(ref _viewMode, value))
                     return;
 
                 RebuildResults();
+                OnPropertyChanged(nameof(IsListView));
+                OnPropertyChanged(nameof(IsFolderView));
             }
         }
+
+        public bool IsListView =>
+            ViewMode == SearchResultViewMode.Flat;
+
+        public bool IsFolderView =>
+            ViewMode == SearchResultViewMode.Folders;
 
         private SearchTreeScope _treeScope = SearchTreeScope.FullPath;
 
@@ -202,7 +206,41 @@ namespace UnityCommander.Modules.LeftSideBars.ViewModels
         public SearchProgress Progress
         {
             get => _progress;
-            private set => SetProperty(ref _progress, value);
+            private set
+            {
+                if(!SetProperty(ref _progress, value))
+                    return;
+
+                ((RelayCommand)CancelSearchCommand).RaiseCanExecuteChanged();
+
+                OnPropertyChanged(nameof(SearchProgressText));
+            }
         }
+
+        public string SearchStatusText =>
+            IsSearching
+                ? "Searching..."
+                : $"{ResultCount} results";
+
+        public string SearchProgressText =>
+            $"Processed: {Progress?.Processed:N0}    Found: {Progress?.Found:N0}";
+
+        public string SearchPlaceholder =>
+            SearchMode switch
+            {
+                SearchMatcherMode.Contains => "Search...",
+                SearchMatcherMode.Mask => "*.cs",
+                _ => "Search..."
+            };
+
+        // ---------------------------------------------------------
+        // Commands
+        // ---------------------------------------------------------
+
+        public ICommand ShowListCommand { get; }
+        public ICommand ShowFoldersCommand { get; }
+
+        public ICommand ExpandAllCommand { get; }
+        public ICommand CollapseAllCommand { get; }
     }
 }

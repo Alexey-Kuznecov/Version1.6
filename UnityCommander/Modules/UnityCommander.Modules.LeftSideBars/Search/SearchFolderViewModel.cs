@@ -1,9 +1,10 @@
 ﻿
 using System.Collections.Generic;
+using UnityCommander.Mvvm.Base;
 
 namespace UnityCommander.Modules.LeftSideBars.Search
 {
-    public sealed class SearchFolderViewModel
+    public sealed class SearchFolderViewModel : PropertiesChanged
     {
         public string Path { get; }
 
@@ -11,16 +12,24 @@ namespace UnityCommander.Modules.LeftSideBars.Search
 
         public IReadOnlyList<SearchResultItemViewModel> Items { get; }
 
-        public bool IsExpanded { get; set; }
+        private bool _isExpanded;
+
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => SetProperty(ref _isExpanded, value);
+        }
 
         public SearchFolderViewModel(
             string path,
             string name,
-            IReadOnlyList<SearchResultItemViewModel> items)
+            IReadOnlyList<SearchResultItemViewModel> items,
+            bool isExpanded = false)
         {
             Path = path;
             Name = name;
             Items = items;
+            IsExpanded = isExpanded;
         }
     }
 }

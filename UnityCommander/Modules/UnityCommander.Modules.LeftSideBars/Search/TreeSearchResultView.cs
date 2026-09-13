@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityCommander.Modules.LeftSideBars.Models;
 
-namespace UnityCommander.Modules.LeftSideBars.Search.Result
+namespace UnityCommander.Modules.LeftSideBars.Search
 {
     public sealed class TreeSearchResultView : ISearchResultView
     {

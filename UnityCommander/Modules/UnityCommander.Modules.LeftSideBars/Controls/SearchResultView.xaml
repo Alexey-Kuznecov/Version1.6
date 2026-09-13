@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:result="clr-namespace:UnityCommander.Modules.LeftSideBars.Search.Result"
+    xmlns:result="clr-namespace:UnityCommander.Modules.LeftSideBars.Search"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -18,6 +18,53 @@
             TargetType="{x:Type ListViewItem}">
             <Setter Property="Height" Value="60" />
         </Style>
+
+        <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+
+        </Style>
+
+        <DataTemplate x:Key="SearchResultItemTemplate">
+            <Grid Margin="6,4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <local:SearchHighlightText
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                    Query="{Binding SearchQuery}"
+                    Text="{Binding Item.Name}" />
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                    Text="{Binding DisplaySize}" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="0,2,0,0"
+                    FontSize="11"
+                    Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                    Text="{Binding Path}"
+                    TextTrimming="CharacterEllipsis" />
+
+            </Grid>
+        </DataTemplate>
 
     </UserControl.Resources>
 
@@ -45,15 +92,6 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
-
-                                    <!--<TextBlock
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        VerticalAlignment="Center"
-                                        FontWeight="Bold"
-                                        Foreground="{DynamicResource UcForegroundPrimaryBrush}"
-                                        Text="{Binding Item.Name}"
-                                        TextTrimming="CharacterEllipsis" />-->
 
                                     <local:SearchHighlightText
                                         Grid.Row="0"
@@ -91,7 +129,24 @@
                 <DataTemplate DataType="{x:Type result:FolderSearchResultView}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 
-                        <ItemsControl ItemsSource="{Binding Folders}" />
+                        <ItemsControl ItemsSource="{Binding Folders}">
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Expander
+                                        Margin="0,2"
+                                        Header="{Binding Name}"
+                                        IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+
+                                        <ItemsControl ItemTemplate="{StaticResource SearchResultItemTemplate}" ItemsSource="{Binding Items}" />
+
+                                    </Expander>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
 
                     </ScrollViewer>
                 </DataTemplate>
@@ -99,7 +154,57 @@
 
                 <!--  Tree  -->
                 <DataTemplate DataType="{x:Type result:TreeSearchResultView}">
-                    <TreeView ItemsSource="{Binding Roots}" />
+                    <TreeView ItemsSource="{Binding Roots}">
+
+                        <TreeView.Resources>
+
+                            <!--  Папка  -->
+                            <HierarchicalDataTemplate DataType="{x:Type result:SearchTreeNodeViewModel}" ItemsSource="{Binding Entries}">
+
+                                <StackPanel Orientation="Horizontal">
+
+                                    <TextBlock
+                                        Margin="4,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Name}" />
+
+                                </StackPanel>
+
+                            </HierarchicalDataTemplate>
+
+
+                            <!--  Файл  -->
+                            <DataTemplate DataType="{x:Type result:SearchResultItemViewModel}">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--<TextBlock
+                                        Grid.Column="0"
+                                        Text="{Binding Name}"
+                                        TextTrimming="CharacterEllipsis" />-->
+
+                                    <local:SearchHighlightText
+                                        FontWeight="Bold"
+                                        Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                                        Query="{Binding SearchQuery}"
+                                        Text="{Binding Item.Name}" />
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                                        Text="{Binding DisplaySize}" />
+                                </Grid>
+
+                            </DataTemplate>
+
+                        </TreeView.Resources>
+
+                    </TreeView>
                 </DataTemplate>
 
             </ContentControl.Resources>

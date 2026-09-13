@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using UnityCommander.Modules.LeftSideBars.Models;
 using UnityCommander.Modules.LeftSideBars.Search;
-using UnityCommander.Modules.LeftSideBars.Search.Result;
 using UnityCommander.Search.Models;
 
 namespace UnityCommander.Modules.LeftSideBars.Services
@@ -74,7 +73,8 @@ namespace UnityCommander.Modules.LeftSideBars.Services
             var roots = BuildTreeNodes(
                resultItems,
                scope,
-               rootPath);
+               rootPath, 
+               query);
 
             return new TreeSearchResultView(roots);
         }
@@ -99,7 +99,8 @@ namespace UnityCommander.Modules.LeftSideBars.Services
         private static IReadOnlyList<SearchTreeNodeViewModel> BuildTreeNodes(
             IReadOnlyList<SearchResultItemViewModel> items,
             SearchTreeScope scope,
-            string? rootPath)
+            string? rootPath,
+            string? query)
         {
             var root = new SearchTreeBuildNode(string.Empty, string.Empty);
 
@@ -122,7 +123,7 @@ namespace UnityCommander.Modules.LeftSideBars.Services
 
             return root.Children.Values
                 .OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
-                .Select(ToViewModel)
+                .Select(x => ToViewModel(x, query))
                 .ToList();
         }
 
@@ -161,11 +162,12 @@ namespace UnityCommander.Modules.LeftSideBars.Services
         }
 
         private static SearchTreeNodeViewModel ToViewModel(
-            SearchTreeBuildNode node)
+          SearchTreeBuildNode node,
+          string? query)
         {
             var children = node.Children.Values
                 .OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
-                .Select(ToViewModel)
+                .Select(x => ToViewModel(x, query))
                 .ToList();
 
             var items = node.Items
@@ -176,7 +178,9 @@ namespace UnityCommander.Modules.LeftSideBars.Services
                 node.Path,
                 node.Name,
                 children,
-                items);
+                items,
+                query,
+                isExpanded: true);
         }
 
         private static IReadOnlyList<string> GetPathParts(

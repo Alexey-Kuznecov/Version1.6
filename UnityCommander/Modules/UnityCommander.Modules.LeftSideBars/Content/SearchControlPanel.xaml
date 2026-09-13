@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:be="clr-namespace:UnityCommander.WPF.Behaviors;assembly=UnityCommander.WPF"
     xmlns:control="clr-namespace:UnityCommander.Modules.LeftSideBars.Controls"
+    xmlns:ctl="clr-namespace:UnityCommander.WPF.Controls;assembly=UnityCommander.WPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:UnityCommander.Modules.LeftSideBars.Content"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="clr-namespace:UnityCommander.Modules.LeftSideBars.Models"
-    xmlns:result="clr-namespace:UnityCommander.Modules.LeftSideBars.Search.Result"
+    xmlns:result="clr-namespace:UnityCommander.Modules.LeftSideBars.Search"
     xmlns:wpf="clr-namespace:UnityCommander.WPF.Converters;assembly=UnityCommander.WPF"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -21,6 +22,7 @@
     <Grid Margin="8">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -37,7 +39,22 @@
             </Grid.RowDefinitions>
 
             <!--  Search field  -->
-            <TextBox
+
+            <ctl:SearchTextBox
+                Grid.Row="0"
+                Height="32"
+                VerticalContentAlignment="Center"
+                be:InputCaptureBehavior.IsEnabled="True"
+                Foreground="{DynamicResource UcForegroundTertiaryBrush}"
+                Placeholder="{Binding SearchPlaceholder}"
+                Style="{StaticResource UcTextBoxSearchStyle}"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
+                </TextBox.InputBindings>
+            </ctl:SearchTextBox>
+
+            <!--<TextBox
                 Grid.Row="0"
                 Height="32"
                 Padding="8,0"
@@ -51,7 +68,7 @@
                     <KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
                 </TextBox.InputBindings>
 
-            </TextBox>
+            </TextBox>-->
 
             <!--  Basic options  -->
             <Grid Grid.Row="1" Margin="0,8,0,0">
@@ -316,16 +333,57 @@
 
         </Expander>
 
+        <Border
+            Grid.Row="2"
+            Margin="0,0,0,8"
+            Padding="10,6"
+            Background="{DynamicResource UcSurfaceSecondaryBrush}"
+            CornerRadius="5"
+            Visibility="{Binding IsSearching, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <StackPanel>
+
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                    Text="Searching..." />
+
+                <TextBlock
+                    Margin="0,3,0,0"
+                    FontSize="11"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                    Text="{Binding SearchProgressText}" />
+
+                <ProgressBar
+                    Height="2"
+                    Margin="0,0,0,6"
+                    IsIndeterminate="{Binding IsSearching}" />
+
+                <Button
+                    Command="{Binding CancelSearchCommand}"
+                    Content="Cancel"
+                    Style="{StaticResource ModernButton}" />
+
+            </StackPanel>
+
+        </Border>
 
         <!--  Results header  -->
-        <Grid Grid.Row="2" Margin="0,0,0,6">
+        <Grid Grid.Row="3" Margin="0,0,0,6">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="32" />
+            </Grid.RowDefinitions>
+
             <TextBlock
+                Grid.Row="0"
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 Foreground="{DynamicResource UcForegroundSecondaryBrush}"
@@ -337,9 +395,42 @@
                 Foreground="{DynamicResource UcForegroundSecondaryBrush}"
                 Text="{Binding ResultCount}" />
 
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+
+                <RadioButton
+                    Command="{Binding ShowListCommand}"
+                    Content="By List"
+                    Style="{StaticResource UcRadioButton}" />
+
+                <RadioButton
+                    Command="{Binding ShowFoldersCommand}"
+                    Content="By Folders"
+                    IsChecked="True"
+                    Style="{StaticResource UcRadioButton}" />
+
+                <Separator Margin="3,0" VerticalAlignment="Stretch" />
+
+                <Button
+                    Height="20"
+                    Margin="1,0"
+                    Command="{Binding ExpandAllCommand}"
+                    Content="Expand"
+                    IsEnabled="{Binding IsFolderView}"
+                    Style="{StaticResource ModernButton}" />
+
+                <Button
+                    Height="20"
+                    Margin="3,0"
+                    Command="{Binding CollapseAllCommand}"
+                    Content="Collapse"
+                    IsEnabled="{Binding IsFolderView}"
+                    Style="{StaticResource ModernButton}" />
+
+            </StackPanel>
+
         </Grid>
 
-        <ContentControl Grid.Row="3">
+        <ContentControl Grid.Row="4">
             <control:SearchResultView />
         </ContentControl>
     </Grid>
