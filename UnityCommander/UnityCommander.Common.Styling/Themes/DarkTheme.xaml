@@ -119,4 +119,56 @@
 
     <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#505052" />
 
+    <!--  EXPANDER  -->
+
+    <SolidColorBrush x:Key="Expander.Background" Color="#2F3031" />
+    <SolidColorBrush x:Key="Expander.Background.Hover" Color="#373839" />
+    <SolidColorBrush x:Key="Expander.Background.Expanded" Color="#333536" />
+
+    <SolidColorBrush x:Key="Expander.Border" Color="#454748" />
+    <SolidColorBrush x:Key="Expander.Border.Hover" Color="#55585A" />
+
+    <SolidColorBrush x:Key="Expander.Foreground" Color="#D9DBDC" />
+    <SolidColorBrush x:Key="Expander.Arrow" Color="#AEB2B4" />
+    <SolidColorBrush x:Key="Expander.Arrow.Hover" Color="#FFFFFF" />
+
+
+    <!--  COMBOBOX  -->
+
+    <Color x:Key="ComboBox.Background.Color">#2F3031</Color>
+    <Color x:Key="ComboBox.Background.Hover.Color">#373839</Color>
+    <Color x:Key="ComboBox.Background.Pressed.Color">#292A2B</Color>
+
+    <Color x:Key="ComboBox.Border.Color">#454748</Color>
+    <Color x:Key="ComboBox.Border.Hover.Color">#5A5D5F</Color>
+    <Color x:Key="ComboBox.Border.Pressed.Color">#676A6C</Color>
+
+    <Color x:Key="ComboBox.Foreground.Color">#D9DBDC</Color>
+    <Color x:Key="ComboBox.Arrow.Color">#AEB2B4</Color>
+    <Color x:Key="ComboBox.Arrow.Hover.Color">#FFFFFF</Color>
+
+    <Color x:Key="ComboBox.Popup.Background.Color">#292A2B</Color>
+    <Color x:Key="ComboBox.Popup.Border.Color">#454748</Color>
+
+    <Color x:Key="ComboBox.Item.Foreground.Color">#D9DBDC</Color>
+    <Color x:Key="ComboBox.Item.Background.Hover.Color">#373839</Color>
+    <Color x:Key="ComboBox.Item.Background.Selected.Color">#414345</Color>
+
+
+    <!--  CHECKBOX  -->
+
+    <SolidColorBrush x:Key="CheckBox.Background" Color="#2F3031" />
+
+    <SolidColorBrush x:Key="CheckBox.Background.Hover" Color="#373839" />
+
+    <SolidColorBrush x:Key="CheckBox.Background.Checked" Color="#3B82F6" />
+
+    <SolidColorBrush x:Key="CheckBox.Border" Color="#4A4C4E" />
+
+    <SolidColorBrush x:Key="CheckBox.Border.Hover" Color="#66686A" />
+
+    <SolidColorBrush x:Key="CheckBox.Border.Checked" Color="#3B82F6" />
+
+    <SolidColorBrush x:Key="CheckBox.Glyph" Color="#FFFFFF" />
+
 </ResourceDictionary>

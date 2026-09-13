@@ -1,0 +1,142 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="UcExpanderStyle" TargetType="{x:Type Expander}">
+
+        <Setter Property="Foreground" Value="{DynamicResource Expander.Foreground}" />
+
+        <Setter Property="Background" Value="{DynamicResource Expander.Background}" />
+
+        <Setter Property="BorderBrush" Value="{DynamicResource Expander.Border}" />
+
+        <Setter Property="BorderThickness" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+
+                <ControlTemplate TargetType="{x:Type Expander}">
+
+                    <Border
+                        x:Name="Chrome"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5">
+
+                        <Grid>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="34" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+
+                            <!--  Header  -->
+                            <ToggleButton
+                                x:Name="HeaderButton"
+                                Grid.Row="0"
+                                Padding="10,0"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Focusable="False"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+
+                                        <Border
+                                            x:Name="HeaderBorder"
+                                            Background="Transparent"
+                                            CornerRadius="5">
+
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="20" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--  Header  -->
+                                                <ContentPresenter
+                                                    Grid.Column="0"
+                                                    Margin="8,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Content="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type Expander}}}"
+                                                    ContentTemplate="{Binding HeaderTemplate, RelativeSource={RelativeSource AncestorType={x:Type Expander}}}"
+                                                    TextElement.Foreground="{DynamicResource UcForegroundTertiaryBrush}" />
+
+                                                <!--  Arrow  -->
+                                                <Path
+                                                    x:Name="Arrow"
+                                                    Grid.Column="1"
+                                                    Width="8"
+                                                    Height="5"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Data="M 0,0 L 4,4 L 8,0"
+                                                    Fill="{DynamicResource Expander.Arrow}"
+                                                    Stretch="None" />
+
+                                            </Grid>
+
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsMouseOver" Value="True">
+
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource Expander.Background.Hover}" />
+
+                                                <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource Expander.Arrow.Hover}" />
+
+                                            </Trigger>
+
+                                            <Trigger Property="IsChecked" Value="True">
+
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource Expander.Background.Expanded}" />
+
+                                                <Setter TargetName="Arrow" Property="Data" Value="M 0,4 L 4,0 L 8,4" />
+
+                                            </Trigger>
+
+                                        </ControlTemplate.Triggers>
+
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+
+                            </ToggleButton>
+
+
+                            <!--  Content  -->
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Grid.Row="1"
+                                Margin="10,0,10,10"
+                                Content="{TemplateBinding Content}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Visibility="Collapsed" />
+
+                        </Grid>
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsExpanded" Value="True">
+
+                            <Setter TargetName="ContentPresenter" Property="Visibility" Value="Visible" />
+
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+</ResourceDictionary>

@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <None Remove="Commands\**" />
+    <Page Remove="Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\CommandSystem\UnityCommander.SystemMetrics\UnityCommander.SystemMetrics.csproj" />
     <ProjectReference Include="..\Plugins\IconMaker.Core\IconMaker.Core.csproj" />
@@ -18,10 +25,6 @@
     <ProjectReference Include="..\UnityCommander.Index\UnityCommander.Index.csproj" />
     <ProjectReference Include="..\UnityCommander.Native\UnityCommander.Native.csproj" />
     <ProjectReference Include="..\UnityCommander.Theme\UnityCommander.Theme.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>
