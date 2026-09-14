@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using UnityCommander.Common;
 using UnityCommander.Common.State;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -20,6 +21,7 @@ namespace UnityCommander.Services.Bootstrap
 {
     public class LayoutService : ILayoutService
     {
+        private readonly string _layoutPath;
         private readonly IDockingService _dockingService;
         private readonly ILayoutContentFactory _factory;
         private readonly ILogger _logger;
@@ -28,8 +30,14 @@ namespace UnityCommander.Services.Bootstrap
         public LayoutService(
             IDockingService dockingService, 
             ILayoutContentFactory factory,
-             LoggerCreator logger)
+             LoggerCreator logger, 
+             UnityCommanderPath commanderPath)
         {
+            _layoutPath =
+                Path.Combine(
+                    commanderPath.DataDirectory,
+                    "layout.xml");
+
             var log = logger;
             _logger = log.Create(
                category: LogCategory.System,
@@ -42,7 +50,7 @@ namespace UnityCommander.Services.Bootstrap
 
         public void Load(AppSessionState session)
         {
-            var path = "layout.xml";
+            var path = _layoutPath;
             _session = session;
             if (!IsValidLayoutFile(path))
             { 

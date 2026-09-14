@@ -5,6 +5,7 @@ using AvalonDock.Serializer.Xml;
 using System;
 using System.Diagnostics;
 using System.IO;
+using UnityCommander.Common;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Docking;
 
@@ -12,8 +13,7 @@ namespace UnityCommander.Services.Docking
 {
     public class ToolDockingStore : IToolDockingStore
     {
-        private const string LayoutPath = "tool-layout.xml";
-
+        private readonly string _layoutPath;
         private readonly IToolRegistry _toolRegistry;
         private readonly ToolDockingHost _dockingHost;
         private readonly DockingContext _context;
@@ -21,8 +21,14 @@ namespace UnityCommander.Services.Docking
         public ToolDockingStore(
             DockingContext context,
             ToolDockingHost dockingHost,
-            IToolRegistry toolRegistry)
+            IToolRegistry toolRegistry, 
+            UnityCommanderPath commanderPath)
         {
+            _layoutPath = 
+                Path.Combine(
+                    commanderPath.DataDirectory, 
+                    "tool-layout.xml");
+
             _context = context;
             _toolRegistry = toolRegistry;
             _dockingHost = dockingHost;
@@ -34,14 +40,14 @@ namespace UnityCommander.Services.Docking
                 throw new InvalidOperationException(
                     "DockingManager has not been initialized.");
 
-            if (!File.Exists(LayoutPath))
+            if (!File.Exists(_layoutPath))
                 return;
 
             try
             {
                 var serializer = CreateSerializer();
 
-                using var reader = new StreamReader(LayoutPath);
+                using var reader = new StreamReader(_layoutPath);
                 serializer.Deserialize(reader);
             }
             catch (Exception ex)
@@ -51,7 +57,7 @@ namespace UnityCommander.Services.Docking
                 // Битый layout не должен ломать запуск приложения.
                 try
                 {
-                    File.Delete(LayoutPath);
+                    File.Delete(_layoutPath);
                 }
                 catch
                 {
@@ -68,7 +74,7 @@ namespace UnityCommander.Services.Docking
 
             var serializer = new XmlLayoutSerializer(_context.ToolManager);
 
-            using var writer = new StreamWriter(LayoutPath);
+            using var writer = new StreamWriter(_layoutPath);
             serializer.Serialize(writer);
         }
 
