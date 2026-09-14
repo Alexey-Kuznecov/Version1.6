@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
-using UnityCommander.Core;
 using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Selectors
@@ -28,6 +27,9 @@ namespace UnityCommander.Modules.FilePanel.Selectors
         public DataTemplate DashboardTemplate
              => ResourceManager.Get<DataTemplate>("DriveContentViewDataTemplate");
 
+        public DataTemplate UnifiedTableTemplate
+            => ResourceManager.Get<DataTemplate>("UnifiedItemViewDataTemplate");
+
         public override DataTemplate SelectTemplate(
             object item,
             DependencyObject container)
@@ -48,6 +50,12 @@ namespace UnityCommander.Modules.FilePanel.Selectors
 
                 (ContentRole.File, ViewMode.Thumbnails)
                     => FileThumbnailTemplate,
+
+                (ContentRole.Unified, ViewMode.Table)
+                    => UnifiedTableTemplate,
+
+                //(ContentRole.Unified, ViewMode.Tiles)
+                //    => UnifiedTilesTemplate,
 
                 (ContentRole.Header, null)
                     => HeaderTemplate,

@@ -71,6 +71,69 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="UnifiedItemViewDataTemplate" DataType="{x:Type layout:ContentNode}">
+        <Border BorderThickness="1">
+            <AdornerDecorator>
+                <ListView
+                    Padding="0"
+                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.File.Columns, Mode=Default}"
+                    be:ScrollBehavior.Enable="True"
+                    be:ScrollBehavior.ViewportTarget="{Binding Context.File}"
+                    be:SelectionBehavior.EnableSelection="True"
+                    cursor:CursorTargetBehavior.Enable="True"
+                    dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    ItemContainerStyle="{StaticResource UcGridItemTemplate}"
+                    ItemsSource="{Binding Context.Items, Mode=OneWay}"
+                    Style="{StaticResource UcGridListViewTemplate}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding Context.NavigateCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListView.ContextMenu>
+                        <ContextMenu
+                            Padding="0"
+                            Background="{DynamicResource UcMenuBackgroundBrush}"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                            ItemsSource="{Binding Context.ContextMenuItems}"
+                            Style="{DynamicResource UcContextMenu}">
+                            <ContextMenu.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
+                                    <Setter Property="Header" Value="{Binding Title}" />
+                                    <Setter Property="Icon" Value="{Binding IconKey}" />
+                                    <Setter Property="Command" Value="{Binding Command}" />
+                                    <Setter Property="Height" Value="30" />
+                                    <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+                                </Style>
+                            </ContextMenu.ItemContainerStyle>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </AdornerDecorator>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <Trigger Property="adorner:DragDropVisual.IsDropTarget" Value="True">
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                            <Setter Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
+    </DataTemplate>
+
     <DataTemplate x:Key="DirectoryContentViewDataTemplate" DataType="{x:Type layout:ContentNode}">
         <Border BorderThickness="1">
             <AdornerDecorator>

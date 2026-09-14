@@ -82,6 +82,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         private FileNodeContext _fileNodeContext;
         private DriveNodeContext _driveNodeContext;
         private FolderNodeContext _folderNodeContext;
+        private UnifiedNodeContext _unifiedNodeContext;
 
         private FilePanelNodeSet _nodeSet;
 
@@ -167,8 +168,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 TabTitleChanged?.Invoke(title);
             };
 
-            // ЛОГЕР
-            this._logger = loggerCreator.Create(
+            _logger = loggerCreator.Create(
                 category: LogCategory.UserAction,
                 scope: LogScope.UserAction
                 );
@@ -176,26 +176,37 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             directoryChangeNotifier.DirectoryChanged += OnDirectoryChanged;
 
             columnRegistry.PluginUnloaded += OnPluginUnloaded;
-            
+
             _panelRuntime = panelContextFactory.Create();
 
             _navigationService = _panelRuntime.Navigation;
 
-            _nodeSet = _panelRuntime.NodeBuilder.Build();
+            _nodeSet = _panelRuntime.Nodes;
 
-            _folderNodeContext = (FolderNodeContext)_nodeSet.Folder.Context;
-            _fileNodeContext = (FileNodeContext)_nodeSet.File.Context;
-            _driveNodeContext = (DriveNodeContext)_nodeSet.Drive.Context;
+            _folderNodeContext =
+                (FolderNodeContext)_nodeSet.Folder.Context;
+
+            _fileNodeContext =
+                (FileNodeContext)_nodeSet.File.Context;
+
+            _driveNodeContext =
+                (DriveNodeContext)_nodeSet.Drive.Context;
+
+            _unifiedNodeContext =
+                (UnifiedNodeContext)_nodeSet.Unified.Context;
 
             _workspaceController =
-                new WorkspaceController(
-                    _panelRuntime.Workspace);
+                _panelRuntime.WorkspaceController;
 
-            LayoutRoot = _panelRuntime.LayoutController.CurrentLayout;
+            LayoutRoot =
+                _panelRuntime.LayoutController.CurrentLayout;
 
-            _panelRuntime.LayoutController.LayoutChanged += layout =>
+            _panelRuntime.LayoutController.Changed += () =>
             {
-                LayoutRoot = layout;
+                _unifiedNodeContext.RebuildItems();
+
+                LayoutRoot =
+                    _panelRuntime.LayoutController.CurrentLayout;
             };
         }
 
@@ -281,6 +292,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 _nodeSet.Folder,
                 _nodeSet.File);
 
+            //_workspaceController.ShowDirectoryMode(
+            //    _nodeSet.Header,
+            //    _nodeSet.Unified,
+            //    null);
+
             return this;
         }
 
@@ -357,12 +373,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             
 
             if (token.IsCancellationRequested)
-                return; // ❌ устарело — убиваем
+                return;
 
             RefreshDirectoryList(dirs);
             RefreshFileList(files);
-
-            //await UpdateColumnValuesAsync();
         }
 
         #region Управление ресурсами и навигация
@@ -458,6 +472,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     LogScope.UI,
                     "Workspace Creation"))
                 {
+                    //_workspaceController.ShowDirectoryMode(
+                    //    _nodeSet.Header,
+                    //    _nodeSet.Unified,
+                    //    null);
+
                     _workspaceController.ShowDirectoryMode(
                         _nodeSet.Header,
                         _nodeSet.Folder,

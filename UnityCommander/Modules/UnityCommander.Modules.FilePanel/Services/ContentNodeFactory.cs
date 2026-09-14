@@ -1,6 +1,8 @@
 ﻿
+using System;
 using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
+using UnityCommander.Modules.FilePanel.States;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -49,6 +51,20 @@ namespace UnityCommander.Modules.FilePanel.Services
             {
                 Role = ContentRole.Header,
                 Context = _contextFactory.CreateHeaderNode()
+            };
+        }
+
+        public ContentNode CreateUnifiedNode(
+            FolderNodeContext folderContext,
+            FileNodeContext fileContext)
+        {
+            var ctx = new UnifiedNodeContext(folderContext, fileContext);
+
+            return new ContentNode
+            {
+                Role = ContentRole.Unified,
+                ViewMode = ViewMode.Table,
+                Context = ctx
             };
         }
     }

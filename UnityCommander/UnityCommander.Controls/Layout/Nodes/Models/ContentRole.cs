@@ -9,6 +9,7 @@ namespace UnityCommander.Controls.Layout
         Preview,
         Editor,
         Dashboard,
-        Header
+        Header,
+        Unified,
     }
 }

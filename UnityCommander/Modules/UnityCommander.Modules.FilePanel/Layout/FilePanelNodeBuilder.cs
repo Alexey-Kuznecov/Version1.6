@@ -1,5 +1,6 @@
 ﻿
 using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.FilePanel.States;
 
 namespace UnityCommander.Modules.FilePanel.Layout
 {
@@ -16,11 +17,24 @@ namespace UnityCommander.Modules.FilePanel.Layout
         {
             var factory = new ContentNodeFactory(_contextFactory);
 
+            var folder = factory.CreateFolderNode();
+            var file = factory.CreateFileNode();
+            var drive = factory.CreateDriveNode();
+            var header = factory.CreateHeaderNode();
+
+            var folderContext = (FolderNodeContext)folder.Context;
+            var fileContext = (FileNodeContext)file.Context;
+
+            var unified = factory.CreateUnifiedNode(
+                folderContext,
+                fileContext);
+
             return new FilePanelNodeSet(
-                factory.CreateFolderNode(),
-                factory.CreateFileNode(),
-                factory.CreateDriveNode(),
-                factory.CreateHeaderNode());
+                folder,
+                file,
+                drive,
+                header,
+                unified);
         }
     }
 }

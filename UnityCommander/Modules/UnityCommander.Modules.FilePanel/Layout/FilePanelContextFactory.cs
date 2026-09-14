@@ -56,43 +56,60 @@ namespace UnityCommander.Modules.FilePanel.Layout
 
         public FilePanelRuntime Create()
         {
-            // 1. Runtime state of THIS panel.
+            // 1. State of THIS panel.
             var workspace = new Workspace(
                 new RegionNode(),
                 new RegionNode(),
                 new RegionNode());
 
-            // 2. Layout controller owns layout state of THIS panel.
-            var layoutController = new FilePanelLayoutController(
-                _layoutService,
-                workspace);
+            var workspaceController =
+                new WorkspaceController(workspace);
 
-            // 3. Navigation of THIS panel.
+            // 2. Navigation of THIS panel.
             var navigation = new NavigationManager(null);
 
-            // 4. Node infrastructure uses the SAME layout controller.
-            var nodeContextFactory = new NodeContextFactory(
-                layoutController,
-                _creationService,
-                _menu,
-                navigation,
-                _selection,
-                _commands,
-                _dropTarget,
-                _contextRegistry,
-                _scrollMapper,
-                _windowManager,
-                _popupService,
-                _activeTab);
+            // 3. Layout controller of THIS panel.
+            var layoutController =
+                new FilePanelLayoutController(
+                    _layoutService,
+                    workspace,
+                    workspaceController);
+
+            // 4. Node infrastructure uses the same layout/navigation.
+            var nodeContextFactory =
+                new NodeContextFactory(
+                    layoutController,
+                    _creationService,
+                    _menu,
+                    navigation,
+                    _selection,
+                    _commands,
+                    _dropTarget,
+                    _contextRegistry,
+                    _scrollMapper,
+                    _windowManager,
+                    _popupService,
+                    _activeTab);
 
             var nodeBuilder =
                 new FilePanelNodeBuilder(nodeContextFactory);
+
+            // 5. Build all nodes once.
+            var nodes = nodeBuilder.Build();
+
+            // 6. Give WorkspaceController access to the available nodes.
+            workspaceController.SetNodes(nodes);
+
+            // 7. Apply initial layout/mode.
+            layoutController.Initialize();
 
             return new FilePanelRuntime(
                 navigation,
                 nodeBuilder,
                 workspace,
-                layoutController);
+                workspaceController,
+                layoutController,
+                nodes);
         }
     }
 }

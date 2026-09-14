@@ -1,6 +1,7 @@
 ﻿
 using System;
 using UnityCommander.Controls.Layout;
+using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.States;
 
 namespace UnityCommander.Modules.FilePanel.Layout
@@ -9,22 +10,31 @@ namespace UnityCommander.Modules.FilePanel.Layout
     {
         private readonly FilePanelLayoutService _layoutService;
         private readonly Workspace _workspace;
+        private readonly WorkspaceController _workspaceController;
 
         public FilePanelLayoutMode Mode { get; private set; }
 
         public LayoutNode CurrentLayout { get; private set; }
 
-        public event Action<LayoutNode>? LayoutChanged;
+        public event Action? Changed;
 
         public FilePanelLayoutController(
             FilePanelLayoutService layoutService,
             Workspace workspace,
+            WorkspaceController workspaceController,
             FilePanelLayoutMode initialMode = FilePanelLayoutMode.Split)
         {
             _layoutService = layoutService;
             _workspace = workspace;
+            _workspaceController = workspaceController;
 
             Mode = initialMode;
+            CurrentLayout = Build();
+        }
+
+        public void Initialize()
+        {
+            _workspaceController.Apply(Mode);
             CurrentLayout = Build();
         }
 
@@ -35,9 +45,11 @@ namespace UnityCommander.Modules.FilePanel.Layout
 
             Mode = mode;
 
+            _workspaceController.Apply(Mode);
+
             CurrentLayout = Build();
 
-            LayoutChanged?.Invoke(CurrentLayout);
+            Changed?.Invoke();
         }
 
         public void Toggle()
