@@ -61,7 +61,7 @@ namespace UnityCommander.Modules.ToolBar.ViewModels
                 r.Tab("home", "Главная")
                     .Group("clipboard", "Буфер обмена")
                         .Section("clip", RibbonGroupLayout.Inline)
-                            .Button("Кнопка 1", CommandNames.Test.ShowParams, "directory.create2")
+                            .Button("Кнопка 1", CommandNames.Views.Toggle, "git")
                             .Button("Кнопка 2", CommandNames.Test.ShowParams, "directory.create2")
                             .Button("Кнопка 3", CommandNames.Test.ShowParams, "directory.create2")
 

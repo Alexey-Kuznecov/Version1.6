@@ -33,10 +33,7 @@ namespace UnityCommander.Core.Navigation
                 "Performance", 
                 LogScope.Runtime);
 
-            if (pathValidator != null)
-                _pathValidator = pathValidator;
-            else
-                _pathValidator = path => Directory.Exists(path) || VirtualPaths.MyComputer == path;
+            _pathValidator = path => Directory.Exists(path) || VirtualPaths.MyComputer == path;
 
             Current = null;
         }

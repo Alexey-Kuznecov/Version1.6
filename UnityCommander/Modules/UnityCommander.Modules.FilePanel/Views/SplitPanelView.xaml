@@ -69,7 +69,7 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <ContentControl Content="{Binding LayoutRoot}" />
+        <ContentControl Content="{Binding LayoutRoot, Mode=TwoWay}" />
         <ContentControl Grid.Row="1">
             <AdornerDecorator>
                 <navigation:NavigationPanel

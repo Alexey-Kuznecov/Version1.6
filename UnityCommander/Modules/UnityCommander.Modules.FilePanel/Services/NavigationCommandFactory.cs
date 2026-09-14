@@ -7,6 +7,7 @@ using UnityCommander.Common.Commands;
 using UnityCommander.Common.Panels;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Dialog;
+using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Modules.FilePanel.Models;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;
@@ -16,6 +17,7 @@ namespace UnityCommander.Modules.FilePanel.Services
 {
     public class NavigationCommandFactory // : INavigationCommandFactory
     {
+        private readonly FilePanelLayoutController _layoutController;
         private readonly ActiveTabContext _activeTab;
         private readonly NavigationManager _navigation;
         private readonly ICommandUIService _ui;
@@ -25,6 +27,7 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly IPopupService _popupService;
 
         public NavigationCommandFactory(
+            FilePanelLayoutController layoutController,
             ActiveTabContext activeTab,
             IPopupService popupService,
             ICreationService creationService,
@@ -33,6 +36,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             ICommandUIService ui,
             IWindowManager windowManager)
         {
+            _layoutController = layoutController;
             _activeTab = activeTab;
             _popupService = popupService;
             _navigation = navigation;
@@ -185,6 +189,19 @@ namespace UnityCommander.Modules.FilePanel.Services
                 command.RefreshCanExecute();
 
             return command;
+        }
+
+        public UICommand CreateLayoutToggleCommand(
+            string id,
+            Func<bool> canExecute)
+        {
+            return _ui.Create(
+               id,
+                new DelegateCommand<object>(obj =>
+                {
+                    _layoutController.Toggle();
+                }),
+               canExecute);
         }
     }
 }

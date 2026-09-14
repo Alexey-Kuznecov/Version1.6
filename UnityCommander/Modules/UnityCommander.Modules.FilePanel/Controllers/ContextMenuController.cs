@@ -20,7 +20,6 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         private readonly CommandRegistryService _commandRegistry;
         private readonly ContextResolverDispatcher _resolver;
 
-
         public ContextMenuController(
             CommandSurfaceEngine surface,
             CommandExecutionService commandExecution,

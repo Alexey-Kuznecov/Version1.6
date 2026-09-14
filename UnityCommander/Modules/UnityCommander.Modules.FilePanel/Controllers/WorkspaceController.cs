@@ -23,6 +23,15 @@ namespace UnityCommander.Modules.FilePanel.Controllers
             _workspace.SecondaryRegion.Content = fileNode;
         }
 
+        public void ShowUnifiedMode(
+            ContentNode headerNode,
+            ContentNode unifiedNode)
+        {
+            _workspace.HeaderRegion.Content = headerNode;
+            _workspace.MainRegion.Content = unifiedNode;
+            _workspace.SecondaryRegion.Content = null;
+        }
+
         public void ShowMyComputerMode(
             ContentNode headerNode,
             ContentNode driveNode)

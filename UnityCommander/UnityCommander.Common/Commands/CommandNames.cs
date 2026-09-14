@@ -96,6 +96,11 @@ namespace UnityCommander.Common.Commands
             public const string SelectAll = "panel.select.all";
         }
 
+        public static class Views
+        {
+            public const string Toggle = "view.toggle-layout";
+        }
+
         public static class ToolBar
         {
             public const string Create = "tools.create-console";

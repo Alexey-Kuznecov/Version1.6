@@ -275,5 +275,18 @@ namespace UnityCommander.Modules.FilePanel
                 Type = SelectionActionType.SelectAll
             });
         }
+
+        public Task ExecuteLayoutToggleAsync(CommandContext context)
+        {
+            var selectionService = context.GetService<ISelectionService>();
+            var tabContextAccessor = context.GetService<ITabContextAccessor>();
+
+            var items = tabContextAccessor.ActiveTab
+                .GetCurrentDirectoryDirectories();
+
+            SelectAll(items, selectionService);
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -21,8 +21,6 @@ namespace UnityCommander.Services
 
         public Guid TabId => _vm.GetTabToken(); // ← просто переименуй смысл
 
-        public bool IsActive => _vm.IsActive;
-
         public string GetCurrentPath() => _vm.GetCurrentPath();
 
         private void OnPathChanged(string path)

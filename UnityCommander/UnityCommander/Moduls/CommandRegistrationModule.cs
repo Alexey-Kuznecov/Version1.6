@@ -1,11 +1,9 @@
 ﻿
-using Microsoft.Win32;
 using Prism.Ioc;
 using Prism.Modularity;
 using UnityCommander.Common.Commands;
 using UnityCommander.Core;
 using UnityCommander.Core.Commands;
-using UnityCommander.Core.IO.Operations;
 using UnityCommander.Modules.BottomPanel.Commands;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.States.Resolver;
@@ -27,6 +25,11 @@ namespace UnityCommander.Moduls
             var tooBarProvider = containerProvider.Resolve<ToolCommandProvider>();
 
             _notifier = containerProvider.Resolve<IDirectoryChangeNotifier>();
+
+            commandRegistry.Register(CommandFactoryExtensions.Create(
+               CommandNames.Views.Toggle,
+                 filePanelProvider.ExecuteLayoutToggleAsync,
+                 null));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
                CommandNames.Test.ShowDialog,
