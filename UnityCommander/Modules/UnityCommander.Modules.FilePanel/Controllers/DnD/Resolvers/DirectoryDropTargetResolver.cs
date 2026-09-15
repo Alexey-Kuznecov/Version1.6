@@ -27,6 +27,14 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
             if (element.DataContext is not ContentNode node)
                 return null;
 
+            if (node.Context is UnifiedNodeContext unifiedNodeContext)
+            {
+                return new DropTargetInfo
+                {
+                    Path = unifiedNodeContext.Folder.Current,
+                };
+            }
+
             if (node.Context is not BaseNodeContext nodeContext)
                 return null;
 
@@ -40,8 +48,6 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
                 result.CanNavigate = true;
                 result.NavigateCommand = folderContext.NavigateCommand;
                 result.NavigationTarget = folderContext.SelectedFolder;
-                // Здесь уже конкретная navigation target,
-                // если она действительно нужна.
             }
 
             return result;

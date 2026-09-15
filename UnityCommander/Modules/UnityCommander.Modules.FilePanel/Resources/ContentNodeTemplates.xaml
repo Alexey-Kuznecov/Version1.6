@@ -76,10 +76,11 @@
             <AdornerDecorator>
                 <ListView
                     Padding="0"
-                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.File.Columns, Mode=Default}"
+                    be:GridViewColumnsBehavior.ColumnDefinitions="{Binding Context.Columns, Mode=Default}"
                     be:ScrollBehavior.Enable="True"
-                    be:ScrollBehavior.ViewportTarget="{Binding Context.File}"
+                    be:ScrollBehavior.ViewportTarget="{Binding Context}"
                     be:SelectionBehavior.EnableSelection="True"
+                    be:SelectionBehavior.Manager="{Binding Context.SelectionManager}"
                     cursor:CursorTargetBehavior.Enable="True"
                     dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
                     dd:DragDrop.IsDragSource="True"
@@ -89,7 +90,7 @@
                     Style="{StaticResource UcGridListViewTemplate}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="PreviewMouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding Context.NavigateCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                            <i:InvokeCommandAction Command="{Binding Context.OpenCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="MouseRightButtonUp">
                             <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />

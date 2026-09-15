@@ -5,6 +5,7 @@ namespace UnityCommander.Abstractions.Columns
     {
         Files,
         Folders,
-        Drives
+        Drives,
+        Unified
     }
 }

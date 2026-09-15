@@ -113,7 +113,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               IRegionManager regionManager,
               IDataProviderService dataService,
               IDirectoryChangeNotifier directoryChangeNotifier,
-              ISelectionManager selectionManager,
               CommandManager manager,
               IColumnProvider columnProvider,
               IColumnStateManager columnStateManager,
@@ -151,8 +150,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _tabStateRegistry = tabStateRegistry ?? throw new ArgumentNullException(nameof(tabStateRegistry));
 
             _commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
-
-            _selectionManager = selectionManager ?? throw new ArgumentNullException(nameof(selectionManager));
 
             _columnStateManager = columnStateManager ?? throw new ArgumentNullException(nameof(columnStateManager));
 
@@ -208,6 +205,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 LayoutRoot =
                     _panelRuntime.LayoutController.CurrentLayout;
             };
+
+
         }
 
         #endregion
@@ -279,6 +278,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 token = Guid.NewGuid();
 
             SetTabId(token);
+
+            _selectionManager = _panelRuntime.SelectionManager;
 
             _selectionService.Register(token, _selectionManager);
             _tabStateRegistry.Register(_state);
@@ -402,10 +403,12 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             var defsFiles = _columnRegistry.GetColumns(PanelType.Files).ToList();
             var defsFolders = _columnRegistry.GetColumns(PanelType.Folders).ToList();
             var defsDrives = _columnRegistry.GetColumns(PanelType.Drives).ToList();
+            var defsUnified = _columnRegistry.GetColumns(PanelType.Unified).ToList();
 
             _fileNodeContext.Columns = _columnStateManager.LoadState("LeftPanel.Files", PanelType.Files, defsFiles);
             _folderNodeContext.Columns = _columnStateManager.LoadState("LeftPanel.Folders", PanelType.Folders, defsFolders);
             _driveNodeContext.Columns = _columnStateManager.LoadState("LeftPanel.Drives", PanelType.Drives, defsDrives);
+            _unifiedNodeContext.Columns = _columnStateManager.LoadState("LeftPanel.Unified", PanelType.Unified, defsUnified);
 
             //await UpdateColumnValuesAsync();
         }
@@ -477,10 +480,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     //    _nodeSet.Unified,
                     //    null);
 
-                    _workspaceController.ShowDirectoryMode(
-                        _nodeSet.Header,
-                        _nodeSet.Folder,
-                        _nodeSet.File);
+                    //_workspaceController.ShowDirectoryMode(
+                    //    _nodeSet.Header,
+                    //    _nodeSet.Folder,
+                    //    _nodeSet.File);
                 }
             }
                 sw.Stop();
@@ -506,6 +509,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                         _folderNodeContext.Folders.Count);
 
             performance.SetMetadata("Path", path);
+
+            _unifiedNodeContext.RebuildItems();
         }
 
         #endregion

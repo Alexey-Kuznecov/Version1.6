@@ -27,6 +27,17 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers
             if (context.TargetContext is not ContentNode node)
                 return null;
 
+            if (node.Context is UnifiedNodeContext unifiedNodeContext)
+            {
+                return new DropTargetInfo
+                {
+                    Path = unifiedNodeContext.Folder.Current,
+                    CanNavigate = true,
+                    NavigateCommand = unifiedNodeContext.Folder.NavigateCommand,
+                    NavigationTarget = folder
+                };
+            }
+
             if (node.Context is not FolderNodeContext folderContext)
                 return null;
 

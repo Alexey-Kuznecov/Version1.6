@@ -47,24 +47,32 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 
         private static IReadOnlyList<object> ExtractSelection(object? sourceContext)
         {
-            if (sourceContext is ContentNode node &&
-                node.Context is BaseNodeContext ctx)
-            {
-                return ctx.SelectedItems.Cast<object>().ToList();
-            }
+            if (sourceContext is not ContentNode node)
+                return [];
 
-            return Array.Empty<object>();
+            return node.Context switch
+            {
+                UnifiedNodeContext unified =>
+                    unified.Folder.SelectedItems.Cast<object>().ToList(),
+
+                BaseNodeContext baseContext =>
+                    baseContext.SelectedItems.Cast<object>().ToList(),
+
+                _ => []
+            };
         }
 
         private static string? GetCurrentPath(object? context)
         {
-            if (context is ContentNode node &&
-                node.Context is BaseNodeContext baseContext)
-            {
-                return baseContext.Current;
-            }
+            if (context is not ContentNode node)
+                return null;
 
-            return null;
+            return node.Context switch
+            {
+                UnifiedNodeContext unified => unified.Folder.Current,
+                BaseNodeContext baseContext => baseContext.Current,
+                _ => null
+            };
         }
     }
 }

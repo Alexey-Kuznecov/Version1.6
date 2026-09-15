@@ -28,20 +28,27 @@ namespace UnityCommander.Operation
 
         public async Task CopyAsync(FileOperationRequest request)
         {
-            var result = _windowManager.ShowModalDialog<CopyDialogResult>(
-                "core.copy-dialog",
-                request);
+            FileOperationRequest operationRequest = request;
 
-            if (result is null || !result.Accepted)
-                return;
+            if (request.ShowDialog)
+            {
+                var result = _windowManager.ShowModalDialog<CopyDialogResult>(
+                    "core.copy-dialog",
+                    request);
 
-            var task = _engine.StartAsync(result.Request);
+                if (result is null || !result.Accepted)
+                    return;
+
+                operationRequest = result.Request;
+            }
+
+            var task = _engine.StartAsync(operationRequest);
 
             if (_settings.Get(GeneralSettings.ShowCopyProgressDialog))
             {
                 _windowManager.ShowModalDialog<CopyDialogResult>(
                     "core.copy-progress-dialog",
-                    result.Request);
+                    operationRequest);
             }
 
             await task;

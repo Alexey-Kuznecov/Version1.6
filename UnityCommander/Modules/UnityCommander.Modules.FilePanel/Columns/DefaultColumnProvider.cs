@@ -248,6 +248,113 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 };
             }
 
+
+            if (panelType == PanelType.Unified)
+            {
+                return new List<ColumnModel>
+                {
+                    new ColumnModel
+                    {
+                        Id = "core.name",
+                        Header = "Name",
+                        //DisplayMemberPath = "Name",
+                        CellTemplateResourceKey = "ColumnNameDataTemplate",
+                        Width = 200,
+                        Order = 1,
+                        SyncGroup = "Name",
+                        ColumnValueHandler = f => ((BaseDirectory)f).Name
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.extension",
+                        Header = "Ext",
+                        //DisplayMemberPath = "Extension",
+                        CellTemplateResourceKey = "ColumnExtensionDataTemplate",
+                        Width = 80,
+                        Order = 2,
+                        SyncGroup = "Ext",
+                        ColumnValueHandler = f => ((FileModel)f).Extension
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.size",
+                        Header = "Size",
+                        //DisplayMemberPath = "Extension",
+                        CellTemplateResourceKey = "ColumnFileSizeDataTemplate",
+                        Width = 80,
+                        Order = 3,
+                        SyncGroup = "Size",
+                        ColumnValueHandler = f => ((FileModel)f).Size
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.creationTime",
+                        Header = "Created",
+                        //DisplayMemberPath = "CreationTime",
+                        CellTemplateResourceKey = "ColumnCreationDateDataTemplate",
+                        Width = 100,
+                        Order = 4,
+                        SyncGroup = "Created",
+                        ColumnValueHandler = f => ((BaseDirectory)f).CreationTime
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.lastAccessTime",
+                        Header = "Last Access",
+                        //DisplayMemberPath = "LastAccessTime",
+                        CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
+                        Width = 100,
+                        Order = 5,
+                        SyncGroup = "LastAccess",
+                        ColumnValueHandler = f => ((BaseDirectory)f).LastAccessTime
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.unified.live",
+                        Header = "Status",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        Width = 100,
+                        Order = 6,
+                        SyncGroup = "Live2",
+                        RefreshInterval = 3000,
+                        IsDynamic = true,
+                        IsVisible = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var path = ((BaseDirectory)f).Path;
+
+                            var state = (FileState)_fileStateService.GetState(path);
+
+                            if (state is null)
+                                return "Не задан";
+
+                            if (state.Progress == 100)
+                                return "Готово";
+
+                            return state.Status switch
+                            {
+                                OperationStatus.InProgress =>
+                                    $"{state.Progress}%",
+
+                                OperationStatus.Completed =>
+                                    "Готово",
+
+                                OperationStatus.Skipped =>
+                                    "Пропущен",
+
+                                OperationStatus.Canceled =>
+                                    "Отменено",
+
+                                OperationStatus.Failed =>
+                                    "Ошибка",
+
+                                _ => "Ожидание"
+                            };
+                        }
+                    },
+                };
+            }
+
             return Enumerable.Empty<ColumnModel>();
         }
     }

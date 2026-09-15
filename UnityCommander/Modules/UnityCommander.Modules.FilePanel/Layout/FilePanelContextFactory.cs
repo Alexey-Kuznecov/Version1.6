@@ -105,6 +105,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
 
             return new FilePanelRuntime(
                 navigation,
+                _selection,
                 nodeBuilder,
                 workspace,
                 workspaceController,

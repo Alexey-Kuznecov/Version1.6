@@ -189,7 +189,7 @@ namespace UnityCommander.Modules.FilePanel
 
             fileOperationService.CopyAsync(new FileOperationRequest
             {
-                ShowDialog = true,
+                ShowDialog = false,
                 Target = tabContext.CurrentPath,
                 Sources = clipboard.Paths.ToList(),
                 Type = type

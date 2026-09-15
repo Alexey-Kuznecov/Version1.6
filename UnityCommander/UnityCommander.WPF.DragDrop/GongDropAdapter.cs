@@ -32,10 +32,10 @@ namespace UnityCommander.WPF.DragDrop
 
         public void DragEnter(IDropInfo dropInfo)
         {
-            var context =
-               _factory.Create(dropInfo);
+            //var context =
+            //   _factory.Create(dropInfo);
 
-            _controller.DragEnter(context);
+            //_controller.DragEnter(context);
         }
 
         public void DragLeave(IDropInfo dropInfo)
