@@ -1,5 +1,4 @@
 ﻿
-using System;
 using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Modules.FilePanel.States;
@@ -58,7 +57,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             FolderNodeContext folderContext,
             FileNodeContext fileContext)
         {
-            var ctx = new UnifiedNodeContext(folderContext, fileContext);
+            var ctx = _contextFactory.CreateUnifiedNode(folderContext, fileContext);
 
             return new ContentNode
             {

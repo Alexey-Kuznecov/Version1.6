@@ -1,19 +1,17 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows.Documents;
 using UnityCommander.WPF;
 
 namespace UnityCommander.Modules.FilePanel.Converters
 {
     public class ColumnValueConverter : BaseConverter<ColumnValueConverter>
     {
-        private static int outputOrder;
+        // Stateful workaround for WPF converter invocation order.
+        // Reset when panel layout changes so the next visual pass starts from zero.
+        public static int outputOrder;
 
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

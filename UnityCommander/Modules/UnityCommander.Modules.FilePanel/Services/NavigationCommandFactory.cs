@@ -89,6 +89,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                 new DelegateCommand<object>(x =>
                 {
                     _navigation.TryNavigateTo(VirtualPaths.MyComputer, true);
+                    //_layoutController.ShowDrives();
                 }),
                 canExecute);
         }

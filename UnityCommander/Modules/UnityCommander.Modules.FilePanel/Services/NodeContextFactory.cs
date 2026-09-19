@@ -94,6 +94,20 @@ namespace UnityCommander.Modules.FilePanel.Services
             return ctx;
         }
 
+        public UnifiedNodeContext CreateUnifiedNode(
+            FolderNodeContext folderNodeContext, 
+            FileNodeContext fileNodeContext)
+        {
+            var ctx = new UnifiedNodeContext(
+                _menu,
+               folderNodeContext, 
+               fileNodeContext);
+
+            _contextRegistry.Register(ctx);
+
+            return ctx;
+        }
+
         public DriveNodeContext CreateDriveNode()
         {
             DriveNodeContext ctx = null;

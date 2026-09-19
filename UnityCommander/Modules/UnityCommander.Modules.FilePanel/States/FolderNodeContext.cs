@@ -58,15 +58,12 @@ namespace UnityCommander.Modules.FilePanel.States
                 if (dir != null)
                     navigation.TryNavigateTo(dir.Path);
                 sw.Stop();
-//#if (Nlog)
-//                _logger.Info($"Переход в папку ({dir.Path}) заняло: {sw.ElapsedMilliseconds} ms, всего папок: {Folders.Count}");
-//#endif
             });
 
-            Mapper.RangeChanged += (start, end) =>
-            {
-                ScrollService.SetRange(start, end);
-            };
+            //Mapper.RangeChanged += (start, end) =>
+            //{
+            //    ScrollService.SetRange(start, end);
+            //};
         }
 
         public IFolderItem Find(string path)

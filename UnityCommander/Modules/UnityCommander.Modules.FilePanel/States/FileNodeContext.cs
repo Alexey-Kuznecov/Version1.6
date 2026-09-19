@@ -39,10 +39,13 @@ namespace UnityCommander.Modules.FilePanel.States
             ScrollService = new ViewportService<IFileItem>(
                    () => Files);
 
-            Mapper.RangeChanged += (start, end) =>
-            {
-                ScrollService.SetRange(start, end);
-            };
+            //Mapper.RangeChanged += (start, end) =>
+            //{
+            //    //if (IsUnified)
+            //    //    return;
+
+            //    ScrollService.SetRange(start, end);
+            //};
         }
 
         public IFileItem? Find(string path)

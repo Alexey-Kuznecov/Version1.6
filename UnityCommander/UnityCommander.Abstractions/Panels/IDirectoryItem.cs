@@ -24,8 +24,10 @@ namespace UnityCommander.Abstractions.Panels
 
         public DateTime LastAccessTime { get; set; }
 
-        public IDictionary<string, object> Additional { get; set; }
-        
+        //public IDictionary<string, object> Additional { get; set; }
+
+        public ICellModel Cell { get; set; }
+
         public TargetPanel TargetPanel { get; set; }
         
         public Dictionary<string, DateTime> LastUpdate { get; }

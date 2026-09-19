@@ -38,12 +38,12 @@ namespace UnityCommander.Modules.FilePanel.Columns
 
                     new ColumnModel
                     {
-                        Id = "core.live",
+                        Id = "core.status",
                         Header = "Status",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
                         Width = 100,
                         Order = 3,
-                        SyncGroup = "Live",
+                        SyncGroup = "Status",
                         RefreshInterval = 3000,
                         IsDynamic = true,
                         IsVisible = true,
@@ -126,7 +126,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.random",
+                        Id = "core.file.random",
                         Header = "Random (Core) ###",
                         //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
@@ -183,7 +183,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.random",
+                        Id = "core.folder.random",
                         Header = "Random (Core) ###",
                         //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
@@ -255,7 +255,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 {
                     new ColumnModel
                     {
-                        Id = "core.name",
+                        Id = "core.unified.name",
                         Header = "Name",
                         //DisplayMemberPath = "Name",
                         CellTemplateResourceKey = "ColumnNameDataTemplate",
@@ -266,7 +266,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.extension",
+                        Id = "core.unified.extension",
                         Header = "Ext",
                         //DisplayMemberPath = "Extension",
                         CellTemplateResourceKey = "ColumnExtensionDataTemplate",
@@ -277,7 +277,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.size",
+                        Id = "core.unified.size",
                         Header = "Size",
                         //DisplayMemberPath = "Extension",
                         CellTemplateResourceKey = "ColumnFileSizeDataTemplate",
@@ -288,7 +288,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.creationTime",
+                        Id = "core.unified.creationTime",
                         Header = "Created",
                         //DisplayMemberPath = "CreationTime",
                         CellTemplateResourceKey = "ColumnCreationDateDataTemplate",
@@ -299,7 +299,7 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.lastAccessTime",
+                        Id = "core.unified.lastAccessTime",
                         Header = "Last Access",
                         //DisplayMemberPath = "LastAccessTime",
                         CellTemplateResourceKey = "ColumnLastAccessDateDataTemplate",
@@ -310,11 +310,28 @@ namespace UnityCommander.Modules.FilePanel.Columns
                     },
                     new ColumnModel
                     {
-                        Id = "core.unified.live",
+                        Id = "core.unified.random",
+                        Header = "Random (unified) ###",
+                        //DisplayMemberPath = "LastAccessTime",
+                        CellTemplateResourceKey = "ColumnTextDataTemplate",
+                        UpdatePriority = ColumnUpdatePriority.Background,
+                        Width = 100,
+                        Order = 6,
+                        SyncGroup = "Random",
+                        IsDynamic = true,
+                        ColumnValueHandler = f =>
+                        {
+                            var r = Random.Shared.Next(100, 200);
+                            return $"{r}%";
+                        }
+                    },
+                    new ColumnModel
+                    {
+                        Id = "core.unified.status",
                         Header = "Status",
                         CellTemplateResourceKey = "ColumnTextDataTemplate",
                         Width = 100,
-                        Order = 6,
+                        Order = 7,
                         SyncGroup = "Live2",
                         RefreshInterval = 3000,
                         IsDynamic = true,

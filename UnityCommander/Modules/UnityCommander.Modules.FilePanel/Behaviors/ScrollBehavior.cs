@@ -4,7 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using UnityCommander.Diagnostics.Tracing;
 using UnityCommander.Modules.FilePanel.Services;
+using Prism.Ioc;
 
 namespace UnityCommander.Modules.FilePanel.Behaviors
 {
@@ -27,12 +29,16 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                 typeof(object),
                 typeof(ScrollBehavior),
                 new PropertyMetadata(null));
-
+       
         public static void SetViewportTarget(DependencyObject obj, IViewportHost value)
             => obj.SetValue(ViewportTargetProperty, value);
 
         public static IViewportHost GetViewportTarget(DependencyObject obj)
             => (IViewportHost)obj.GetValue(ViewportTargetProperty);
+
+#pragma warning disable CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".
+        private static IDiagnosticTrace? _trace = ContainerLocator.Container.Resolve<IDiagnosticTrace>();
+#pragma warning restore CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".
 
         private static void OnEnableChanged(
             DependencyObject d,
@@ -59,6 +65,17 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
                     //    $"Viewport: {scrollViewer.ViewportHeight}, " +
                     //    $"Offset: {scrollViewer.VerticalOffset}, " +
                     //    $"ActualHeight: {scrollViewer.ActualHeight}");
+
+                    //_trace?.Write(
+                    //    "Viewport",
+                    //    "ScrollChanged",
+                    //    new Dictionary<string, object?>
+                    //    {
+                    //        ["Mode"] = target is UnifiedNodeContext ? "Unified" : "Split",
+                    //        ["Offset"] = scrollViewer.VerticalOffset,
+                    //        ["Viewport"] = scrollViewer.ViewportHeight,
+                    //        ["ActualHeight"] = scrollViewer.ActualHeight
+                    //    });
                 }
 
                 scrollViewer.ScrollChanged += (_, __) =>
@@ -89,5 +106,10 @@ namespace UnityCommander.Modules.FilePanel.Behaviors
         }
 
         public static event Action<int, int>? ScrollChanged;
+
+        public static void InitializeIDiagnostic(IDiagnosticTrace? diagnostic)
+        {
+            //_trace = diagnostic;
+        }
     }
 }

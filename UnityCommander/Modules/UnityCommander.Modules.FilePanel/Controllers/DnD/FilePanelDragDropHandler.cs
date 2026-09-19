@@ -118,7 +118,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
             {
                 IsAllowed = true,
                 Effect = DragDropEffects.Copy,
-                Adorner = ResolveAdorner(context)
+                Adorner = ResolveAdorner(dropContext, context)
             };
         }
 
@@ -241,6 +241,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
         }
 
         private static Type? ResolveAdorner(
+            IDropContext dropContext,
             DragDropContext context)
         {
             if (context.VisualTarget is LayoutDocumentTabItem)
@@ -248,6 +249,14 @@ namespace UnityCommander.Modules.FilePanel.Controllers.DnD
 
             if (context.TargetContext is ContentNode node)
             {
+                if (node.Context is UnifiedNodeContext &&
+                    dropContext is FilePanelDragDropContext ctx)
+                {
+                    return ctx.CanNavigate
+                        ? DropTargetAdorners.Highlight
+                        : DropTargetAdorners.Insert;
+                }
+
                 return node.Context is FileNodeContext
                     ? DropTargetAdorners.Insert
                     : DropTargetAdorners.Highlight;

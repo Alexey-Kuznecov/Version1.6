@@ -16,13 +16,13 @@ namespace UnityCommander.Modules.FilePanel.Layout
 
         public LayoutNode CurrentLayout { get; private set; }
 
-        public event Action? Changed;
+        public event Action<FilePanelLayoutMode>? Changed;
 
         public FilePanelLayoutController(
             FilePanelLayoutService layoutService,
             Workspace workspace,
             WorkspaceController workspaceController,
-            FilePanelLayoutMode initialMode = FilePanelLayoutMode.Split)
+            FilePanelLayoutMode initialMode = FilePanelLayoutMode.Unified)
         {
             _layoutService = layoutService;
             _workspace = workspace;
@@ -49,7 +49,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
 
             CurrentLayout = Build();
 
-            Changed?.Invoke();
+            Changed?.Invoke(mode);
         }
 
         public void Toggle()
@@ -67,6 +67,12 @@ namespace UnityCommander.Modules.FilePanel.Layout
                 _workspace.HeaderRegion,
                 _workspace.MainRegion,
                 _workspace.SecondaryRegion);
+        }
+
+        internal void ShowDrives()
+        {
+            //SetMode(FilePanelLayoutMode.Split);
+            _workspaceController.ShowMyComputerMode();
         }
     }
 }

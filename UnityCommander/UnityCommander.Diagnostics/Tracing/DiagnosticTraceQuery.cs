@@ -16,5 +16,7 @@ namespace UnityCommander.Diagnostics.Tracing
         public IReadOnlyDictionary<string, object?>? Data { get; init; }
 
         public int? Limit { get; init; }
+
+        public bool Contains { get; init; }
     }
 }

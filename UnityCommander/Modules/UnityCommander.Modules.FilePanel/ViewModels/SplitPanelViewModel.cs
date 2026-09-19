@@ -39,6 +39,7 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
+using UnityCommander.Modules.FilePanel.Converters;
 using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
@@ -197,16 +198,28 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
             LayoutRoot =
                 _panelRuntime.LayoutController.CurrentLayout;
-
-            _panelRuntime.LayoutController.Changed += () =>
+            
+            _panelRuntime.LayoutController.Changed += mode =>
             {
+                // Reset converter order when panel layout changes.
+                // WPF rebuilds cell templates asynchronously, so during the transition
+                // a temporary visual mismatch may occur.
+                //ColumnValueConverter.outputOrder = 0;
+
+                _folderNodeContext.IsUnified =
+                    mode == FilePanelLayoutMode.Unified;
+
+                _fileNodeContext.IsUnified =
+                    mode == FilePanelLayoutMode.Unified;
+
+                _unifiedNodeContext.IsUnified =
+                    mode == FilePanelLayoutMode.Unified;
+
                 _unifiedNodeContext.RebuildItems();
 
                 LayoutRoot =
                     _panelRuntime.LayoutController.CurrentLayout;
             };
-
-
         }
 
         #endregion
@@ -287,16 +300,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _navigationService.CurrentChanged += OnPathChanged;
 
             _ = SetLastPanelState();
-
-            _workspaceController.ShowDirectoryMode(
-                _nodeSet.Header,
-                _nodeSet.Folder,
-                _nodeSet.File);
-
-            //_workspaceController.ShowDirectoryMode(
-            //    _nodeSet.Header,
-            //    _nodeSet.Unified,
-            //    null);
 
             return this;
         }
@@ -456,9 +459,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             {
                 await GoDrivePanel();
 
-                _workspaceController.ShowMyComputerMode(
-                    _nodeSet.Header,
-                    _nodeSet.Drive);
+                _workspaceController.ShowMyComputerMode();
             }
             else
             {
@@ -475,10 +476,10 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                     LogScope.UI,
                     "Workspace Creation"))
                 {
-                    //_workspaceController.ShowDirectoryMode(
-                    //    _nodeSet.Header,
-                    //    _nodeSet.Unified,
-                    //    null);
+                    _workspaceController.ShowDirectoryMode(
+                        _nodeSet.Header,
+                        _nodeSet.Unified,
+                        null);
 
                     //_workspaceController.ShowDirectoryMode(
                     //    _nodeSet.Header,
@@ -559,7 +560,9 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             //(_driveNodeContext as IDisposable).Dispose();
             (_folderNodeContext as IDisposable).Dispose();
             (_fileNodeContext as IDisposable).Dispose();
+            _unifiedNodeContext.Dispose();
 
+            _contextRegistry.Unregister(_folderNodeContext);
             _contextRegistry.TryUnregister(_fileNodeContext);
             _contextRegistry.TryUnregister(_folderNodeContext);
 
@@ -571,6 +574,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _state.CurrentPath = path;
             _fileNodeContext.Current = _state.CurrentPath;
             _folderNodeContext.Current = _state.CurrentPath;
+            _unifiedNodeContext.Current = _state.CurrentPath;
         }
 
         public void OnViewAttached(object view)

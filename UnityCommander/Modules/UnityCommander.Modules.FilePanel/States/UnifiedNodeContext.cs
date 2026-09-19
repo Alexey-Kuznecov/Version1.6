@@ -1,5 +1,6 @@
 ﻿
 using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -8,24 +9,32 @@ using System.Collections.Specialized;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Panels;
+using UnityCommander.Diagnostics.Tracing;
+using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.WPF.DragDrop;
 
 namespace UnityCommander.Modules.FilePanel.States
 {
-    public sealed class UnifiedNodeContext : BindableBase, IViewportHost, IDisposable
+    public sealed class UnifiedNodeContext : BindableBase, IContextMenuHost, IViewportHost, IDisposable
     {
         public FolderNodeContext Folder { get; }
+        
         public FileNodeContext File { get; }
 
         public ICommand OpenCommand { get; }
+        
+        public ICommand OpenMenuCommand { get; }
 
         public ObservableCollection<IDirectoryItem> Items { get; } = [];
 
-        public ViewportMapper Mapper { get; }
+        public ObservableCollection<MenuItemViewModel> ContextMenuItems { get; }
+            = [];
 
-        public ViewportService<IDirectoryItem>? ScrollService { get; }
+        public ViewportService<IDirectoryItem>? ScrollService { get; private set; }
 
         public ISelectionManager SelectionManager => File.SelectionManager;
 
@@ -37,28 +46,40 @@ namespace UnityCommander.Modules.FilePanel.States
             set => SetProperty(ref _columns, value);
         }
 
+        public ViewportMapper Mapper => File.Mapper;
+
         public IDropTarget DropTarget => File.DropTarget;
 
+        public Guid TabId => File.TabId;
+
+        public bool IsUnified { get; set; }
+
+        public string Current { get; set; }
+
         public UnifiedNodeContext(
-            FolderNodeContext folder,
-            FileNodeContext file)
+             ContextMenuController menu,
+             FolderNodeContext folder,
+             FileNodeContext file)
         {
             Folder = folder;
             File = file;
 
-            //ScrollService = new ViewportService<IDirectoryItem>(
-            //    () => Items);
-
-            Mapper = new ViewportMapper();
-
             OpenCommand = new DelegateCommand<IDirectoryItem>(Open);
+           
+            OpenMenuCommand = new DelegateCommand<object>(parameter =>
+            {
+                menu.Show(this, parameter);
+            });
+
+            ScrollService = new ViewportService<IDirectoryItem>(
+                () => Items);
 
             Folder.Folders.CollectionChanged += OnFoldersChanged;
             File.Files.CollectionChanged += OnFilesChanged;
 
             RebuildItems();
 
-            //Mapper.RangeChanged += OnRangeChanged;
+            Mapper.RangeChanged += OnRangeChanged;
         }
 
         private void OnFoldersChanged(
@@ -128,10 +149,32 @@ namespace UnityCommander.Modules.FilePanel.States
 
             foreach (var item in File.Files)
                 Items.Add(item);
+
+            _trace.Write(
+               "UnifiedNodeContext",
+               "ItemsRebuilt",
+               new Dictionary<string, object?>
+               {
+                   ["Count"] = Items.Count
+               });
         }
+
+#pragma warning disable CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".
+        private IDiagnosticTrace? _trace = ContainerLocator.Container.Resolve<IDiagnosticTrace>();
+#pragma warning restore CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".
 
         private void OnRangeChanged(int start, int end)
         {
+            _trace.Write(
+                "UnifiedNodeContext",
+                "ViewportRangeChanged",
+                new Dictionary<string, object?>
+                {
+                    ["Start"] = start,
+                    ["End"] = end,
+                    ["ItemCount"] = Items.Count
+                });
+
             ScrollService?.SetRange(start, end);
         }
 
@@ -154,6 +197,7 @@ namespace UnityCommander.Modules.FilePanel.States
 
         public void Dispose()
         {
+            Mapper.RangeChanged -= ScrollService.SetRange;
             Folder.Folders.CollectionChanged -= OnFoldersChanged;
             File.Files.CollectionChanged -= OnFilesChanged;
             Mapper.RangeChanged -= OnRangeChanged;

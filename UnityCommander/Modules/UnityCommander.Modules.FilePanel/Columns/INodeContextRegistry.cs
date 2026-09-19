@@ -8,25 +8,44 @@ namespace UnityCommander.Modules.FilePanel.Columns
     {
         private readonly object _lock = new();
 
-        public List<FileNodeContext> FileContexts { get; }
-            = new List<FileNodeContext>();
-        public List<FolderNodeContext> FolderContexts { get; }
-            = new List<FolderNodeContext>();
+        public List<FileNodeContext> FileContexts { get; } = [];
+        public List<FolderNodeContext> FolderContexts { get; } = [];
+        public List<UnifiedNodeContext> UnifiedContexts { get; } = [];
 
         public void Register(FileNodeContext context)
         {
-            FileContexts.Add(context);
+            lock (_lock)
+                FileContexts.Add(context);
         }
 
         public void Register(FolderNodeContext context)
         {
-            FolderContexts.Add(context);
+            lock (_lock)
+                FolderContexts.Add(context);
+        }
+
+        public void Register(UnifiedNodeContext context)
+        {
+            lock (_lock)
+                UnifiedContexts.Add(context);
         }
 
         public void Unregister(FileNodeContext context)
         {
             lock (_lock)
                 FileContexts.Remove(context);
+        }
+
+        public void Unregister(FolderNodeContext context)
+        {
+            lock (_lock)
+                FolderContexts.Remove(context);
+        }
+
+        public void Unregister(UnifiedNodeContext context)
+        {
+            lock (_lock)
+                UnifiedContexts.Remove(context);
         }
 
         public bool TryUnregister(FileNodeContext ctx)
@@ -41,7 +60,6 @@ namespace UnityCommander.Modules.FilePanel.Columns
             }
         }
 
-
         public bool TryUnregister(FolderNodeContext ctx)
         {
             lock (_lock)
@@ -52,11 +70,6 @@ namespace UnityCommander.Modules.FilePanel.Columns
                 FolderContexts.Remove(ctx);
                 return true;
             }
-        }
-
-        public void Unregister(FolderNodeContext context)
-        {
-            FolderContexts.Remove(context);
         }
     }
 }

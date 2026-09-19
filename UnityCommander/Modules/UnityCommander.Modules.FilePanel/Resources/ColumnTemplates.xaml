@@ -53,7 +53,10 @@
                 VerticalAlignment="Center"
                 Foreground="{Binding ., Converter={StaticResource RandomForegroundConverter}}">
                 <TextBlock.Text>
-                    <converter:BindableParameter Binding="{Binding Additional.Values}" Converter="{StaticResource ColumnValueConverter}" />
+                    <converter:BindableParameter
+                        Binding="{Binding Cell.Additional.Values}"
+                        Converter="{StaticResource ColumnValueConverter}"
+                        ConverterParameter="{Binding Cell}" />
                 </TextBlock.Text>
             </TextBlock>
         </Grid>

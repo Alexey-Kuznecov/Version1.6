@@ -52,14 +52,17 @@ namespace UnityCommander.Commands
 
                 var query = new DiagnosticTraceQuery
                 {
+                    EventName = args.GetString("event"),
                     Source = args.GetString("source"),
                     Data = data.ToDictionary(
                         x => x.Key,
-                        x => (object?)x.Value)
+                        x => (object?)x.Value),
+                    Contains = args.HasFlag("contains")
                 };
 
                 entries = _store.Query(query);
             }
+
 
             foreach (var entry in entries)
             {

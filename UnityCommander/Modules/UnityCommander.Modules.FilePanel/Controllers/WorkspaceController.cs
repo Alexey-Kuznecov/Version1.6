@@ -32,21 +32,17 @@ namespace UnityCommander.Modules.FilePanel.Controllers
             _workspace.SecondaryRegion.Content = fileNode;
         }
 
-        public void ShowUnifiedMode(
-            ContentNode headerNode,
-            ContentNode unifiedNode)
+        public void ShowUnifiedMode()
         {
-            _workspace.HeaderRegion.Content = headerNode;
-            _workspace.MainRegion.Content = unifiedNode;
+            _workspace.HeaderRegion.Content = _nodes!.Header;
+            _workspace.MainRegion.Content = _nodes.Unified;
             _workspace.SecondaryRegion.Content = null;
         }
 
-        public void ShowMyComputerMode(
-            ContentNode headerNode,
-            ContentNode driveNode)
+        public void ShowMyComputerMode()
         {
-            _workspace.HeaderRegion.Content = headerNode;
-            _workspace.MainRegion.Content = driveNode;
+            _workspace.HeaderRegion.Content = _nodes!.Header;
+            _workspace.MainRegion.Content = _nodes!.Drive;
             _workspace.SecondaryRegion.Content = null;
         }
 

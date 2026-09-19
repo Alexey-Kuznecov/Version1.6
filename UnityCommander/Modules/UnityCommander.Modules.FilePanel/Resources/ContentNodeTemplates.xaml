@@ -96,7 +96,7 @@
                             <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="PreviewMouseRightButtonUp">
-                            <i:InvokeCommandAction Command="{Binding Context.ShowContextMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                            <i:InvokeCommandAction Command="{Binding Context.OpenMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <ListView.ContextMenu>

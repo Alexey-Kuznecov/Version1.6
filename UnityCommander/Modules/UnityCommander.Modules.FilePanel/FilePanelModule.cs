@@ -41,6 +41,7 @@ namespace UnityCommander.Modules.FilePanel
             // Контестное меню 
             containerRegistry.RegisterSingleton<IContextMenuResolver, DriveContextMenuResolver>();
             containerRegistry.RegisterSingleton<IContextMenuResolver, FilePanelContextMenuResolver>();
+            containerRegistry.RegisterSingleton<IContextMenuResolver, UnifiedContextMenuResolver>();
             containerRegistry.RegisterSingleton<ContextResolverDispatcher>();
             containerRegistry.RegisterSingleton<ContextMenuController>();
 

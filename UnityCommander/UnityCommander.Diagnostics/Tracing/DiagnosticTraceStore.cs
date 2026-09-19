@@ -1,4 +1,7 @@
 ﻿
+using Newtonsoft.Json.Linq;
+using NLog.Filters;
+
 namespace UnityCommander.Diagnostics.Tracing
 {
     public sealed class DiagnosticTraceStore : IDiagnosticTraceStore
@@ -84,8 +87,19 @@ namespace UnityCommander.Diagnostics.Tracing
                 {
                     result = result.Where(entry =>
                         query.Data.All(filter =>
-                            entry.Data.TryGetValue(filter.Key, out var value) &&
-                            Equals(value, filter.Value)));
+                        {
+                            if (!TryGetDataValue(entry.Data, filter.Key, out var value))
+                                return false;
+
+                            if (query.Contains)
+                            {
+                                return value?.ToString()?.Contains(
+                                    filter.Value?.ToString() ?? string.Empty,
+                                    StringComparison.OrdinalIgnoreCase) == true;
+                            }
+
+                            return Equals(value, filter.Value);
+                        }));
                 }
 
                 result = result.OrderBy(x => x.Timestamp);
@@ -95,6 +109,24 @@ namespace UnityCommander.Diagnostics.Tracing
 
                 return result.ToList();
             }
+        }
+
+        private static bool TryGetDataValue(
+            IReadOnlyDictionary<string, object?> data,
+            string key,
+            out object? value)
+        {
+            foreach (var pair in data)
+            {
+                if (string.Equals(pair.Key, key, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = pair.Value;
+                    return true;
+                }
+            }
+
+            value = null;
+            return false;
         }
 
         public void Clear()

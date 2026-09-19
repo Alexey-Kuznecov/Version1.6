@@ -41,6 +41,8 @@ namespace UnityCommander.Modules.FilePanel.States
             });
         }
 
+        public bool IsUnified { get; set; }
+
         public ViewportMapper Mapper { get; }
 
         public ICommand ShowContextMenuCommand { get; set; }

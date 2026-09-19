@@ -1,5 +1,4 @@
 ﻿
-using Example;
 using Prism.Ioc;
 using UnityCommander.Commands.Diagnostic;
 using UnityCommander.Commands.Parsing;
@@ -8,7 +7,6 @@ using UnityCommander.Commands.Rendering;
 using UnityCommander.Commands.Services;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Core.Diagnostics;
-using UnityCommander.Diagnostics.Diagnostic;
 using UnityCommander.Diagnostics.Performance;
 using UnityCommander.Diagnostics.Reporting;
 using UnityCommander.Diagnostics.Tracing;

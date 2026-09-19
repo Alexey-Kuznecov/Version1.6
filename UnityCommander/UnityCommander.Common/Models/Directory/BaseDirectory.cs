@@ -1,7 +1,6 @@
 ﻿
 namespace UnityCommander.Common.Models.Directory
 {
-    using NSwag.Collections;
     using Prism.Mvvm;
     using System;
     using System.Collections.Generic;
@@ -54,8 +53,8 @@ namespace UnityCommander.Common.Models.Directory
             set => SetProperty(ref _lastAccessTime, value);
         }
 
-        public IDictionary<string, object> Additional { get; set; }
-            = new ObservableDictionary<string, object>();
+        //public IDictionary<string, object> Additional { get; set; }
+        //    = new ObservableDictionary<string, object>();
 
         public TargetPanel TargetPanel { get; set; }
         
@@ -78,6 +77,14 @@ namespace UnityCommander.Common.Models.Directory
         {
             get => _isCut;
             set => SetProperty(ref _isCut, value);
+        }
+
+        private ICellModel _cell = new CellModel();
+
+        public ICellModel Cell
+        {
+            get => _cell;
+            set => SetProperty(ref _cell, value);
         }
     }
 }

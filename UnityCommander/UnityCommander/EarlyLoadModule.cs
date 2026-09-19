@@ -8,7 +8,9 @@ using UnityCommander.Abstractions.Widget;
 using UnityCommander.Common;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
+using UnityCommander.Diagnostics.Tracing;
 using UnityCommander.Logging.Contracts;
+using UnityCommander.Modules.FilePanel.Behaviors;
 using UnityCommander.Modules.LeftSideBars.Widget;
 using UnityCommander.Rendering.Icons;
 using UnityCommander.Services.Interfaces;
@@ -47,17 +49,19 @@ namespace UnityCommander
             var elementRegistry = provider.Resolve<IVisualElementRegistry>();
             var actionProvider = provider.Resolve<IContextActionProvider>();
             var inputCaptureManager = provider.Resolve<IInputCaptureManager>();
+            var traceDiagnostic = provider.Resolve<IDiagnosticTrace>();
 
             KeyboardBinding.Initialize(context);
             Interaction.Initialize(actionProvider);
             IconHub.Initialize(iconRender, iconColor);
             InputCaptureBehavior.Initialize(inputCaptureManager);
             VisualElementRegistration.Initialize(elementRegistry);
+            ScrollBehavior.InitializeIDiagnostic(traceDiagnostic);
 
             _providerInfo.LoadMetadata();
 
             _activator.Activate("icon-maker-1.0");
-            _activator.Activate("multi-column-1.0");
+            //_activator.Activate("multi-column-1.0");
             //_activator.Activate("sidebar-ex-1.0");
             //_activator.Activate("plugin-test-1.0");
             //_activator.Activate("advance-copy-1.0");

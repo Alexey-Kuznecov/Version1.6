@@ -53,7 +53,7 @@ namespace UnityCommander.Modules.FilePanel.Controllers
                     foreach (var col in defs)
                     {
                         var value = col.ColumnValueHandler(item);
-                        item.Additional[col.Id] = value;
+                        item.Cell.Additional[col.Id] = value;
                     }
                 }
             });
