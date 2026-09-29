@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Common.Commands;
+using UnityCommander.Common.Models;
 using UnityCommander.Common.Panels;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Dialog;
@@ -201,6 +202,32 @@ namespace UnityCommander.Modules.FilePanel.Services
                 new DelegateCommand<object>(obj =>
                 {
                     _layoutController.Toggle();
+                }),
+               canExecute);
+        }
+
+        public UICommand CreateSetThumbnailsModeCommand(
+         string id,
+         Func<bool> canExecute)
+        {
+            return _ui.Create(
+               id,
+                new DelegateCommand<object>(obj =>
+                {
+                    _layoutController.SetViewMode(ViewMode.Thumbnails);
+                }),
+               canExecute);
+        }
+
+        public UICommand CreateSetTableModeCommand(
+        string id,
+        Func<bool> canExecute)
+        {
+            return _ui.Create(
+               id,
+                new DelegateCommand<object>(obj =>
+                {
+                    _layoutController.SetViewMode(ViewMode.Table);
                 }),
                canExecute);
         }

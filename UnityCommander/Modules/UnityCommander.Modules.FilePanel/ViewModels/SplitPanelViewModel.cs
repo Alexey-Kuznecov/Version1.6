@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,7 +24,6 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Models.Directory;
-using UnityCommander.Common.Panels;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
 using UnityCommander.Core.Helper;
@@ -39,7 +37,6 @@ using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
-using UnityCommander.Modules.FilePanel.Converters;
 using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services;
@@ -48,15 +45,8 @@ using UnityCommander.Settings.Abstactions;
 
 namespace UnityCommander.Modules.FilePanel.ViewModels
 {
-    /// <summary>
-    /// Представляет ViewModel левой панели файлового менеджера.
-    /// Реализует обработку навигации, команд, drag & drop и интеграцию плагинных колонок.
-    /// </summary>
-    [Serializable]
     public class SplitPanelViewModel : RegionViewModelBase, IDirectoryPanel
     {
-        private readonly FilePanelLayoutController _layoutController;
-        private readonly FilePanelLayoutService _panelLayoutService;
         #region Поля и зависимости
 
         // --- Зависимости через DI
@@ -95,20 +85,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 
         #region Конструктор
 
-        /// <summary>
-        /// Инициализирует новый экземпляр <see cref="SplitPanelViewModel"/>.
-        /// </summary>
-        /// <param name="dialogService">Сервис для отображения диалоговых окон.</param>
-        /// <param name="regionManager">Менеджер регионов Prism.</param>
-        /// <param name="settingsService">Сервис для доступа к настройкам приложения.</param>
-        /// <param name="dataService">Сервис для получения данных о файловой системе.</param>
-        /// <param name="multiCommandService">Сервис для работы с составными командами.</param>
-        /// <param name="pluginService">Сервис загрузки плагинов.</param>
-        /// <param name="globalCommandService">Сервис глобальных команд.</param>
-        /// <param name="iconProvider">Сервис для получения иконок.</param>
-        /// <param name="configService">Сервис конфигурации приложения.</param>
-        /// <param name="manager">Менеджер команд.</param>
-        /// <param name="logger">Логгер для записи событий.</param>
         public SplitPanelViewModel(
               IDialogService dialogService,
               IRegionManager regionManager,
@@ -132,8 +108,6 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               TabState tabState)
             : base(regionManager)
         {
-            _panelLayoutService = panelLayoutService;
-
             _dataService = dataService ?? throw new ArgumentNullException(nameof(dataService));
 
             _navigationRegistry = navigationRegistry ?? throw new ArgumentNullException(nameof(navigationRegistry));
@@ -414,6 +388,8 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             _unifiedNodeContext.Columns = _columnStateManager.LoadState("LeftPanel.Unified", PanelType.Unified, defsUnified);
 
             //await UpdateColumnValuesAsync();
+
+            _unifiedNodeContext.RebuildItems();
         }
 
         private async Task GoDrivePanel()

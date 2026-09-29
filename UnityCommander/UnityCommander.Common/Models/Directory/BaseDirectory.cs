@@ -6,6 +6,7 @@ namespace UnityCommander.Common.Models.Directory
     using System.Collections.Generic;
     using UnityCommander.Abstractions;
     using UnityCommander.Abstractions.Panels;
+    using UnityCommander.Abstractions.Thumbnail;
 
     [Serializable]
     public abstract class BaseDirectory : BindableBase, IDirectoryItem
@@ -33,6 +34,14 @@ namespace UnityCommander.Common.Models.Directory
         {
             get => _iconKey;
             set => SetProperty(ref _iconKey, value);
+        }
+
+        private ThumbnailResult? _thumbnail;
+
+        public ThumbnailResult? Thumbnail
+        {
+            get => _thumbnail;
+            set => SetProperty(ref _thumbnail, value);
         }
 
         public IconKind Kind

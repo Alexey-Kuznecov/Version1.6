@@ -121,7 +121,6 @@ namespace UnityCommander.Modules.FilePanel.Services
 #if (Nlog)
                     _logger.Info($"Переход в диск ({dir})");
 #endif
-
                 }),
 
                 ShowContextMenuCommand = new DelegateCommand<object>(x =>
@@ -195,6 +194,19 @@ namespace UnityCommander.Modules.FilePanel.Services
              navFactory.CreateLayoutToggleCommand(
                  CommandNames.Views.Toggle,
                  () => true));
+
+            ctx.Commands.Add(new UICommand());
+
+            ctx.Commands.Add(
+               navFactory.CreateSetThumbnailsModeCommand(
+                   CommandNames.Views.Thumbnails,
+                   () => true));
+
+            ctx.Commands.Add(
+                navFactory.CreateSetTableModeCommand(
+                    CommandNames.Views.Table,
+                    () => true));
+
 
             ctx.SelectionManager = _selection;
 

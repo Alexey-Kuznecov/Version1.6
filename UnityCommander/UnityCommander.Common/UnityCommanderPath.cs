@@ -25,6 +25,9 @@ namespace UnityCommander.Common
         public string IconsDirectory =>
             Path.Combine(BaseDirectory, "Icons");
 
+        public string ThumbnailCache =>
+           Path.Combine(BaseDirectory, "Data\\cache");
+
         public string DataDirectory =>
             Path.Combine(BaseDirectory, "Data");
 

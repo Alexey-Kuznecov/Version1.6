@@ -1,5 +1,6 @@
 ﻿
 using System;
+using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.States;
@@ -12,7 +13,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
         private readonly Workspace _workspace;
         private readonly WorkspaceController _workspaceController;
 
-        public FilePanelLayoutMode Mode { get; private set; }
+        public FilePanelLayoutMode LayoutMode { get; private set; }
 
         public LayoutNode CurrentLayout { get; private set; }
 
@@ -28,34 +29,50 @@ namespace UnityCommander.Modules.FilePanel.Layout
             _workspace = workspace;
             _workspaceController = workspaceController;
 
-            Mode = initialMode;
+            LayoutMode = initialMode;
             CurrentLayout = Build();
         }
 
         public void Initialize()
         {
-            _workspaceController.Apply(Mode);
+            _workspaceController.Apply(LayoutMode);
             CurrentLayout = Build();
         }
 
-        public void SetMode(FilePanelLayoutMode mode)
+        public void SetLayoutMode(FilePanelLayoutMode mode)
         {
-            if (Mode == mode)
+            if (LayoutMode == mode)
                 return;
 
-            Mode = mode;
+            LayoutMode = mode;
 
-            _workspaceController.Apply(Mode);
+            _workspaceController.Apply(LayoutMode);
 
             CurrentLayout = Build();
 
             Changed?.Invoke(mode);
         }
 
+        public void SetViewMode(ViewMode mode)
+        {
+            var content = _workspaceController.GetActiveContentNode();
+
+            if (content is null)
+                return;
+
+            content.ViewMode = mode;
+
+            //_workspaceController.Apply(LayoutMode);
+
+            CurrentLayout = Build();
+
+            Changed?.Invoke(LayoutMode);
+        }
+
         public void Toggle()
         {
-            SetMode(
-                Mode == FilePanelLayoutMode.Split
+            SetLayoutMode(
+                LayoutMode == FilePanelLayoutMode.Split
                     ? FilePanelLayoutMode.Unified
                     : FilePanelLayoutMode.Split);
         }
@@ -63,7 +80,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
         private LayoutNode Build()
         {
             return _layoutService.Build(
-                Mode,
+                LayoutMode,
                 _workspace.HeaderRegion,
                 _workspace.MainRegion,
                 _workspace.SecondaryRegion);

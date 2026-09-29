@@ -89,5 +89,11 @@ namespace UnityCommander.Modules.FilePanel.Controllers
             _workspace.MainRegion.Content = _nodes.Unified;
             _workspace.SecondaryRegion.Content = null;
         }
+
+        public ContentNode? GetActiveContentNode()
+        {
+            return _workspace.MainRegion.Content;
+        }
     }
 }
+

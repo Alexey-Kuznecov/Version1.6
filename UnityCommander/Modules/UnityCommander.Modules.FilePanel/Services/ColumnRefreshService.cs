@@ -1,5 +1,4 @@
 ﻿
-using Prism.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +8,11 @@ using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.IO;
 using UnityCommander.Abstractions.Panels;
-using UnityCommander.Diagnostics.Tracing;
+using UnityCommander.Abstractions.Thumbnail;
 using UnityCommander.Modules.FilePanel.Columns;
-using UnityCommander.Modules.FilePanel.Converters;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services.Interfaces;
-using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using UnityCommander.WPF.Images;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
@@ -40,16 +38,24 @@ namespace UnityCommander.Modules.FilePanel.Services
 
         private readonly IVisibleTabResolver _visibleTabResolver;
 
+        private IThumbnailService _thumbnailService;
+
+        private ThumbnailImageLoader _thumbnailImage;
+
         public ColumnRefreshService(
             IColumnRegistry registry,
             NodeContextRegistry contexts,
             IVisibleTabResolver visibleTabResolver, 
-            IFileActivityService activityService)
+            IFileActivityService activityService,
+            IThumbnailService thumbnailService, 
+            ThumbnailImageLoader imageLoader)
         {
             _activityService = activityService;
             _registry = registry;
             _contexts = contexts;
             _visibleTabResolver = visibleTabResolver;
+            _thumbnailService = thumbnailService;
+            _thumbnailImage = imageLoader;
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -58,55 +64,22 @@ namespace UnityCommander.Modules.FilePanel.Services
                 return;
 
             IsRunning = true;
-            
+
             try
             {
                 while (IsRunning && !token.IsCancellationRequested)
                 {
-                    
-
-                    var visibleTabs = _visibleTabResolver.GetVisibleTabs();
-
-                    //foreach (var ctx in _contexts.FileContexts)
-                    //{
-                    //    if (!visibleTabs.Contains(ctx.TabId))
-                    //        continue;
-
-                    //    if (ctx.IsUnified)
-                    //    {
-                    //        _isUnified = true;
-                    //        continue;
-                    //    } 
-
-                    //    await RefreshFilesAsync(ctx);
-                    //}
-
-                    //foreach (var ctx in _contexts.FolderContexts)
-                    //{
-                    //    if (!visibleTabs.Contains(ctx.TabId))
-                    //        continue;
-
-                    //    if (ctx.IsUnified)
-                    //    {
-                    //        _isUnified = true;
-                    //        continue;
-                    //    } 
-
-
-                    //    await RefreshFoldersAsync(ctx);
-                    //}
+                    var visibleTabs =
+                        _visibleTabResolver.GetVisibleTabs();
 
                     foreach (var ctx in _contexts.UnifiedContexts)
                     {
                         if (!visibleTabs.Contains(ctx.TabId))
                             continue;
 
-                        //if (!ctx.IsUnified)
-                        //{
-                        //    continue;
-                        //}
-
-                        await RefreshUnifiedAsync(ctx);
+                        await RefreshVisibleItemsAsync(
+                            ctx,
+                            token);
                     }
 
                     await Task.Delay(50, token);
@@ -116,6 +89,94 @@ namespace UnityCommander.Modules.FilePanel.Services
             {
                 IsRunning = false;
             }
+        }
+
+        private async Task RefreshVisibleItemsAsync(
+            UnifiedNodeContext ctx,
+            CancellationToken token)
+        {
+            var visibleItems =
+                ctx.ScrollService?.GetVisibleItems()?.ToList()
+                ?? [];
+
+            await RefreshThumbnailsAsync(
+                visibleItems,
+                token);
+
+            RefreshDynamicColumns(
+                visibleItems);
+        }
+
+        private void RefreshDynamicColumns(List<IDirectoryItem> visibleItems)
+        {
+            var columns = _registry
+                .GetColumns(PanelType.Unified)
+                .Where(x => x.IsDynamic)
+                .OrderBy(x => x.Order)
+                .ToList();
+
+            var columnIds = columns
+               .Select(x => x.Id)
+               .ToHashSet();
+
+            foreach (var item in visibleItems ?? [])
+            {
+                var now = DateTime.UtcNow;
+
+                foreach (var key in item.Cell.Additional.Keys.ToList())
+                {
+                    if (!columnIds.Contains(key))
+                        item.Cell.Additional.Remove(key);
+                }
+
+                for (var index = 0; index < columns.Count; index++)
+                {
+                    var column = columns[index];
+
+                    item.LastUpdate.TryGetValue(column.Id, out var last);
+
+                    var interval = GetInterval(column, item);
+
+                    if ((now - last).TotalMilliseconds < interval)
+                        continue;
+
+                    var newValue = column.ColumnValueHandler(item);
+
+                    item.LastUpdate[column.Id] = now;
+
+                    var oldValue = item.Cell.Additional.GetValueOrDefault(column.Id);
+
+                    if (!Equals(oldValue, newValue))
+                    {
+                        item.Cell.Additional[column.Id] = newValue;
+                    }
+
+                    item.Cell.OutputOrder = 0;
+                }
+            }
+        }
+
+        private async Task RefreshThumbnailsAsync(
+            List<IDirectoryItem> visibleItems,
+            CancellationToken token)
+        {
+            await Parallel.ForEachAsync(
+                visibleItems,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = 6,
+                    CancellationToken = token
+                },
+                async (item, ct) =>
+                {
+                    var thumbnail = await _thumbnailService.GetAsync(
+                        item.Path,
+                        new ThumbnailRequest(128),
+                        ct);
+
+                    if (thumbnail is not null)
+                        item.Thumbnail = thumbnail;
+                });
         }
 
         private Task RefreshFilesAsync(FileNodeContext ctx)
@@ -164,82 +225,6 @@ namespace UnityCommander.Modules.FilePanel.Services
                     }
 
                     file.Cell.OutputOrder = 0;
-                }
-            }
-
-            return Task.CompletedTask;
-        }
-
-#pragma warning disable CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".
-        private IDiagnosticTrace? _trace = ContainerLocator.Container.Resolve<IDiagnosticTrace>();
-#pragma warning restore CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".
-
-        private Task RefreshUnifiedAsync(UnifiedNodeContext ctx)
-        {
-            //using var trace = _trace.Begin(
-            //  "DynamicColumns",
-            //  "RefreshUnified",
-            //  new Dictionary<string, object?>
-            //  {
-            //      ["TabId"] = ctx.TabId,
-            //      ["IsUnified"] = ctx.IsUnified,
-            //      ["ItemCount"] = ctx.Items.Count
-            //  });
-
-            var columns = _registry
-                .GetColumns(PanelType.Unified)
-                .Where(x => x.IsDynamic)
-                .OrderBy(x => x.Order)
-                .ToList();
-
-            //trace.Write(
-            // "ColumnsResolved",
-            // new Dictionary<string, object?>
-            // {
-            //     ["Count"] = columns.Count,
-            //     ["Columns"] = string.Join(
-            //         ", ",
-            //         columns.Select(x => $"{x.Id}[Order={x.Order}]"))
-            // });
-
-            var columnIds = columns
-               .Select(x => x.Id)
-               .ToHashSet();
-             
-
-            foreach (var item in ctx.ScrollService?.GetVisibleItems() ?? [])
-            {
-                var now = DateTime.UtcNow;
-
-                foreach (var key in item.Cell.Additional.Keys.ToList())
-                {
-                    if (!columnIds.Contains(key))
-                        item.Cell.Additional.Remove(key);
-                }
-
-                for (var index = 0; index < columns.Count; index++)
-                {
-                    var column = columns[index];
-
-                    item.LastUpdate.TryGetValue(column.Id, out var last);
-
-                    var interval = GetInterval(column, item);
-
-                    if ((now - last).TotalMilliseconds < interval)
-                        continue;
-
-                    var newValue = column.ColumnValueHandler(item);
-
-                    item.LastUpdate[column.Id] = now;
-
-                    var oldValue = item.Cell.Additional.GetValueOrDefault(column.Id);
-
-                    if (!Equals(oldValue, newValue))
-                    {
-                        item.Cell.Additional[column.Id] = newValue;
-                    }
-
-                    item.Cell.OutputOrder = 0;
                 }
             }
 

@@ -10,6 +10,7 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Abstractions.Thumbnail;
 using UnityCommander.Abstractions.Widget;
 using UnityCommander.Common;
 using UnityCommander.Common.Docking;
@@ -45,6 +46,7 @@ using UnityCommander.UI.Interaction;
 using UnityCommander.UI.Overlay;
 using UnityCommander.UI.Visual;
 using UnityCommander.WPF;
+using UnityCommander.WPF.Images;
 using UnityCommander.WPF.Input;
 using UnityCommander.WPF.Overlays;
 using UnityCommander.WPF.Widget;
@@ -190,6 +192,15 @@ namespace UnityCommander.Dependencies
 
 
             registry.RegisterSingleton<ISearchResultBuilder, SearchResultBuilder>();
+
+            registry.RegisterSingleton<IThumbnailCache, MemoryThumbnailCache>();
+            registry.RegisterSingleton<IThumbnailCache, DiskThumbnailCache>();
+            registry.RegisterSingleton<IThumbnailProvider, FolderThumbnailProvider>();
+            registry.RegisterSingleton<IThumbnailProvider, ShellThumbnailProvider>();
+            registry.RegisterSingleton<IThumbnailService, ThumbnailService>();
+            registry.RegisterSingleton<IThumbnailRenderer, ThumbnailRenderer>();
+            registry.RegisterSingleton<IShellThumbnailExtractor, ShellThumbnailExtractor>();
+            //registry.RegisterSingleton<ThumbnailImageLoader>();
         }
     }
 }

@@ -6,6 +6,7 @@ namespace UnityCommander.Abstractions.Panels
     using UnityCommander.Abstractions;
     using UnityCommander.Abstractions.Clipboard;
     using UnityCommander.Abstractions.Selection;
+    using UnityCommander.Abstractions.Thumbnail;
 
     /// <summary>
     /// The directory base.
@@ -17,6 +18,8 @@ namespace UnityCommander.Abstractions.Panels
         public string Path { get; set; }
 
         public string IconKey { get; set; }
+
+        public ThumbnailResult Thumbnail { get; set; }
 
         public IconKind Kind { get; set; }
 

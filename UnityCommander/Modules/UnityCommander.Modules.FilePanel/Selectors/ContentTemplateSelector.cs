@@ -20,12 +20,15 @@ namespace UnityCommander.Modules.FilePanel.Selectors
             => ResourceManager.Get<DataTemplate>("FileContentViewDataTemplate");
 
         public DataTemplate FileThumbnailTemplate { get; set; }
-
+       
         public DataTemplate HeaderTemplate
             => ResourceManager.Get<DataTemplate>("HeaderContentDataTemplate");
 
         public DataTemplate DashboardTemplate
              => ResourceManager.Get<DataTemplate>("DriveContentViewDataTemplate");
+
+        public DataTemplate UnifiedThumbnailTemplate
+           => ResourceManager.Get<DataTemplate>("UnifiedThumbnailViewDataTemplate");
 
         public DataTemplate UnifiedTableTemplate
             => ResourceManager.Get<DataTemplate>("UnifiedItemViewDataTemplate");
@@ -50,6 +53,9 @@ namespace UnityCommander.Modules.FilePanel.Selectors
 
                 (ContentRole.File, ViewMode.Thumbnails)
                     => FileThumbnailTemplate,
+
+                (ContentRole.Unified, ViewMode.Thumbnails)
+                    => UnifiedThumbnailTemplate,
 
                 (ContentRole.Unified, ViewMode.Table)
                     => UnifiedTableTemplate,

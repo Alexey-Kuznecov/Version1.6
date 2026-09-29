@@ -33,6 +33,7 @@ using UnityCommander.Settings.Abstactions;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views.CopyDialogs;
 using UnityCommander.Views.Dialogs;
+using UnityCommander.WPF.Images;
 using IViewRegistry = UnityCommander.Core.Registrar.IViewRegistry;
 
 namespace UnityCommander
@@ -60,7 +61,8 @@ namespace UnityCommander
             var shotcuts = containerProvider.Resolve<IShortcutOverrideStore>();
             var builder = containerProvider.Resolve<IShortcutMapProvider>();
             var loggerCreator = containerProvider.Resolve<LoggerCreator>();
-           
+            //var thumbnailLoader = containerProvider.Resolve<ThumbnailImageLoader>();
+
             initializer.Initialize();
 
             var token = new CancellationToken();

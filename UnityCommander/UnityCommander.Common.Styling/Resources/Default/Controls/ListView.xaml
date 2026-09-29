@@ -184,18 +184,52 @@
         </Setter>
     </Style>
 
-    <!--<Style x:Key="&#342;">
-        <Setter Property="Control.Template">
+    <Style x:Key="UcThumbnailListViewTemplate" TargetType="{x:Type ListView}">
+
+        <Setter Property="Background" Value="{DynamicResource UcSurfacePrimaryBrush}" />
+
+        <Setter Property="BorderBrush" Value="{DynamicResource UcBorderSecondaryBrush}" />
+
+        <Setter Property="BorderThickness" Value="1" />
+
+        <Setter Property="Foreground" Value="{DynamicResource UcForegroundSecondaryBrush}" />
+
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalOnly" />
+
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+
+        <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
-                    <Rectangle
-                        RadiusX="2"
-                        RadiusY="2"
-                        Stroke="#8E6EA6F5"
-                        StrokeThickness="1" />
+                <ControlTemplate TargetType="{x:Type ListView}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+
+                        <ScrollViewer
+                            Padding="{TemplateBinding Padding}"
+                            CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto">
+
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                        </ScrollViewer>
+
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>-->
+    </Style>
 
 </ResourceDictionary>

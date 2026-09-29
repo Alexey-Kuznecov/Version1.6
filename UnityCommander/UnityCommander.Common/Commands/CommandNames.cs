@@ -99,6 +99,8 @@ namespace UnityCommander.Common.Commands
         public static class Views
         {
             public const string Toggle = "view.toggle-layout";
+            public const string Thumbnails = "view.show-thumbnails-mode";
+            public const string Table = "view.show-table-mode";
         }
 
         public static class ToolBar

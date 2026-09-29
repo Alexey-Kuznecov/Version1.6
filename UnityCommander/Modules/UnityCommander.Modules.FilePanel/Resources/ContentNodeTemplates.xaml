@@ -7,6 +7,7 @@
     xmlns:commands="clr-namespace:UnityCommander.Modules.FilePanel.Commands"
     xmlns:control="clr-namespace:UnityCommander.Modules.FilePanel.Controls"
     xmlns:controllers="clr-namespace:UnityCommander.Modules.FilePanel.Controllers.DnD"
+    xmlns:converters="clr-namespace:UnityCommander.Modules.FilePanel.Converters"
     xmlns:cursor="clr-namespace:UnityCommander.WPF.Behaviors;assembly=UnityCommander.WPF"
     xmlns:dd="clr-namespace:UnityCommander.WPF.DragDrop;assembly=UnityCommander.WPF.DragDrop"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -17,6 +18,8 @@
     xmlns:state="clr-namespace:UnityCommander.Modules.FilePanel.States">
 
     <selectors:ContentTemplateSelector x:Key="ContentTemplateSelector" />
+
+    <converters:ThumbnailImageConverter x:Key="ThumbnailImageConverter" />
 
     <Style BasedOn="{StaticResource {x:Type avalonDockControls:LayoutDocumentTabItem}}" TargetType="{x:Type avalonDockControls:LayoutDocumentTabItem}">
 
@@ -70,6 +73,129 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <DataTemplate x:Key="UnifiedThumbnailViewDataTemplate" DataType="{x:Type layout:ContentNode}">
+        <Border BorderThickness="1">
+            <AdornerDecorator>
+                <ListView
+                    Padding="8"
+                    HorizontalContentAlignment="Stretch"
+                    be:ScrollBehavior.Enable="True"
+                    be:ScrollBehavior.ViewportTarget="{Binding Context}"
+                    be:SelectionBehavior.EnableSelection="True"
+                    be:SelectionBehavior.Manager="{Binding Context.SelectionManager}"
+                    cursor:CursorTargetBehavior.Enable="True"
+                    dd:DragDrop.DropHandler="{Binding Context.DropTarget}"
+                    dd:DragDrop.IsDragSource="True"
+                    dd:DragDrop.IsDropTarget="True"
+                    ItemsSource="{Binding Context.Items, Mode=OneWay}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    Style="{StaticResource UcThumbnailListViewTemplate}">
+
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Stretch" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Width="110"
+                                Height="120"
+                                Margin="6"
+                                Padding="8">
+
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                                    <Border
+                                        Width="86"
+                                        Height="86"
+                                        HorizontalAlignment="Center">
+
+                                        <Image
+                                            Width="86"
+                                            Height="86"
+                                            Source="{Binding Thumbnail, Converter={StaticResource ThumbnailImageConverter}}"
+                                            Stretch="Uniform" />
+
+                                        <!--<icon:IconRender
+                                            Key="{Binding IconKey}"
+                                            Width="24"
+                                            Height="24"
+                                            IconKind="{Binding Kind}" />-->
+                                    </Border>
+
+                                    <TextBlock
+                                        Width="80"
+                                        Margin="0,8,0,0"
+                                        HorizontalAlignment="Center"
+                                        Text="{Binding Name}"
+                                        TextAlignment="Center"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding Context.OpenCommand, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.SelectedFolder, Mode=OneWay}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItem, Mode=OneWay}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseRightButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Context.OpenMenuCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}, Path=SelectedItems, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <ListView.ContextMenu>
+                        <ContextMenu
+                            Padding="0"
+                            Background="{DynamicResource UcMenuBackgroundBrush}"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                            ItemsSource="{Binding Context.ContextMenuItems}"
+                            Style="{DynamicResource UcContextMenu}">
+
+                            <ContextMenu.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
+                                    <Setter Property="Header" Value="{Binding Title}" />
+                                    <Setter Property="Icon" Value="{Binding IconKey}" />
+                                    <Setter Property="Command" Value="{Binding Command}" />
+                                    <Setter Property="Height" Value="30" />
+                                    <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+                                </Style>
+                            </ContextMenu.ItemContainerStyle>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+
+                </ListView>
+            </AdornerDecorator>
+
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <Trigger Property="adorner:DragDropVisual.IsDropTarget" Value="True">
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                            <Setter Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
+    </DataTemplate>
 
     <DataTemplate x:Key="UnifiedItemViewDataTemplate" DataType="{x:Type layout:ContentNode}">
         <Border BorderThickness="1">

@@ -7,8 +7,17 @@ namespace UnityCommander.Controls.Layout
     public class ContentNode : LayoutNode
     {
         public Guid RuntimeId { get; }
+
         public ContentRole Role { get; set; }
-        public ViewMode? ViewMode { get; set; }
+
+        private ViewMode? _viewMode;
+
+        public ViewMode? ViewMode
+        {
+            get => _viewMode;
+            set => SetProperty(ref _viewMode, value);
+        }
+
         public object Context { get; set; }
     }
 }

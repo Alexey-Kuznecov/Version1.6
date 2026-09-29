@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 namespace UnityCommander.Controls.Layout
 {
     public class RegionNode : LayoutNode
