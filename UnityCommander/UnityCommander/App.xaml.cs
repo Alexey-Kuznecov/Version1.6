@@ -9,6 +9,7 @@ using UnityCommander.Common.Styling;
 using UnityCommander.Dependencies;
 using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.FilePanel;
+using UnityCommander.Modules.FilePanel.Converters;
 using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel;
 using UnityCommander.Modules.StatusBar;
@@ -31,6 +32,12 @@ namespace UnityCommander
             var catalog = new ThemeCatalog();
 
             ThemeManager.Initialize(catalog, "Light");
+
+            var converter =
+                Container.Resolve<ThumbnailImageConverter>();
+
+            Resources["ThumbnailImageConverter"] =
+                converter;
 
             var resources =
                CoreResources.ResourceUris

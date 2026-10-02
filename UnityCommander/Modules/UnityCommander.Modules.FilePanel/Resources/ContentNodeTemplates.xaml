@@ -19,7 +19,7 @@
 
     <selectors:ContentTemplateSelector x:Key="ContentTemplateSelector" />
 
-    <converters:ThumbnailImageConverter x:Key="ThumbnailImageConverter" />
+    <!--<converters:ThumbnailImageConverter x:Key="ThumbnailImageConverter" />-->
 
     <Style BasedOn="{StaticResource {x:Type avalonDockControls:LayoutDocumentTabItem}}" TargetType="{x:Type avalonDockControls:LayoutDocumentTabItem}">
 

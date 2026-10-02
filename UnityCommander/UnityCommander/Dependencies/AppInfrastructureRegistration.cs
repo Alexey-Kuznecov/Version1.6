@@ -23,6 +23,7 @@ using UnityCommander.Core.Registrar;
 using UnityCommander.Index.Abstractions;
 using UnityCommander.Index.Indexing;
 using UnityCommander.Index.Storage;
+using UnityCommander.Modules.FilePanel.Converters;
 using UnityCommander.Modules.FilePanel.Docking.Services;
 using UnityCommander.Modules.FilePanel.Services;
 using UnityCommander.Modules.LeftSideBars.Services;
@@ -133,7 +134,7 @@ namespace UnityCommander.Dependencies
             // Старт приложения: точка инициализации всей системы при запуске
             registry.RegisterSingleton<AppInitializer>();
 
-            registry.RegisterSingleton<IBackgroundService, ColumnRefreshService>();
+            registry.RegisterSingleton<IBackgroundService, VisibleItemUpdateService>();
             registry.RegisterSingleton<IBackgroundService, DirectoryChangeService>();
             registry.RegisterSingleton<IBackgroundService, CopyMonitorService>();
 
@@ -200,7 +201,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IThumbnailService, ThumbnailService>();
             registry.RegisterSingleton<IThumbnailRenderer, ThumbnailRenderer>();
             registry.RegisterSingleton<IShellThumbnailExtractor, ShellThumbnailExtractor>();
-            //registry.RegisterSingleton<ThumbnailImageLoader>();
+            registry.RegisterSingleton<ThumbnailImageLoader>();
+            registry.RegisterSingleton<ThumbnailImageConverter>();
         }
     }
 }

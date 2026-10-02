@@ -1,4 +1,7 @@
 ﻿
+using System.Collections.Concurrent;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using UnityCommander.Abstractions.Thumbnail;
 
@@ -6,30 +9,20 @@ namespace UnityCommander.WPF.Images
 {
     public sealed class ThumbnailImageLoader
     {
-        private readonly IThumbnailService _service;
+        private readonly ConditionalWeakTable<
+            ThumbnailResult,
+            ImageSource> _cache = new();
 
-        public ThumbnailImageLoader(
-            IThumbnailService service)
+        public ImageSource GetImage(ThumbnailResult thumbnail)
         {
-            _service = service;
-        }
+            if (_cache.TryGetValue(thumbnail, out var image))
+                return image;
 
-        public async Task<ImageSource?> LoadAsync(
-            string path,
-            int size,
-            CancellationToken token)
-        {
-            var result =
-                await _service.GetAsync(
-                    path,
-                    new ThumbnailRequest(size),
-                    token);
+            image = ThumbnailImageCodec.Decode(thumbnail);
 
-            if (result is null)
-                return null;
+            _cache.Add(thumbnail, image);
 
-            return ThumbnailImageCodec.Decode(
-                result);
+            return image;
         }
     }
 }

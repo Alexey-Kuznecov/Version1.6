@@ -12,11 +12,10 @@ using UnityCommander.Abstractions.Thumbnail;
 using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.WPF.Images;
 
 namespace UnityCommander.Modules.FilePanel.Services
 {
-    public sealed class ColumnRefreshService : IBackgroundService
+    public sealed class VisibleItemUpdateService : IBackgroundService
     {
         private readonly NodeContextRegistry _contexts;
 
@@ -40,22 +39,18 @@ namespace UnityCommander.Modules.FilePanel.Services
 
         private IThumbnailService _thumbnailService;
 
-        private ThumbnailImageLoader _thumbnailImage;
-
-        public ColumnRefreshService(
+        public VisibleItemUpdateService(
             IColumnRegistry registry,
             NodeContextRegistry contexts,
             IVisibleTabResolver visibleTabResolver, 
             IFileActivityService activityService,
-            IThumbnailService thumbnailService, 
-            ThumbnailImageLoader imageLoader)
+            IThumbnailService thumbnailService)
         {
             _activityService = activityService;
             _registry = registry;
             _contexts = contexts;
             _visibleTabResolver = visibleTabResolver;
             _thumbnailService = thumbnailService;
-            _thumbnailImage = imageLoader;
         }
 
         public async Task RunAsync(CancellationToken token)
@@ -77,9 +72,19 @@ namespace UnityCommander.Modules.FilePanel.Services
                         if (!visibleTabs.Contains(ctx.TabId))
                             continue;
 
-                        await RefreshVisibleItemsAsync(
-                            ctx,
-                            token);
+                        var visibleItems =
+                            ctx.ScrollService?.GetVisibleItems()?.ToList()
+                            ?? [];
+
+                        var thumbnailsTask =
+                            RefreshThumbnailsAsync(
+                                visibleItems,
+                                token);
+
+                        RefreshDynamicColumns(
+                            visibleItems);
+
+                        await thumbnailsTask;
                     }
 
                     await Task.Delay(50, token);
@@ -89,22 +94,6 @@ namespace UnityCommander.Modules.FilePanel.Services
             {
                 IsRunning = false;
             }
-        }
-
-        private async Task RefreshVisibleItemsAsync(
-            UnifiedNodeContext ctx,
-            CancellationToken token)
-        {
-            var visibleItems =
-                ctx.ScrollService?.GetVisibleItems()?.ToList()
-                ?? [];
-
-            await RefreshThumbnailsAsync(
-                visibleItems,
-                token);
-
-            RefreshDynamicColumns(
-                visibleItems);
         }
 
         private void RefreshDynamicColumns(List<IDirectoryItem> visibleItems)
@@ -169,13 +158,18 @@ namespace UnityCommander.Modules.FilePanel.Services
                 },
                 async (item, ct) =>
                 {
+                    if (item.Thumbnail is not null)
+                        return;
+
                     var thumbnail = await _thumbnailService.GetAsync(
                         item.Path,
                         new ThumbnailRequest(128),
                         ct);
 
                     if (thumbnail is not null)
+                    {
                         item.Thumbnail = thumbnail;
+                    }
                 });
         }
 

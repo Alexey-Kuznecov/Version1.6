@@ -183,7 +183,7 @@ namespace UnityCommander.Services.Bootstrap
             var dock = _dockingService.GetDockingManager();
             var serializer = new XmlLayoutSerializer(_dockingService.GetDockingManager());
 
-            using (var stream = new StreamWriter("layout.xml"))
+            using (var stream = new StreamWriter(_layoutPath))
             {
                 serializer.Serialize(stream);
             }
