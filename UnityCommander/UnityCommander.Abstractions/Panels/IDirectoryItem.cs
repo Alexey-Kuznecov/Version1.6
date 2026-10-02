@@ -21,6 +21,9 @@ namespace UnityCommander.Abstractions.Panels
 
         public ThumbnailResult Thumbnail { get; set; }
 
+        public bool HasThumbnail 
+            => Thumbnail is not null;
+
         public IconKind Kind { get; set; }
 
         public DateTime CreationTime { get; set; }

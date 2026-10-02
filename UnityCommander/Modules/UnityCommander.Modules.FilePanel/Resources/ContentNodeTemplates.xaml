@@ -19,7 +19,7 @@
 
     <selectors:ContentTemplateSelector x:Key="ContentTemplateSelector" />
 
-    <!--<converters:ThumbnailImageConverter x:Key="ThumbnailImageConverter" />-->
+    <converters:ThumbnailVisibilityConverter x:Key="ThumbnailVisibilityConverter" />
 
     <Style BasedOn="{StaticResource {x:Type avalonDockControls:LayoutDocumentTabItem}}" TargetType="{x:Type avalonDockControls:LayoutDocumentTabItem}">
 
@@ -115,23 +115,26 @@
 
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                                    <Border
-                                        Width="86"
-                                        Height="86"
-                                        HorizontalAlignment="Center">
+                                    <Grid Width="86" Height="86">
 
+                                        <!--  Обычная иконка  -->
+                                        <icon:IconRender
+                                            Key="{Binding IconKey}"
+                                            Width="48"
+                                            Height="48"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            IconKind="{Binding Kind}"
+                                            Visibility="{Binding Thumbnail, Converter={StaticResource ThumbnailVisibilityConverter}, ConverterParameter=Inverse}" />
+
+                                        <!--  Thumbnail  -->
                                         <Image
                                             Width="86"
                                             Height="86"
                                             Source="{Binding Thumbnail, Converter={StaticResource ThumbnailImageConverter}}"
                                             Stretch="Uniform" />
 
-                                        <!--<icon:IconRender
-                                            Key="{Binding IconKey}"
-                                            Width="24"
-                                            Height="24"
-                                            IconKind="{Binding Kind}" />-->
-                                    </Border>
+                                    </Grid>
 
                                     <TextBlock
                                         Width="80"

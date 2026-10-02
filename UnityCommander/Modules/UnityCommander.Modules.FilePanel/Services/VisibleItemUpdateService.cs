@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using UnityCommander.Abstractions.Background;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.IO;
@@ -39,6 +40,8 @@ namespace UnityCommander.Modules.FilePanel.Services
 
         private IThumbnailService _thumbnailService;
 
+        private CancellationToken _cancellationToken;
+
         public VisibleItemUpdateService(
             IColumnRegistry registry,
             NodeContextRegistry contexts,
@@ -59,6 +62,13 @@ namespace UnityCommander.Modules.FilePanel.Services
                 return;
 
             IsRunning = true;
+
+            _cancellationToken = token;
+
+            foreach (var context in _contexts.UnifiedContexts)
+            {
+                Subscribe(context);
+            }
 
             try
             {
@@ -92,6 +102,11 @@ namespace UnityCommander.Modules.FilePanel.Services
             }
             finally
             {
+                foreach (var context in _contexts.UnifiedContexts)
+                {
+                    Unsubscribe(context);
+                }
+
                 IsRunning = false;
             }
         }
@@ -149,28 +164,33 @@ namespace UnityCommander.Modules.FilePanel.Services
             List<IDirectoryItem> visibleItems,
             CancellationToken token)
         {
-            await Parallel.ForEachAsync(
-                visibleItems,
-                new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = 6,
-                    CancellationToken = token
-                },
-                async (item, ct) =>
-                {
-                    if (item.Thumbnail is not null)
-                        return;
+            var tasks = visibleItems
+                .Where(item => item.Thumbnail is null)
+                .Select(item => LoadThumbnailAsync(item, token))
+                .ToList();
 
-                    var thumbnail = await _thumbnailService.GetAsync(
-                        item.Path,
-                        new ThumbnailRequest(128),
-                        ct);
+            await Task.WhenAll(tasks);
+        }
 
-                    if (thumbnail is not null)
-                    {
-                        item.Thumbnail = thumbnail;
-                    }
-                });
+        private async Task LoadThumbnailAsync(
+            IDirectoryItem item,
+            CancellationToken token)
+        {
+            var thumbnail = await _thumbnailService.GetAsync(
+                item.Path,
+                new ThumbnailRequest(128),
+                token);
+
+            if (thumbnail is null)
+                return;
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                if (item.Thumbnail is null)
+                {
+                    item.Thumbnail = thumbnail;
+                }
+            });
         }
 
         private Task RefreshFilesAsync(FileNodeContext ctx)
@@ -292,6 +312,25 @@ namespace UnityCommander.Modules.FilePanel.Services
                 return (int)column.UpdatePriority;
 
             return (int)ColumnUpdatePriority.Normal;
+        }
+
+        private void Subscribe(UnifiedNodeContext context)
+        {
+            context.ItemsAdded += OnItemsAdded;
+        }
+
+        private void Unsubscribe(UnifiedNodeContext context)
+        {
+            context.ItemsAdded -= OnItemsAdded;
+        }
+
+        private void OnItemsAdded(
+            UnifiedNodeContext context,
+            IReadOnlyList<IDirectoryItem> items)
+        {
+            _ = RefreshThumbnailsAsync(
+                items.ToList(),
+                _cancellationToken);
         }
 
         public Task StopAsync()

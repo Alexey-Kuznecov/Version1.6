@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows.Input;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Panels;
@@ -56,6 +57,10 @@ namespace UnityCommander.Modules.FilePanel.States
 
         public string Current { get; set; }
 
+        public event Action<
+            UnifiedNodeContext,
+            IReadOnlyList<IDirectoryItem>>? ItemsAdded;
+
         public UnifiedNodeContext(
              ContextMenuController menu,
              FolderNodeContext folder,
@@ -102,11 +107,23 @@ namespace UnityCommander.Modules.FilePanel.States
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    if (e.NewItems is not null)
+                    if (e.NewItems is null)
+                        return;
+
+                    var addedItems =
+                        e.NewItems
+                            .Cast<IDirectoryItem>()
+                            .ToList();
+
+                    foreach (var item in addedItems)
                     {
-                        foreach (IDirectoryItem item in e.NewItems)
-                            Items.Add(item);
+                        Items.Add(item);
                     }
+
+                    ItemsAdded?.Invoke(
+                        this,
+                        addedItems);
+
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
@@ -115,6 +132,7 @@ namespace UnityCommander.Modules.FilePanel.States
                         foreach (IDirectoryItem item in e.OldItems)
                             Items.Remove(item);
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
@@ -132,6 +150,7 @@ namespace UnityCommander.Modules.FilePanel.States
                             }
                         }
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
@@ -139,7 +158,6 @@ namespace UnityCommander.Modules.FilePanel.States
                     break;
             }
         }
-
         public void RebuildItems()
         {
             Items.Clear();
@@ -157,6 +175,8 @@ namespace UnityCommander.Modules.FilePanel.States
                {
                    ["Count"] = Items.Count
                });
+
+            ItemsAdded?.Invoke(this, Items);
         }
 
 #pragma warning disable CS8632 // Аннотацию для ссылочных типов, допускающих значения NULL, следует использовать в коде только в контексте аннотаций "#nullable".

@@ -1,7 +1,8 @@
 ﻿
 using System.Collections.Concurrent;
-using System.IO;
 using UnityCommander.Abstractions.Thumbnail;
+using UnityCommander.Diagnostics.Tracing;
+using Path = System.IO.Path;
 
 namespace UnityCommander.WPF.Images
 {
@@ -13,11 +14,15 @@ namespace UnityCommander.WPF.Images
         private readonly ConcurrentDictionary<
             string,
             Lazy<Task<ThumbnailResult?>>> _inflight = new();
+        private IDiagnosticTrace _trace;
 
         public ThumbnailService(
             IEnumerable<IThumbnailProvider> providers,
-            IEnumerable<IThumbnailCache> caches)
+            IEnumerable<IThumbnailCache> caches, 
+            IDiagnosticTrace diagnosticTrace)
         {
+            _trace = diagnosticTrace;
+
             _providers = providers
                 .OrderByDescending(x => x.Priority)
                 .ToList();
@@ -28,16 +33,28 @@ namespace UnityCommander.WPF.Images
         }
 
         public async Task<ThumbnailResult?> GetAsync(
-            string path,
-            ThumbnailRequest request,
-            CancellationToken token)
+           string path,
+           ThumbnailRequest request,
+           CancellationToken token)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return null;
 
             foreach (var provider in _providers)
             {
-                if (!provider.CanProvide(path))
+                var canProvide = provider.CanProvide(path);
+
+                _trace.Write(
+                    "ThumbnailService",
+                    "ProviderCheck",
+                    new Dictionary<string, object?>
+                    {
+                        ["Provider"] = provider.Id,
+                        ["Path"] = path,
+                        ["CanProvide"] = canProvide
+                    });
+
+                if (!canProvide)
                     continue;
 
                 var providerKey =
@@ -60,6 +77,15 @@ namespace UnityCommander.WPF.Images
                         cacheKey,
                         token);
 
+                    _trace.Write(
+                        "ThumbnailService",
+                        "CacheMiss",
+                        new Dictionary<string, object?>
+                        {
+                            ["Provider"] = provider.Id,
+                            ["Path"] = path
+                        });
+
                     if (cached is not null)
                         return cached;
                 }
@@ -81,7 +107,20 @@ namespace UnityCommander.WPF.Images
 
                 try
                 {
-                    return await lazy.Value.WaitAsync(token);
+                    var result = await lazy.Value.WaitAsync(token);
+
+                    _trace.Write(
+                        "ThumbnailService",
+                        "ProviderCompleted",
+                        new Dictionary<string, object?>
+                        {
+                            ["Provider"] = provider.Id,
+                            ["Path"] = path,
+                            ["HasResult"] = result is not null
+                        });
+
+                    if (result is not null)
+                        return result;
                 }
                 finally
                 {
@@ -97,6 +136,14 @@ namespace UnityCommander.WPF.Images
                     }
                 }
             }
+
+            _trace.Write(
+                "ThumbnailService",
+                "NoThumbnail",
+                new Dictionary<string, object?>
+                {
+                    ["Path"] = path
+                });
 
             return null;
         }

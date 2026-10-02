@@ -199,7 +199,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IThumbnailProvider, FolderThumbnailProvider>();
             registry.RegisterSingleton<IThumbnailProvider, ShellThumbnailProvider>();
             registry.RegisterSingleton<IThumbnailService, ThumbnailService>();
-            registry.RegisterSingleton<IThumbnailRenderer, ThumbnailRenderer>();
+            //registry.RegisterSingleton<IThumbnailRenderer, ThumbnailRenderer>();
             registry.RegisterSingleton<IShellThumbnailExtractor, ShellThumbnailExtractor>();
             registry.RegisterSingleton<ThumbnailImageLoader>();
             registry.RegisterSingleton<ThumbnailImageConverter>();

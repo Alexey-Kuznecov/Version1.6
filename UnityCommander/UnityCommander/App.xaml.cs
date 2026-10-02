@@ -31,7 +31,7 @@ namespace UnityCommander
         {
             var catalog = new ThemeCatalog();
 
-            ThemeManager.Initialize(catalog, "Light");
+            ThemeManager.Initialize(catalog, "Dark");
 
             var converter =
                 Container.Resolve<ThumbnailImageConverter>();
