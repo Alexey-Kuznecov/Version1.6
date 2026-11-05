@@ -14,7 +14,7 @@ using UnityCommander.Common.Models.Directory;
 using UnityCommander.Common.Selection;
 using UnityCommander.Core.Clipboard;
 using UnityCommander.Modules.FilePanel.Services;
-using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Modules.FilePanel.States.Resolver.Models;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 

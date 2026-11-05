@@ -18,6 +18,7 @@
     xmlns:state="clr-namespace:UnityCommander.Modules.FilePanel.States">
 
     <selectors:ContentTemplateSelector x:Key="ContentTemplateSelector" />
+    <!--<selectors:ContextMenuItemTemplateSelector x:Key="ContextMenuItemTemplateSelector" />-->
 
     <converters:ThumbnailVisibilityConverter x:Key="ThumbnailVisibilityConverter" />
 
@@ -170,7 +171,6 @@
                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
                             ItemsSource="{Binding Context.ContextMenuItems}"
                             Style="{DynamicResource UcContextMenu}">
-
                             <ContextMenu.ItemContainerStyle>
                                 <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
@@ -179,6 +179,25 @@
                                     <Setter Property="Height" Value="30" />
                                     <Setter Property="ItemsSource" Value="{Binding Children}" />
                                     <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+
+                                    <Style.Triggers>
+
+                                        <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Setter Property="IsHitTestVisible" Value="False" />
+                                            <Setter Property="Focusable" Value="False" />
+                                            <Setter Property="Height" Value="1" />
+
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="MenuItem">
+                                                        <Separator Style="{StaticResource UcContextMenuSeparator}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
                                 </Style>
                             </ContextMenu.ItemContainerStyle>
                         </ContextMenu>
@@ -245,10 +264,30 @@
                                     <Setter Property="Height" Value="30" />
                                     <Setter Property="ItemsSource" Value="{Binding Children}" />
                                     <Setter Property="Foreground" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+
+                                    <Style.Triggers>
+
+                                        <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Setter Property="IsHitTestVisible" Value="False" />
+                                            <Setter Property="Focusable" Value="False" />
+                                            <Setter Property="Height" Value="1" />
+
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="MenuItem">
+                                                        <Separator Style="{StaticResource UcContextMenuSeparator}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
                                 </Style>
                             </ContextMenu.ItemContainerStyle>
                         </ContextMenu>
                     </ListView.ContextMenu>
+
                 </ListView>
             </AdornerDecorator>
             <Border.Style>
@@ -367,7 +406,7 @@
                             <ContextMenu.ItemContainerStyle>
                                 <Style BasedOn="{StaticResource UcContextMenuItem}" TargetType="MenuItem">
                                     <Setter Property="Header" Value="{Binding Title}" />
-                                    <Setter Property="Icon" Value="🙂" />
+                                    <Setter Property="Icon" Value="{Binding IconKey}" />
                                     <Setter Property="Command" Value="{Binding Command}" />
                                     <Setter Property="Height" Value="30" />
                                     <Setter Property="ItemsSource" Value="{Binding Children}" />

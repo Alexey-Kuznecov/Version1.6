@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Columns;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.Diagnostics.Tracing;
@@ -22,6 +23,8 @@ namespace UnityCommander.Modules.FilePanel.States
 {
     public sealed class UnifiedNodeContext : BindableBase, IContextMenuHost, IViewportHost, IDisposable
     {
+        private readonly IFileLauncher _fileLauncher;
+
         public FolderNodeContext Folder { get; }
         
         public FileNodeContext File { get; }
@@ -64,7 +67,8 @@ namespace UnityCommander.Modules.FilePanel.States
         public UnifiedNodeContext(
              ContextMenuController menu,
              FolderNodeContext folder,
-             FileNodeContext file)
+             FileNodeContext file,
+             IFileLauncher fileLauncher)
         {
             Folder = folder;
             File = file;
@@ -85,6 +89,8 @@ namespace UnityCommander.Modules.FilePanel.States
             RebuildItems();
 
             Mapper.RangeChanged += OnRangeChanged;
+
+            _fileLauncher = fileLauncher;
         }
 
         private void OnFoldersChanged(
@@ -211,7 +217,7 @@ namespace UnityCommander.Modules.FilePanel.States
 
             if (item is IFileItem file)
             {
-                // File.OpenCommand.Execute(file);
+                _fileLauncher.Open(file.Path);
             }
         }
 

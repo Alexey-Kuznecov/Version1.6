@@ -1,6 +1,7 @@
 ﻿
 using Prism.Commands;
 using System.Collections.ObjectModel;
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Models.Directory;
@@ -34,6 +35,7 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly ICreationService _creationService;
         private ViewportMapper _scrollMapper;
         private readonly IWindowManager _windowManager;
+        private readonly IFileLauncher _fileLauncher;
 
         public NodeContextFactory(
             FilePanelLayoutController layoutController,
@@ -47,7 +49,8 @@ namespace UnityCommander.Modules.FilePanel.Services
             ViewportMapper scrollMapper,
             IWindowManager windowManager,
             IPopupService popupService,
-            ActiveTabContext activeTab)
+            ActiveTabContext activeTab,
+            IFileLauncher fileLauncher)
         {
             var loggerCreator = Log.GetLoggerCreator();
 
@@ -65,6 +68,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             _scrollMapper = scrollMapper;
             _creationService = creationService;
             _windowManager = windowManager;
+            _fileLauncher = fileLauncher;
         }
 
         public FolderNodeContext CreateFolderNode()
@@ -101,7 +105,8 @@ namespace UnityCommander.Modules.FilePanel.Services
             var ctx = new UnifiedNodeContext(
                 _menu,
                folderNodeContext, 
-               fileNodeContext);
+               fileNodeContext,
+               _fileLauncher);
 
             _contextRegistry.Register(ctx);
 

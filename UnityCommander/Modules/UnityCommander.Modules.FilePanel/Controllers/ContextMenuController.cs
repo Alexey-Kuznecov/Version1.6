@@ -2,12 +2,11 @@
 using CommandSystem.Abstractions;
 using Prism.Commands;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Windows;
 using UnityCommander.CommandSurface;
 using UnityCommander.Common.Commands;
 using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Modules.FilePanel.States.Resolver.Models;
 using UnityCommander.Modules.FilePanel.ViewModels;
 using UnityCommander.Services;
 
@@ -19,17 +18,20 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         private readonly CommandExecutionService _commandExecution;
         private readonly CommandRegistryService _commandRegistry;
         private readonly ContextResolverDispatcher _resolver;
+        private readonly ISurfaceCategoryPresentation _categoryPresentation;
 
         public ContextMenuController(
             CommandSurfaceEngine surface,
             CommandExecutionService commandExecution,
             CommandRegistryService commandRegistry,
-            ContextResolverDispatcher resolver)
+            ContextResolverDispatcher resolver,
+            ISurfaceCategoryPresentation categoryPresentation)
         {
             _surface = surface;
             _commandExecution = commandExecution;
             _commandRegistry = commandRegistry;
             _resolver = resolver;
+            _categoryPresentation = categoryPresentation;
         }
 
         public void Show(IContextMenuHost state, object? parameter)
@@ -51,45 +53,70 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         }
 
         private List<MenuItemViewModel> MapToMenu(
-        IEnumerable<SurfaceNode> nodes,
-        SurfaceContext context)
+            IEnumerable<SurfaceNode> nodes,
+            SurfaceContext context)
         {
             var result = new List<MenuItemViewModel>();
 
             foreach (var node in nodes)
             {
-                var item = new MenuItemViewModel
-                {
-                    Title = node.Title
-                };
-
                 if (node.CommandName is not null)
                 {
-                    var name = CommandPresentationProvider.Get(node.CommandName).DisplayName;
-
-                    item.Title = name ?? node.CommandName;
-                    item.IconKey = node.CommandName;
-
-                    item.Command = new DelegateCommand(() =>
-                    {
-                        var menuContext = context.Get<FilePanelContextMenu>();
-
-                        var ctx = new CommandContext(
-                            node.CommandName,
-                            menuContext,
-                            menuContext?.SelectedPaths);
-
-                        _commandExecution.ExecuteAsync(
-                            node.CommandName,
-                            ctx);
-                    });
+                    result.Add(CreateCommandItem(node, context));
+                    continue;
                 }
 
-                item.Children = MapToMenu(node.Children, context);
-                result.Add(item);
+                var presentation = _categoryPresentation.Get(node.Title);
+
+                var children = MapToMenu(node.Children, context);
+
+                if (children.Count == 0)
+                    continue;
+
+                if (presentation == SurfaceCategoryPresentation.Separator)
+                {
+                    if (result.Count > 0)
+                    {
+                        result.Add(new MenuItemViewModel
+                        {
+                            IsSeparator = true
+                        });
+                    }
+
+                    result.AddRange(children);
+                    continue;
+                }
+
+                result.Add(new MenuItemViewModel
+                {
+                    Title = node.Title,
+                    Children = children
+                });
             }
 
             return result;
+        }
+
+        private MenuItemViewModel CreateCommandItem(
+            SurfaceNode node,
+            SurfaceContext context)
+        {
+            var name = CommandPresentationProvider
+                .Get(node.CommandName!)
+                .DisplayName;
+
+            var item = new MenuItemViewModel
+            {
+                Title = name ?? node.CommandName!,
+                IconKey = node.CommandName!
+            };
+
+            item.Command = new DelegateCommand(() =>
+            {
+                _commandExecution.ExecuteAsync(node.CommandName!);
+            });
+
+            return item;
         }
     }
 }

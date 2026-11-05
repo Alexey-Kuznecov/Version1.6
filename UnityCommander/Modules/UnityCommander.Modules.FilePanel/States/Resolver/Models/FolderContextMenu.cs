@@ -1,9 +1,9 @@
 ﻿
 using System.Collections.Generic;
 
-namespace UnityCommander.Modules.FilePanel.States.Resolver
+namespace UnityCommander.Modules.FilePanel.States.Resolver.Models
 {
-    public class FilePanelContextMenu
+    public class FolderContextMenu
     {
         public string CurrentPath { get; set; } = default!;
         

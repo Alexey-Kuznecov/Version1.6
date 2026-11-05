@@ -1,4 +1,5 @@
 ﻿
+using UnityCommander.Abstractions;
 using UnityCommander.Abstractions.Dialog;
 using UnityCommander.Common.Panels;
 using UnityCommander.Controls.Layout;
@@ -27,6 +28,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
         private readonly ViewportMapper _scrollMapper;
         private readonly IWindowManager _windowManager;
         private readonly IPopupService _popupService;
+        private readonly IFileLauncher _fileLauncher;
 
         public FilePanelContextFactory(
             FilePanelLayoutService layoutService,
@@ -39,7 +41,8 @@ namespace UnityCommander.Modules.FilePanel.Layout
             NodeContextRegistry contextRegistry,
             ViewportMapper scrollMapper,
             IWindowManager windowManager,
-            IPopupService popupService)
+            IPopupService popupService,
+            IFileLauncher fileLauncher)
         {
             _layoutService = layoutService;
             _activeTab = activeTab;
@@ -52,6 +55,7 @@ namespace UnityCommander.Modules.FilePanel.Layout
             _scrollMapper = scrollMapper;
             _windowManager = windowManager;
             _popupService = popupService;
+            _fileLauncher = fileLauncher;
         }
 
         public FilePanelRuntime Create()
@@ -89,7 +93,8 @@ namespace UnityCommander.Modules.FilePanel.Layout
                     _scrollMapper,
                     _windowManager,
                     _popupService,
-                    _activeTab);
+                    _activeTab,
+                    _fileLauncher);
 
             var nodeBuilder =
                 new FilePanelNodeBuilder(nodeContextFactory);

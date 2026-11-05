@@ -213,8 +213,8 @@ namespace UnityCommander
             var shortcutBinder = containerRegistry.Resolve<IShortcutBinder>();
 
             shortcutBinder.Bind(CommandNames.File.Open, ShortcutKey.Enter);
-            shortcutBinder.Bind(CommandNames.File.Delete, ShortcutKey.Delete);
-            shortcutBinder.Bind(CommandNames.File.Rename, ShortcutKey.F2);
+            shortcutBinder.Bind(CommandNames.Item.Delete, ShortcutKey.Delete);
+            shortcutBinder.Bind(CommandNames.Item.Rename, ShortcutKey.F2);
             shortcutBinder.Bind(CommandNames.Clipboard.Copy, ShortcutKey.C, ShortcutModifiers.Ctrl);
             shortcutBinder.Bind(CommandNames.Clipboard.Cut, ShortcutKey.X, ShortcutModifiers.Ctrl);
             shortcutBinder.Bind(CommandNames.Clipboard.Paste, ShortcutKey.V, ShortcutModifiers.Ctrl);

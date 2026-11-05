@@ -1,6 +1,7 @@
 ﻿
 using System.Linq;
 using UnityCommander.CommandSurface;
+using UnityCommander.Modules.FilePanel.States.Resolver.Models;
 
 namespace UnityCommander.Modules.FilePanel.States.Resolver
 {
@@ -20,7 +21,7 @@ namespace UnityCommander.Modules.FilePanel.States.Resolver
 
             var result = new SurfaceContext();
 
-            result.Set(new FilePanelContextMenu
+            result.Set(new FileContextMenu
             {
                 CurrentPath = state.Current,
                 SelectedPaths = state.SelectedItems

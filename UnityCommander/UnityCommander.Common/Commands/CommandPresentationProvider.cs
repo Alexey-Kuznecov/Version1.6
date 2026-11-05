@@ -54,12 +54,12 @@ namespace UnityCommander.Common.Commands
                 ),
 
 
-                [CommandNames.File.SelectAll] = new(
+                [CommandNames.Panel.SelectFilesAll] = new(
                     "Выделить все файлы",
                     "Выделить все файлы в текущем каталоге"
                 ),
 
-                [CommandNames.Directory.SelectAll] = new(
+                [CommandNames.Panel.SelectFoldersAll] = new(
                     "Выделить все папки",
                     "Выделить все папки в текущем каталоге"
                 ),
@@ -70,17 +70,32 @@ namespace UnityCommander.Common.Commands
                 ),
 
                 // File commands
-                [CommandNames.File.Delete] = new(
-                    "Удалить файл",
-                    "Удалить файл/Восстановить файл"
+                [CommandNames.Item.Delete] = new(
+                    "Удалить",
+                    "Удалить файл/папку"
                 ),
 
                 // File commands
-                [CommandNames.File.Rename] = new(
+                [CommandNames.Item.Rename] = new(
                     "Переименовать",
                     "Переименовать выбранный файл или папку"
                 ),
 
+                // Clipboard commands
+                [CommandNames.Clipboard.Copy] = new(
+                    "Копировать",
+                    "Копировать выбранные файлы и папки в буфер обмена"
+                ),
+
+                [CommandNames.Clipboard.Paste] = new(
+                    "Вставить",
+                    "Вставить файлы и папки из буфера обмена в текущую папку"
+                ),
+
+                [CommandNames.Clipboard.Cut] = new(
+                    "Вырезать",
+                    "Вырезать выбранные файлы и папки и переместить их в текущую папку при вставке"
+                ),
                 [CommandNames.File.OpenInViewer] = new(
                     "Открыть файл",
                     "Открыть файл во внутренем просмоторщике"

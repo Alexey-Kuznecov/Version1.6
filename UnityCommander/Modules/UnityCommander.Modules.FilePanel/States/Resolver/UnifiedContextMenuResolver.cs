@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityCommander.Abstractions.Panels;
 using UnityCommander.CommandSurface;
+using UnityCommander.Modules.FilePanel.States.Resolver.Models;
 
 namespace UnityCommander.Modules.FilePanel.States.Resolver
 {
@@ -13,8 +14,8 @@ namespace UnityCommander.Modules.FilePanel.States.Resolver
         }
 
         public SurfaceContext Resolve(
-           object context,
-           object parameter)
+            object context,
+            object parameter)
         {
             var state = (UnifiedNodeContext)context;
 
@@ -35,32 +36,9 @@ namespace UnityCommander.Modules.FilePanel.States.Resolver
                     []
             };
 
-            if (items.Count == 1)
-            {
-                var item = items[0];
-
-                if (item is IFileItem)
-                {
-                    result.Set(new FilePanelContextMenu
-                    {
-                        CurrentPath = state.Current,
-                        SelectedPaths = [item.Path]
-                    });
-
-                    return result;
-                }
-
-                if (item is IFolderItem)
-                {
-                    result.Set(new FilePanelContextMenu
-                    {
-                        CurrentPath = state.Current,
-                        SelectedPaths = [item.Path]
-                    });
-
-                    return result;
-                }
-            }
+            var paths = items
+                .Select(x => x.Path)
+                .ToList();
 
             result.Set(new FilePanelContextMenu
             {
@@ -69,6 +47,24 @@ namespace UnityCommander.Modules.FilePanel.States.Resolver
                     .Select(x => x.Path)
                     .ToList()
             });
+
+            if (items.All(x => x is IFileItem))
+            {
+                result.Set(new FileContextMenu
+                {
+                    CurrentPath = state.Current,
+                    SelectedPaths = paths
+                });
+            }
+
+            else if (items.All(x => x is IFolderItem))
+            {
+                result.Set(new FolderContextMenu
+                {
+                    CurrentPath = state.Current,
+                    SelectedPaths = paths
+                });
+            }
 
             return result;
         }

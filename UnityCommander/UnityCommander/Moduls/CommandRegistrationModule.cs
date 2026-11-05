@@ -6,7 +6,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.Commands;
 using UnityCommander.Modules.BottomPanel.Commands;
 using UnityCommander.Modules.FilePanel;
-using UnityCommander.Modules.FilePanel.States.Resolver;
+using UnityCommander.Modules.FilePanel.States.Resolver.Models;
 using UnityCommander.Modules.ToolBar.Commands;
 using UnityCommander.Services;
 
@@ -44,17 +44,32 @@ namespace UnityCommander.Moduls
             commandRegistry.Register(CommandFactoryExtensions.Create(
               CommandNames.Clipboard.Copy,
                filePanelProvider.ExecuteCopyAsync,
-               null));
+               null,
+                contextTypes: new[]
+                {
+                    typeof(FileContextMenu),
+                    typeof(FolderContextMenu)
+                }));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
               CommandNames.Clipboard.Cut,
                filePanelProvider.ExecuteCutAsync,
-               null));
+               null,
+                contextTypes: new[]
+                {
+                    typeof(FileContextMenu),
+                    typeof(FolderContextMenu)
+                }));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
               CommandNames.Clipboard.Paste,
                filePanelProvider.ExecutePasteAsync,
-               null));
+               null,
+                contextTypes: new[]
+                {
+                    typeof(FileContextMenu),
+                    typeof(FolderContextMenu)
+                }));
 
             // -------------------------------
             // 1. Регистрация команд файловой панели
@@ -70,31 +85,42 @@ namespace UnityCommander.Moduls
                 null));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
-                CommandNames.Directory.SelectAll,
+                CommandNames.Panel.SelectFoldersAll,
                 filePanelProvider.ExecuteSelectFoldersAsync,
-                null));
+                 null,
+                 contextTypes: typeof(FolderContextMenu)));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
-                 CommandNames.File.SelectAll,
+                 CommandNames.Panel.SelectFilesAll,
                  filePanelProvider.ExecuteSelectFilesAsync,
-                 null));
+                 null,
+                  contextTypes: typeof(FileContextMenu)));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
                  CommandNames.Panel.SelectAll,
                  filePanelProvider.ExecuteSelectAllAsync,
-                 null));
+                 null,
+                 contextTypes: typeof(FilePanelContextMenu)));
 
             commandRegistry.RegisterUndoable(CommandFactoryExtensions.Create(
-                CommandNames.File.Delete,
+                CommandNames.Item.Delete,
                 null,
                 filePanelProvider.ExecuteDeleteAsync,
-                contextTypes: typeof(FilePanelContextMenu)));
+                   contextTypes: new[]
+                {
+                    typeof(FileContextMenu),
+                    typeof(FolderContextMenu)
+                }));
 
             commandRegistry.Register(CommandFactoryExtensions.Create(
-                CommandNames.File.Rename,
+                CommandNames.Item.Rename,
                 filePanelProvider.ExecuteRenameAsync,
                 null,
-                contextTypes: typeof(FilePanelContextMenu)));
+                  contextTypes: new[]
+                {
+                    typeof(FileContextMenu),
+                    typeof(FolderContextMenu)
+                }));
 
             // -------------------------------
             // 2. Регистрация команд панели интсрументов

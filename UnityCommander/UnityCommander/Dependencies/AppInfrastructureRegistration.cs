@@ -203,6 +203,8 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IShellThumbnailExtractor, ShellThumbnailExtractor>();
             registry.RegisterSingleton<ThumbnailImageLoader>();
             registry.RegisterSingleton<ThumbnailImageConverter>();
+
+            registry.RegisterSingleton<IFileLauncher, WindowsFileLauncher>();
         }
     }
 }

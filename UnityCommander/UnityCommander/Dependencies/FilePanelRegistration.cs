@@ -15,6 +15,7 @@ using UnityCommander.Modules.FilePanel.Columns;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.Layout;
 using UnityCommander.Modules.FilePanel.Services;
+using UnityCommander.Modules.FilePanel.States.Resolver.Models;
 using UnityCommander.Services;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Selection;
@@ -74,6 +75,7 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IRenameService, RenameService>();
             registry.RegisterSingleton<IRenameManager, RenameManager>();
 
+            registry.RegisterSingleton<ISurfaceCategoryPresentation, ContextMenuCategoryPresentation>();
             registry.RegisterSingleton<FilePanelLayoutService>();
             registry.RegisterSingleton<CommandSurfaceEngine>();
             registry.RegisterSingleton<ContextMenuController>();

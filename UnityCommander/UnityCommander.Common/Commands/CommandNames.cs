@@ -9,14 +9,6 @@ namespace UnityCommander.Common.Commands
             public const string ShowParams = "test.show.dialog.params";
         }
 
-        public static class Directory
-        {
-            public const string Create = "directory.create";
-            public const string Delete = "directory.delete";
-            public const string Rename = "directory.rename";
-            public const string SelectAll = "directory.select.all";
-        }
-
         public static class Command
         {
             public const string Execute = "command.execute";
@@ -33,24 +25,32 @@ namespace UnityCommander.Common.Commands
             public const string CopyLink = "clipboard.create.link";
         }
 
+        public static class Item
+        {
+            public const string Move = "item.move";
+            public const string Delete = "item.delete";
+            public const string Rename = "item.rename";
+
+            public const string Copy = "item.copy";
+            public const string Paste = "item.paste";
+
+            public const string GetInfo = "item.get-info";
+            public const string SetAttributes = "item.set-attributes";
+        }
+
         public static class File
         {
-            public const string Move = "file.move";
-            public const string Delete = "file.delete";
-            public const string Rename = "file.rename";
-
             public const string Create = "file.create";
-
             public const string Open = "file.open";
             public const string OpenWith = "file.open-with";
-            public const string OpenInViewer = "file.open-in-viewer"; 
+            public const string OpenInViewer = "file.open-in-viewer";
+        }
 
-            public const string GetInfo = "file.get-info";
-            public const string SetAttributes = "file.set-attributes";
-            
-            public const string Copy = "file.copy";
-            public const string Paste = "file.paste";
-            public const string SelectAll = "file.select.all";
+        public static class Directory
+        {
+            public const string Create = "directory.create";
+            public const string Open = "folder.open";
+            public const string OpenInNewTab = "folder.open-in-new-tab";
         }
 
         public static class Navigation
@@ -94,6 +94,9 @@ namespace UnityCommander.Common.Commands
             public const string Focus = "panel.focus";
             public const string Switch = "panel.switch"; // левая/правая
             public const string SelectAll = "panel.select.all";
+
+            public const string SelectFilesAll = "panel.file.select.all";
+            public const string SelectFoldersAll = "panel.folder.select.all";
         }
 
         public static class Views

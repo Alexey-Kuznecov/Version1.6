@@ -16,5 +16,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public bool HasChildren => Children.Count > 0;
 
         public string IconKey { get; internal set; }
+
+        public bool IsSeparator { get; internal set; }
     }
 }
