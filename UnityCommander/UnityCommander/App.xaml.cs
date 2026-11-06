@@ -76,6 +76,8 @@ namespace UnityCommander
             SettingsRegistration.Register(containerRegistry);
             BottomPanelRegistration.Register(containerRegistry);
             SearchRegistration.Register(containerRegistry);
+            NotificationRegistration.Register(containerRegistry);
+
             //AiRegistration.Register(containerRegistry);
         }
 

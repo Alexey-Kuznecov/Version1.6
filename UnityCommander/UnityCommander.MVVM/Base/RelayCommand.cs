@@ -1,11 +1,12 @@
 ﻿
 // ReSharper disable All
-namespace UnityCommander.Mvvm
+namespace UnityCommander.Mvvm.Base
 {
     using System;
+    using System.Diagnostics;
     using System.Windows.Input;
 
-    ///[DebuggerStepThrough]
+    [DebuggerStepThrough]
     public class RelayCommand : ICommand
     {
         private readonly Action _command;

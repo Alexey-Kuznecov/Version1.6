@@ -17,6 +17,8 @@ namespace UnityCommander.ViewModels
     using UnityCommander.Common.Commands;
     using UnityCommander.Controls.Window;
     using UnityCommander.Mvvm;
+    using UnityCommander.Mvvm.Base;
+    using UnityCommander.Notifications.WPF.Presentation.ViewModels;
     using UnityCommander.Services;
     using UnityCommander.Services.Interfaces;
     using UnityCommander.Services.Layout;
@@ -45,8 +47,10 @@ namespace UnityCommander.ViewModels
             IEventAggregator exchange,
             IMultiCommandService command,
             IShellLayoutManager shellLayoutManager,
-            CommandExecutionService commandService)
+            CommandExecutionService commandService, 
+            NotificationHostViewModel notificationHost)
         {
+            NotificationHost = notificationHost;
             _commandExecutionService = commandService;
             _shellLayoutManager = shellLayoutManager;
             _shellLayoutManager.AreaChanged += OnAreaChanged;
@@ -59,6 +63,8 @@ namespace UnityCommander.ViewModels
 
             this.Icon = Directory.GetCurrentDirectory() + "\\icon.ico";
         }
+
+        public NotificationHostViewModel NotificationHost { get; }
 
         public string Icon
         {

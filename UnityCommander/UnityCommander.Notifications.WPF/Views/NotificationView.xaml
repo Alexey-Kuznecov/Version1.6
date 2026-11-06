@@ -1,0 +1,102 @@
+﻿<UserControl
+    x:Class="UnityCommander.Notifications.WPF.Views.NotificationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering">
+
+    <Border
+        Margin="0,2"
+        Padding="12"
+        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+        CornerRadius="4">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Цветной акцент  -->
+            <Border
+                Grid.Column="0"
+                Background="{Binding AccentBrush}"
+                CornerRadius="2" />
+
+            <!--  Иконка  -->
+            <icon:IconRender
+                Key="{Binding IconKey}"
+                Grid.Column="2"
+                Width="20"
+                Height="20"
+                VerticalAlignment="Center"
+                Brush="{Binding AccentBrush}" />
+
+            <!--  Текст  -->
+            <StackPanel
+                Grid.Column="3"
+                Margin="12,0,12,0"
+                VerticalAlignment="Center">
+
+                <TextBlock
+                    Margin="0,0,0,3"
+                    FontSize="13"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                    Text="{Binding Title}">
+
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Visible" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Title}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding Title}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{DynamicResource UcForegroundSecondaryBrush}"
+                    Text="{Binding Message}"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
+
+            <!--  Закрытие  -->
+            <Button
+                Grid.Column="4"
+                Padding="5"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding CloseCommand}"
+                ToolTip="Dismiss notification">
+
+                <Button.Visibility>
+                    <Binding Path="IsDismissible">
+                        <Binding.Converter>
+                            <BooleanToVisibilityConverter />
+                        </Binding.Converter>
+                    </Binding>
+                </Button.Visibility>
+
+                <icon:IconRender
+                    Key="Close"
+                    Width="14"
+                    Height="14"
+                    Brush="{DynamicResource UcForegroundSecondaryBrush}" />
+            </Button>
+
+        </Grid>
+    </Border>
+</UserControl>

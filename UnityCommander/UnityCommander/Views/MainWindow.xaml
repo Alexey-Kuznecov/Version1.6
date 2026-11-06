@@ -10,6 +10,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:inputBinding="clr-namespace:UnityCommander.WPF.Behaviors;assembly=UnityCommander.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:notifications="clr-namespace:UnityCommander.Notifications.WPF.Views;assembly=UnityCommander.Notifications.WPF"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:UnityCommander.ViewModels"
     x:Name="Window"
@@ -48,12 +49,24 @@
             <ColumnDefinition Width="3" />
             <ColumnDefinition Width="571*" />
         </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
+            <!--  Ribbon  -->
             <RowDefinition Height="{Binding RibbonHeight}" />
+
+            <!--  Notifications  -->
+            <RowDefinition Height="Auto" />
+
+            <!--  Main content  -->
             <RowDefinition Height="1*" />
+
+            <!--  Bottom panel  -->
             <RowDefinition Height="{Binding BottomHeight}" />
+
+            <!--  Status bar  -->
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
+
         <!--
             Toolbar region.
         -->
@@ -63,6 +76,13 @@
             Grid.Column="3"
             Grid.ColumnSpan="3"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.ToolBarRegion}" />
+
+
+        <notifications:NotificationHost
+            Grid.Row="1"
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            DataContext="{Binding NotificationHost}" />
 
         <!--
             Grid splitter.
@@ -88,7 +108,7 @@
             File panel region.
         -->
         <Grid
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="2"
             Grid.ColumnSpan="2">
             <DockingManager
@@ -101,7 +121,7 @@
         </Grid>
 
         <Border
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.Column="2"
             Grid.ColumnSpan="2">
             <ContentControl
@@ -113,7 +133,7 @@
 
 
         <ContentControl
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="0"
             Grid.ColumnSpan="3"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.StatusBarRegion}" />
