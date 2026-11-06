@@ -16,7 +16,7 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/DataTemplates/MergedDataTemplates.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Controls/RadioButton.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Images/Icons.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Xceed.Wpf.AvalonDock.Themes.Metro;component/Theme.xaml" />
+        <!--<ResourceDictionary Source="pack://application:,,,/Xceed.Wpf.AvalonDock.Themes.Metro;component/Theme.xaml" />-->
         <!--<ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/LightTheme.xaml" />-->
         <!--<ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Themes/DarkTheme.xaml" />-->
 

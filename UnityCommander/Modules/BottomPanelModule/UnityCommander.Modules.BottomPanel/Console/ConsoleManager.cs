@@ -9,6 +9,7 @@ using UnityCommander.CLI.History;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Lifecicle;
 using UnityCommander.Mvvm;
+using UnityCommander.Mvvm.Base;
 using UnityCommander.Services.Interfaces;
 
 namespace UnityCommander.Modules.BottomPanel.Console

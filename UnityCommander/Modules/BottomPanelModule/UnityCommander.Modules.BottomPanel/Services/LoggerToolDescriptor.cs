@@ -19,10 +19,19 @@ namespace UnityCommander.Modules.BottomPanel.Services
 
         public string Id => "Logger";
         public string Title => "Logger";
+
         public bool CanCreateMultiple => false;
+
+        public int MaxInstances => 1;
 
         public ToolDockSide DockSide 
             => ToolDockSide.Right;
+
+        public string Icon => "logger";
+
+        public string Description => "A logger for viewing and managing log entries.";
+
+        public string Category => "Utilities";
 
         public Control Create()
         {

@@ -1,6 +1,5 @@
 ﻿
 using CommandSystem.Abstractions;
-using System;
 using System.Threading.Tasks;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;

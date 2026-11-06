@@ -1,0 +1,155 @@
+﻿<UserControl
+    x:Class="UnityCommander.Modules.BottomPanel.Views.ToolCatalogView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icon="clr-namespace:UnityCommander.Rendering.Icons;assembly=UnityCommander.Rendering"
+    xmlns:local="clr-namespace:UnityCommander.Modules.BottomPanel.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="UcPluginListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+
+                        <Border
+                            x:Name="ItemBorder"
+                            Background="Transparent"
+                            CornerRadius="6">
+
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" />
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!--  Hover  -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource UcSurfaceSecondaryBrush}" />
+                            </Trigger>
+
+                            <!--  Selected  -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource UcSurfaceTertiaryBrush}" />
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Заголовок  -->
+        <TextBlock
+            Grid.Row="0"
+            Margin="12,12,12,10"
+            FontSize="16"
+            FontWeight="SemiBold"
+            Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+            Text="Available Tools" />
+
+        <!--  Поиск  -->
+        <!--<TextBox
+            Grid.Row="1"
+            Height="34"
+            Margin="12,0,12,10"
+            Padding="10,5"
+            VerticalContentAlignment="Center"
+            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+            ToolTip="Search tools..." />-->
+
+        <!--  Каталог  -->
+        <ListBox
+            Grid.Row="2"
+            Margin="8,0"
+            Background="Transparent"
+            BorderThickness="0"
+            ItemContainerStyle="{StaticResource UcPluginListBoxItemStyle}"
+            ItemsSource="{Binding FilteredTools}"
+            SelectedItem="{Binding SelectedDescriptor, Mode=TwoWay}"
+            Style="{StaticResource UcListBoxTemplate}">
+
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Margin="4,3"
+                        Padding="14,12"
+                        Background="{DynamicResource UcSurfaceSecondaryBrush}"
+                        CornerRadius="6">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Иконка  -->
+                            <Border
+                                Grid.Column="0"
+                                Width="42"
+                                Height="42"
+                                Margin="0,0,12,0"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource UcSurfaceTertiaryBrush}"
+                                CornerRadius="6"
+                                Style="{StaticResource IconHostStyle}">
+
+                                <icon:IconRender
+                                    Key="{Binding Icon}"
+                                    Width="22"
+                                    Height="22"
+                                    Brush="{DynamicResource UcForegroundSecondaryBrush}" />
+
+                            </Border>
+
+                            <!--  Информация  -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+
+                                <TextBlock
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource UcForegroundPrimaryBrush}"
+                                    Text="{Binding Title}"
+                                    TextTrimming="CharacterEllipsis" />
+
+                                <TextBlock
+                                    MaxHeight="36"
+                                    Margin="0,5,0,0"
+                                    FontSize="12"
+                                    Foreground="{DynamicResource UcForegroundTertiaryBrush}"
+                                    Text="{Binding Description}"
+                                    TextTrimming="WordEllipsis"
+                                    TextWrapping="Wrap" />
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+
+</UserControl>

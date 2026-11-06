@@ -6,6 +6,7 @@ using System.Windows.Input;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Core;
 using UnityCommander.Mvvm;
+using UnityCommander.Mvvm.Base;
 
 namespace UnityCommander.Modules.BottomPanel.ViewModels
 {

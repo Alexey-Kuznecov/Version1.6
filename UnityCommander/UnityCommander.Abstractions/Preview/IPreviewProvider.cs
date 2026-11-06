@@ -7,10 +7,10 @@ namespace UnityCommander.Abstractions.Preview
 
         int Priority { get; }
 
-        bool CanPreview(PreviewRequest request);
+        //bool CanPreview(PreviewRequest request);
 
-        Task<IPreviewContent> CreateAsync(
-            PreviewRequest request,
-            CancellationToken cancellationToken);
+        //Task<IPreviewContent> CreateAsync(
+        //    PreviewRequest request,
+        //    CancellationToken cancellationToken);
     }
 }

@@ -17,8 +17,16 @@ namespace UnityCommander.Modules.BottomPanel.Services
 
         public bool CanCreateMultiple => true;
 
+        public int MaxInstances => 3;
+
         public ToolDockSide DockSide 
             => ToolDockSide.Center;
+
+        public string Icon => "console";
+
+        public string Description => "A simple console for executing commands.";
+
+        public string Category => "Utilities";
 
         public ConsoleToolDescriptor(IConsoleManager consoleManager)
         {
