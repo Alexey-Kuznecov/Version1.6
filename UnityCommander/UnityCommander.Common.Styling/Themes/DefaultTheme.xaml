@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:UnityCommander.Common.Styling">
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/UnityCommander.Common.Styling;component/Resources/Default/AvalonDock/AnchorableContextMenu.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Colors.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Brushes.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls.xaml" />

@@ -82,7 +82,6 @@ namespace UnityCommander.ViewModels
         {
             get => _bottomHeight;
             set => SetProperty(ref _bottomHeight, value);
-            
         }
 
         private void OnAreaChanged(object? sender, ShellAreaChangedEventArgs e)

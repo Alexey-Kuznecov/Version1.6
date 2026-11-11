@@ -41,6 +41,57 @@
             <Setter Property="Height" Value="50" />
         </Style>
         <conv:BoolToBrushConverter x:Key="BoolToBrushConverter" />
+
+        <Style x:Key="UcHorizontalGridSplitter" TargetType="{x:Type GridSplitter}">
+
+            <Setter Property="Height" Value="5" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Cursor" Value="SizeNS" />
+            <Setter Property="ResizeDirection" Value="Rows" />
+            <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+            <Setter Property="ShowsPreview" Value="False" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GridSplitter}">
+                        <Grid Background="{TemplateBinding Background}">
+
+                            <!--  Subtle separator line  -->
+                            <Border
+                                x:Name="Separator"
+                                Height="1"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource UcSurfaceSecondaryBrush}" />
+
+                            <!--  Center grip  -->
+                            <Border
+                                x:Name="Grip"
+                                Width="32"
+                                Height="3"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource UcMenuItemForegroundBrush}"
+                                CornerRadius="2"
+                                Opacity="0.35" />
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Grip" Property="Opacity" Value="1" />
+
+                                <Setter TargetName="Grip" Property="Width" Value="40" />
+
+                                <Setter TargetName="Separator" Property="Background" Value="{DynamicResource UcMenuItemForegroundBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid inputBinding:KeyboardBinding.Scope="MainWindow" Background="{DynamicResource UcApplicationBackgroundBrush}">
@@ -58,15 +109,20 @@
             <RowDefinition Height="Auto" />
 
             <!--  Main content  -->
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" MinHeight="250" />
+
+            <!--  Bottom panel splitter  -->
+            <RowDefinition Height="5" />
 
             <!--  Bottom panel  -->
-            <RowDefinition Height="{Binding BottomHeight}" />
+            <RowDefinition
+                Height="{Binding BottomHeight}"
+                MinHeight="150"
+                MaxHeight="550" />
 
             <!--  Status bar  -->
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
-
         <!--
             Toolbar region.
         -->
@@ -85,22 +141,11 @@
             DataContext="{Binding NotificationHost}" />
 
         <!--
-            Grid splitter.
-        -->
-        <!--<GridSplitter
-            Grid.Row="1"
-            Grid.Column="2"
-            Width="10"
-            HorizontalAlignment="Center"
-            DragIncrement="1"
-            ResizeDirection="Columns"
-            ShowsPreview="False" />-->
-        <!--
             Functional selection region on the left side panel.
         -->
         <ContentControl
             Grid.Row="0"
-            Grid.RowSpan="3"
+            Grid.RowSpan="5"
             Grid.Column="0"
             Grid.ColumnSpan="1"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftSideBarRegion}" />
@@ -120,10 +165,23 @@
                 IsVirtualizingDocument="True" />
         </Grid>
 
-        <Border
+        <GridSplitter
             Grid.Row="3"
             Grid.Column="2"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Cursor="SizeNS"
+            ResizeBehavior="PreviousAndNext"
+            ResizeDirection="Rows"
+            ShowsPreview="False"
+            Style="{StaticResource UcHorizontalGridSplitter}" />
+
+        <Border
+            Grid.Row="4"
+            Grid.Column="2"
             Grid.ColumnSpan="2">
+
             <ContentControl
                 prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}"
                 Background="{DynamicResource UcSurfaceSecondaryBrush}"
@@ -131,9 +189,8 @@
 
         </Border>
 
-
         <ContentControl
-            Grid.Row="4"
+            Grid.Row="5"
             Grid.Column="0"
             Grid.ColumnSpan="3"
             prism:RegionManager.RegionName="{x:Static core:RegionNames.StatusBarRegion}" />

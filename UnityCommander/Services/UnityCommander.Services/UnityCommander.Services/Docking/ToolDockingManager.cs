@@ -1,10 +1,12 @@
 ﻿
+using AvalonDock;
 using AvalonDock.Controls;
 using AvalonDock.Layout;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using UnityCommander.Abstractions;
@@ -49,6 +51,8 @@ namespace UnityCommander.Services.Docking
 
             var button = FindVisualParent<Button>(source);
 
+            var downDrop = FindVisualParent<ToggleButton>(source);
+
             if (button == null)
                 return;
 
@@ -71,6 +75,11 @@ namespace UnityCommander.Services.Docking
 
                 case "PART_AutoHidePin":
                     e.Handled = true;
+
+                    var manager = sender as DockingManager;
+
+                    manager.AnchorableContextMenu = new ContextMenu();
+
                     //OnAutoHideTool();
                     break;
 

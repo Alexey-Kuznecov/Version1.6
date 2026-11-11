@@ -18,10 +18,10 @@ namespace UnityCommander.Common.Styling
                 Priority = 0,
                 Name = "Dark",
                 ResourceUris =
-                    [
+                    [      
                         "/UnityCommander.Common.Styling;component/Themes/DarkTheme.xaml",
                         "/UnityCommander.Ribbon.Wpf;component/Themes/DarkTheme.xaml",
-                        "/AvalonDock.Themes.Arc;component/DarkTheme.xaml"
+                        "/AvalonDock.Themes.Arc;component/DarkTheme.xaml",
                     ],
                 Palette = new ThemePalette
                 {

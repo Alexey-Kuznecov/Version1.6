@@ -31,13 +31,13 @@ namespace UnityCommander
         {
             var catalog = new ThemeCatalog();
 
-            ThemeManager.Initialize(catalog, "Dark");
-
             var converter =
                 Container.Resolve<ThumbnailImageConverter>();
 
             Resources["ThumbnailImageConverter"] =
                 converter;
+
+            ThemeManager.Initialize(catalog, "Dark");
 
             var resources =
                CoreResources.ResourceUris

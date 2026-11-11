@@ -64,7 +64,7 @@ namespace UnityCommander.Modules.BottomPanel.ViewModels
                 ShellArea.BottomPanel,
                 new ShellAreaState
                 {
-                    Size = IsBottonPanelOpen ? 250 : 0
+                    Size = IsBottonPanelOpen ? 350 : 0
                 });
         }
     }
