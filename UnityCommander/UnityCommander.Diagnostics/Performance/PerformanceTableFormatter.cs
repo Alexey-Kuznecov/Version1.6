@@ -1,5 +1,6 @@
 ﻿
 using System.Text;
+using UnityCommander.Diagnostics.Abstraction.Performance;
 
 namespace UnityCommander.Diagnostics.Performance
 {

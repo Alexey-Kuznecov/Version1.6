@@ -1,98 +1,124 @@
-﻿namespace UnityCommander.Diagnostics.Tracing
+﻿
+using System.Diagnostics;
+using UnityCommander.Diagnostics.Tracing;
+
+public sealed class DiagnosticTraceScope : IDiagnosticTraceScope
 {
-    public sealed class DiagnosticTraceScope : IDiagnosticTraceScope
+    private readonly object _sync = new();
+
+    private readonly DiagnosticTrace _trace;
+    private readonly string _source;
+    private readonly DiagnosticTraceContext _context;
+    private readonly Stopwatch _stopwatch;
+
+    private bool _completed;
+
+    public string Id => _context.SpanId;
+
+    public DiagnosticTraceScope(
+        DiagnosticTrace trace,
+        string source,
+        string operation,
+        DiagnosticTraceContext context,
+        IReadOnlyDictionary<string, object?>? data)
     {
-        private readonly DiagnosticTrace _trace;
-        private readonly string _source;
+        _trace = trace;
+        _source = source;
+        _context = context;
 
-        private int _depth;
-        private bool _completed;
+        _stopwatch = Stopwatch.StartNew();
 
-        public string Id { get; }
+        _trace.Write(
+            _context,
+            _source,
+            $"{operation}.begin",
+            data);
+    }
 
-        public DiagnosticTraceScope(
-            DiagnosticTrace trace,
-            string source,
-            string operation,
-            IReadOnlyDictionary<string, object?>? data)
-        {
-            _trace = trace;
-            _source = source;
-
-            Id = Guid.NewGuid().ToString("N");
-
-            _trace.Write(
-                Id,
-                _source,
-                $"{operation}.begin",
-                _depth,
-                data);
-        }
-
-        public void Write(
-            string eventName,
-            IReadOnlyDictionary<string, object?>? data = null)
+    public void Write(
+        string eventName,
+        IReadOnlyDictionary<string, object?>? data = null)
+    {
+        lock (_sync)
         {
             if (_completed)
-                return;
-
-            _trace.Write(
-                Id,
-                _source,
-                eventName,
-                _depth,
-                data);
-        }
-
-        public void Complete(
-            IReadOnlyDictionary<string, object?>? data = null)
-        {
-            if (_completed)
-                return;
-
-            _completed = true;
-
-            _trace.Write(
-                Id,
-                _source,
-                "complete",
-                _depth,
-                data);
-        }
-
-        public void Fail(
-            Exception exception,
-            IReadOnlyDictionary<string, object?>? data = null)
-        {
-            if (_completed)
-                return;
-
-            _completed = true;
-
-            var result = new Dictionary<string, object?>
             {
-                ["exception"] = exception.GetType().FullName,
-                ["message"] = exception.Message
-            };
-
-            if (data != null)
-            {
-                foreach (var pair in data)
-                    result[pair.Key] = pair.Value;
+                return;
             }
 
             _trace.Write(
-                Id,
+                _context,
                 _source,
-                "failed",
-                _depth,
-                result);
+                eventName,
+                data);
+        }
+    }
+
+    public void Complete(
+        IReadOnlyDictionary<string, object?>? data = null)
+    {
+        Finish(
+            "complete",
+            data);
+    }
+
+    public void Fail(
+        Exception exception,
+        IReadOnlyDictionary<string, object?>? data = null)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+
+        var result = new Dictionary<string, object?>
+        {
+            ["exception"] = exception.GetType().FullName,
+            ["message"] = exception.Message
+        };
+
+        if (data != null)
+        {
+            foreach (var pair in data)
+            {
+                result[pair.Key] = pair.Value;
+            }
         }
 
-        public void Dispose()
+        Finish(
+            "failed",
+            result);
+    }
+
+    public void Dispose()
+    {
+        Complete();
+    }
+
+    private void Finish(
+        string eventName,
+        IReadOnlyDictionary<string, object?>? data)
+    {
+        lock (_sync)
         {
-            if (!_completed)
-                Complete();
+            if (_completed)
+            {
+                return;
+            }
+
+            _completed = true;
+            _stopwatch.Stop();
+
+            try
+            {
+                _trace.Write(
+                    _context,
+                    _source,
+                    eventName,
+                    data,
+                    _stopwatch.Elapsed.Ticks);
+            }
+            finally
+            {
+                _trace.OnScopeCompleted(_context);
+            }
         }
     }
 }

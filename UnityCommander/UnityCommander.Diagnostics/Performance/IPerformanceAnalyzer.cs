@@ -1,4 +1,7 @@
 ﻿
+
+using UnityCommander.Diagnostics.Abstraction.Performance;
+
 namespace UnityCommander.Diagnostics.Performance
 {
     public interface IPerformanceAnalyzer

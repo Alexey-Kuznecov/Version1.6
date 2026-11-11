@@ -1,0 +1,274 @@
+<Window
+    x:Class="UnityCommander.Diagnostics.Workbench.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:performance="clr-namespace:UnityCommander.Diagnostics.Workbench.Views.Performance"
+    xmlns:reporting="clr-namespace:UnityCommander.Diagnostics.Workbench.Views.Reporting"
+    xmlns:snapshots="clr-namespace:UnityCommander.Diagnostics.Workbench.Views.Snapshots"
+    xmlns:tracing="clr-namespace:UnityCommander.Diagnostics.Workbench.Views.Tracing"
+    xmlns:vm="clr-namespace:UnityCommander.Diagnostics.Workbench.ViewModels"
+    Title="Unity Commander Diagnostics"
+    Width="1440"
+    Height="900"
+    MinWidth="1120"
+    MinHeight="720"
+    WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
+    <Grid Margin="22,18,22,12" Panel.ZIndex="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="28" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Width="44"
+                Height="44"
+                VerticalAlignment="Center"
+                Background="{DynamicResource AccentBrush}"
+                CornerRadius="9">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="UC" />
+            </Border>
+
+            <StackPanel
+                Grid.Column="1"
+                Margin="13,0,0,0"
+                VerticalAlignment="Center">
+                <TextBlock
+                    FontSize="19"
+                    FontWeight="SemiBold"
+                    Text="{Binding ApplicationTitle}" />
+                <TextBlock
+                    Margin="0,2,0,0"
+                    FontSize="11"
+                    Foreground="{DynamicResource MutedTextBrush}"
+                    Text="{Binding ApplicationSubtitle}" />
+            </StackPanel>
+
+            <ToggleButton
+                Grid.Column="2"
+                Padding="0"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                IsChecked="{Binding IsSessionPanelOpen, Mode=TwoWay}">
+
+                <Border
+                    Padding="12,8"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+
+                        <Ellipse
+                            Width="8"
+                            Height="8"
+                            Margin="0,0,9,0"
+                            Fill="{DynamicResource AccentBrush}" />
+
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="9"
+                                Foreground="{DynamicResource MutedTextBrush}"
+                                Text="ACTIVE SESSION" />
+
+                            <TextBlock
+                                Margin="0,2,0,0"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="{Binding SelectedSession.Name, TargetNullValue='No session selected'}" />
+                        </StackPanel>
+
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="⌄" />
+
+                    </StackPanel>
+                </Border>
+            </ToggleButton>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Padding="7,0,7,7"
+            Background="{DynamicResource SurfaceBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="7">
+            <TabControl>
+                <TabItem Header="PERFORMANCE">
+                    <performance:PerformanceView DataContext="{Binding Performance}" />
+                </TabItem>
+                <TabItem Header="TRACING">
+                    <tracing:TracingView DataContext="{Binding Tracing}" />
+                </TabItem>
+                <TabItem Header="REPORTING">
+                    <reporting:ReportingView DataContext="{Binding Reporting}" />
+                </TabItem>
+                <TabItem Header="SNAPSHOTS">
+                    <snapshots:SnapshotsView DataContext="{Binding Snapshots}" />
+                </TabItem>
+            </TabControl>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="2,8,2,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="10"
+                Style="{StaticResource MutedText}"
+                Text="{Binding DataSourceDescription}" />
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                FontSize="10"
+                Style="{StaticResource MutedText}"
+                Text="Unity Commander Diagnostics Workbench" />
+        </Grid>
+
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Width="360"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Stretch"
+            Panel.ZIndex="100"
+            Background="{DynamicResource SurfaceBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1,0,0,0"
+            Visibility="{Binding IsSessionPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+
+            <Grid Margin="18">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--  Header  -->
+                <Grid Grid.Row="0">
+
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="20"
+                            FontWeight="SemiBold"
+                            Text="Sessions" />
+
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            FontSize="11"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="Diagnostic sessions" />
+                    </StackPanel>
+
+                    <ToggleButton
+                        Width="28"
+                        Height="28"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Content="✕"
+                        IsChecked="{Binding IsSessionPanelOpen, Mode=TwoWay}" />
+
+                </Grid>
+
+                <!--  Session count  -->
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="0,20,0,10"
+                    FontSize="11"
+                    Foreground="{DynamicResource MutedTextBrush}"
+                    Text="{Binding Sessions.Count, StringFormat=Sessions ({0})}" />
+
+                <!--  Session list  -->
+                <ListBox
+                    Grid.Row="2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ItemsSource="{Binding Sessions}"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    SelectedItem="{Binding SelectedSession, Mode=TwoWay}">
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0,0,8" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+
+                            <Border
+                                Padding="12"
+                                Background="{DynamicResource SurfaceBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+
+                                <StackPanel>
+
+                                    <TextBlock
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Name}"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                    <TextBlock
+                                        Margin="0,7,0,0"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource MutedTextBrush}"
+                                        Text="{Binding StartedAt, StringFormat={}{0:dd MMM yyyy HH:mm}}" />
+
+                                    <TextBlock
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource MutedTextBrush}"
+                                        Text="{Binding ApplicationVersion, StringFormat=Version {0}}" />
+
+                                    <TextBlock
+                                        Margin="0,3,0,0"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource MutedTextBrush}"
+                                        Text="{Binding GitCommit, StringFormat=Commit {0}}" />
+
+                                </StackPanel>
+
+                            </Border>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

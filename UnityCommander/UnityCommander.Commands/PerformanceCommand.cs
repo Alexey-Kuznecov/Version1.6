@@ -6,6 +6,7 @@ using UnityCommander.CLI.Core;
 using UnityCommander.CLI.Integration;
 using UnityCommander.CLI.Mode;
 using UnityCommander.Commands.Parsing;
+using UnityCommander.Diagnostics.Abstraction.Performance;
 using UnityCommander.Diagnostics.Performance;
 
 namespace UnityCommander.Commands

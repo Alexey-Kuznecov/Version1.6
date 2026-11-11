@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using UnityCommander.Abstractions;
+using UnityCommander.Diagnostics.Tracing;
 
 namespace UnityCommander.Rendering.Icons
 {
@@ -287,50 +288,55 @@ namespace UnityCommander.Rendering.Icons
                 Command.Execute(CommandParameter);
         }
 
-        //private static void OnKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    var control = (IconRender)d;
-        //    var key = (string)e.NewValue;
-
-        //    if (!IconHub.TryGet(key, out var result))
-        //        return;
-
-        //    control.Data = result.Geometry;
-        //    control.DefaultBrush = IconHub.Resolve(control.IconKind, control.Role, control.Tone, control.State);
-        //}
-
         private static void UpdateIcon(
             DependencyObject d,
             DependencyPropertyChangedEventArgs e)
         {
             var control = (IconRender)d;
 
-            if (e.NewValue is string key)
+            if (e.NewValue is not string key)
+            {
+                return;
+            }
+
+            using IDiagnosticTraceScope? scope = IconHub.Begin(
+                "icon.render",
+                "UpdateIcon",
+                DiagnosticTraceData.Of(
+                    ("key", key)));
+
+            try
             {
                 if (!IconHub.TryGet(key, out var result))
+                {
+                    scope?.Complete(
+                        DiagnosticTraceData.Of(
+                            ("found", false)));
+
                     return;
+                }
 
                 control.Layers = result.Layers;
                 control.ViewBoxWidth = result.ViewBoxWidth;
                 control.ViewBoxHeight = result.ViewBoxHeight;
                 control.ViewBoxX = result.ViewBoxX;
                 control.ViewBoxY = result.ViewBoxY;
+
+                scope?.Complete(
+                    DiagnosticTraceData.Of(
+                        ("found", true),
+                        ("layerCount", result.Layers.Count)));
+            }
+            catch (Exception exception)
+            {
+                scope?.Fail(exception);
+                throw;
             }
 
             if (control.State == VisualState.Disabled)
-            { 
-                
-            }
+            {
 
-            //if (e.NewValue is IconKind || e.NewValue is IconRole)
-            //{
-            //    control.DefaultBrush =
-            //        IconHub.Resolve(
-            //            control.IconKind,
-            //            control.Role,
-            //            control.Tone,
-            //            control.State);
-            //}
+            }
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

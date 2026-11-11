@@ -1,5 +1,5 @@
 ﻿
-namespace UnityCommander.Diagnostics.Performance
+namespace UnityCommander.Diagnostics.Abstraction.Performance
 {
     public sealed record PerformanceMeasurement(
      long Sequence,

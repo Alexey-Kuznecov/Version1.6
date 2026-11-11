@@ -21,7 +21,7 @@ namespace UnityCommander
             Log.Initialize(loggerCreator);
 
             return Log.Create(
-                "EarlyLoadModule",
+                "LoggerInitialization",
                 LogScope.Startup);
         }
     }

@@ -29,6 +29,7 @@ using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
+using UnityCommander.Diagnostics.Abstraction.Performance;
 using UnityCommander.Diagnostics.Performance;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Configuration;

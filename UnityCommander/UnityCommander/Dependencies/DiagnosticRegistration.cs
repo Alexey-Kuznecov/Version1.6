@@ -1,14 +1,20 @@
 ﻿
 using Prism.Ioc;
+using System.IO;
 using UnityCommander.Commands.Diagnostic;
 using UnityCommander.Commands.Parsing;
 using UnityCommander.Commands.Performance;
 using UnityCommander.Commands.Rendering;
 using UnityCommander.Commands.Services;
+using UnityCommander.Common;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Core.Diagnostics;
+using UnityCommander.Diagnostics.Abstraction;
+using UnityCommander.Diagnostics.Abstraction.Performance;
 using UnityCommander.Diagnostics.Performance;
 using UnityCommander.Diagnostics.Reporting;
+using UnityCommander.Diagnostics.Storage;
+using UnityCommander.Diagnostics.Storage.SQLite;
 using UnityCommander.Diagnostics.Tracing;
 
 namespace UnityCommander.Dependencies
@@ -38,6 +44,21 @@ namespace UnityCommander.Dependencies
             registry.RegisterSingleton<IDiagnosticTraceStore, DiagnosticTraceStore>();
 
             registry.RegisterSingleton<IDiagnosticTrace, Diagnostics.Tracing.DiagnosticTrace>();
+
+#if UNITYCOMMANDER_DIAGNOSTICS
+
+            registry.RegisterSingleton<IDiagnosticsStorage, SqliteDiagnosticsStorage>();
+            registry.RegisterSingleton<IDiagnosticsRecorder, DiagnosticsRecorder>();
+
+            registry.RegisterSingleton<SqliteConnectionFactory>(sp =>
+            {
+                var paths = sp.Resolve<UnityCommanderPath>();
+
+                return new SqliteConnectionFactory(
+                    Path.Combine(paths.DiagnosticDirectory, "diagnostics.db"));
+            });
+
+#endif
         }
     }
 }

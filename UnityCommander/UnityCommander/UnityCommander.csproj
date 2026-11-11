@@ -50,6 +50,7 @@
     <ProjectReference Include="..\UnityCommander.Commands\UnityCommander.Commands.csproj" />
     <ProjectReference Include="..\UnityCommander.Common.Styling\UnityCommander.Common.Styling.csproj" />
     <ProjectReference Include="..\UnityCommander.Core\UnityCommander.Core.csproj" />
+    <ProjectReference Include="..\UnityCommander.Diagnostics.Storage\UnityCommander.Diagnostics.Storage.csproj" />
     <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
     <ProjectReference Include="..\UnityCommander.Notifications.Abstraction\UnityCommander.Notifications.Abstraction.csproj" />
     <ProjectReference Include="..\UnityCommander.Notifications.WPF\UnityCommander.Notifications.WPF.csproj" />
@@ -108,4 +109,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+	    <DefineConstants>$(DefineConstants);UNITYCOMMANDER_DIAGNOSTICS</DefineConstants>
+    </PropertyGroup>
 </Project>

@@ -1,0 +1,362 @@
+<UserControl
+    x:Class="UnityCommander.Diagnostics.Workbench.Views.Tracing.TracingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid Margin="14,12,14,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="85" />
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <UniformGrid
+            Grid.Row="0"
+            Margin="0,0,0,12"
+            Columns="3">
+            <Border Margin="0,0,8,0" Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="TRACE EVENTS" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding EventCount}" />
+                </StackPanel>
+            </Border>
+            <Border Margin="0,0,8,0" Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="TRACE GROUPS" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding TraceCount}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="SOURCES" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding SourceCount}" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox
+                Height="32"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="{Binding SearchToolTip}" />
+
+            <TextBlock
+                Grid.Column="1"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                FontSize="10"
+                Foreground="{DynamicResource MutedTextBrush}"
+                Text="{Binding SearchScopeLabel}" />
+
+            <StackPanel
+                Grid.Column="2"
+                Margin="20,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+
+                <RadioButton
+                    Margin="0,0,12,0"
+                    Content="Timeline"
+                    GroupName="TracingView"
+                    IsChecked="{Binding IsTimelineView, Mode=OneWay}" />
+
+                <RadioButton
+                    Content="Call Tree"
+                    GroupName="TracingView"
+                    IsChecked="{Binding IsCallTreeView, Mode=TwoWay}" />
+
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.1*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="1.1*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Padding="0"
+                Style="{StaticResource PanelBorder}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="42" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Padding="13,0"
+                        Background="{DynamicResource SurfaceSecondaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="7,7,0,0">
+                        <DockPanel VerticalAlignment="Center">
+                            <TextBlock FontWeight="SemiBold" Text="Event stream" />
+                            <TextBlock
+                                DockPanel.Dock="Right"
+                                FontSize="10"
+                                Foreground="{DynamicResource MutedTextBrush}"
+                                Text="Oldest → newest" />
+                        </DockPanel>
+                    </Border>
+                    <Grid Grid.Row="1">
+
+                        <!--  Timeline  -->
+                        <Grid Visibility="{Binding IsTimelineView, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <DataGrid
+                                CanUserSortColumns="False"
+                                ItemsSource="{Binding FilteredEvents}"
+                                SelectedItem="{Binding SelectedEvent}">
+
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn
+                                        Width="115"
+                                        Binding="{Binding Timestamp, StringFormat={}{0:HH:mm:ss.fff}}"
+                                        Header="TIME" />
+
+                                    <DataGridTextColumn
+                                        Width="1.7*"
+                                        Binding="{Binding EventName}"
+                                        Header="EVENT" />
+
+                                    <DataGridTextColumn
+                                        Width="1.2*"
+                                        Binding="{Binding Source}"
+                                        Header="SOURCE" />
+
+                                    <DataGridTextColumn
+                                        Width="105"
+                                        Binding="{Binding DurationMilliseconds, StringFormat={}{0:F1} ms, TargetNullValue=—}"
+                                        Header="DURATION" />
+
+                                    <DataGridTextColumn
+                                        Width="190"
+                                        Binding="{Binding TraceId}"
+                                        Header="TRACE ID" />
+
+                                    <DataGridTextColumn
+                                        Width="55"
+                                        Binding="{Binding Depth}"
+                                        Header="DEPTH" />
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+
+                        </Grid>
+
+                        <!--  Call Tree  -->
+                        <Grid Visibility="{Binding IsCallTreeView, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <Border Padding="0" Style="{StaticResource PanelBorder}">
+
+                                <ListView
+                                    BorderThickness="0"
+                                    ItemsSource="{Binding VisibleRows}"
+                                    ScrollViewer.CanContentScroll="True"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                    SelectedItem="{Binding SelectedTreeRow}"
+                                    VirtualizingPanel.IsVirtualizing="True"
+                                    VirtualizingPanel.VirtualizationMode="Recycling">
+
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+
+                                            <Grid MinHeight="34">
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="110" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal">
+
+                                                    <TextBlock FontFamily="Consolas" Text="{Binding IndentPrefix}" />
+
+                                                    <ToggleButton
+                                                        Width="22"
+                                                        Height="22"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Content="{Binding ExpandGlyph}"
+                                                        IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                        IsEnabled="{Binding CanToggleExpansion}" />
+
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+
+                                                    <TextBlock
+                                                        x:Name="TitleText"
+                                                        FontWeight="Medium"
+                                                        Text="{Binding Title}"
+                                                        TextTrimming="CharacterEllipsis" />
+
+                                                    <TextBlock
+                                                        FontSize="10"
+                                                        Foreground="{DynamicResource MutedTextBrush}"
+                                                        Text="{Binding Source}" />
+
+                                                </StackPanel>
+
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource MutedTextBrush}"
+                                                    Text="{Binding DurationMilliseconds, StringFormat={}{0:F2} ms}" />
+
+                                            </Grid>
+
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsFailed}" Value="True">
+                                                    <Setter Property="TextElement.Foreground" Value="IndianRed" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsEvent}" Value="True">
+                                                    <Setter TargetName="TitleText" Property="FontSize" Value="11" />
+                                                    <Setter TargetName="TitleText" Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding IsContextOnly}" Value="True">
+                                                    <Setter TargetName="TitleText" Property="Opacity" Value="0.7" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding IsFailed}" Value="True">
+                                                    <Setter TargetName="TitleText" Property="Foreground" Value="IndianRed" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+
+                                </ListView>
+
+                            </Border>
+
+                        </Grid>
+
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource PanelBorder}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource SectionTitle}"
+                                Text="Event details" />
+
+                            <Button
+                                Grid.Column="1"
+                                Padding="10,5"
+                                Command="{Binding CopyAllDetailsCommand}"
+                                Content="Copy All Details" />
+                        </Grid>
+
+                        <TextBlock
+                            FontSize="17"
+                            FontWeight="SemiBold"
+                            Text="{Binding SelectedEvent.EventName}"
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Margin="0,3,0,15"
+                            FontSize="11"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="{Binding SelectedEvent.Source}" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="TIMESTAMP" />
+                        <TextBlock Margin="0,0,0,12" Text="{Binding SelectedEvent.Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm:ss.fff}}" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="TRACE IDENTIFIER" />
+                        <TextBlock Margin="0,0,0,12" Text="{Binding SelectedEvent.TraceId}" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="NESTING DEPTH" />
+                        <TextBlock Margin="0,0,0,12" Text="{Binding SelectedEvent.Depth}" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="DURATION" />
+                        <TextBlock Margin="0,0,0,16" Text="{Binding SelectedEvent.DurationMilliseconds, StringFormat={}{0:F2} ms}" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="SPAN IDENTIFIER" />
+                        <TextBlock
+                            Margin="0,0,0,12"
+                            Text="{Binding SelectedEvent.SpanId}"
+                            TextWrapping="Wrap" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="PARENT SPAN IDENTIFIER" />
+                        <TextBlock
+                            Margin="0,0,0,12"
+                            Text="{Binding SelectedEvent.ParentSpanId}"
+                            TextWrapping="Wrap" />
+
+                        <TextBlock Style="{StaticResource MetricLabel}" Text="PLUGIN ID" />
+                        <TextBlock
+                            Margin="0,0,0,12"
+                            Text="{Binding SelectedEvent.PluginId}"
+                            TextWrapping="Wrap" />
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource SectionTitle}"
+                                Text="EVENT DATA" />
+
+                            <Button
+                                Grid.Column="1"
+                                Padding="8,3"
+                                Command="{Binding CopyEventDataCommand}"
+                                Content="Copy Data" />
+                        </Grid>
+                        
+                        <Border
+                            Padding="10"
+                            Background="{DynamicResource SurfaceSecondaryBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                FontSize="11"
+                                Text="{Binding SelectedEvent.Data}"
+                                TextWrapping="Wrap" />
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

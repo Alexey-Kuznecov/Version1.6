@@ -31,6 +31,13 @@ namespace UnityCommander.Common
         public string DataDirectory =>
             Path.Combine(BaseDirectory, "Data");
 
+        public string DiagnosticDirectory =>
+            Path.Combine(
+              Environment.GetFolderPath(
+                  Environment.SpecialFolder.LocalApplicationData),
+                      "UnityCommander",
+                      "Diagnostics");
+
         public string UserNavigationHistoryDirectory =>
             Path.Combine(BaseDirectory, "Data");
 

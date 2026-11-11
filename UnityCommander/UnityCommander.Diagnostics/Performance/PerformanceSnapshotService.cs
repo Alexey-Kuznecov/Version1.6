@@ -1,89 +1,163 @@
 ﻿
+using UnityCommander.Diagnostics.Abstraction;
+using UnityCommander.Diagnostics.Abstraction.Performance;
+
 namespace UnityCommander.Diagnostics.Performance
 {
     public sealed class PerformanceSnapshotService
-     : IPerformanceSnapshotService
+      : IPerformanceSnapshotService
     {
-        private readonly PerformanceProfiler _profiler;
+        private readonly IPerformanceProfiler _profiler;
         private readonly IPerformanceAnalyzer _analyzer;
+        private readonly IDiagnosticsRecorder _recorder;
 
-        private readonly List<PerformanceSnapshot> _snapshots = [];
+        private readonly List<PerformanceSnapshot> _snapshots = new();
+
+        private readonly object _sync = new();
 
         private long _lastSequence;
 
         public PerformanceSnapshotService(
             IPerformanceProfiler profiler,
-            IPerformanceAnalyzer analyzer)
+            IPerformanceAnalyzer analyzer,
+            IDiagnosticsRecorder recorder)
         {
-            _profiler = (PerformanceProfiler)profiler;
+            _profiler = profiler;
             _analyzer = analyzer;
+            _recorder = recorder;
         }
 
-        public PerformanceSnapshot Create(
-            string name)
+        public PerformanceSnapshot Create(string name)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-            var fromSequence = _lastSequence;
-            var toSequence = _profiler.CurrentSequence;
+            name = name.Trim();
 
-            var measurements =
-                _profiler.GetMeasurements(
-                    fromSequence,
-                    toSequence);
+            lock (_sync)
+            {
+                EnsureActiveSession();
 
-            var operations =
-                measurements
-                    .Select(x => x.Operation)
-                    .Distinct(StringComparer.Ordinal)
+                long toSequence = _profiler.CurrentSequence;
+
+                // Профайлер мог быть очищен отдельно от SnapshotService.
+                // В таком случае начинаем отсчёт заново.
+                if (toSequence < _lastSequence)
+                {
+                    _lastSequence = 0;
+                }
+
+                long fromSequence = _lastSequence;
+
+                var measurements = _profiler
+                    .GetMeasurements(fromSequence, toSequence)
                     .ToArray();
 
-            var statistics =
-                new Dictionary<string, PerformanceStatistics>(
-                    StringComparer.Ordinal);
+                var statistics = BuildStatistics(measurements);
 
-            foreach (var operation in operations)
-            {
-                var stats =
-                    _analyzer.GetStatistics(
-                        operation,
-                        measurements);
+                DateTime createdAt = DateTime.UtcNow;
 
-                if (stats is not null)
-                {
-                    statistics[operation] = stats;
-                }
-            }
-
-            var snapshot =
-                new PerformanceSnapshot(
+                var snapshot = new PerformanceSnapshot(
                     name,
-                    DateTime.UtcNow,
+                    createdAt,
                     fromSequence,
                     toSequence,
                     statistics);
 
-            _snapshots.Add(snapshot);
+                SaveSnapshot(snapshot);
 
-            _lastSequence = toSequence;
+                // Обновляем локальную историю и контрольную точку
+                // только после принятия записи Recorder.
+                _snapshots.Add(snapshot);
 
-            return snapshot;
+                _lastSequence = toSequence;
+
+                return snapshot;
+            }
         }
 
-        public IReadOnlyList<PerformanceSnapshot> GetAll() =>
-            _snapshots;
+        public IReadOnlyList<PerformanceSnapshot> GetAll()
+        {
+            lock (_sync)
+            {
+                return _snapshots.ToArray();
+            }
+        }
 
-        public PerformanceSnapshot? Get(string name) =>
-            _snapshots.FirstOrDefault(
-                x => string.Equals(
-                    x.Name,
-                    name,
-                    StringComparison.OrdinalIgnoreCase));
+        public PerformanceSnapshot? Get(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return null;
+            }
+
+            lock (_sync)
+            {
+                return _snapshots.LastOrDefault(
+                    x => string.Equals(
+                        x.Name,
+                        name,
+                        StringComparison.OrdinalIgnoreCase));
+            }
+        }
 
         public void Clear()
         {
-            _snapshots.Clear();
-            _lastSequence = _profiler.CurrentSequence;
+            lock (_sync)
+            {
+                _snapshots.Clear();
+
+                _lastSequence = _profiler.CurrentSequence;
+            }
+        }
+
+        private void EnsureActiveSession()
+        {
+            if (_recorder.CurrentSession == null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot create a performance snapshot without an active diagnostic session.");
+            }
+        }
+
+        private Dictionary<string, PerformanceStatistics> BuildStatistics(
+            IReadOnlyList<PerformanceMeasurement> measurements)
+        {
+            var statistics = new Dictionary<string, PerformanceStatistics>(
+                StringComparer.Ordinal);
+
+            var operations = measurements
+                .Select(x => x.Operation)
+                .Distinct(StringComparer.Ordinal);
+
+            foreach (var operation in operations)
+            {
+                var result = _analyzer.GetStatistics(
+                    operation,
+                    measurements);
+
+                if (result != null)
+                {
+                    statistics[operation] = result;
+                }
+            }
+
+            return statistics;
+        }
+
+        private void SaveSnapshot(PerformanceSnapshot snapshot)
+        {
+            var record = new DiagnosticRecord(
+                DiagnosticRecordKind.Snapshot,
+                new DateTimeOffset(snapshot.CreatedAt, TimeSpan.Zero),
+                "Performance",
+                snapshot.Name,
+                snapshot);
+
+            if (!_recorder.TryRecord(record))
+            {
+                throw new InvalidOperationException(
+                    $"The diagnostics recorder rejected snapshot '{snapshot.Name}'.");
+            }
         }
     }
 }

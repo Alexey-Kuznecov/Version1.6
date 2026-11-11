@@ -1,0 +1,234 @@
+<UserControl
+    x:Class="UnityCommander.Diagnostics.Workbench.Views.Snapshots.SnapshotsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="14,12,14,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42" />
+            <RowDefinition Height="1.05*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="0.95*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                <TextBlock
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="Snapshots" />
+                <TextBlock
+                    Margin="9,2,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="11"
+                    Foreground="{DynamicResource MutedTextBrush}"
+                    Text="{Binding SnapshotCount, StringFormat={}  ·  {0} saved}" />
+            </StackPanel>
+            <Button
+                Grid.Column="1"
+                Padding="13,7"
+                Command="{Binding CreateSnapshotCommand}"
+                Content="＋  Create snapshot"
+                Style="{StaticResource AccentButton}" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.45*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Padding="0"
+                Style="{StaticResource PanelBorder}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Padding="13,0"
+                        Background="{DynamicResource SurfaceSecondaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="7,7,0,0">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Saved snapshots" />
+                    </Border>
+                    <DataGrid
+                        Grid.Row="1"
+                        ItemsSource="{Binding Snapshots}"
+                        SelectedItem="{Binding SelectedSnapshot}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="1.6*"
+                                Binding="{Binding Name}"
+                                Header="NAME" />
+                            <DataGridTextColumn
+                                Width="145"
+                                Binding="{Binding CreatedAt, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                Header="CREATED" />
+                            <DataGridTextColumn
+                                Width="95"
+                                Binding="{Binding OperationCount}"
+                                Header="OPERATIONS" />
+                            <DataGridTextColumn
+                                Width="95"
+                                Binding="{Binding TotalMilliseconds, StringFormat={}{0:N0} ms}"
+                                Header="TOTAL" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource PanelBorder}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="Snapshot details" />
+                    <TextBlock
+                        FontSize="17"
+                        FontWeight="SemiBold"
+                        Text="{Binding SelectedSnapshot.Name}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        Margin="0,4,0,14"
+                        FontSize="11"
+                        Foreground="{DynamicResource MutedTextBrush}"
+                        Text="{Binding SelectedSnapshot.Description}"
+                        TextWrapping="Wrap" />
+
+                    <UniformGrid
+                        Margin="0,0,0,12"
+                        Columns="2"
+                        Rows="2">
+                        <StackPanel Margin="0,0,8,10">
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="CREATED" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding SelectedSnapshot.CreatedAt, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,0,10">
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="OPERATIONS" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding SelectedSnapshot.OperationCount, StringFormat=N0}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,8,0">
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="FROM SEQUENCE" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding SelectedSnapshot.FromSequence, StringFormat=N0}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource MetricLabel}" Text="TO SEQUENCE" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding SelectedSnapshot.ToSequence, StringFormat=N0}" />
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <Border
+                        Padding="10"
+                        Background="{DynamicResource AccentLightBrush}"
+                        CornerRadius="5">
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="10"
+                                Foreground="{DynamicResource MutedTextBrush}"
+                                Text="TOTAL MEASURED TIME" />
+                            <TextBlock
+                                Margin="0,3,0,0"
+                                FontSize="20"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource AccentBrush}"
+                                Text="{Binding SelectedSnapshot.TotalMeasureTimeDisplay}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border
+            Grid.Row="3"
+            Padding="0"
+            Style="{StaticResource PanelBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="44" />
+                    <RowDefinition Height="42" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border
+                    Padding="13,0"
+                    Background="{DynamicResource SurfaceSecondaryBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="7,7,0,0">
+                    <DockPanel VerticalAlignment="Center">
+                        <TextBlock FontWeight="SemiBold" Text="Snapshot comparison" />
+                        <TextBlock
+                            DockPanel.Dock="Right"
+                            FontSize="10"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="{Binding ComparisonStatus}" />
+                    </DockPanel>
+                </Border>
+                <Grid Grid.Row="1" Margin="12,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Snapshots}"
+                        SelectedItem="{Binding ComparisonBefore}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{DynamicResource MutedTextBrush}"
+                        Text="→" />
+                    <ComboBox
+                        Grid.Column="2"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Snapshots}"
+                        SelectedItem="{Binding ComparisonAfter}" />
+                    <Button
+                        Grid.Column="3"
+                        Margin="10,0,0,0"
+                        Padding="14,5"
+                        Command="{Binding CompareCommand}"
+                        Content="Compare" />
+                </Grid>
+                <DataGrid
+                    Grid.Row="2"
+                    Margin="0,0,0,1"
+                    ItemsSource="{Binding ComparisonRows}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="2*"
+                            Binding="{Binding Operation}"
+                            Header="OPERATION" />
+                        <DataGridTextColumn
+                            Width="120"
+                            Binding="{Binding BeforeMilliseconds, StringFormat={}{0:F1} ms}"
+                            Header="BEFORE" />
+                        <DataGridTextColumn
+                            Width="120"
+                            Binding="{Binding AfterMilliseconds, StringFormat={}{0:F1} ms}"
+                            Header="AFTER" />
+                        <DataGridTextColumn
+                            Width="130"
+                            Binding="{Binding DifferenceMilliseconds, StringFormat='{}{0:+0.0;-0.0;0.0} ms'}"
+                            Header="DIFFERENCE" />
+                        <DataGridTextColumn
+                            Width="110"
+                            Binding="{Binding DifferencePercent}"
+                            Header="CHANGE" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

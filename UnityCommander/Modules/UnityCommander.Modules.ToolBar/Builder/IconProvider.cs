@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityCommander.Abstractions.Resources;
 using UnityCommander.Diagnostics.Tracing;
 using UnityCommander.Logging.Contracts;
@@ -31,29 +32,32 @@ namespace UnityCommander.Modules.ToolBar.Builder
         {
             using var trace = _trace.Begin(
                 "ribbon.icon.provider",
-                "resolve",
+                "GetIcon",
                 DiagnosticTraceData.Of(
                     ("key", iconKey)));
 
-            var icon = _iconResolver.Resolve(iconKey);
+            try
+            {
+                var icon = _iconResolver.Resolve(iconKey);
 
-            trace.Write(
-                "resolved",
-                DiagnosticTraceData.Of(
-                    ("found", icon != null),
-                    ("type", icon?.IconType),
-                    ("layerCount", icon?.Layers.Count ?? 0)));
+                var result = _converter.Convert(
+                    icon,
+                    iconKey);
 
-            var result = _converter.Convert(icon, iconKey);
+                trace.Complete(
+                    DiagnosticTraceData.Of(
+                        ("found", icon != null),
+                        ("type", icon?.IconType),
+                        ("sourceLayerCount", icon?.Layers.Count ?? 0),
+                        ("resultLayerCount", result?.Layers.Count)));
 
-            //trace.Write(
-            //    "converted",
-            //    DiagnosticTraceData.Of(
-            //        ("layerCount", result.Layers.Count)));
-
-            trace.Complete();
-
-            return result;
+                return result;
+            }
+            catch (Exception exception)
+            {
+                trace.Fail(exception);
+                throw;
+            }
         }
     }
 }

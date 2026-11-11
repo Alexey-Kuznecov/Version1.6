@@ -1,0 +1,313 @@
+<UserControl
+    x:Class="UnityCommander.Diagnostics.Workbench.Views.Performance.PerformanceView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="14,12,14,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="85" />
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <UniformGrid
+            Grid.Row="0"
+            Margin="0,0,0,12"
+            Columns="4">
+            <Border Margin="0,0,8,0" Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="OPERATIONS" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding OperationCount}" />
+                </StackPanel>
+            </Border>
+            <Border Margin="0,0,8,0" Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="MEASUREMENTS" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding MeasurementCount}" />
+                </StackPanel>
+            </Border>
+            <Border Margin="0,0,8,0" Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="AVERAGE DURATION" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding AverageDuration}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource PanelBorder}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetricLabel}" Text="P95 DURATION" />
+                    <TextBlock Style="{StaticResource MetricValue}" Text="{Binding P95Duration}" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="310" />
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                Height="32"
+                VerticalContentAlignment="Center"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="Search operation, category or owner" />
+            <ComboBox
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                ItemsSource="{Binding Scopes}"
+                SelectedItem="{Binding SelectedScope}" />
+            <TextBlock
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                FontSize="11"
+                Foreground="{DynamicResource MutedTextBrush}"
+                Text="Select an operation to inspect its measurements" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.1*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="1.2*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Padding="0"
+                Style="{StaticResource PanelBorder}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="42" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Padding="13,0"
+                        Background="{DynamicResource SurfaceSecondaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="7,7,0,0">
+                        <DockPanel VerticalAlignment="Center">
+                            <TextBlock FontWeight="SemiBold" Text="Operations" />
+                            <TextBlock
+                                DockPanel.Dock="Right"
+                                FontSize="10"
+                                Foreground="{DynamicResource MutedTextBrush}"
+                                Text="Name · calls · duration statistics" />
+                        </DockPanel>
+                    </Border>
+                    <DataGrid
+                        Grid.Row="1"
+                        Margin="0,0,0,1"
+                        ItemsSource="{Binding FilteredOperations}"
+                        SelectedItem="{Binding SelectedOperation}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="2.1*"
+                                Binding="{Binding Operation}"
+                                Header="OPERATION" />
+                            <DataGridTextColumn
+                                Width="1.1*"
+                                Binding="{Binding Owner}"
+                                Header="OWNER" />
+                            <DataGridTextColumn
+                                Width="75"
+                                Binding="{Binding Count, StringFormat=N0}"
+                                Header="CALLS" />
+                            <DataGridTextColumn
+                                Width="85"
+                                Binding="{Binding AverageMilliseconds, StringFormat={}{0:F1} ms}"
+                                Header="AVG" />
+                            <DataGridTextColumn
+                                Width="85"
+                                Binding="{Binding P95Milliseconds, StringFormat={}{0:F1} ms}"
+                                Header="P95" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border
+                Grid.Column="2"
+                Padding="14"
+                Style="{StaticResource PanelBorder}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="Operation details" />
+                        <TextBlock
+                            FontSize="17"
+                            FontWeight="SemiBold"
+                            Text="{Binding SelectedOperation.Operation}"
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Margin="0,3,0,14"
+                            FontSize="11"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="{Binding SelectedOperation.Category}" />
+
+                        <UniformGrid
+                            Margin="0,0,0,14"
+                            Columns="2"
+                            Rows="3">
+                            <StackPanel Margin="0,0,8,10">
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="TOTAL" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding SelectedOperation.TotalMilliseconds, StringFormat={}{0:N1} ms}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,10">
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="COUNT" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding SelectedOperation.Count, StringFormat=N0}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,8,10">
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="MIN" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding SelectedOperation.MinMilliseconds, StringFormat={}{0:N1} ms}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,0,10">
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="MAX" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding SelectedOperation.MaxMilliseconds, StringFormat={}{0:N1} ms}" />
+                            </StackPanel>
+                            <StackPanel Margin="0,0,8,0">
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="AVERAGE" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding SelectedOperation.AverageMilliseconds, StringFormat={}{0:N1} ms}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="P95" />
+                                <TextBlock FontWeight="SemiBold" Text="{Binding SelectedOperation.P95Milliseconds, StringFormat={}{0:N1} ms}" />
+                            </StackPanel>
+                        </UniformGrid>
+
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="Slow measurements" />
+                        <ItemsControl ItemsSource="{Binding SlowMeasurements}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Padding="0,10"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="0,0,0,1">
+
+                                        <StackPanel>
+
+                                            <!--  Operation and duration  -->
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Text="{Binding Operation}"
+                                                        TextWrapping="Wrap" />
+
+                                                    <TextBlock
+                                                        Margin="0,3,0,0"
+                                                        FontSize="10"
+                                                        Foreground="{DynamicResource MutedTextBrush}"
+                                                        Text="{Binding SequenceLabel}" />
+                                                </StackPanel>
+
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Padding="8,5"
+                                                    VerticalAlignment="Center"
+                                                    Background="{DynamicResource AccentLightBrush}"
+                                                    CornerRadius="4">
+
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{DynamicResource AccentBrush}"
+                                                        Text="{Binding DurationDisplay}" />
+                                                </Border>
+                                            </Grid>
+
+                                            <!--  Timestamp  -->
+
+                                            <TextBlock
+                                                Margin="0,7,0,0"
+                                                FontSize="10"
+                                                Foreground="{DynamicResource MutedTextBrush}"
+                                                Text="{Binding Timestamp, StringFormat={}{0:yyyy-MM-dd HH:mm:ss.fff}}" />
+
+                                            <!--  Metadata  -->
+
+                                            <StackPanel Margin="0,10,0,0">
+
+                                                <TextBlock Margin="0,0,0,5" Text="METADATA">
+
+                                                    <TextBlock.Style>
+                                                        <Style BasedOn="{StaticResource MetricLabel}" TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HasMetadata}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+
+                                                <ItemsControl ItemsSource="{Binding Metadata}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Margin="0,3,0,3">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="76" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <TextBlock
+                                                                    Margin="0,0,8,0"
+                                                                    VerticalAlignment="Top"
+                                                                    FontSize="11"
+                                                                    Foreground="{DynamicResource MutedTextBrush}"
+                                                                    Text="{Binding Name}" />
+
+                                                                <TextBlock
+                                                                    Grid.Column="1"
+                                                                    VerticalAlignment="Top"
+                                                                    FontSize="11"
+                                                                    Text="{Binding Value}"
+                                                                    TextWrapping="Wrap" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+
+                                            <!--  Raw JSON  -->
+
+                                            <Expander
+                                                Margin="0,8,0,0"
+                                                FontSize="11"
+                                                Header="Raw JSON">
+
+                                                <TextBox
+                                                    MaxHeight="220"
+                                                    Margin="0,6,0,0"
+                                                    AcceptsReturn="True"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    FontFamily="Consolas"
+                                                    FontSize="10"
+                                                    HorizontalScrollBarVisibility="Disabled"
+                                                    IsReadOnly="True"
+                                                    Text="{Binding FormattedRawJson, Mode=OneWay}"
+                                                    TextWrapping="Wrap"
+                                                    VerticalScrollBarVisibility="Auto" />
+
+                                            </Expander>
+
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

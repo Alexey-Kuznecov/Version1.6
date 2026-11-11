@@ -9,11 +9,17 @@ namespace UnityCommander.Diagnostics.Tracing
 
         public required string TraceId { get; init; }
 
+        public string? SpanId { get; init; }
+
+        public string? ParentSpanId { get; init; }
+
         public required string Source { get; init; }
 
         public required string EventName { get; init; }
 
         public int Depth { get; init; }
+
+        public long? DurationTicks { get; init; }
 
         public IReadOnlyDictionary<string, object?> Data { get; init; }
             = new Dictionary<string, object?>();
@@ -32,6 +38,15 @@ namespace UnityCommander.Diagnostics.Tracing
             builder.Append(Source);
             builder.Append("  ");
             builder.Append(EventName);
+
+            if (DurationTicks.HasValue)
+            {
+                builder.Append(" (");
+                builder.Append(
+                    TimeSpan.FromTicks(DurationTicks.Value).TotalMilliseconds
+                        .ToString("N2"));
+                builder.Append(" ms)");
+            }
 
             foreach (var pair in Data)
             {

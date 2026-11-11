@@ -1,12 +1,17 @@
 ﻿
 using Prism.Ioc;
 using Prism.Modularity;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using UnityCommander.Abstractions.Keyboard;
 using UnityCommander.Bootstrap;
 using UnityCommander.Common.Styling;
 using UnityCommander.Dependencies;
+using UnityCommander.Diagnostics.Abstraction;
+using UnityCommander.Diagnostics.Abstraction.Performance;
+using UnityCommander.Logging.Contracts;
 using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.FilePanel;
 using UnityCommander.Modules.FilePanel.Converters;
@@ -25,40 +30,94 @@ namespace UnityCommander
 {
     public partial class App
     {
+        private static ILogger _logger;
+
+        private IPerformanceProfiler? _performanceProfiler;
+
+        private IDiagnosticsRecorder? _diagnosticsRecorder;
+
         private WindowInputManager _windowInput;
 
         protected override Window CreateShell()
         {
-            var catalog = new ThemeCatalog();
+            _logger = LoggingBootstrap.Initialize(Container);
 
-            var converter =
-                Container.Resolve<ThumbnailImageConverter>();
+#if UNITYCOMMANDER_DIAGNOSTICS
+            StartDiagnosticsSession();
+#endif
+            var profiler = Container.Resolve<IPerformanceProfiler>();
 
-            Resources["ThumbnailImageConverter"] =
-                converter;
+            _performanceProfiler = profiler;
 
-            ThemeManager.Initialize(catalog, "Dark");
+            using var startupScope =
+                profiler.Measure("Startup.CreateShell");
 
-            var resources =
-               CoreResources.ResourceUris
-                   .Concat(ThemeManager.GetResourceUris())
-                       .Concat(ModuleResources.ResourceUris);
+            ThemeCatalog catalog;
 
-            foreach (var dictionary in SharedDictionaryManager.Load(resources))
+            using (profiler.Measure("Startup.ThemeCatalog"))
             {
-                Resources.MergedDictionaries.Add(dictionary);
+                catalog = new ThemeCatalog();
             }
 
-            return this.Container.Resolve<MainWindow>();
+            ThumbnailImageConverter converter;
+
+            using (profiler.Measure("Startup.ThumbnailConverter"))
+            {
+                converter = Container.Resolve<ThumbnailImageConverter>();
+            }
+
+            Resources["ThumbnailImageConverter"] = converter;
+
+            using (profiler.Measure("Startup.ThemeInitialization"))
+            {
+                ThemeManager.Initialize(catalog, "Dark");
+            }
+
+            using (profiler.Measure("Startup.ResourceDictionaries"))
+            {
+                var resources = CoreResources.ResourceUris
+                    .Concat(ThemeManager.GetResourceUris())
+                    .Concat(ModuleResources.ResourceUris)
+                    .ToArray();
+
+                foreach (var dictionary in SharedDictionaryManager.Load(resources))
+                {
+                    Resources.MergedDictionaries.Add(dictionary);
+                }
+            }
+
+            MainWindow mainWindow;
+
+            using (profiler.Measure("Startup.MainWindow"))
+            {
+                mainWindow = Container.Resolve<MainWindow>();
+            }
+
+            return mainWindow;
         }
 
         protected override void InitializeShell(Window shell)
         {
-            _windowInput = this.Container.Resolve<WindowInputManager>();
+            var profiler = _performanceProfiler
+                ?? Container.Resolve<IPerformanceProfiler>();
 
-            _windowInput.Attach(shell, ShortcutScope.MainWindow);
+            using var startupScope =
+                profiler.Measure("Startup.InitializeShell");
 
-            base.InitializeShell(shell);
+            using (profiler.Measure("Startup.WindowInputManager"))
+            {
+                _windowInput = Container.Resolve<WindowInputManager>();
+            }
+
+            using (profiler.Measure("Startup.AttachWindowInput"))
+            {
+                _windowInput.Attach(shell, ShortcutScope.MainWindow);
+            }
+
+            using (profiler.Measure("Startup.BaseInitializeShell"))
+            {
+                base.InitializeShell(shell);
+            }
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -109,6 +168,63 @@ namespace UnityCommander
             // Инициализация после загрузки все модулей
             moduleCatalog.AddModule<AppLoadModule>();
             moduleCatalog.AddModule<CommandRegistrationModule>(); // Команды
+        }
+
+        private void StartDiagnosticsSession()
+        {
+            try
+            {
+                _diagnosticsRecorder = Container.Resolve<IDiagnosticsRecorder>();
+
+                var sessionInfo = new DiagnosticSessionInfo(
+                    "Development",
+                    typeof(App).Assembly.GetName().Version?.ToString()
+                        ?? "Unknown",
+                    null,
+                    "Debug");
+
+                Task.Run(async () =>
+                {
+                    await _diagnosticsRecorder
+                        .StartSessionAsync(sessionInfo)
+                        .ConfigureAwait(false);
+                }).GetAwaiter().GetResult();
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("Error while starting diagnostics session.", exception);
+
+                _diagnosticsRecorder = null;
+            }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+
+            {
+                #if UNITYCOMMANDER_DIAGNOSTICS
+
+                    if (_diagnosticsRecorder is not null)
+                    {
+                        Task.Run(async () =>
+                        {
+                            await _diagnosticsRecorder
+                                .DisposeAsync()
+                                .ConfigureAwait(false);
+                        }).GetAwaiter().GetResult();
+                    }
+
+                #endif
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("Error while disposing diagnostics recorder.", exception);
+            }
+            finally
+            {
+                base.OnExit(e);
+            }
         }
     }
 }

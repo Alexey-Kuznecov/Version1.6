@@ -9,7 +9,6 @@ using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Rendering.Converters;
-using UnityCommander.Rendering.Icons;
 using UnityCommander.Ribbon.Services.Icon;
 
 namespace UnityCommander.Modules.ToolBar.Builder
@@ -28,7 +27,9 @@ namespace UnityCommander.Modules.ToolBar.Builder
         public IconDefinition? Convert(RuntimeIcon? icon, string key)
         {
             if (icon is null || string.IsNullOrWhiteSpace(key))
+            {
                 return null;
+            }
 
             using var trace = _trace.Begin(
                 "ribbon.icon.converter",
@@ -38,78 +39,124 @@ namespace UnityCommander.Modules.ToolBar.Builder
                     ("type", icon.IconType),
                     ("layerCount", icon.Layers.Count)));
 
-            var layers = new List<IconLayer>();
-
-            for (var index = 0; index < icon.Layers.Count; index++)
+            try
             {
-                var layer = icon.Layers[index];
+                var layers = new List<IconLayer>();
+                var skippedLayerCount = 0;
 
-                if (layer is null)
+                for (var index = 0; index < icon.Layers.Count; index++)
                 {
-                    _logger.Warning(
-                        $"Icon '{key}' contains null layer at index {index}.");
+                    var layer = icon.Layers[index];
 
-                    continue;
-                }
-
-                try
-                {
-                    trace.Write(
-                        "layer.input",
-                        DiagnosticTraceData.Of(
-                            ("index", index),
-                            ("fill", layer.Fill),
-                            ("stroke", layer.Stroke),
-                            ("strokeWidth", layer.StrokeWidth),
-                            ("lineCap", layer.StrokeLineCap),
-                            ("lineJoin", layer.StrokeLineJoin)));
-
-                    if (string.IsNullOrWhiteSpace(layer.Data))
+                    if (layer is null)
                     {
+                        skippedLayerCount++;
+
                         _logger.Warning(
-                            $"Icon '{key}' contains empty geometry at layer {index}.");
+                            $"Icon '{key}' contains null layer at index {index}.");
+
+                        trace.Write(
+                            "layer.skipped",
+                            DiagnosticTraceData.Of(
+                                ("index", index),
+                                ("reason", "Layer is null")));
 
                         continue;
                     }
 
-                    layers.Add(new IconLayer
+                    try
                     {
-                        Geometry = Geometry.Parse(layer.Data),
-                        Fill = ResolveBrush(layer.Fill),
-                        Stroke = ResolveBrush(layer.Stroke),
-                        Order = index
-                    });
+                        trace.Write(
+                            "layer.input",
+                            DiagnosticTraceData.Of(
+                                ("index", index),
+                                ("fill", layer.Fill),
+                                ("stroke", layer.Stroke),
+                                ("strokeWidth", layer.StrokeWidth),
+                                ("lineCap", layer.StrokeLineCap),
+                                ("lineJoin", layer.StrokeLineJoin)));
+
+                        if (string.IsNullOrWhiteSpace(layer.Data))
+                        {
+                            skippedLayerCount++;
+
+                            _logger.Warning(
+                                $"Icon '{key}' contains empty geometry at layer {index}.");
+
+                            trace.Write(
+                                "layer.skipped",
+                                DiagnosticTraceData.Of(
+                                    ("index", index),
+                                    ("reason", "Empty geometry")));
+
+                            continue;
+                        }
+
+                        layers.Add(new IconLayer
+                        {
+                            Geometry = Geometry.Parse(layer.Data),
+                            Fill = ResolveBrush(layer.Fill),
+                            Stroke = ResolveBrush(layer.Stroke),
+                            Order = index
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        skippedLayerCount++;
+
+                        _logger.Error(
+                            $"Failed to convert layer {index} of icon '{key}'.",
+                            ex);
+
+                        trace.Write(
+                            "layer.failed",
+                            DiagnosticTraceData.Of(
+                                ("index", index),
+                                ("exception", ex.GetType().FullName),
+                                ("message", ex.Message)));
+
+                        continue;
+                    }
                 }
-                catch (Exception ex)
+
+                if (layers.Count == 0)
                 {
-                    _logger.Error(
-                        $"Failed to convert layer {index} of icon '{key}'.", ex);
+                    trace.Fail(
+                        new InvalidOperationException(
+                            "Icon contains no valid layers."),
+                        DiagnosticTraceData.Of(
+                            ("inputLayerCount", icon.Layers.Count),
+                            ("skippedLayerCount", skippedLayerCount)));
+
+                    _logger.Warning(
+                        $"Icon '{key}' contains no valid layers.");
+
+                    return null;
                 }
-            }
 
-            if (layers.Count == 0)
+                var result = new IconDefinition(
+                    key,
+                    290,
+                    200,
+                    layers);
+
+                trace.Write(
+                    "result.created",
+                    DiagnosticTraceData.Of(
+                        ("layerCount", result.Layers.Count),
+                        ("skippedLayerCount", skippedLayerCount)));
+
+                trace.Complete();
+
+                return result;
+            }
+            catch (Exception ex)
             {
-                _logger.Warning(
-                    $"Icon '{key}' contains no valid layers.");
-
-                return null;
+                trace.Fail(ex);
+                throw;
             }
-
-            var result = new IconDefinition(
-                key,
-                290,
-                200,
-                layers);
-
-            trace.Write(
-                "result.created",
-                DiagnosticTraceData.Of(
-                    ("layerCount", result.Layers.Count)));
-
-            trace.Complete();
-
-            return result;
         }
+
         private static Brush? ResolveBrush(string? value)
         {
             if (string.IsNullOrWhiteSpace(value) ||

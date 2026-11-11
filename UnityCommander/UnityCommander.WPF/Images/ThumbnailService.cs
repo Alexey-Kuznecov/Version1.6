@@ -33,119 +33,228 @@ namespace UnityCommander.WPF.Images
         }
 
         public async Task<ThumbnailResult?> GetAsync(
-           string path,
-           ThumbnailRequest request,
-           CancellationToken token)
+            string path,
+            ThumbnailRequest request,
+            CancellationToken token)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                return null;
+            using var scope = _trace.Begin(
+                "thumbnail.service",
+                "GetAsync",
+                DiagnosticTraceData.Of(
+                    ("path", path),
+                    ("extension", Path.GetExtension(path)),
+                    ("requestedSize", request.Size),
+                    ("providerCount", _providers.Count),
+                    ("cacheCount", _caches.Count)));
 
-            foreach (var provider in _providers)
+            try
             {
-                var canProvide = provider.CanProvide(path);
-
-                _trace.Write(
-                    "ThumbnailService",
-                    "ProviderCheck",
-                    new Dictionary<string, object?>
-                    {
-                        ["Provider"] = provider.Id,
-                        ["Path"] = path,
-                        ["CanProvide"] = canProvide
-                    });
-
-                if (!canProvide)
-                    continue;
-
-                var providerKey =
-                    await provider.GetCacheKeyAsync(
-                        path,
-                        request,
-                        token);
-
-                if (string.IsNullOrWhiteSpace(providerKey))
-                    continue;
-
-                var cacheKey = BuildCacheKey(
-                    provider.Id,
-                    providerKey,
-                    request.Size);
-
-                foreach (var cache in _caches)
+                if (string.IsNullOrWhiteSpace(path))
                 {
-                    var cached = await cache.GetAsync(
-                        cacheKey,
-                        token);
+                    scope.Complete(
+                        DiagnosticTraceData.Of(
+                            ("hasThumbnail", false),
+                            ("reason", "EmptyPath")));
 
-                    _trace.Write(
-                        "ThumbnailService",
-                        "CacheMiss",
-                        new Dictionary<string, object?>
-                        {
-                            ["Provider"] = provider.Id,
-                            ["Path"] = path
-                        });
-
-                    if (cached is not null)
-                        return cached;
+                    return null;
                 }
 
-                var inflightKey = BuildInflightKey(
-                    provider.Id,
-                    path,
-                    request.Size);
+                foreach (var provider in _providers)
+                {
+                    var canProvide = provider.CanProvide(path);
 
-                var lazy = _inflight.GetOrAdd(
-                    inflightKey,
-                    _ => new Lazy<Task<ThumbnailResult?>>(
+                    _trace.Write(
+                        "thumbnail.provider",
+                        "provider.check",
+                        DiagnosticTraceData.Of(
+                            ("provider", provider.Id),
+                            ("path", path),
+                            ("canProvide", canProvide)));
+
+                    if (!canProvide)
+                        continue;
+
+                    string? providerKey;
+
+                    using (var keyScope = _trace.Begin(
+                        "thumbnail.provider",
+                        "GetCacheKeyAsync",
+                        DiagnosticTraceData.Of(
+                            ("provider", provider.Id),
+                            ("path", path),
+                            ("requestedSize", request.Size))))
+                    {
+                        try
+                        {
+                            providerKey = await provider.GetCacheKeyAsync(
+                                path,
+                                request,
+                                token);
+
+                            keyScope.Complete(
+                                DiagnosticTraceData.Of(
+                                    ("hasKey", !string.IsNullOrWhiteSpace(providerKey)),
+                                    ("keyLength", providerKey?.Length ?? 0)));
+                        }
+                        catch (Exception exception)
+                        {
+                            keyScope.Fail(exception);
+                            throw;
+                        }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(providerKey))
+                        continue;
+
+                    var cacheKey = BuildCacheKey(
+                        provider.Id,
+                        providerKey,
+                        request.Size);
+
+                    foreach (var cache in _caches)
+                    {
+                        using var cacheScope = _trace.Begin(
+                            "thumbnail.cache",
+                            "GetAsync",
+                            DiagnosticTraceData.Of(
+                                ("cache", cache.GetType().Name),
+                                ("provider", provider.Id),
+                                ("cacheKey", cacheKey),
+                                ("requestedSize", request.Size)));
+
+                        try
+                        {
+                            var cached = await cache.GetAsync(
+                                cacheKey,
+                                token);
+
+                            cacheScope.Complete(
+                                DiagnosticTraceData.Of(
+                                    ("hit", cached is not null),
+                                    ("width", cached?.Width),
+                                    ("height", cached?.Height),
+                                    ("bytes", cached?.PngData.Length ?? 0)));
+
+                            if (cached is not null)
+                            {
+                                scope.Complete(
+                                    DiagnosticTraceData.Of(
+                                        ("hasThumbnail", true),
+                                        ("resultSource", "Cache"),
+                                        ("provider", provider.Id),
+                                        ("width", cached.Width),
+                                        ("height", cached.Height),
+                                        ("bytes", cached.PngData.Length)));
+
+                                return cached;
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            cacheScope.Fail(exception);
+                            throw;
+                        }
+                    }
+
+                    var inflightKey = BuildInflightKey(
+                        provider.Id,
+                        path,
+                        request.Size);
+
+                    var candidate = new Lazy<Task<ThumbnailResult?>>(
                         () => LoadAsync(
                             provider,
                             path,
                             request,
                             cacheKey),
-                        LazyThreadSafetyMode.ExecutionAndPublication));
+                        LazyThreadSafetyMode.ExecutionAndPublication);
 
-                try
-                {
-                    var result = await lazy.Value.WaitAsync(token);
+                    var lazy = _inflight.GetOrAdd(
+                        inflightKey,
+                        candidate);
 
-                    _trace.Write(
-                        "ThumbnailService",
-                        "ProviderCompleted",
-                        new Dictionary<string, object?>
-                        {
-                            ["Provider"] = provider.Id,
-                            ["Path"] = path,
-                            ["HasResult"] = result is not null
-                        });
+                    var joinedExisting = !ReferenceEquals(
+                        candidate,
+                        lazy);
 
-                    if (result is not null)
-                        return result;
-                }
-                finally
-                {
-                    if (lazy.IsValueCreated &&
-                        lazy.Value.IsCompleted)
+                    try
                     {
-                        _inflight.TryRemove(
-                            new KeyValuePair<
-                                string,
-                                Lazy<Task<ThumbnailResult?>>>(
-                                inflightKey,
-                                lazy));
+                        using var waitScope = _trace.Begin(
+                            "thumbnail.service",
+                            "GetOrJoinGeneration",
+                            DiagnosticTraceData.Of(
+                                ("provider", provider.Id),
+                                ("path", path),
+                                ("requestedSize", request.Size),
+                                ("joinedExisting", joinedExisting)));
+
+                        try
+                        {
+                            var result = await lazy.Value.WaitAsync(token);
+
+                            waitScope.Complete(
+                                DiagnosticTraceData.Of(
+                                    ("hasResult", result is not null),
+                                    ("width", result?.Width),
+                                    ("height", result?.Height),
+                                    ("bytes", result?.PngData.Length ?? 0)));
+
+                            if (result is not null)
+                            {
+                                scope.Complete(
+                                    DiagnosticTraceData.Of(
+                                        ("hasThumbnail", true),
+                                        ("resultSource", "Provider"),
+                                        ("provider", provider.Id),
+                                        ("joinedExisting", joinedExisting),
+                                        ("width", result.Width),
+                                        ("height", result.Height),
+                                        ("bytes", result.PngData.Length)));
+
+                                return result;
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            waitScope.Fail(
+                                exception,
+                                DiagnosticTraceData.Of(
+                                    ("cancelled", exception is OperationCanceledException)));
+
+                            throw;
+                        }
+                    }
+                    finally
+                    {
+                        if (lazy.IsValueCreated &&
+                            lazy.Value.IsCompleted)
+                        {
+                            _inflight.TryRemove(
+                                new KeyValuePair<
+                                    string,
+                                    Lazy<Task<ThumbnailResult?>>>(
+                                    inflightKey,
+                                    lazy));
+                        }
                     }
                 }
+
+                scope.Complete(
+                    DiagnosticTraceData.Of(
+                        ("hasThumbnail", false),
+                        ("reason", "NoProviderProducedResult")));
+
+                return null;
             }
+            catch (Exception exception)
+            {
+                scope.Fail(
+                    exception,
+                    DiagnosticTraceData.Of(
+                        ("cancelled", exception is OperationCanceledException)));
 
-            _trace.Write(
-                "ThumbnailService",
-                "NoThumbnail",
-                new Dictionary<string, object?>
-                {
-                    ["Path"] = path
-                });
-
-            return null;
+                throw;
+            }
         }
 
         private async Task<ThumbnailResult?> LoadAsync(
@@ -154,33 +263,111 @@ namespace UnityCommander.WPF.Images
             ThumbnailRequest request,
             string cacheKey)
         {
-            // Не используем cancellation вызывающего UI.
-            // Если один visual ушёл из viewport, общую генерацию
-            // всё равно может использовать другой consumer.
-            var result = await provider.GetAsync(
-                path,
-                request,
-                CancellationToken.None);
+            using var scope = _trace.Begin(
+                "thumbnail.service",
+                "LoadAsync",
+                DiagnosticTraceData.Of(
+                    ("provider", provider.Id),
+                    ("path", path),
+                    ("requestedSize", request.Size),
+                    ("cacheKey", cacheKey)));
 
-            if (result is null)
-                return null;
-
-            foreach (var cache in _caches)
+            try
             {
-                try
-                {
-                    await cache.SetAsync(
-                        cacheKey,
-                        result,
-                        CancellationToken.None);
-                }
-                catch
-                {
-                    // Cache failure не должен ломать thumbnail pipeline.
-                }
-            }
+                ThumbnailResult? result;
 
-            return result;
+                using (var providerScope = _trace.Begin(
+                    "thumbnail.provider",
+                    "GetAsync",
+                    DiagnosticTraceData.Of(
+                        ("provider", provider.Id),
+                        ("path", path),
+                        ("requestedSize", request.Size))))
+                {
+                    try
+                    {
+                        // Не используем cancellation вызывающего UI.
+                        // Общую генерацию могут использовать другие consumers.
+                        result = await provider.GetAsync(
+                            path,
+                            request,
+                            CancellationToken.None);
+
+                        providerScope.Complete(
+                            DiagnosticTraceData.Of(
+                                ("hasResult", result is not null),
+                                ("width", result?.Width),
+                                ("height", result?.Height),
+                                ("bytes", result?.PngData.Length ?? 0)));
+                    }
+                    catch (Exception exception)
+                    {
+                        providerScope.Fail(exception);
+                        throw;
+                    }
+                }
+
+                if (result is null)
+                {
+                    scope.Complete(
+                        DiagnosticTraceData.Of(
+                            ("hasThumbnail", false),
+                            ("reason", "ProviderReturnedNull")));
+
+                    return null;
+                }
+
+                foreach (var cache in _caches)
+                {
+                    using var cacheScope = _trace.Begin(
+                        "thumbnail.cache",
+                        "SetAsync",
+                        DiagnosticTraceData.Of(
+                            ("cache", cache.GetType().Name),
+                            ("provider", provider.Id),
+                            ("cacheKey", cacheKey),
+                            ("width", result.Width),
+                            ("height", result.Height),
+                            ("bytes", result.PngData.Length)));
+
+                    try
+                    {
+                        await cache.SetAsync(
+                            cacheKey,
+                            result,
+                            CancellationToken.None);
+
+                        cacheScope.Complete(
+                            DiagnosticTraceData.Of(
+                                ("stored", true)));
+                    }
+                    catch (Exception exception)
+                    {
+                        // Ошибка записи кэша не должна ломать
+                        // генерацию миниатюры.
+                        cacheScope.Fail(
+                            exception,
+                            DiagnosticTraceData.Of(
+                                ("stored", false),
+                                ("ignored", true)));
+                    }
+                }
+
+                scope.Complete(
+                    DiagnosticTraceData.Of(
+                        ("hasThumbnail", true),
+                        ("provider", provider.Id),
+                        ("width", result.Width),
+                        ("height", result.Height),
+                        ("bytes", result.PngData.Length)));
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+                scope.Fail(exception);
+                throw;
+            }
         }
 
         private static string BuildCacheKey(

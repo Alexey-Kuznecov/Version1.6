@@ -25,7 +25,7 @@ namespace UnityCommander
 {
     internal class EarlyLoadModule : IModule
     {
-        private static ILogger _logger;
+        //private static ILogger _logger;
         private IPluginProvider _provider;
         private IPluginActivator _activator;
         private IIconSourceRegistry _iconSource;
@@ -33,9 +33,9 @@ namespace UnityCommander
 
         public void OnInitialized(IContainerProvider provider)
         {
-            _logger = LoggingBootstrap.Initialize(provider);
+            //_logger = LoggingBootstrap.Initialize(provider);
 
-            _logger.Info("EarlyLoadModule initialized.");
+            //_logger.Info("EarlyLoadModule initialized.");
 
             RegisterWidgets(provider);
 
@@ -53,7 +53,7 @@ namespace UnityCommander
 
             KeyboardBinding.Initialize(context);
             Interaction.Initialize(actionProvider);
-            IconHub.Initialize(iconRender, iconColor);
+            IconHub.Initialize(iconRender, iconColor, traceDiagnostic);
             InputCaptureBehavior.Initialize(inputCaptureManager);
             VisualElementRegistration.Initialize(elementRegistry);
             ScrollBehavior.InitializeIDiagnostic(traceDiagnostic);

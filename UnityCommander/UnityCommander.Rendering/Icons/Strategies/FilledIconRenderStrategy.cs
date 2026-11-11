@@ -22,42 +22,64 @@ namespace UnityCommander.Rendering.Icons.Strategies
             RuntimeIcon icon,
             Brush defaultBrush)
         {
-            var geometry = Geometry.Parse(icon.Data!);
-            geometry.Freeze();
-
-            var bounds = geometry.Bounds;
-
-            _trace.Write(
+            using IDiagnosticTraceScope scope = _trace.Begin(
                 "icon.render",
-                "bounds",
+                "Render",
                 DiagnosticTraceData.Of(
-                    ("x", bounds.X),
-                    ("y", bounds.Y),
-                    ("width", bounds.Width),
-                    ("height", bounds.Height)));
+                    ("iconKey", icon.Key)));
 
-            var normalized = geometry.Clone();
-
-            normalized.Transform = new TranslateTransform(
-                -bounds.X,
-                -bounds.Y);
-
-            normalized.Freeze();
-
-            return new IconRenderResult
+            try
             {
-                Layers =
-                [
-                    new IconRenderLayer
-            {
-                Geometry = normalized,
-                Fill = ResolveBrush(icon.Color, defaultBrush),
-                Order = 0
+                var geometry = Geometry.Parse(icon.Data!);
+                geometry.Freeze();
+
+                var bounds = geometry.Bounds;
+
+                _trace.Write(
+                    "icon.render",
+                    "bounds",
+                    DiagnosticTraceData.Of(
+                        ("x", bounds.X),
+                        ("y", bounds.Y),
+                        ("width", bounds.Width),
+                        ("height", bounds.Height)));
+
+                var normalized = geometry.Clone();
+
+                normalized.Transform = new TranslateTransform(
+                    -bounds.X,
+                    -bounds.Y);
+
+                normalized.Freeze();
+
+                var result = new IconRenderResult
+                {
+                    Layers =
+                    [
+                        new IconRenderLayer
+                {
+                    Geometry = normalized,
+                    Fill = ResolveBrush(icon.Color, defaultBrush),
+                    Order = 0
+                }
+                    ],
+                    ViewBoxWidth = bounds.Width,
+                    ViewBoxHeight = bounds.Height
+                };
+
+                scope.Complete(
+                    DiagnosticTraceData.Of(
+                        ("layerCount", result.Layers.Count),
+                        ("viewBoxWidth", result.ViewBoxWidth),
+                        ("viewBoxHeight", result.ViewBoxHeight)));
+
+                return result;
             }
-                ],
-                ViewBoxWidth = bounds.Width,
-                ViewBoxHeight = bounds.Height
-            };
+            catch (Exception exception)
+            {
+                scope.Fail(exception);
+                throw;
+            }
         }
 
         private static Brush? ResolveBrush(
