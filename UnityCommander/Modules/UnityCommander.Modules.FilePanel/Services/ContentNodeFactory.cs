@@ -1,5 +1,5 @@
 ﻿
-using UnityCommander.Common.Models;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Modules.FilePanel.States;
 

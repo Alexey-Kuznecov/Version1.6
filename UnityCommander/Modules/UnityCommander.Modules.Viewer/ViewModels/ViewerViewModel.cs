@@ -35,7 +35,11 @@ namespace UnityCommander.Modules.Viewer.ViewModels
             }
         }
 
-        public ITabPanelContent InitializedViewModel(ref Guid token, string path)
+        public ITabPanelContent InitializedViewModel(
+            ref Guid token,
+            string path,
+            Guid panelId, 
+            ViewMode viewMode)
         {
             this.CurrentPath = path;
             this.Token = token;

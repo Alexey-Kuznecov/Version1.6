@@ -14,11 +14,16 @@ namespace UnityCommander.Modules.FilePanel
     
     using Prism.Modularity;
     using Prism.Navigation.Regions;
+    using UnityCommander.Core;
     using UnityCommander.Modules.FilePanel.Controllers;
     using UnityCommander.Modules.FilePanel.Controllers.DnD;
     using UnityCommander.Modules.FilePanel.Controllers.DnD.Resolvers;
     using UnityCommander.Modules.FilePanel.States.Resolver;
+    using UnityCommander.Modules.FilePanel.ViewModels;
     using UnityCommander.Modules.FilePanel.Views;
+    using UnityCommander.Mvvm.Helper;
+    using UnityCommander.Services.Interfaces;
+    using UnityCommander.Services.Interfaces.Sidebar;
     using UnityCommander.WPF.DragDrop;
 
     public class FilePanelModule : IModule

@@ -1,6 +1,6 @@
 ﻿
-namespace UnityCommander.Common.Models
-{
+namespace UnityCommander.Abstractions.Panels
+{ 
     public enum ViewMode
     {
         Table,

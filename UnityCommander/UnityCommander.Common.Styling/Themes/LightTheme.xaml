@@ -10,7 +10,8 @@
     <Color x:Key="UcSelectionColor">#DCE8F8</Color>
     <Color x:Key="UcFocusColor">#D8ECFF</Color>
     <Color x:Key="UcBorderColor">#D4D7DA</Color>
-    <Color x:Key="UcBlueColor">#576C95</Color>
+    <Color x:Key="UcBlueColor">#3B82F6</Color>
+    <Color x:Key="UcDarknessBlueColor">#2858A6</Color>
     <Color x:Key="UcPinkColor">#E83E83</Color>
 
 
@@ -53,6 +54,11 @@
     <SolidColorBrush x:Key="UcBorderSecondaryBrush" Color="#E1E3E5" />
 
     <SolidColorBrush x:Key="UcBorderTertiaryBrush" Color="#C5C9CD" />
+
+    <SolidColorBrush
+        x:Key="UcAccentPrimaryTransparentBrush"
+        Opacity="0.20"
+        Color="{StaticResource UcDarknessBlueColor}" />
 
     <SolidColorBrush x:Key="UcAccentPrimaryBrush" Color="#3582FF" />
 

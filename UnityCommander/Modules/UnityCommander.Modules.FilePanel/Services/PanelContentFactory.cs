@@ -14,19 +14,30 @@ namespace UnityCommander.Modules.FilePanel.Services
     {
         private readonly IRegionManager _regionManager;
         private readonly ITabRegistry _tabRegistry;
+        private readonly ITabStateRegistry _tabStateRegistry;
+
         private TabContentAdapter _adapter;
 
         public PanelContentFactory(
             IRegionManager regionManager, 
             ITabRegistry tabRegistry, 
-            IPanelRegistry panelRegistry)
+            IPanelRegistry panelRegistry, 
+            ITabStateRegistry tabStateRegistry)
         {
             _regionManager = regionManager;
             _tabRegistry = tabRegistry;
+            _tabStateRegistry = tabStateRegistry;
         }
 
-        public void Create(ContentControl content, Guid tabId, string path, Action<ITabPanelContent> onReady)
+        public void Create(
+            ContentControl content,
+            Guid tabId,
+            Guid panelId, 
+            string path, 
+            Action<ITabPanelContent> onReady)
         {
+            var viewMode = _tabStateRegistry.GetPanelViewMode(panelId);
+
             var regionName = $"Tab_{Guid.NewGuid()}";
 
             RegionManager.SetRegionName(content, regionName);
@@ -44,7 +55,7 @@ namespace UnityCommander.Modules.FilePanel.Services
 
                 if (vm != null)
                 {
-                    vm.InitializedViewModel(ref tabId, path);
+                    vm.InitializedViewModel(ref tabId, path, panelId, viewMode);
 
                     _adapter = new TabContentAdapter(vm);
                     _tabRegistry.Register(_adapter);

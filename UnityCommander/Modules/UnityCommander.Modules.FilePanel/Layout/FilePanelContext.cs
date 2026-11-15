@@ -3,7 +3,6 @@ using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.States;
 using UnityCommander.Services.Interfaces;
-using UnityCommander.Services.Selection;
 
 namespace UnityCommander.Modules.FilePanel.Layout
 {

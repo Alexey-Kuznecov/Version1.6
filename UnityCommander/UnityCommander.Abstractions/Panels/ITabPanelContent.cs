@@ -9,7 +9,12 @@ namespace UnityCommander.Abstractions.Panels
         event Action<string> PathChanged;
         event Action<string> TabTitleChanged;
         Guid GetTabToken();
-        ITabPanelContent InitializedViewModel(ref Guid token, string path);
+        ITabPanelContent InitializedViewModel(
+            ref Guid token, 
+            string path, 
+            Guid panelId, 
+            ViewMode viewMode);
+
         string GetCurrentPath();
         string GetCurrentFilePath();
         void SetCurrentPath(string value);

@@ -97,19 +97,22 @@ namespace UnityCommander.Services.Bootstrap
                 return;
             }
 
-            var tab = _session.Panels
-                .SelectMany(p => p.Tabs)
+            var panel = _session.Panels
+                .FirstOrDefault(p => p.Tabs.Any(t => t.TabId == tabId));
+
+            var tab = panel?.Tabs
                 .FirstOrDefault(t => t.TabId == tabId);
 
-            if (tab == null)
+            if (panel is null || tab is null)
             {
-                _logger.Error("Tab not exist");
+                _logger.Error($"Panel or tab not found: {tabId}");
                 return;
             }
 
-            var path = tab?.Path ?? "C:\\";
+            var path = tab.Path ?? "C:\\";
+            var panelId = panel.PanelId;
 
-            _factory.Create(content, tabId, path, vm =>
+            _factory.Create(content, tabId, panelId, path, vm =>
             {
                 vm.TabTitleChanged += formatPath =>
                 {
@@ -147,7 +150,7 @@ namespace UnityCommander.Services.Bootstrap
 
                     if (doc is LayoutContent layout) 
                     {
-                        _factory.Create(content, tab.TabId, tab.Path, vm =>
+                        _factory.Create(content, tab.TabId, panelState.PanelId, tab.Path, vm =>
                         {
                             vm.TabTitleChanged += formatPath =>
                             {

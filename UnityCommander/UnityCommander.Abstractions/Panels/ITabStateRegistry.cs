@@ -3,10 +3,11 @@ namespace UnityCommander.Abstractions.Panels
 {
     public interface ITabStateRegistry
     {
-        public void Register(TabState state);
+        void Register(TabState state);
+        void Unregister(Guid tabId);
+        TabState? Get(Guid tabId);
 
-        public void Unregister(Guid tabId);
-
-        public TabState? Get(Guid tabId);
+        ViewMode GetPanelViewMode(Guid panelId);
+        void SetPanelViewMode(Guid panelId, ViewMode mode);
     }
 }

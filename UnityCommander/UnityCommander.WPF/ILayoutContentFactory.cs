@@ -6,6 +6,6 @@ namespace UnityCommander.WPF
 {
     public interface ILayoutContentFactory
     {
-        public void Create(ContentControl content, Guid tabId, string path, Action<ITabPanelContent> onReady);
+        public void Create(ContentControl content, Guid tabId, Guid panelId, string path, Action<ITabPanelContent> onReady);
     }
 }

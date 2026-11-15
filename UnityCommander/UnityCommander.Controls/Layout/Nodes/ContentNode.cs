@@ -1,6 +1,6 @@
 ﻿
 using System;
-using UnityCommander.Common.Models;
+using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.Controls.Layout
 {

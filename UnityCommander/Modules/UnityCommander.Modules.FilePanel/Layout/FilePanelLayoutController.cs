@@ -1,6 +1,8 @@
 ﻿
 using System;
-using UnityCommander.Common.Models;
+using System.Linq;
+using UnityCommander.Abstractions.Panels;
+using UnityCommander.Common.Commands;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Modules.FilePanel.Controllers;
 using UnityCommander.Modules.FilePanel.States;
@@ -16,6 +18,10 @@ namespace UnityCommander.Modules.FilePanel.Layout
         public FilePanelLayoutMode LayoutMode { get; private set; }
 
         public LayoutNode CurrentLayout { get; private set; }
+
+        public ViewMode CurrentViewMode { get; internal set; }
+
+        public event Action<ViewMode>? ViewModeChanged;
 
         public event Action<FilePanelLayoutMode>? Changed;
 
@@ -53,22 +59,6 @@ namespace UnityCommander.Modules.FilePanel.Layout
             Changed?.Invoke(mode);
         }
 
-        public void SetViewMode(ViewMode mode)
-        {
-            var content = _workspaceController.GetActiveContentNode();
-
-            if (content is null)
-                return;
-
-            content.ViewMode = mode;
-
-            //_workspaceController.Apply(LayoutMode);
-
-            CurrentLayout = Build();
-
-            Changed?.Invoke(LayoutMode);
-        }
-
         public void Toggle()
         {
             SetLayoutMode(
@@ -90,6 +80,52 @@ namespace UnityCommander.Modules.FilePanel.Layout
         {
             //SetMode(FilePanelLayoutMode.Split);
             _workspaceController.ShowMyComputerMode();
+        }
+
+        public void SetViewMode(ViewMode mode)
+        {
+            if (ApplyViewModeCore(mode))
+                ViewModeChanged?.Invoke(mode);
+        }
+
+        internal void ApplyViewMode(ViewMode mode)
+        {
+            ApplyViewModeCore(mode);
+        }
+
+        private bool ApplyViewModeCore(ViewMode mode)
+        {
+            var content = _workspaceController.GetActiveContentNode();
+
+            if (content is null || content.ViewMode == mode)
+                return false;
+
+            var headerNode = _workspaceController.GetHeaderContentNode();
+
+            if (headerNode?.Context is NavigationNodeContext navigationContext)
+            {
+                var commands = navigationContext.Commands;
+
+                var tableCommand = commands.FirstOrDefault(
+                    x => x.Id == CommandNames.Views.Table);
+
+                var thumbnailsCommand = commands.FirstOrDefault(
+                    x => x.Id == CommandNames.Views.Thumbnails);
+
+                if (tableCommand is not null)
+                    tableCommand.IsChecked = mode == ViewMode.Table;
+
+                if (thumbnailsCommand is not null)
+                    thumbnailsCommand.IsChecked = mode == ViewMode.Thumbnails;
+            }
+
+            content.ViewMode = mode;
+
+            CurrentLayout = Build();
+
+            Changed?.Invoke(LayoutMode);
+
+            return true;
         }
     }
 }

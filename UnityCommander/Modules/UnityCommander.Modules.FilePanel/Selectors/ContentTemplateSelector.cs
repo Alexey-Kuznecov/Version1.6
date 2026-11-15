@@ -1,6 +1,7 @@
 ﻿
 using System.Windows;
 using System.Windows.Controls;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Models;
 using UnityCommander.Controls.Layout;
 using UnityCommander.WPF;

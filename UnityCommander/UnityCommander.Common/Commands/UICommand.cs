@@ -19,6 +19,14 @@ namespace UnityCommander.Common.Commands
             set => this.SetProperty(ref _isEnabled, value);
         }
 
+        private bool _isChecked;
+
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set => SetProperty(ref _isChecked, value);
+        }
+
         public object? CommandParameter { get; init; }
 
         public string Title { get; init; }

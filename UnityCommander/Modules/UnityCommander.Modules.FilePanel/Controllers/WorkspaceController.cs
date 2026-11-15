@@ -94,6 +94,11 @@ namespace UnityCommander.Modules.FilePanel.Controllers
         {
             return _workspace.MainRegion.Content;
         }
+
+        public ContentNode? GetHeaderContentNode()
+        {
+            return _workspace.HeaderRegion.Content;
+        }
     }
 }
 

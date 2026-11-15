@@ -24,13 +24,13 @@ using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Diagnostic;
 using UnityCommander.Common.Models.Directory;
+using UnityCommander.Common.State;
 using UnityCommander.Controls.Layout;
 using UnityCommander.Core;
 using UnityCommander.Core.Helper;
 using UnityCommander.Core.Mvvm;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Diagnostics.Abstraction.Performance;
-using UnityCommander.Diagnostics.Performance;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Configuration;
 using UnityCommander.Logging.Contracts;
@@ -48,6 +48,7 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
 {
     public class SplitPanelViewModel : RegionViewModelBase, IDirectoryPanel
     {
+        private readonly ISessionAggregator _sessionAggregator;
         #region Поля и зависимости
 
         // --- Зависимости через DI
@@ -104,11 +105,14 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
               INavigationRegistry navigationRegistry,
               ISelectionService selectionService,
               IDiagnosticRegistry diagnosticRegistry,
+              ISessionAggregator sessionAggregator,
               FilePanelLayoutService panelLayoutService, 
               FilePanelContextFactory panelContextFactory,
               TabState tabState)
             : base(regionManager)
         {
+            _sessionAggregator = sessionAggregator ?? throw new ArgumentNullException(nameof(sessionAggregator));
+
             _dataService = dataService ?? throw new ArgumentNullException(nameof(dataService));
 
             _navigationRegistry = navigationRegistry ?? throw new ArgumentNullException(nameof(navigationRegistry));
@@ -195,6 +199,19 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
                 LayoutRoot =
                     _panelRuntime.LayoutController.CurrentLayout;
             };
+
+            _panelRuntime.LayoutController.ViewModeChanged += mode =>
+            {
+                _state.ViewMode = mode;
+            };
+
+            _state.ViewModeChanged += mode =>
+            {
+                _panelRuntime.LayoutController.ApplyViewMode(mode);
+            };
+
+            _sessionAggregator.RegisterCapture(Capture);
+            _sessionAggregator.RegisterRestore(Restore);
         }
 
         #endregion
@@ -257,21 +274,23 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
           });
 
         public ITabPanelContent InitializedViewModel(
-            ref Guid token,
-            string path)
+            ref Guid tabId,
+            string path, 
+            Guid panelId, 
+            ViewMode mode)
         {
             SetInternalCurrentPath(path);
 
-            if (token == Guid.Empty)
-                token = Guid.NewGuid();
+            if (tabId == Guid.Empty)
+                tabId = Guid.NewGuid();
 
-            SetTabId(token);
+            SetTabId(tabId, panelId, mode);
 
             _selectionManager = _panelRuntime.SelectionManager;
 
-            _selectionService.Register(token, _selectionManager);
+            _selectionService.Register(tabId, _selectionManager);
             _tabStateRegistry.Register(_state);
-            _navigationRegistry.Register(token, _navigationService);
+            _navigationRegistry.Register(tabId, _navigationService);
             _navigationService.CurrentChanged += OnPathChanged;
 
             _ = SetLastPanelState();
@@ -279,9 +298,11 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
             return this;
         }
 
-        private void SetTabId(Guid tabId)
+        private void SetTabId(Guid tabId, Guid panelId, ViewMode mode)
         {
             _state.TabId = tabId;
+            _state.PanelId = panelId;
+            _state.ViewMode = mode;
 
             _fileNodeContext.TabId = tabId;
             _folderNodeContext.TabId = tabId;
@@ -563,6 +584,41 @@ namespace UnityCommander.Modules.FilePanel.ViewModels
         public void OnViewDetached()
         {
             _navigationService.CurrentChanged -= OnPathChanged;
+        }
+
+        internal void Capture(AppSessionState state)
+        {
+            var panelState = state.Panels
+                .FirstOrDefault(p => p.PanelId == _state.PanelId);
+
+            if (panelState is null)
+                return;
+
+            var tabState = panelState.Tabs
+                .FirstOrDefault(t => t.TabId == _state.TabId);
+
+            if (tabState is null)
+                return;
+
+            tabState.ViewMode = _state.ViewMode;
+        }
+
+        internal void Restore(AppSessionState state)
+        {
+            var panelState = state.Panels
+                .FirstOrDefault(p => p.PanelId == _state.PanelId);
+
+            if (panelState is null)
+                return;
+
+            var tabState = panelState.Tabs
+                .FirstOrDefault(t => t.TabId == _state.TabId);
+
+            var viewMode = tabState?.ViewMode ?? panelState.ViewMode;
+
+            _state.ViewMode = viewMode;
+
+            _panelRuntime.LayoutController.SetViewMode(viewMode);
         }
 
         #endregion

@@ -486,8 +486,24 @@
                             Height="25"
                             Padding="3"
                             IsEnabled="{Binding IsEnabled}"
-                            Style="{StaticResource UcIconControlStyle}"
                             ToolTip="{Binding Description}">
+
+                            <ContentControl.Style>
+                                <Style BasedOn="{StaticResource UcIconControlStyle}" TargetType="ContentControl">
+
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="1" />
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{DynamicResource UcAccentPrimaryBrush}" />
+                                            <Setter Property="BorderThickness" Value="1.5" />
+                                            <Setter Property="Background" Value="{DynamicResource UcAccentPrimaryBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+
                             <ContentControl.Content>
                                 <icon:IconRender
                                     Key="{Binding IconKey}"
@@ -497,6 +513,7 @@
                                     State="Disabled"
                                     Stroke="White" />
                             </ContentControl.Content>
+
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonUp">
                                     <i:InvokeCommandAction Command="{Binding Command}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}}" />

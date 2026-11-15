@@ -26,6 +26,9 @@ namespace UnityCommander.Modules.FilePanel.Services
         private readonly IDockingService _dockingService;
         private readonly IPanelRegistry _panelRegistry;
         private readonly ITabRegistry _tabRegistry;
+
+        private readonly ITabStateRegistry _tabStateRegistry;
+
         private readonly IDockingSyncService _dockingSyncService;
         private DoubleClickHandlerHelper _tabDoubleClick;
         private CommandExecutionService _command;
@@ -37,6 +40,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             IPanelRegistry panelRegistry,
             ITabRegistry tabRegistry,
             IDockingSyncService dockingSyncService,
+            ITabStateRegistry tabStateRegistry,
             CommandExecutionService command,
             LoggerCreator logger)
         {
@@ -49,6 +53,7 @@ namespace UnityCommander.Modules.FilePanel.Services
             _dockingService = dockingService;
             _tabRegistry = tabRegistry;
             _panelRegistry = panelRegistry;
+            _tabStateRegistry = tabStateRegistry;
             _dockingSyncService = dockingSyncService;
             _command = command;
         }
@@ -176,6 +181,8 @@ namespace UnityCommander.Modules.FilePanel.Services
             var panel = _panelRegistry.GetActivePanel(); // Панель пустая 
             var panelId = panel.PanelId;
 
+            var viewMode = _tabStateRegistry.GetPanelViewMode(panelId);
+
             var tabId = Guid.NewGuid();
             var tabHeader = PathTitleHelper.GetTabTitle(basePath);
             var regionName = $"Tab_{tabId}";
@@ -202,7 +209,7 @@ namespace UnityCommander.Modules.FilePanel.Services
                
                 if (viewModel == null) return;
 
-                viewModel.InitializedViewModel(ref tabId, basePath);
+                viewModel.InitializedViewModel(ref tabId, basePath, panelId, viewMode);
 
                 var adapter = new TabContentAdapter(viewModel);
 

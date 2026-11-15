@@ -3,8 +3,8 @@ using Prism.Commands;
 using System;
 using System.Windows;
 using UnityCommander.Abstractions.Dialog;
+using UnityCommander.Abstractions.Panels;
 using UnityCommander.Common.Commands;
-using UnityCommander.Common.Models;
 using UnityCommander.Common.Panels;
 using UnityCommander.Core.Navigation;
 using UnityCommander.Modules.FilePanel.Dialog;
@@ -207,29 +207,37 @@ namespace UnityCommander.Modules.FilePanel.Services
         }
 
         public UICommand CreateSetThumbnailsModeCommand(
-         string id,
-         Func<bool> canExecute)
+            string id,
+            Func<bool> canExecute)
         {
-            return _ui.Create(
-               id,
+            var command = _ui.Create(
+                id,
                 new DelegateCommand<object>(obj =>
                 {
                     _layoutController.SetViewMode(ViewMode.Thumbnails);
                 }),
-               canExecute);
+                canExecute);
+
+            command.IsChecked = _layoutController.CurrentViewMode == ViewMode.Thumbnails;
+
+            return command;
         }
 
         public UICommand CreateSetTableModeCommand(
-        string id,
-        Func<bool> canExecute)
+          string id,
+          Func<bool> canExecute)
         {
-            return _ui.Create(
-               id,
+            var command = _ui.Create(
+                id,
                 new DelegateCommand<object>(obj =>
                 {
                     _layoutController.SetViewMode(ViewMode.Table);
                 }),
-               canExecute);
+                canExecute);
+
+            command.IsChecked = _layoutController.CurrentViewMode == ViewMode.Table;
+
+            return command;
         }
     }
 }
