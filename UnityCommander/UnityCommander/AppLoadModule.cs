@@ -35,7 +35,6 @@ using UnityCommander.Settings.Abstactions;
 using UnityCommander.ViewModels.Dialogs;
 using UnityCommander.Views.CopyDialogs;
 using UnityCommander.Views.Dialogs;
-using UnityCommander.WPF.Images;
 using IViewRegistry = UnityCommander.Core.Registrar.IViewRegistry;
 
 namespace UnityCommander

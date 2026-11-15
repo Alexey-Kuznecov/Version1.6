@@ -11,6 +11,7 @@ using UnityCommander.Common.Styling;
 using UnityCommander.Dependencies;
 using UnityCommander.Diagnostics.Abstraction;
 using UnityCommander.Diagnostics.Abstraction.Performance;
+using UnityCommander.Diagnostics.Storage;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Modules.BottomPanel;
 using UnityCommander.Modules.FilePanel;
@@ -92,6 +93,13 @@ namespace UnityCommander
             {
                 mainWindow = Container.Resolve<MainWindow>();
             }
+
+            _logger.Info(
+                $"Diagnostics dropped: {((DiagnosticsRecorder)_diagnosticsRecorder)?.DroppedRecordCount ?? 0}");
+
+            _logger.Info(
+                $"Diagnostics storage error: " +
+                $"{((DiagnosticsRecorder)_diagnosticsRecorder)?.LastStorageError?.ToString() ?? "None"}");
 
             return mainWindow;
         }
@@ -214,8 +222,7 @@ namespace UnityCommander
                                 .ConfigureAwait(false);
                         }).GetAwaiter().GetResult();
                     }
-
-                #endif
+#endif
             }
             catch (Exception exception)
             {

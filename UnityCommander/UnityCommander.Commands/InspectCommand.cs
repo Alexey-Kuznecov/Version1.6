@@ -39,8 +39,6 @@ namespace UnityCommander.Commands
         public CommandExecutionMode Mode 
             => CommandExecutionMode.Background;
 
-
-
         public InspectCommand(
             ICommandArgumentParser parse,
             IDiagnosticRender render,

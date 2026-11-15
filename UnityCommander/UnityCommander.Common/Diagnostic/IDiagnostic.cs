@@ -5,6 +5,8 @@ namespace UnityCommander.Common.Diagnostic
     {
         string Name { get; }
 
+        string Subsystem => Name;
+
         DiagnosticCardinality Cardinality { get; }
     }
 }

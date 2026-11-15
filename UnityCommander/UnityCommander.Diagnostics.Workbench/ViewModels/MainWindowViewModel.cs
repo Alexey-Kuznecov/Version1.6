@@ -27,7 +27,7 @@ public sealed class MainWindowViewModel : ObservableObject
         Performance = new PerformanceViewModel(diagnosticsReader);
 
         Tracing = new TracingViewModel(diagnosticsReader);
-        Reporting = new ReportingViewModel();
+        Reporting = new ReportingViewModel(diagnosticsReader);
         Snapshots = new SnapshotsViewModel(diagnosticsReader);
     }
 
@@ -101,13 +101,9 @@ public sealed class MainWindowViewModel : ObservableObject
         {
             await Task.WhenAll(
                Performance.LoadSessionAsync(session),
-               Snapshots.LoadSessionAsync(session),
-               Tracing.LoadSessionAsync(session));
-
-            // По мере реализации:
-            // await Tracing.LoadSessionAsync(session);
-            // await Reporting.LoadSessionAsync(session);
-            // await Snapshots.LoadSessionAsync(session);
+               Tracing.LoadSessionAsync(session),
+               Reporting.LoadSessionAsync(session),
+               Snapshots.LoadSessionAsync(session));
         }
         catch (Exception exception)
         {

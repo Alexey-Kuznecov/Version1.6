@@ -2,20 +2,20 @@
 using AvalonDock.Layout;
 using CommandSystem.Core.UndoRedo;
 using Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityCommander.Abstractions.History;
 using UnityCommander.CLI.History;
 using UnityCommander.Common.Docking;
-using UnityCommander.Common.History;
 using UnityCommander.Common.State;
+using UnityCommander.Diagnostics.Reporting;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
 using UnityCommander.Logging.Infrastructure;
 using UnityCommander.Services.Interfaces;
 using UnityCommander.Services.Interfaces.Bootstrap;
 using UnityCommander.Services.Interfaces.Docking;
-using static UnityCommander.Common.Commands.CommandNames;
 
 namespace UnityCommander.Services.Bootstrap
 {
@@ -38,6 +38,8 @@ namespace UnityCommander.Services.Bootstrap
         private readonly IUserFavoriteStore _favoriteStore;
         private readonly IUserNavigationHistoryStore _userNavigation;
 
+        private readonly IDiagnosticReportingService _reporting;
+
         public AppInitializer(
             ISessionService session,
             ILayoutService layout,
@@ -53,8 +55,11 @@ namespace UnityCommander.Services.Bootstrap
             IUserFavoriteStore userFavoriteStore,
             ConsoleHistoryService consoleHistory,
             LoggerCreator logger, 
-            SessionStateValidator stateValidator) 
+            SessionStateValidator stateValidator, 
+            IDiagnosticReportingService reporting) 
         {
+            _reporting = reporting;
+
             _loggerCreator = logger;
             _stateValidator = stateValidator;
 
@@ -101,30 +106,154 @@ namespace UnityCommander.Services.Bootstrap
 
         public void Initialize()
         {
-            using (_loggerCreator.ProfileScope(LogScope.Startup, "Layout Initial"))
+            var started = System.Diagnostics.Stopwatch.GetTimestamp();
+
+            _reporting.Publish(
+                new DiagnosticEvent(
+                    "Application.Startup",
+                    "Initialize.Started"));
+
+            try
             {
-                _logger.Info("Session load..");
-                _state = _session.Load();
+                using (_loggerCreator.ProfileScope(
+                    LogScope.Startup,
+                    "Layout Initial"))
+                {
+                    _logger.Info("Session load..");
 
-                _stateValidator.Validate(_state);
+                    RunStartupStep(
+                        "Session.Load",
+                        () =>
+                        {
+                            _state = _session.Load();
+                        });
 
-                _logger.Info("AvalonDock init..");
-                _layout.Load(_state);
+                    RunStartupStep(
+                        "Session.Validate",
+                        () =>
+                        {
+                            _stateValidator.Validate(_state);
+                        });
 
-                _logger.Info("Initial Panel..");
-                _panel.Initialize();
+                    _logger.Info("AvalonDock init..");
 
-                _logger.Info("AvalonDock and Panel sync..");
-                _dockingSync.Initialize(_state.Panels);
+                    RunStartupStep(
+                        "Layout.Load",
+                        () =>
+                        {
+                            _layout.Load(_state);
+                        });
 
-                _logger.Info("Restore prev session..");
-                _sessionAggregator.Restore(_state);
+                    _logger.Info("Initial Panel..");
 
-                _toolDockingStore.Load();
-                _logger.Info("Tool layout loaded.");
+                    RunStartupStep(
+                        "Panels.Initialize",
+                        () =>
+                        {
+                            _panel.Initialize();
+                        });
 
-                 _consoleHistory.Initialize();
-                _logger.Info("Console history initialized..");
+                    _logger.Info("AvalonDock and Panel sync..");
+
+                    RunStartupStep(
+                        "Docking.Synchronize",
+                        () =>
+                        {
+                            _dockingSync.Initialize(_state.Panels);
+                        });
+
+                    _logger.Info("Restore prev session..");
+
+                    RunStartupStep(
+                        "Session.Restore",
+                        () =>
+                        {
+                            _sessionAggregator.Restore(_state);
+                        });
+
+                    RunStartupStep(
+                        "ToolLayout.Load",
+                        () =>
+                        {
+                            _toolDockingStore.Load();
+                        });
+
+                    _logger.Info("Tool layout loaded.");
+
+                    RunStartupStep(
+                        "ConsoleHistory.Initialize",
+                        () =>
+                        {
+                            _consoleHistory.Initialize();
+                        });
+
+                    _logger.Info("Console history initialized..");
+                }
+
+                _reporting.Publish(
+                    new DiagnosticEvent(
+                        "Application.Startup",
+                        "Initialize.Completed",
+                        Duration: System.Diagnostics.Stopwatch.GetElapsedTime(
+                            started)));
+            }
+            catch (Exception exception)
+            {
+                _reporting.Publish(
+                    new DiagnosticEvent(
+                        "Application.Startup",
+                        "Initialize.Failed",
+                        new
+                        {
+                            ExceptionType = exception.GetType().FullName,
+                            exception.Message
+                        },
+                        Duration: System.Diagnostics.Stopwatch.GetElapsedTime(
+                            started)));
+
+                throw;
+            }
+        }
+
+        private void RunStartupStep(string name, Action action)
+        {
+            var started = System.Diagnostics.Stopwatch.GetTimestamp();
+
+            try
+            {
+                action();
+
+                var duration =
+                    System.Diagnostics.Stopwatch.GetElapsedTime(started);
+
+                _reporting.Publish(
+                    new DiagnosticEvent(
+                        "Application.Startup",
+                        name,
+                        new
+                        {
+                            Status = "Completed"
+                        },
+                        Duration: duration));
+            }
+            catch (Exception exception)
+            {
+                var duration =
+                    System.Diagnostics.Stopwatch.GetElapsedTime(started);
+
+                _reporting.Publish(
+                    new DiagnosticEvent(
+                        "Application.Startup",
+                        name,
+                        new
+                        {
+                            Status = "Failed",
+                            ExceptionType = exception.GetType().FullName,
+                            exception.Message
+                        },
+                        Duration: duration));
+
+                throw;
             }
         }
     }

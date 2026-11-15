@@ -148,6 +148,8 @@ namespace UnityCommander.Core.Panels
 
         public string Name => "tab";
 
+        public string Subsystem => "Application.Startup";
+
         public DiagnosticCardinality Cardinality
             => DiagnosticCardinality.Single;
 

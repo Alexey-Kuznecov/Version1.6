@@ -16,6 +16,7 @@ using UnityCommander.Diagnostics.Reporting;
 using UnityCommander.Diagnostics.Storage;
 using UnityCommander.Diagnostics.Storage.SQLite;
 using UnityCommander.Diagnostics.Tracing;
+using UnityCommander.Services.Diagnostics;
 
 namespace UnityCommander.Dependencies
 {
@@ -42,6 +43,8 @@ namespace UnityCommander.Dependencies
 
 
             registry.RegisterSingleton<IDiagnosticTraceStore, DiagnosticTraceStore>();
+
+            registry.RegisterSingleton<IDiagnosticReportingService, DiagnosticReportingService>();
 
             registry.RegisterSingleton<IDiagnosticTrace, Diagnostics.Tracing.DiagnosticTrace>();
 
