@@ -1,6 +1,9 @@
 ﻿
 using Prism.Ioc;
 using UnityCommander.Modules.BottomPanel.Services;
+using UnityCommander.Preview;
+using UnityCommander.Preview.Abstraction;
+using UnityCommander.Preview.Wpf;
 using UnityCommander.Services;
 using UnityCommander.Services.Docking;
 using UnityCommander.Services.Interfaces;
@@ -13,8 +16,11 @@ namespace UnityCommander.Dependencies
         public static void Register(IContainerRegistry registry)
         {
             registry.RegisterSingleton<IToolRegistry, ToolRegistry>();
+
             registry.RegisterSingleton<IToolDescriptor, ConsoleToolDescriptor>();
             registry.RegisterSingleton<IToolDescriptor, LoggerToolDescriptor>();
+            registry.RegisterSingleton<IToolDescriptor, PreviewToolDescriptor>();
+
             registry.RegisterSingleton<IToolCatalogViewFactory, ToolCatalogViewFactory>();
             registry.RegisterSingleton<IToolDockingStore, ToolDockingStore>();
             registry.RegisterSingleton<IToolDockingManager, ToolDockingManager>();

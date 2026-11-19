@@ -1,0 +1,218 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <!--  Slider colors  -->
+    <SolidColorBrush x:Key="UcSliderTrackBrush" Color="#55888888" />
+    <SolidColorBrush x:Key="UcSliderProgressBrush" Color="#FF4A90E2" />
+    <SolidColorBrush x:Key="UcSliderThumbBrush" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="UcSliderThumbHoverBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="UcSliderDisabledBrush" Color="#55888888" />
+
+    <!--  Video player slider  -->
+    <Style x:Key="UcSliderVideoPlayerStyle" TargetType="{x:Type Slider}">
+
+        <Setter Property="Height" Value="24" />
+        <Setter Property="MinWidth" Value="40" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource UcSliderProgressBrush}" />
+        <Setter Property="Background" Value="{DynamicResource UcSliderTrackBrush}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Slider}">
+
+                    <Grid>
+
+                        <Track x:Name="PART_Track" IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+
+                            <!--  Filled track  -->
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton
+                                    Background="{TemplateBinding Foreground}"
+                                    BorderThickness="0"
+                                    Command="{x:Static Slider.DecreaseLarge}"
+                                    Focusable="False"
+                                    IsTabStop="False">
+
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                            <Border
+                                                Height="4"
+                                                VerticalAlignment="Center"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="2" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+
+                            <!--  Empty track  -->
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="0"
+                                    Command="{x:Static Slider.IncreaseLarge}"
+                                    Focusable="False"
+                                    IsTabStop="False">
+
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                            <Border
+                                                Height="4"
+                                                VerticalAlignment="Center"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="2" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+
+                            <!--  Thumb  -->
+                            <Track.Thumb>
+                                <Thumb x:Name="Thumb">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="{x:Type Thumb}">
+                                            <Ellipse
+                                                Width="12"
+                                                Height="12"
+                                                Fill="{DynamicResource UcSliderThumbBrush}"
+                                                StrokeThickness="0" />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+
+                        </Track>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Thumb" Property="Width" Value="14" />
+                            <Setter TargetName="Thumb" Property="Height" Value="14" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_Track" Property="Opacity" Value="0.4" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Video timeline  -->
+    <Style
+        x:Key="UcSliderTimelineStyle"
+        BasedOn="{StaticResource UcSliderVideoPlayerStyle}"
+        TargetType="{x:Type Slider}">
+        <Setter Property="Height" Value="20" />
+    </Style>
+
+    <!--  Volume  -->
+
+
+    <Style x:Key="UcSliderVolumeStyle" TargetType="{x:Type Slider}">
+
+        <Setter Property="Width" Value="24" />
+        <Setter Property="MinHeight" Value="70" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource UcSliderProgressBrush}" />
+        <Setter Property="Background" Value="{DynamicResource UcSliderTrackBrush}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Slider}">
+                    <Grid>
+
+                        <Track
+                            x:Name="PART_Track"
+                            Margin="0,7"
+                            IsDirectionReversed="False"
+                            Maximum="{TemplateBinding Maximum}"
+                            Minimum="{TemplateBinding Minimum}"
+                            Orientation="Vertical"
+                            ViewportSize="0"
+                            Value="{TemplateBinding Value}">
+
+                            <!--  Filled track: bottom  -->
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton
+                                    Background="{TemplateBinding Foreground}"
+                                    BorderThickness="0"
+                                    Command="{x:Static Slider.DecreaseLarge}"
+                                    Focusable="False"
+                                    IsTabStop="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                            <Border
+                                                Width="4"
+                                                HorizontalAlignment="Center"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="2" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+
+                            <!--  Empty track: top  -->
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="0"
+                                    Command="{x:Static Slider.IncreaseLarge}"
+                                    Focusable="False"
+                                    IsTabStop="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                            <Border
+                                                Width="4"
+                                                HorizontalAlignment="Center"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="2" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+
+                            <!--  Thumb  -->
+                            <Track.Thumb>
+                                <Thumb x:Name="Thumb">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="{x:Type Thumb}">
+                                            <Ellipse
+                                                Width="12"
+                                                Height="12"
+                                                Fill="{DynamicResource UcSliderThumbBrush}"
+                                                StrokeThickness="0" />
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+
+                        </Track>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Thumb" Property="Width" Value="14" />
+                            <Setter TargetName="Thumb" Property="Height" Value="14" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_Track" Property="Opacity" Value="0.4" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

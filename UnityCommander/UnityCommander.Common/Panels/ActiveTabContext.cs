@@ -14,6 +14,8 @@ namespace UnityCommander.Common.Panels
 
         public Guid ActiveTabId { get; private set; }
 
+        public ITabContentAdapter? ActiveContent { get; }
+
         public TabState? Active =>
             _states.Get(ActiveTabId);
 

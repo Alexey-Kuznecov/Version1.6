@@ -6,6 +6,7 @@
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ScrollBarAutoHide.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/Checkbox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/Slider.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/SliderStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ComboBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/ProgressBar.xaml" />
         <ResourceDictionary Source="pack://application:,,,/UnityCommander.Common.Styling;component/Resources/Default/Controls/RepeatButton.xaml" />

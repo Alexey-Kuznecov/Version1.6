@@ -19,5 +19,8 @@ namespace UnityCommander.Common.State
         
         public RibbonSessionState Ribbon { get; set; } 
             = new RibbonSessionState();
+
+        public Dictionary<string, string> ExtensionStates { get; set; }
+            = new();
     }
 }

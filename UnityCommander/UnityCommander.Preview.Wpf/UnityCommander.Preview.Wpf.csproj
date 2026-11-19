@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibVLCSharp.WPF" Version="3.10.2" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityCommander.Logging\UnityCommander.Logging.csproj" />
+    <ProjectReference Include="..\UnityCommander.MVVM\UnityCommander.MVVM.csproj" />
+    <ProjectReference Include="..\UnityCommander.Preview.Abstraction\UnityCommander.Preview.Abstraction.csproj" />
+    <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
+  </ItemGroup>
+
+</Project>

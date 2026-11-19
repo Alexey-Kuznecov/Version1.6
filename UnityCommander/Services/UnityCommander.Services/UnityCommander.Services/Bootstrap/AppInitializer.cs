@@ -165,13 +165,6 @@ namespace UnityCommander.Services.Bootstrap
                     _logger.Info("Restore prev session..");
 
                     RunStartupStep(
-                        "Session.Restore",
-                        () =>
-                        {
-                            _sessionAggregator.Restore(_state);
-                        });
-
-                    RunStartupStep(
                         "ToolLayout.Load",
                         () =>
                         {
@@ -179,6 +172,13 @@ namespace UnityCommander.Services.Bootstrap
                         });
 
                     _logger.Info("Tool layout loaded.");
+
+                    RunStartupStep(
+                        "Session.Restore",
+                        () =>
+                        {
+                            _sessionAggregator.Restore(_state);
+                        });
 
                     RunStartupStep(
                         "ConsoleHistory.Initialize",

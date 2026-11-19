@@ -4,6 +4,7 @@ using UnityCommander.Abstractions.Panels;
 
 namespace UnityCommander.Services.Interfaces
 {
+    [Obsolete("Use ActiveTabContext instead.")]
     public class TabContextAccessor : ITabContextAccessor
     {
         private readonly ITabRegistry _registry;

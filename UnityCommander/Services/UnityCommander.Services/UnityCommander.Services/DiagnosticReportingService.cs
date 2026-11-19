@@ -1,4 +1,5 @@
 ﻿
+using NLog.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using UnityCommander.Common.Diagnostic;
 using UnityCommander.Diagnostics.Abstraction;
 using UnityCommander.Diagnostics.Reporting;
 using UnityCommander.Logging.Contracts;
+using UnityCommander.Logging.Core;
 
 namespace UnityCommander.Services.Diagnostics
 {
@@ -18,11 +20,12 @@ namespace UnityCommander.Services.Diagnostics
 
         public DiagnosticReportingService(
             IDiagnosticRegistry registry,
-            IDiagnosticsRecorder recorder, AppLogger appLogger)
+            IDiagnosticsRecorder recorder, 
+            AppLogger appLogger)
         {
             _registry = registry;
             _recorder = recorder;
-            _logger = appLogger.For<DiagnosticReportingService>();
+            _logger = appLogger.For<DiagnosticReportingService>(LogScope.Diagnostic);
         }
 
         public bool Publish(DiagnosticEvent diagnosticEvent)

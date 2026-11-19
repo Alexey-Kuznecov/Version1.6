@@ -1,0 +1,68 @@
+﻿<UserControl
+    x:Class="UnityCommander.Preview.Wpf.Views.ImagePreviewView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:UnityCommander.Preview.Wpf.Controls">
+
+    <Grid ClipToBounds="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Image viewport  -->
+        <controls:ZoomPanScrollViewer
+            Grid.Row="0"
+            SelectedZoom="{Binding SelectedZoom, Mode=TwoWay}"
+            Source="{Binding Source}" />
+
+        <!--  Image toolbar  -->
+        <Border
+            Grid.Row="1"
+            Padding="8,5"
+            Background="{DynamicResource UcPanelBackgroundBrush}">
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+                <Button
+                    MinWidth="30"
+                    Margin="2"
+                    Command="{Binding ZoomOutCommand}"
+                    Content="−"
+                    Style="{StaticResource ModernButton}"
+                    ToolTip="Zoom out" />
+
+                <ComboBox
+                    Width="95"
+                    Margin="2"
+                    ItemContainerStyle="{StaticResource UcComboBoxItemStyle}"
+                    ItemsSource="{Binding ZoomOptions}"
+                    SelectedItem="{Binding SelectedZoom, Mode=TwoWay}"
+                    Style="{StaticResource UcComboBoxStyle}" />
+
+                <Button
+                    MinWidth="30"
+                    Margin="2"
+                    Command="{Binding ZoomInCommand}"
+                    Content="+"
+                    Style="{StaticResource ModernButton}"
+                    ToolTip="Zoom in" />
+
+                <Button
+                    Margin="4,2"
+                    Command="{Binding FitCommand}"
+                    Content="Fit"
+                    Style="{StaticResource ModernButton}"
+                    ToolTip="Fit to window" />
+
+                <Button
+                    Margin="2"
+                    Command="{Binding ActualSizeCommand}"
+                    Content="100%"
+                    Style="{StaticResource ModernButton}"
+                    ToolTip="Actual size" />
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

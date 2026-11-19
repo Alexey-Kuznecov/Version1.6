@@ -9,7 +9,6 @@ using UnityCommander.Common;
 using UnityCommander.Common.Styling;
 using UnityCommander.Core.Bootstrap;
 using UnityCommander.Diagnostics.Tracing;
-using UnityCommander.Logging.Contracts;
 using UnityCommander.Modules.FilePanel.Behaviors;
 using UnityCommander.Modules.LeftSideBars.Widget;
 using UnityCommander.Rendering.Icons;

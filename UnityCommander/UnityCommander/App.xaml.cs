@@ -142,6 +142,7 @@ namespace UnityCommander
             CopyModuleRegistration.Register(containerRegistry);
             SettingsRegistration.Register(containerRegistry);
             BottomPanelRegistration.Register(containerRegistry);
+            PreviewRegistration.Register(containerRegistry);
             SearchRegistration.Register(containerRegistry);
             NotificationRegistration.Register(containerRegistry);
 

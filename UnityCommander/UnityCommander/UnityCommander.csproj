@@ -28,6 +28,7 @@
     <PackageReference Include="Config.Net" Version="4.15.0" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.24" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommandSystem\CommandSystem.Abstractions\CommandSystem.Abstractions.csproj" />
@@ -54,6 +55,8 @@
     <ProjectReference Include="..\UnityCommander.Diagnostics\UnityCommander.Diagnostics.csproj" />
     <ProjectReference Include="..\UnityCommander.Notifications.Abstraction\UnityCommander.Notifications.Abstraction.csproj" />
     <ProjectReference Include="..\UnityCommander.Notifications.WPF\UnityCommander.Notifications.WPF.csproj" />
+    <ProjectReference Include="..\UnityCommander.Preview.Providers\UnityCommander.Preview.Providers.csproj" />
+    <ProjectReference Include="..\UnityCommander.Preview\UnityCommander.Preview.csproj" />
     <ProjectReference Include="..\UnityCommander.Rendering\UnityCommander.Rendering.csproj" />
     <ProjectReference Include="..\UnityCommander.UI\UnityCommander.UI.csproj" />
   </ItemGroup>

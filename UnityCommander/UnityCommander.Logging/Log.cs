@@ -39,5 +39,10 @@ namespace UnityCommander.Logging
         public static LoggerCreator GetLoggerCreator()
             => _loggerCreator ?? throw new InvalidOperationException(
                 "LoggerCreator has not been initialized.");
+
+        public static void Error(Exception errorException, string message)
+        {
+            _logger?.Error(message, errorException);
+        }
     }
 }

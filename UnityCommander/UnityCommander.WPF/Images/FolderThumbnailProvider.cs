@@ -60,7 +60,7 @@ namespace UnityCommander.WPF.Images
 
             var builder = new StringBuilder();
 
-            builder.Append("folder|");
+            builder.Append("folder-v2|");
             builder.Append(Path.GetFullPath(path));
 
             foreach (var file in candidates)

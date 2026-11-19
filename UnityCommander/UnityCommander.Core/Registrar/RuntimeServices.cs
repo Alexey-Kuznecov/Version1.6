@@ -9,6 +9,7 @@ using UnityCommander.Abstractions.Overrides;
 using UnityCommander.Abstractions.Plugins;
 using UnityCommander.Abstractions.Ribbon;
 using UnityCommander.Abstractions.Sidebar;
+using UnityCommander.Preview.Abstraction;
 
 namespace UnityCommander.Core.Registrar
 {
@@ -29,7 +30,9 @@ namespace UnityCommander.Core.Registrar
         public IIconSourceRegistry Icons { get; }
 
         public IRibbonRegistry Ribbon { get; }
-        
+
+        public IPreviewRegistry Preview { get; }
+
         public IBackgroundServiceRegistry Services { get; }
 
         public RuntimeServices(
@@ -41,7 +44,8 @@ namespace UnityCommander.Core.Registrar
             IPluginCommandRegistry command,
             IRibbonRegistry ribbon,
             IIconSourceRegistry iconSource,
-            IBackgroundServiceRegistry services)
+            IBackgroundServiceRegistry services, 
+            IPreviewRegistry preview)
         {
             Services = services;
             Sidebar = sidebar;
@@ -52,6 +56,7 @@ namespace UnityCommander.Core.Registrar
             Commands = command;
             Ribbon = ribbon;
             Icons = iconSource;
+            Preview = preview;
         }
 
         public void Cleanup(string id)
@@ -64,6 +69,7 @@ namespace UnityCommander.Core.Registrar
             Commands.Cleanup(id);
             //Ribbon.Cleanup(id);
             Services.Cleanup(id);
+            Preview.Cleanup(id);
         }
     }
 }

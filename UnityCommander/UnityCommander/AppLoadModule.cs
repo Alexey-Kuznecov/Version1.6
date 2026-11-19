@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.Win32;
 using Prism.Ioc;
 using Prism.Modularity;
 using System;
@@ -14,6 +15,7 @@ using UnityCommander.Commands;
 using UnityCommander.Common.Commands;
 using UnityCommander.Common.Dialog;
 using UnityCommander.Core.Commands;
+using UnityCommander.Dependencies;
 using UnityCommander.Logging;
 using UnityCommander.Logging.Contracts;
 using UnityCommander.Logging.Core;
@@ -27,6 +29,7 @@ using UnityCommander.Modules.LeftSideBars;
 using UnityCommander.Modules.SettingsPanel.ViewModels;
 using UnityCommander.Modules.SettingsPanel.Views;
 using UnityCommander.Modules.ToolBar;
+using UnityCommander.Preview.Abstraction;
 using UnityCommander.Services;
 using UnityCommander.Services.Background;
 using UnityCommander.Services.Bootstrap;
@@ -71,6 +74,10 @@ namespace UnityCommander
             backgroundService.Start(token);
 
             builder.Rebuild();
+
+            PreviewRegistration.Initialize(
+                containerProvider.Resolve<IPreviewRegistry>(),
+                containerProvider);
 
             _logger.Info("AppLoadModule initialized");
         }

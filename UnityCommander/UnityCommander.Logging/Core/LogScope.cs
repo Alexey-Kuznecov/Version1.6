@@ -13,6 +13,7 @@
 
         public static readonly LogScope Startup = new("Startup");
         public static readonly LogScope Runtime = new("Runtime");
+        public static readonly LogScope Diagnostic = new("Diagnostic");
         public static readonly LogScope UI = new("UI");
         public static readonly LogScope UserAction = new("UserAction");
 

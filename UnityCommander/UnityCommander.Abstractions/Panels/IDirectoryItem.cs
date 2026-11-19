@@ -8,9 +8,6 @@ namespace UnityCommander.Abstractions.Panels
     using UnityCommander.Abstractions.Selection;
     using UnityCommander.Abstractions.Thumbnail;
 
-    /// <summary>
-    /// The directory base.
-    /// </summary>
     public interface IDirectoryItem : ISelectableItem, ICuttableItem
     {
         public string Name { get; set; }
@@ -29,8 +26,6 @@ namespace UnityCommander.Abstractions.Panels
         public DateTime CreationTime { get; set; }
 
         public DateTime LastAccessTime { get; set; }
-
-        //public IDictionary<string, object> Additional { get; set; }
 
         public ICellModel Cell { get; set; }
 

@@ -149,7 +149,6 @@ namespace UnityCommander.Modules.FilePanel.Services
             _tabRegistry.SetActive(tabId);
         }
 
-
         private void Manager_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             try
